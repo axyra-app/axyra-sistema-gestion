@@ -151,47 +151,70 @@
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="axyra-footer">
+    <!-- Footer Profesional -->
+    <footer class="axyra-footer-professional">
       <div class="axyra-container">
         <div class="axyra-footer-content">
           <div class="axyra-footer-section">
-            <h3>🚀 AXYRA</h3>
-            <p>Sistema de gestión empresarial completo y eficiente.</p>
-          </div>
-
-          <div class="axyra-footer-section">
-            <h4>📋 Enlaces Rápidos</h4>
+            <h4>¿TIENES DUDAS?</h4>
             <ul>
-              <li><button onclick="handleDashboardAccess()">📊 Dashboard</button></li>
-              <li><button onclick="handleEmpleadosAccess()">👥 Empleados</button></li>
-              <li><button onclick="handleHorasAccess()">⏰ Horas</button></li>
-              <li><button onclick="handleNominaAccess()">💰 Nómina</button></li>
-              <li><button onclick="handleCuadreAccess()">🧮 Cuadre de Caja</button></li>
+              <li><button onclick="contactarSoporte()">✉️ ESCRIBENOS</button></li>
+              <li><button onclick="enviarFeedback()">📡 ENVIAR FEEDBACK</button></li>
             </ul>
           </div>
 
           <div class="axyra-footer-section">
-            <h4>🔐 Acceso</h4>
+            <h4>NOSOTROS</h4>
             <ul>
-              <li><button onclick="handleLoginClick()">🔑 Iniciar Sesión</button></li>
-              <li><button onclick="handleRegisterClick()">📝 Registrarse</button></li>
+              <li><button onclick="quienesSomos()">Quiénes Somos</button></li>
+              <li><button onclick="centroAyuda()">Centro de Ayuda</button></li>
+              <li><button onclick="comoFunciona()">Cómo Funciona</button></li>
+              <li><button onclick="terminosCondiciones()">Términos y Condiciones</button></li>
+              <li><button onclick="garantiaSatisfaccion()">Garantía de Satisfacción</button></li>
+              <li><button onclick="blogAxyra()">AXYRA Blog</button></li>
+            </ul>
+            <div class="axyra-copyright">
+              <p>&copy; 2013-2025 AXYRA</p>
+            </div>
+          </div>
+
+          <div class="axyra-footer-section">
+            <h4>EN DONDE ESTAMOS</h4>
+            <ul>
+              <li>🇦🇷 Argentina</li>
+              <li>🇨🇱 Chile</li>
+              <li>🇲🇽 México</li>
+              <li>🇨🇴 Colombia</li>
+            </ul>
+          </div>
+
+          <div class="axyra-footer-section">
+            <h4>NUESTROS SERVICIOS</h4>
+            <ul>
+              <li><button onclick="servicioEmpleados()">👥 Empleados</button></li>
+              <li><button onclick="servicioHoras()">⏰ Gestión de Horas</button></li>
+              <li><button onclick="servicioNomina()">💰 Nómina</button></li>
+              <li><button onclick="servicioCuadre()">🧮 Cuadre de Caja</button></li>
+              <li><button onclick="servicioConfiguracion()">⚙️ Configuración</button></li>
+              <li><button onclick="servicioDashboard()">📊 Dashboard</button></li>
             </ul>
           </div>
         </div>
 
         <div class="axyra-footer-bottom">
           <div class="axyra-footer-bottom-content">
-            <div class="axyra-footer-copyright">
-              <p>&copy; 2025 AXYRA. Todos los derechos reservados.</p>
-              <span class="axyra-version">v2.1.0</span>
+            <div class="axyra-social">
+              <h4>SIGUENOS</h4>
+              <div class="axyra-social-icons">
+                <button onclick="seguirFacebook()" class="axyra-social-btn facebook">f</button>
+                <button onclick="seguirInstagram()" class="axyra-social-btn instagram">📷</button>
+                <button onclick="seguirLinkedIn()" class="axyra-social-btn linkedin">in</button>
+              </div>
             </div>
-            <div class="axyra-footer-legal">
-              <button onclick="showPrivacyPolicy()" class="axyra-footer-link">Política de Privacidad</button>
-              <span class="axyra-footer-separator">•</span>
-              <button onclick="showTermsOfService()" class="axyra-footer-link">Términos de Servicio</button>
-              <span class="axyra-footer-separator">•</span>
-              <button onclick="showSupport()" class="axyra-footer-link">Soporte Técnico</button>
+            <div class="axyra-offer">
+              <button onclick="ofrecerServicios()" class="axyra-offer-btn">
+                OFRECE TUS SERVICIOS
+              </button>
             </div>
           </div>
         </div>
@@ -525,6 +548,95 @@
 
       // Verificar estado cuando cambie el localStorage
       window.addEventListener('storage', checkAuthStatus);
+
+      // ========================================
+      // FUNCIONES DEL FOOTER PROFESIONAL
+      // ========================================
+      
+      // Sección ¿TIENES DUDAS?
+      function contactarSoporte() {
+        window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank');
+      }
+      
+      function enviarFeedback() {
+        window.open('mailto:axyra.app@gmail.com?subject=Feedback AXYRA', '_blank');
+      }
+      
+      // Sección NOSOTROS
+      function quienesSomos() {
+        alert('AXYRA es un sistema de gestión empresarial completo y eficiente, diseñado para optimizar todos los procesos de tu empresa.');
+      }
+      
+      function centroAyuda() {
+        window.open('mailto:axyra.app@gmail.com?subject=Centro de Ayuda AXYRA', '_blank');
+      }
+      
+      function comoFunciona() {
+        alert('AXYRA funciona como un ecosistema integrado que conecta empleados, horas, nómina y finanzas en una sola plataforma.');
+      }
+      
+      function terminosCondiciones() {
+        showTermsOfService();
+      }
+      
+      function garantiaSatisfaccion() {
+        alert('AXYRA funciona como un ecosistema integrado que conecta empleados, horas, nómina y finanzas en una sola plataforma.');
+      }
+      
+      function blogAxyra() {
+        alert('Próximamente: Blog de AXYRA con tips de gestión empresarial y novedades del sistema.');
+      }
+      
+      // Sección NUESTROS SERVICIOS
+      function servicioEmpleados() {
+        handleEmpleadosAccess();
+      }
+      
+      function servicioHoras() {
+        handleHorasAccess();
+      }
+      
+      function servicioNomina() {
+        handleNominaAccess();
+      }
+      
+      function servicioCuadre() {
+        handleCuadreAccess();
+      }
+      
+      function servicioConfiguracion() {
+        if (localStorage.getItem('axyra_user')) {
+          window.location.href = 'modulos/configuracion/configuracion.html';
+        } else {
+          showAuthModal();
+        }
+      }
+      
+      function servicioDashboard() {
+        handleDashboardAccess();
+      }
+      
+      // Sección SIGUENOS
+      function seguirFacebook() {
+        alert('Próximamente: Síguenos en Facebook para tips de gestión empresarial.');
+      }
+      
+      function seguirInstagram() {
+        alert('Próximamente: Síguenos en Instagram para contenido visual de AXYRA.');
+      }
+      
+      function seguirLinkedIn() {
+        alert('Próximamente: Conecta con nosotros en LinkedIn para networking empresarial.');
+      }
+      
+      // Sección OFRECE TUS SERVICIOS
+      function ofrecerServicios() {
+        if (localStorage.getItem('axyra_user')) {
+          alert('¡Gracias por tu interés! Ya tienes acceso completo a AXYRA. Si quieres ofrecer servicios adicionales, contáctanos en axyra.app@gmail.com');
+        } else {
+          showAuthModal();
+        }
+      }
     </script>
   </body>
 </html>

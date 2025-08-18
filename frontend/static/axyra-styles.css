@@ -1903,6 +1903,197 @@ p {
 }
 
 /* ========================================
+   DISEÑO PROFESIONAL - FOOTER ESTILO ZOLVERS
+   ======================================== */
+.axyra-footer-professional {
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+  color: #ffffff;
+  padding: 60px 0 30px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-footer-professional::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M 8 0 L 0 0 0 8" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.3;
+}
+
+.axyra-footer-professional .axyra-footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 2;
+}
+
+.axyra-footer-professional .axyra-footer-section h4 {
+  color: #ffffff !important;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.axyra-footer-professional .axyra-footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.axyra-footer-professional .axyra-footer-section li {
+  margin-bottom: 12px;
+}
+
+.axyra-footer-professional .axyra-footer-section button {
+  background: none;
+  border: none;
+  color: #90cdf4;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 8px 0;
+  text-align: left;
+  width: 100%;
+  font-weight: 500;
+  position: relative;
+}
+
+.axyra-footer-professional .axyra-footer-section button:hover {
+  color: #63b3ed;
+  transform: translateX(8px);
+}
+
+.axyra-footer-professional .axyra-footer-section button::before {
+  content: '';
+  position: absolute;
+  left: -15px;
+  top: 50%;
+  width: 0;
+  height: 2px;
+  background: #63b3ed;
+  transition: width 0.3s ease;
+  transform: translateY(-50%);
+}
+
+.axyra-footer-professional .axyra-footer-section button:hover::before {
+  width: 10px;
+}
+
+.axyra-footer-professional .axyra-footer-section li:not(:has(button)) {
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  padding: 8px 0;
+}
+
+.axyra-copyright {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.axyra-copyright p {
+  color: #a0aec0;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.axyra-footer-professional .axyra-footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 30px;
+  position: relative;
+  z-index: 2;
+}
+
+.axyra-footer-professional .axyra-footer-bottom-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.axyra-social h4 {
+  color: #ffffff !important;
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.axyra-social-icons {
+  display: flex;
+  gap: 15px;
+}
+
+.axyra-social-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  background: transparent;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.axyra-social-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.axyra-social-btn.facebook:hover {
+  background: #1877f2;
+  border-color: #1877f2;
+}
+
+.axyra-social-btn.instagram:hover {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  border-color: #dc2743;
+}
+
+.axyra-social-btn.linkedin:hover {
+  background: #0077b5;
+  border-color: #0077b5;
+}
+
+.axyra-offer-btn {
+  background: transparent;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  padding: 12px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+}
+
+.axyra-offer-btn:hover {
+  background: #ffffff;
+  color: #2d3748;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
    DISEÑO PROFESIONAL - FOOTER MEJORADO
    ======================================== */
 .axyra-footer-bottom-content {
