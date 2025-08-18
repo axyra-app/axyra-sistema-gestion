@@ -1201,2137 +1201,32 @@ p {
    MODALES AXYRA
    ======================================== */
 .axyra-modal {
-  display: none;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(11, 31, 63, 0.8);
-  backdrop-filter: blur(8px);
-  z-index: 2000;
-  animation: fadeIn 0.3s ease;
-}
-
-.axyra-modal.show {
-  display: flex;
-  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
   justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  backdrop-filter: blur(5px);
 }
 
 .axyra-modal-content {
-  background: var(--axyra-white);
-  border-radius: var(--border-radius-xl);
-  padding: 0;
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
   max-width: 500px;
   width: 90%;
   max-height: 90vh;
-  overflow: hidden;
-  box-shadow: var(--shadow-xl);
-  animation: slideUp 0.3s ease;
-}
-
-.axyra-modal-header {
-  background: linear-gradient(135deg, var(--axyra-dark-blue) 0%, var(--axyra-blue-800) 100%);
-  color: var(--axyra-white);
-  padding: var(--spacing-lg);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.axyra-modal-title {
-  font-size: 1.25rem;
-  margin: 0;
-}
-
-.axyra-modal-close {
-  background: none;
-  border: none;
-  color: var(--axyra-white);
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: var(--spacing-xs);
-  border-radius: 50%;
-  transition: var(--transition-normal);
-}
-
-.axyra-modal-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.axyra-modal-body {
-  padding: var(--spacing-xl);
-}
-
-.axyra-modal-footer {
-  padding: var(--spacing-lg) var(--spacing-xl);
-  border-top: 1px solid var(--axyra-blue-200);
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: flex-end;
-}
-
-.axyra-modal-footer .axyra-btn {
-  margin: 0;
-}
-
-/* ========================================
-   DIVIDER
-   ======================================== */
-.axyra-divider {
-  text-align: center;
-  margin: var(--spacing-lg) 0;
-  position: relative;
-}
-
-.axyra-divider::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--axyra-blue-200);
-}
-
-.axyra-divider span {
-  background: var(--axyra-white);
-  padding: 0 var(--spacing-md);
-  color: var(--axyra-dark-blue);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-/* ========================================
-   FORM FOOTER
-   ======================================== */
-.axyra-form-footer {
-  text-align: center;
-  margin-top: var(--spacing-lg);
-}
-
-.axyra-form-footer p {
-  margin-bottom: var(--spacing-sm);
-  font-size: 0.875rem;
-}
-
-.axyra-form-footer a {
-  color: var(--axyra-light-blue);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.axyra-form-footer a:hover {
-  text-decoration: underline;
-}
-
-/* ========================================
-   DEMO CONTENT
-   ======================================== */
-.axyra-demo-content {
-  text-align: center;
-}
-
-.axyra-demo-video {
-  margin-bottom: var(--spacing-lg);
-}
-
-.axyra-demo-video i {
-  font-size: 4rem;
-  color: var(--axyra-light-blue);
-  margin-bottom: var(--spacing-md);
-}
-
-.axyra-demo-features {
-  text-align: left;
-}
-
-.axyra-demo-features h4 {
-  color: var(--axyra-dark-blue);
-  margin-bottom: var(--spacing-md);
-}
-
-.axyra-demo-features ul {
-  list-style: none;
-  padding: 0;
-}
-
-.axyra-demo-features li {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-sm);
-}
-
-.axyra-demo-features li i {
-  color: var(--axyra-success);
-  margin-right: var(--spacing-sm);
-}
-
-/* ========================================
-   ANIMACIONES AXYRA
-   ======================================== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-.axyra-pulse {
-  animation: pulse 2s infinite;
-}
-
-/* ========================================
-   RESPONSIVE DESIGN
-   ======================================== */
-@media (max-width: 768px) {
-  .axyra-header-content {
-    flex-direction: column;
-    gap: var(--spacing-lg);
-  }
-
-  .axyra-nav {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .axyra-grid-2,
-  .axyra-grid-3,
-  .axyra-grid-4 {
-    grid-template-columns: 1fr;
-  }
-
-  .axyra-page-title {
-    font-size: 2rem;
-  }
-
-  .axyra-container {
-    padding: var(--spacing-lg) var(--spacing-md);
-  }
-}
-
-@media (max-width: 480px) {
-  .axyra-page-title {
-    font-size: 1.75rem;
-  }
-
-  .axyra-card {
-    padding: var(--spacing-lg);
-  }
-
-  .axyra-btn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* ========================================
-   UTILIDADES AXYRA
-   ======================================== */
-.axyra-text-center {
-  text-align: center;
-}
-.axyra-text-left {
-  text-align: left;
-}
-.axyra-text-right {
-  text-align: right;
-}
-
-.axyra-mb-0 {
-  margin-bottom: 0;
-}
-.axyra-mb-sm {
-  margin-bottom: var(--spacing-sm);
-}
-.axyra-mb-md {
-  margin-bottom: var(--spacing-md);
-}
-.axyra-mb-lg {
-  margin-bottom: var(--spacing-lg);
-}
-.axyra-mb-xl {
-  margin-bottom: var(--spacing-xl);
-}
-
-.axyra-mt-0 {
-  margin-top: 0;
-}
-.axyra-mt-sm {
-  margin-top: var(--spacing-sm);
-}
-.axyra-mt-md {
-  margin-top: var(--spacing-md);
-}
-.axyra-mt-lg {
-  margin-top: var(--spacing-lg);
-}
-.axyra-mt-xl {
-  margin-top: var(--spacing-xl);
-}
-
-.axyra-hidden {
-  display: none;
-}
-.axyra-visible {
-  display: block;
-}
-
-.axyra-rounded {
-  border-radius: var(--border-radius-md);
-}
-.axyra-rounded-lg {
-  border-radius: var(--border-radius-lg);
-}
-.axyra-rounded-xl {
-  border-radius: var(--border-radius-xl);
-}
-
-/* ========================================
-   ESTADOS ESPECIALES
-   ======================================== */
-.axyra-loading {
-  position: relative;
-  pointer-events: none;
-}
-
-.axyra-loading::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
-  border: 2px solid var(--axyra-blue-200);
-  border-top: 2px solid var(--axyra-light-blue);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.axyra-success-message {
-  background: var(--axyra-success);
-  color: var(--axyra-white);
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-.axyra-error-message {
-  background: var(--axyra-error);
-  color: var(--axyra-white);
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-.axyra-warning-message {
-  background: var(--axyra-warning);
-  color: var(--axyra-white);
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-/* ========================================
-   ENLACES
-   ======================================== */
-a {
-  color: var(--axyra-light-blue);
-  text-decoration: none;
-  transition: var(--transition-normal);
-}
-
-a:hover {
-  color: var(--axyra-blue-600);
-  text-decoration: underline;
-}
-
-/* ========================================
-   SECCIÓN HERO - PÁGINA PRINCIPAL
-   ======================================== */
-.axyra-hero {
-  background: linear-gradient(135deg, var(--axyra-dark-blue) 0%, var(--axyra-blue-800) 100%);
-  padding: var(--spacing-xxl) 0;
-  color: var(--axyra-white);
-  position: relative;
-  overflow: hidden;
-}
-
-.axyra-hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-  opacity: 0.3;
-}
-
-.axyra-hero-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-xxl);
-  align-items: center;
-  position: relative;
-  z-index: 2;
-}
-
-.axyra-hero-text {
-  max-width: 600px;
-}
-
-.axyra-hero-title {
-  font-size: 3.5rem;
-  font-weight: 700;
-  margin-bottom: var(--spacing-lg);
-  line-height: 1.1;
-  background: linear-gradient(135deg, var(--axyra-white) 0%, var(--axyra-light-blue) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.axyra-hero-subtitle {
-  font-size: 1.25rem;
-  margin-bottom: var(--spacing-xl);
-  opacity: 0.9;
-  line-height: 1.6;
-}
-
-.axyra-hero-actions {
-  display: flex;
-  gap: var(--spacing-md);
-  flex-wrap: wrap;
-}
-
-.axyra-hero-visual {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.axyra-hero-image {
-  width: 300px;
-  height: 300px;
-  background: linear-gradient(135deg, var(--axyra-light-blue) 0%, var(--axyra-blue-400) 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 120px;
-  color: var(--axyra-white);
-  box-shadow: var(--shadow-xl);
-  animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-}
-
-/* ========================================
-   SECCIÓN ABOUT
-   ======================================== */
-.axyra-section-alt {
-  background: var(--axyra-white);
-}
-
-.axyra-about-content {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: var(--spacing-xxl);
-  align-items: center;
-}
-
-.axyra-about-text h3 {
-  color: var(--axyra-dark-blue);
-  margin-bottom: var(--spacing-md);
-  font-size: 1.5rem;
-}
-
-.axyra-about-text p {
-  margin-bottom: var(--spacing-lg);
-  font-size: 1.1rem;
-  line-height: 1.7;
-}
-
-.axyra-about-text ul {
-  list-style: none;
-  padding: 0;
-}
-
-.axyra-about-text li {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-  font-size: 1.1rem;
-}
-
-.axyra-about-text li i {
-  color: var(--axyra-success);
-  margin-right: var(--spacing-md);
-  font-size: 1.2rem;
-}
-
-/* ========================================
-   LISTAS
-   ======================================== */
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  margin-bottom: var(--spacing-sm);
-}
-
-.axyra-about-visual {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.axyra-about-image {
-  width: 200px;
-  height: 200px;
-  background: linear-gradient(135deg, var(--axyra-dark-blue) 0%, var(--axyra-blue-800) 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 80px;
-  color: var(--axyra-white);
-  box-shadow: var(--shadow-lg);
-}
-
-/* ========================================
-   SECCIÓN CTA
-   ======================================== */
-.axyra-cta {
-  background: linear-gradient(135deg, var(--axyra-dark-blue) 0%, var(--axyra-blue-800) 100%);
-  color: var(--axyra-white);
-  text-align: center;
-}
-
-.axyra-cta-content h2 {
-  font-size: 2.5rem;
-  margin-bottom: var(--spacing-md);
-  color: var(--axyra-white);
-  font-weight: 700;
-}
-
-.axyra-cta-content p {
-  font-size: 1.25rem;
-  margin-bottom: var(--spacing-xl);
-  color: var(--axyra-white);
-  opacity: 0.9;
-}
-
-.axyra-cta-actions {
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* ========================================
-   FOOTER
-   ======================================== */
-.axyra-footer {
-  background: var(--axyra-dark-blue);
-  color: var(--axyra-white);
-  padding: var(--spacing-xxl) 0 var(--spacing-lg) 0;
-}
-
-.axyra-footer-content {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: var(--spacing-xl);
-  margin-bottom: var(--spacing-xl);
-}
-
-.axyra-footer-section h4 {
-  color: var(--axyra-light-blue);
-  margin-bottom: var(--spacing-lg);
-  font-size: 1.1rem;
-}
-
-.axyra-footer-section ul {
-  list-style: none;
-  padding: 0;
-}
-
-.axyra-footer-section li {
-  margin-bottom: var(--spacing-sm);
-}
-
-.axyra-footer-section a {
-  color: var(--axyra-blue-200);
-  text-decoration: none;
-  transition: var(--transition-normal);
-}
-
-.axyra-footer-section a:hover {
-  color: var(--axyra-light-blue);
-}
-
-.axyra-footer-bottom {
-  border-top: 1px solid var(--axyra-blue-800);
-  padding-top: var(--spacing-lg);
-}
-
-.axyra-footer-bottom-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-}
-
-.axyra-footer-legal {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  font-size: 0.85rem;
-  color: var(--axyra-blue-300);
-}
-
-.axyra-footer-legal a {
-  color: var(--axyra-blue-300);
-  text-decoration: none;
-  transition: var(--transition-normal);
-}
-
-.axyra-footer-legal a:hover {
-  color: var(--axyra-light-blue);
-}
-
-.axyra-footer-legal span {
-  color: var(--axyra-blue-500);
-}
-
-.axyra-version {
-  background: var(--axyra-blue-800);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--axyra-blue-200);
-}
-
-.axyra-footer-links {
-  display: flex;
-  gap: var(--spacing-lg);
-}
-
-.axyra-footer-links a {
-  color: var(--axyra-blue-200);
-  text-decoration: none;
-  transition: var(--transition-normal);
-}
-
-.axyra-footer-links a:hover {
-  color: var(--axyra-light-blue);
-}
-
-/* ========================================
-   DEMO CONTENT
-   ======================================== */
-.axyra-demo-content {
-  text-align: center;
-}
-
-.axyra-demo-video {
-  margin-bottom: var(--spacing-lg);
-}
-
-.axyra-demo-video i {
-  font-size: 4rem;
-  color: var(--axyra-light-blue);
-  margin-bottom: var(--spacing-md);
-}
-
-.axyra-demo-features {
-  text-align: left;
-}
-
-.axyra-demo-features h4 {
-  color: var(--axyra-dark-blue);
-  margin-bottom: var(--spacing-md);
-}
-
-.axyra-demo-features ul {
-  list-style: none;
-  padding: 0;
-}
-
-.axyra-demo-features li {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-sm);
-}
-
-.axyra-demo-features li i {
-  color: var(--axyra-success);
-  margin-right: var(--spacing-sm);
-}
-
-/* ========================================
-   ACTIVITY ITEMS
-   ======================================== */
-.axyra-activity-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius-md);
-  background: var(--axyra-white);
-  margin-bottom: var(--spacing-sm);
-  box-shadow: var(--shadow-sm);
-}
-
-.axyra-activity-icon {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, var(--axyra-light-blue) 0%, var(--axyra-blue-400) 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--axyra-white);
-  font-size: 14px;
-}
-
-.axyra-activity-content {
-  flex: 1;
-}
-
-.axyra-activity-title {
-  font-weight: 500;
-  color: var(--axyra-dark-blue);
-  margin-bottom: var(--spacing-xs);
-}
-
-.axyra-activity-time {
-  font-size: 0.875rem;
-  color: var(--axyra-dark-blue);
-  opacity: 0.7;
-}
-
-/* ========================================
-   MENSAJES
-   ======================================== */
-.axyra-success-message {
-  background: var(--axyra-success);
-  color: var(--axyra-white);
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-.axyra-error-message {
-  background: var(--axyra-error);
-  color: var(--axyra-white);
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-.axyra-warning-message {
-  background: var(--axyra-warning);
-  color: var(--axyra-white);
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-/* ========================================
-   RESPONSIVE DESIGN ADICIONAL
-   ======================================== */
-@media (max-width: 768px) {
-  .axyra-hero-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-    gap: var(--spacing-xl);
-  }
-
-  .axyra-hero-title {
-    font-size: 2.5rem;
-  }
-
-  .axyra-hero-actions {
-    justify-content: center;
-  }
-
-  .axyra-about-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-
-  .axyra-footer-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-
-  .axyra-footer-bottom {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .axyra-cta-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .axyra-hero-title {
-    font-size: 2rem;
-  }
-
-  .axyra-hero-subtitle {
-    font-size: 1.1rem;
-  }
-
-  .axyra-hero-image {
-    width: 200px;
-    height: 200px;
-    font-size: 80px;
-  }
-
-  .axyra-about-image {
-    width: 150px;
-    height: 150px;
-    font-size: 60px;
-  }
-}
-
-/* ========================================
-   LOGIN Y REGISTRO
-   ======================================== */
-.axyra-login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--axyra-dark-blue) 0%, var(--axyra-blue-800) 100%);
-  padding: var(--spacing-lg);
-}
-
-.axyra-login-card {
-  background: var(--axyra-white);
-  border-radius: var(--border-radius-xl);
-  padding: var(--spacing-xxl);
-  box-shadow: var(--shadow-xl);
-  width: 100%;
-  max-width: 500px;
-  animation: slideUp 0.5s ease;
-}
-
-.axyra-login-header {
-  text-align: center;
-  margin-bottom: var(--spacing-xxl);
-}
-
-.axyra-login-header h2 {
-  color: var(--axyra-dark-blue);
-  margin-bottom: var(--spacing-sm);
-}
-
-.axyra-login-header p {
-  color: var(--axyra-dark-blue);
-  opacity: 0.7;
-}
-
-.axyra-login-form {
-  margin-bottom: var(--spacing-xl);
-}
-
-.axyra-login-footer {
-  text-align: center;
-  padding-top: var(--spacing-lg);
-  border-top: 1px solid var(--axyra-blue-200);
-}
-
-.axyra-test-setup {
-  margin-top: var(--spacing-md);
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--axyra-blue-100);
-}
-
-.axyra-test-setup .axyra-btn {
-  font-size: 0.85rem;
-  padding: 0.5rem 1rem;
-}
-
-.axyra-link {
-  color: var(--axyra-light-blue);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.axyra-link:hover {
-  text-decoration: underline;
-}
-
-/* ========================================
-   TABLAS
-   ======================================== */
-.axyra-table-container {
-  background: var(--axyra-white);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  margin-bottom: var(--spacing-lg);
-}
-
-.axyra-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.axyra-table th,
-.axyra-table td {
-  padding: var(--spacing-md);
-  text-align: left;
-  border-bottom: 1px solid var(--axyra-blue-200);
-}
-
-.axyra-table th {
-  background: var(--axyra-blue-50);
-  font-weight: 600;
-  color: var(--axyra-dark-blue);
-}
-
-.axyra-table tr:hover {
-  background: var(--axyra-blue-50);
-}
-
-/* ========================================
-   ACCIONES Y BOTONES
-   ======================================== */
-.axyra-actions-bar {
-  display: flex;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-  flex-wrap: wrap;
-}
-
-.axyra-actions {
-  display: flex;
-  gap: var(--spacing-xs);
-}
-
-.axyra-avatar {
-  width: 32px;
-  height: 32px;
-  background: var(--axyra-blue-100);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--axyra-blue-600);
-}
-
-/* ========================================
-   FILTROS Y BÚSQUEDA
-   ======================================== */
-.axyra-filters {
-  display: flex;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-  flex-wrap: wrap;
-}
-
-.axyra-search-box {
-  position: relative;
-  flex: 1;
-  min-width: 250px;
-}
-
-.axyra-search-box input {
-  padding-right: var(--spacing-xl);
-}
-
-.axyra-search-box i {
-  position: absolute;
-  right: var(--spacing-md);
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--axyra-blue-400);
-}
-
-/* ========================================
-   PAGINACIÓN
-   ======================================== */
-.axyra-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-lg);
-}
-
-/* ========================================
-   BADGES
-   ======================================== */
-.axyra-badge {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--border-radius-sm);
-  font-size: 0.75rem;
-  font-weight: 500;
-  text-transform: uppercase;
-}
-
-.axyra-badge-activo {
-  background: var(--axyra-success);
-  color: var(--axyra-white);
-}
-
-.axyra-badge-inactivo {
-  background: var(--axyra-error);
-  color: var(--axyra-white);
-}
-
-.axyra-badge-vacaciones {
-  background: var(--axyra-warning);
-  color: var(--axyra-white);
-}
-
-.axyra-badge-licencia {
-  background: var(--axyra-info);
-  color: var(--axyra-white);
-}
-
-/* Badges para prioridades */
-.axyra-badge-alta {
-  background: var(--axyra-error);
-  color: var(--axyra-white);
-}
-
-.axyra-badge-media {
-  background: var(--axyra-warning);
-  color: var(--axyra-white);
-}
-
-.axyra-badge-baja {
-  background: var(--axyra-success);
-  color: var(--axyra-white);
-}
-
-/* Badges para estados */
-.axyra-badge-pendiente {
-  background: var(--axyra-warning);
-  color: var(--axyra-white);
-}
-
-.axyra-badge-en-progreso {
-  background: var(--axyra-info);
-  color: var(--axyra-white);
-}
-
-.axyra-badge-completada {
-  background: var(--axyra-success);
-  color: var(--axyra-white);
-}
-
-/* ========================================
-   FORMULARIOS EN FILA
-   ======================================== */
-.axyra-form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-md);
-}
-
-@media (max-width: 768px) {
-  .axyra-form-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ========================================
-   MENSAJES
-   ======================================== */
-.axyra-message {
-  padding: var(--spacing-md);
-  border-radius: var(--border-radius-md);
-  margin-top: var(--spacing-md);
-  text-align: center;
-  font-weight: 500;
-}
-
-/* ========================================
-   DASHBOARD
-   ======================================== */
-.axyra-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-xxl);
-}
-
-.axyra-stat-card {
-  background: var(--axyra-white);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-xl);
-  box-shadow: var(--shadow-sm);
-  text-align: center;
-  transition: var(--transition-normal);
-}
-
-.axyra-stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-
-.axyra-stat-icon {
-  width: 64px;
-  height: 64px;
-  background: linear-gradient(135deg, var(--axyra-light-blue) 0%, var(--axyra-blue-400) 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto var(--spacing-lg);
-  font-size: 28px;
-  color: var(--axyra-white);
-}
-
-.axyra-stat-number {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--axyra-dark-blue);
-  margin-bottom: var(--spacing-sm);
-}
-
-.axyra-stat-label {
-  font-size: 1rem;
-  color: var(--axyra-dark-blue);
-  opacity: 0.7;
-}
-
-.axyra-chart-placeholder {
-  text-align: center;
-  padding: var(--spacing-xxl);
-  color: var(--axyra-blue-400);
-}
-
-.axyra-chart-placeholder p {
-  margin-top: var(--spacing-md);
-  font-size: 0.875rem;
-  opacity: 0.7;
-}
-
-/* ========================================
-   RESPONSIVE ADICIONAL
-   ======================================== */
-@media (max-width: 768px) {
-  .axyra-login-card {
-    margin: var(--spacing-lg);
-    padding: var(--spacing-xl);
-  }
-
-  .axyra-actions-bar {
-    flex-direction: column;
-  }
-
-  .axyra-filters {
-    flex-direction: column;
-  }
-
-  .axyra-search-box {
-    min-width: 100%;
-  }
-
-  .axyra-table-container {
-    overflow-x: auto;
-  }
-
-  .axyra-table {
-    min-width: 600px;
-  }
-}
-
-/* ===== PÁGINA PRINCIPAL MEJORADA ===== */
-
-/* Features Section */
-.axyra-features {
-  padding: 80px 0;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-}
-
-.axyra-features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 30px;
-  margin-top: 50px;
-}
-
-.axyra-feature-card {
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
-}
-
-.axyra-feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-.axyra-feature-icon {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  display: block;
-}
-
-.axyra-feature-card h3 {
-  color: var(--axyra-primary);
-  margin-bottom: 15px;
-  font-size: 1.5rem;
-}
-
-.axyra-feature-card p {
-  color: var(--axyra-text-secondary);
-  margin-bottom: 25px;
-  line-height: 1.6;
-}
-
-/* Quick Access Section */
-.axyra-quick-access {
-  padding: 80px 0;
-  background: white;
-}
-
-.axyra-quick-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 25px;
-  margin-top: 50px;
-}
-
-.axyra-quick-card {
-  background: linear-gradient(135deg, var(--axyra-blue-500) 0%, var(--axyra-blue-700) 100%);
-  color: var(--axyra-white);
-  padding: 30px 20px;
-  border-radius: 15px;
-  text-align: center;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(76, 169, 255, 0.3);
-}
-
-.axyra-quick-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(76, 169, 255, 0.4);
-  color: var(--axyra-white);
-}
-
-.axyra-quick-icon {
-  font-size: 2.5rem;
-  margin-bottom: 15px;
-  display: block;
-}
-
-.axyra-quick-card h3 {
-  margin-bottom: 10px;
-  font-size: 1.3rem;
-  color: var(--axyra-white);
-}
-
-.axyra-quick-card p {
-  opacity: 0.9;
-  font-size: 0.9rem;
-  color: var(--axyra-white);
-}
-
-/* CTA Section Mejorada */
-.axyra-cta {
-  padding: 80px 0;
-  background: linear-gradient(135deg, var(--axyra-primary) 0%, var(--axyra-secondary) 100%);
-  color: white;
-  text-align: center;
-}
-
-.axyra-cta-content h2 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-  color: white;
-}
-
-.axyra-cta-content p {
-  font-size: 1.2rem;
-  margin-bottom: 40px;
-  opacity: 0.9;
-}
-
-.axyra-cta-actions {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* Botones Mejorados */
-.axyra-btn-large {
-  padding: 18px 36px;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.axyra-btn-outline {
-  background: transparent;
-  border: 2px solid var(--axyra-primary);
-  color: var(--axyra-primary);
-}
-
-.axyra-btn-outline:hover {
-  background: var(--axyra-primary);
-  color: white;
-}
-
-/* Header Mejorado */
-.axyra-header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
-}
-
-.axyra-header-scrolled {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-}
-
-.axyra-logo h1 {
-  color: var(--axyra-primary);
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 700;
-}
-
-.axyra-logo p {
-  color: var(--axyra-text-secondary);
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-/* Hero Section Mejorada */
-.axyra-hero {
-  padding: 120px 0 100px;
-  background: linear-gradient(135deg, #0b1f3f 0%, #4ca9ff 100%);
-  color: white;
-  text-align: center;
-}
-
-.axyra-hero-title {
-  font-size: 3.5rem;
-  margin-bottom: 20px;
-  font-weight: 700;
-}
-
-.axyra-highlight {
-  color: #4ca9ff;
-  text-shadow: 0 0 20px rgba(76, 169, 255, 0.5);
-}
-
-.axyra-hero-subtitle {
-  font-size: 1.3rem;
-  margin-bottom: 40px;
-  opacity: 0.9;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.axyra-hero-actions {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* Section Titles */
-.axyra-section-title {
-  text-align: center;
-  font-size: 2.5rem;
-  color: var(--axyra-primary);
-  margin-bottom: 20px;
-  font-weight: 700;
-}
-
-.axyra-section-title::after {
-  content: '';
-  display: block;
-  width: 80px;
-  height: 4px;
-  background: var(--axyra-secondary);
-  margin: 20px auto 0;
-  border-radius: 2px;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .axyra-hero-title {
-    font-size: 2.5rem;
-  }
-
-  .axyra-hero-subtitle {
-    font-size: 1.1rem;
-  }
-
-  .axyra-features-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .axyra-quick-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .axyra-cta-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .axyra-hero-actions {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .axyra-quick-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .axyra-hero {
-    padding: 80px 0 60px;
-  }
-
-  .axyra-hero-title {
-    font-size: 2rem;
-  }
-}
-
-/* ===== MEJORAS DE VISIBILIDAD Y EXPERIENCIA ===== */
-
-/* Mensajes del sistema mejorados */
-.axyra-message {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 10000;
-  max-width: 400px;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  animation: slideInRight 0.3s ease-out;
-}
-
-.axyra-message-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px 20px;
-  color: white;
-  font-weight: 500;
-}
-
-.axyra-message-close {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  margin-left: 15px;
-  opacity: 0.8;
-  transition: opacity 0.3s;
-}
-
-.axyra-message-close:hover {
-  opacity: 1;
-}
-
-.axyra-success-message {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border-left: 4px solid #34d399;
-}
-
-.axyra-error-message {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  border-left: 4px solid #f87171;
-}
-
-.axyra-warning-message {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  border-left: 4px solid #fbbf24;
-}
-
-.axyra-info-message {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  border-left: 4px solid #60a5fa;
-}
-
-/* Animación para mensajes */
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-/* ===== CORRECCIÓN DE BOTONES INVISIBLES ===== */
-
-/* Botones siempre visibles */
-.axyra-btn {
-  color: white !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  font-weight: 600;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.axyra-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.axyra-btn:hover::before {
-  left: 100%;
-}
-
-.axyra-btn-primary {
-  background: linear-gradient(135deg, var(--axyra-primary) 0%, #1e40af 100%);
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-}
-
-.axyra-btn-primary:hover {
-  background: linear-gradient(135deg, #1e40af 0%, var(--axyra-primary) 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
-}
-
-.axyra-btn-secondary {
-  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-  box-shadow: 0 4px 15px rgba(100, 116, 139, 0.4);
-}
-
-.axyra-btn-secondary:hover {
-  background: linear-gradient(135deg, #475569 0%, #64748b 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(100, 116, 139, 0.6);
-}
-
-.axyra-btn-success {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-}
-
-.axyra-btn-success:hover {
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
-}
-
-.axyra-btn-info {
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-  box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
-}
-
-.axyra-btn-info:hover {
-  background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
-}
-
-.axyra-btn-warning {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-}
-
-.axyra-btn-warning:hover {
-  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.6);
-}
-
-.axyra-btn-danger {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
-}
-
-.axyra-btn-danger:hover {
-  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
-}
-
-/* Eliminada definición duplicada de axyra-btn-ghost */
-
-.axyra-btn-outline {
-  background: transparent;
-  color: var(--axyra-primary) !important;
-  border: 2px solid var(--axyra-primary);
-  text-shadow: none;
-}
-
-.axyra-btn-outline:hover {
-  background: var(--axyra-primary);
-  color: white !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* ===== MONEDA COLOMBIANA ===== */
-
-.axyra-currency-selector {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.axyra-currency-option {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-}
-
-.axyra-currency-option.active {
-  background: var(--axyra-primary);
-  color: white;
-  border-color: var(--axyra-primary);
-}
-
-.axyra-currency-option:hover:not(.active) {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: var(--axyra-primary);
-}
-
-.axyra-currency-flag {
-  width: 20px;
-  height: 15px;
-  border-radius: 2px;
-  background-size: cover;
-}
-
-.axyra-currency-option span {
-  color: var(--axyra-text-primary);
-  font-weight: 500;
-  font-size: 0.9rem;
-  white-space: nowrap;
-}
-
-.axyra-currency-option.active span {
-  color: white;
-  font-weight: 600;
-}
-
-.axyra-currency-cop {
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600"><rect fill="%23FCD116" width="900" height="300"/><rect fill="%23003893" width="900" height="300" y="300"/><rect fill="%23CE1126" width="900" height="300" y="600"/></svg>');
-}
-
-.axyra-currency-usd {
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600"><rect fill="%23B22234" width="900" height="600"/><rect fill="%23FFFFFF" width="900" height="46.15" y="0"/><rect fill="%23FFFFFF" width="900" height="46.15" y="92.3"/><rect fill="%23FFFFFF" width="900" height="46.15" y="184.6"/><rect fill="%23FFFFFF" width="900" height="46.15" y="276.9"/><rect fill="%23FFFFFF" width="900" height="46.15" y="369.2"/><rect fill="%23FFFFFF" width="900" height="46.15" y="461.5"/><rect fill="%23FFFFFF" width="900" height="46.15" y="553.8"/><rect fill="%2300227C" width="400" height="323.1"/></svg>');
-}
-
-.axyra-currency-eur {
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600"><rect fill="%230039A6" width="900" height="600"/><rect fill="%23FFD100" width="900" height="400" y="100"/><rect fill="%23D00C33" width="900" height="200" y="200"/></svg>');
-}
-
-/* ===== SCROLL Y MODALES ===== */
-
-.axyra-modal-content,
-.axyra-card-content,
-.axyra-form {
-  max-height: 70vh;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--axyra-primary) transparent;
-}
-
-.axyra-modal-content::-webkit-scrollbar,
-.axyra-card-content::-webkit-scrollbar,
-.axyra-form::-webkit-scrollbar {
-  width: 8px;
-}
-
-.axyra-modal-content::-webkit-scrollbar-track,
-.axyra-card-content::-webkit-scrollbar-track,
-.axyra-form::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.axyra-modal-content::-webkit-scrollbar-thumb,
-.axyra-card-content::-webkit-scrollbar-thumb,
-.axyra-form::-webkit-scrollbar-thumb {
-  background: var(--axyra-primary);
-  border-radius: 4px;
-}
-
-.axyra-modal-content::-webkit-scrollbar-thumb:hover,
-.axyra-card-content::-webkit-scrollbar-thumb:hover,
-.axyra-form::-webkit-scrollbar-thumb:hover {
-  background: var(--axyra-dark-blue);
-}
-
-/* Scroll específico para formularios largos */
-.axyra-form-long {
-  max-height: 60vh;
-  overflow-y: auto;
-  padding-right: 10px;
-}
-
-/* Scroll para tablas largas */
-.axyra-table-container {
-  max-height: 50vh;
-  overflow-y: auto;
-  border-radius: var(--border-radius-md);
-}
-
-/* Scroll para listas de empleados */
-.axyra-empleados-masivos {
-  max-height: 200px;
-  overflow-y: auto;
-  border: 1px solid var(--axyra-blue-200);
-  border-radius: var(--border-radius-md);
-  padding: var(--spacing-sm);
-  background: var(--axyra-white);
-}
-
-/* ===== MEJORAS DE VISIBILIDAD ===== */
-
-/* Mejorar visibilidad de texto en botones */
-.axyra-btn {
-  color: white !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  font-weight: 600;
-}
-
-.axyra-btn-outline {
-  color: var(--axyra-primary) !important;
-  text-shadow: none;
-}
-
-.axyra-btn-outline:hover {
-  color: white !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* Mejorar visibilidad de texto en tarjetas */
-.axyra-feature-card h3,
-.axyra-feature-card p {
-  color: var(--axyra-text-primary) !important;
-}
-
-.axyra-quick-card h3,
-.axyra-quick-card p {
-  color: white !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* Mejorar visibilidad en el header */
-.axyra-header {
-  background: rgba(255, 255, 255, 0.98) !important;
-  backdrop-filter: blur(15px);
-  border-bottom: 2px solid var(--axyra-primary);
-}
-
-.axyra-logo h1 {
-  color: var(--axyra-primary) !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.axyra-logo p {
-  color: var(--axyra-text-secondary) !important;
-}
-
-/* Mejorar visibilidad en navegación */
-.axyra-nav-link {
-  color: var(--axyra-text-primary) !important;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.axyra-nav-link:hover {
-  color: var(--axyra-primary) !important;
-  transform: translateY(-2px);
-}
-
-.axyra-nav-link.active {
-  color: var(--axyra-primary) !important;
-  border-bottom: 2px solid var(--axyra-primary);
-}
-
-/* Mejorar visibilidad en secciones */
-.axyra-section-title {
-  color: var(--axyra-primary) !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.axyra-hero-title {
-  color: white !important;
-  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-}
-
-.axyra-hero-subtitle {
-  color: rgba(255, 255, 255, 0.95) !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Mejorar visibilidad en CTA */
-.axyra-cta-content h2,
-.axyra-cta-content p {
-  color: white !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Mejorar visibilidad en footer */
-.axyra-footer-section h3,
-.axyra-footer-section h4 {
-  color: var(--axyra-primary) !important;
-}
-
-.axyra-footer-section a {
-  color: var(--axyra-text-secondary) !important;
-  transition: color 0.3s ease;
-}
-
-.axyra-footer-section a:hover {
-  color: var(--axyra-primary) !important;
-}
-
-/* Mejorar visibilidad en tablas */
-.axyra-table th {
-  background: var(--axyra-primary) !important;
-  color: white !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.axyra-table td {
-  color: var(--axyra-text-primary) !important;
-}
-
-/* Mejorar visibilidad en formularios */
-.axyra-form-label {
-  color: var(--axyra-text-primary) !important;
-  font-weight: 600;
-}
-
-.axyra-form-input,
-.axyra-form-select,
-.axyra-form-textarea {
-  color: var(--axyra-text-primary) !important;
-  border: 2px solid #e2e8f0;
-  transition: all 0.3s ease;
-}
-
-.axyra-form-input:focus,
-.axyra-form-select:focus,
-.axyra-form-textarea:focus {
-  border-color: var(--axyra-primary);
-  box-shadow: 0 0 0 3px rgba(76, 169, 255, 0.1);
-}
-
-/* Mejorar visibilidad en badges */
-.axyra-badge {
-  color: white !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  font-weight: 600;
-}
-
-/* Mejorar visibilidad en estadísticas */
-.axyra-stat-number {
-  color: var(--axyra-primary) !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.axyra-stat-label {
-  color: var(--axyra-text-secondary) !important;
-  font-weight: 500;
-}
-
-/* Responsive improvements */
-@media (max-width: 768px) {
-  .axyra-message {
-    right: 10px;
-    left: 10px;
-    max-width: none;
-  }
-
-  .axyra-hero-title {
-    font-size: 2.5rem;
-    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
-  }
-
-  .axyra-hero-subtitle {
-    font-size: 1.1rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-  }
-}
-
-/* ===== ESTILOS PARA LOGIN CON GOOGLE ===== */
-
-.axyra-btn-google {
-  background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
-  color: white !important;
-  border: 2px solid #4285f4;
-  position: relative;
-  overflow: hidden;
-}
-
-.axyra-btn-google::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.axyra-btn-google:hover::before {
-  left: 100%;
-}
-
-.axyra-btn-google:hover {
-  background: linear-gradient(135deg, #34a853 0%, #4285f4 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(66, 133, 244, 0.6);
-}
-
-.axyra-divider {
-  position: relative;
-  text-align: center;
-  margin: 20px 0;
-}
-
-.axyra-divider::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--axyra-text-secondary);
-}
-
-.axyra-divider span {
-  background: var(--axyra-background);
-  padding: 0 15px;
-  color: var(--axyra-text-secondary);
-  font-size: 14px;
-  font-weight: 500;
-}
-
-/* ===== ESTILOS PARA 2FA Y SEGURIDAD ===== */
-
-.axyra-2fa-input {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.axyra-2fa-input input {
-  flex: 1;
-}
-
-.axyra-2fa-input button {
-  flex-shrink: 0;
-  padding: 8px 12px;
-  min-width: auto;
-}
-
-.axyra-form-help {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-top: 5px;
-  font-style: italic;
-}
-
-/* ===== ESTILOS PARA SISTEMAS DE CALIDAD ===== */
-
-.axyra-quality-survey {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.axyra-quality-survey h3 {
-  color: var(--axyra-primary);
-  margin-bottom: 20px;
-  font-size: 1.25rem;
-}
-
-.axyra-survey-options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.axyra-survey-options button {
-  padding: 12px 20px;
-  border: 2px solid var(--axyra-primary);
-  background: white;
-  color: var(--axyra-primary);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 500;
-}
-
-.axyra-survey-options button:hover {
-  background: var(--axyra-primary);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 169, 255, 0.3);
-}
-
-/* ===== ESTILOS PARA REPORTES DE CALIDAD ===== */
-
-.axyra-quality-report {
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 20px;
-  margin: 20px 0;
-}
-
-.axyra-quality-report h4 {
-  color: var(--axyra-primary);
-  margin-bottom: 15px;
-  font-size: 1.1rem;
-  border-bottom: 2px solid var(--axyra-primary);
-  padding-bottom: 8px;
-}
-
-.axyra-quality-metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin: 15px 0;
-}
-
-.axyra-quality-metric {
-  background: white;
-  padding: 15px;
-  border-radius: 8px;
-  border-left: 4px solid var(--axyra-primary);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.axyra-quality-metric-label {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-bottom: 5px;
-}
-
-.axyra-quality-metric-value {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--axyra-primary);
-}
-
-.axyra-quality-metric-status {
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.axyra-quality-metric-status.pass {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.axyra-quality-metric-status.fail {
-  background: #fef2f2;
-  color: #dc2626;
-}
-
-.axyra-quality-metric-status.warning {
-  background: #fef3c7;
-  color: #d97706;
-}
-
-/* ===== ESTILOS PARA MODAL DE ESTADO DEL SISTEMA ===== */
-
-.axyra-status-modal-content {
-  background: #fff;
-  border-radius: 12px;
-  max-width: 600px;
-  width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   animation: modalSlideIn 0.3s ease-out;
+}
+
+.axyra-modal-large {
+  max-width: 700px;
 }
 
 @keyframes modalSlideIn {
@@ -3345,145 +1240,268 @@ li {
   }
 }
 
-.axyra-status-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 25px;
-  border-bottom: 1px solid #e9ecef;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #fff;
-  border-radius: 12px 12px 0 0;
-}
-
-.axyra-status-modal-header h3 {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 600;
-}
-
-.axyra-status-modal-close {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 1.25rem;
-  cursor: pointer;
-  padding: 5px;
-  border-radius: 50%;
-  transition: background-color 0.3s ease;
-}
-
-.axyra-status-modal-close:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.axyra-status-modal-body {
-  padding: 25px;
-  line-height: 1.6;
-  font-size: 0.95rem;
-}
-
-.axyra-status-modal-body strong {
-  color: #495057;
-}
-
-.axyra-status-modal-footer {
-  padding: 20px 25px;
-  border-top: 1px solid #e9ecef;
-  text-align: right;
-  background: #f8f9fa;
-  border-radius: 0 0 12px 12px;
-}
-
-/* ===== ESTILOS PARA 2FA MAESTRO ===== */
-
-.axyra-master-2fa-indicator {
-  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-  color: #8b4513;
-  padding: 8px 12px;
-  border-radius: 6px;
-  margin-top: 8px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-align: center;
-  border: 2px solid #daa520;
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-  animation: masterIndicatorPulse 2s infinite;
-}
-
-@keyframes masterIndicatorPulse {
-  0%,
-  100% {
-    transform: scale(1);
-    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-  }
-  50% {
-    transform: scale(1.02);
-    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.5);
-  }
-}
-
-.axyra-master-2fa-indicator i {
-  margin-right: 6px;
-  color: #8b4513;
-}
-
-/* ===== ESTILOS PARA MODAL DE VERIFICACIÓN ===== */
-
-.axyra-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-}
-
-.axyra-modal-content {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
 .axyra-modal-header {
-  padding: 1.5rem 1.5rem 1rem;
-  border-bottom: 1px solid #e5e7eb;
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+  border-bottom: 1px solid var(--axyra-blue-100);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: linear-gradient(135deg, var(--axyra-blue-50) 0%, var(--axyra-white) 100%);
+  border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
 }
 
 .axyra-modal-header h3 {
   margin: 0;
-  color: var(--axyra-gray-900);
+  color: var(--axyra-dark-blue);
   font-size: 1.25rem;
   font-weight: 600;
+  font-family: var(--font-logo);
+}
+
+.axyra-modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--axyra-blue-600);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: 50%;
+  transition: var(--transition-fast);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.axyra-modal-close:hover {
+  background: var(--axyra-blue-100);
+  color: var(--axyra-blue-800);
 }
 
 .axyra-modal-body {
-  padding: 1.5rem;
+  padding: var(--spacing-lg);
 }
 
-.axyra-modal-body p {
-  margin: 0 0 1rem 0;
-  color: var(--axyra-gray-600);
-  line-height: 1.6;
+.axyra-modal-body h4 {
+  color: var(--axyra-dark-blue);
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: var(--font-logo);
 }
 
-.axyra-modal-body strong {
-  color: var(--axyra-gray-900);
+.axyra-modal-body h5 {
+  color: var(--axyra-blue-800);
+  margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+  font-size: 1rem;
   font-weight: 600;
 }
 
-/* ===== ESTILOS PARA PÁGINA DE REGISTRO ===== */
+.axyra-modal-body p {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--axyra-blue-700);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.axyra-modal-body strong {
+  color: var(--axyra-dark-blue);
+  font-weight: 600;
+}
+
+.axyra-modal-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  margin-top: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+/* Estilos específicos para soporte técnico */
+.axyra-support-info {
+  margin: var(--spacing-lg) 0;
+}
+
+.axyra-support-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--axyra-blue-50);
+  border-radius: var(--border-radius-md);
+  border-left: 4px solid var(--axyra-blue-500);
+}
+
+.axyra-support-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.axyra-support-item div {
+  flex: 1;
+}
+
+.axyra-support-item strong {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--axyra-dark-blue);
+}
+
+.axyra-support-item p {
+  margin: 0;
+  color: var(--axyra-blue-700);
+  font-size: 0.9rem;
+}
+
+.axyra-support-item a {
+  color: var(--axyra-blue-600);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.axyra-support-item a:hover {
+  color: var(--axyra-blue-800);
+  text-decoration: underline;
+}
+
+/* ========================================
+   CORRECCIÓN DE COLORES CTA
+   ======================================== */
+.axyra-cta-title {
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--axyra-white);
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.axyra-cta-subtitle {
+  font-size: 1.25rem;
+  margin-bottom: var(--spacing-xl);
+  color: var(--axyra-blue-100);
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   CORRECCIÓN DE COLORES FOOTER
+   ======================================== */
+.axyra-footer-section button {
+  background: none;
+  border: none;
+  color: var(--axyra-blue-200);
+  text-decoration: none;
+  transition: var(--transition-normal);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: var(--spacing-xs) 0;
+  text-align: left;
+  width: 100%;
+}
+
+.axyra-footer-section button:hover {
+  color: var(--axyra-light-blue);
+}
+
+.axyra-footer-legal button {
+  background: none;
+  border: none;
+  color: var(--axyra-blue-300);
+  text-decoration: none;
+  transition: var(--transition-normal);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+}
+
+.axyra-footer-legal button:hover {
+  color: var(--axyra-light-blue);
+  background: var(--axyra-blue-900);
+}
+
+/* ========================================
+   MEJORAS EN BOTONES
+   ======================================== */
+.axyra-quick-card {
+  background: var(--axyra-white);
+  border: 2px solid var(--axyra-blue-100);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  text-align: center;
+  transition: var(--transition-normal);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  width: 100%;
+}
+
+.axyra-quick-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--axyra-blue-300);
+  background: linear-gradient(135deg, var(--axyra-blue-50) 0%, var(--axyra-white) 100%);
+}
+
+.axyra-quick-card:active {
+  transform: translateY(-2px);
+}
+
+/* ========================================
+   RESPONSIVE PARA MODALES
+   ======================================== */
+@media (max-width: 768px) {
+  .axyra-modal-content {
+    width: 95%;
+    margin: var(--spacing-md);
+  }
+  
+  .axyra-modal-actions {
+    flex-direction: column;
+  }
+  
+  .axyra-modal-actions .axyra-btn {
+    width: 100%;
+  }
+  
+  .axyra-support-item {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .axyra-support-icon {
+    align-self: center;
+  }
+}
+
+/* ========================================
+   ANIMACIONES ADICIONALES
+   ======================================== */
+.axyra-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: var(--transition-normal);
+}
+
+.axyra-btn:hover::before {
+  left: 100%;
+}
+
+/* ========================================
+   ESTILOS PARA PÁGINA DE REGISTRO ===== */
 
 .axyra-register-card {
   background: white;

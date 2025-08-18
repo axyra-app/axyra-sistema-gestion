@@ -20,7 +20,7 @@
             <a href="#inicio" class="axyra-nav-link">Inicio</a>
             <a href="#servicios" class="axyra-nav-link">Servicios</a>
             <a href="#contacto" class="axyra-nav-link">Contacto</a>
-            <a href="login.html" class="axyra-btn axyra-btn-primary">Iniciar Sesión</a>
+            <a href="login.html" class="axyra-btn axyra-btn-primary" id="headerLoginBtn">Iniciar Sesión</a>
           </nav>
         </div>
       </div>
@@ -36,12 +36,12 @@
             plataforma.
           </p>
           <div class="axyra-hero-actions">
-            <a href="modulos/dashboard/dashboard.html" class="axyra-btn axyra-btn-primary axyra-btn-large">
+            <button class="axyra-btn axyra-btn-primary axyra-btn-large" onclick="handleDashboardAccess()">
               🚀 Ir al Dashboard
-            </a>
-            <a href="modulos/empleados/empleados.html" class="axyra-btn axyra-btn-secondary axyra-btn-large">
+            </button>
+            <button class="axyra-btn axyra-btn-secondary axyra-btn-large" onclick="handleEmpleadosAccess()">
               👥 Gestionar Empleados
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -56,28 +56,28 @@
             <div class="axyra-feature-icon">👥</div>
             <h3>Gestión de Empleados</h3>
             <p>Administra toda la información de tus empleados, contratos y perfiles de manera eficiente.</p>
-            <a href="modulos/empleados/empleados.html" class="axyra-btn axyra-btn-outline">Acceder</a>
+            <button class="axyra-btn axyra-btn-outline" onclick="handleEmpleadosAccess()">Acceder</button>
           </div>
 
           <div class="axyra-feature-card">
             <div class="axyra-feature-icon">⏰</div>
             <h3>Control de Horas</h3>
             <p>Registra y controla las horas trabajadas, turnos y horarios de tu equipo.</p>
-            <a href="modulos/horas/gestionar_horas.html" class="axyra-btn axyra-btn-outline">Acceder</a>
+            <button class="axyra-btn axyra-btn-outline" onclick="handleHorasAccess()">Acceder</button>
           </div>
 
           <div class="axyra-feature-card">
             <div class="axyra-feature-icon">💰</div>
             <h3>Gestión de Nómina</h3>
             <p>Calcula salarios, bonificaciones y genera reportes de nómina automáticamente.</p>
-            <a href="modulos/nomina/gestionar_nomina.html" class="axyra-btn axyra-btn-outline">Acceder</a>
+            <button class="axyra-btn axyra-btn-outline" onclick="handleNominaAccess()">Acceder</button>
           </div>
 
           <div class="axyra-feature-card">
             <div class="axyra-feature-icon">📊</div>
             <h3>Dashboard Analítico</h3>
             <p>Visualiza estadísticas, métricas y reportes en tiempo real de tu empresa.</p>
-            <a href="modulos/dashboard/dashboard.html" class="axyra-btn axyra-btn-outline">Acceder</a>
+            <button class="axyra-btn axyra-btn-outline" onclick="handleDashboardAccess()">Acceder</button>
           </div>
         </div>
       </div>
@@ -88,41 +88,41 @@
       <div class="axyra-container">
         <h2 class="axyra-section-title">Acceso Rápido</h2>
         <div class="axyra-quick-grid">
-          <a href="modulos/dashboard/dashboard.html" class="axyra-quick-card">
+          <button class="axyra-quick-card" onclick="handleDashboardAccess()">
             <div class="axyra-quick-icon">📊</div>
             <h3>Dashboard</h3>
             <p>Vista general del sistema</p>
-          </a>
+          </button>
 
-          <a href="modulos/empleados/empleados.html" class="axyra-quick-card">
+          <button class="axyra-quick-card" onclick="handleEmpleadosAccess()">
             <div class="axyra-quick-icon">👥</div>
             <h3>Empleados</h3>
             <p>Gestionar personal</p>
-          </a>
+          </button>
 
-          <a href="modulos/horas/gestionar_horas.html" class="axyra-quick-card">
+          <button class="axyra-quick-card" onclick="handleHorasAccess()">
             <div class="axyra-quick-icon">⏰</div>
             <h3>Horas</h3>
             <p>Control de tiempo</p>
-          </a>
+          </button>
 
-          <a href="modulos/nomina/gestionar_nomina.html" class="axyra-quick-card">
+          <button class="axyra-quick-card" onclick="handleNominaAccess()">
             <div class="axyra-quick-icon">💰</div>
             <h3>Nómina</h3>
             <p>Gestión salarial</p>
-          </a>
+          </button>
 
-          <a href="modulos/cuadre_caja/cuadre_caja.html" class="axyra-quick-card">
+          <button class="axyra-quick-card" onclick="handleCuadreAccess()">
             <div class="axyra-quick-icon">🧮</div>
             <h3>Cuadre de Caja</h3>
             <p>Control financiero</p>
-          </a>
+          </button>
 
-          <a href="modulos/configuracion/configuracion.html" class="axyra-quick-card">
+          <button class="axyra-quick-card" onclick="handleConfigAccess()">
             <div class="axyra-quick-icon">⚙️</div>
             <h3>Configuración</h3>
             <p>Ajustes del sistema</p>
-          </a>
+          </button>
         </div>
       </div>
     </section>
@@ -131,15 +131,15 @@
     <section class="axyra-cta">
       <div class="axyra-container">
         <div class="axyra-cta-content">
-          <h2>¿Listo para comenzar?</h2>
-          <p>Accede a todas las funcionalidades de AXYRA de manera inmediata</p>
+          <h2 class="axyra-cta-title">¿Listo para comenzar?</h2>
+          <p class="axyra-cta-subtitle">Accede a todas las funcionalidades de AXYRA de manera inmediata</p>
           <div class="axyra-cta-actions">
-            <a href="modulos/dashboard/dashboard.html" class="axyra-btn axyra-btn-primary axyra-btn-large">
+            <button class="axyra-btn axyra-btn-primary axyra-btn-large" onclick="handleDashboardAccess()">
               🚀 Comenzar Ahora
-            </a>
-            <a href="login.html" class="axyra-btn axyra-btn-secondary axyra-btn-large" id="btnLogin">
+            </button>
+            <button class="axyra-btn axyra-btn-secondary axyra-btn-large" id="btnLogin" onclick="handleLoginClick()">
               🔐 Iniciar Sesión
-            </a>
+            </button>
           </div>
         </div>
       </div>
@@ -157,19 +157,19 @@
           <div class="axyra-footer-section">
             <h4>Enlaces Rápidos</h4>
             <ul>
-              <li><a href="modulos/dashboard/dashboard.html">Dashboard</a></li>
-              <li><a href="modulos/empleados/empleados.html">Empleados</a></li>
-              <li><a href="modulos/horas/gestionar_horas.html">Horas</a></li>
-              <li><a href="modulos/nomina/gestionar_nomina.html">Nómina</a></li>
-              <li><a href="modulos/cuadre_caja/cuadre_caja.html">Cuadre de Caja</a></li>
+              <li><button onclick="handleDashboardAccess()">Dashboard</button></li>
+              <li><button onclick="handleEmpleadosAccess()">Empleados</button></li>
+              <li><button onclick="handleHorasAccess()">Horas</button></li>
+              <li><button onclick="handleNominaAccess()">Nómina</button></li>
+              <li><button onclick="handleCuadreAccess()">Cuadre de Caja</button></li>
             </ul>
           </div>
 
           <div class="axyra-footer-section">
             <h4>Acceso</h4>
             <ul>
-              <li><a href="login.html">Iniciar Sesión</a></li>
-              <li><a href="register.html">Registrarse</a></li>
+              <li><button onclick="handleLoginClick()">Iniciar Sesión</button></li>
+              <li><button onclick="handleRegisterClick()">Registrarse</button></li>
             </ul>
           </div>
         </div>
@@ -179,11 +179,11 @@
             <p>&copy; 2025 AXYRA. Todos los derechos reservados.</p>
             <div class="axyra-footer-legal">
               <span>•</span>
-              <a href="#privacy">Política de Privacidad</a>
+              <button onclick="showPrivacyPolicy()">Política de Privacidad</button>
               <span>•</span>
-              <a href="#terms">Términos de Servicio</a>
+              <button onclick="showTermsOfService()">Términos de Servicio</button>
               <span>•</span>
-              <a href="#support">Soporte Técnico</a>
+              <button onclick="showSupport()">Soporte Técnico</button>
               <span>•</span>
               <span class="axyra-version">v2.1.0</span>
             </div>
@@ -192,18 +192,152 @@
       </div>
     </footer>
 
+    <!-- Modal de Autenticación -->
+    <div id="authModal" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3>🔐 Acceso Requerido</h3>
+          <button class="axyra-modal-close" onclick="closeAuthModal()">&times;</button>
+        </div>
+        <div class="axyra-modal-body">
+          <p>Para acceder a esta funcionalidad, necesitas iniciar sesión o crear una cuenta.</p>
+          <div class="axyra-modal-actions">
+            <button class="axyra-btn axyra-btn-primary" onclick="redirectToLogin()">
+              🔐 Iniciar Sesión
+            </button>
+            <button class="axyra-btn axyra-btn-secondary" onclick="redirectToRegister()">
+              📝 Registrarse
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Política de Privacidad -->
+    <div id="privacyModal" class="axyra-modal">
+      <div class="axyra-modal-content axyra-modal-large">
+        <div class="axyra-modal-header">
+          <h3>📋 Política de Privacidad</h3>
+          <button class="axyra-modal-close" onclick="closePrivacyModal()">&times;</button>
+        </div>
+        <div class="axyra-modal-body">
+          <h4>AXYRA - Política de Privacidad</h4>
+          <p><strong>Última actualización:</strong> 18 de Agosto, 2025</p>
+          
+          <h5>1. Información que Recopilamos</h5>
+          <p>Recopilamos información que nos proporcionas directamente, como cuando creas una cuenta, utilizas nuestros servicios o te comunicas con nosotros.</p>
+          
+          <h5>2. Cómo Utilizamos tu Información</h5>
+          <p>Utilizamos la información que recopilamos para proporcionar, mantener y mejorar nuestros servicios, así como para desarrollar nuevos servicios.</p>
+          
+          <h5>3. Compartir Información</h5>
+          <p>No vendemos, alquilamos ni compartimos tu información personal con terceros, excepto en las circunstancias descritas en esta política.</p>
+          
+          <h5>4. Seguridad de Datos</h5>
+          <p>Implementamos medidas de seguridad técnicas y organizativas apropiadas para proteger tu información personal contra el acceso no autorizado, alteración, divulgación o destrucción.</p>
+          
+          <h5>5. Tus Derechos</h5>
+          <p>Tienes derecho a acceder, corregir o eliminar tu información personal. Puedes ejercer estos derechos contactándonos directamente.</p>
+          
+          <h5>6. Contacto</h5>
+          <p>Si tienes preguntas sobre esta política, contáctanos en: <strong>axyr.app@gmail.com</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Términos de Servicio -->
+    <div id="termsModal" class="axyra-modal">
+      <div class="axyra-modal-content axyra-modal-large">
+        <div class="axyra-modal-header">
+          <h3>📜 Términos de Servicio</h3>
+          <button class="axyra-modal-close" onclick="closeTermsModal()">&times;</button>
+        </div>
+        <div class="axyra-modal-body">
+          <h4>AXYRA - Términos de Servicio</h4>
+          <p><strong>Última actualización:</strong> 18 de Agosto, 2025</p>
+          
+          <h5>1. Aceptación de Términos</h5>
+          <p>Al acceder y utilizar AXYRA, aceptas estar sujeto a estos términos de servicio. Si no estás de acuerdo con alguna parte de estos términos, no debes utilizar nuestro servicio.</p>
+          
+          <h5>2. Descripción del Servicio</h5>
+          <p>AXYRA es un sistema de gestión empresarial que incluye funcionalidades para la gestión de empleados, control de horas, nóminas y análisis empresarial.</p>
+          
+          <h5>3. Uso Aceptable</h5>
+          <p>Te comprometes a utilizar el servicio solo para fines legales y de acuerdo con estos términos. No debes utilizar el servicio para actividades ilegales o no autorizadas.</p>
+          
+          <h5>4. Cuentas de Usuario</h5>
+          <p>Eres responsable de mantener la confidencialidad de tu cuenta y contraseña. Eres responsable de todas las actividades que ocurran bajo tu cuenta.</p>
+          
+          <h5>5. Propiedad Intelectual</h5>
+          <p>El servicio y su contenido original, características y funcionalidad son propiedad de AXYRA y están protegidos por leyes de propiedad intelectual.</p>
+          
+          <h5>6. Limitación de Responsabilidad</h5>
+          <p>En ningún caso AXYRA será responsable por daños indirectos, incidentales, especiales, consecuentes o punitivos.</p>
+          
+          <h5>7. Contacto</h5>
+          <p>Para preguntas sobre estos términos, contáctanos en: <strong>axyr.app@gmail.com</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Soporte Técnico -->
+    <div id="supportModal" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3>🛠️ Soporte Técnico</h3>
+          <button class="axyra-modal-close" onclick="closeSupportModal()">&times;</button>
+        </div>
+        <div class="axyra-modal-body">
+          <h4>¿Necesitas Ayuda?</h4>
+          <p>Nuestro equipo de soporte está aquí para ayudarte con cualquier pregunta o problema que puedas tener.</p>
+          
+          <div class="axyra-support-info">
+            <div class="axyra-support-item">
+              <span class="axyra-support-icon">📧</span>
+              <div>
+                <strong>Email de Soporte:</strong>
+                <a href="mailto:axyr.app@gmail.com">axyr.app@gmail.com</a>
+              </div>
+            </div>
+            
+            <div class="axyra-support-item">
+              <span class="axyra-support-icon">⏰</span>
+              <div>
+                <strong>Horario de Atención:</strong>
+                <p>Lunes a Viernes: 9:00 AM - 6:00 PM</p>
+              </div>
+            </div>
+            
+            <div class="axyra-support-item">
+              <span class="axyra-support-icon">🚀</span>
+              <div>
+                <strong>Tiempo de Respuesta:</strong>
+                <p>Máximo 24 horas</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="axyra-modal-actions">
+            <button class="axyra-btn axyra-btn-primary" onclick="sendSupportEmail()">
+              📧 Enviar Email
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script>
       // Verificar estado de autenticación
       function checkAuthStatus() {
         const user = localStorage.getItem('axyra_user');
         const btnLogin = document.getElementById('btnLogin');
-        const headerLoginBtn = document.querySelector('.axyra-header .axyra-btn-primary');
+        const headerLoginBtn = document.getElementById('headerLoginBtn');
 
         if (user) {
           // Usuario logueado - cambiar botón por "Ir al Dashboard"
           if (btnLogin) {
             btnLogin.innerHTML = '🚀 Ir al Dashboard';
-            btnLogin.href = 'modulos/dashboard/dashboard.html';
+            btnLogin.onclick = () => window.location.href = 'modulos/dashboard/dashboard.html';
             btnLogin.className = 'axyra-btn axyra-btn-primary axyra-btn-large';
           }
 
@@ -216,7 +350,7 @@
           // Usuario no logueado - mantener botón de login
           if (btnLogin) {
             btnLogin.innerHTML = '🔐 Iniciar Sesión';
-            btnLogin.href = 'login.html';
+            btnLogin.onclick = handleLoginClick;
             btnLogin.className = 'axyra-btn axyra-btn-secondary axyra-btn-large';
           }
 
@@ -226,6 +360,125 @@
             headerLoginBtn.className = 'axyra-btn axyra-btn-primary';
           }
         }
+      }
+
+      // Funciones de manejo de acceso
+      function handleDashboardAccess() {
+        const user = localStorage.getItem('axyra_user');
+        if (user) {
+          window.location.href = 'modulos/dashboard/dashboard.html';
+        } else {
+          showAuthModal();
+        }
+      }
+
+      function handleEmpleadosAccess() {
+        const user = localStorage.getItem('axyra_user');
+        if (user) {
+          window.location.href = 'modulos/empleados/empleados.html';
+        } else {
+          showAuthModal();
+        }
+      }
+
+      function handleHorasAccess() {
+        const user = localStorage.getItem('axyra_user');
+        if (user) {
+          window.location.href = 'modulos/horas/gestionar_horas.html';
+        } else {
+          showAuthModal();
+        }
+      }
+
+      function handleNominaAccess() {
+        const user = localStorage.getItem('axyra_user');
+        if (user) {
+          window.location.href = 'modulos/nomina/gestionar_nomina.html';
+        } else {
+          showAuthModal();
+        }
+      }
+
+      function handleCuadreAccess() {
+        const user = localStorage.getItem('axyra_user');
+        if (user) {
+          window.location.href = 'modulos/cuadre_caja/cuadre_caja.html';
+        } else {
+          showAuthModal();
+        }
+      }
+
+      function handleConfigAccess() {
+        const user = localStorage.getItem('axyra_user');
+        if (user) {
+          window.location.href = 'modulos/configuracion/configuracion.html';
+        } else {
+          showAuthModal();
+        }
+      }
+
+      function handleLoginClick() {
+        window.location.href = 'login.html';
+      }
+
+      function handleRegisterClick() {
+        window.location.href = 'register.html';
+      }
+
+      // Funciones del modal de autenticación
+      function showAuthModal() {
+        document.getElementById('authModal').style.display = 'flex';
+      }
+
+      function closeAuthModal() {
+        document.getElementById('authModal').style.display = 'none';
+      }
+
+      function redirectToLogin() {
+        window.location.href = 'login.html';
+      }
+
+      function redirectToRegister() {
+        window.location.href = 'register.html';
+      }
+
+      // Funciones de los modales de información
+      function showPrivacyPolicy() {
+        document.getElementById('privacyModal').style.display = 'flex';
+      }
+
+      function closePrivacyModal() {
+        document.getElementById('privacyModal').style.display = 'none';
+      }
+
+      function showTermsOfService() {
+        document.getElementById('termsModal').style.display = 'flex';
+      }
+
+      function closeTermsModal() {
+        document.getElementById('termsModal').style.display = 'none';
+      }
+
+      function showSupport() {
+        document.getElementById('supportModal').style.display = 'flex';
+      }
+
+      function closeSupportModal() {
+        document.getElementById('supportModal').style.display = 'none';
+      }
+
+      function sendSupportEmail() {
+        window.open('mailto:axyr.app@gmail.com?subject=Soporte%20Técnico%20AXYRA&body=Hola,%20necesito%20ayuda%20con:');
+      }
+
+      // Cerrar modales al hacer clic fuera de ellos
+      window.onclick = function(event) {
+        const modals = document.querySelectorAll('.axyra-modal');
+        modals.forEach(modal => {
+          if (event.target === modal) {
+            modal.style.display = 'none';
+          }
+        });
       }
 
       // Navegación suave
