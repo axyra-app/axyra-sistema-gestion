@@ -469,12 +469,12 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
 
     <!-- AXYRA Scripts -->
-    <script src="static/axyra-auth-api.js"></script>
+    <script src="static/simple-auth.js"></script>
 
     <script>
-      // Verificar autenticación al cargar
+      // Verificar autenticación al cargar - SIN VERIFICACIONES AUTOMÁTICAS
       function checkAuth() {
-        if (window.axyraAuthAPI && window.axyraAuthAPI.isUserAuthenticated()) {
+        if (window.axyraSimpleAuth && window.axyraSimpleAuth.isUserAuthenticated()) {
           window.location.href = 'modulos/dashboard/dashboard.html';
         }
       }
@@ -591,8 +591,8 @@
         }
 
         try {
-          // Usar la nueva API de autenticación
-          const result = await window.axyraAuthAPI.login({
+          // Usar el sistema simple de autenticación
+          const result = window.axyraSimpleAuth.login({
             usernameOrEmail: usernameOrEmail,
             password: password
           });

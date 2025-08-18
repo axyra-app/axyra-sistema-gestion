@@ -144,19 +144,19 @@ const axyraAuthGuard = new AXYRAAuthGuard();
 window.AXYRAAuthGuard = AXYRAAuthGuard;
 window.axyraAuthGuard = axyraAuthGuard;
 
-  // Verificar acceso automáticamente en cada página
-  document.addEventListener('DOMContentLoaded', () => {
-    // Solo verificar en módulos protegidos, no en la página principal
-    if (axyraAuthGuard.isRouteProtected() && 
-        window.location.pathname !== '/index.html' && 
-        window.location.pathname !== '/' &&
-        !window.location.pathname.includes('index.html')) {
-      console.log('🛡️ Verificando acceso a módulo protegido...');
-      // Delay más largo para evitar conflictos con Firebase
-      setTimeout(() => {
-        axyraAuthGuard.checkModuleAccess();
-      }, 3000);
-    }
-  });
+                      // VERIFICACIÓN AUTOMÁTICA DESACTIVADA TEMPORALMENTE
+                    // document.addEventListener('DOMContentLoaded', () => {
+                    //   // Solo verificar en módulos protegidos, no en la página principal
+                    //   if (axyraAuthGuard.isRouteProtected() && 
+                    //       window.location.pathname !== '/index.html' && 
+                    //       window.location.pathname !== '/' &&
+                    //       !window.location.pathname.includes('index.html')) {
+                    //     console.log('🛡️ Verificando acceso a módulo protegido...');
+                    //     // Delay más largo para evitar conflictos con Firebase
+                    //     setTimeout(() => {
+                    //       axyraAuthGuard.checkModuleAccess();
+                    //     }, 3000);
+                    //   }
+                    // });
 
 console.log('🛡️ AXYRA Auth Guard cargado y activo');

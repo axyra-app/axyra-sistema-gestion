@@ -20,7 +20,8 @@
     <script src="../../static/firebase-config.js"></script>
     <script src="../../static/firebase-user-system.js"></script>
     <script src="../../static/firebase-data-system.js"></script>
-    <script src="../../static/auth-guard.js"></script>
+    <!-- AUTH GUARD DESACTIVADO TEMPORALMENTE -->
+    <!-- <script src="../../static/auth-guard.js"></script> -->
   </head>
   <body>
     <!-- Header -->
@@ -525,42 +526,17 @@
       }
 
       // Cerrar sesión
-      async function logout() {
-        try {
-          console.log('🔄 Cerrando sesión...');
-
-          // Usar Firebase para cerrar sesión si está disponible
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.signOut) {
-            try {
-              await window.axyraFirebaseUserSystem.signOut();
-              console.log('✅ Sesión cerrada usando Firebase');
-            } catch (firebaseError) {
-              console.warn('⚠️ Error con Firebase logout, continuando con limpieza local:', firebaseError);
-            }
-          }
-
-          // Limpiar todas las sesiones del localStorage
-          localStorage.removeItem('axyra_user');
-          localStorage.removeItem('axyra_firebase_user');
-          localStorage.removeItem('axyra_empleados');
-          localStorage.removeItem('axyra_horas');
-          localStorage.removeItem('axyra_nomina');
-
-          // Limpiar variable global
-          if (typeof currentUser !== 'undefined') {
-            currentUser = null;
-          }
-
-          console.log('✅ Sesión cerrada completamente');
-
-          // Redirigir al login
-          window.location.href = '../../login.html';
-        } catch (error) {
-          console.error('❌ Error al cerrar sesión:', error);
-          // Forzar limpieza y redirección
-          localStorage.clear();
-          window.location.href = '../../login.html';
-        }
+      // Cerrar sesión - SISTEMA SIMPLIFICADO
+      function logout() {
+        console.log('🔄 Cerrando sesión...');
+        
+        // Limpiar solo la sesión del usuario
+        localStorage.removeItem('axyra_user');
+        
+        console.log('✅ Sesión cerrada');
+        
+        // Redirigir al login
+        window.location.href = '../../login.html';
       }
 
       // Función para limpiar datos corruptos del localStorage
