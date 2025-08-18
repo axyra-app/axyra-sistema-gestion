@@ -468,36 +468,50 @@
         try {
           console.log('🔐 Verificando autenticación...');
 
+          // Esperar a que Firebase se inicialice
+          let attempts = 0;
+          while (!window.axyraFirebaseUserSystem && attempts < 10) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+            attempts++;
+          }
+
           // Verificar sesión usando Firebase
           if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
             currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
             console.log('✅ Usuario autenticado con Firebase:', currentUser.email);
+            
+            // Guardar sesión en localStorage para persistencia
+            localStorage.setItem('axyra_user', JSON.stringify({
+              username: currentUser.email.split('@')[0],
+              email: currentUser.email,
+              fullName: currentUser.displayName || currentUser.email.split('@')[0],
+              isFirebaseUser: true
+            }));
+            
             return true;
           }
 
-          // Verificar sesión usando el sistema profesional como fallback
-          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-            currentUser = axyraUserSystem.getCurrentUser();
-            console.log('✅ Usuario autenticado con sistema profesional:', currentUser.username);
-            return true;
-          }
-
-          // Si no hay sesión activa, verificar localStorage como último fallback
-          const user = localStorage.getItem('axyra_user');
-          if (user) {
+          // Verificar sesión persistente en localStorage
+          const savedUser = localStorage.getItem('axyra_firebase_user');
+          if (savedUser) {
             try {
-              const userData = JSON.parse(user);
-              if (userData && userData.username) {
-                // Crear sesión en el sistema profesional
-                if (axyraUserSystem) {
-                  axyraUserSystem.createSession(userData);
-                }
+              const userData = JSON.parse(savedUser);
+              const lastLogin = new Date(userData.lastLogin);
+              const now = new Date();
+              const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
+
+              // Sesión válida por 24 horas
+              if (hoursDiff < 24) {
+                console.log('✅ Sesión persistente encontrada:', userData.email);
                 currentUser = userData;
-                console.log('✅ Sesión restaurada desde localStorage:', currentUser.username);
                 return true;
+              } else {
+                localStorage.removeItem('axyra_firebase_user');
+                localStorage.removeItem('axyra_user');
               }
             } catch (error) {
-              console.error('Error parseando sesión de localStorage:', error);
+              localStorage.removeItem('axyra_firebase_user');
+              localStorage.removeItem('axyra_user');
             }
           }
 
@@ -528,17 +542,13 @@
           if (window.axyraFirebaseUserSystem) {
             await window.axyraFirebaseUserSystem.signOut();
             console.log('✅ Sesión cerrada usando Firebase');
-          } else if (axyraUserSystem) {
-            // Fallback al sistema profesional
-            axyraUserSystem.logout();
-            console.log('✅ Sesión cerrada usando sistema profesional');
-          } else {
-            // Fallback si no hay sistema de usuarios
-            localStorage.removeItem('axyra_user');
-            console.log('✅ Sesión cerrada usando fallback');
           }
 
-          // Limpiar cualquier variable global
+          // Limpiar todas las sesiones
+          localStorage.removeItem('axyra_user');
+          localStorage.removeItem('axyra_firebase_user');
+          
+          // Limpiar variable global
           if (typeof currentUser !== 'undefined') {
             currentUser = null;
           }
@@ -549,12 +559,15 @@
             console.log('✅ Datos de Firebase limpiados');
           }
 
+          console.log('✅ Sesión cerrada completamente');
+          
           // Redirigir al login
           window.location.href = '../../login.html';
         } catch (error) {
           console.error('❌ Error al cerrar sesión:', error);
           // Forzar limpieza y redirección
           localStorage.removeItem('axyra_user');
+          localStorage.removeItem('axyra_firebase_user');
           window.location.href = '../../login.html';
         }
       }
@@ -1684,12 +1697,27 @@
       }
 
       // Inicialización
-      window.addEventListener('load', () => {
+      window.addEventListener('load', async () => {
         // Inicializar dashboard
         console.log('✅ Inicializando dashboard...');
 
         // Verificar autenticación
-        checkAuth();
+        const isAuthenticated = await checkAuth();
+        if (!isAuthenticated) {
+          return; // checkAuth ya redirige al login
+        }
+
+        // Configurar listener de cambios de autenticación
+        if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.auth) {
+          window.axyraFirebaseUserSystem.auth.onAuthStateChanged((user) => {
+            if (!user) {
+              console.log('⚠️ Usuario desconectado, redirigiendo al login');
+              localStorage.removeItem('axyra_user');
+              localStorage.removeItem('axyra_firebase_user');
+              window.location.href = '../../login.html';
+            }
+          });
+        }
 
         // Verificar y corregir datos corruptos antes de cargar estadísticas
         verificarDatosCorruptos();
