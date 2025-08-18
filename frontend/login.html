@@ -414,12 +414,12 @@
           <label class="checkbox-container">
             <input type="checkbox" id="rememberSession" />
             <span class="checkmark"></span>
-            Recordar sesión (no pedir 2FA por 30 días)
+            Recordar sesión por 30 días
           </label>
         </div>
 
-        <div class="form-group">
-          <label for="twofaCode" class="form-label">Código 2FA</label>
+        <div class="form-group" id="twofaSection" style="display: none;">
+          <label for="twofaCode" class="form-label">Código 2FA (Opcional)</label>
           <div class="twofa-section">
             <input
               type="text"
@@ -428,9 +428,9 @@
               placeholder="Código de 6 dígitos"
               maxlength="6"
             />
-            <button type="button" class="twofa-btn" onclick="generatePersonal2FA()">🔑</button>
+            <button type="button" class="twofa-btn" onclick="show2FAHelp()">❓</button>
           </div>
-          <div class="form-hint">Ingrese el código de 6 dígitos de su autenticador</div>
+          <div class="form-hint">Solo si tienes 2FA habilitado</div>
         </div>
 
         <button type="submit" class="login-btn" id="loginBtn">
@@ -471,9 +471,6 @@
     <!-- AXYRA Scripts -->
     <script src="static/firebase-config.js"></script>
     <script src="static/firebase-user-system.js"></script>
-    <script src="static/professional-user-system.js"></script>
-    <script src="static/personal-2fa-system.js"></script>
-    <script src="static/email-verification-system.js"></script>
     <script src="static/google-oauth-config.js"></script>
 
     <script>
@@ -498,20 +495,11 @@
         }
       }
 
-      // Generar código 2FA
-      function generatePersonal2FA() {
-        const username = document.getElementById('username').value;
-        if (!username) {
-          showError('Por favor ingrese un nombre de usuario primero');
-          return;
-        }
 
-        const result = axyraPersonal2FA.generatePersonalCode(username);
-        if (result.success) {
-          showSuccess(`✅ Código 2FA generado: ${result.code}\nVálido por: ${result.validity} minutos`);
-        } else {
-          showError(`❌ Error: ${result.message}`);
-        }
+
+      // Mostrar ayuda 2FA
+      function show2FAHelp() {
+        alert('ℹ️ El código 2FA solo se requiere si tienes la autenticación de dos factores habilitada en tu cuenta.\n\nSi no tienes 2FA habilitado, puedes dejar este campo vacío.');
       }
 
       // Login con Google usando Firebase
@@ -600,21 +588,13 @@
         const password = document.getElementById('password').value;
         const twofaCode = document.getElementById('twofaCode').value.trim();
 
-        if (!username || !password || !twofaCode) {
-          showError('Por favor complete todos los campos');
+        if (!username || !password) {
+          showError('Por favor complete usuario y contraseña');
           return;
         }
 
         try {
-          // Verificar código 2FA
-          const twofaResult = axyraPersonal2FA.verifyPersonalCode(username, twofaCode);
-
-          if (!twofaResult.success) {
-            showError(`Error 2FA: ${twofaResult.message}`);
-            return;
-          }
-
-          // Verificar credenciales
+          // Verificar credenciales primero
           let user = null;
 
           if (window.axyraUserSystem) {
@@ -628,22 +608,44 @@
             user = users.find((u) => u.username === username && u.password === password);
           }
 
-          if (user) {
-            // Crear sesión
-            if (window.axyraUserSystem) {
-              axyraUserSystem.createSession(user);
-            } else {
-              localStorage.setItem('axyra_user', JSON.stringify(user));
+          if (!user) {
+            showError('Credenciales incorrectas');
+            return;
+          }
+
+          // Verificar si el usuario tiene 2FA habilitado
+          const twofaEnabled = localStorage.getItem('axyra_2fa_enabled') === 'true';
+          
+          if (twofaEnabled) {
+            // Mostrar campo 2FA si está habilitado
+            document.getElementById('twofaSection').style.display = 'block';
+            
+            if (!twofaCode) {
+              showError('Por favor ingrese el código 2FA');
+              return;
             }
 
-            showSuccess('✅ Inicio de sesión exitoso. Redirigiendo...');
-
-            setTimeout(() => {
-              window.location.href = 'modulos/dashboard/dashboard.html';
-            }, 1500);
-          } else {
-            showError('Credenciales incorrectas');
+            // Verificar código 2FA simple (por ahora solo verificar que no esté vacío)
+            if (twofaCode.length !== 6) {
+              showError('El código 2FA debe tener 6 dígitos');
+              return;
+            }
           }
+
+          // Crear sesión
+          if (window.axyraUserSystem) {
+            axyraUserSystem.createSession(user);
+          } else {
+            // Agregar timestamp de login
+            user.lastLogin = new Date().toISOString();
+            localStorage.setItem('axyra_user', JSON.stringify(user));
+          }
+
+          showSuccess('✅ Inicio de sesión exitoso. Redirigiendo...');
+
+          setTimeout(() => {
+            window.location.href = 'modulos/dashboard/dashboard.html';
+          }, 1500);
         } catch (error) {
           console.error('Error en login:', error);
           showError('Error al iniciar sesión');

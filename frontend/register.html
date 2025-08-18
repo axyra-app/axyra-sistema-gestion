@@ -440,9 +440,7 @@
 
         <button type="submit" class="register-btn" id="registerBtn">
           <span id="btnText">Crear Cuenta</span>
-          <span id="btnLoading" style="display: none">
-            <i class="fas fa-spinner fa-spin"></i> Creando cuenta...
-          </span>
+          <span id="btnLoading" style="display: none"> <i class="fas fa-spinner fa-spin"></i> Creando cuenta... </span>
         </button>
 
         <div class="divider">
@@ -692,23 +690,23 @@
 
           if (result.success) {
             console.log('✅ Usuario creado en Firebase:', result.user.email);
-            
+
             // Enviar email de verificación
             const emailResult = await axyraRealEmailVerification.sendVerificationEmail(email, username);
-            
+
             if (emailResult.success) {
               currentVerificationEmail = email;
               currentVerificationUsername = username;
-              
+
               // Mostrar modal de verificación
               showVerificationModal();
-              
+
               // Mostrar código en el modal (para desarrollo)
               if (emailResult.simulatedCode) {
                 document.getElementById('verificationCodeDisplay').style.display = 'block';
                 document.getElementById('codeBox').textContent = emailResult.simulatedCode;
               }
-              
+
               // Limpiar formulario
               document.getElementById('registerForm').reset();
             } else {
@@ -767,13 +765,13 @@
       async function signInWithGoogle() {
         try {
           showSuccess('Iniciando sesión con Google...');
-          
+
           // Usar Firebase Auth para Google
           const result = await axyraFirebaseUserSystem.signInWithGoogle();
-          
+
           if (result.success) {
             showSuccess('¡Inicio de sesión exitoso! Redirigiendo al dashboard...');
-            
+
             // Redirigir al dashboard
             setTimeout(() => {
               window.location.href = 'modulos/dashboard/dashboard.html';

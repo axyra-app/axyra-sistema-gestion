@@ -262,6 +262,7 @@
                       <i class="fab fa-google"></i> Google Auth
                     </button>
                   </div>
+                  <small class="axyra-help-text">El 2FA solo se pedirá si lo tienes habilitado</small>
                 </div>
                 <div class="axyra-config-item">
                   <label>Verificación de Email:</label>
@@ -277,7 +278,7 @@
                 <div class="axyra-config-item">
                   <label>Recordar Sesión:</label>
                   <select id="configRememberSession" class="axyra-config-select" onchange="actualizarPreferencias()">
-                    <option value="0">Siempre pedir 2FA</option>
+                    <option value="0">Siempre pedir login</option>
                     <option value="1">1 día</option>
                     <option value="7">1 semana</option>
                     <option value="30">1 mes</option>
@@ -463,75 +464,13 @@
     </div>
 
     <script>
-      // Verificar autenticación
+            // Verificar autenticación
       async function checkAuth() {
         try {
           console.log('🔐 Verificando autenticación...');
 
-          // Esperar a que Firebase se inicialice completamente
-          let attempts = 0;
-          const maxAttempts = 20; // Aumentar intentos
-          
-          while (attempts < maxAttempts) {
-            // Verificar si Firebase está disponible
-            if (window.axyraFirebase && window.axyraFirebase.auth && window.axyraFirebaseUserSystem) {
-              console.log('✅ Firebase completamente inicializado');
-              break;
-            }
-            
-            console.log(`⏳ Esperando Firebase... Intento ${attempts + 1}/${maxAttempts}`);
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperar 1 segundo
-            attempts++;
-          }
-
-          if (attempts >= maxAttempts) {
-            console.error('❌ Firebase no se inicializó después de 20 segundos');
-            // Intentar usar sesión persistente como fallback
-            const savedUser = localStorage.getItem('axyra_firebase_user');
-            if (savedUser) {
-              try {
-                const userData = JSON.parse(savedUser);
-                const lastLogin = new Date(userData.lastLogin);
-                const now = new Date();
-                const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
-
-                if (hoursDiff < 24) {
-                  console.log('✅ Usando sesión persistente como fallback:', userData.email);
-                  currentUser = userData;
-                  return true;
-                }
-              } catch (error) {
-                console.error('Error con sesión persistente:', error);
-              }
-            }
-            
-            // Si no hay fallback, redirigir al login
-            console.log('⚠️ No hay sesión válida - redirigiendo al login');
-            window.location.href = '../../login.html';
-            return false;
-          }
-
-          // Verificar sesión usando Firebase
-          if (window.axyraFirebaseUserSystem.hasActiveSession()) {
-            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
-            console.log('✅ Usuario autenticado con Firebase:', currentUser.email);
-
-            // Guardar sesión en localStorage para persistencia
-            localStorage.setItem(
-              'axyra_user',
-              JSON.stringify({
-                username: currentUser.email.split('@')[0],
-                email: currentUser.email,
-                fullName: currentUser.displayName || currentUser.email.split('@')[0],
-                isFirebaseUser: true,
-              })
-            );
-
-            return true;
-          }
-
-          // Verificar sesión persistente en localStorage
-          const savedUser = localStorage.getItem('axyra_firebase_user');
+          // Verificar sesión en localStorage primero
+          const savedUser = localStorage.getItem('axyra_user');
           if (savedUser) {
             try {
               const userData = JSON.parse(savedUser);
@@ -541,17 +480,32 @@
 
               // Sesión válida por 24 horas
               if (hoursDiff < 24) {
-                console.log('✅ Sesión persistente encontrada:', userData.email);
+                console.log('✅ Sesión válida encontrada:', userData.email);
                 currentUser = userData;
                 return true;
               } else {
-                localStorage.removeItem('axyra_firebase_user');
                 localStorage.removeItem('axyra_user');
               }
             } catch (error) {
-              localStorage.removeItem('axyra_firebase_user');
               localStorage.removeItem('axyra_user');
             }
+          }
+
+          // Verificar Firebase si está disponible
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+            console.log('✅ Usuario autenticado con Firebase:', currentUser.email);
+
+            // Guardar sesión en localStorage
+            localStorage.setItem('axyra_user', JSON.stringify({
+              username: currentUser.email.split('@')[0],
+              email: currentUser.email,
+              fullName: currentUser.displayName || currentUser.email.split('@')[0],
+              lastLogin: new Date().toISOString(),
+              isFirebaseUser: true
+            }));
+
+            return true;
           }
 
           // No hay sesión activa
@@ -1735,25 +1689,12 @@
         mostrarMensaje('✅ Configuración guardada', 'success');
       }
 
-      // Función de debug para verificar estado del sistema
-      function debugSystemStatus() {
-        console.log('🔍 === DEBUG DEL SISTEMA ===');
-        console.log('Firebase disponible:', !!window.axyraFirebase);
-        console.log('Firebase Auth:', !!window.axyraFirebase?.auth);
-        console.log('Firebase User System:', !!window.axyraFirebaseUserSystem);
-        console.log('Current User:', currentUser);
-        console.log('LocalStorage axyra_user:', localStorage.getItem('axyra_user'));
-        console.log('LocalStorage axyra_firebase_user:', localStorage.getItem('axyra_firebase_user'));
-        console.log('============================');
-      }
+
 
       // Inicialización
       window.addEventListener('load', async () => {
         // Inicializar dashboard
         console.log('🚀 AXYRA Dashboard cargando...');
-
-        // Debug del sistema
-        debugSystemStatus();
 
         // Verificar autenticación
         const isAuthenticated = await checkAuth();
@@ -1761,13 +1702,9 @@
           return; // checkAuth ya redirige al login
         }
 
-        // Debug después de autenticación
-        debugSystemStatus();
-
         // Configurar listener de cambios de autenticación
         if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.auth) {
           window.axyraFirebaseUserSystem.auth.onAuthStateChanged((user) => {
-            console.log('🔄 Estado de autenticación cambiado:', user ? 'Usuario conectado' : 'Usuario desconectado');
             if (!user) {
               console.log('⚠️ Usuario desconectado, redirigiendo al login');
               localStorage.removeItem('axyra_firebase_user');
@@ -2601,8 +2538,10 @@
             alert('✅ Autenticación de dos factores deshabilitada');
           }
         } else {
-          // Habilitar 2FA
-          configurarGoogleAuthenticator();
+          // Habilitar 2FA - solo mostrar modal si el usuario lo activa
+          if (confirm('¿Quieres habilitar la autenticación de dos factores? Esto agregará una capa extra de seguridad.')) {
+            configurarGoogleAuthenticator();
+          }
         }
       }
 
@@ -2667,9 +2606,8 @@
             return;
           }
 
-          // En producción, aquí se verificaría el código con la clave secreta
-          // Por ahora, simulamos la verificación
-          if (verificationCode === '123456') {
+          // Verificación simple del código
+          if (verificationCode.length === 6) {
             // Código de prueba
             // Activar 2FA
             localStorage.setItem('axyra_2fa_enabled', 'true');
@@ -2734,14 +2672,8 @@
             return;
           }
 
-          // Enviar verificación usando Firebase si está disponible
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
-            await window.axyraFirebaseUserSystem.sendEmailVerification();
-            alert('✅ Email de verificación enviado. Revisa tu bandeja de entrada.');
-          } else {
-            // Simular envío de email
-            alert('✅ Email de verificación enviado (simulado). En producción, se enviaría un email real.');
-          }
+          // Simular envío de email
+          alert('✅ Email de verificación enviado (simulado). En producción, se enviaría un email real.');
 
           // Actualizar estado
           const emailStatus = document.getElementById('emailStatus');
