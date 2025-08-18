@@ -90,15 +90,49 @@ class AXYRAFirebaseUserSystem {
         }, 100);
         
       } else {
-        // Solo limpiar si realmente no hay usuario (no por timeout)
-        if (this.currentUser) {
-          console.log('🔒 Usuario desconectado, limpiando sesión');
-          this.currentUser = null;
-          localStorage.removeItem('axyra_firebase_user');
-          localStorage.removeItem('axyra_user');
+        // Verificar si hay sesión persistente antes de limpiar
+        const savedUser = localStorage.getItem('axyra_user');
+        const savedFirebaseUser = localStorage.getItem('axyra_firebase_user');
+        
+        if (savedUser || savedFirebaseUser) {
+          try {
+            const userData = savedUser ? JSON.parse(savedUser) : JSON.parse(savedFirebaseUser);
+            const lastLogin = new Date(userData.lastLogin);
+            const now = new Date();
+            const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
+            
+            // Solo limpiar si han pasado más de 24 horas
+            if (hoursDiff >= 24) {
+              console.log('⏰ Sesión expirada por tiempo, limpiando...');
+              this.clearSession();
+            } else {
+              console.log('🔄 Usuario desconectado de Firebase pero sesión válida en localStorage');
+              return; // Mantener sesión
+            }
+          } catch (error) {
+            console.error('❌ Error verificando sesión persistente:', error);
+            this.clearSession();
+          }
+        } else {
+          // Solo limpiar si realmente no hay usuario
+          if (this.currentUser) {
+            console.log('🔒 Usuario desconectado, limpiando sesión');
+            this.currentUser = null;
+          }
         }
       }
     });
+  }
+
+  // Limpiar sesión de manera segura
+  clearSession() {
+    this.currentUser = null;
+    localStorage.removeItem('axyra_firebase_user');
+    localStorage.removeItem('axyra_user');
+    localStorage.removeItem('axyra_empleados');
+    localStorage.removeItem('axyra_horas');
+    localStorage.removeItem('axyra_nomina');
+    console.log('🧹 Sesión limpiada completamente');
   }
 
   // Cargar datos del usuario desde Firestore
