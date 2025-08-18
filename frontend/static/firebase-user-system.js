@@ -10,6 +10,7 @@ class AXYRAFirebaseUserSystem {
     this.db = null;
     this.currentUser = null;
     this.isInitialized = false;
+    this.useSimulatedMode = false; // Por defecto, usar Firebase real
 
     this.init();
   }

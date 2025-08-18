@@ -11,7 +11,7 @@ class AXYRAGoogleOAuth {
     this.discoveryDocs = ['https://www.googleapis.com/discovery/v1/apis/oauth2/v2/rest'];
     this.scope = 'email profile';
     this.isInitialized = false;
-    this.useSimulatedMode = true; // Cambiar a false para usar Google real
+    this.useSimulatedMode = false; // Cambiar a false para usar Google real
     this.simulatedUsers = new Map();
 
     this.init();
