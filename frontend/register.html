@@ -275,6 +275,83 @@
         color: #a0aec0;
       }
 
+      .divider {
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      .divider span {
+        display: inline-block;
+        position: relative;
+        padding: 0 10px;
+        font-size: 14px;
+        color: #a0aec0;
+      }
+
+      .divider span::before,
+      .divider span::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        width: 100px;
+        height: 1px;
+        background: #e2e8f0;
+      }
+
+      .divider span::before {
+        left: 0;
+      }
+
+      .divider span::after {
+        right: 0;
+      }
+
+      .google-btn {
+        width: 100%;
+        padding: 15px;
+        background: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        transition: all 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .google-btn:hover {
+        background: #357abd;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(66, 133, 244, 0.3);
+      }
+
+      .google-btn img {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+      }
+
+      .verification-hint {
+        margin-top: 20px;
+        text-align: center;
+        font-weight: 600;
+        color: #667eea;
+        padding: 15px;
+        background: rgba(102, 126, 234, 0.1);
+        border-radius: 8px;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+      }
+
+      .verification-hint i {
+        margin-right: 8px;
+        color: #667eea;
+      }
+
       @media (max-width: 600px) {
         .register-container {
           padding: 30px 20px;
@@ -307,15 +384,33 @@
 
       <form id="registerForm">
         <div class="form-group">
+          <label for="fullName" class="form-label">Nombre Completo</label>
+          <input type="text" id="fullName" class="form-input" placeholder="Ingrese su nombre completo" required />
+          <div class="form-hint">Mínimo 3 caracteres, solo letras y espacios</div>
+        </div>
+
+        <div class="form-group">
           <label for="username" class="form-label">Nombre de Usuario</label>
           <input type="text" id="username" class="form-input" placeholder="Ingrese un nombre de usuario" required />
           <div class="form-hint">Mínimo 3 caracteres, solo letras y números</div>
         </div>
 
         <div class="form-group">
+          <label for="email" class="form-label">Correo Electrónico</label>
+          <input type="email" id="email" class="form-input" placeholder="Ingrese su correo electrónico" required />
+          <div class="form-hint">Se enviará un código de verificación a este correo</div>
+        </div>
+
+        <div class="form-group">
           <label for="password" class="form-label">Contraseña</label>
           <div class="password-container">
-            <input type="password" id="password" class="form-input" placeholder="Ingrese una contraseña segura" required />
+            <input
+              type="password"
+              id="password"
+              class="form-input"
+              placeholder="Ingrese una contraseña segura"
+              required
+            />
             <button type="button" class="password-toggle" onclick="togglePassword()">
               <i class="fas fa-eye" id="passwordIcon"></i>
             </button>
@@ -326,18 +421,37 @@
         <div class="form-group">
           <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
           <div class="password-container">
-            <input type="password" id="confirmPassword" class="form-input" placeholder="Confirme su contraseña" required />
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-input"
+              placeholder="Confirme su contraseña"
+              required
+            />
             <button type="button" class="password-toggle" onclick="toggleConfirmPassword()">
               <i class="fas fa-eye" id="confirmPasswordIcon"></i>
             </button>
           </div>
         </div>
-        
-        <div class="form-hint">Recibirás un código de verificación</div>
+
+        <div class="form-hint verification-hint">
+          <i class="fas fa-envelope"></i> Recibirás un código de verificación por correo
+        </div>
 
         <button type="submit" class="register-btn" id="registerBtn">
           <span id="btnText">Crear Cuenta</span>
-          <span id="btnLoading" style="display: none">Creando cuenta...</span>
+          <span id="btnLoading" style="display: none">
+            <i class="fas fa-spinner fa-spin"></i> Creando cuenta...
+          </span>
+        </button>
+
+        <div class="divider">
+          <span>o</span>
+        </div>
+
+        <button type="button" class="google-btn" onclick="signInWithGoogle()">
+          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
+          Continuar con Google
         </button>
       </form>
 
@@ -413,9 +527,21 @@
 
       // Validar datos del usuario
       function validateUserData() {
+        const fullName = document.getElementById('fullName').value.trim();
         const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Validar nombre completo
+        if (fullName.length < 3) {
+          showError('El nombre completo debe tener al menos 3 caracteres');
+          return false;
+        }
+        if (!/^[a-zA-Z\s]+$/.test(fullName)) {
+          showError('El nombre completo solo puede contener letras y espacios');
+          return false;
+        }
 
         // Validar nombre de usuario
         if (username.length < 3) {
@@ -424,6 +550,16 @@
         }
         if (!/^[a-zA-Z0-9]+$/.test(username)) {
           showError('El nombre de usuario solo puede contener letras y números');
+          return false;
+        }
+
+        // Validar correo electrónico
+        if (!email) {
+          showError('Por favor ingrese un correo electrónico');
+          return false;
+        }
+        if (!/\S+@\S+\.\S/.test(email)) {
+          showError('Por favor ingrese un correo electrónico válido');
           return false;
         }
 
@@ -529,7 +665,9 @@
 
         hideMessages();
 
+        const fullName = document.getElementById('fullName').value.trim();
         const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
         // Verificar si el usuario ya existe
@@ -538,34 +676,62 @@
           showError('El nombre de usuario ya está en uso');
           return;
         }
+        if (existingUsers.find((user) => user.email === email)) {
+          showError('El correo electrónico ya está en uso');
+          return;
+        }
 
         try {
-          // Crear usuario simple en localStorage por ahora
-          const newUser = {
-            username: username,
-            password: password,
-            createdAt: new Date().toISOString(),
-            isVerified: false
-          };
+          // Mostrar loading
+          document.getElementById('btnText').style.display = 'none';
+          document.getElementById('btnLoading').style.display = 'inline-block';
+          document.getElementById('registerBtn').disabled = true;
 
-          // Agregar a la lista de usuarios
-          const existingUsers = JSON.parse(localStorage.getItem('axyra_users') || '[]');
-          existingUsers.push(newUser);
-          localStorage.setItem('axyra_users', JSON.stringify(existingUsers));
+          // Crear usuario en Firebase
+          const result = await axyraFirebaseUserSystem.createAccount(email, password, fullName, username);
 
-          console.log('✅ Usuario creado exitosamente:', username);
-          showSuccess('¡Cuenta creada exitosamente! Redirigiendo al login...');
-
-          // Limpiar formulario
-          document.getElementById('registerForm').reset();
-
-          // Redirigir al login después de 2 segundos
-          setTimeout(() => {
-            window.location.href = 'login.html';
-          }, 2000);
+          if (result.success) {
+            console.log('✅ Usuario creado en Firebase:', result.user.email);
+            
+            // Enviar email de verificación
+            const emailResult = await axyraRealEmailVerification.sendVerificationEmail(email, username);
+            
+            if (emailResult.success) {
+              currentVerificationEmail = email;
+              currentVerificationUsername = username;
+              
+              // Mostrar modal de verificación
+              showVerificationModal();
+              
+              // Mostrar código en el modal (para desarrollo)
+              if (emailResult.simulatedCode) {
+                document.getElementById('verificationCodeDisplay').style.display = 'block';
+                document.getElementById('codeBox').textContent = emailResult.simulatedCode;
+              }
+              
+              // Limpiar formulario
+              document.getElementById('registerForm').reset();
+            } else {
+              showError('Error al enviar email de verificación: ' + emailResult.message);
+            }
+          } else {
+            // Manejar errores específicos
+            if (result.error.includes('email-already-in-use')) {
+              showError('Este email ya está registrado. Puedes iniciar sesión o usar otro email.');
+            } else if (result.error.includes('weak-password')) {
+              showError('La contraseña es muy débil. Usa al menos 8 caracteres con mayúsculas y números.');
+            } else {
+              showError(`Error creando cuenta: ${result.error}`);
+            }
+          }
         } catch (error) {
           console.error('Error creando usuario:', error);
-          showError('Error al crear la cuenta');
+          showError('Error al crear la cuenta: ' + error.message);
+        } finally {
+          // Restaurar botón
+          document.getElementById('btnText').style.display = 'inline-block';
+          document.getElementById('btnLoading').style.display = 'none';
+          document.getElementById('registerBtn').disabled = false;
         }
       });
 
@@ -573,7 +739,7 @@
       function togglePassword() {
         const passwordInput = document.getElementById('password');
         const passwordIcon = document.getElementById('passwordIcon');
-        
+
         if (passwordInput.type === 'password') {
           passwordInput.type = 'text';
           passwordIcon.innerHTML = '<i class="fas fa-eye-slash"></i>';
@@ -587,13 +753,37 @@
       function toggleConfirmPassword() {
         const confirmPasswordInput = document.getElementById('confirmPassword');
         const confirmPasswordIcon = document.getElementById('confirmPasswordIcon');
-        
+
         if (confirmPasswordInput.type === 'password') {
           confirmPasswordInput.type = 'text';
           confirmPasswordIcon.innerHTML = '<i class="fas fa-eye-slash"></i>';
         } else {
           confirmPasswordInput.type = 'password';
           confirmPasswordIcon.innerHTML = '<i class="fas fa-eye"></i>';
+        }
+      }
+
+      // Función para login con Google
+      async function signInWithGoogle() {
+        try {
+          showSuccess('Iniciando sesión con Google...');
+          
+          // Usar Firebase Auth para Google
+          const result = await axyraFirebaseUserSystem.signInWithGoogle();
+          
+          if (result.success) {
+            showSuccess('¡Inicio de sesión exitoso! Redirigiendo al dashboard...');
+            
+            // Redirigir al dashboard
+            setTimeout(() => {
+              window.location.href = 'modulos/dashboard/dashboard.html';
+            }, 2000);
+          } else {
+            showError('Error al iniciar sesión con Google: ' + result.error);
+          }
+        } catch (error) {
+          console.error('Error con Google OAuth:', error);
+          showError('Error al conectar con Google');
         }
       }
 
