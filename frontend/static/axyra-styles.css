@@ -133,12 +133,13 @@ p {
    HEADER Y NAVEGACIÓN AXYRA
    ======================================== */
 .axyra-header {
-  background: linear-gradient(135deg, var(--axyra-dark-blue) 0%, var(--axyra-blue-800) 100%);
-  padding: var(--spacing-lg) 0;
-  box-shadow: var(--shadow-lg);
+  background: #1e293b;
+  padding: 20px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
   z-index: 1000;
+  border-bottom: 3px solid #2563eb;
 }
 
 .axyra-header-content {
@@ -184,16 +185,17 @@ p {
 .axyra-logo-title {
   font-family: var(--font-logo);
   font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--axyra-dark-blue);
+  font-weight: 800;
+  color: #ffffff;
   line-height: 1;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .axyra-logo-subtitle {
   font-family: var(--font-text);
   font-size: 0.875rem;
-  color: var(--axyra-blue-200);
-  font-weight: 300;
+  color: #94a3b8;
+  font-weight: 500;
   line-height: 1;
 }
 
@@ -204,23 +206,29 @@ p {
 }
 
 .axyra-nav-link {
-  color: var(--axyra-white);
+  color: #ffffff;
   text-decoration: none;
-  font-weight: 500;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--border-radius-sm);
-  transition: var(--transition-normal);
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
   position: relative;
+  border: 2px solid transparent;
 }
 
 .axyra-nav-link:hover {
-  color: var(--axyra-light-blue);
-  background: rgba(255, 255, 255, 0.1);
+  color: #2563eb;
+  background: #ffffff;
+  border-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .axyra-nav-link.active {
-  color: var(--axyra-light-blue);
-  background: rgba(76, 169, 255, 0.2);
+  color: #2563eb;
+  background: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .axyra-nav-link.active::after {
@@ -1367,39 +1375,109 @@ p {
 }
 
 /* ========================================
-   CORRECCIÓN DE COLORES CTA
+   DISEÑO PROFESIONAL Y ROBUSTO - CTA
    ======================================== */
 .axyra-cta-title {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   margin-bottom: var(--spacing-md);
-  color: var(--axyra-white) !important;
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #ffffff !important;
+  font-weight: 800;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  letter-spacing: -0.5px;
+  font-family: var(--font-logo);
 }
 
 .axyra-cta-subtitle {
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   margin-bottom: var(--spacing-xl);
-  color: var(--axyra-blue-100) !important;
-  opacity: 0.95;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  color: #ffffff !important;
+  font-weight: 500;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  opacity: 1;
+  line-height: 1.4;
 }
 
 /* ========================================
-   CORRECCIÓN DE COLORES HEADER
+   DISEÑO PROFESIONAL Y ROBUSTO - HEADER
    ======================================== */
 .axyra-header .axyra-btn-primary {
-  background: linear-gradient(135deg, var(--axyra-blue-600) 0%, var(--axyra-blue-800) 100%) !important;
-  color: var(--axyra-white) !important;
-  border: 2px solid var(--axyra-blue-600) !important;
-  font-weight: 600 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 3px solid #1d4ed8 !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+  font-size: 1rem !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
+  transition: all 0.3s ease !important;
+  letter-spacing: 0.5px !important;
 }
 
 .axyra-header .axyra-btn-primary:hover {
-  background: linear-gradient(135deg, var(--axyra-blue-700) 0%, var(--axyra-blue-900) 100%) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: var(--shadow-lg) !important;
+  background: #1d4ed8 !important;
+  border-color: #1e40af !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.6) !important;
+}
+
+.axyra-header .axyra-btn-primary:active {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
+}
+
+/* ========================================
+   DISEÑO PROFESIONAL - BOTONES PRINCIPALES
+   ======================================== */
+.axyra-btn-primary {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 3px solid #1d4ed8 !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4) !important;
+  transition: all 0.3s ease !important;
+  letter-spacing: 0.5px !important;
+}
+
+.axyra-btn-primary:hover {
+  background: #1d4ed8 !important;
+  border-color: #1e40af !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.6) !important;
+}
+
+.axyra-btn-secondary {
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  border: 3px solid #d1d5db !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.axyra-btn-secondary:hover {
+  background: #f3f4f6 !important;
+  border-color: #9ca3af !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.axyra-btn-outline {
+  background: transparent !important;
+  color: #2563eb !important;
+  border: 3px solid #2563eb !important;
+  font-weight: 600 !important;
+  text-shadow: none !important;
+  transition: all 0.3s ease !important;
+}
+
+.axyra-btn-outline:hover {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4) !important;
 }
 
 /* ========================================
@@ -1440,31 +1518,126 @@ p {
 }
 
 /* ========================================
-   MEJORAS EN BOTONES
+   DISEÑO PROFESIONAL - TARJETAS Y ELEMENTOS
    ======================================== */
 .axyra-quick-card {
-  background: var(--axyra-white);
-  border: 2px solid var(--axyra-blue-100);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-lg);
+  background: #ffffff;
+  border: 3px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
   text-align: center;
-  transition: var(--transition-normal);
+  transition: all 0.3s ease;
   cursor: pointer;
   text-decoration: none;
-  color: inherit;
+  color: #1f2937;
   display: block;
   width: 100%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-quick-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+  transition: left 0.5s ease;
 }
 
 .axyra-quick-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--axyra-blue-300);
-  background: linear-gradient(135deg, var(--axyra-blue-50) 0%, var(--axyra-white) 100%);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  border-color: #2563eb;
+  background: #f8fafc;
+}
+
+.axyra-quick-card:hover::before {
+  left: 100%;
 }
 
 .axyra-quick-card:active {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+}
+
+.axyra-quick-card h3 {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+  font-size: 1.2rem !important;
+  margin-bottom: 8px !important;
+}
+
+.axyra-quick-card p {
+  color: #6b7280 !important;
+  font-weight: 500 !important;
+  font-size: 0.95rem !important;
+}
+
+.axyra-quick-icon {
+  font-size: 2.5rem !important;
+  margin-bottom: 16px !important;
+  display: block !important;
+}
+
+/* ========================================
+   DISEÑO PROFESIONAL - TARJETAS DE FUNCIONALIDADES
+   ======================================== */
+.axyra-feature-card {
+  background: #ffffff;
+  border: 3px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #2563eb, #1d4ed8, #1e40af);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.axyra-feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+  border-color: #2563eb;
+}
+
+.axyra-feature-card:hover::before {
+  transform: scaleX(1);
+}
+
+.axyra-feature-card h3 {
+  color: #1f2937 !important;
+  font-weight: 700 !important;
+  font-size: 1.4rem !important;
+  margin-bottom: 16px !important;
+}
+
+.axyra-feature-card p {
+  color: #6b7280 !important;
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+  margin-bottom: 24px !important;
+}
+
+.axyra-feature-icon {
+  font-size: 3rem !important;
+  margin-bottom: 20px !important;
+  display: block !important;
 }
 
 /* ========================================
@@ -1568,4 +1741,103 @@ p {
 .axyra-register-footer .axyra-link:hover {
   color: var(--axyra-blue-700);
   text-decoration: underline;
+}
+
+/* ========================================
+   DISEÑO PROFESIONAL - SECCIÓN HERO
+   ======================================== */
+.axyra-hero {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+  padding: 120px 0 80px;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.3;
+}
+
+.axyra-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.axyra-hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  line-height: 1.1;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  letter-spacing: -1px;
+}
+
+.axyra-hero-highlight {
+  color: #2563eb;
+  text-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
+}
+
+.axyra-hero-subtitle {
+  font-size: 1.4rem;
+  margin-bottom: 40px;
+  color: #e2e8f0;
+  font-weight: 500;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.axyra-hero-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ========================================
+   DISEÑO PROFESIONAL - SECCIÓN CTA
+   ======================================== */
+.axyra-cta {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  padding: 80px 0;
+  color: #ffffff;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.axyra-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M 8 0 L 0 0 0 8" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.4;
+}
+
+.axyra-cta-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.axyra-cta-actions {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 40px;
 }
