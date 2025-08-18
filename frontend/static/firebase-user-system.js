@@ -87,7 +87,7 @@ class AXYRAFirebaseUserSystem {
         // Cargar datos del usuario después de guardar en localStorage
         setTimeout(() => {
           this.loadUserData(user.uid);
-        }, 100);
+        }, 500); // Aumentar el delay para evitar conflictos
         
       } else {
         // Verificar si hay sesión persistente antes de limpiar
@@ -305,25 +305,37 @@ class AXYRAFirebaseUserSystem {
 
     // Verificar sesión persistente en localStorage
     const savedUser = localStorage.getItem('axyra_firebase_user');
-    if (savedUser) {
+    const savedAxyraUser = localStorage.getItem('axyra_user');
+    
+    if (savedUser || savedAxyraUser) {
       try {
-        const userData = JSON.parse(savedUser);
-        const lastLogin = new Date(userData.lastLogin);
-        const now = new Date();
-        const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
+        const userData = savedUser ? JSON.parse(savedUser) : JSON.parse(savedAxyraUser);
+        
+        if (userData.lastLogin) {
+          const lastLogin = new Date(userData.lastLogin);
+          const now = new Date();
+          const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
 
-        // Sesión válida por 24 horas
-        if (hoursDiff < 24) {
-          console.log('✅ Sesión persistente encontrada:', userData.email);
-          return true;
+          // Sesión válida por 24 horas
+          if (hoursDiff < 24) {
+            console.log('✅ Sesión persistente encontrada:', userData.email || userData.username);
+            // Restaurar usuario actual
+            this.currentUser = userData;
+            return true;
+          } else {
+            console.log('⏰ Sesión expirada por tiempo');
+            this.clearSession();
+            return false;
+          }
         } else {
-          localStorage.removeItem('axyra_firebase_user');
-          localStorage.removeItem('axyra_user');
-          return false;
+          // Si no hay lastLogin, asumir que es válida
+          console.log('✅ Sesión persistente encontrada (sin timestamp)');
+          this.currentUser = userData;
+          return true;
         }
       } catch (error) {
-        localStorage.removeItem('axyra_firebase_user');
-        localStorage.removeItem('axyra_user');
+        console.error('❌ Error verificando sesión persistente:', error);
+        this.clearSession();
         return false;
       }
     }

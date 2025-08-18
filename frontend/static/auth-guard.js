@@ -33,9 +33,24 @@ class AXYRAAuthGuard {
     
     if (user || firebaseUser) {
       try {
-        this.currentUser = user ? JSON.parse(user) : JSON.parse(firebaseUser);
+        const userData = user ? JSON.parse(user) : JSON.parse(firebaseUser);
+        
+        // Verificar si la sesión no ha expirado (24 horas)
+        if (userData.lastLogin) {
+          const lastLogin = new Date(userData.lastLogin);
+          const now = new Date();
+          const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
+          
+          if (hoursDiff >= 24) {
+            console.log('⏰ Sesión expirada por tiempo, limpiando...');
+            this.clearSession();
+            return false;
+          }
+        }
+        
+        this.currentUser = userData;
         this.isAuthenticated = true;
-        console.log('✅ Usuario autenticado:', this.currentUser.email || this.currentUser.username);
+        console.log('✅ Usuario autenticado:', userData.email || userData.username);
         return true;
       } catch (error) {
         console.error('❌ Error parseando datos de usuario:', error);
@@ -73,10 +88,16 @@ class AXYRAAuthGuard {
 
   // Verificar acceso a módulo
   checkModuleAccess() {
-    if (this.isRouteProtected() && !this.isAuthenticated) {
-      console.log('🚫 Acceso denegado a módulo protegido');
-      this.redirectToLogin();
-      return false;
+    // Solo verificar si estamos en una ruta protegida
+    if (this.isRouteProtected()) {
+      // Verificar si hay sesión activa
+      const hasSession = this.checkAuthStatus();
+      
+      if (!hasSession) {
+        console.log('🚫 Acceso denegado a módulo protegido');
+        this.redirectToLogin();
+        return false;
+      }
     }
     return true;
   }
@@ -125,7 +146,9 @@ window.axyraAuthGuard = axyraAuthGuard;
 
 // Verificar acceso automáticamente en cada página
 document.addEventListener('DOMContentLoaded', () => {
-  if (axyraAuthGuard.isRouteProtected()) {
+  // Solo verificar en módulos protegidos, no en la página principal
+  if (axyraAuthGuard.isRouteProtected() && window.location.pathname !== '/index.html' && window.location.pathname !== '/') {
+    console.log('🛡️ Verificando acceso a módulo protegido...');
     axyraAuthGuard.checkModuleAccess();
   }
 });
