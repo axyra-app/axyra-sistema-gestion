@@ -469,15 +469,12 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
 
     <!-- AXYRA Scripts -->
-    <script src="static/environment-config.js"></script>
-    <script src="static/firebase-config.js"></script>
-    <script src="static/firebase-user-system.js"></script>
-    <script src="static/google-oauth-config.js"></script>
+    <script src="static/axyra-auth-api.js"></script>
 
     <script>
       // Verificar autenticación al cargar
       function checkAuth() {
-        if (window.axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+        if (window.axyraAuthAPI && window.axyraAuthAPI.isUserAuthenticated()) {
           window.location.href = 'modulos/dashboard/dashboard.html';
         }
       }
@@ -587,7 +584,6 @@
       async function login() {
         const usernameOrEmail = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
-        const twofaCode = document.getElementById('twofaCode').value.trim();
 
         if (!usernameOrEmail || !password) {
           showError('Por favor complete usuario/email y contraseña');
@@ -595,71 +591,24 @@
         }
 
         try {
-          // Verificar credenciales primero
-          let user = null;
+          // Usar la nueva API de autenticación
+          const result = await window.axyraAuthAPI.login({
+            usernameOrEmail: usernameOrEmail,
+            password: password
+          });
 
-          if (window.axyraUserSystem) {
-            // Intentar con Firebase primero
-            try {
-              const result = await window.axyraFirebaseUserSystem.signIn(usernameOrEmail, password);
-              if (result.success) {
-                user = result.user;
-              }
-            } catch (firebaseError) {
-              console.log('Firebase login falló, intentando con sistema local...');
-            }
-          }
-
-          // Si Firebase falló o no está disponible, usar sistema local
-          if (!user) {
-            const users = JSON.parse(localStorage.getItem('axyra_users') || '[]');
-            user = users.find((u) => 
-              (u.username === usernameOrEmail || u.email === usernameOrEmail) && 
-              u.password === password
-            );
-          }
-
-          if (!user) {
-            showError('Credenciales incorrectas. Verifica tu usuario/email y contraseña.');
-            return;
-          }
-
-          // Verificar si el usuario tiene 2FA habilitado
-          const twofaEnabled = localStorage.getItem('axyra_2fa_enabled') === 'true';
-          
-          if (twofaEnabled) {
-            // Mostrar campo 2FA si está habilitado
-            document.getElementById('twofaSection').style.display = 'block';
+          if (result.success) {
+            showSuccess('✅ Inicio de sesión exitoso. Redirigiendo...');
             
-            if (!twofaCode) {
-              showError('Por favor ingrese el código 2FA');
-              return;
-            }
-
-            // Verificar código 2FA simple (por ahora solo verificar que no esté vacío)
-            if (twofaCode.length !== 6) {
-              showError('El código 2FA debe tener 6 dígitos');
-              return;
-            }
-          }
-
-          // Crear sesión
-          if (window.axyraUserSystem) {
-            axyraUserSystem.createSession(user);
+            setTimeout(() => {
+              window.location.href = 'modulos/dashboard/dashboard.html';
+            }, 1500);
           } else {
-            // Agregar timestamp de login
-            user.lastLogin = new Date().toISOString();
-            localStorage.setItem('axyra_user', JSON.stringify(user));
+            showError(result.error);
           }
-
-          showSuccess('✅ Inicio de sesión exitoso. Redirigiendo...');
-
-          setTimeout(() => {
-            window.location.href = 'modulos/dashboard/dashboard.html';
-          }, 1500);
         } catch (error) {
           console.error('Error en login:', error);
-          showError('Error al iniciar sesión: ' + error.message);
+          showError('Error al iniciar sesión. Intenta nuevamente.');
         }
       }
 
