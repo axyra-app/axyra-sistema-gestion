@@ -358,6 +358,27 @@ class AXYRAFirebaseUserSystem {
     console.log('🏥 Estado del sistema:', health);
     return health;
   }
+
+  // Cerrar sesión
+  async signOut() {
+    try {
+      if (!this.isInitialized || !this.auth) {
+        console.warn('⚠️ Firebase no está disponible para cerrar sesión');
+        return { success: true };
+      }
+
+      await this.auth.signOut();
+      console.log('✅ Sesión de Firebase cerrada');
+      
+      // Limpiar usuario actual
+      this.currentUser = null;
+      
+      return { success: true };
+    } catch (error) {
+      console.error('❌ Error cerrando sesión de Firebase:', error);
+      return { success: false, error: error.message };
+    }
+  }
 }
 
 // Instancia global

@@ -8,8 +8,7 @@
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="../../static/dashboard-analytics.js"></script>
-    <script src="../../static/professional-user-system.js"></script>
+    <!-- Scripts removidos por limpieza del sistema -->
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
@@ -529,25 +528,26 @@
         try {
           console.log('🔄 Cerrando sesión...');
 
-          // Usar Firebase para cerrar sesión
-          if (window.axyraFirebaseUserSystem) {
-            await window.axyraFirebaseUserSystem.signOut();
-            console.log('✅ Sesión cerrada usando Firebase');
+          // Usar Firebase para cerrar sesión si está disponible
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.signOut) {
+            try {
+              await window.axyraFirebaseUserSystem.signOut();
+              console.log('✅ Sesión cerrada usando Firebase');
+            } catch (firebaseError) {
+              console.warn('⚠️ Error con Firebase logout, continuando con limpieza local:', firebaseError);
+            }
           }
 
-          // Limpiar todas las sesiones
+          // Limpiar todas las sesiones del localStorage
           localStorage.removeItem('axyra_user');
           localStorage.removeItem('axyra_firebase_user');
+          localStorage.removeItem('axyra_empleados');
+          localStorage.removeItem('axyra_horas');
+          localStorage.removeItem('axyra_nomina');
 
           // Limpiar variable global
           if (typeof currentUser !== 'undefined') {
             currentUser = null;
-          }
-
-          // Limpiar datos de Firebase
-          if (window.axyraFirebaseDataSystem) {
-            window.axyraFirebaseDataSystem.clearUserData();
-            console.log('✅ Datos de Firebase limpiados');
           }
 
           console.log('✅ Sesión cerrada completamente');
@@ -557,8 +557,7 @@
         } catch (error) {
           console.error('❌ Error al cerrar sesión:', error);
           // Forzar limpieza y redirección
-          localStorage.removeItem('axyra_user');
-          localStorage.removeItem('axyra_firebase_user');
+          localStorage.clear();
           window.location.href = '../../login.html';
         }
       }
