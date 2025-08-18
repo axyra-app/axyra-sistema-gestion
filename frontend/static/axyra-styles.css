@@ -160,7 +160,19 @@ p {
 .axyra-logo {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  gap: 16px;
+}
+
+.axyra-logo-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+}
+
+.axyra-logo-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .axyra-logo-icon {
@@ -203,6 +215,12 @@ p {
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
+}
+
+.axyra-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .axyra-nav-link {
@@ -1840,4 +1858,65 @@ p {
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 40px;
+}
+
+/* ========================================
+   DISEÑO PROFESIONAL - FOOTER MEJORADO
+   ======================================== */
+.axyra-footer-bottom-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.axyra-footer-copyright {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.axyra-footer-copyright p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.axyra-version {
+  background: #374151;
+  color: #d1d5db;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.axyra-footer-legal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.axyra-footer-link {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.axyra-footer-link:hover {
+  color: #2563eb;
+  background: #374151;
+}
+
+.axyra-footer-separator {
+  color: #6b7280;
+  font-weight: 600;
 }

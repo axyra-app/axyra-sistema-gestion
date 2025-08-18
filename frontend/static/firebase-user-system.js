@@ -55,39 +55,48 @@ class AXYRAFirebaseUserSystem {
     }
 
     this.auth.onAuthStateChanged((user) => {
+      console.log('🔄 Estado de autenticación cambiado:', user ? user.email : 'No autenticado');
+      
       if (user) {
         this.currentUser = user;
         console.log('✅ Usuario autenticado:', user.email);
-        this.loadUserData(user.uid);
-
+        
         // Guardar sesión en localStorage para persistencia
-        localStorage.setItem(
-          'axyra_firebase_user',
-          JSON.stringify({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            lastLogin: new Date().toISOString(),
-          })
-        );
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          lastLogin: new Date().toISOString(),
+        };
+        
+        localStorage.setItem('axyra_firebase_user', JSON.stringify(userData));
 
         // También guardar en axyra_user para compatibilidad
-        localStorage.setItem('axyra_user', JSON.stringify({
+        const axyraUserData = {
           username: user.email.split('@')[0],
           email: user.email,
           fullName: user.displayName || user.email.split('@')[0],
           lastLogin: new Date().toISOString(),
           isFirebaseUser: true,
           uid: user.uid
-        }));
+        };
+        
+        localStorage.setItem('axyra_user', JSON.stringify(axyraUserData));
+        
+        // Cargar datos del usuario después de guardar en localStorage
+        setTimeout(() => {
+          this.loadUserData(user.uid);
+        }, 100);
+        
       } else {
-        this.currentUser = null;
-        console.log('🔒 Usuario no autenticado');
-
-        // Limpiar sesión del localStorage
-        localStorage.removeItem('axyra_firebase_user');
-        localStorage.removeItem('axyra_user');
+        // Solo limpiar si realmente no hay usuario (no por timeout)
+        if (this.currentUser) {
+          console.log('🔒 Usuario desconectado, limpiando sesión');
+          this.currentUser = null;
+          localStorage.removeItem('axyra_firebase_user');
+          localStorage.removeItem('axyra_user');
+        }
       }
     });
   }

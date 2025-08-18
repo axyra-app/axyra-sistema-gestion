@@ -13,14 +13,20 @@
       <div class="axyra-container">
         <div class="axyra-header-content">
           <div class="axyra-logo">
-            <h1>🚀 AXYRA</h1>
-            <p>Sistema de Gestión Integral</p>
+            <img src="logo.png" alt="AXYRA Logo" class="axyra-logo-img">
+            <div class="axyra-logo-text">
+              <h1>AXYRA</h1>
+              <p>Sistema de Gestión Integral</p>
+            </div>
           </div>
           <nav class="axyra-nav">
             <a href="#inicio" class="axyra-nav-link">Inicio</a>
             <a href="#servicios" class="axyra-nav-link">Servicios</a>
             <a href="#contacto" class="axyra-nav-link">Contacto</a>
-            <a href="login.html" class="axyra-btn axyra-btn-primary" id="headerLoginBtn">Iniciar Sesión</a>
+            <div class="axyra-header-actions">
+              <a href="login.html" class="axyra-btn axyra-btn-secondary" id="headerLoginBtn">🔐 Iniciar Sesión</a>
+              <a href="register.html" class="axyra-btn axyra-btn-outline" id="headerRegisterBtn">📝 Registrarse</a>
+            </div>
           </nav>
         </div>
       </div>
@@ -176,16 +182,16 @@
 
         <div class="axyra-footer-bottom">
           <div class="axyra-footer-bottom-content">
-            <p>&copy; 2025 AXYRA. Todos los derechos reservados.</p>
-            <div class="axyra-footer-legal">
-              <span>•</span>
-              <button onclick="showPrivacyPolicy()">Política de Privacidad</button>
-              <span>•</span>
-              <button onclick="showTermsOfService()">Términos de Servicio</button>
-              <span>•</span>
-              <button onclick="showSupport()">Soporte Técnico</button>
-              <span>•</span>
+            <div class="axyra-footer-copyright">
+              <p>&copy; 2025 AXYRA. Todos los derechos reservados.</p>
               <span class="axyra-version">v2.1.0</span>
+            </div>
+            <div class="axyra-footer-legal">
+              <button onclick="showPrivacyPolicy()" class="axyra-footer-link">Política de Privacidad</button>
+              <span class="axyra-footer-separator">•</span>
+              <button onclick="showTermsOfService()" class="axyra-footer-link">Términos de Servicio</button>
+              <span class="axyra-footer-separator">•</span>
+              <button onclick="showSupport()" class="axyra-footer-link">Soporte Técnico</button>
             </div>
           </div>
         </div>
@@ -332,9 +338,10 @@
         const user = localStorage.getItem('axyra_user');
         const btnLogin = document.getElementById('btnLogin');
         const headerLoginBtn = document.getElementById('headerLoginBtn');
+        const headerRegisterBtn = document.getElementById('headerRegisterBtn');
 
         if (user) {
-          // Usuario logueado - cambiar botón por "Ir al Dashboard"
+          // Usuario logueado - cambiar botones por "Ir al Dashboard"
           if (btnLogin) {
             btnLogin.innerHTML = '🚀 Ir al Dashboard';
             btnLogin.onclick = () => window.location.href = 'modulos/dashboard/dashboard.html';
@@ -346,8 +353,12 @@
             headerLoginBtn.href = 'modulos/dashboard/dashboard.html';
             headerLoginBtn.className = 'axyra-btn axyra-btn-primary';
           }
+
+          if (headerRegisterBtn) {
+            headerRegisterBtn.style.display = 'none';
+          }
         } else {
-          // Usuario no logueado - mantener botón de login
+          // Usuario no logueado - mostrar botones de login y registro
           if (btnLogin) {
             btnLogin.innerHTML = '🔐 Iniciar Sesión';
             btnLogin.onclick = handleLoginClick;
@@ -357,7 +368,11 @@
           if (headerLoginBtn) {
             headerLoginBtn.innerHTML = '🔐 Iniciar Sesión';
             headerLoginBtn.href = 'login.html';
-            headerLoginBtn.className = 'axyra-btn axyra-btn-primary';
+            headerLoginBtn.className = 'axyra-btn axyra-btn-secondary';
+          }
+
+          if (headerRegisterBtn) {
+            headerRegisterBtn.style.display = 'inline-block';
           }
         }
       }
