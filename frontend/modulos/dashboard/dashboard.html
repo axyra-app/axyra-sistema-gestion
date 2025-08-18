@@ -485,33 +485,22 @@
                 return true;
               } else {
                 localStorage.removeItem('axyra_user');
+                localStorage.removeItem('axyra_firebase_user');
               }
             } catch (error) {
               localStorage.removeItem('axyra_user');
+              localStorage.removeItem('axyra_firebase_user');
             }
           }
 
-          // Verificar Firebase si está disponible y no está en modo simulado
+          // Verificar Firebase si está disponible
           if (
             window.axyraFirebaseUserSystem &&
-            window.axyraFirebaseUserSystem.hasActiveSession &&
-            !window.axyraFirebaseUserSystem.useSimulatedMode
+            window.axyraFirebaseUserSystem.hasActiveSession
           ) {
             try {
               currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
               console.log('✅ Usuario autenticado con Firebase:', currentUser.email);
-
-              // Guardar sesión en localStorage
-              localStorage.setItem(
-                'axyra_user',
-                JSON.stringify({
-                  username: currentUser.email.split('@')[0],
-                  email: currentUser.email,
-                  fullName: currentUser.displayName || currentUser.email.split('@')[0],
-                  lastLogin: new Date().toISOString(),
-                  isFirebaseUser: true,
-                })
-              );
 
               return true;
             } catch (error) {
@@ -1711,11 +1700,10 @@
           return; // checkAuth ya redirige al login
         }
 
-        // Configurar listener de cambios de autenticación (solo para Firebase real)
+        // Configurar listener de cambios de autenticación
         if (
           window.axyraFirebaseUserSystem &&
-          window.axyraFirebaseUserSystem.auth &&
-          !window.axyraFirebaseUserSystem.useSimulatedMode
+          window.axyraFirebaseUserSystem.auth
         ) {
           window.axyraFirebaseUserSystem.auth.onAuthStateChanged((user) => {
             if (!user) {

@@ -1,7 +1,7 @@
 /**
  * AXYRA Firebase User System
  * Sistema de usuarios basado en Firebase Authentication y Firestore
- * Versión: 1.0
+ * Versión: 2.0 - Sistema simplificado y estable
  */
 
 class AXYRAFirebaseUserSystem {
@@ -10,7 +10,6 @@ class AXYRAFirebaseUserSystem {
     this.db = null;
     this.currentUser = null;
     this.isInitialized = false;
-    this.useSimulatedMode = false; // Por defecto, usar Firebase real
 
     this.init();
   }
@@ -52,12 +51,23 @@ class AXYRAFirebaseUserSystem {
             lastLogin: new Date().toISOString(),
           })
         );
+
+        // También guardar en axyra_user para compatibilidad
+        localStorage.setItem('axyra_user', JSON.stringify({
+          username: user.email.split('@')[0],
+          email: user.email,
+          fullName: user.displayName || user.email.split('@')[0],
+          lastLogin: new Date().toISOString(),
+          isFirebaseUser: true,
+          uid: user.uid
+        }));
       } else {
         this.currentUser = null;
         console.log('🔒 Usuario no autenticado');
 
         // Limpiar sesión del localStorage
         localStorage.removeItem('axyra_firebase_user');
+        localStorage.removeItem('axyra_user');
       }
     });
   }
@@ -214,10 +224,12 @@ class AXYRAFirebaseUserSystem {
           return true;
         } else {
           localStorage.removeItem('axyra_firebase_user');
+          localStorage.removeItem('axyra_user');
           return false;
         }
       } catch (error) {
         localStorage.removeItem('axyra_firebase_user');
+        localStorage.removeItem('axyra_user');
         return false;
       }
     }
