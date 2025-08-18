@@ -254,7 +254,7 @@
           <p>Tienes derecho a acceder, corregir o eliminar tu información personal. Puedes ejercer estos derechos contactándonos directamente.</p>
           
           <h5>6. Contacto</h5>
-          <p>Si tienes preguntas sobre esta política, contáctanos en: <strong>axyr.app@gmail.com</strong></p>
+          <p>Si tienes preguntas sobre esta política, contáctanos en: <strong>axyra.app@gmail.com</strong></p>
         </div>
       </div>
     </div>
@@ -540,24 +540,234 @@
       
       // Sección ¿TIENES DUDAS?
       function contactarSoporte() {
-        window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank');
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>✉️ Escribenos</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>¿Tienes Dudas o Necesitas Ayuda?</h4>
+              
+              <h5>📧 Canales de Contacto</h5>
+              <ul>
+                <li><strong>Soporte Técnico:</strong> axyra.app@gmail.com</li>
+                <li><strong>Consultas Generales:</strong> axyra.app@gmail.com</li>
+                <li><strong>Implementación:</strong> axyra.app@gmail.com</li>
+                <li><strong>Facturación:</strong> axyra.app@gmail.com</li>
+              </ul>
+              
+              <h5>⏰ Tiempos de Respuesta</h5>
+              <ul>
+                <li><strong>Urgencias:</strong> 2-4 horas</li>
+                <li><strong>Consultas Técnicas:</strong> 24 horas</li>
+                <li><strong>Implementaciones:</strong> 48-72 horas</li>
+                <li><strong>Mejoras del Sistema:</strong> 1 semana</li>
+              </ul>
+              
+              <h5>🔧 Tipos de Soporte</h5>
+              <ul>
+                <li>Configuración inicial del sistema</li>
+                <li>Migración de datos existentes</li>
+                <li>Capacitación de usuarios</li>
+                <li>Resolución de problemas técnicos</li>
+                <li>Personalizaciones específicas</li>
+                <li>Integración con otros sistemas</li>
+              </ul>
+              
+              <div class="axyra-modal-actions">
+                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank')">
+                  📧 Contactar Ahora
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
       }
       
       function enviarFeedback() {
-        window.open('mailto:axyra.app@gmail.com?subject=Feedback AXYRA', '_blank');
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>📡 Enviar Feedback</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>Tu Opinión es Valiosa para Nosotros</h4>
+              
+              <h5>💡 ¿Qué Puedes Reportar?</h5>
+              <ul>
+                <li><strong>Bugs o Errores:</strong> Problemas que encuentres en el sistema</li>
+                <li><strong>Sugerencias:</strong> Ideas para mejorar la funcionalidad</li>
+                <li><strong>Nuevas Características:</strong> Funcionalidades que te gustaría ver</li>
+                <li><strong>Experiencia de Usuario:</strong> Qué te gusta y qué no del sistema</li>
+                <li><strong>Rendimiento:</strong> Problemas de velocidad o lentitud</li>
+              </ul>
+              
+              <h5>📝 Cómo Enviar Feedback Efectivo</h5>
+              <ol>
+                <li><strong>Describe el problema:</strong> Sé específico sobre qué está pasando</li>
+                <li><strong>Pasos para reproducir:</strong> Cómo llegaste al problema</li>
+                <li><strong>Resultado esperado:</strong> Qué debería pasar</li>
+                <li><strong>Resultado actual:</strong> Qué está pasando realmente</li>
+                <li><strong>Capturas de pantalla:</strong> Si es posible, adjunta imágenes</li>
+              </ol>
+              
+              <h5>🎯 Categorías de Feedback</h5>
+              <ul>
+                <li>Interfaz de usuario</li>
+                <li>Funcionalidades del sistema</li>
+                <li>Rendimiento y velocidad</li>
+                <li>Documentación y ayuda</li>
+                <li>Integración con otros sistemas</li>
+                <li>Reportes y análisis</li>
+              </ul>
+              
+              <div class="axyra-modal-actions">
+                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Feedback AXYRA', '_blank')">
+                  📧 Enviar Feedback
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
       }
       
       // Sección NOSOTROS
       function quienesSomos() {
-        alert('AXYRA es un sistema de gestión empresarial completo y eficiente, diseñado para optimizar todos los procesos de tu empresa.');
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>🚀 Quiénes Somos</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>AXYRA - Sistema de Gestión Empresarial</h4>
+              <p><strong>AXYRA</strong> es una plataforma integral de gestión empresarial diseñada para optimizar todos los procesos de tu empresa.</p>
+              
+              <h5>🎯 Nuestra Misión</h5>
+              <p>Simplificar la gestión empresarial mediante tecnología innovadora que conecte empleados, procesos y datos en una sola plataforma.</p>
+              
+              <h5>💡 Nuestros Valores</h5>
+              <ul>
+                <li><strong>Innovación:</strong> Tecnología de vanguardia para tu empresa</li>
+                <li><strong>Simplicidad:</strong> Interfaz intuitiva y fácil de usar</li>
+                <li><strong>Confiabilidad:</strong> Sistema estable y seguro</li>
+                <li><strong>Eficiencia:</strong> Optimización de todos los procesos</li>
+              </ul>
+              
+              <h5>📈 Beneficios</h5>
+              <ul>
+                <li>Gestión centralizada de empleados</li>
+                <li>Control preciso de horas trabajadas</li>
+                <li>Liquidación automática de nóminas</li>
+                <li>Análisis financiero en tiempo real</li>
+                <li>Reportes detallados y personalizables</li>
+              </ul>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
       }
       
       function centroAyuda() {
-        window.open('mailto:axyra.app@gmail.com?subject=Centro de Ayuda AXYRA', '_blank');
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>🆘 Centro de Ayuda</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>¿Necesitas Ayuda con AXYRA?</h4>
+              
+              <h5>📧 Contacto Directo</h5>
+              <p>Para soporte técnico inmediato, contáctanos en: <strong>axyra.app@gmail.com</strong></p>
+              
+              <h5>🔧 Problemas Comunes</h5>
+              <ul>
+                <li><strong>Acceso al sistema:</strong> Verifica tu email y contraseña</li>
+                <li><strong>Módulos no cargan:</strong> Recarga la página y verifica tu conexión</li>
+                <li><strong>Datos no se guardan:</strong> Asegúrate de tener conexión a internet</li>
+                <li><strong>Reportes no generan:</strong> Verifica que tengas datos en el sistema</li>
+              </ul>
+              
+              <h5>📚 Recursos Adicionales</h5>
+              <ul>
+                <li>Manual de usuario detallado</li>
+                <li>Videos tutoriales paso a paso</li>
+                <li>FAQ con preguntas frecuentes</li>
+                <li>Soporte técnico especializado</li>
+              </ul>
+              
+              <div class="axyra-modal-actions">
+                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank')">
+                  📧 Contactar Soporte
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
       }
       
       function comoFunciona() {
-        alert('AXYRA funciona como un ecosistema integrado que conecta empleados, horas, nómina y finanzas en una sola plataforma.');
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>⚙️ Cómo Funciona AXYRA</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>Ecosistema Integrado de Gestión Empresarial</h4>
+              
+              <h5>🔄 Flujo de Trabajo</h5>
+              <ol>
+                <li><strong>Registro de Empleados:</strong> Crea y gestiona perfiles completos</li>
+                <li><strong>Control de Horas:</strong> Registra entrada/salida y horas extras</li>
+                <li><strong>Liquidación de Nómina:</strong> Cálculo automático con recargos</li>
+                <li><strong>Análisis Financiero:</strong> Reportes y cuadres de caja</li>
+                <li><strong>Configuración:</strong> Personaliza parámetros del sistema</li>
+              </ol>
+              
+              <h5>🔗 Módulos Integrados</h5>
+              <ul>
+                <li><strong>Dashboard:</strong> Vista general de toda la empresa</li>
+                <li><strong>Empleados:</strong> Gestión completa del personal</li>
+                <li><strong>Horas:</strong> Control preciso del tiempo trabajado</li>
+                <li><strong>Nómina:</strong> Liquidación automática de salarios</li>
+                <li><strong>Cuadre de Caja:</strong> Control financiero detallado</li>
+                <li><strong>Configuración:</strong> Ajustes del sistema</li>
+              </ul>
+              
+              <h5>💡 Características Destacadas</h5>
+              <ul>
+                <li>Sincronización en tiempo real</li>
+                <li>Backup automático de datos</li>
+                <li>Interfaz responsive para móviles</li>
+                <li>Reportes exportables en PDF</li>
+                <li>Seguridad de nivel empresarial</li>
+              </ul>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
       }
       
       function terminosCondiciones() {
@@ -565,11 +775,97 @@
       }
       
       function garantiaSatisfaccion() {
-        alert('AXYRA funciona como un ecosistema integrado que conecta empleados, horas, nómina y finanzas en una sola plataforma.');
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>✅ Garantía de Satisfacción</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>Tu Satisfacción es Nuestra Prioridad</h4>
+              
+              <h5>🎯 Compromiso de Calidad</h5>
+              <p>En AXYRA, garantizamos que nuestro sistema cumpla con las más altas expectativas de calidad y funcionalidad.</p>
+              
+              <h5>🔒 Garantías Incluidas</h5>
+              <ul>
+                <li><strong>Funcionalidad:</strong> Sistema operativo 99.9% del tiempo</li>
+                <li><strong>Seguridad:</strong> Protección de datos de nivel empresarial</li>
+                <li><strong>Rendimiento:</strong> Respuesta rápida en todas las operaciones</li>
+                <li><strong>Soporte:</strong> Asistencia técnica disponible 24/7</li>
+                <li><strong>Actualizaciones:</strong> Mejoras continuas sin costo adicional</li>
+              </ul>
+              
+              <h5>📞 Proceso de Resolución</h5>
+              <ol>
+                <li>Reporta el problema a nuestro equipo</li>
+                <li>Recibe confirmación en menos de 2 horas</li>
+                <li>Nuestro equipo trabaja en la solución</li>
+                <li>Te mantenemos informado del progreso</li>
+                <li>Verificamos que la solución funcione</li>
+              </ol>
+              
+              <h5>💬 Si No Estás Satisfecho</h5>
+              <p>Si por alguna razón no estás completamente satisfecho con AXYRA, trabajaremos contigo hasta resolver cualquier problema. Tu éxito es nuestro éxito.</p>
+              
+              <div class="axyra-modal-actions">
+                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Garantía de Satisfacción', '_blank')">
+                  📧 Contactar Soporte
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
       }
       
       function blogAxyra() {
-        alert('Próximamente: Blog de AXYRA con tips de gestión empresarial y novedades del sistema.');
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>📝 AXYRA Blog</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>Próximamente: Blog de AXYRA</h4>
+              
+              <h5>🚀 Contenido que Estamos Preparando</h5>
+              <ul>
+                <li><strong>Tips de Gestión Empresarial:</strong> Mejores prácticas para optimizar tu empresa</li>
+                <li><strong>Novedades del Sistema:</strong> Actualizaciones y nuevas funcionalidades</li>
+                <li><strong>Casos de Éxito:</strong> Historias reales de empresas que usan AXYRA</li>
+                <li><strong>Tutoriales Avanzados:</strong> Guías paso a paso para usuarios expertos</li>
+                <li><strong>Noticias del Sector:</strong> Tendencias en gestión empresarial</li>
+              </ul>
+              
+              <h5>📧 Suscríbete para Notificaciones</h5>
+              <p>Recibe notificaciones cuando publiquemos nuevo contenido en nuestro blog. Envía un email a <strong>axyra.app@gmail.com</strong> con el asunto "Suscripción Blog".</p>
+              
+              <h5>🎯 Temas que Cubriremos</h5>
+              <ul>
+                <li>Gestión eficiente de empleados</li>
+                <li>Optimización de procesos de nómina</li>
+                <li>Control de costos laborales</li>
+                <li>Análisis financiero empresarial</li>
+                <li>Automatización de procesos</li>
+                <li>Compliance y normativas laborales</li>
+              </ul>
+              
+              <div class="axyra-modal-actions">
+                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Suscripción Blog AXYRA', '_blank')">
+                  📧 Suscribirse al Blog
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
       }
       
       // Sección NUESTROS SERVICIOS
