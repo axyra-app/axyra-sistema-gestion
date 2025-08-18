@@ -468,26 +468,65 @@
         try {
           console.log('🔐 Verificando autenticación...');
 
-          // Esperar a que Firebase se inicialice
+          // Esperar a que Firebase se inicialice completamente
           let attempts = 0;
-          while (!window.axyraFirebaseUserSystem && attempts < 10) {
-            await new Promise(resolve => setTimeout(resolve, 500));
+          const maxAttempts = 20; // Aumentar intentos
+          
+          while (attempts < maxAttempts) {
+            // Verificar si Firebase está disponible
+            if (window.axyraFirebase && window.axyraFirebase.auth && window.axyraFirebaseUserSystem) {
+              console.log('✅ Firebase completamente inicializado');
+              break;
+            }
+            
+            console.log(`⏳ Esperando Firebase... Intento ${attempts + 1}/${maxAttempts}`);
+            await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperar 1 segundo
             attempts++;
           }
 
+          if (attempts >= maxAttempts) {
+            console.error('❌ Firebase no se inicializó después de 20 segundos');
+            // Intentar usar sesión persistente como fallback
+            const savedUser = localStorage.getItem('axyra_firebase_user');
+            if (savedUser) {
+              try {
+                const userData = JSON.parse(savedUser);
+                const lastLogin = new Date(userData.lastLogin);
+                const now = new Date();
+                const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
+
+                if (hoursDiff < 24) {
+                  console.log('✅ Usando sesión persistente como fallback:', userData.email);
+                  currentUser = userData;
+                  return true;
+                }
+              } catch (error) {
+                console.error('Error con sesión persistente:', error);
+              }
+            }
+            
+            // Si no hay fallback, redirigir al login
+            console.log('⚠️ No hay sesión válida - redirigiendo al login');
+            window.location.href = '../../login.html';
+            return false;
+          }
+
           // Verificar sesión usando Firebase
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+          if (window.axyraFirebaseUserSystem.hasActiveSession()) {
             currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
             console.log('✅ Usuario autenticado con Firebase:', currentUser.email);
-            
+
             // Guardar sesión en localStorage para persistencia
-            localStorage.setItem('axyra_user', JSON.stringify({
-              username: currentUser.email.split('@')[0],
-              email: currentUser.email,
-              fullName: currentUser.displayName || currentUser.email.split('@')[0],
-              isFirebaseUser: true
-            }));
-            
+            localStorage.setItem(
+              'axyra_user',
+              JSON.stringify({
+                username: currentUser.email.split('@')[0],
+                email: currentUser.email,
+                fullName: currentUser.displayName || currentUser.email.split('@')[0],
+                isFirebaseUser: true,
+              })
+            );
+
             return true;
           }
 
@@ -547,7 +586,7 @@
           // Limpiar todas las sesiones
           localStorage.removeItem('axyra_user');
           localStorage.removeItem('axyra_firebase_user');
-          
+
           // Limpiar variable global
           if (typeof currentUser !== 'undefined') {
             currentUser = null;
@@ -560,7 +599,7 @@
           }
 
           console.log('✅ Sesión cerrada completamente');
-          
+
           // Redirigir al login
           window.location.href = '../../login.html';
         } catch (error) {
@@ -1696,10 +1735,25 @@
         mostrarMensaje('✅ Configuración guardada', 'success');
       }
 
+      // Función de debug para verificar estado del sistema
+      function debugSystemStatus() {
+        console.log('🔍 === DEBUG DEL SISTEMA ===');
+        console.log('Firebase disponible:', !!window.axyraFirebase);
+        console.log('Firebase Auth:', !!window.axyraFirebase?.auth);
+        console.log('Firebase User System:', !!window.axyraFirebaseUserSystem);
+        console.log('Current User:', currentUser);
+        console.log('LocalStorage axyra_user:', localStorage.getItem('axyra_user'));
+        console.log('LocalStorage axyra_firebase_user:', localStorage.getItem('axyra_firebase_user'));
+        console.log('============================');
+      }
+
       // Inicialización
       window.addEventListener('load', async () => {
         // Inicializar dashboard
-        console.log('✅ Inicializando dashboard...');
+        console.log('🚀 AXYRA Dashboard cargando...');
+
+        // Debug del sistema
+        debugSystemStatus();
 
         // Verificar autenticación
         const isAuthenticated = await checkAuth();
@@ -1707,13 +1761,17 @@
           return; // checkAuth ya redirige al login
         }
 
+        // Debug después de autenticación
+        debugSystemStatus();
+
         // Configurar listener de cambios de autenticación
         if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.auth) {
           window.axyraFirebaseUserSystem.auth.onAuthStateChanged((user) => {
+            console.log('🔄 Estado de autenticación cambiado:', user ? 'Usuario conectado' : 'Usuario desconectado');
             if (!user) {
               console.log('⚠️ Usuario desconectado, redirigiendo al login');
-              localStorage.removeItem('axyra_user');
               localStorage.removeItem('axyra_firebase_user');
+              localStorage.removeItem('axyra_user');
               window.location.href = '../../login.html';
             }
           });
@@ -1742,6 +1800,8 @@
 
         // Actualizar estado de seguridad cada 30 segundos
         setInterval(updateSecurityStatus, 30000);
+
+        console.log('✅ Dashboard completamente inicializado');
       });
     </script>
 
