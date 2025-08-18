@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AXYRA - Configuración General</title>
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="../../static/work-areas-config.js"></script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="axyra-header">
+      <div class="axyra-header-content">
+        <div class="axyra-logo">
+          <div class="axyra-logo-icon">
+            <i class="fas fa-cog"></i>
+          </div>
+          <div class="axyra-logo-text">
+            <div class="axyra-logo-title">AXYRA</div>
+            <div class="axyra-logo-subtitle">Configuración General</div>
+          </div>
+        </div>
+        <nav class="axyra-nav">
+          <a href="../../index.html" class="axyra-nav-link"> <i class="fas fa-home"></i> Inicio </a>
+          <a href="../dashboard/dashboard.html" class="axyra-nav-link">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </a>
+          <a href="../empleados/empleados.html" class="axyra-nav-link"> <i class="fas fa-users"></i> Empleados </a>
+          <a href="../horas/gestionar_horas.html" class="axyra-nav-link"> <i class="fas fa-clock"></i> Horas </a>
+          <a href="../nomina/gestionar_nomina.html" class="axyra-nav-link">
+            <i class="fas fa-file-invoice-dollar"></i> Nómina
+          </a>
+          <a href="../cuadre_caja/cuadre_caja.html" class="axyra-nav-link">
+            <i class="fas fa-calculator"></i> Cuadre de Caja
+          </a>
+          <a href="configuracion.html" class="axyra-nav-link active"> <i class="fas fa-cog"></i> Configuración </a>
+          <button class="axyra-btn axyra-btn-ghost" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="axyra-section">
+      <div class="axyra-container">
+        <div class="axyra-page-header">
+          <h1 class="axyra-page-title">Configuración General del Sistema</h1>
+          <p class="axyra-page-subtitle">Personaliza todos los parámetros y configuraciones de AXYRA</p>
+        </div>
+
+        <!-- Configuración de Empresa -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-building"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Información de la Empresa</h3>
+              <p class="axyra-card-subtitle">Datos básicos de la empresa</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <form id="formEmpresa" class="axyra-form">
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="nombreEmpresa" class="axyra-form-label">Nombre de la Empresa</label>
+                  <input type="text" id="nombreEmpresa" name="nombreEmpresa" class="axyra-form-input" required />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="nitEmpresa" class="axyra-form-label">NIT</label>
+                  <input type="text" id="nitEmpresa" name="nitEmpresa" class="axyra-form-input" required />
+                </div>
+              </div>
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="direccionEmpresa" class="axyra-form-label">Dirección</label>
+                  <input type="text" id="direccionEmpresa" name="direccionEmpresa" class="axyra-form-input" required />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="telefonoEmpresa" class="axyra-form-label">Teléfono</label>
+                  <input type="tel" id="telefonoEmpresa" name="telefonoEmpresa" class="axyra-form-input" />
+                </div>
+              </div>
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="emailEmpresa" class="axyra-form-label">Email</label>
+                  <input type="email" id="emailEmpresa" name="emailEmpresa" class="axyra-form-input" />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="sitioWebEmpresa" class="axyra-form-label">Sitio Web</label>
+                  <input type="url" id="sitioWebEmpresa" name="sitioWebEmpresa" class="axyra-form-input" />
+                </div>
+              </div>
+              <div class="axyra-form-actions">
+                <button type="submit" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-save"></i> Guardar Empresa
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Configuración de Nómina -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Configuración de Nómina</h3>
+              <p class="axyra-card-subtitle">Parámetros para el cálculo de salarios</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <form id="formNomina" class="axyra-form">
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="salarioMinimo" class="axyra-form-label">Salario Mínimo Legal (COP)</label>
+                  <input type="number" id="salarioMinimo" name="salarioMinimo" class="axyra-form-input" required />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="auxilioTransporte" class="axyra-form-label">Auxilio de Transporte (COP)</label>
+                  <input
+                    type="number"
+                    id="auxilioTransporte"
+                    name="auxilioTransporte"
+                    class="axyra-form-input"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="porcentajeSalud" class="axyra-form-label">Porcentaje Salud (%)</label>
+                  <input
+                    type="number"
+                    id="porcentajeSalud"
+                    name="porcentajeSalud"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="porcentajePension" class="axyra-form-label">Porcentaje Pensión (%)</label>
+                  <input
+                    type="number"
+                    id="porcentajePension"
+                    name="porcentajePension"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="horasEstandar" class="axyra-form-label">Horas Estándar por Mes</label>
+                  <input type="number" id="horasEstandar" name="horasEstandar" class="axyra-form-input" required />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="periodoNomina" class="axyra-form-label">Período de Nómina</label>
+                  <select id="periodoNomina" name="periodoNomina" class="axyra-form-select" required>
+                    <option value="quincenal">Quincenal</option>
+                    <option value="mensual">Mensual</option>
+                    <option value="semanal">Semanal</option>
+                  </select>
+                </div>
+              </div>
+              <div class="axyra-form-actions">
+                <button type="submit" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-save"></i> Guardar Nómina
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Configuración de Recargos -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-percentage"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Recargos por Tipo de Hora</h3>
+              <p class="axyra-card-subtitle">Porcentajes según legislación colombiana 2025</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <form id="formRecargos" class="axyra-form">
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="recargoNocturno" class="axyra-form-label">Recargo Nocturno (%)</label>
+                  <input
+                    type="number"
+                    id="recargoNocturno"
+                    name="recargoNocturno"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="recargoDominical" class="axyra-form-label">Recargo Dominical (%)</label>
+                  <input
+                    type="number"
+                    id="recargoDominical"
+                    name="recargoDominical"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="recargoExtraDiurna" class="axyra-form-label">Recargo Extra Diurna (%)</label>
+                  <input
+                    type="number"
+                    id="recargoExtraDiurna"
+                    name="recargoExtraDiurna"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="recargoExtraNocturna" class="axyra-form-label">Recargo Extra Nocturna (%)</label>
+                  <input
+                    type="number"
+                    id="recargoExtraNocturna"
+                    name="recargoExtraNocturna"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="recargoFestivo" class="axyra-form-label">Recargo Festivo (%)</label>
+                  <input
+                    type="number"
+                    id="recargoFestivo"
+                    name="recargoFestivo"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="recargoDominicalNocturno" class="axyra-form-label">Recargo Dominical Nocturno (%)</label>
+                  <input
+                    type="number"
+                    id="recargoDominicalNocturno"
+                    name="recargoDominicalNocturno"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="axyra-form-actions">
+                <button type="submit" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-save"></i> Guardar Recargos
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Configuración de Facturación -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-receipt"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Configuración de Facturación</h3>
+              <p class="axyra-card-subtitle">Métodos de pago y configuraciones</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <form id="formFacturacion" class="axyra-form">
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="metodosPago" class="axyra-form-label">Métodos de Pago</label>
+                  <div class="axyra-checkbox-group">
+                    <label class="axyra-checkbox">
+                      <input type="checkbox" name="metodosPago" value="efectivo" checked />
+                      <span>Efectivo</span>
+                    </label>
+                    <label class="axyra-checkbox">
+                      <input type="checkbox" name="metodosPago" value="transferencia" checked />
+                      <span>Transferencia</span>
+                    </label>
+                    <label class="axyra-checkbox">
+                      <input type="checkbox" name="metodosPago" value="datafono" checked />
+                      <span>Datafono</span>
+                    </label>
+                    <label class="axyra-checkbox">
+                      <input type="checkbox" name="metodosPago" value="qr" checked />
+                      <span>QR</span>
+                    </label>
+                    <label class="axyra-checkbox">
+                      <input type="checkbox" name="metodosPago" value="cheque" />
+                      <span>Cheque</span>
+                    </label>
+                  </div>
+                </div>
+                <div class="axyra-form-group">
+                  <label for="serieFactura" class="axyra-form-label">Serie de Factura</label>
+                  <input
+                    type="text"
+                    id="serieFactura"
+                    name="serieFactura"
+                    class="axyra-form-input"
+                    placeholder="FAC-001"
+                  />
+                </div>
+              </div>
+              <div class="axyra-form-actions">
+                <button type="submit" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-save"></i> Guardar Facturación
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Configuración del Sistema -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-cogs"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Configuración del Sistema</h3>
+              <p class="axyra-card-subtitle">Preferencias generales</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <form id="formSistema" class="axyra-form">
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="zonaHoraria" class="axyra-form-label">Zona Horaria</label>
+                  <select id="zonaHoraria" name="zonaHoraria" class="axyra-form-select" required>
+                    <option value="America/Bogota">Bogotá (UTC-5)</option>
+                    <option value="America/New_York">Nueva York (UTC-5)</option>
+                    <option value="America/Los_Angeles">Los Ángeles (UTC-8)</option>
+                    <option value="Europe/Madrid">Madrid (UTC+1)</option>
+                  </select>
+                </div>
+                <div class="axyra-form-group">
+                  <label for="formatoFecha" class="axyra-form-label">Formato de Fecha</label>
+                  <select id="formatoFecha" name="formatoFecha" class="axyra-form-select" required>
+                    <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                    <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                    <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                  </select>
+                </div>
+              </div>
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="idioma" class="axyra-form-label">Idioma</label>
+                  <select id="idioma" name="idioma" class="axyra-form-select" required>
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                  </select>
+                </div>
+                <div class="axyra-form-group">
+                  <label for="tema" class="axyra-form-label">Tema</label>
+                  <select id="tema" name="tema" class="axyra-form-select" required>
+                    <option value="light">Claro</option>
+                    <option value="dark">Oscuro</option>
+                    <option value="auto">Automático</option>
+                  </select>
+                </div>
+              </div>
+              <div class="axyra-form-actions">
+                <button type="submit" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-save"></i> Guardar Sistema
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Configuración de Áreas de Trabajo -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Configuración de Áreas de Trabajo</h3>
+              <p class="axyra-card-subtitle">Personaliza las áreas de trabajo según tu empresa</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <div data-axyra-area-config="manager"></div>
+          </div>
+        </div>
+
+        <!-- Acciones del Sistema -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-tools"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Acciones del Sistema</h3>
+              <p class="axyra-card-subtitle">Mantenimiento y utilidades</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <div class="axyra-actions-bar">
+              <button class="axyra-btn axyra-btn-info" onclick="exportarConfiguracion()">
+                <i class="fas fa-download"></i> Exportar Configuración
+              </button>
+              <button class="axyra-btn axyra-btn-warning" onclick="importarConfiguracion()">
+                <i class="fas fa-upload"></i> Importar Configuración
+              </button>
+              <button class="axyra-btn axyra-btn-secondary" onclick="restaurarValoresPorDefecto()">
+                <i class="fas fa-undo"></i> Restaurar Valores por Defecto
+              </button>
+              <button class="axyra-btn axyra-btn-error" onclick="limpiarDatos()">
+                <i class="fas fa-trash"></i> Limpiar Todos los Datos
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="axyra-footer">
+      <div class="axyra-container">
+        <div class="axyra-footer-content">
+          <p>&copy; 2025 AXYRA. Sistema de Gestión Empresarial.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Verificar autenticación
+      function checkAuth() {
+        const user = localStorage.getItem('axyra_user');
+        if (!user) {
+          window.location.href = '../../login.html';
+        }
+      }
+
+      // Cerrar sesión
+      function logout() {
+        localStorage.removeItem('axyra_user');
+        window.location.href = '../../login.html';
+      }
+
+      // Cargar configuración
+      function cargarConfiguracion() {
+        const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
+
+        // Cargar datos de empresa
+        document.getElementById('nombreEmpresa').value = config.nombreEmpresa || '';
+        document.getElementById('nitEmpresa').value = config.nitEmpresa || '';
+        document.getElementById('direccionEmpresa').value = config.direccionEmpresa || '';
+        document.getElementById('telefonoEmpresa').value = config.telefonoEmpresa || '';
+        document.getElementById('emailEmpresa').value = config.emailEmpresa || '';
+        document.getElementById('sitioWebEmpresa').value = config.sitioWebEmpresa || '';
+
+        // Cargar datos de nómina
+        document.getElementById('salarioMinimo').value = config.salarioMinimo || '1423500';
+        document.getElementById('auxilioTransporte').value = config.auxilioTransporte || '100000';
+        document.getElementById('porcentajeSalud').value = config.porcentajeSalud || '4';
+        document.getElementById('porcentajePension').value = config.porcentajePension || '4';
+        document.getElementById('horasEstandar').value = config.horasEstandar || '160';
+        document.getElementById('periodoNomina').value = config.periodoNomina || 'quincenal';
+
+        // Cargar recargos
+        document.getElementById('recargoNocturno').value = config.recargoNocturno || '35';
+        document.getElementById('recargoDominical').value = config.recargoDominical || '75';
+        document.getElementById('recargoExtraDiurna').value = config.recargoExtraDiurna || '25';
+        document.getElementById('recargoExtraNocturna').value = config.recargoExtraNocturna || '75';
+        document.getElementById('recargoFestivo').value = config.recargoFestivo || '75';
+        document.getElementById('recargoDominicalNocturno').value = config.recargoDominicalNocturno || '110';
+
+        // Cargar sistema
+        document.getElementById('zonaHoraria').value = config.zonaHoraria || 'America/Bogota';
+        document.getElementById('formatoFecha').value = config.formatoFecha || 'DD/MM/YYYY';
+        document.getElementById('idioma').value = config.idioma || 'es';
+        document.getElementById('tema').value = config.tema || 'light';
+      }
+
+      // Guardar configuración de empresa
+      document.getElementById('formEmpresa').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
+
+        config.nombreEmpresa = formData.get('nombreEmpresa');
+        config.nitEmpresa = formData.get('nitEmpresa');
+        config.direccionEmpresa = formData.get('direccionEmpresa');
+        config.telefonoEmpresa = formData.get('telefonoEmpresa');
+        config.emailEmpresa = formData.get('emailEmpresa');
+        config.sitioWebEmpresa = formData.get('sitioWebEmpresa');
+
+        localStorage.setItem('axyra_configuracion', JSON.stringify(config));
+        mostrarMensaje('✅ Configuración de empresa guardada', 'success');
+      });
+
+      // Guardar configuración de nómina
+      document.getElementById('formNomina').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
+
+        config.salarioMinimo = formData.get('salarioMinimo');
+        config.auxilioTransporte = formData.get('auxilioTransporte');
+        config.porcentajeSalud = formData.get('porcentajeSalud');
+        config.porcentajePension = formData.get('porcentajePension');
+        config.horasEstandar = formData.get('horasEstandar');
+        config.periodoNomina = formData.get('periodoNomina');
+
+        localStorage.setItem('axyra_configuracion', JSON.stringify(config));
+        mostrarMensaje('✅ Configuración de nómina guardada', 'success');
+      });
+
+      // Guardar recargos
+      document.getElementById('formRecargos').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
+
+        config.recargoNocturno = formData.get('recargoNocturno');
+        config.recargoDominical = formData.get('recargoDominical');
+        config.recargoExtraDiurna = formData.get('recargoExtraDiurna');
+        config.recargoExtraNocturna = formData.get('recargoExtraNocturna');
+        config.recargoFestivo = formData.get('recargoFestivo');
+        config.recargoDominicalNocturno = formData.get('recargoDominicalNocturno');
+
+        localStorage.setItem('axyra_configuracion', JSON.stringify(config));
+        mostrarMensaje('✅ Recargos guardados', 'success');
+      });
+
+      // Guardar configuración del sistema
+      document.getElementById('formSistema').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
+
+        config.zonaHoraria = formData.get('zonaHoraria');
+        config.formatoFecha = formData.get('formatoFecha');
+        config.idioma = formData.get('idioma');
+        config.tema = formData.get('tema');
+
+        localStorage.setItem('axyra_configuracion', JSON.stringify(config));
+        mostrarMensaje('✅ Configuración del sistema guardada', 'success');
+      });
+
+      // Exportar configuración
+      function exportarConfiguracion() {
+        const config = localStorage.getItem('axyra_configuracion');
+        const blob = new Blob([config], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `axyra_config_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        mostrarMensaje('✅ Configuración exportada', 'success');
+      }
+
+      // Importar configuración
+      function importarConfiguracion() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              try {
+                const config = JSON.parse(e.target.result);
+                localStorage.setItem('axyra_configuracion', JSON.stringify(config));
+                cargarConfiguracion();
+                mostrarMensaje('✅ Configuración importada', 'success');
+              } catch (error) {
+                mostrarMensaje('❌ Error al importar configuración', 'error');
+              }
+            };
+            reader.readAsText(file);
+          }
+        };
+        input.click();
+      }
+
+      // Restaurar valores por defecto
+      function restaurarValoresPorDefecto() {
+        if (confirm('¿Estás seguro de que quieres restaurar todos los valores por defecto?')) {
+          localStorage.removeItem('axyra_configuracion');
+          cargarConfiguracion();
+          mostrarMensaje('✅ Valores por defecto restaurados', 'success');
+        }
+      }
+
+      // Limpiar datos
+      function limpiarDatos() {
+        if (confirm('⚠️ ADVERTENCIA: Esta acción eliminará TODOS los datos del sistema. ¿Estás seguro?')) {
+          const keys = [
+            'axyra_empleados',
+            'axyra_horas',
+            'axyra_nominas',
+            'axyra_comprobantes',
+            'axyra_historial',
+            'axyra_cuadre_caja',
+            'axyra_facturas',
+          ];
+
+          keys.forEach((key) => localStorage.removeItem(key));
+          mostrarMensaje('✅ Todos los datos han sido eliminados', 'success');
+        }
+      }
+
+      // Mostrar mensajes
+      function mostrarMensaje(mensaje, tipo = 'info') {
+        const mensajeDiv = document.createElement('div');
+        mensajeDiv.className = `axyra-message axyra-${tipo}-message`;
+        mensajeDiv.innerHTML = `
+          <div class="axyra-message-content">
+            <span class="axyra-message-text">${mensaje}</span>
+            <button class="axyra-message-close" onclick="this.parentElement.parentElement.remove()">×</button>
+          </div>
+        `;
+
+        document.body.appendChild(mensajeDiv);
+
+        setTimeout(() => {
+          if (mensajeDiv.parentElement) {
+            mensajeDiv.remove();
+          }
+        }, 5000);
+      }
+
+      // Inicialización
+      window.addEventListener('load', () => {
+        checkAuth();
+        cargarConfiguracion();
+      });
+    </script>
+
+    <style>
+      .axyra-checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+
+      .axyra-checkbox {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        cursor: pointer;
+      }
+
+      .axyra-checkbox input[type='checkbox'] {
+        width: 18px;
+        height: 18px;
+      }
+
+      .axyra-checkbox span {
+        font-size: 0.9rem;
+        color: var(--axyra-gray-700);
+      }
+    </style>
+  </body>
+</html>

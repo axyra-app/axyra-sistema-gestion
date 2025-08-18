@@ -1,0 +1,781 @@
+<!-- frontend/cuadre_caja.html -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AXYRA - Cuadre de Caja</title>
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="../../static/work-areas-config.js"></script>
+    <script src="../../static/cash-reconciliation-export.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <!-- AXYRA Firebase Scripts -->
+    <script src="../../static/firebase-config.js"></script>
+    <script src="../../static/firebase-user-system.js"></script>
+    <script src="../../static/firebase-data-system.js"></script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="axyra-header">
+      <div class="axyra-header-content">
+        <div class="axyra-logo">
+          <div class="axyra-logo-icon">
+            <i class="fas fa-calculator"></i>
+          </div>
+          <div class="axyra-logo-text">
+            <div class="axyra-logo-title">AXYRA</div>
+            <div class="axyra-logo-subtitle">Cuadre de Caja</div>
+          </div>
+        </div>
+        <nav class="axyra-nav">
+          <a href="../../index.html" class="axyra-nav-link"> <i class="fas fa-home"></i> Inicio </a>
+          <a href="../dashboard/dashboard.html" class="axyra-nav-link">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </a>
+          <a href="../empleados/empleados.html" class="axyra-nav-link"> <i class="fas fa-users"></i> Empleados </a>
+          <a href="../horas/gestionar_horas.html" class="axyra-nav-link"> <i class="fas fa-clock"></i> Horas </a>
+          <a href="../nomina/gestionar_nomina.html" class="axyra-nav-link">
+            <i class="fas fa-file-invoice-dollar"></i> Nómina
+          </a>
+          <a href="cuadre_caja.html" class="axyra-nav-link active">
+            <i class="fas fa-calculator"></i> Cuadre de Caja
+          </a>
+          <a href="../configuracion/configuracion.html" class="axyra-nav-link">
+            <i class="fas fa-cog"></i> Configuración
+          </a>
+          <button class="axyra-btn axyra-btn-ghost" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="axyra-section">
+      <div class="axyra-container">
+        <div class="axyra-page-header">
+          <h1 class="axyra-page-title">Cuadre de Caja</h1>
+          <p class="axyra-page-subtitle">Registro de ingresos por factura individual y control de caja</p>
+        </div>
+
+        <!-- Registrar Nueva Factura -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-file-invoice"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Registrar Nueva Factura</h3>
+              <p class="axyra-card-subtitle">Ingresa los datos de la factura</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <form id="formFactura" class="axyra-form">
+              <div class="axyra-form-grid">
+                <div class="axyra-form-group">
+                  <label class="axyra-form-label">Fecha</label>
+                  <input type="date" id="fecha" class="axyra-form-input" required />
+                </div>
+                <div class="axyra-form-group">
+                  <label class="axyra-form-label">Encargado</label>
+                  <input
+                    type="text"
+                    id="encargado"
+                    class="axyra-form-input"
+                    placeholder="Nombre del encargado"
+                    required
+                  />
+                </div>
+                <div class="axyra-form-group">
+                  <label class="axyra-form-label">Número de Factura</label>
+                  <input type="text" id="numeroFactura" class="axyra-form-input" placeholder="Ej: 3945" required />
+                </div>
+                <div class="axyra-form-group">
+                  <label class="axyra-form-label">Área</label>
+                  <select id="area" class="axyra-form-select" required data-axyra-area-config="select">
+                    <option value="">Seleccionar área</option>
+                  </select>
+                </div>
+                <div class="axyra-form-group">
+                  <label class="axyra-form-label">Monto</label>
+                  <input
+                    type="number"
+                    id="monto"
+                    class="axyra-form-input"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0"
+                    required
+                  />
+                </div>
+                <div class="axyra-form-group">
+                  <label class="axyra-form-label">Método de Pago</label>
+                  <select id="metodoPago" class="axyra-form-select" required>
+                    <option value="">Seleccionar método</option>
+                    <option value="efectivo">Efectivo</option>
+                    <option value="transferencia">Transferencia</option>
+                    <option value="datafono">Datafono</option>
+                    <option value="qr">QR</option>
+                    <option value="cheque">Cheque</option>
+                  </select>
+                </div>
+                <div class="axyra-form-group">
+                  <label class="axyra-form-label">Descripción</label>
+                  <textarea
+                    id="descripcion"
+                    class="axyra-form-textarea"
+                    placeholder="Descripción de la factura"
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="axyra-form-actions">
+                <button type="submit" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-save"></i> Registrar Factura
+                </button>
+                <button type="button" class="axyra-btn axyra-btn-secondary" onclick="limpiarFormulario()">
+                  <i class="fas fa-eraser"></i> Limpiar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Resumen del Día -->
+        <div class="axyra-grid axyra-grid-2">
+          <div class="axyra-card">
+            <div class="axyra-card-header">
+              <div class="axyra-card-icon">
+                <i class="fas fa-chart-pie"></i>
+              </div>
+              <div>
+                <h3 class="axyra-card-title">Resumen del Día</h3>
+                <p class="axyra-card-subtitle">Total de ingresos y facturas</p>
+              </div>
+            </div>
+            <div class="axyra-card-content">
+              <div class="axyra-stats-grid">
+                <div class="axyra-stat-card">
+                  <div class="axyra-stat-icon">
+                    <i class="fas fa-file-invoice"></i>
+                  </div>
+                  <div class="axyra-stat-number" id="totalFacturas">0</div>
+                  <div class="axyra-stat-label">Total Facturas</div>
+                </div>
+                <div class="axyra-stat-card">
+                  <div class="axyra-stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                  </div>
+                  <div class="axyra-stat-number" id="totalIngresos">$0</div>
+                  <div class="axyra-stat-label">Total Ingresos</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="axyra-card">
+            <div class="axyra-card-header">
+              <div class="axyra-card-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div>
+                <h3 class="axyra-card-title">Última Factura</h3>
+                <p class="axyra-card-subtitle">Información de la última factura registrada</p>
+              </div>
+            </div>
+            <div class="axyra-card-content">
+              <div id="ultimaFactura" class="axyra-text-center">
+                <i class="fas fa-file-invoice" style="font-size: 3rem; color: var(--axyra-blue-200)"></i>
+                <p>No hay facturas registradas</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historial de Facturas -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-history"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Historial de Facturas</h3>
+              <p class="axyra-card-subtitle">Todas las facturas registradas</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <div class="axyra-actions-bar">
+              <button class="axyra-btn axyra-btn-info" onclick="exportarFacturas()">
+                <i class="fas fa-download"></i> Exportar Facturas
+              </button>
+              <button class="axyra-btn axyra-btn-success" onclick="exportarCuadreCaja()">
+                <i class="fas fa-file-excel"></i> Exportar Cuadre de Caja
+              </button>
+              <button class="axyra-btn axyra-btn-warning" onclick="limpiarHistorial()">
+                <i class="fas fa-trash"></i> Limpiar Historial
+              </button>
+            </div>
+
+            <div class="axyra-table-container">
+              <table class="axyra-table" id="facturasTable">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Número</th>
+                    <th>Encargado</th>
+                    <th>Área</th>
+                    <th>Monto</th>
+                    <th>Método de Pago</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="facturasTableBody">
+                  <!-- Las facturas se cargarán dinámicamente -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="axyra-footer">
+      <div class="axyra-container">
+        <div class="axyra-footer-content">
+          <p>&copy; 2025 AXYRA. Sistema de Gestión Empresarial.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Verificar autenticación
+      async function checkAuth() {
+        try {
+          console.log('🔐 Verificando autenticación en cuadre de caja...');
+
+          // Verificar sesión usando Firebase
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            const currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+            console.log('✅ Usuario autenticado con Firebase en cuadre de caja:', currentUser.email);
+            return true;
+          }
+
+          // Verificar sesión usando localStorage como fallback
+          const user = localStorage.getItem('axyra_user');
+          if (user) {
+            try {
+              const userData = JSON.parse(user);
+              if (userData && (userData.username || userData.email)) {
+                console.log(
+                  '✅ Usuario autenticado con localStorage en cuadre de caja:',
+                  userData.username || userData.email
+                );
+                return true;
+              }
+            } catch (error) {
+              console.error('Error parseando sesión de localStorage:', error);
+            }
+          }
+
+          // No hay sesión activa
+          console.log('⚠️ No hay sesión activa en cuadre de caja - redirigiendo al login');
+          window.location.href = '../../login.html';
+          return false;
+        } catch (error) {
+          console.error('❌ Error al verificar sesión en cuadre de caja:', error);
+          window.location.href = '../../login.html';
+          return false;
+        }
+      }
+
+      // Cerrar sesión
+      async function logout() {
+        try {
+          console.log('🔄 Cerrando sesión...');
+
+          // Usar Firebase para cerrar sesión
+          if (window.axyraFirebaseUserSystem) {
+            await window.axyraFirebaseUserSystem.signOut();
+            console.log('✅ Sesión cerrada usando Firebase');
+          } else {
+            // Fallback si no hay Firebase
+            localStorage.removeItem('axyra_user');
+            console.log('✅ Sesión cerrada usando fallback');
+          }
+
+          // Limpiar datos de Firebase
+          if (window.axyraFirebaseDataSystem) {
+            window.axyraFirebaseDataSystem.clearUserData();
+            console.log('✅ Datos de Firebase limpiados');
+          }
+
+          // Redirigir al login
+          window.location.href = '../../login.html';
+        } catch (error) {
+          console.error('❌ Error al cerrar sesión:', error);
+          // Forzar limpieza y redirección
+          localStorage.removeItem('axyra_user');
+          window.location.href = '../../login.html';
+        }
+      }
+
+      // Variables globales
+      let facturas = [];
+      let monedaActual = 'COP';
+
+      // Inicialización
+      window.addEventListener('load', async () => {
+        try {
+          console.log('🚀 AXYRA Cuadre de Caja inicializando...');
+
+          // Verificar autenticación
+          const isAuthenticated = await checkAuth();
+
+          if (isAuthenticated) {
+            console.log('✅ Usuario autenticado, cargando cuadre de caja...');
+
+            // Cargar facturas
+            await cargarFacturas();
+
+            // Cargar resumen y configuración
+            cargarResumen();
+            cargarConfiguracion();
+
+            console.log('✅ Módulo de cuadre de caja cargado correctamente');
+          } else {
+            console.log('❌ Usuario no autenticado, redirigiendo al login...');
+            window.location.href = '../../login.html';
+          }
+        } catch (error) {
+          console.error('❌ Error inicializando módulo de cuadre de caja:', error);
+          window.location.href = '../../login.html';
+        }
+      });
+
+      // Cargar facturas desde Firebase o localStorage
+      async function cargarFacturas() {
+        try {
+          console.log('📊 Cargando facturas...');
+
+          // Obtener usuario actual
+          let currentUser = null;
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+            console.log('✅ Usuario Firebase en cuadre de caja:', currentUser.email);
+          } else {
+            // Fallback a localStorage
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser) {
+            console.log('⚠️ No hay usuario autenticado en cuadre de caja');
+            facturas = [];
+            mostrarFacturas();
+            return;
+          }
+
+          // Intentar cargar desde Firebase primero
+          if (window.axyraFirebaseDataSystem && currentUser.uid) {
+            console.log('🔥 Cargando facturas desde Firebase...');
+
+            try {
+              facturas = await window.axyraFirebaseDataSystem.getInvoices();
+              console.log(`✅ Facturas cargadas desde Firebase: ${facturas.length}`);
+            } catch (firebaseError) {
+              console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
+            }
+          }
+
+          // Fallback a localStorage si Firebase falló o no está disponible
+          if (facturas.length === 0) {
+            console.log('💾 Cargando facturas desde localStorage...');
+            facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+
+            // Filtrar facturas por usuario actual si es necesario
+            if (currentUser.username || currentUser.email) {
+              const userId = currentUser.username || currentUser.email;
+              facturas = facturas.filter((factura) => factura.userId === userId);
+              console.log(`✅ Facturas filtradas para usuario ${userId}: ${facturas.length}`);
+            }
+          }
+
+          mostrarFacturas();
+        } catch (error) {
+          console.error('❌ Error cargando facturas:', error);
+          facturas = [];
+          mostrarFacturas();
+        }
+      }
+
+      // Mostrar facturas en la tabla
+      function mostrarFacturas() {
+        const tbody = document.getElementById('facturasTableBody');
+        if (facturas.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" class="axyra-text-center">No hay facturas registradas</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = facturas
+          .map(
+            (factura) => `
+          <tr>
+            <td>${formatearFecha(factura.fecha)}</td>
+            <td>${factura.numero}</td>
+            <td>${factura.encargado}</td>
+            <td>${factura.area}</td>
+            <td>${formatearMoneda(factura.monto)}</td>
+            <td>${factura.metodoPago || '-'}</td>
+            <td>${factura.descripcion || '-'}</td>
+            <td>
+              <button class="axyra-btn axyra-btn-danger axyra-btn-small" onclick="eliminarFactura('${factura.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `
+          )
+          .join('');
+      }
+
+      // Formatear fecha
+      function formatearFecha(fecha) {
+        return new Date(fecha).toLocaleDateString('es-CO');
+      }
+
+      // Formatear moneda
+      function formatearMoneda(monto) {
+        const simbolos = { COP: '$', USD: '$', EUR: '€' };
+        const simbolo = simbolos[monedaActual];
+        return `${simbolo}${parseFloat(monto).toLocaleString('es-CO', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+      }
+
+      // Cargar resumen del día
+      function cargarResumen() {
+        const hoy = new Date().toISOString().split('T')[0];
+        const facturasHoy = facturas.filter((f) => f.fecha === hoy);
+
+        document.getElementById('totalFacturas').textContent = facturasHoy.length;
+        const totalIngresos = facturasHoy.reduce((total, f) => total + parseFloat(f.monto), 0);
+        document.getElementById('totalIngresos').textContent = formatearMoneda(totalIngresos);
+
+        // Mostrar última factura
+        if (facturas.length > 0) {
+          const ultima = facturas[facturas.length - 1];
+          document.getElementById('ultimaFactura').innerHTML = `
+            <div class="axyra-activity-item">
+              <div class="axyra-activity-icon">
+                <i class="fas fa-file-invoice"></i>
+              </div>
+              <div class="axyra-activity-content">
+                <div class="axyra-activity-title">Factura #${ultima.numero}</div>
+                <div class="axyra-activity-time">${ultima.encargado} - ${formatearMoneda(ultima.monto)}</div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      // Cambiar moneda
+      function cambiarMoneda(moneda) {
+        document.querySelectorAll('.axyra-currency-option').forEach((option) => {
+          option.classList.remove('active');
+        });
+
+        // Encontrar la opción seleccionada y marcarla como activa
+        const opcionSeleccionada = document.querySelector(`.axyra-currency-option[onclick*="${moneda}"]`);
+        if (opcionSeleccionada) {
+          opcionSeleccionada.classList.add('active');
+        }
+
+        monedaActual = moneda;
+        localStorage.setItem('axyra_moneda', moneda);
+
+        mostrarFacturas();
+        cargarResumen();
+
+        mostrarMensaje(`✅ Moneda cambiada a ${moneda}`, 'success');
+      }
+
+      // Cargar configuración
+      function cargarConfiguracion() {
+        const moneda = localStorage.getItem('axyra_moneda') || 'COP';
+        cambiarMoneda(moneda);
+      }
+
+      // Registrar factura
+      document.getElementById('formFactura').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const factura = {
+          id: Date.now().toString(),
+          fecha: document.getElementById('fecha').value,
+          encargado: document.getElementById('encargado').value,
+          numero: document.getElementById('numeroFactura').value,
+          area: document.getElementById('area').value,
+          monto: document.getElementById('monto').value,
+          metodoPago: document.getElementById('metodoPago').value,
+          descripcion: document.getElementById('descripcion').value,
+        };
+
+        facturas.unshift(factura);
+        localStorage.setItem('axyra_facturas', JSON.stringify(facturas));
+
+        mostrarFacturas();
+        cargarResumen();
+        limpiarFormulario();
+
+        mostrarMensaje('✅ Factura registrada correctamente', 'success');
+      });
+
+      // Limpiar formulario
+      function limpiarFormulario() {
+        document.getElementById('formFactura').reset();
+        document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+      }
+
+      // Eliminar factura
+      function eliminarFactura(id) {
+        if (confirm('¿Estás seguro de que deseas eliminar esta factura?')) {
+          facturas = facturas.filter((f) => f.id !== id);
+          localStorage.setItem('axyra_facturas', JSON.stringify(facturas));
+
+          mostrarFacturas();
+          cargarResumen();
+
+          mostrarMensaje('✅ Factura eliminada correctamente', 'success');
+        }
+      }
+
+      // Exportar facturas en formato Excel profesional
+      function exportarFacturas() {
+        if (facturas.length === 0) {
+          mostrarMensaje('❌ No hay facturas para exportar', 'warning');
+          return;
+        }
+
+        try {
+          // Verificar si SheetJS está disponible
+          if (typeof XLSX === 'undefined') {
+            mostrarMensaje('❌ Librería Excel no disponible. Generando CSV...', 'warning');
+            exportarFacturasCSV();
+            return;
+          }
+
+          // Crear contenido del Excel
+          const excelContent = [];
+
+          // Título principal
+          excelContent.push(['REPORTE DE FACTURAS - VILLA VENECIA']);
+          excelContent.push([]);
+
+          // Información de la empresa
+          excelContent.push(['EMPRESA:', 'VILLA VENECIA']);
+          excelContent.push(['NIT:', '901.234.567-8']);
+          excelContent.push(['FECHA DE EXPORTACIÓN:', new Date().toLocaleDateString('es-CO')]);
+          excelContent.push(['TOTAL FACTURAS:', facturas.length]);
+          excelContent.push([]);
+
+          // Encabezados de la tabla
+          excelContent.push(['Fecha', 'Número', 'Encargado', 'Área', 'Monto', 'Método de Pago', 'Descripción']);
+
+          // Datos de las facturas
+          facturas.forEach((factura) => {
+            excelContent.push([
+              formatearFecha(factura.fecha),
+              factura.numero,
+              factura.encargado,
+              factura.area,
+              factura.monto,
+              factura.metodoPago || '',
+              factura.descripcion || '',
+            ]);
+          });
+
+          excelContent.push([]);
+
+          // Resumen por área
+          excelContent.push(['RESUMEN POR ÁREA']);
+          excelContent.push(['Área', 'Total Ventas', 'Cantidad Facturas']);
+
+          const resumenAreas = {};
+          facturas.forEach((factura) => {
+            const area = factura.area || 'SIN ÁREA';
+            if (!resumenAreas[area]) {
+              resumenAreas[area] = { total: 0, cantidad: 0 };
+            }
+            resumenAreas[area].total += parseFloat(factura.monto) || 0;
+            resumenAreas[area].cantidad += 1;
+          });
+
+          Object.keys(resumenAreas).forEach((area) => {
+            excelContent.push([area, resumenAreas[area].total, resumenAreas[area].cantidad]);
+          });
+
+          excelContent.push([]);
+
+          // Resumen por método de pago
+          excelContent.push(['RESUMEN POR MÉTODO DE PAGO']);
+          excelContent.push(['Método', 'Total']);
+
+          const resumenMetodos = {};
+          facturas.forEach((factura) => {
+            const metodo = factura.metodoPago || 'NO ESPECIFICADO';
+            if (!resumenMetodos[metodo]) {
+              resumenMetodos[metodo] = 0;
+            }
+            resumenMetodos[metodo] += parseFloat(factura.monto) || 0;
+          });
+
+          Object.keys(resumenMetodos).forEach((metodo) => {
+            excelContent.push([metodo, resumenMetodos[metodo]]);
+          });
+
+          excelContent.push([]);
+
+          // Totales finales
+          const totalIngresos = facturas.reduce((total, factura) => total + (parseFloat(factura.monto) || 0), 0);
+          excelContent.push(['TOTALES FINALES']);
+          excelContent.push(['Concepto', 'Valor']);
+          excelContent.push(['Total Facturas', facturas.length]);
+          excelContent.push(['Total Ingresos', totalIngresos]);
+          excelContent.push([
+            'Promedio por Factura',
+            facturas.length > 0 ? (totalIngresos / facturas.length).toFixed(2) : 0,
+          ]);
+
+          // Crear archivo Excel
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.aoa_to_sheet(excelContent);
+
+          // Agregar hoja al libro
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Facturas');
+
+          // Generar archivo Excel
+          XLSX.writeFile(workbook, `FACTURAS_VILLA_VENECIA_${new Date().toISOString().split('T')[0]}.xlsx`);
+
+          mostrarMensaje('✅ Facturas exportadas en Excel correctamente', 'success');
+        } catch (error) {
+          console.error('Error exportando facturas:', error);
+          mostrarMensaje('❌ Error exportando facturas. Generando CSV...', 'error');
+          exportarFacturasCSV();
+        }
+      }
+
+      // Función de respaldo para CSV
+      function exportarFacturasCSV() {
+        let csv = 'Fecha,Número,Encargado,Área,Monto,Método de Pago,Descripción\n';
+        facturas.forEach((factura) => {
+          csv += `"${formatearFecha(factura.fecha)}","${factura.numero}","${factura.encargado}","${factura.area}",${
+            factura.monto
+          },"${factura.metodoPago || ''}","${factura.descripcion || ''}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `facturas_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        mostrarMensaje('✅ Facturas exportadas en CSV correctamente', 'success');
+      }
+
+      // Exportar cuadre de caja en formato exacto al Excel
+      function exportarCuadreCaja() {
+        if (axyraCashExport) {
+          axyraCashExport.generateCashReconciliationReport();
+        } else {
+          mostrarMensaje('❌ Sistema de exportación no disponible', 'error');
+        }
+      }
+
+      // Limpiar historial
+      function limpiarHistorial() {
+        if (confirm('¿Estás seguro de que deseas limpiar todo el historial? Esta acción no se puede deshacer.')) {
+          facturas = [];
+          localStorage.removeItem('axyra_facturas');
+
+          mostrarFacturas();
+          cargarResumen();
+
+          mostrarMensaje('✅ Historial limpiado correctamente', 'success');
+        }
+      }
+
+      // Mostrar mensajes del sistema
+      function mostrarMensaje(mensaje, tipo = 'info') {
+        const mensajeDiv = document.createElement('div');
+        mensajeDiv.className = `axyra-message axyra-${tipo}-message`;
+        mensajeDiv.innerHTML = `
+          <div class="axyra-message-content">
+            <span class="axyra-message-text">${mensaje}</span>
+            <button class="axyra-message-close" onclick="this.parentElement.parentElement.remove()">×</button>
+          </div>
+        `;
+
+        document.body.appendChild(mensajeDiv);
+
+        setTimeout(() => {
+          if (mensajeDiv.parentElement) {
+            mensajeDiv.remove();
+          }
+        }, 5000);
+      }
+    </script>
+
+    <style>
+      .axyra-currency-info {
+        text-align: center;
+        padding: var(--spacing-lg);
+      }
+
+      .axyra-currency-display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--spacing-md);
+        margin-bottom: var(--spacing-md);
+        font-size: 1.1rem;
+      }
+
+      .axyra-currency-flag {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .axyra-currency-description {
+        color: var(--axyra-gray-600);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin: 0;
+      }
+    </style>
+  </body>
+</html>

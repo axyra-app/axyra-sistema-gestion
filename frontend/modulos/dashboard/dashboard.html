@@ -1,0 +1,2716 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AXYRA - Dashboard</title>
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../../static/dashboard-analytics.js"></script>
+    <script src="../../static/professional-user-system.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <!-- AXYRA Firebase Scripts -->
+    <script src="../../static/firebase-config.js"></script>
+    <script src="../../static/firebase-user-system.js"></script>
+    <script src="../../static/firebase-data-system.js"></script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="axyra-header">
+      <div class="axyra-header-content">
+        <div class="axyra-logo">
+          <div class="axyra-logo-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="axyra-logo-text">
+            <div class="axyra-logo-title">AXYRA</div>
+            <div class="axyra-logo-subtitle">Dashboard</div>
+          </div>
+        </div>
+
+        <nav class="axyra-nav">
+          <a href="../../index.html" class="axyra-nav-link" onclick="irAInicio(event)">
+            <i class="fas fa-home"></i> Inicio
+          </a>
+          <a href="dashboard.html" class="axyra-nav-link active"> <i class="fas fa-tachometer-alt"></i> Dashboard </a>
+          <a href="../empleados/empleados.html" class="axyra-nav-link"> <i class="fas fa-users"></i> Empleados </a>
+          <a href="../horas/gestionar_horas.html" class="axyra-nav-link"> <i class="fas fa-clock"></i> Horas </a>
+          <a href="../nomina/gestionar_nomina.html" class="axyra-nav-link">
+            <i class="fas fa-file-invoice-dollar"></i> Nómina
+          </a>
+          <a href="../cuadre_caja/cuadre_caja.html" class="axyra-nav-link">
+            <i class="fas fa-calculator"></i> Cuadre de Caja
+          </a>
+          <a href="../configuracion/configuracion.html" class="axyra-nav-link">
+            <i class="fas fa-cog"></i> Configuración
+          </a>
+          <button class="axyra-btn axyra-btn-ghost" onclick="irAInicio(event)">
+            <i class="fas fa-home"></i> Inicio
+          </button>
+          <button class="axyra-btn axyra-btn-ghost" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="axyra-section">
+      <div class="axyra-container">
+        <div class="axyra-page-header">
+          <h1 class="axyra-page-title">Dashboard</h1>
+          <p class="axyra-page-subtitle">Resumen general de tu empresa y estadísticas importantes</p>
+        </div>
+
+        <!-- Mensaje de Bienvenida -->
+        <div class="axyra-welcome-card" id="welcomeCard">
+          <div class="axyra-welcome-icon">
+            <i class="fas fa-sun"></i>
+          </div>
+          <div class="axyra-welcome-content">
+            <h2 class="axyra-welcome-title" id="welcomeTitle">¡Bienvenido a AXYRA!</h2>
+            <p class="axyra-welcome-message" id="welcomeMessage">
+              Esperamos que tengas un excelente día gestionando tu empresa
+            </p>
+            <div class="axyra-welcome-time" id="welcomeTime"></div>
+          </div>
+        </div>
+
+        <!-- Estadísticas Principales -->
+        <div class="axyra-stats-grid">
+          <div class="axyra-stat-card clickable" onclick="mostrarDetalleEmpleados()">
+            <div class="axyra-stat-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="axyra-stat-number" id="totalEmpleados">0</div>
+            <div class="axyra-stat-label">Total Empleados</div>
+            <div class="axyra-stat-hint">Click para ver detalles</div>
+          </div>
+
+          <div class="axyra-stat-card clickable" onclick="mostrarDetalleHoras()">
+            <div class="axyra-stat-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="axyra-stat-number" id="horasTrabajadas">0</div>
+            <div class="axyra-stat-label">Horas Trabajadas</div>
+            <div class="axyra-stat-hint">Click para ver detalles</div>
+          </div>
+
+          <div class="axyra-stat-card clickable" onclick="mostrarDetalleComprobantes()">
+            <div class="axyra-stat-icon">
+              <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div class="axyra-stat-number" id="comprobantesGenerados">0</div>
+            <div class="axyra-stat-label">Comprobantes</div>
+            <div class="axyra-stat-hint">Click para ver detalles</div>
+          </div>
+
+          <div class="axyra-stat-card clickable" onclick="mostrarDetalleSalarios()">
+            <div class="axyra-stat-icon">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="axyra-stat-number" id="totalSalarios">$0</div>
+            <div class="axyra-stat-label">Total Salarios</div>
+            <div class="axyra-stat-hint">Click para ver detalles</div>
+          </div>
+        </div>
+
+        <!-- Indicadores de Productividad -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Indicadores de Productividad</h3>
+              <p class="axyra-card-subtitle">Métricas de eficiencia y rendimiento</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <div id="productivityIndicators">
+              <!-- Los indicadores se cargan dinámicamente -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráficos y Análisis -->
+        <div class="axyra-grid axyra-grid-2">
+          <div class="axyra-card">
+            <div class="axyra-card-header">
+              <div class="axyra-card-icon">
+                <i class="fas fa-chart-pie"></i>
+              </div>
+              <div>
+                <h3 class="axyra-card-title">Distribución de Empleados</h3>
+                <p class="axyra-card-subtitle">Por departamento</p>
+              </div>
+            </div>
+            <div class="axyra-card-content">
+              <div id="employeeDistributionChart" style="height: 300px"></div>
+            </div>
+          </div>
+
+          <div class="axyra-card">
+            <div class="axyra-card-header">
+              <div class="axyra-card-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div>
+                <h3 class="axyra-card-title">Tendencia de Horas</h3>
+                <p class="axyra-card-subtitle">Por mes</p>
+              </div>
+            </div>
+            <div class="axyra-card-content">
+              <div id="hoursTrendChart" style="height: 300px"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="axyra-grid axyra-grid-2">
+          <div class="axyra-card">
+            <div class="axyra-card-header">
+              <div class="axyra-card-icon">
+                <i class="fas fa-chart-bar"></i>
+              </div>
+              <div>
+                <h3 class="axyra-card-title">Distribución de Salarios</h3>
+                <p class="axyra-card-subtitle">Por departamento</p>
+              </div>
+            </div>
+            <div class="axyra-card-content">
+              <div id="salaryDistributionChart" style="height: 300px"></div>
+            </div>
+          </div>
+
+          <div class="axyra-card">
+            <div class="axyra-card-header">
+              <div class="axyra-card-icon">
+                <i class="fas fa-chart-area"></i>
+              </div>
+              <div>
+                <h3 class="axyra-card-title">Métricas de Productividad</h3>
+                <p class="axyra-card-subtitle">Eficiencia y ocupación</p>
+              </div>
+            </div>
+            <div class="axyra-card-content">
+              <div id="productivityChart" style="height: 300px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Configuración Regional -->
+        <div class="axyra-grid axyra-grid-2"></div>
+
+        <!-- Panel de Configuración -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-cog"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Configuración de Cuenta</h3>
+              <p class="axyra-card-subtitle">Gestiona tu perfil y configuraciones de seguridad</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <div class="axyra-config-grid">
+              <!-- Perfil de Usuario -->
+              <div class="axyra-config-section">
+                <h4 class="axyra-config-title"><i class="fas fa-user"></i> Perfil de Usuario</h4>
+                <div class="axyra-config-item">
+                  <label>Nombre de Usuario:</label>
+                  <input type="text" id="configUsername" class="axyra-config-input" />
+                  <button class="axyra-config-btn" onclick="actualizarUsername()">
+                    <i class="fas fa-save"></i> Actualizar
+                  </button>
+                </div>
+                <div class="axyra-config-item">
+                  <label>Email:</label>
+                  <input type="email" id="configEmail" class="axyra-config-input" readonly />
+                  <span class="axyra-config-status" id="emailStatus">No verificado</span>
+                </div>
+              </div>
+
+              <!-- Seguridad -->
+              <div class="axyra-config-section">
+                <h4 class="axyra-config-title"><i class="fas fa-shield-alt"></i> Seguridad</h4>
+                <div class="axyra-config-item">
+                  <label>Cambiar Contraseña:</label>
+                  <button class="axyra-config-btn" onclick="mostrarModalCambiarPassword()">
+                    <i class="fas fa-key"></i> Cambiar
+                  </button>
+                </div>
+                <div class="axyra-config-item">
+                  <label>Autenticación 2FA:</label>
+                  <div class="axyra-2fa-controls">
+                    <button class="axyra-config-btn" id="btn2FA" onclick="toggle2FA()">
+                      <i class="fas fa-toggle-off"></i> Deshabilitado
+                    </button>
+                    <button
+                      class="axyra-config-btn"
+                      onclick="configurarGoogleAuthenticator()"
+                      style="display: none"
+                      id="btnGoogleAuth"
+                    >
+                      <i class="fab fa-google"></i> Google Auth
+                    </button>
+                  </div>
+                </div>
+                <div class="axyra-config-item">
+                  <label>Verificación de Email:</label>
+                  <button class="axyra-config-btn" onclick="enviarVerificacionEmail()" id="btnVerificarEmail">
+                    <i class="fas fa-envelope"></i> Verificar
+                  </button>
+                </div>
+              </div>
+
+              <!-- Preferencias -->
+              <div class="axyra-config-section">
+                <h4 class="axyra-config-title"><i class="fas fa-sliders-h"></i> Preferencias</h4>
+                <div class="axyra-config-item">
+                  <label>Recordar Sesión:</label>
+                  <select id="configRememberSession" class="axyra-config-select" onchange="actualizarPreferencias()">
+                    <option value="0">Siempre pedir 2FA</option>
+                    <option value="1">1 día</option>
+                    <option value="7">1 semana</option>
+                    <option value="30">1 mes</option>
+                  </select>
+                </div>
+                <div class="axyra-config-item">
+                  <label>Notificaciones:</label>
+                  <label class="axyra-checkbox">
+                    <input type="checkbox" id="configNotificaciones" onchange="actualizarPreferencias()" />
+                    <span class="checkmark"></span>
+                    Recibir notificaciones por email
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actividad Reciente -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-history"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Actividad Reciente</h3>
+              <p class="axyra-card-subtitle">Últimas acciones en el sistema</p>
+            </div>
+          </div>
+          <div id="actividadReciente">
+            <!-- La actividad se cargará dinámicamente -->
+          </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-bolt"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Acciones Rápidas</h3>
+              <p class="axyra-card-subtitle">Accede rápidamente a las funciones principales</p>
+            </div>
+          </div>
+          <div class="axyra-actions-bar">
+            <button
+              onclick="mostrarModalAccion('Agregar Empleado', '¿Deseas ir a la página de empleados para agregar un nuevo empleado?', 'empleados')"
+              class="axyra-btn axyra-btn-primary"
+            >
+              <i class="fas fa-user-plus"></i> Agregar Empleado
+            </button>
+            <button
+              onclick="mostrarModalAccion('Registrar Horas', '¿Deseas ir a la página de horas para registrar el tiempo trabajado?', 'horas')"
+              class="axyra-btn axyra-btn-secondary"
+            >
+              <i class="fas fa-clock"></i> Registrar Horas
+            </button>
+            <button
+              onclick="mostrarModalAccion('Generar Nómina', '¿Deseas ir a la página de nómina para generar el reporte de salarios?', 'nomina')"
+              class="axyra-btn axyra-btn-success"
+            >
+              <i class="fas fa-file-invoice-dollar"></i> Generar Nómina
+            </button>
+            <button
+              onclick="mostrarModalAccion('Cuadre de Caja', '¿Deseas ir a la página de cuadre de caja para revisar los ingresos?', 'cuadre')"
+              class="axyra-btn axyra-btn-info"
+            >
+              <i class="fas fa-calculator"></i> Cuadre de Caja
+            </button>
+            <button
+              onclick="mostrarModalConfirmacion('Limpiar Datos', '¿Estás seguro de que deseas limpiar todos los datos corruptos del sistema? Esta acción no se puede deshacer.', 'limpiarDatosCorruptos')"
+              class="axyra-btn axyra-btn-warning"
+            >
+              <i class="fas fa-broom"></i> Limpiar Datos
+            </button>
+            <button
+              onclick="mostrarModalConfirmacion('Resetear Todo', '⚠️ ADVERTENCIA: ¿Estás completamente seguro de que deseas eliminar TODOS los datos del sistema? Esta acción es IRREVERSIBLE y eliminará toda la información.', 'resetearLocalStorage')"
+              class="axyra-btn axyra-btn-danger"
+            >
+              <i class="fas fa-trash"></i> Resetear Todo
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal Cambiar Contraseña -->
+    <div id="modalCambiarPassword" class="axyra-modal" style="display: none">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3><i class="fas fa-key"></i> Cambiar Contraseña</h3>
+          <button class="axyra-modal-close" onclick="cerrarModalCambiarPassword()">&times;</button>
+        </div>
+        <div class="axyra-modal-body">
+          <form id="formCambiarPassword">
+            <div class="axyra-form-group">
+              <label for="currentPassword">Contraseña Actual:</label>
+              <div class="password-container">
+                <input type="password" id="currentPassword" class="axyra-form-input" required />
+                <button type="button" class="password-toggle" onclick="toggleCurrentPassword()">
+                  <i class="fas fa-eye" id="currentPasswordIcon"></i>
+                </button>
+              </div>
+            </div>
+            <div class="axyra-form-group">
+              <label for="newPassword">Nueva Contraseña:</label>
+              <div class="password-container">
+                <input type="password" id="newPassword" class="axyra-form-input" required />
+                <button type="button" class="password-toggle" onclick="toggleNewPassword()">
+                  <i class="fas fa-eye" id="newPasswordIcon"></i>
+                </button>
+              </div>
+              <small class="axyra-form-help">Mínimo 8 caracteres, incluir mayúsculas y números</small>
+            </div>
+            <div class="axyra-form-group">
+              <label for="confirmNewPassword">Confirmar Nueva Contraseña:</label>
+              <div class="password-container">
+                <input type="password" id="confirmNewPassword" class="axyra-form-input" required />
+                <button type="button" class="password-toggle" onclick="toggleConfirmNewPassword()">
+                  <i class="fas fa-eye" id="confirmNewPasswordIcon"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="axyra-modal-footer">
+          <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalCambiarPassword()">Cancelar</button>
+          <button class="axyra-btn axyra-btn-primary" onclick="cambiarPassword()">Cambiar Contraseña</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Configurar Google Authenticator -->
+    <div id="modalGoogleAuth" class="axyra-modal" style="display: none">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3><i class="fab fa-google"></i> Configurar Google Authenticator</h3>
+          <button class="axyra-modal-close" onclick="cerrarModalGoogleAuth()">&times;</button>
+        </div>
+        <div class="axyra-modal-body">
+          <div class="axyra-google-auth-setup">
+            <div class="axyra-qr-section">
+              <h4>1. Escanea el código QR</h4>
+              <div id="qrCode" class="axyra-qr-container">
+                <!-- El código QR se generará aquí -->
+              </div>
+              <p>Usa la aplicación Google Authenticator para escanear este código</p>
+            </div>
+            <div class="axyra-manual-section">
+              <h4>2. O ingresa manualmente</h4>
+              <div class="axyra-form-group">
+                <label>Clave Secreta:</label>
+                <input type="text" id="secretKey" class="axyra-form-input" readonly />
+                <button type="button" class="axyra-btn axyra-btn-secondary" onclick="copiarClaveSecreta()">
+                  <i class="fas fa-copy"></i> Copiar
+                </button>
+              </div>
+              <p>Ingresa esta clave en tu aplicación de autenticación</p>
+            </div>
+            <div class="axyra-verification-section">
+              <h4>3. Verifica la configuración</h4>
+              <div class="axyra-form-group">
+                <label>Código de Verificación:</label>
+                <input
+                  type="text"
+                  id="verificationCode"
+                  class="axyra-form-input"
+                  placeholder="Ingresa el código de 6 dígitos"
+                  maxlength="6"
+                />
+              </div>
+              <button class="axyra-btn axyra-btn-primary" onclick="verificarGoogleAuth()">
+                <i class="fas fa-check"></i> Verificar y Activar
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="axyra-modal-footer">
+          <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalGoogleAuth()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Verificar autenticación
+      async function checkAuth() {
+        try {
+          console.log('🔐 Verificando autenticación...');
+
+          // Verificar sesión usando Firebase
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+            console.log('✅ Usuario autenticado con Firebase:', currentUser.email);
+            return true;
+          }
+
+          // Verificar sesión usando el sistema profesional como fallback
+          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+            currentUser = axyraUserSystem.getCurrentUser();
+            console.log('✅ Usuario autenticado con sistema profesional:', currentUser.username);
+            return true;
+          }
+
+          // Si no hay sesión activa, verificar localStorage como último fallback
+          const user = localStorage.getItem('axyra_user');
+          if (user) {
+            try {
+              const userData = JSON.parse(user);
+              if (userData && userData.username) {
+                // Crear sesión en el sistema profesional
+                if (axyraUserSystem) {
+                  axyraUserSystem.createSession(userData);
+                }
+                currentUser = userData;
+                console.log('✅ Sesión restaurada desde localStorage:', currentUser.username);
+                return true;
+              }
+            } catch (error) {
+              console.error('Error parseando sesión de localStorage:', error);
+            }
+          }
+
+          // No hay sesión activa
+          console.log('⚠️ No hay sesión activa - redirigiendo al login');
+          window.location.href = '../../login.html';
+          return false;
+        } catch (error) {
+          console.error('❌ Error al verificar sesión:', error);
+          window.location.href = '../../login.html';
+          return false;
+        }
+      }
+
+      // Ir a inicio
+      function irAInicio(event) {
+        event.preventDefault();
+        // Simplemente ir a la página principal sin verificar sesión
+        window.location.href = '../../index.html';
+      }
+
+      // Cerrar sesión
+      async function logout() {
+        try {
+          console.log('🔄 Cerrando sesión...');
+
+          // Usar Firebase para cerrar sesión
+          if (window.axyraFirebaseUserSystem) {
+            await window.axyraFirebaseUserSystem.signOut();
+            console.log('✅ Sesión cerrada usando Firebase');
+          } else if (axyraUserSystem) {
+            // Fallback al sistema profesional
+            axyraUserSystem.logout();
+            console.log('✅ Sesión cerrada usando sistema profesional');
+          } else {
+            // Fallback si no hay sistema de usuarios
+            localStorage.removeItem('axyra_user');
+            console.log('✅ Sesión cerrada usando fallback');
+          }
+
+          // Limpiar cualquier variable global
+          if (typeof currentUser !== 'undefined') {
+            currentUser = null;
+          }
+
+          // Limpiar datos de Firebase
+          if (window.axyraFirebaseDataSystem) {
+            window.axyraFirebaseDataSystem.clearUserData();
+            console.log('✅ Datos de Firebase limpiados');
+          }
+
+          // Redirigir al login
+          window.location.href = '../../login.html';
+        } catch (error) {
+          console.error('❌ Error al cerrar sesión:', error);
+          // Forzar limpieza y redirección
+          localStorage.removeItem('axyra_user');
+          window.location.href = '../../login.html';
+        }
+      }
+
+      // Función para limpiar datos corruptos del localStorage
+      function limpiarDatosCorruptos() {
+        console.log('=== LIMPIANDO DATOS CORRUPTOS ===');
+
+        // Mostrar todos los datos del localStorage para depuración
+        console.log('=== DATOS COMPLETOS DEL LOCALSTORAGE ===');
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('axyra_')) {
+            console.log(`${key}:`, localStorage.getItem(key));
+          }
+        }
+
+        // Obtener usuario actual para aislamiento de datos
+        let currentUser = null;
+        if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+          currentUser = axyraUserSystem.getCurrentUser();
+        } else {
+          // Fallback a localStorage
+          const userData = localStorage.getItem('axyra_user');
+          if (userData) {
+            currentUser = JSON.parse(userData);
+          }
+        }
+
+        if (!currentUser) {
+          console.log('No hay usuario autenticado para limpieza de datos');
+          return;
+        }
+
+        // Limpiar empleados con salarios inválidos FILTRADOS POR USUARIO
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
+          (emp) => emp.userId === currentUser.username
+        );
+        console.log('Empleados del usuario antes de limpieza:', empleados);
+
+        const empleadosLimpios = empleados.filter((empleado) => {
+          if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+            console.log('Empleado sin salario válido:', empleado);
+            return false;
+          }
+          const salario = parseFloat(empleado.salario);
+          if (isNaN(salario) || salario <= 0) {
+            console.log('Empleado con salario inválido:', empleado);
+            return false;
+          }
+          return true;
+        });
+
+        // Guardar empleados limpios
+        localStorage.setItem('axyra_empleados', JSON.stringify(empleadosLimpios));
+        console.log('Empleados después de limpieza:', empleadosLimpios);
+
+        // Recargar estadísticas
+        cargarEstadisticas();
+
+        // Mostrar mensaje de confirmación usando modal
+        mostrarMensaje(
+          '✅ Datos corruptos limpiados correctamente. Se han eliminado empleados con salarios inválidos.',
+          'success'
+        );
+      }
+
+      // Función para resetear completamente el localStorage (último recurso)
+      function resetearLocalStorage() {
+        console.log('=== RESETEANDO LOCALSTORAGE ===');
+
+        // Obtener usuario actual para aislamiento de datos
+        let currentUser = null;
+        if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+          currentUser = axyraUserSystem.getCurrentUser();
+        } else {
+          // Fallback a localStorage
+          const userData = localStorage.getItem('axyra_user');
+          if (userData) {
+            currentUser = JSON.parse(userData);
+          }
+        }
+
+        if (!currentUser) {
+          console.log('No hay usuario autenticado para reset de datos');
+          return;
+        }
+
+        // Eliminar solo los datos de AXYRA DEL USUARIO ACTUAL
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('axyra_') && key !== 'axyra_user') {
+            keysToRemove.push(key);
+          }
+        }
+
+        keysToRemove.forEach((key) => {
+          localStorage.removeItem(key);
+          console.log(`Eliminado: ${key}`);
+        });
+
+        console.log('LocalStorage reseteado completamente');
+        console.log('✅ Usuario mantiene su sesión:', currentUser.username);
+
+        // Mostrar mensaje de éxito
+        mostrarMensaje(
+          '✅ Todos los datos han sido reseteados correctamente. Tu sesión se mantiene activa.',
+          'success'
+        );
+
+        // Recargar las estadísticas sin recargar la página
+        setTimeout(() => {
+          cargarEstadisticas();
+          cargarActividadReciente();
+        }, 1000);
+      }
+
+      // Función para verificar automáticamente datos corruptos
+      function verificarDatosCorruptos() {
+        console.log('=== VERIFICANDO DATOS CORRUPTOS AUTOMÁTICAMENTE ===');
+
+        let datosCorruptos = false;
+
+        // Obtener usuario actual para aislamiento de datos
+        let currentUser = null;
+        if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+          currentUser = axyraUserSystem.getCurrentUser();
+        } else {
+          // Fallback a localStorage
+          const userData = localStorage.getItem('axyra_user');
+          if (userData) {
+            currentUser = JSON.parse(userData);
+          }
+        }
+
+        if (!currentUser) {
+          console.log('No hay usuario autenticado para verificación de datos');
+          return;
+        }
+
+        // Verificar empleados FILTRADOS POR USUARIO
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
+          (emp) => emp.userId === currentUser.username
+        );
+        const empleadosLimpios = empleados.filter((empleado) => {
+          if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+            console.log('Empleado sin salario válido detectado:', empleado);
+            datosCorruptos = true;
+            return false;
+          }
+          const salario = parseFloat(empleado.salario);
+          if (isNaN(salario) || salario <= 0 || salario > 1000000000) {
+            // Límite razonable de 1 billón
+            console.log('Empleado con salario inválido detectado:', empleado);
+            datosCorruptos = true;
+            return false;
+          }
+          return true;
+        });
+
+        // Si se encontraron datos corruptos, limpiarlos automáticamente
+        if (datosCorruptos) {
+          console.log('Datos corruptos detectados. Limpiando automáticamente...');
+          localStorage.setItem('axyra_empleados', JSON.stringify(empleadosLimpios));
+          console.log('Empleados después de limpieza automática:', empleadosLimpios);
+        }
+
+        // Verificar otros datos FILTRADOS POR USUARIO
+        const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
+          (hr) => hr.userId === currentUser.username
+        );
+        const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
+          (comp) => comp.userId === currentUser.username
+        );
+
+        // Verificar que no haya valores extremadamente altos
+        const totalSalarios = empleadosLimpios.reduce((total, empleado) => {
+          const salario = parseFloat(empleado.salario) || 0;
+          return total + salario;
+        }, 0);
+
+        if (totalSalarios > 1000000000) {
+          // Más de 1 billón
+          console.log('Total de salarios extremadamente alto detectado:', totalSalarios);
+          console.log('Limpiando todos los datos de empleados...');
+          localStorage.removeItem('axyra_empleados');
+          localStorage.removeItem('axyra_horas');
+          localStorage.removeItem('axyra_comprobantes');
+          datosCorruptos = true;
+        }
+
+        if (datosCorruptos) {
+          console.log('✅ Datos corruptos corregidos automáticamente');
+        } else {
+          console.log('✅ No se encontraron datos corruptos');
+        }
+      }
+
+      // Función para actualizar indicador de seguridad
+      function updateSecurityStatus() {
+        const securityStatus = document.getElementById('securityStatus');
+        if (!securityStatus) return;
+
+        try {
+          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+            const user = axyraUserSystem.getCurrentUser();
+            if (user) {
+              securityStatus.className = 'axyra-security-indicator';
+              securityStatus.innerHTML = '<i class="fas fa-shield-alt"></i><span>Sesión Activa</span>';
+            } else {
+              securityStatus.className = 'axyra-security-indicator warning';
+              securityStatus.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span>Sesión Expirada</span>';
+            }
+          } else {
+            // Verificar localStorage como fallback
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              try {
+                const user = JSON.parse(userData);
+                if (user && user.username) {
+                  securityStatus.className = 'axyra-security-indicator';
+                  securityStatus.innerHTML = '<i class="fas fa-shield-alt"></i><span>Sesión Activa</span>';
+                  return;
+                }
+              } catch (error) {
+                console.error('Error parseando sesión:', error);
+              }
+            }
+
+            securityStatus.className = 'axyra-security-indicator danger';
+            securityStatus.innerHTML = '<i class="fas fa-times-circle"></i><span>Sin Seguridad</span>';
+          }
+        } catch (error) {
+          console.error('Error actualizando estado de seguridad:', error);
+          securityStatus.className = 'axyra-security-indicator danger';
+          securityStatus.innerHTML = '<i class="fas fa-times-circle"></i><span>Error</span>';
+        }
+      }
+
+      // Cargar estadísticas
+      async function cargarEstadisticas() {
+        try {
+          console.log('📊 Cargando estadísticas...');
+
+          // Obtener usuario actual para aislamiento de datos
+          let currentUser = null;
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+            console.log('✅ Usuario Firebase:', currentUser.email);
+          } else if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+            currentUser = axyraUserSystem.getCurrentUser();
+            console.log('✅ Usuario sistema profesional:', currentUser.username);
+          } else {
+            // Fallback a localStorage
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser) {
+            console.error('❌ No hay usuario autenticado');
+            return;
+          }
+
+          // Intentar cargar datos desde Firebase primero
+          if (window.axyraFirebaseDataSystem && currentUser.uid) {
+            console.log('🔥 Cargando datos desde Firebase...');
+
+            try {
+              // Cargar empleados desde Firebase
+              const empleados = await window.axyraFirebaseDataSystem.getEmployees();
+              document.getElementById('totalEmpleados').textContent = empleados.length;
+
+              // Cargar horas desde Firebase
+              const horas = await window.axyraFirebaseDataSystem.getHours();
+              const totalHorasTrabajadas = horas.reduce((total, registro) => {
+                const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
+                const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
+                const horasExtras = parseFloat(registro.horasExtras) || 0;
+                const horasDominicales = parseFloat(registro.horasDominicales) || 0;
+                return total + horasOrdinarias + horasNocturnas + horasExtras + horasDominicales;
+              }, 0);
+
+              // Cargar comprobantes desde Firebase
+              const comprobantes = await window.axyraFirebaseDataSystem.getReceipts();
+              document.getElementById('comprobantesGenerados').textContent = comprobantes.length;
+
+              // Calcular total de salarios base
+              const totalSalarios = empleados.reduce((total, empleado) => {
+                if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+                  return total;
+                }
+                const salario = parseFloat(empleado.salario);
+                if (!isNaN(salario) && salario > 0) {
+                  return total + salario;
+                }
+                return total;
+              }, 0);
+
+              // Formatear y mostrar datos
+              formatearYMostrarDatos(totalSalarios, totalHorasTrabajadas);
+
+              console.log('✅ Datos cargados desde Firebase');
+              return;
+            } catch (firebaseError) {
+              console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
+            }
+          }
+
+          // Fallback a localStorage
+          console.log('💾 Cargando datos desde localStorage...');
+          cargarEstadisticasLocalStorage(currentUser);
+        } catch (error) {
+          console.error('❌ Error cargando estadísticas:', error);
+        }
+      }
+
+      // Función auxiliar para cargar desde localStorage
+      function cargarEstadisticasLocalStorage(currentUser) {
+        // Empleados FILTRADOS POR USUARIO
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
+          (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email
+        );
+        document.getElementById('totalEmpleados').textContent = empleados.length;
+
+        // Comprobantes FILTRADOS POR USUARIO
+        const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
+          (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email
+        );
+        document.getElementById('comprobantesGenerados').textContent = comprobantes.length;
+
+        // Calcular total de salarios base
+        const totalSalarios = empleados.reduce((total, empleado) => {
+          if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+            return total;
+          }
+          const salario = parseFloat(empleado.salario);
+          if (!isNaN(salario) && salario > 0) {
+            return total + salario;
+          }
+          return total;
+        }, 0);
+
+        // Calcular horas trabajadas
+        const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
+          (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email
+        );
+        const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
+          const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
+          const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
+          const horasExtras = parseFloat(registro.horasExtras) || 0;
+          const horasDominicales = parseFloat(registro.horasDominicales) || 0;
+          return total + horasOrdinarias + horasNocturnas + horasExtras + horasDominicales;
+        }, 0);
+
+        // Formatear y mostrar datos
+        formatearYMostrarDatos(totalSalarios, totalHorasTrabajadas);
+
+        // Cargar actividad reciente
+        cargarActividadReciente();
+      }
+
+      // Función para formatear y mostrar datos
+      function formatearYMostrarDatos(totalSalarios, totalHorasTrabajadas) {
+        // Formatear salario con solo 1 decimal y ajustar tamaño
+        const formatearMoneda = (monto) => {
+          if (monto === 0) return '$0';
+          if (monto < 1000) return `$${monto.toFixed(1)}`;
+          if (monto < 1000000) return `$${(monto / 1000).toFixed(1)}K`;
+          if (monto < 1000000000) return `$${(monto / 1000000).toFixed(1)}M`;
+          return `$${(monto / 1000000000).toFixed(1)}B`;
+        };
+
+        document.getElementById('totalSalarios').textContent = formatearMoneda(totalSalarios);
+
+        // Formatear horas con solo 1 decimal y ajustar tamaño
+        const formatearHoras = (horas) => {
+          if (horas === 0) return '0';
+          if (horas < 100) return horas.toFixed(1);
+          if (horas < 1000) return (horas / 100).toFixed(1) + 'C';
+          if (horas < 1000000) return (horas / 1000).toFixed(1) + 'K';
+          return (horas / 1000000).toFixed(1) + 'M';
+        };
+
+        document.getElementById('horasTrabajadas').textContent = formatearHoras(totalHorasTrabajadas);
+      }
+
+      // Cargar actividad reciente
+      function cargarActividadReciente() {
+        const actividadReciente = document.getElementById('actividadReciente');
+
+        // Obtener usuario actual para aislamiento de datos
+        let currentUser = null;
+        if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+          currentUser = axyraUserSystem.getCurrentUser();
+        } else {
+          // Fallback a localStorage
+          const userData = localStorage.getItem('axyra_user');
+          if (userData) {
+            currentUser = JSON.parse(userData);
+          }
+        }
+
+        if (!currentUser || !currentUser.username) {
+          console.error('No hay usuario autenticado para actividad reciente');
+          return;
+        }
+
+        // Filtrar datos por usuario
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
+          (emp) => emp.userId === currentUser.username
+        );
+        const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
+          (comp) => comp.userId === currentUser.username
+        );
+
+        let actividadHTML = '';
+
+        // Actividad de empleados
+        if (empleados.length > 0) {
+          const ultimoEmpleado = empleados[empleados.length - 1];
+          actividadHTML += `
+                    <div class="axyra-activity-item">
+                        <div class="axyra-activity-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="axyra-activity-content">
+                            <div class="axyra-activity-title">Empleado agregado</div>
+                            <div class="axyra-activity-time">${
+                              ultimoEmpleado.nombre
+                            } - ${new Date().toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Actividad de comprobantes
+        if (comprobantes.length > 0) {
+          const ultimoComprobante = comprobantes[comprobantes.length - 1];
+          actividadHTML += `
+                    <div class="axyra-activity-item">
+                        <div class="axyra-activity-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="axyra-activity-content">
+                            <div class="axyra-activity-title">Comprobante generado</div>
+                            <div class="axyra-activity-time">${ultimoComprobante.empleado} - ${ultimoComprobante.fecha}</div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Actividad del sistema
+        actividadHTML += `
+                <div class="axyra-activity-item">
+                    <div class="axyra-activity-icon">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <div class="axyra-activity-content">
+                        <div class="axyra-activity-title">Sesión iniciada</div>
+                        <div class="axyra-activity-time">Administrador - ${new Date().toLocaleDateString()}</div>
+                    </div>
+                </div>
+            `;
+
+        if (actividadHTML === '') {
+          actividadHTML = '<p class="axyra-text-center">No hay actividad reciente</p>';
+        }
+
+        actividadReciente.innerHTML = actividadHTML;
+      }
+
+      // Funciones para mostrar detalles de las estadísticas
+      function mostrarDetalleEmpleados() {
+        try {
+          // Obtener usuario actual
+          let currentUser = null;
+          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+            currentUser = axyraUserSystem.getCurrentUser();
+          } else {
+            // Fallback a localStorage
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser || !currentUser.username) {
+            mostrarMensaje('❌ No hay usuario autenticado', 'error');
+            return;
+          }
+
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
+            (emp) => emp.userId === currentUser.username
+          );
+
+          let detalleHTML = '<h4>📋 Lista de Empleados</h4>';
+          if (empleados.length > 0) {
+            detalleHTML += '<div class="axyra-empleados-lista">';
+            empleados.forEach((emp) => {
+              detalleHTML += `
+                <div class="axyra-empleado-item">
+                  <div class="axyra-empleado-info">
+                    <strong>${emp.nombre}</strong>
+                    <span>${emp.cargo} - ${emp.departamento}</span>
+                    <span>Salario: $${emp.salario?.toLocaleString('es-CO') || '0'}</span>
+                  </div>
+                </div>
+              `;
+            });
+            detalleHTML += '</div>';
+          } else {
+            detalleHTML += '<p>No hay empleados registrados</p>';
+          }
+
+          mostrarModal('Detalle de Empleados', detalleHTML);
+        } catch (error) {
+          console.error('Error mostrando detalle de empleados:', error);
+          mostrarMensaje('❌ Error al mostrar detalles', 'error');
+        }
+      }
+
+      function mostrarDetalleHoras() {
+        try {
+          // Obtener usuario actual
+          let currentUser = null;
+          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+            currentUser = axyraUserSystem.getCurrentUser();
+          } else {
+            // Fallback a localStorage
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser || !currentUser.username) {
+            mostrarMensaje('❌ No hay usuario autenticado', 'error');
+            return;
+          }
+
+          const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
+            (hr) => hr.userId === currentUser.username
+          );
+
+          let detalleHTML = '<h4>⏰ Detalle de Horas Trabajadas</h4>';
+          if (registrosHoras.length > 0) {
+            detalleHTML += '<div class="axyra-horas-lista">';
+            registrosHoras.forEach((hr) => {
+              const totalHoras =
+                (parseFloat(hr.horasOrdinarias) || 0) +
+                (parseFloat(hr.horasNocturnas) || 0) +
+                (parseFloat(hr.horasExtras) || 0) +
+                (parseFloat(hr.horasDominicales) || 0);
+              detalleHTML += `
+                <div class="axyra-hora-item">
+                  <div class="axyra-hora-info">
+                    <strong>${hr.empleado}</strong>
+                    <span>Fecha: ${hr.fecha}</span>
+                    <span>Total: ${totalHoras} horas</span>
+                  </div>
+                </div>
+              `;
+            });
+            detalleHTML += '</div>';
+          } else {
+            detalleHTML += '<p>No hay registros de horas</p>';
+          }
+
+          mostrarModal('Detalle de Horas', detalleHTML);
+        } catch (error) {
+          console.error('Error mostrando detalle de horas:', error);
+          mostrarMensaje('❌ Error al mostrar detalles', 'error');
+        }
+      }
+
+      function mostrarDetalleComprobantes() {
+        try {
+          // Obtener usuario actual
+          let currentUser = null;
+          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+            currentUser = axyraUserSystem.getCurrentUser();
+          } else {
+            // Fallback a localStorage
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser || !currentUser.username) {
+            mostrarMensaje('❌ No hay usuario autenticado', 'error');
+            return;
+          }
+
+          const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
+            (comp) => comp.userId === currentUser.username
+          );
+
+          let detalleHTML = '<h4>🧾 Detalle de Comprobantes</h4>';
+          if (comprobantes.length > 0) {
+            detalleHTML += '<div class="axyra-comprobantes-lista">';
+            comprobantes.forEach((comp) => {
+              detalleHTML += `
+                <div class="axyra-comprobante-item">
+                  <div class="axyra-comprobante-info">
+                    <strong>${comp.numeroFactura}</strong>
+                    <span>${comp.encargado} - ${comp.area}</span>
+                    <span>$${comp.monto?.toLocaleString('es-CO') || '0'}</span>
+                </div>
+                <button class="axyra-btn axyra-btn-sm axyra-btn-secondary" onclick="descargarComprobante('${comp.id}')">
+                  <i class="fas fa-download"></i> Descargar
+                </button>
+              </div>
+            `;
+            });
+            detalleHTML += '</div>';
+          } else {
+            detalleHTML += '<p>No hay comprobantes generados</p>';
+          }
+
+          mostrarModal('Detalle de Comprobantes', detalleHTML);
+        } catch (error) {
+          console.error('Error mostrando detalle de comprobantes:', error);
+          mostrarMensaje('❌ Error al mostrar detalles', 'error');
+        }
+      }
+
+      function mostrarDetalleSalarios() {
+        try {
+          // Obtener usuario actual
+          let currentUser = null;
+          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+            currentUser = axyraUserSystem.getCurrentUser();
+          } else {
+            // Fallback a localStorage
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser || !currentUser.username) {
+            mostrarMensaje('❌ No hay usuario autenticado', 'error');
+            return;
+          }
+
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
+            (emp) => emp.userId === currentUser.username
+          );
+
+          let detalleHTML = '<h4>💰 Detalle de Salarios</h4>';
+          if (empleados.length > 0) {
+            detalleHTML += '<div class="axyra-salarios-lista">';
+            let totalGeneral = 0;
+            empleados.forEach((emp) => {
+              const salario = parseFloat(emp.salario) || 0;
+              totalGeneral += salario;
+              detalleHTML += `
+                <div class="axyra-salario-item">
+                  <div class="axyra-empleado-info">
+                    <strong>${emp.nombre}</strong>
+                    <span>${emp.cargo}</span>
+                    <span class="axyra-salario-monto">$${salario.toLocaleString('es-CO')}</span>
+                  </div>
+                </div>
+              `;
+            });
+            detalleHTML += `
+              <div class="axyra-salario-total">
+                <strong>Total General: $${totalGeneral.toLocaleString('es-CO')}</strong>
+              </div>
+            `;
+            detalleHTML += '</div>';
+          } else {
+            detalleHTML += '<p>No hay empleados registrados</p>';
+          }
+
+          mostrarModal('Detalle de Salarios', detalleHTML);
+        } catch (error) {
+          console.error('Error mostrando detalle de salarios:', error);
+          mostrarMensaje('❌ Error al mostrar detalles', 'error');
+        }
+      }
+
+      // Función para mostrar mensajes
+      function mostrarMensaje(mensaje, tipo = 'info') {
+        // Remover mensajes existentes
+        const existingMessages = document.querySelectorAll('.axyra-message');
+        existingMessages.forEach((msg) => msg.remove());
+
+        const mensajeDiv = document.createElement('div');
+        mensajeDiv.className = `axyra-message axyra-${tipo}-message`;
+        mensajeDiv.innerHTML = `
+          <div class="axyra-message-content">
+            <span class="axyra-message-text">${mensaje}</span>
+            <button class="axyra-message-close" onclick="this.parentElement.parentElement.remove()">×</button>
+          </div>
+        `;
+
+        document.body.appendChild(mensajeDiv);
+
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+          if (mensajeDiv.parentElement) {
+            mensajeDiv.remove();
+          }
+        }, 5000);
+      }
+
+      // Función para mostrar modal
+      function mostrarModal(titulo, contenido) {
+        // Cerrar modales existentes antes de crear uno nuevo
+        cerrarModalesExistentes();
+
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>${titulo}</h3>
+              <button class="axyra-modal-close" onclick="cerrarModal(this)">×</button>
+            </div>
+            <div class="axyra-modal-body">
+              ${contenido}
+            </div>
+            <div class="axyra-modal-footer">
+              <button class="axyra-btn axyra-btn-primary" onclick="cerrarModal(this)">
+                <i class="fas fa-check"></i> Entendido
+              </button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Agregar funcionalidad para cerrar con Escape
+        const handleEscape = (e) => {
+          if (e.key === 'Escape') {
+            cerrarModal(modal);
+            document.removeEventListener('keydown', handleEscape);
+          }
+        };
+        document.addEventListener('keydown', handleEscape);
+
+        // Cerrar al hacer click fuera del modal
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            cerrarModal(modal);
+            document.removeEventListener('keydown', handleEscape);
+          }
+        });
+      }
+
+      // Función para descargar comprobante
+      function descargarComprobante(comprobanteId) {
+        const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]');
+        const comprobante = comprobantes.find((c) => c.id === comprobanteId);
+
+        if (comprobante) {
+          // Crear contenido del comprobante
+          const contenido = `
+            COMPROBANTE: ${comprobante.numeroFactura}
+            FECHA: ${comprobante.fecha}
+            ENCARGADO: ${comprobante.encargado}
+            ÁREA: ${comprobante.area}
+            MONTO: $${comprobante.monto?.toLocaleString('es-CO') || '0'}
+            MÉTODO DE PAGO: ${comprobante.metodoPago}
+            DESCRIPCIÓN: ${comprobante.descripcion}
+          `;
+
+          // Crear y descargar archivo
+          const blob = new Blob([contenido], { type: 'text/plain' });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `comprobante_${comprobante.numeroFactura}.txt`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        }
+      }
+
+      // Función para mostrar modal de acción (navegación)
+      function mostrarModalAccion(titulo, mensaje, accion) {
+        // Cerrar modales existentes antes de crear uno nuevo
+        cerrarModalesExistentes();
+
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>${titulo}</h3>
+              <button class="axyra-modal-close" onclick="cerrarModal(this)">×</button>
+            </div>
+            <div class="axyra-modal-body">
+              <p>${mensaje}</p>
+            </div>
+            <div class="axyra-modal-footer">
+              <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModal(this)">
+                <i class="fas fa-times"></i> Cancelar
+              </button>
+              <button class="axyra-btn axyra-btn-primary" onclick="ejecutarAccion('${accion}')">
+                <i class="fas fa-check"></i> Continuar
+              </button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Agregar funcionalidad para cerrar con Escape
+        const handleEscape = (e) => {
+          if (e.key === 'Escape') {
+            cerrarModal(modal);
+            document.removeEventListener('keydown', handleEscape);
+          }
+        };
+        document.addEventListener('keydown', handleEscape);
+
+        // Cerrar al hacer click fuera del modal
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            cerrarModal(modal);
+            document.removeEventListener('keydown', handleEscape);
+          }
+        });
+      }
+
+      // Función para mostrar modal de confirmación (acciones destructivas)
+      function mostrarModalConfirmacion(titulo, mensaje, accion) {
+        // Cerrar modales existentes antes de crear uno nuevo
+        cerrarModalesExistentes();
+
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>${titulo}</h3>
+              <button class="axyra-modal-close" onclick="cerrarModal(this)">×</button>
+            </div>
+            <div class="axyra-modal-body">
+              <p>${mensaje}</p>
+            </div>
+            <div class="axyra-modal-footer">
+              <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModal(this)">
+                <i class="fas fa-times"></i> Cancelar
+              </button>
+              <button class="axyra-btn axyra-btn-danger" onclick="ejecutarAccionConfirmada('${accion}')">
+                <i class="fas fa-exclamation-triangle"></i> Confirmar
+              </button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Agregar funcionalidad para cerrar con Escape
+        const handleEscape = (e) => {
+          if (e.key === 'Escape') {
+            cerrarModal(modal);
+            document.removeEventListener('keydown', handleEscape);
+          }
+        };
+        document.addEventListener('keydown', handleEscape);
+
+        // Cerrar al hacer click fuera del modal
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            cerrarModal(modal);
+            document.removeEventListener('keydown', handleEscape);
+          }
+        });
+      }
+
+      // Función para ejecutar acciones de navegación
+      function ejecutarAccion(accion) {
+        // Cerrar modal
+        document.querySelector('.axyra-modal').remove();
+
+        // Ejecutar acción según el tipo
+        switch (accion) {
+          case 'empleados':
+            window.location.href = '../empleados/empleados.html';
+            break;
+          case 'horas':
+            window.location.href = '../horas/gestionar_horas.html';
+            break;
+          case 'nomina':
+            window.location.href = '../nomina/gestionar_nomina.html';
+            break;
+          case 'cuadre':
+            window.location.href = '../cuadre_caja/cuadre_caja.html';
+            break;
+          default:
+            console.log('Acción no reconocida:', accion);
+        }
+      }
+
+      // Función para ejecutar acciones confirmadas
+      function ejecutarAccionConfirmada(accion) {
+        // Cerrar modal
+        cerrarModalesExistentes();
+
+        // Ejecutar acción según el tipo
+        switch (accion) {
+          case 'limpiarDatosCorruptos':
+            limpiarDatosCorruptos();
+            break;
+          case 'resetearLocalStorage':
+            resetearLocalStorage();
+            break;
+          case 'crearDatosPrueba':
+            crearDatosPrueba();
+            break;
+          default:
+            console.log('Acción confirmada no reconocida:', accion);
+        }
+      }
+
+      // Función para cerrar un modal específico
+      function cerrarModal(elemento) {
+        const modal = elemento.closest('.axyra-modal');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Función para cerrar todos los modales existentes
+      function cerrarModalesExistentes() {
+        const modales = document.querySelectorAll('.axyra-modal');
+        modales.forEach((modal) => modal.remove());
+      }
+
+      // Ver todas las tareas
+      function verTodasLasTareas() {
+        // Crear modal para mostrar todas las tareas
+        const modalHTML = `
+          <div id="modalTareas" class="axyra-modal show">
+            <div class="axyra-modal-content">
+              <div class="axyra-modal-header">
+                <h3 class="axyra-modal-title">
+                  <i class="fas fa-tasks"></i> Todas las Tareas
+                </h3>
+                <button class="axyra-modal-close" onclick="cerrarModalTareas()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-tasks-container">
+                  <div class="axyra-task-filters">
+                    <select id="filterPrioridad" class="axyra-form-select" onchange="filtrarTareas()">
+                      <option value="">Todas las prioridades</option>
+                      <option value="Alta">Alta</option>
+                      <option value="Media">Media</option>
+                      <option value="Baja">Baja</option>
+                    </select>
+                    <select id="filterEstado" class="axyra-form-select" onchange="filtrarTareas()">
+                      <option value="">Todos los estados</option>
+                      <option value="Pendiente">Pendiente</option>
+                      <option value="En Progreso">En Progreso</option>
+                      <option value="Completada">Completada</option>
+                    </select>
+                  </div>
+                  <div id="listaTareasCompleta" class="axyra-tasks-list">
+                    <!-- Las tareas se cargarán dinámicamente -->
+                  </div>
+                  <div class="axyra-task-actions">
+                    <button class="axyra-btn axyra-btn-primary" onclick="agregarNuevaTarea()">
+                      <i class="fas fa-plus"></i> Nueva Tarea
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        cargarTodasLasTareas();
+      }
+
+      // Cerrar modal de tareas
+      function cerrarModalTareas() {
+        const modal = document.getElementById('modalTareas');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Cargar todas las tareas
+      function cargarTodasLasTareas() {
+        const listaTareas = document.getElementById('listaTareasCompleta');
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+        const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]');
+
+        let tareasHTML = '';
+
+        // Tareas del sistema
+        const tareasSistema = [
+          {
+            id: 'sistema-1',
+            titulo: 'Configurar zona horaria',
+            descripcion: 'Establecer zona horaria para Colombia',
+            prioridad: 'Baja',
+            estado: 'Pendiente',
+            fecha: new Date().toLocaleDateString(),
+            tipo: 'Sistema',
+          },
+          {
+            id: 'sistema-2',
+            titulo: 'Configurar moneda por defecto',
+            descripcion: 'Establecer COP como moneda principal',
+            prioridad: 'Media',
+            estado: 'Completada',
+            fecha: new Date().toLocaleDateString(),
+            tipo: 'Sistema',
+          },
+        ];
+
+        // Tareas basadas en empleados
+        if (empleados.length === 0) {
+          tareasSistema.push({
+            id: 'empleado-1',
+            titulo: 'Agregar primer empleado',
+            descripcion: 'Registrar el primer empleado en el sistema',
+            prioridad: 'Alta',
+            estado: 'Pendiente',
+            fecha: new Date().toLocaleDateString(),
+            tipo: 'Empleado',
+          });
+        }
+
+        // Tareas basadas en comprobantes
+        if (comprobantes.length === 0 && empleados.length > 0) {
+          tareasSistema.push({
+            id: 'comprobante-1',
+            titulo: 'Generar primer comprobante',
+            descripcion: 'Crear el primer comprobante de pago',
+            prioridad: 'Media',
+            estado: 'Pendiente',
+            fecha: new Date().toLocaleDateString(),
+            tipo: 'Comprobante',
+          });
+        }
+
+        // Mostrar todas las tareas
+        tareasSistema.forEach((tarea) => {
+          const prioridadClass = tarea.prioridad.toLowerCase().replace(' ', '-');
+          const estadoClass = tarea.estado.toLowerCase().replace(' ', '-');
+
+          tareasHTML += `
+            <div class="axyra-task-item" data-prioridad="${tarea.prioridad}" data-estado="${tarea.estado}">
+              <div class="axyra-task-header">
+                <div class="axyra-task-title">${tarea.titulo}</div>
+                <div class="axyra-task-meta">
+                  <span class="axyra-badge axyra-badge-${prioridadClass}">${tarea.prioridad}</span>
+                  <span class="axyra-badge axyra-badge-${estadoClass}">${tarea.estado}</span>
+                </div>
+              </div>
+              <div class="axyra-task-description">${tarea.descripcion}</div>
+              <div class="axyra-task-footer">
+                <span class="axyra-task-type">${tarea.tipo}</span>
+                <span class="axyra-task-date">${tarea.fecha}</span>
+              </div>
+            </div>
+          `;
+        });
+
+        if (tareasHTML === '') {
+          tareasHTML = '<p class="axyra-text-center">No hay tareas pendientes</p>';
+        }
+
+        listaTareas.innerHTML = tareasHTML;
+      }
+
+      // Filtrar tareas
+      function filtrarTareas() {
+        const prioridad = document.getElementById('filterPrioridad').value;
+        const estado = document.getElementById('filterEstado').value;
+
+        document.querySelectorAll('.axyra-task-item').forEach((item) => {
+          let mostrar = true;
+
+          if (prioridad && item.dataset.prioridad !== prioridad) {
+            mostrar = false;
+          }
+
+          if (estado && item.dataset.estado !== estado) {
+            mostrar = false;
+          }
+
+          item.style.display = mostrar ? 'block' : 'none';
+        });
+      }
+
+      // Agregar nueva tarea
+      function agregarNuevaTarea() {
+        alert('📝 Funcionalidad de agregar tareas en desarrollo');
+      }
+
+      // Cargar configuración guardada
+      function cargarConfiguracion() {
+        const moneda = localStorage.getItem('axyra_moneda') || 'COP';
+        const zonaHoraria = localStorage.getItem('axyra_zona_horaria') || 'America/Bogota';
+        const formatoFecha = localStorage.getItem('axyra_formato_fecha') || 'DD/MM/YYYY';
+
+        // Aplicar moneda
+        cambiarMoneda(moneda);
+
+        // Aplicar zona horaria
+        document.getElementById('zonaHoraria').value = zonaHoraria;
+
+        // Aplicar formato de fecha
+        document.getElementById('formatoFecha').value = formatoFecha;
+      }
+
+      // Guardar configuración
+      function guardarConfiguracion() {
+        const zonaHoraria = document.getElementById('zonaHoraria').value;
+        const formatoFecha = document.getElementById('formatoFecha').value;
+
+        localStorage.setItem('axyra_zona_horaria', zonaHoraria);
+        localStorage.setItem('axyra_formato_fecha', formatoFecha);
+
+        mostrarMensaje('✅ Configuración guardada', 'success');
+      }
+
+      // Inicialización
+      window.addEventListener('load', () => {
+        // Inicializar dashboard
+        console.log('✅ Inicializando dashboard...');
+
+        // Verificar autenticación
+        checkAuth();
+
+        // Verificar y corregir datos corruptos antes de cargar estadísticas
+        verificarDatosCorruptos();
+
+        // Cargar estadísticas
+        cargarEstadisticas();
+        cargarConfiguracion();
+
+        // Event listeners para configuración
+        document.getElementById('zonaHoraria').addEventListener('change', guardarConfiguracion);
+        document.getElementById('formatoFecha').addEventListener('change', guardarConfiguracion);
+
+        // Inicializar analytics si está disponible
+        if (window.axyraDashboardAnalytics) {
+          setTimeout(() => {
+            window.axyraDashboardAnalytics.loadMetrics();
+          }, 1000);
+        }
+
+        // Actualizar estado de seguridad
+        updateSecurityStatus();
+
+        // Actualizar estado de seguridad cada 30 segundos
+        setInterval(updateSecurityStatus, 30000);
+      });
+    </script>
+
+    <style>
+      .axyra-productivity-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .axyra-productivity-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        border-radius: 0.5rem;
+        border: 1px solid #e2e8f0;
+      }
+
+      .axyra-productivity-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+      }
+
+      .axyra-productivity-content {
+        flex: 1;
+      }
+
+      .axyra-productivity-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--axyra-gray-900);
+        line-height: 1;
+      }
+
+      .axyra-productivity-label {
+        font-size: 0.875rem;
+        color: var(--axyra-gray-600);
+        margin-top: 0.25rem;
+      }
+
+      #employeeDistributionChart,
+      #hoursTrendChart,
+      #salaryDistributionChart,
+      #productivityChart {
+        position: relative;
+        min-height: 300px;
+      }
+
+      /* Estilos para tarjetas clickeables */
+      .axyra-stat-card.clickable {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .axyra-stat-card.clickable:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .axyra-stat-hint {
+        font-size: 0.75rem;
+        color: var(--axyra-gray-500);
+        text-align: center;
+        margin-top: 0.5rem;
+        opacity: 0.8;
+      }
+
+      /* Estilos para el modal */
+      .axyra-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .axyra-modal-content {
+        background: white;
+        border-radius: 0.5rem;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Estilos para tarjeta de bienvenida */
+      .axyra-welcome-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+      }
+
+      .axyra-welcome-icon {
+        font-size: 48px;
+        opacity: 0.9;
+      }
+
+      .axyra-welcome-content {
+        flex: 1;
+      }
+
+      .axyra-welcome-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 10px 0;
+        color: white;
+      }
+
+      .axyra-welcome-message {
+        font-size: 16px;
+        margin: 0 0 15px 0;
+        opacity: 0.9;
+        line-height: 1.5;
+      }
+
+      .axyra-welcome-time {
+        font-size: 14px;
+        opacity: 0.8;
+        font-weight: 500;
+      }
+
+      /* Estilos para panel de configuración */
+      .axyra-config-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+      }
+
+      .axyra-config-section {
+        background: #f8fafc;
+        padding: 25px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .axyra-config-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2d3748;
+        margin: 0 0 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .axyra-config-item {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .axyra-config-item label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #4a5568;
+      }
+
+      .axyra-config-input {
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+      }
+
+      .axyra-config-input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .axyra-config-select {
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+        cursor: pointer;
+      }
+
+      .axyra-config-btn {
+        padding: 10px 16px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .axyra-config-btn:hover {
+        background: #5a67d8;
+        transform: translateY(-2px);
+      }
+
+      .axyra-config-status {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: #fed7d7;
+        color: #c53030;
+        display: inline-block;
+      }
+
+      .axyra-config-status.verified {
+        background: #c6f6d5;
+        color: #2f855a;
+      }
+
+      .axyra-2fa-controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .axyra-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #4a5568;
+      }
+
+      .axyra-checkbox input[type='checkbox'] {
+        width: 18px;
+        height: 18px;
+        accent-color: #667eea;
+      }
+
+      /* Estilos para modales */
+      .axyra-modal-body {
+        padding: 20px;
+      }
+
+      .axyra-modal-footer {
+        padding: 20px;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .axyra-form-group {
+        margin-bottom: 20px;
+      }
+
+      .axyra-form-group label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #4a5568;
+        margin-bottom: 8px;
+      }
+
+      .axyra-form-input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
+      }
+
+      .axyra-form-input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .axyra-form-help {
+        font-size: 12px;
+        color: #718096;
+        margin-top: 5px;
+        display: block;
+      }
+
+      .password-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 12px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #718096;
+        font-size: 16px;
+        padding: 5px;
+        transition: color 0.3s ease;
+      }
+
+      .password-toggle:hover {
+        color: #667eea;
+      }
+
+      /* Estilos para Google Authenticator */
+      .axyra-google-auth-setup {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .axyra-qr-section,
+      .axyra-manual-section,
+      .axyra-verification-section {
+        text-align: center;
+      }
+
+      .axyra-qr-section h4,
+      .axyra-manual-section h4,
+      .axyra-verification-section h4 {
+        color: #2d3748;
+        margin-bottom: 15px;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .axyra-qr-container {
+        background: #f8fafc;
+        border: 2px dashed #e2e8f0;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 20px 0;
+        min-height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .axyra-qr-container img {
+        max-width: 200px;
+        height: auto;
+      }
+
+      .axyra-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .axyra-btn-primary {
+        background: #667eea;
+        color: white;
+        border: none;
+      }
+
+      .axyra-btn-primary:hover {
+        background: #5a67d8;
+        transform: translateY(-2px);
+      }
+
+      .axyra-btn-secondary {
+        background: #718096;
+        color: white;
+        border: none;
+      }
+
+      .axyra-btn-secondary:hover {
+        background: #4a5568;
+        transform: translateY(-2px);
+      }
+
+      .axyra-modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--axyra-gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .axyra-modal-header h3 {
+        margin: 0;
+        color: var(--axyra-gray-900);
+      }
+
+      .axyra-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--axyra-gray-500);
+        padding: 0.25rem;
+        border-radius: 0.25rem;
+      }
+
+      .axyra-modal-close:hover {
+        background: var(--axyra-gray-100);
+        color: var(--axyra-gray-700);
+      }
+
+      .axyra-modal-body {
+        padding: 1.5rem;
+      }
+
+      .axyra-modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid var(--axyra-gray-200);
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        background: var(--axyra-gray-50);
+        border-radius: 0 0 0.5rem 0.5rem;
+      }
+
+      /* Estilos para listas de detalles */
+      .axyra-empleados-lista,
+      .axyra-horas-lista,
+      .axyra-comprobantes-lista,
+      .axyra-salarios-lista {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .axyra-empleado-item,
+      .axyra-hora-item,
+      .axyra-comprobante-item,
+      .axyra-salario-item {
+        padding: 1rem;
+        border: 1px solid var(--axyra-gray-200);
+        border-radius: 0.5rem;
+        background: var(--axyra-gray-50);
+      }
+
+      .axyra-empleado-info,
+      .axyra-hora-info,
+      .axyra-comprobante-info,
+      .axyra-salario-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .axyra-comprobante-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .axyra-salario-total {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: var(--axyra-blue-50);
+        border: 1px solid var(--axyra-blue-200);
+        border-radius: 0.5rem;
+        text-align: center;
+        color: var(--axyra-blue-800);
+      }
+
+      .axyra-chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+      }
+
+      @media (max-width: 768px) {
+        .axyra-productivity-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .axyra-productivity-item {
+          flex-direction: column;
+          text-align: center;
+        }
+      }
+    </style>
+
+    <!-- Inicialización automática del dashboard -->
+    <script>
+      // Inicializar dashboard cuando se carga la página
+      document.addEventListener('DOMContentLoaded', async function () {
+        console.log('🚀 AXYRA Dashboard inicializando...');
+
+        try {
+          // Verificar autenticación
+          const isAuthenticated = await checkAuth();
+
+          if (isAuthenticated) {
+            console.log('✅ Usuario autenticado, cargando dashboard...');
+
+            // Personalizar mensaje de bienvenida
+            personalizarBienvenida();
+
+            // Cargar configuración del usuario
+            cargarConfiguracionUsuario();
+
+            // Cargar estadísticas
+            await cargarEstadisticas();
+
+            // Verificar datos corruptos automáticamente
+            verificarDatosCorruptos();
+
+            console.log('✅ Dashboard cargado correctamente');
+          } else {
+            console.log('❌ Usuario no autenticado, redirigiendo al login...');
+            window.location.href = '../../login.html';
+          }
+        } catch (error) {
+          console.error('❌ Error inicializando dashboard:', error);
+          window.location.href = '../../login.html';
+        }
+      });
+
+      // Personalizar mensaje de bienvenida
+      function personalizarBienvenida() {
+        try {
+          // Obtener usuario actual
+          let currentUser = null;
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+          } else {
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (currentUser) {
+            const username =
+              currentUser.username || currentUser.displayName || currentUser.email?.split('@')[0] || 'Usuario';
+            const welcomeTitle = document.getElementById('welcomeTitle');
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            const welcomeTime = document.getElementById('welcomeTime');
+
+            if (welcomeTitle) {
+              welcomeTitle.textContent = `¡Bienvenido, ${username}!`;
+            }
+
+            if (welcomeMessage) {
+              const hora = new Date().getHours();
+              let mensaje = '';
+
+              if (hora < 12) {
+                mensaje = '¡Que tengas un excelente día gestionando tu empresa!';
+              } else if (hora < 18) {
+                mensaje = '¡Que tengas una excelente tarde gestionando tu empresa!';
+              } else {
+                mensaje = '¡Que tengas una excelente noche gestionando tu empresa!';
+              }
+
+              welcomeMessage.textContent = mensaje;
+            }
+
+            if (welcomeTime) {
+              const ahora = new Date();
+              const opciones = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              };
+              welcomeTime.textContent = ahora.toLocaleDateString('es-CO', opciones);
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error personalizando bienvenida:', error);
+        }
+      }
+
+      // ===== FUNCIONES DEL PANEL DE CONFIGURACIÓN =====
+
+      // Cargar configuración del usuario
+      function cargarConfiguracionUsuario() {
+        try {
+          let currentUser = null;
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+          } else {
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (currentUser) {
+            // Cargar datos en el formulario
+            const configUsername = document.getElementById('configUsername');
+            const configEmail = document.getElementById('configEmail');
+            const emailStatus = document.getElementById('emailStatus');
+            const btn2FA = document.getElementById('btn2FA');
+            const btnGoogleAuth = document.getElementById('btnGoogleAuth');
+            const configRememberSession = document.getElementById('configRememberSession');
+            const configNotificaciones = document.getElementById('configNotificaciones');
+
+            if (configUsername) {
+              configUsername.value =
+                currentUser.username || currentUser.displayName || currentUser.email?.split('@')[0] || '';
+            }
+
+            if (configEmail) {
+              configEmail.value = currentUser.email || '';
+            }
+
+            if (emailStatus) {
+              if (currentUser.emailVerified) {
+                emailStatus.textContent = 'Verificado';
+                emailStatus.className = 'axyra-config-status verified';
+              } else {
+                emailStatus.textContent = 'No verificado';
+                emailStatus.className = 'axyra-config-status';
+              }
+            }
+
+            // Cargar estado del 2FA
+            const twoFAEnabled = localStorage.getItem('axyra_2fa_enabled') === 'true';
+            if (btn2FA) {
+              if (twoFAEnabled) {
+                btn2FA.innerHTML = '<i class="fas fa-toggle-on"></i> Habilitado';
+                btn2FA.style.background = '#48bb78';
+                if (btnGoogleAuth) btnGoogleAuth.style.display = 'inline-flex';
+              } else {
+                btn2FA.innerHTML = '<i class="fas fa-toggle-off"></i> Deshabilitado';
+                btn2FA.style.background = '#718096';
+                if (btnGoogleAuth) btnGoogleAuth.style.display = 'none';
+              }
+            }
+
+            // Cargar preferencias
+            const rememberSession = localStorage.getItem('axyra_remember_session') || '0';
+            if (configRememberSession) {
+              configRememberSession.value = rememberSession;
+            }
+
+            const notificaciones = localStorage.getItem('axyra_notificaciones') === 'true';
+            if (configNotificaciones) {
+              configNotificaciones.checked = notificaciones;
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error cargando configuración:', error);
+        }
+      }
+
+      // Actualizar nombre de usuario
+      async function actualizarUsername() {
+        try {
+          const newUsername = document.getElementById('configUsername').value.trim();
+
+          if (!newUsername || newUsername.length < 3) {
+            alert('El nombre de usuario debe tener al menos 3 caracteres');
+            return;
+          }
+
+          // Validar que solo contenga letras y números
+          if (!/^[a-zA-Z0-9]+$/.test(newUsername)) {
+            alert('El nombre de usuario solo puede contener letras y números');
+            return;
+          }
+
+          // Actualizar en Firebase si está disponible
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            await window.axyraFirebaseUserSystem.updateProfile({ displayName: newUsername });
+            console.log('✅ Username actualizado en Firebase');
+          }
+
+          // Actualizar en localStorage
+          const userData = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+          userData.username = newUsername;
+          localStorage.setItem('axyra_user', JSON.stringify(userData));
+
+          // Actualizar mensaje de bienvenida
+          personalizarBienvenida();
+
+          alert('✅ Nombre de usuario actualizado correctamente');
+        } catch (error) {
+          console.error('❌ Error actualizando username:', error);
+          alert('❌ Error al actualizar el nombre de usuario');
+        }
+      }
+
+      // Mostrar modal para cambiar contraseña
+      function mostrarModalCambiarPassword() {
+        document.getElementById('modalCambiarPassword').style.display = 'flex';
+        document.getElementById('formCambiarPassword').reset();
+      }
+
+      // Cerrar modal de cambiar contraseña
+      function cerrarModalCambiarPassword() {
+        document.getElementById('modalCambiarPassword').style.display = 'none';
+      }
+
+      // Cambiar contraseña
+      async function cambiarPassword() {
+        try {
+          const currentPassword = document.getElementById('currentPassword').value;
+          const newPassword = document.getElementById('newPassword').value;
+          const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+          // Validaciones
+          if (!currentPassword || !newPassword || !confirmNewPassword) {
+            alert('Por favor completa todos los campos');
+            return;
+          }
+
+          if (newPassword !== confirmNewPassword) {
+            alert('Las contraseñas no coinciden');
+            return;
+          }
+
+          if (newPassword.length < 8) {
+            alert('La nueva contraseña debe tener al menos 8 caracteres');
+            return;
+          }
+
+          if (!/(?=.*[A-Z])(?=.*\d)/.test(newPassword)) {
+            alert('La nueva contraseña debe incluir al menos una mayúscula y un número');
+            return;
+          }
+
+          // Cambiar contraseña en Firebase si está disponible
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            await window.axyraFirebaseUserSystem.updatePassword(newPassword);
+            console.log('✅ Contraseña actualizada en Firebase');
+          }
+
+          // Actualizar en localStorage
+          const userData = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+          userData.password = newPassword; // En producción, esto debería estar hasheado
+          localStorage.setItem('axyra_user', JSON.stringify(userData));
+
+          alert('✅ Contraseña actualizada correctamente');
+          cerrarModalCambiarPassword();
+        } catch (error) {
+          console.error('❌ Error cambiando contraseña:', error);
+          alert('❌ Error al cambiar la contraseña');
+        }
+      }
+
+      // Toggle 2FA
+      function toggle2FA() {
+        const twoFAEnabled = localStorage.getItem('axyra_2fa_enabled') === 'true';
+
+        if (twoFAEnabled) {
+          // Deshabilitar 2FA
+          if (
+            confirm(
+              '¿Estás seguro de que quieres deshabilitar la autenticación de dos factores? Esto reducirá la seguridad de tu cuenta.'
+            )
+          ) {
+            localStorage.setItem('axyra_2fa_enabled', 'false');
+            localStorage.removeItem('axyra_2fa_secret');
+            localStorage.removeItem('axyra_2fa_backup_codes');
+
+            const btn2FA = document.getElementById('btn2FA');
+            const btnGoogleAuth = document.getElementById('btnGoogleAuth');
+
+            if (btn2FA) {
+              btn2FA.innerHTML = '<i class="fas fa-toggle-off"></i> Deshabilitado';
+              btn2FA.style.background = '#718096';
+            }
+
+            if (btnGoogleAuth) {
+              btnGoogleAuth.style.display = 'none';
+            }
+
+            alert('✅ Autenticación de dos factores deshabilitada');
+          }
+        } else {
+          // Habilitar 2FA
+          configurarGoogleAuthenticator();
+        }
+      }
+
+      // Configurar Google Authenticator
+      function configurarGoogleAuthenticator() {
+        try {
+          // Generar clave secreta
+          const secretKey = generarClaveSecreta();
+          localStorage.setItem('axyra_2fa_secret', secretKey);
+
+          // Mostrar clave en el modal
+          document.getElementById('secretKey').value = secretKey;
+
+          // Generar código QR (simulado por ahora)
+          const qrContainer = document.getElementById('qrCode');
+          qrContainer.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+              <i class="fas fa-qrcode" style="font-size: 100px; color: #667eea;"></i>
+              <p style="margin-top: 15px; color: #718096;">Código QR simulado</p>
+              <p style="font-size: 12px; color: #a0aec0;">En producción, aquí se generaría un código QR real</p>
+            </div>
+          `;
+
+          // Mostrar modal
+          document.getElementById('modalGoogleAuth').style.display = 'flex';
+        } catch (error) {
+          console.error('❌ Error configurando Google Auth:', error);
+          alert('❌ Error al configurar Google Authenticator');
+        }
+      }
+
+      // Cerrar modal de Google Auth
+      function cerrarModalGoogleAuth() {
+        document.getElementById('modalGoogleAuth').style.display = 'none';
+      }
+
+      // Generar clave secreta para 2FA
+      function generarClaveSecreta() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+        let result = '';
+        for (let i = 0; i < 32; i++) {
+          result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+      }
+
+      // Copiar clave secreta
+      function copiarClaveSecreta() {
+        const secretKey = document.getElementById('secretKey');
+        secretKey.select();
+        document.execCommand('copy');
+        alert('✅ Clave secreta copiada al portapapeles');
+      }
+
+      // Verificar Google Auth
+      function verificarGoogleAuth() {
+        try {
+          const verificationCode = document.getElementById('verificationCode').value.trim();
+
+          if (!verificationCode || verificationCode.length !== 6) {
+            alert('Por favor ingresa un código de 6 dígitos válido');
+            return;
+          }
+
+          // En producción, aquí se verificaría el código con la clave secreta
+          // Por ahora, simulamos la verificación
+          if (verificationCode === '123456') {
+            // Código de prueba
+            // Activar 2FA
+            localStorage.setItem('axyra_2fa_enabled', 'true');
+
+            // Generar códigos de respaldo
+            const backupCodes = generarCodigosRespaldo();
+            localStorage.setItem('axyra_2fa_backup_codes', JSON.stringify(backupCodes));
+
+            // Actualizar UI
+            const btn2FA = document.getElementById('btn2FA');
+            const btnGoogleAuth = document.getElementById('btnGoogleAuth');
+
+            if (btn2FA) {
+              btn2FA.innerHTML = '<i class="fas fa-toggle-on"></i> Habilitado';
+              btn2FA.style.background = '#48bb78';
+            }
+
+            if (btnGoogleAuth) {
+              btnGoogleAuth.style.display = 'inline-flex';
+            }
+
+            alert(
+              `✅ Autenticación de dos factores activada correctamente!\n\nCódigos de respaldo: ${backupCodes.join(
+                ', '
+              )}\n\nGuarda estos códigos en un lugar seguro.`
+            );
+
+            cerrarModalGoogleAuth();
+          } else {
+            alert('❌ Código de verificación incorrecto. Por favor intenta nuevamente.');
+          }
+        } catch (error) {
+          console.error('❌ Error verificando Google Auth:', error);
+          alert('❌ Error al verificar el código');
+        }
+      }
+
+      // Generar códigos de respaldo
+      function generarCodigosRespaldo() {
+        const codes = [];
+        for (let i = 0; i < 5; i++) {
+          codes.push(Math.floor(100000 + Math.random() * 900000));
+        }
+        return codes;
+      }
+
+      // Enviar verificación de email
+      async function enviarVerificacionEmail() {
+        try {
+          let currentUser = null;
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+          } else {
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser || !currentUser.email) {
+            alert('❌ No se encontró un email válido para verificar');
+            return;
+          }
+
+          // Enviar verificación usando Firebase si está disponible
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            await window.axyraFirebaseUserSystem.sendEmailVerification();
+            alert('✅ Email de verificación enviado. Revisa tu bandeja de entrada.');
+          } else {
+            // Simular envío de email
+            alert('✅ Email de verificación enviado (simulado). En producción, se enviaría un email real.');
+          }
+
+          // Actualizar estado
+          const emailStatus = document.getElementById('emailStatus');
+          if (emailStatus) {
+            emailStatus.textContent = 'Verificación enviada';
+            emailStatus.className = 'axyra-config-status';
+          }
+        } catch (error) {
+          console.error('❌ Error enviando verificación de email:', error);
+          alert('❌ Error al enviar el email de verificación');
+        }
+      }
+
+      // Actualizar preferencias
+      function actualizarPreferencias() {
+        try {
+          const rememberSession = document.getElementById('configRememberSession').value;
+          const notificaciones = document.getElementById('configNotificaciones').checked;
+
+          localStorage.setItem('axyra_remember_session', rememberSession);
+          localStorage.setItem('axyra_notificaciones', notificaciones.toString());
+
+          alert('✅ Preferencias actualizadas correctamente');
+        } catch (error) {
+          console.error('❌ Error actualizando preferencias:', error);
+          alert('❌ Error al actualizar las preferencias');
+        }
+      }
+
+      // Funciones para mostrar/ocultar contraseñas en modales
+      function toggleCurrentPassword() {
+        const input = document.getElementById('currentPassword');
+        const icon = document.getElementById('currentPasswordIcon');
+        togglePasswordVisibility(input, icon);
+      }
+
+      function toggleNewPassword() {
+        const input = document.getElementById('newPassword');
+        const icon = document.getElementById('newPasswordIcon');
+        togglePasswordVisibility(input, icon);
+      }
+
+      function toggleConfirmNewPassword() {
+        const input = document.getElementById('confirmNewPassword');
+        const icon = document.getElementById('confirmNewPasswordIcon');
+        togglePasswordVisibility(input, icon);
+      }
+
+      function togglePasswordVisibility(input, icon) {
+        if (input.type === 'password') {
+          input.type = 'text';
+          icon.className = 'fas fa-eye-slash';
+        } else {
+          input.type = 'password';
+          icon.className = 'fas fa-eye';
+        }
+      }
+    </script>
+  </body>
+</html>

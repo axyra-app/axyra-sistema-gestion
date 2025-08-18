@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AXYRA - Iniciar Sesión</title>
+    <link rel="icon" href="nomina.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="static/axyra-styles.css" />
+    <style>
+      body {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .login-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .login-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .logo-section {
+        margin-bottom: 30px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .logo-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .logo-text {
+        font-size: 32px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .title {
+        font-size: 28px;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 10px;
+      }
+
+      .subtitle {
+        font-size: 16px;
+        color: #718096;
+        margin-bottom: 30px;
+        line-height: 1.5;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 8px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .form-hint {
+        font-size: 12px;
+        color: #a0aec0;
+        margin-top: 5px;
+        font-style: italic;
+      }
+
+      .password-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 15px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #718096;
+        font-size: 16px;
+        padding: 5px;
+        transition: color 0.3s ease;
+      }
+
+      .password-toggle:hover {
+        color: #667eea;
+      }
+
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 14px;
+        color: #4a5568;
+        user-select: none;
+      }
+
+      .checkbox-container input[type="checkbox"] {
+        margin-right: 10px;
+        width: 18px;
+        height: 18px;
+        accent-color: #667eea;
+      }
+
+      .checkbox-container:hover {
+        color: #667eea;
+      }
+
+      .twofa-section {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .twofa-input {
+        flex: 1;
+      }
+
+      .twofa-btn {
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        font-weight: 600;
+        background: #48bb78;
+        color: white;
+      }
+
+      .twofa-btn:hover {
+        background: #38a169;
+        transform: translateY(-2px);
+      }
+
+      .login-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+      }
+
+      .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      }
+
+      .login-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .google-btn {
+        width: 100%;
+        padding: 15px;
+        background: white;
+        color: #333;
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .google-btn:hover {
+        border-color: #667eea;
+        transform: translateY(-2px);
+      }
+
+      .google-mode-indicator {
+        font-size: 10px;
+        margin-top: 5px;
+        opacity: 0.8;
+      }
+
+      .google-controls {
+        margin-top: 10px;
+      }
+
+      .toggle-mode-btn:hover {
+        background: #cbd5e0 !important;
+      }
+
+      .status-btn:hover {
+        background: #5a67d8 !important;
+      }
+
+      .google-icon {
+        width: 20px;
+        height: 20px;
+        background: #4285f4;
+        border-radius: 2px;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .divider {
+        margin: 20px 0;
+        text-align: center;
+        position: relative;
+      }
+
+      .divider::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #e2e8f0;
+      }
+
+      .divider span {
+        background: white;
+        padding: 0 15px;
+        color: #718096;
+        font-size: 14px;
+      }
+
+      .register-link {
+        margin-top: 25px;
+        font-size: 14px;
+        color: #718096;
+      }
+
+      .register-link a {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .register-link a:hover {
+        text-decoration: underline;
+      }
+
+      .footer {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e2e8f0;
+        font-size: 12px;
+        color: #a0aec0;
+      }
+
+      .error-message {
+        background: #fed7d7;
+        color: #c53030;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        display: none;
+      }
+
+      .success-message {
+        background: #c6f6d5;
+        color: #2f855a;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        display: none;
+      }
+
+      .system-status-btn {
+        background: #718096;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: all 0.3s ease;
+      }
+
+      .system-status-btn:hover {
+        background: #4a5568;
+      }
+
+      /* Estilos para el modal de estado del sistema */
+      .system-status-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+
+      .system-status-content {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="logo-section">
+        <div class="logo">
+          <img src="nomina.ico" alt="AXYRA Logo" style="width: 50px; height: 50px; border-radius: 12px" />
+          <div class="logo-text">AXYRA</div>
+        </div>
+        <h1 class="title">Iniciar Sesión</h1>
+        <p class="subtitle">Accede a tu panel de control empresarial</p>
+      </div>
+
+      <div id="errorMessage" class="error-message"></div>
+      <div id="successMessage" class="success-message"></div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="username" class="form-label">Usuario</label>
+          <input type="text" id="username" class="form-input" placeholder="Ingrese su nombre de usuario" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="form-label">Contraseña</label>
+          <div class="password-container">
+            <input type="password" id="password" class="form-input" placeholder="Ingrese su contraseña" required />
+            <button type="button" class="password-toggle" onclick="togglePassword()">
+              <i class="fas fa-eye" id="passwordIcon"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-container">
+            <input type="checkbox" id="rememberSession" />
+            <span class="checkmark"></span>
+            Recordar sesión (no pedir 2FA por 30 días)
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="twofaCode" class="form-label">Código 2FA</label>
+          <div class="twofa-section">
+            <input
+              type="text"
+              id="twofaCode"
+              class="form-input twofa-input"
+              placeholder="Código de 6 dígitos"
+              maxlength="6"
+            />
+            <button type="button" class="twofa-btn" onclick="generatePersonal2FA()">🔑</button>
+          </div>
+          <div class="form-hint">Ingrese el código de 6 dígitos de su autenticador</div>
+        </div>
+
+        <button type="submit" class="login-btn" id="loginBtn">
+          <span id="btnText">Iniciar Sesión</span>
+          <span id="btnLoading" style="display: none">Iniciando sesión...</span>
+        </button>
+      </form>
+
+      <div class="divider">
+        <span>o</span>
+      </div>
+
+      <button class="google-btn" onclick="loginWithGoogle()">
+        <div class="google-icon">G</div>
+        Continuar con Google
+
+      </button>
+
+      <div class="google-controls" style="margin-top: 10px; text-align: center">
+
+
+      <div class="register-link">¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></div>
+
+
+
+      <div class="footer">
+        <p>&copy; 2025 AXYRA. Todos los derechos reservados.</p>
+        <p>Sistema de Gestión Empresarial Profesional</p>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <!-- AXYRA Scripts -->
+    <script src="static/firebase-config.js"></script>
+    <script src="static/firebase-user-system.js"></script>
+    <script src="static/professional-user-system.js"></script>
+    <script src="static/personal-2fa-system.js"></script>
+    <script src="static/email-verification-system.js"></script>
+    <script src="static/google-oauth-config.js"></script>
+
+    <script>
+      // Verificar autenticación al cargar
+      function checkAuth() {
+        if (window.axyraUserSystem && axyraUserSystem.hasActiveSession()) {
+          window.location.href = 'modulos/dashboard/dashboard.html';
+        }
+      }
+
+      // Mostrar/ocultar contraseña
+      function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const passwordIcon = document.getElementById('passwordIcon');
+        
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          passwordIcon.className = 'fas fa-eye-slash';
+        } else {
+          passwordInput.type = 'password';
+          passwordIcon.className = 'fas fa-eye';
+        }
+      }
+
+      // Generar código 2FA
+      function generatePersonal2FA() {
+        const username = document.getElementById('username').value;
+        if (!username) {
+          showError('Por favor ingrese un nombre de usuario primero');
+          return;
+        }
+
+        const result = axyraPersonal2FA.generatePersonalCode(username);
+        if (result.success) {
+          showSuccess(`✅ Código 2FA generado: ${result.code}\nVálido por: ${result.validity} minutos`);
+        } else {
+          showError(`❌ Error: ${result.message}`);
+        }
+      }
+
+      // Login con Google usando Firebase
+      async function loginWithGoogle() {
+        try {
+          showSuccess('🔄 Iniciando autenticación con Google...');
+
+          // Usar Firebase para autenticación con Google
+          const authResult = await axyraFirebaseUserSystem.signInWithGoogle();
+
+          if (authResult.success) {
+            showSuccess('✅ Autenticación con Google exitosa');
+            showSuccess('✅ Inicio de sesión exitoso. Redirigiendo...');
+
+            setTimeout(() => {
+              window.location.href = 'modulos/dashboard/dashboard.html';
+            }, 1500);
+          } else {
+            showError(`❌ Error en autenticación: ${authResult.error}`);
+          }
+        } catch (error) {
+          console.error('Error en login con Google:', error);
+          showError('❌ Error al iniciar sesión con Google');
+        }
+      }
+
+      // Crear o obtener usuario de Google
+      async function createOrGetGoogleUser(googleData) {
+        try {
+          const users = JSON.parse(localStorage.getItem('axyra_users') || '[]');
+          let user = users.find((u) => u.email === googleData.email);
+
+          if (!user) {
+            // Crear nuevo usuario de Google
+            user = {
+              username: googleData.email.split('@')[0],
+              fullName: googleData.name,
+              email: googleData.email,
+              googleId: googleData.id,
+              picture: googleData.picture,
+              role: 'user',
+              emailVerified: true,
+              createdAt: new Date().toISOString(),
+              userId: googleData.email.split('@')[0],
+            };
+
+            users.push(user);
+            localStorage.setItem('axyra_users', JSON.stringify(users));
+            console.log(`✅ Usuario de Google creado: ${user.username}`);
+          }
+
+          return user;
+        } catch (error) {
+          console.error('Error creando/obteniendo usuario de Google:', error);
+          throw error;
+        }
+      }
+
+
+
+      // Mostrar error
+      function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        document.getElementById('successMessage').style.display = 'none';
+      }
+
+      // Mostrar éxito
+      function showSuccess(message) {
+        const successDiv = document.getElementById('successMessage');
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+      }
+
+      // Ocultar mensajes
+      function hideMessages() {
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
+      }
+
+      // Función de login
+      async function login() {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const twofaCode = document.getElementById('twofaCode').value.trim();
+
+        if (!username || !password || !twofaCode) {
+          showError('Por favor complete todos los campos');
+          return;
+        }
+
+        try {
+          // Verificar código 2FA
+          const twofaResult = axyraPersonal2FA.verifyPersonalCode(username, twofaCode);
+
+          if (!twofaResult.success) {
+            showError(`Error 2FA: ${twofaResult.message}`);
+            return;
+          }
+
+          // Verificar credenciales
+          let user = null;
+
+          if (window.axyraUserSystem) {
+            const result = axyraUserSystem.validateCredentials(username, password);
+            if (result.success) {
+              user = result.user;
+            }
+          } else {
+            // Fallback básico
+            const users = JSON.parse(localStorage.getItem('axyra_users') || '[]');
+            user = users.find((u) => u.username === username && u.password === password);
+          }
+
+          if (user) {
+            // Crear sesión
+            if (window.axyraUserSystem) {
+              axyraUserSystem.createSession(user);
+            } else {
+              localStorage.setItem('axyra_user', JSON.stringify(user));
+            }
+
+            showSuccess('✅ Inicio de sesión exitoso. Redirigiendo...');
+
+            setTimeout(() => {
+              window.location.href = 'modulos/dashboard/dashboard.html';
+            }, 1500);
+          } else {
+            showError('Credenciales incorrectas');
+          }
+        } catch (error) {
+          console.error('Error en login:', error);
+          showError('Error al iniciar sesión');
+        }
+      }
+
+      // Event listeners
+
+
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('AXYRA Login Page cargada');
+        checkAuth();
+
+
+      });
+
+      document.getElementById('loginForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        hideMessages();
+        login();
+      });
+
+      // Cerrar sesión si se navega desde otra página
+      window.addEventListener('pageshow', function (event) {
+        if (event.persisted) {
+          // Página cargada desde cache
+          checkAuth();
+        }
+      });
+    </script>
+  </body>
+</html>

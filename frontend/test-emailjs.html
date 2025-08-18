@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test EmailJS - AXYRA</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        color: #333;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+      button {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px;
+      }
+      button:hover {
+        background: #5a67d8;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        background: #f7fafc;
+        border-left: 4px solid #667eea;
+      }
+      .success {
+        border-left-color: #38a169;
+      }
+      .error {
+        border-left-color: #e53e3e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🧪 Test EmailJS - AXYRA</h1>
+      <p>Esta página prueba si EmailJS está funcionando correctamente.</p>
+
+      <button onclick="testEmailJS()">📧 Probar Envío de Email</button>
+      <button onclick="checkEmailJSStatus()">🔍 Verificar Estado</button>
+
+      <div id="result" class="result" style="display: none"></div>
+    </div>
+
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script>
+      // Inicializar EmailJS
+      emailjs.init('SRhw4RGz8nrZInNaZ');
+
+      function showResult(message, isSuccess = true) {
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+        resultDiv.className = `result ${isSuccess ? 'success' : 'error'}`;
+        resultDiv.innerHTML = message;
+      }
+
+      async function testEmailJS() {
+        try {
+          showResult('🔄 Enviando email de prueba...', true);
+
+          const templateParams = {
+            to_email: 'juanfernando10gamer@gmail.com',
+            to_name: 'Juan Fernando',
+            verification_code: '123456',
+            app_name: 'AXYRA',
+          };
+
+          const result = await emailjs.send('servicio_skzrkhp', 'template_p0ll7ci', templateParams);
+
+          console.log('✅ Email enviado exitosamente:', result);
+          showResult(
+            `
+                    <h3>✅ Email enviado exitosamente!</h3>
+                    <p><strong>Status:</strong> ${result.status}</p>
+                    <p><strong>Text:</strong> ${result.text}</p>
+                    <p><strong>Email enviado a:</strong> juanfernando10gamer@gmail.com</p>
+                    <p><strong>Código:</strong> 123456</p>
+                    <p><em>Revisa tu bandeja de entrada y spam</em></p>
+                `,
+            true
+          );
+        } catch (error) {
+          console.error('❌ Error enviando email:', error);
+          showResult(
+            `
+                    <h3>❌ Error enviando email</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p><strong>Detalles:</strong> ${JSON.stringify(error, null, 2)}</p>
+                `,
+            false
+          );
+        }
+      }
+
+      function checkEmailJSStatus() {
+        const status = {
+          emailjsLoaded: typeof emailjs !== 'undefined',
+          userID: 'SRhw4RGz8nrZInNaZ',
+          serviceID: 'servicio_skzrkhp',
+          templateID: 'template_p0ll7ci',
+        };
+
+        showResult(
+          `
+                <h3>🔍 Estado de EmailJS</h3>
+                <p><strong>EmailJS cargado:</strong> ${status.emailjsLoaded ? '✅ Sí' : '❌ No'}</p>
+                <p><strong>User ID:</strong> ${status.userID}</p>
+                <p><strong>Service ID:</strong> ${status.serviceID}</p>
+                <p><strong>Template ID:</strong> ${status.templateID}</p>
+            `,
+          true
+        );
+      }
+    </script>
+  </body>
+</html>

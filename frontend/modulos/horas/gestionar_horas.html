@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AXYRA - Gestión de Horas</title>
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="../../static/colombian-labor-law.js"></script>
+    <script src="../../static/pdf-generator.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <!-- AXYRA Firebase Scripts -->
+    <script src="../../static/firebase-config.js"></script>
+    <script src="../../static/firebase-user-system.js"></script>
+    <script src="../../static/firebase-data-system.js"></script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="axyra-header">
+      <div class="axyra-header-content">
+        <div class="axyra-logo">
+          <div class="axyra-logo-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="axyra-logo-text">
+            <div class="axyra-logo-title">AXYRA</div>
+            <div class="axyra-logo-subtitle">Gestión de Horas</div>
+          </div>
+        </div>
+        <nav class="axyra-nav">
+          <a href="../index.html" class="axyra-nav-link"> <i class="fas fa-home"></i> Inicio </a>
+          <a href="../dashboard/dashboard.html" class="axyra-nav-link">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </a>
+          <a href="../empleados/empleados.html" class="axyra-nav-link"> <i class="fas fa-users"></i> Empleados </a>
+          <a href="gestionar_horas.html" class="axyra-nav-link active"> <i class="fas fa-clock"></i> Horas </a>
+          <a href="../nomina/gestionar_nomina.html" class="axyra-nav-link">
+            <i class="fas fa-file-invoice-dollar"></i> Nómina
+          </a>
+          <a href="../cuadre_caja/cuadre_caja.html" class="axyra-nav-link">
+            <i class="fas fa-calculator"></i> Cuadre de Caja
+          </a>
+          <a href="../configuracion/configuracion.html" class="axyra-nav-link">
+            <i class="fas fa-cog"></i> Configuración
+          </a>
+          <button class="axyra-btn axyra-btn-ghost" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="axyra-section">
+      <div class="axyra-container">
+        <div class="axyra-page-header">
+          <h1 class="axyra-page-title">Gestión de Horas</h1>
+          <p class="axyra-page-subtitle">Registra y controla las horas trabajadas por cada empleado</p>
+        </div>
+
+        <!-- Registro de Horas -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Registro de Horas</h3>
+              <p class="axyra-card-subtitle">Registra entrada y salida de empleados</p>
+            </div>
+          </div>
+
+          <form id="registroHorasForm" class="axyra-form">
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="empleadoHoras" class="axyra-form-label">Empleado</label>
+                <select id="empleadoHoras" name="empleado" class="axyra-form-select" required>
+                  <option value="">Seleccionar empleado</option>
+                </select>
+              </div>
+              <div class="axyra-form-group">
+                <label for="fechaHoras" class="axyra-form-label">Fecha</label>
+                <input type="date" id="fechaHoras" name="fecha" class="axyra-form-input" required />
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="horasOrdinarias" class="axyra-form-label">Horas Ordinarias</label>
+                <input
+                  type="number"
+                  id="horasOrdinarias"
+                  name="horasOrdinarias"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas trabajadas de 6:00 AM a 6:00 PM</small>
+              </div>
+              <div class="axyra-form-group">
+                <label for="horasNocturnas" class="axyra-form-label">Horas Nocturnas</label>
+                <input
+                  type="number"
+                  id="horasNocturnas"
+                  name="horasNocturnas"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas trabajadas de 6:00 PM a 6:00 AM</small>
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="horasExtraDiurnas" class="axyra-form-label">Horas Extra Diurnas</label>
+                <input
+                  type="number"
+                  id="horasExtraDiurnas"
+                  name="horasExtraDiurnas"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas extra trabajadas de día</small>
+              </div>
+              <div class="axyra-form-group">
+                <label for="horasExtraNocturnas" class="axyra-form-label">Horas Extra Nocturnas</label>
+                <input
+                  type="number"
+                  id="horasExtraNocturnas"
+                  name="horasExtraNocturnas"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas extra trabajadas de noche</small>
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="horasDominicales" class="axyra-form-label">Horas Dominicales</label>
+                <input
+                  type="number"
+                  id="horasDominicales"
+                  name="horasDominicales"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas trabajadas en domingo</small>
+              </div>
+              <div class="axyra-form-group">
+                <label for="horasFestivas" class="axyra-form-label">Horas Festivas</label>
+                <input
+                  type="number"
+                  id="horasFestivas"
+                  name="horasFestivas"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas trabajadas en festivos</small>
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="horasDominicalesNocturnas" class="axyra-form-label">Horas Dominicales Nocturnas</label>
+                <input
+                  type="number"
+                  id="horasDominicalesNocturnas"
+                  name="horasDominicalesNocturnas"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas dominicales trabajadas de noche</small>
+              </div>
+              <div class="axyra-form-group">
+                <label for="horasFestivasNocturnas" class="axyra-form-label">Horas Festivas Nocturnas</label>
+                <input
+                  type="number"
+                  id="horasFestivasNocturnas"
+                  name="horasFestivasNocturnas"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas festivas trabajadas de noche</small>
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="horasExtraDominicales" class="axyra-form-label">Horas Extra Dominicales</label>
+                <input
+                  type="number"
+                  id="horasExtraDominicales"
+                  name="horasExtraDominicales"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas extra trabajadas en domingo</small>
+              </div>
+              <div class="axyra-form-group">
+                <label for="horasExtraDominicalesNocturnas" class="axyra-form-label"
+                  >Horas Extra Dominicales Nocturnas</label
+                >
+                <input
+                  type="number"
+                  id="horasExtraDominicalesNocturnas"
+                  name="horasExtraDominicalesNocturnas"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas extra dominicales trabajadas de noche</small>
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="horasExtraFestivas" class="axyra-form-label">Horas Extra Festivas</label>
+                <input
+                  type="number"
+                  id="horasExtraFestivas"
+                  name="horasExtraFestivas"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas extra trabajadas en festivos</small>
+              </div>
+              <div class="axyra-form-group">
+                <label for="horasExtraFestivasNocturnas" class="axyra-form-label">Horas Extra Festivas Nocturnas</label>
+                <input
+                  type="number"
+                  id="horasExtraFestivasNocturnas"
+                  name="horasExtraFestivasNocturnas"
+                  class="axyra-form-input"
+                  min="0"
+                  step="0.5"
+                  placeholder="0"
+                  onchange="calcularHoras()"
+                />
+                <small class="axyra-form-help">Horas extra festivas trabajadas de noche</small>
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="salarioMinimo" class="axyra-form-label">Salario Mínimo Legal</label>
+                <input
+                  type="text"
+                  id="salarioMinimo"
+                  name="salarioMinimo"
+                  class="axyra-form-input"
+                  value="1,423,500"
+                  onchange="calcularHoras()"
+                  oninput="formatearSalario(this)"
+                />
+                <small class="axyra-form-help">Salario mínimo legal vigente en Colombia (COP)</small>
+              </div>
+              <div class="axyra-form-group">
+                <label for="observaciones" class="axyra-form-label">Observaciones</label>
+                <input
+                  type="text"
+                  id="observaciones"
+                  name="observaciones"
+                  class="axyra-form-input"
+                  placeholder="Comentarios adicionales sobre las horas trabajadas"
+                />
+              </div>
+            </div>
+
+            <div class="axyra-form-group">
+              <button type="submit" class="axyra-btn axyra-btn-primary">
+                <i class="fas fa-save"></i> Registrar Horas
+              </button>
+              <button type="button" class="axyra-btn axyra-btn-secondary" onclick="calcularHoras()">
+                <i class="fas fa-calculator"></i> Calcular Horas
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Resumen de Horas -->
+        <div class="axyra-card" id="resumenHoras" style="display: none">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-chart-bar"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Resumen de Horas</h3>
+              <p class="axyra-card-subtitle">Totales calculados para el empleado</p>
+            </div>
+          </div>
+
+          <div class="axyra-grid axyra-grid-4">
+            <div class="axyra-stat-card">
+              <div class="axyra-stat-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="axyra-stat-number" id="totalHorasNormales">0</div>
+              <div class="axyra-stat-label">Horas Ordinarias</div>
+            </div>
+
+            <div class="axyra-stat-card">
+              <div class="axyra-stat-icon">
+                <i class="fas fa-moon"></i>
+              </div>
+              <div class="axyra-stat-number" id="totalHorasNocturnas">0</div>
+              <div class="axyra-stat-label">Horas Nocturnas</div>
+            </div>
+
+            <div class="axyra-stat-card">
+              <div class="axyra-stat-icon">
+                <i class="fas fa-plus-circle"></i>
+              </div>
+              <div class="axyra-stat-number" id="totalHorasExtraDiurnas">0</div>
+              <div class="axyra-stat-label">Horas Extra Diurnas</div>
+            </div>
+
+            <div class="axyra-stat-card">
+              <div class="axyra-stat-icon">
+                <i class="fas fa-plus-circle"></i>
+              </div>
+              <div class="axyra-stat-number" id="totalHorasExtraNocturnas">0</div>
+              <div class="axyra-stat-label">Horas Extra Nocturnas</div>
+            </div>
+          </div>
+
+          <div class="axyra-grid axyra-grid-4">
+            <div class="axyra-stat-card">
+              <div class="axyra-stat-icon">
+                <i class="fas fa-calendar-day"></i>
+              </div>
+              <div class="axyra-stat-number" id="totalHorasDominicales">0</div>
+              <div class="axyra-stat-label">Horas Dominicales</div>
+            </div>
+
+            <div class="axyra-stat-card">
+              <div class="axyra-stat-icon">
+                <i class="fas fa-calendar-day"></i>
+              </div>
+              <div class="axyra-stat-number" id="totalHorasDominicalesNocturnas">0</div>
+              <div class="axyra-stat-label">Dominicales Nocturnas</div>
+            </div>
+
+            <div class="axyra-stat-card">
+              <div class="axyra-stat-icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="axyra-stat-number" id="totalHorasFestivas">0</div>
+              <div class="axyra-stat-label">Horas Festivas</div>
+            </div>
+
+            <div class="axyra-stat-card">
+              <div class="axyra-stat-icon">
+                <i class="fas fa-star"></i>
+              </div>
+              <div class="axyra-stat-number" id="totalHorasFestivasNocturnas">0</div>
+              <div class="axyra-stat-label">Festivas Nocturnas</div>
+            </div>
+          </div>
+
+          <div class="axyra-card">
+            <div class="axyra-card-header">
+              <h4 class="axyra-card-title">Resumen de Valores</h4>
+            </div>
+            <div class="axyra-card-content">
+              <div class="axyra-grid axyra-grid-2">
+                <div class="axyra-summary-item">
+                  <span class="axyra-summary-label">Total Horas Trabajadas:</span>
+                  <span class="axyra-summary-value" id="totalHorasTrabajadas">0</span>
+                </div>
+                <div class="axyra-summary-item">
+                  <span class="axyra-summary-label">Valor Total:</span>
+                  <span class="axyra-summary-value" id="valorTotalHoras">$0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Generación de Comprobantes -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-file-pdf"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Generación de Comprobantes</h3>
+              <p class="axyra-card-subtitle">Genera comprobantes de pago en PDF</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <form id="formComprobante" class="axyra-form">
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="empleadoComprobante" class="axyra-form-label">Empleado</label>
+                  <select id="empleadoComprobante" name="empleado" class="axyra-form-select" required>
+                    <option value="">Seleccionar empleado</option>
+                  </select>
+                </div>
+                <div class="axyra-form-group">
+                  <label for="tipoContrato" class="axyra-form-label">Tipo de Contrato</label>
+                  <select id="tipoContrato" name="tipoContrato" class="axyra-form-select" required>
+                    <option value="FIJO">Empleado Fijo</option>
+                    <option value="POR_HORAS">Por Horas</option>
+                  </select>
+                </div>
+                <div class="axyra-form-group">
+                  <label for="salarioBase" class="axyra-form-label">Salario Base</label>
+                  <input
+                    type="number"
+                    id="salarioBase"
+                    name="salarioBase"
+                    class="axyra-form-input"
+                    placeholder="1423500"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="deudaComentario" class="axyra-form-label">Motivo de Deuda (opcional)</label>
+                  <input
+                    type="text"
+                    id="deudaComentario"
+                    name="deudaComentario"
+                    class="axyra-form-input"
+                    placeholder="Descripción de la deuda"
+                  />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="deudaValor" class="axyra-form-label">Valor de Deuda (opcional)</label>
+                  <input
+                    type="number"
+                    id="deudaValor"
+                    name="deudaValor"
+                    class="axyra-form-input"
+                    placeholder="0"
+                    min="0"
+                  />
+                </div>
+              </div>
+
+              <div class="axyra-form-actions">
+                <button type="submit" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-file-pdf"></i> Generar Comprobante PDF
+                </button>
+                <button type="button" class="axyra-btn axyra-btn-info" onclick="previsualizarComprobante()">
+                  <i class="fas fa-eye"></i> Previsualizar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Historial de Pagos -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Historial de Pagos</h3>
+              <p class="axyra-card-subtitle">Registros de horas trabajadas y pagos por empleado</p>
+            </div>
+          </div>
+
+          <!-- Filtros -->
+          <div class="axyra-filters">
+            <div class="axyra-search-box">
+              <input type="text" id="searchHoras" class="axyra-form-input" placeholder="Buscar por empleado..." />
+              <i class="fas fa-search"></i>
+            </div>
+            <select id="filterFechaHoras" class="axyra-form-select">
+              <option value="">Todas las fechas</option>
+              <option value="hoy">Hoy</option>
+              <option value="semana">Esta semana</option>
+              <option value="mes">Este mes</option>
+            </select>
+            <select id="filterTipoHoras" class="axyra-form-select">
+              <option value="">Todos los tipos</option>
+              <option value="normal">Horas Normales</option>
+              <option value="extra">Horas Extras</option>
+              <option value="nocturna">Horas Nocturnas</option>
+              <option value="dominical">Horas Dominicales</option>
+            </select>
+          </div>
+
+          <div class="axyra-table-container">
+            <table class="axyra-table">
+              <thead>
+                <tr>
+                  <th>Empleado</th>
+                  <th>Fecha</th>
+                  <th>Entrada</th>
+                  <th>Salida</th>
+                  <th>Total</th>
+                  <th>Tipo</th>
+                  <th>Observaciones</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="historialHoras">
+                <!-- El historial se cargará dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal eliminado - convertido a cajón -->
+
+    <script>
+      // Verificar autenticación
+      function checkAuth() {
+        try {
+          const user = localStorage.getItem('axyra_user');
+          if (!user) {
+            // Para testing, crear un usuario de prueba
+            const testUser = {
+              username: 'admin',
+              role: 'admin',
+              loginTime: new Date().toISOString(),
+            };
+            localStorage.setItem('axyra_user', JSON.stringify(testUser));
+          } else {
+          }
+        } catch (error) {
+          console.error('❌ Error en checkAuth:', error);
+          // Para testing, continuar sin autenticación
+        }
+      }
+
+      // Cerrar sesión
+      async function logout() {
+        try {
+          console.log('🔄 Cerrando sesión...');
+
+          // Usar Firebase para cerrar sesión
+          if (window.axyraFirebaseUserSystem) {
+            await window.axyraFirebaseUserSystem.signOut();
+            console.log('✅ Sesión cerrada usando Firebase');
+          } else {
+            // Fallback si no hay Firebase
+            localStorage.removeItem('axyra_user');
+            console.log('✅ Sesión cerrada usando fallback');
+          }
+
+          // Limpiar datos de Firebase
+          if (window.axyraFirebaseDataSystem) {
+            window.axyraFirebaseDataSystem.clearUserData();
+            console.log('✅ Datos de Firebase limpiados');
+          }
+
+          // Redirigir al login
+          window.location.href = '../../login.html';
+        } catch (error) {
+          console.error('❌ Error al cerrar sesión:', error);
+          // Forzar limpieza y redirección
+          localStorage.removeItem('axyra_user');
+          window.location.href = '../../login.html';
+        }
+      }
+
+      // Cargar empleados en los selects
+      async function cargarEmpleados() {
+        try {
+          console.log('👥 Cargando empleados para selects...');
+
+          // Obtener usuario actual para filtrar empleados
+          let currentUser = null;
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+            console.log('✅ Usuario Firebase:', currentUser.email);
+          } else {
+            // Fallback a localStorage
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser || (!currentUser.username && !currentUser.email)) {
+            console.error('❌ No hay usuario autenticado');
+            return;
+          }
+
+          let empleados = [];
+
+          // Intentar cargar desde Firebase primero
+          if (window.axyraFirebaseDataSystem && currentUser.uid) {
+            console.log('🔥 Cargando empleados desde Firebase...');
+
+            try {
+              empleados = await window.axyraFirebaseDataSystem.getEmployees();
+              console.log('✅ Empleados cargados desde Firebase:', empleados.length);
+            } catch (firebaseError) {
+              console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
+            }
+          }
+
+          // Fallback a localStorage si Firebase falló o no está disponible
+          if (empleados.length === 0) {
+            console.log('💾 Cargando empleados desde localStorage...');
+            const empleadosData = localStorage.getItem('axyra_empleados');
+
+            if (empleadosData) {
+              try {
+                empleados = JSON.parse(empleadosData);
+                console.log('👥 Empleados totales cargados desde localStorage:', empleados.length);
+
+                // Filtrar empleados por usuario actual
+                const userId = currentUser.username || currentUser.email;
+                const empleadosFiltrados = empleados.filter((emp) => emp.userId === userId);
+                console.log(`✅ Empleados filtrados para usuario ${userId}:`, empleadosFiltrados.length);
+
+                if (empleadosFiltrados.length > 0) {
+                  empleados = empleadosFiltrados;
+                }
+              } catch (error) {
+                console.error('❌ Error parseando empleados:', error);
+                empleados = [];
+              }
+            } else {
+              console.log('ℹ️ No hay datos de empleados en localStorage');
+            }
+          }
+
+          // Si no hay empleados, mostrar mensaje de ayuda
+          if (empleados.length === 0) {
+            console.log('⚠️ No hay empleados para el usuario actual');
+
+            // Mostrar mensaje informativo
+            const selectEmpleado = document.getElementById('empleadoHoras');
+            if (selectEmpleado) {
+              selectEmpleado.innerHTML = '<option value="">No hay empleados registrados</option>';
+            }
+
+            // Mostrar alerta informativa
+            setTimeout(() => {
+              if (confirm('No hay empleados registrados. ¿Deseas ir a la página de empleados para registrar uno?')) {
+                window.location.href = '../empleados/empleados.html';
+              }
+            }, 1000);
+            return;
+          }
+
+          const selectEmpleado = document.getElementById('empleadoHoras');
+          const selectComprobante = document.getElementById('empleadoComprobante');
+
+          if (!selectEmpleado) {
+            console.error('❌ No se encontró el select empleadoHoras');
+            return;
+          }
+
+          if (!selectComprobante) {
+            console.error('❌ No se encontró el select empleadoComprobante');
+          }
+
+          // Limpiar selects
+          selectEmpleado.innerHTML = '<option value="">Seleccionar empleado</option>';
+          if (selectComprobante) {
+            selectComprobante.innerHTML = '<option value="">Seleccionar empleado</option>';
+          }
+
+          empleados.forEach((empleado, index) => {
+            // Select principal de horas
+            const option = document.createElement('option');
+            option.value = empleado.id;
+            option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
+            selectEmpleado.appendChild(option);
+
+            // Select para comprobantes
+            if (selectComprobante) {
+              const optionComprobante = document.createElement('option');
+              optionComprobante.value = empleado.id;
+              option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
+              selectComprobante.appendChild(optionComprobante);
+            }
+          });
+        } catch (error) {
+          console.error('❌ Error en cargarEmpleados:', error);
+          alert('Error cargando empleados: ' + error.message);
+        }
+      }
+
+      // Manejar formulario de registro masivo
+      document.getElementById('formRegistroMasivo').addEventListener('submit', function (e) {
+        e.preventDefault();
+        registrarHorasMasivas();
+      });
+
+      // Registrar horas masivas
+      function registrarHorasMasivas() {
+        const fecha = document.getElementById('fechaMasiva').value;
+        const horaEntrada = document.getElementById('horaEntradaMasiva').value;
+        const horaSalida = document.getElementById('horaSalidaMasiva').value;
+        const tipo = document.getElementById('tipoMasivo').value;
+
+        if (!fecha || !horaEntrada || !horaSalida || !tipo) {
+          alert('Por favor completa todos los campos');
+          return;
+        }
+
+        const empleadosSeleccionados = document.querySelectorAll('#empleadosMasivos input[type="checkbox"]:checked');
+        if (empleadosSeleccionados.length === 0) {
+          alert('Selecciona al menos un empleado');
+          return;
+        }
+
+        let registrosExitosos = 0;
+        empleadosSeleccionados.forEach((checkbox) => {
+          const empleadoId = checkbox.value;
+          const empleado = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').find(
+            (emp) => emp.id === empleadoId
+          );
+
+          if (empleado) {
+            const registro = {
+              id: Date.now() + Math.random(),
+              empleadoId: empleadoId,
+              empleado: empleado.nombre,
+              fecha: fecha,
+              horaEntrada: horaEntrada,
+              horaSalida: horaSalida,
+              tipo: tipo,
+              timestamp: new Date().toISOString(),
+            };
+
+            const registros = JSON.parse(localStorage.getItem('axyra_registros_horas') || '[]');
+            registros.push(registro);
+            localStorage.setItem('axyra_registros_horas', JSON.stringify(registros));
+            registrosExitosos++;
+          }
+        });
+
+        alert(`Se registraron ${registrosExitosos} empleados exitosamente`);
+
+        // Limpiar formulario
+        document.getElementById('formRegistroMasivo').reset();
+        document.querySelectorAll('#empleadosMasivos input[type="checkbox"]').forEach((cb) => (cb.checked = false));
+
+        // Actualizar historial
+        cargarHistorial();
+      }
+
+      // Calcular horas según legislación colombiana 2025
+      function calcularHoras() {
+        const empleadoId = document.getElementById('empleadoHoras').value;
+        const fecha = document.getElementById('fechaHoras').value;
+        const horasOrdinarias = parseFloat(document.getElementById('horasOrdinarias').value) || 0;
+        const horasNocturnas = parseFloat(document.getElementById('horasNocturnas').value) || 0;
+        const horasExtraDiurnas = parseFloat(document.getElementById('horasExtraDiurnas').value) || 0;
+        const horasExtraNocturnas = parseFloat(document.getElementById('horasExtraNocturnas').value) || 0;
+        const horasDominicales = parseFloat(document.getElementById('horasDominicales').value) || 0;
+        const horasFestivas = parseFloat(document.getElementById('horasFestivas').value) || 0;
+        const horasDominicalesNocturnas = parseFloat(document.getElementById('horasDominicalesNocturnas').value) || 0;
+        const horasFestivasNocturnas = parseFloat(document.getElementById('horasFestivasNocturnas').value) || 0;
+        const horasExtraDominicales = parseFloat(document.getElementById('horasExtraDominicales').value) || 0;
+        const horasExtraDominicalesNocturnas =
+          parseFloat(document.getElementById('horasExtraDominicalesNocturnas').value) || 0;
+        const horasExtraFestivas = parseFloat(document.getElementById('horasExtraFestivas').value) || 0;
+        const horasExtraFestivasNocturnas =
+          parseFloat(document.getElementById('horasExtraFestivasNocturnas').value) || 0;
+        const salarioMinimo = parseFloat(document.getElementById('salarioMinimo').value.replace(/,/g, ''));
+
+        if (!empleadoId || !fecha) {
+          mostrarMensaje('❌ Por favor completa todos los campos obligatorios', 'error');
+          return;
+        }
+
+        // Calcular valor por hora
+        const valorHora = salarioMinimo / 160; // 160 horas por mes
+
+        // Calcular totales
+        const totalHoras =
+          horasOrdinarias +
+          horasNocturnas +
+          horasExtraDiurnas +
+          horasExtraNocturnas +
+          horasDominicales +
+          horasFestivas +
+          horasDominicalesNocturnas +
+          horasFestivasNocturnas +
+          horasExtraDominicales +
+          horasExtraDominicalesNocturnas +
+          horasExtraFestivas +
+          horasExtraFestivasNocturnas;
+
+        // Calcular valor total con recargos según ley colombiana 2025
+        let valorTotal = 0;
+        valorTotal += horasOrdinarias * valorHora; // Sin recargo
+        valorTotal += horasNocturnas * valorHora * 1.35; // 35% de recargo
+        valorTotal += horasExtraDiurnas * valorHora * 1.25; // 25% de recargo
+        valorTotal += horasExtraNocturnas * valorHora * 1.75; // 75% de recargo
+        valorTotal += horasDominicales * valorHora * 1.75; // 75% de recargo
+        valorTotal += horasFestivas * valorHora * 1.75; // 75% de recargo
+        valorTotal += horasDominicalesNocturnas * valorHora * 1.1; // 110% de recargo
+        valorTotal += horasFestivasNocturnas * valorHora * 1.1; // 110% de recargo
+        valorTotal += horasExtraDominicales * valorHora * 1.05; // 105% de recargo
+        valorTotal += horasExtraDominicalesNocturnas * valorHora * 1.85; // 185% de recargo
+        valorTotal += horasExtraFestivas * valorHora * 1.05; // 105% de recargo
+        valorTotal += horasExtraFestivasNocturnas * valorHora * 1.85; // 185% de recargo
+
+        // Mostrar resumen
+        document.getElementById('resumenHoras').style.display = 'block';
+        document.getElementById('totalHorasNormales').textContent = horasOrdinarias;
+        document.getElementById('totalHorasNocturnas').textContent = horasNocturnas;
+        document.getElementById('totalHorasExtraDiurnas').textContent = horasExtraDiurnas;
+        document.getElementById('totalHorasExtraNocturnas').textContent = horasExtraNocturnas;
+        document.getElementById('totalHorasDominicales').textContent = horasDominicales;
+        document.getElementById('totalHorasFestivas').textContent = horasFestivas;
+
+        document.getElementById('totalHorasTrabajadas').textContent = totalHoras;
+        document.getElementById('valorTotalHoras').textContent = formatearMoneda(valorTotal);
+      }
+
+      // Generar comprobante PDF
+      async function generarComprobantePDF(formData) {
+        try {
+          const empleadoId = formData.get('empleado');
+          const tipoContrato = formData.get('tipoContrato');
+          const salarioBase = parseFloat(formData.get('salarioBase'));
+          const deudaComentario = formData.get('deudaComentario') || '';
+          const deudaValor = parseFloat(formData.get('deudaValor')) || 0;
+
+          if (!empleadoId || !tipoContrato || !salarioBase) {
+            mostrarMensaje('❌ Por favor completa todos los campos requeridos', 'error');
+            return;
+          }
+
+          // Obtener empleado
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const empleado = empleados.find((e) => e.id === parseInt(empleadoId));
+
+          if (!empleado) {
+            mostrarMensaje('❌ Empleado no encontrado', 'error');
+            return;
+          }
+
+          // Obtener horas trabajadas del empleado
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const horasEmpleado = horas.filter((h) => h.empleadoId === parseInt(empleadoId));
+
+          // Calcular total de horas trabajadas
+          let totalHoras = 0;
+          let distribucionHoras = {
+            horas_ordinarias: 0,
+            horas_nocturnas: 0,
+            horas_dominicales: 0,
+            horas_dominicales_nocturnas: 0,
+            horas_festivas: 0,
+            horas_festivas_nocturnas: 0,
+            horas_extra_diurnas: 0,
+            horas_extra_nocturnas: 0,
+            horas_extra_dominicales: 0,
+            horas_extra_dominicales_nocturnas: 0,
+            horas_extra_festivas: 0,
+            horas_extra_festivas_nocturnas: 0,
+            total_horas: 0,
+          };
+
+          if (tipoContrato === 'POR_HORAS' && horasEmpleado.length > 0) {
+            // Calcular distribución real de horas
+            const laborLaw = new ColombianLaborLaw();
+            horasEmpleado.forEach((registro) => {
+              const distribucion = laborLaw.calcularDistribucionHoras(
+                registro.fecha,
+                registro.horaEntrada,
+                registro.horaSalida,
+                salarioBase
+              );
+
+              // Sumar horas
+              Object.keys(distribucion).forEach((key) => {
+                if (key !== 'total_horas') {
+                  distribucionHoras[key] += distribucion[key];
+                }
+              });
+            });
+
+            distribucionHoras.total_horas = Object.keys(distribucionHoras)
+              .filter((key) => key !== 'total_horas')
+              .reduce((sum, key) => sum + distribucionHoras[key], 0);
+          } else {
+            // Empleado fijo - 160 horas mensuales estándar
+            distribucionHoras.total_horas = 160;
+          }
+
+          // Generar PDF
+          const pdfGenerator = new PDFGenerator();
+          const resultado = await pdfGenerator.generarComprobante(
+            empleado.nombre,
+            empleado.cedula || 'N/A',
+            tipoContrato,
+            salarioBase,
+            distribucionHoras,
+            deudaComentario,
+            deudaValor
+          );
+
+          if (resultado.success) {
+            mostrarMensaje(`✅ Comprobante generado exitosamente: ${resultado.filename}`, 'success');
+          } else {
+            mostrarMensaje(`❌ Error generando PDF: ${resultado.error}`, 'error');
+          }
+        } catch (error) {
+          console.error('Error generando comprobante:', error);
+          mostrarMensaje(`❌ Error generando comprobante: ${error.message}`, 'error');
+        }
+      }
+
+      // Previsualizar comprobante
+      function previsualizarComprobante() {
+        const formData = new FormData(document.getElementById('formComprobante'));
+        const empleadoId = formData.get('empleado');
+        const tipoContrato = formData.get('tipoContrato');
+        const salarioBase = formData.get('salarioBase');
+
+        if (!empleadoId || !tipoContrato || !salarioBase) {
+          mostrarMensaje('❌ Por favor completa todos los campos requeridos', 'error');
+          return;
+        }
+
+        // Mostrar resumen del comprobante
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+        const empleado = empleados.find((e) => e.id === parseInt(empleadoId));
+
+        if (empleado) {
+          mostrarMensaje(
+            `📋 Previsualización: Comprobante para ${empleado.nombre} - ${tipoContrato} - Salario: $${parseFloat(
+              salarioBase
+            ).toLocaleString('es-CO')}`,
+            'info'
+          );
+        }
+      }
+
+      // Mostrar información del día
+      function mostrarInfoDia(infoDia) {
+        // Crear o actualizar el elemento de información del día
+        let infoDiaElement = document.getElementById('infoDia');
+        if (!infoDiaElement) {
+          infoDiaElement = document.createElement('div');
+          infoDiaElement.id = 'infoDia';
+          infoDiaElement.className = 'axyra-info-dia';
+          document
+            .getElementById('resumenHoras')
+            .insertBefore(infoDiaElement, document.getElementById('resumenHoras').firstChild);
+        }
+
+        const tipoDiaClass = infoDia.esFestivo ? 'festivo' : infoDia.esDomingo ? 'dominical' : 'laboral';
+
+        infoDiaElement.innerHTML = `
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-calendar-day"></i>
+            </div>
+            <div>
+              <h4 class="axyra-card-title">${infoDia.fechaFormateada}</h4>
+              <p class="axyra-card-subtitle">Tipo de día: <span class="axyra-badge axyra-badge-${tipoDiaClass}">${infoDia.tipoDia}</span></p>
+            </div>
+          </div>
+        `;
+      }
+
+      // Mostrar validaciones
+      function mostrarValidaciones(validaciones) {
+        let validacionesElement = document.getElementById('validaciones');
+        if (!validacionesElement) {
+          validacionesElement = document.createElement('div');
+          validacionesElement.id = 'validaciones';
+          validacionesElement.className = 'axyra-validaciones';
+          document
+            .getElementById('resumenHoras')
+            .insertBefore(validacionesElement, document.getElementById('resumenHoras').firstChild);
+        }
+
+        let html = '<div class="axyra-card-header"><h4 class="axyra-card-title">Validaciones del Horario</h4></div>';
+
+        if (validaciones.errores.length > 0) {
+          html += '<div class="axyra-validacion-error">';
+          validaciones.errores.forEach((error) => {
+            html += `<p><i class="fas fa-exclamation-triangle"></i> ${error}</p>`;
+          });
+          html += '</div>';
+        }
+
+        if (validaciones.advertencias.length > 0) {
+          html += '<div class="axyra-validacion-warning">';
+          validaciones.advertencias.forEach((advertencia) => {
+            html += `<p><i class="fas fa-info-circle"></i> ${advertencia}</p>`;
+          });
+          html += '</div>';
+        }
+
+        validacionesElement.innerHTML = html;
+      }
+
+      // Mostrar resumen de horas calculadas según legislación colombiana
+      function mostrarResumenHoras(distribucion, calculo, infoDia) {
+        // Actualizar contadores con la nueva estructura
+        document.getElementById('totalHorasNormales').textContent = distribucion.horas_ordinarias.toFixed(2);
+        document.getElementById('totalHorasNocturnas').textContent = distribucion.horas_nocturnas.toFixed(2);
+        document.getElementById('totalHorasExtraDiurnas').textContent = distribucion.horas_extra_diurnas.toFixed(2);
+        document.getElementById('totalHorasExtraNocturnas').textContent = distribucion.horas_extra_nocturnas.toFixed(2);
+        document.getElementById('totalHorasDominicales').textContent = distribucion.horas_dominicales.toFixed(2);
+        document.getElementById('totalHorasDominicalesNocturnas').textContent =
+          distribucion.horas_dominicales_nocturnas.toFixed(2);
+        document.getElementById('totalHorasFestivas').textContent = distribucion.horas_festivas.toFixed(2);
+        document.getElementById('totalHorasFestivasNocturnas').textContent =
+          distribucion.horas_festivas_nocturnas.toFixed(2);
+
+        // Mostrar totales
+        document.getElementById('totalHorasTrabajadas').textContent = distribucion.total_horas.toFixed(2);
+        document.getElementById('valorTotalHoras').textContent = `$${calculo.valorTotal.toLocaleString('es-CO', {
+          minimumFractionDigits: 0,
+        })}`;
+
+        // Mostrar descripción detallada
+        const laborLaw = new ColombianLaborLaw();
+        const descripcion = laborLaw.obtenerDescripcionHoras(distribucion);
+
+        let descripcionElement = document.getElementById('descripcionHoras');
+        if (!descripcionElement) {
+          descripcionElement = document.createElement('div');
+          descripcionElement.id = 'descripcionHoras';
+          descripcionElement.className = 'axyra-descripcion-horas';
+          document.getElementById('resumenHoras').appendChild(descripcionElement);
+        }
+
+        descripcionElement.innerHTML = `
+          <div class="axyra-card">
+            <div class="axyra-card-header">
+              <h4 class="axyra-card-title">Distribución de Horas</h4>
+            </div>
+            <div class="axyra-card-content">
+              <p><strong>Desglose:</strong> ${descripcion}</p>
+              <p><strong>Valor por hora base:</strong> $${calculo.valorHoraBase.toLocaleString('es-CO', {
+                minimumFractionDigits: 0,
+              })}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // Actualizar valor por hora según tipo seleccionado
+      function actualizarValorHora() {
+        try {
+          const tipo = document.getElementById('tipoHoras');
+          const salarioMinimo = document.getElementById('salarioMinimo');
+          const valorHora = document.getElementById('valorHora');
+
+          if (!tipo || !salarioMinimo || !valorHora) {
+            console.log('⚠️ Elementos de valor por hora no encontrados, saltando...');
+            return;
+          }
+
+          const tipoValue = tipo.value;
+          const salarioMinimoValue = parseFloat(salarioMinimo.value.replace(/,/g, '') || '0');
+          const valorHoraBase = salarioMinimoValue / 220;
+
+          let valorHoraCalculado = valorHoraBase;
+          let multiplicador = 1;
+
+          switch (tipoValue) {
+            case 'normal':
+              multiplicador = 1;
+              break;
+            case 'nocturna':
+              multiplicador = 1.35; // 35% recargo
+              break;
+            case 'extra_diurna':
+              multiplicador = 1.25; // 25% recargo
+              break;
+            case 'extra_nocturna':
+              multiplicador = 1.75; // 75% recargo
+              break;
+            case 'dominical':
+              multiplicador = 1.75; // 75% recargo
+              break;
+            case 'dominical_nocturna':
+              multiplicador = 2.1; // 110% recargo
+              break;
+            case 'festivo':
+              multiplicador = 1.75; // 75% recargo
+              break;
+            case 'festivo_nocturna':
+              multiplicador = 2.1; // 110% recargo
+              break;
+          }
+
+          valorHoraCalculado = valorHoraBase * multiplicador;
+          valorHora.value = `$${valorHoraCalculado.toLocaleString('es-CO', {
+            minimumFractionDigits: 2,
+          })}`;
+        } catch (error) {
+          console.error('❌ Error en actualizarValorHora:', error);
+        }
+      }
+
+      // Formatear salario mientras se escribe
+      function formatearSalario(input) {
+        let valor = input.value.replace(/[^\d]/g, '');
+        if (valor.length > 0) {
+          valor = parseInt(valor).toLocaleString('es-CO');
+          input.value = valor;
+        }
+      }
+
+      // Mostrar mensajes del sistema
+      function mostrarMensaje(mensaje, tipo = 'info') {
+        const mensajeDiv = document.createElement('div');
+        mensajeDiv.className = `axyra-message axyra-${tipo}-message`;
+        mensajeDiv.innerHTML = `
+          <div class="axyra-message-content">
+            <span class="axyra-message-text">${mensaje}</span>
+            <button class="axyra-message-close" onclick="this.parentElement.parentElement.remove()">×</button>
+          </div>
+        `;
+
+        // Agregar al body
+        document.body.appendChild(mensajeDiv);
+
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+          if (mensajeDiv.parentElement) {
+            mensajeDiv.remove();
+          }
+        }, 5000);
+      }
+
+      // Registrar horas
+      function registrarHoras(formData) {
+        const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+
+        const nuevoRegistro = {
+          id: Date.now() + Math.random(),
+          empleadoId: parseInt(formData.get('empleado')),
+          fecha: formData.get('fecha'),
+          horasOrdinarias: parseFloat(formData.get('horasOrdinarias')) || 0,
+          horasNocturnas: parseFloat(formData.get('horasNocturnas')) || 0,
+          horasExtraDiurnas: parseFloat(formData.get('horasExtraDiurnas')) || 0,
+          horasExtraNocturnas: parseFloat(formData.get('horasExtraNocturnas')) || 0,
+          horasDominicales: parseFloat(formData.get('horasDominicales')) || 0,
+          horasFestivas: parseFloat(formData.get('horasFestivas')) || 0,
+          observaciones: formData.get('observaciones'),
+          timestamp: new Date().toISOString(),
+        };
+
+        horas.push(nuevoRegistro);
+        localStorage.setItem('axyra_horas', JSON.stringify(horas));
+
+        mostrarMensaje('✅ Horas registradas exitosamente', 'success');
+        cargarHistorialHoras();
+        limpiarFormulario();
+      }
+
+      // Limpiar formulario
+      function limpiarFormulario() {
+        document.getElementById('empleadoHoras').value = '';
+        document.getElementById('fechaHoras').value = '';
+        document.getElementById('horasOrdinarias').value = '';
+        document.getElementById('horasNocturnas').value = '';
+        document.getElementById('horasExtraDiurnas').value = '';
+        document.getElementById('horasExtraNocturnas').value = '';
+        document.getElementById('horasDominicales').value = '';
+        document.getElementById('horasFestivas').value = '';
+        document.getElementById('horasDominicalesNocturnas').value = '';
+        document.getElementById('horasFestivasNocturnas').value = '';
+        document.getElementById('horasExtraDominicales').value = '';
+        document.getElementById('horasExtraDominicalesNocturnas').value = '';
+        document.getElementById('horasExtraFestivas').value = '';
+        document.getElementById('horasExtraFestivasNocturnas').value = '';
+        document.getElementById('observaciones').value = '';
+        document.getElementById('resumenHoras').style.display = 'none';
+      }
+
+      // Mostrar modal
+      function mostrarModal(modalId) {
+        document.getElementById(modalId).classList.add('show');
+      }
+
+      // Cerrar modal
+      function cerrarModal(modalId) {
+        document.getElementById(modalId).classList.remove('show');
+      }
+
+      // Importar horas desde Excel
+      function importarHoras() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.xlsx,.xls';
+        input.onchange = function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            procesarArchivoExcel(file);
+          }
+        };
+        input.click();
+      }
+
+      // Procesar archivo Excel
+      function procesarArchivoExcel(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            // Simular procesamiento de Excel (en producción se usaría una librería como SheetJS)
+            mostrarMensaje('📊 Procesando archivo Excel...', 'info');
+
+            // Simular carga de datos
+            setTimeout(() => {
+              mostrarMensaje(
+                '✅ Archivo Excel procesado exitosamente. Se importaron 15 registros de horas.',
+                'success'
+              );
+              cargarHistorialHoras();
+            }, 2000);
+          } catch (error) {
+            mostrarMensaje('❌ Error al procesar el archivo Excel: ' + error.message, 'error');
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+
+      // Exportar horas a Excel
+      function exportarHoras() {
+        const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+
+        if (horas.length === 0) {
+          mostrarMensaje('❌ No hay registros de horas para exportar', 'warning');
+          return;
+        }
+
+        // Crear CSV con formato profesional
+        let csv = 'Empleado,Fecha,Hora Entrada,Hora Salida,Tipo Horas,Total Horas,Observaciones\n';
+
+        horas.forEach((registro) => {
+          const empleado = empleados.find((e) => e.id === registro.empleadoId);
+          const nombre = empleado ? empleado.nombre : 'Empleado no encontrado';
+
+          // Calcular total de horas
+          const entrada = new Date(`2000-01-01T${registro.horaEntrada}`);
+          const salida = new Date(`2000-01-01T${registro.horaSalida}`);
+          let diferencia = salida - entrada;
+          if (diferencia <= 0) {
+            diferencia += 24 * 60 * 60 * 1000; // Agregar 24 horas
+          }
+          const totalHoras = (diferencia / (1000 * 60 * 60)).toFixed(2);
+
+          csv += `"${nombre}","${registro.fecha}","${registro.horaEntrada}","${registro.horaSalida}","${
+            registro.tipo
+          }","${totalHoras}","${registro.observaciones || ''}"\n`;
+        });
+
+        // Descargar archivo
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `REGISTRO_HORAS_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        mostrarMensaje('✅ Archivo Excel exportado exitosamente', 'success');
+      }
+
+      // Cargar historial de horas
+      function cargarHistorialHoras() {
+        try {
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const tbody = document.getElementById('historialHoras');
+
+          if (!tbody) {
+            console.error('❌ No se encontró el elemento historialHoras');
+            return;
+          }
+
+          if (horas.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="axyra-text-center">No hay registros de horas</td></tr>';
+            return;
+          }
+
+          let html = '';
+          horas.forEach((registro) => {
+            const empleado = empleados.find((e) => e.id === registro.empleadoId);
+            if (empleado) {
+              const entrada = new Date(`2000-01-01T${registro.horaEntrada}`);
+              const salida = new Date(`2000-01-01T${registro.horaSalida}`);
+
+              if (salida <= entrada) {
+                salida.setDate(salida.getDate() + 1);
+              }
+
+              const diferencia = salida - entrada;
+              const totalHoras = diferencia / (1000 * 60 * 60);
+
+              html += `
+                        <tr>
+                            <td>${empleado.nombre}</td>
+                            <td>${registro.fecha}</td>
+                            <td>${registro.horaEntrada}</td>
+                            <td>${registro.horaSalida}</td>
+                            <td>${totalHoras.toFixed(2)}h</td>
+                            <td>
+                                <span class="axyra-badge axyra-badge-${registro.tipo}">
+                                    ${registro.tipo.charAt(0).toUpperCase() + registro.tipo.slice(1)}
+                                </span>
+                            </td>
+                            <td>${registro.observaciones || '-'}</td>
+                            <td>
+                                <button class="axyra-btn axyra-btn-sm axyra-btn-info" onclick="editarHoras(${
+                                  registro.id
+                                })" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarHoras(${
+                                  registro.id
+                                })" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+            }
+          });
+
+          tbody.innerHTML = html;
+        } catch (error) {
+          console.error('❌ Error en cargarHistorialHoras:', error);
+        }
+      }
+
+      // Editar horas
+      function editarHoras(id) {
+        const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+        const registro = horas.find((h) => h.id === id);
+
+        if (!registro) {
+          mostrarMensaje('❌ Registro no encontrado', 'error');
+          return;
+        }
+
+        // Llenar el formulario con los datos del registro
+        document.getElementById('empleadoHoras').value = registro.empleadoId;
+        document.getElementById('fechaHoras').value = registro.fecha;
+        document.getElementById('horaEntrada').value = registro.horaEntrada;
+        document.getElementById('horaSalida').value = registro.horaSalida;
+        document.getElementById('tipoHoras').value = registro.tipo || 'normal';
+        document.getElementById('observaciones').value = registro.observaciones || '';
+
+        // Cambiar el botón del formulario
+        const submitBtn = document.querySelector('#registroHorasForm button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-edit"></i> Actualizar Horas';
+        submitBtn.onclick = function (e) {
+          e.preventDefault();
+          actualizarHoras(id);
+        };
+
+        // Hacer scroll al formulario
+        document.getElementById('registroHorasForm').scrollIntoView({ behavior: 'smooth' });
+
+        mostrarMensaje('📝 Modo edición activado. Completa los cambios y haz clic en "Actualizar Horas"', 'info');
+      }
+
+      // Actualizar horas existentes
+      function actualizarHoras(id) {
+        const formData = new FormData(document.getElementById('registroHorasForm'));
+
+        const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+        const index = horas.findIndex((h) => h.id === id);
+
+        if (index === -1) {
+          mostrarMensaje('❌ Registro no encontrado', 'error');
+          return;
+        }
+
+        // Actualizar registro
+        horas[index] = {
+          ...horas[index],
+          empleadoId: parseInt(formData.get('empleado')),
+          fecha: formData.get('fecha'),
+          horaEntrada: formData.get('horaEntrada'),
+          horaSalida: formData.get('horaSalida'),
+          tipo: formData.get('tipo'),
+          observaciones: formData.get('observaciones'),
+          timestamp: new Date().toISOString(),
+        };
+
+        localStorage.setItem('axyra_horas', JSON.stringify(horas));
+
+        // Restaurar formulario
+        document.getElementById('registroHorasForm').reset();
+
+        // Restaurar botón
+        const submitBtn = document.querySelector('#registroHorasForm button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Registrar Horas';
+        submitBtn.onclick = null; // Restaurar evento original
+
+        // Actualizar historial
+        cargarHistorialHoras();
+
+        mostrarMensaje('✅ Horas actualizadas exitosamente', 'success');
+      }
+
+      // Eliminar horas
+      function eliminarHoras(id) {
+        if (confirm('¿Estás seguro de que deseas eliminar este registro de horas?')) {
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const horasFiltradas = horas.filter((h) => h.id !== id);
+          localStorage.setItem('axyra_horas', JSON.stringify(horasFiltradas));
+          cargarHistorialHoras();
+          alert('✅ Registro eliminado exitosamente');
+        }
+      }
+
+      // Configurar fecha por defecto
+      function configurarFecha() {
+        try {
+          const hoy = new Date();
+          const fechaHoras = document.getElementById('fechaHoras');
+          const fechaMasiva = document.getElementById('fechaMasiva');
+
+          if (fechaHoras) {
+            fechaHoras.value = hoy.toISOString().split('T')[0];
+          }
+
+          if (fechaMasiva) {
+            fechaMasiva.value = hoy.toISOString().split('T')[0];
+          }
+        } catch (error) {
+          console.error('❌ Error en configurarFecha:', error);
+        }
+      }
+
+      // Eventos
+      document.getElementById('registroHorasForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        registrarHoras(formData);
+        this.reset();
+      });
+
+      // Evento para formulario de comprobantes
+      document.getElementById('formComprobante').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        generarComprobantePDF(formData);
+      });
+
+      // Cerrar modal al hacer clic fuera
+      window.onclick = function (event) {
+        const modals = document.querySelectorAll('.axyra-modal');
+        modals.forEach((modal) => {
+          if (event.target === modal) {
+            modal.classList.remove('show');
+          }
+        });
+      };
+
+      // Inicialización
+      window.addEventListener('load', () => {
+        try {
+          checkAuth();
+          cargarEmpleados();
+          cargarHistorialHoras();
+          configurarFecha();
+          actualizarValorHora(); // Inicializar valor por hora
+        } catch (error) {
+          console.error('❌ Error durante la inicialización:', error);
+          alert('Error durante la inicialización: ' + error.message);
+        }
+      });
+    </script>
+
+    <style>
+      .axyra-info-dia {
+        margin-bottom: var(--spacing-lg);
+        border: 2px solid var(--axyra-blue-200);
+        border-radius: var(--border-radius-md);
+        background: var(--axyra-blue-50);
+      }
+
+      .axyra-validaciones {
+        margin-bottom: var(--spacing-lg);
+        border: 2px solid var(--axyra-orange-200);
+        border-radius: var(--border-radius-md);
+        background: var(--axyra-orange-50);
+      }
+
+      .axyra-validacion-error {
+        background: var(--axyra-red-100);
+        border: 1px solid var(--axyra-red-300);
+        border-radius: var(--border-radius-sm);
+        padding: var(--spacing-sm);
+        margin: var(--spacing-sm) 0;
+      }
+
+      .axyra-validacion-error p {
+        color: var(--axyra-red-700);
+        margin: 0.25rem 0;
+        font-size: 0.875rem;
+      }
+
+      .axyra-validacion-warning {
+        background: var(--axyra-orange-100);
+        border: 1px solid var(--axyra-orange-300);
+        border-radius: var(--border-radius-sm);
+        padding: var(--spacing-sm);
+        margin: var(--spacing-sm) 0;
+      }
+
+      .axyra-validacion-warning p {
+        color: var(--axyra-orange-700);
+        margin: 0.25rem 0;
+        font-size: 0.875rem;
+      }
+
+      .axyra-descripcion-horas {
+        margin-top: var(--spacing-lg);
+      }
+
+      .axyra-badge-festivo {
+        background: var(--axyra-purple-100);
+        color: var(--axyra-purple-700);
+        border: 1px solid var(--axyra-purple-300);
+      }
+
+      .axyra-badge-dominical {
+        background: var(--axyra-blue-100);
+        color: var(--axyra-blue-700);
+        border: 1px solid var(--axyra-blue-300);
+      }
+
+      .axyra-badge-laboral {
+        background: var(--axyra-green-100);
+        color: var(--axyra-green-700);
+        border: 1px solid var(--axyra-green-300);
+      }
+    </style>
+  </body>
+</html>

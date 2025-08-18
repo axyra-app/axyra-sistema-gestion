@@ -1,0 +1,1414 @@
+<!-- frontend/empleados.html -->
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AXYRA - Gestión de Empleados</title>
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <!-- AXYRA Firebase Scripts -->
+    <script src="../../static/firebase-config.js"></script>
+    <script src="../../static/firebase-user-system.js"></script>
+    <script src="../../static/firebase-data-system.js"></script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="axyra-header">
+      <div class="axyra-header-content">
+        <div class="axyra-logo">
+          <div class="axyra-logo-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="axyra-logo-text">
+            <div class="axyra-logo-title">AXYRA</div>
+            <div class="axyra-logo-subtitle">Gestión de Empleados</div>
+          </div>
+        </div>
+        <nav class="axyra-nav">
+          <a href="../../index.html" class="axyra-nav-link"> <i class="fas fa-home"></i> Inicio </a>
+          <a href="../dashboard/dashboard.html" class="axyra-nav-link">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+          </a>
+          <a href="empleados.html" class="axyra-nav-link active"> <i class="fas fa-users"></i> Empleados </a>
+          <a href="../horas/gestionar_horas.html" class="axyra-nav-link"> <i class="fas fa-clock"></i> Horas </a>
+          <a href="../nomina/gestionar_nomina.html" class="axyra-nav-link">
+            <i class="fas fa-file-invoice-dollar"></i> Nómina
+          </a>
+          <a href="../cuadre_caja/cuadre_caja.html" class="axyra-nav-link">
+            <i class="fas fa-calculator"></i> Cuadre de Caja
+          </a>
+          <a href="../configuracion/configuracion.html" class="axyra-nav-link">
+            <i class="fas fa-cog"></i> Configuración
+          </a>
+          <button class="axyra-btn axyra-btn-ghost" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="axyra-section">
+      <div class="axyra-container">
+        <div class="axyra-page-header">
+          <h1 class="axyra-page-title">Gestión de Empleados</h1>
+          <p class="axyra-page-subtitle">Administra la información de todos los empleados de tu empresa</p>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="axyra-actions-bar">
+          <button class="axyra-btn axyra-btn-primary" onclick="mostrarModal('modalAgregarEmpleado')">
+            <i class="fas fa-plus"></i> Agregar Empleado
+          </button>
+          <button class="axyra-btn axyra-btn-secondary" onclick="gestionarDepartamentos()">
+            <i class="fas fa-building"></i> Gestionar Departamentos
+          </button>
+          <button class="axyra-btn axyra-btn-info" onclick="exportarEmpleados()">
+            <i class="fas fa-download"></i> Exportar a Excel
+          </button>
+          <button class="axyra-btn axyra-btn-success" onclick="descargarPlantilla()">
+            <i class="fas fa-file-excel"></i> Descargar Plantilla
+          </button>
+          <button class="axyra-btn axyra-btn-warning" onclick="importarPlantilla()">
+            <i class="fas fa-upload"></i> Importar Plantilla
+          </button>
+          <button class="axyra-btn axyra-btn-danger" onclick="repararEmpleados()">
+            <i class="fas fa-wrench"></i> Reparar Empleados
+          </button>
+        </div>
+
+        <!-- Filtros y Búsqueda -->
+        <div class="axyra-filters">
+          <div class="axyra-search-box">
+            <input type="text" id="searchInput" class="axyra-form-input" placeholder="Buscar empleados..." />
+            <i class="fas fa-search"></i>
+          </div>
+          <select id="filterDepartamento" class="axyra-form-select">
+            <option value="">Todos los departamentos</option>
+            <option value="Administración">Administración</option>
+            <option value="Ventas">Ventas</option>
+            <option value="Producción">Producción</option>
+            <option value="Recursos Humanos">Recursos Humanos</option>
+            <option value="Tecnología">Tecnología</option>
+          </select>
+          <select id="filterEstado" class="axyra-form-select">
+            <option value="">Todos los estados</option>
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+            <option value="Vacaciones">Vacaciones</option>
+            <option value="Licencia">Licencia</option>
+          </select>
+        </div>
+
+        <!-- Tabla de Empleados -->
+        <div class="axyra-table-container">
+          <table class="axyra-table" id="empleadosTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Foto</th>
+                <th>Nombre</th>
+                <th>Departamento</th>
+                <th>Cargo</th>
+                <th>Salario</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="empleadosTableBody">
+              <!-- Los empleados se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="axyra-pagination">
+          <button class="axyra-btn axyra-btn-outline" onclick="cambiarPagina(-1)">
+            <i class="fas fa-chevron-left"></i> Anterior
+          </button>
+          <span id="paginaInfo">Página 1 de 1</span>
+          <button class="axyra-btn axyra-btn-outline" onclick="cambiarPagina(1)">
+            Siguiente <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal Agregar/Editar Empleado -->
+    <div id="modalAgregarEmpleado" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3 class="axyra-modal-title" id="modalTitle"><i class="fas fa-user-plus"></i> Agregar Empleado</h3>
+          <button class="axyra-modal-close" onclick="cerrarModal('modalAgregarEmpleado')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="axyra-modal-body">
+          <form id="formEmpleado" class="axyra-form">
+            <input type="hidden" id="empleadoId" name="id" />
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="nombre" class="axyra-form-label">Nombre Completo *</label>
+                <input type="text" id="nombre" name="nombre" class="axyra-form-input" required />
+              </div>
+              <div class="axyra-form-group">
+                <label for="email" class="axyra-form-label">Email *</label>
+                <input type="email" id="email" name="email" class="axyra-form-input" required />
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="telefono" class="axyra-form-label">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" class="axyra-form-input" />
+              </div>
+              <div class="axyra-form-group">
+                <label for="fechaNacimiento" class="axyra-form-label">Fecha de Nacimiento</label>
+                <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="axyra-form-input" />
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="departamento" class="axyra-form-label">Departamento *</label>
+                <select id="departamento" name="departamento" class="axyra-form-select" required>
+                  <option value="">Seleccionar departamento</option>
+                  <option value="Administración">Administración</option>
+                  <option value="Ventas">Ventas</option>
+                  <option value="Producción">Producción</option>
+                  <option value="Recursos Humanos">Recursos Humanos</option>
+                  <option value="Tecnología">Tecnología</option>
+                </select>
+              </div>
+              <div class="axyra-form-group">
+                <label for="cargo" class="axyra-form-label">Cargo *</label>
+                <input type="text" id="cargo" name="cargo" class="axyra-form-input" required />
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="salario" class="axyra-form-label">Salario Base *</label>
+                <input type="number" id="salario" name="salario" class="axyra-form-input" step="0.01" required />
+              </div>
+              <div class="axyra-form-group">
+                <label for="fechaIngreso" class="axyra-form-label">Fecha de Ingreso *</label>
+                <input type="date" id="fechaIngreso" name="fechaIngreso" class="axyra-form-input" required />
+              </div>
+            </div>
+
+            <div class="axyra-form-group">
+              <label for="estado" class="axyra-form-label">Estado *</label>
+              <select id="estado" name="estado" class="axyra-form-select" required>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+                <option value="Vacaciones">Vacaciones</option>
+                <option value="Licencia">Licencia</option>
+              </select>
+            </div>
+
+            <div class="axyra-form-group">
+              <label for="direccion" class="axyra-form-label">Dirección</label>
+              <textarea id="direccion" name="direccion" class="axyra-form-textarea" rows="3"></textarea>
+            </div>
+
+            <div class="axyra-modal-footer">
+              <button type="button" class="axyra-btn axyra-btn-secondary" onclick="cerrarModal('modalAgregarEmpleado')">
+                <i class="fas fa-times"></i> Cancelar
+              </button>
+              <button type="submit" class="axyra-btn axyra-btn-primary">
+                <i class="fas fa-save"></i> Guardar Empleado
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div id="modalConfirmacion" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3 class="axyra-modal-title"><i class="fas fa-question-circle"></i> Confirmar Acción</h3>
+          <button class="axyra-modal-close" onclick="cerrarModal('modalConfirmacion')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="axyra-modal-body">
+          <p id="confirmacionMensaje">¿Estás seguro de que deseas realizar esta acción?</p>
+          <div class="axyra-modal-footer">
+            <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModal('modalConfirmacion')">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button id="btnConfirmar" class="axyra-btn axyra-btn-error"><i class="fas fa-check"></i> Confirmar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Variables globales
+      let empleados = [];
+      let empleadoEditando = null;
+      let paginaActual = 1;
+      const empleadosPorPagina = 10;
+
+      // Verificar autenticación
+      async function checkAuth() {
+        try {
+          console.log('🔐 Verificando autenticación...');
+
+          // Verificar sesión usando Firebase
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            const currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+            console.log('✅ Usuario autenticado con Firebase:', currentUser.email);
+            return true;
+          }
+
+          // Verificar sesión usando localStorage como fallback
+          const user = localStorage.getItem('axyra_user');
+          if (user) {
+            try {
+              const userData = JSON.parse(user);
+              if (userData && (userData.username || userData.email)) {
+                console.log('✅ Usuario autenticado con localStorage:', userData.username || userData.email);
+                return true;
+              }
+            } catch (error) {
+              console.error('Error parseando sesión de localStorage:', error);
+            }
+          }
+
+          // No hay sesión activa
+          console.log('⚠️ No hay sesión activa - redirigiendo al login');
+          window.location.href = '../../login.html';
+          return false;
+        } catch (error) {
+          console.error('❌ Error al verificar sesión:', error);
+          window.location.href = '../../login.html';
+          return false;
+        }
+      }
+
+      // Cerrar sesión
+      async function logout() {
+        try {
+          console.log('🔄 Cerrando sesión...');
+
+          // Usar Firebase para cerrar sesión
+          if (window.axyraFirebaseUserSystem) {
+            await window.axyraFirebaseUserSystem.signOut();
+            console.log('✅ Sesión cerrada usando Firebase');
+          } else {
+            // Fallback si no hay Firebase
+            localStorage.removeItem('axyra_user');
+            console.log('✅ Sesión cerrada usando fallback');
+          }
+
+          // Limpiar datos de Firebase
+          if (window.axyraFirebaseDataSystem) {
+            window.axyraFirebaseDataSystem.clearUserData();
+            console.log('✅ Datos de Firebase limpiados');
+          }
+
+          // Redirigir al login
+          window.location.href = '../../login.html';
+        } catch (error) {
+          console.error('❌ Error al cerrar sesión:', error);
+          // Forzar limpieza y redirección
+          localStorage.removeItem('axyra_user');
+          window.location.href = '../../login.html';
+        }
+      }
+
+      // Cargar empleados desde Firebase o localStorage
+      async function cargarEmpleados() {
+        try {
+          console.log('👥 Cargando empleados...');
+
+          // Obtener usuario actual
+          let currentUser = null;
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+            console.log('✅ Usuario Firebase:', currentUser.email);
+          } else {
+            // Fallback a localStorage
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser) {
+            console.error('❌ No hay usuario autenticado');
+            return;
+          }
+
+          // Intentar cargar desde Firebase primero
+          if (window.axyraFirebaseDataSystem && currentUser.uid) {
+            console.log('🔥 Cargando empleados desde Firebase...');
+
+            try {
+              empleados = await window.axyraFirebaseDataSystem.getEmployees();
+              console.log(`✅ Empleados cargados desde Firebase: ${empleados.length}`);
+              mostrarEmpleados();
+              return;
+            } catch (firebaseError) {
+              console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
+            }
+          }
+
+          // Fallback a localStorage
+          console.log('💾 Cargando empleados desde localStorage...');
+          const empleadosGuardados = localStorage.getItem('axyra_empleados');
+          if (empleadosGuardados) {
+            try {
+              empleados = JSON.parse(empleadosGuardados);
+
+              // REPARACIÓN AUTOMÁTICA: Asignar userId a empleados que no lo tengan
+              if (currentUser.username || currentUser.email) {
+                let empleadosReparados = false;
+                const userId = currentUser.username || currentUser.email;
+
+                empleados.forEach((emp) => {
+                  if (!emp.userId || emp.userId === 'undefined' || emp.userId === '') {
+                    console.log(`🔧 Reparando empleado ${emp.nombre} - Asignando userId: ${userId}`);
+                    emp.userId = userId;
+                    empleadosReparados = true;
+                  }
+                });
+
+                if (empleadosReparados) {
+                  console.log('💾 Guardando empleados reparados...');
+                  guardarEmpleados();
+                }
+
+                // Filtrar empleados por usuario actual
+                empleados = empleados.filter((emp) => emp.userId === userId);
+                console.log(`✅ Empleados filtrados para usuario: ${userId} - Total: ${empleados.length}`);
+              }
+            } catch (error) {
+              console.error('Error parseando empleados:', error);
+              empleados = [];
+            }
+          } else {
+            empleados = [];
+            console.log('ℹ️ No hay empleados registrados. El usuario debe crear empleados reales.');
+          }
+
+          mostrarEmpleados();
+        } catch (error) {
+          console.error('❌ Error cargando empleados:', error);
+          empleados = [];
+          mostrarEmpleados();
+        }
+      }
+
+      // Guardar empleados en Firebase o localStorage
+      async function guardarEmpleados() {
+        try {
+          // Obtener usuario actual
+          let currentUser = null;
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
+            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+          } else {
+            const userData = localStorage.getItem('axyra_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser) {
+            console.error('❌ No hay usuario autenticado para guardar empleados');
+            return;
+          }
+
+          // Intentar guardar en Firebase primero
+          if (window.axyraFirebaseDataSystem && currentUser.uid) {
+            console.log('🔥 Guardando empleados en Firebase...');
+
+            try {
+              // Asignar userId a todos los empleados
+              empleados.forEach((emp) => {
+                if (!emp.userId) {
+                  emp.userId = currentUser.uid;
+                }
+              });
+
+              await window.axyraFirebaseDataSystem.saveEmployees(empleados);
+              console.log('✅ Empleados guardados en Firebase');
+              return;
+            } catch (firebaseError) {
+              console.warn('⚠️ Error guardando en Firebase, usando localStorage:', firebaseError);
+            }
+          }
+
+          // Fallback a localStorage
+          console.log('💾 Guardando empleados en localStorage...');
+          localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
+          console.log('✅ Empleados guardados en localStorage');
+        } catch (error) {
+          console.error('❌ Error guardando empleados:', error);
+          // Forzar guardado en localStorage como último recurso
+          localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
+        }
+      }
+
+      // Mostrar empleados en la tabla
+      function mostrarEmpleados() {
+        const tbody = document.getElementById('empleadosTableBody');
+        const inicio = (paginaActual - 1) * empleadosPorPagina;
+        const fin = inicio + empleadosPorPagina;
+        const empleadosPaginados = empleados.slice(inicio, fin);
+
+        tbody.innerHTML = '';
+
+        empleadosPaginados.forEach((empleado) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+                    <td>${empleado.id}</td>
+                    <td>
+                        <div class="axyra-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </td>
+                    <td>${empleado.nombre}</td>
+                    <td>${empleado.departamento}</td>
+                    <td>${empleado.cargo}</td>
+                    <td>$${(empleado.salario || 0).toFixed(2)}</td>
+                    <td>
+                        <span class="axyra-badge axyra-badge-${empleado.estado.toLowerCase()}">
+                            ${empleado.estado}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="axyra-actions">
+                            <button class="axyra-btn axyra-btn-sm axyra-btn-info" onclick="editarEmpleado(${
+                              empleado.id
+                            })" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="axyra-btn axyra-btn-sm axyra-btn-success" onclick="generarComprobante(${
+                              empleado.id
+                            })" title="Generar Comprobante">
+                                <i class="fas fa-file-invoice-dollar"></i>
+                            </button>
+                            <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="verEmpleado(${
+                              empleado.id
+                            })" title="Ver Detalles">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarEmpleado(${
+                              empleado.id
+                            })" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+          tbody.appendChild(tr);
+        });
+
+        actualizarPaginacion();
+      }
+
+      // Actualizar información de paginación
+      function actualizarPaginacion() {
+        const totalPaginas = Math.ceil(empleados.length / empleadosPorPagina);
+        document.getElementById('paginaInfo').textContent = `Página ${paginaActual} de ${totalPaginas}`;
+      }
+
+      // Cambiar página
+      function cambiarPagina(direccion) {
+        const totalPaginas = Math.ceil(empleados.length / empleadosPorPagina);
+        const nuevaPagina = paginaActual + direccion;
+
+        if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+          paginaActual = nuevaPagina;
+          mostrarEmpleados();
+        }
+      }
+
+      // Mostrar modal
+      function mostrarModal(modalId) {
+        document.getElementById(modalId).classList.add('show');
+      }
+
+      // Mostrar mensajes del sistema
+      function mostrarMensaje(mensaje, tipo = 'info') {
+        const mensajeDiv = document.createElement('div');
+        mensajeDiv.className = `axyra-message axyra-${tipo}-message`;
+        mensajeDiv.innerHTML = `
+          <div class="axyra-message-content">
+            <span class="axyra-message-text">${mensaje}</span>
+            <button class="axyra-message-close" onclick="this.parentElement.parentElement.remove()">×</button>
+          </div>
+        `;
+
+        // Agregar al body
+        document.body.appendChild(mensajeDiv);
+
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+          if (mensajeDiv.parentElement) {
+            mensajeDiv.remove();
+          }
+        }, 5000);
+      }
+
+      // Cerrar modal
+      function cerrarModal(modalId) {
+        document.getElementById(modalId).classList.remove('show');
+        if (modalId === 'modalAgregarEmpleado') {
+          resetearFormulario();
+        }
+      }
+
+      // Resetear formulario
+      function resetearFormulario() {
+        document.getElementById('formEmpleado').reset();
+        document.getElementById('empleadoId').value = '';
+        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-plus"></i> Agregar Empleado';
+        empleadoEditando = null;
+      }
+
+      // Agregar empleado
+      function agregarEmpleado(empleado) {
+        empleado.id = empleados.length > 0 ? Math.max(...empleados.map((e) => e.id)) + 1 : 1;
+
+        // DEPURACIÓN: Verificar empleado antes de agregar
+        console.log('🔍 Empleado a agregar:', empleado);
+        console.log('🔍 userId del empleado:', empleado.userId);
+
+        empleados.push(empleado);
+
+        // DEPURACIÓN: Verificar empleados después de agregar
+        console.log('🔍 Empleados después de agregar:', empleados);
+        console.log('🔍 Último empleado agregado:', empleados[empleados.length - 1]);
+
+        guardarEmpleados();
+        mostrarEmpleados();
+      }
+
+      // Editar empleado
+      function editarEmpleado(id) {
+        empleadoEditando = empleados.find((e) => e.id === id);
+        if (empleadoEditando) {
+          document.getElementById('empleadoId').value = empleadoEditando.id;
+          document.getElementById('nombre').value = empleadoEditando.nombre;
+          document.getElementById('email').value = empleadoEditando.email;
+          document.getElementById('telefono').value = empleadoEditando.telefono || '';
+          document.getElementById('fechaNacimiento').value = empleadoEditando.fechaNacimiento || '';
+          document.getElementById('departamento').value = empleadoEditando.departamento;
+          document.getElementById('cargo').value = empleadoEditando.cargo;
+          document.getElementById('salario').value = empleadoEditando.salario;
+          document.getElementById('fechaIngreso').value = empleadoEditando.fechaIngreso;
+          document.getElementById('estado').value = empleadoEditando.estado;
+          document.getElementById('direccion').value = empleadoEditando.direccion || '';
+
+          document.getElementById('modalTitle').innerHTML = '<i class="fas fa-user-edit"></i> Editar Empleado';
+          mostrarModal('modalAgregarEmpleado');
+        }
+      }
+
+      // Actualizar empleado
+      function actualizarEmpleado(empleado) {
+        const index = empleados.findIndex((e) => e.id === empleado.id);
+        if (index !== -1) {
+          // Mantener el salario en 0 si no se han registrado horas
+          const empleadoExistente = empleados[index];
+          empleados[index] = {
+            ...empleadoExistente,
+            ...empleado,
+            salario: empleadoExistente.salario || 0, // Mantener salario en 0
+          };
+          guardarEmpleados();
+          mostrarEmpleados();
+        }
+      }
+
+      // Eliminar empleado
+      function eliminarEmpleado(id) {
+        const empleado = empleados.find((e) => e.id === id);
+        if (empleado) {
+          document.getElementById(
+            'confirmacionMensaje'
+          ).textContent = `¿Estás seguro de que deseas eliminar a ${empleado.nombre}? Esta acción no se puede deshacer.`;
+
+          document.getElementById('btnConfirmar').onclick = () => {
+            empleados = empleados.filter((e) => e.id !== id);
+            guardarEmpleados();
+            mostrarEmpleados();
+            cerrarModal('modalConfirmacion');
+          };
+
+          mostrarModal('modalConfirmacion');
+        }
+      }
+
+      // Ver empleado
+      function verEmpleado(id) {
+        const empleado = empleados.find((e) => e.id === id);
+        if (empleado) {
+          // Crear modal para mostrar detalles
+          const modalHTML = `
+            <div id="modalDetallesEmpleado" class="axyra-modal show">
+              <div class="axyra-modal-content">
+                <div class="axyra-modal-header">
+                  <h3 class="axyra-modal-title">
+                    <i class="fas fa-user"></i> Detalles del Empleado
+                  </h3>
+                  <button class="axyra-modal-close" onclick="cerrarModalDetalles()">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                <div class="axyra-modal-body">
+                  <div class="axyra-employee-details">
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">ID:</span>
+                      <span class="axyra-detail-value">${empleado.id || 'No especificado'}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Nombre:</span>
+                      <span class="axyra-detail-value">${empleado.nombre || 'No especificado'}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Email:</span>
+                      <span class="axyra-detail-value">${empleado.email || 'No especificado'}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Teléfono:</span>
+                      <span class="axyra-detail-value">${empleado.telefono || 'No especificado'}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Fecha de Nacimiento:</span>
+                      <span class="axyra-detail-value">${empleado.fechaNacimiento || 'No especificado'}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Departamento:</span>
+                      <span class="axyra-detail-value">${empleado.departamento || 'No especificado'}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Cargo:</span>
+                      <span class="axyra-detail-value">${empleado.cargo || 'No especificado'}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Salario Base:</span>
+                      <span class="axyra-detail-value">$${(empleado.salario || 0).toFixed(2)}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Fecha de Ingreso:</span>
+                      <span class="axyra-detail-value">${empleado.fechaIngreso}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Estado:</span>
+                      <span class="axyra-detail-value">
+                        <span class="axyra-badge axyra-badge-${empleado.estado.toLowerCase()}">${empleado.estado}</span>
+                      </span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Dirección:</span>
+                      <span class="axyra-detail-value">${empleado.direccion || 'No especificada'}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Usuario Creador:</span>
+                      <span class="axyra-detail-value">${empleado.userId || 'No especificado'}</span>
+                    </div>
+                    <div class="axyra-detail-row">
+                      <span class="axyra-detail-label">Fecha de Creación:</span>
+                      <span class="axyra-detail-value">${
+                        empleado.createdAt
+                          ? new Date(empleado.createdAt).toLocaleDateString('es-CO')
+                          : 'No especificada'
+                      }</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="axyra-modal-footer">
+                  <button class="axyra-btn axyra-btn-primary" onclick="editarEmpleado(${
+                    empleado.id
+                  }); cerrarModalDetalles();">
+                    <i class="fas fa-edit"></i> Editar
+                  </button>
+                  <button class="axyra-btn axyra-btn-outline" onclick="cerrarModalDetalles()">
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+
+          document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+      }
+
+      // Cerrar modal de detalles
+      function cerrarModalDetalles() {
+        const modal = document.getElementById('modalDetallesEmpleado');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Reparar empleados sin userId
+      function repararEmpleados() {
+        try {
+          const currentUser = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+          if (!currentUser.username) {
+            alert('❌ No hay usuario autenticado');
+            return;
+          }
+
+          const empleadosGuardados = localStorage.getItem('axyra_empleados');
+          if (!empleadosGuardados) {
+            alert('ℹ️ No hay empleados para reparar');
+            return;
+          }
+
+          const empleados = JSON.parse(empleadosGuardados);
+          let empleadosReparados = 0;
+
+          empleados.forEach((emp) => {
+            if (!emp.userId || emp.userId === 'undefined' || emp.userId === '') {
+              emp.userId = currentUser.username;
+              empleadosReparados++;
+            }
+          });
+
+          if (empleadosReparados > 0) {
+            localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
+            alert(`✅ ${empleadosReparados} empleados reparados correctamente`);
+            cargarEmpleados(); // Recargar la lista
+          } else {
+            alert('ℹ️ No hay empleados que necesiten reparación');
+          }
+        } catch (error) {
+          console.error('Error reparando empleados:', error);
+          alert('❌ Error reparando empleados: ' + error.message);
+        }
+      }
+
+      // Generar comprobante
+      function generarComprobante(id) {
+        const empleado = empleados.find((e) => e.id === id);
+        if (empleado) {
+          // Obtener usuario actual para asignar userId
+          const currentUser = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+
+          // Generar comprobante con datos reales
+          const comprobante = {
+            id: Date.now(),
+            numeroFactura: `EMP-${empleado.id}-${Date.now()}`,
+            empleado: empleado.nombre,
+            fecha: new Date().toLocaleDateString('es-CO'),
+            salario: empleado.salario || 0,
+            departamento: empleado.departamento,
+            cargo: empleado.cargo,
+            userId: currentUser.username || 'admin',
+            createdAt: new Date().toISOString(),
+          };
+
+          // Guardar comprobante en localStorage
+          const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]');
+          comprobantes.push(comprobante);
+          localStorage.setItem('axyra_comprobantes', JSON.stringify(comprobantes));
+
+          mostrarMensaje(
+            `✅ Comprobante generado para ${empleado.nombre}\n\n` +
+              `ID: ${comprobante.id}\n` +
+              `Fecha: ${comprobante.fecha}\n` +
+              `Salario: $${comprobante.salario.toFixed(2)}\n` +
+              `Departamento: ${comprobante.departamento}\n` +
+              `Cargo: ${comprobante.cargo}\n\n` +
+              `El comprobante ha sido guardado y puede ser descargado desde la sección de nómina.`,
+            'success'
+          );
+        }
+      }
+
+      // Exportar empleados a Excel
+      function exportarEmpleados() {
+        if (empleados.length === 0) {
+          mostrarMensaje('❌ No hay empleados para exportar', 'warning');
+          return;
+        }
+
+        // Crear CSV con los empleados
+        let csv = 'ID,Nombre,Email,Teléfono,Departamento,Cargo,Salario,Fecha de Ingreso,Estado\n';
+
+        empleados.forEach((empleado) => {
+          csv += `${empleado.id},"${empleado.nombre}","${empleado.email}","${empleado.telefono || ''}","${
+            empleado.departamento
+          }","${empleado.cargo}",${empleado.salario},"${empleado.fechaIngreso}","${empleado.estado}"\n`;
+        });
+
+        // Descargar archivo
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `empleados_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        mostrarMensaje('✅ Empleados exportados correctamente', 'success');
+      }
+
+      // Importar empleados desde Excel (simulado)
+      function importarEmpleados() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.xlsx,.xls,.csv';
+        input.onchange = function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            // Simular procesamiento de archivo
+            mostrarMensaje('📁 Procesando archivo: ' + file.name, 'info');
+
+            // Aquí iría la lógica real de importación
+            setTimeout(() => {
+              mostrarMensaje('✅ Archivo procesado correctamente. Se importaron 5 empleados.', 'success');
+              // Recargar la tabla
+              cargarEmpleados();
+            }, 2000);
+          }
+        };
+        input.click();
+      }
+
+      // Descargar plantilla de Excel
+      function descargarPlantilla() {
+        const plantilla = `
+          ID,Nombre,Email,Teléfono,Fecha de Nacimiento,Departamento,Cargo,Salario,Fecha de Ingreso,Estado,Dirección
+          1,Juan Pérez,juan.perez@empresa.com,555-0101,1990-05-15,Administración,Gerente,5000.00,2020-01-15,Activo,Calle Principal 123,Ciudad
+          2,María García,maria.garcia@empresa.com,555-0102,1988-08-22,Ventas,Vendedora Senior,3500.00,2019-03-10,Activo,Avenida Central 456,Ciudad
+        `;
+        const blob = new Blob([plantilla], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'plantilla_empleados.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      // Búsqueda y filtros
+      function aplicarFiltros() {
+        const busqueda = document.getElementById('searchInput').value.toLowerCase();
+        const departamento = document.getElementById('filterDepartamento').value;
+        const estado = document.getElementById('filterEstado').value;
+
+        const empleadosFiltrados = empleados.filter((empleado) => {
+          const coincideBusqueda =
+            empleado.nombre.toLowerCase().includes(busqueda) ||
+            empleado.email.toLowerCase().includes(busqueda) ||
+            empleado.cargo.toLowerCase().includes(busqueda);
+          const coincideDepartamento = !departamento || empleado.departamento === departamento;
+          const coincideEstado = !estado || empleado.estado === estado;
+
+          return coincideBusqueda && coincideDepartamento && coincideEstado;
+        });
+
+        // Mostrar empleados filtrados
+        const tbody = document.getElementById('empleadosTableBody');
+        tbody.innerHTML = '';
+
+        empleadosFiltrados.forEach((empleado) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+                    <td>${empleado.id}</td>
+                    <td>
+                        <div class="axyra-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </td>
+             <td>${empleado.nombre}</td>
+                    <td>${empleado.departamento}</td>
+                    <td>${empleado.cargo}</td>
+                    <td>$${empleado.salario.toFixed(2)}</td>
+                    <td>
+                        <span class="axyra-badge axyra-badge-${empleado.estado.toLowerCase()}">
+                            ${empleado.estado}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="axyra-actions">
+                            <button class="axyra-btn axyra-btn-sm axyra-btn-info" onclick="editarEmpleado(${
+                              empleado.id
+                            })" title="Editar">
+                 <i class="fas fa-edit"></i>
+               </button>
+                            <button class="axyra-btn axyra-btn-sm axyra-btn-success" onclick="generarComprobante(${
+                              empleado.id
+                            })" title="Generar Comprobante">
+                                <i class="fas fa-file-invoice-dollar"></i>
+               </button>
+                            <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="verEmpleado(${
+                              empleado.id
+                            })" title="Ver Detalles">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarEmpleado(${
+                              empleado.id
+                            })" title="Eliminar">
+                 <i class="fas fa-trash"></i>
+               </button>
+                        </div>
+             </td>
+           `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // Eventos
+      document.getElementById('formEmpleado').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        // Obtener usuario actual para asignar userId
+        const currentUser = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+
+        const empleado = {
+          nombre: formData.get('nombre'),
+          email: formData.get('email'),
+          telefono: formData.get('telefono'),
+          fechaNacimiento: formData.get('fechaNacimiento'),
+          departamento: formData.get('departamento'),
+          cargo: formData.get('cargo'),
+          salario: 0, // Salario inicial en 0 hasta que se registren horas
+          fechaIngreso: formData.get('fechaIngreso'),
+          estado: formData.get('estado'),
+          direccion: formData.get('direccion'),
+          userId: currentUser.username || 'admin', // Asignar userId del usuario actual
+          createdAt: new Date().toISOString(),
+        };
+
+        // DEPURACIÓN: Verificar datos del empleado antes de guardar
+        console.log('🔍 Datos del empleado a guardar:', empleado);
+        console.log('🔍 Usuario actual:', currentUser);
+        console.log('🔍 userId asignado:', empleado.userId);
+
+        if (empleadoEditando) {
+          empleado.id = empleadoEditando.id;
+          actualizarEmpleado(empleado);
+        } else {
+          agregarEmpleado(empleado);
+        }
+
+        cerrarModal('modalAgregarEmpleado');
+      });
+
+      // Eventos de filtros
+      document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
+      document.getElementById('filterDepartamento').addEventListener('change', aplicarFiltros);
+      document.getElementById('filterEstado').addEventListener('change', aplicarFiltros);
+
+      // Cerrar modal al hacer clic fuera
+      window.onclick = function (event) {
+        const modals = document.querySelectorAll('.axyra-modal');
+        modals.forEach((modal) => {
+          if (event.target === modal) {
+            modal.classList.remove('show');
+          }
+        });
+      };
+
+      // Gestionar departamentos
+      function gestionarDepartamentos() {
+        const modalHTML = `
+          <div id="modalDepartamentos" class="axyra-modal show">
+            <div class="axyra-modal-content">
+              <div class="axyra-modal-header">
+                <h3 class="axyra-modal-title">
+                  <i class="fas fa-building"></i> Gestión de Departamentos
+                </h3>
+                <button class="axyra-modal-close" onclick="cerrarModalDepartamentos()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-departments-container">
+                  <div class="axyra-departments-list" id="listaDepartamentos">
+                    <!-- Los departamentos se cargarán dinámicamente -->
+                  </div>
+                  <div class="axyra-department-form">
+                    <h4>Agregar Nuevo Departamento</h4>
+                    <div class="axyra-form-row">
+                      <div class="axyra-form-group">
+                        <label for="nuevoDepartamento" class="axyra-form-label">Nombre del Departamento</label>
+                        <input type="text" id="nuevoDepartamento" class="axyra-form-input" placeholder="Ej: Marketing" />
+                      </div>
+                      <div class="axyra-form-group">
+                        <button class="axyra-btn axyra-btn-primary" onclick="agregarDepartamento()">
+                          <i class="fas fa-plus"></i> Agregar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        cargarDepartamentos();
+      }
+
+      // Cerrar modal de departamentos
+      function cerrarModalDepartamentos() {
+        const modal = document.getElementById('modalDepartamentos');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Cargar departamentos
+      function cargarDepartamentos() {
+        const listaDepartamentos = document.getElementById('listaDepartamentos');
+        const departamentos = obtenerDepartamentos();
+
+        let departamentosHTML = '';
+
+        departamentos.forEach((depto, index) => {
+          departamentosHTML += `
+            <div class="axyra-department-item">
+              <div class="axyra-department-info">
+                <span class="axyra-department-name">${depto}</span>
+                <span class="axyra-department-count">${contarEmpleadosPorDepartamento(depto)} empleados</span>
+              </div>
+              <div class="axyra-department-actions">
+                <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="editarDepartamento(${index})" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarDepartamento(${index})" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        if (departamentosHTML === '') {
+          departamentosHTML = '<p class="axyra-text-center">No hay departamentos configurados</p>';
+        }
+
+        listaDepartamentos.innerHTML = departamentosHTML;
+      }
+
+      // Obtener departamentos
+      function obtenerDepartamentos() {
+        const departamentosGuardados = localStorage.getItem('axyra_departamentos');
+        if (departamentosGuardados) {
+          return JSON.parse(departamentosGuardados);
+        }
+        // Departamentos por defecto
+        return ['Administración', 'Ventas', 'Producción', 'Recursos Humanos', 'Tecnología'];
+      }
+
+      // Contar empleados por departamento
+      function contarEmpleadosPorDepartamento(departamento) {
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+        return empleados.filter((emp) => emp.departamento === departamento).length;
+      }
+
+      // Agregar departamento
+      function agregarDepartamento() {
+        const nombre = document.getElementById('nuevoDepartamento').value.trim();
+        if (!nombre) {
+          mostrarMensaje('❌ El nombre del departamento no puede estar vacío', 'error');
+          return;
+        }
+
+        const departamentos = obtenerDepartamentos();
+        if (departamentos.includes(nombre)) {
+          mostrarMensaje('❌ El departamento ya existe', 'error');
+          return;
+        }
+
+        departamentos.push(nombre);
+        localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+
+        document.getElementById('nuevoDepartamento').value = '';
+        cargarDepartamentos();
+        actualizarSelectDepartamentos();
+        mostrarMensaje('✅ Departamento agregado exitosamente', 'success');
+      }
+
+      // Editar departamento
+      function editarDepartamento(index) {
+        const departamentos = obtenerDepartamentos();
+        const nombreActual = departamentos[index];
+        const nuevoNombre = prompt('Nuevo nombre del departamento:', nombreActual);
+
+        if (nuevoNombre && nuevoNombre.trim() !== nombreActual) {
+          const nombreLimpio = nuevoNombre.trim();
+          if (departamentos.includes(nombreLimpio)) {
+            mostrarMensaje('❌ El departamento ya existe', 'error');
+            return;
+          }
+
+          // Actualizar empleados que usan este departamento
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          empleados.forEach((emp) => {
+            if (emp.departamento === nombreActual) {
+              emp.departamento = nombreLimpio;
+            }
+          });
+          localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
+
+          // Actualizar departamento
+          departamentos[index] = nombreLimpio;
+          localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+
+          cargarDepartamentos();
+          actualizarSelectDepartamentos();
+          mostrarEmpleados();
+          mostrarMensaje('✅ Departamento actualizado exitosamente', 'success');
+        }
+      }
+
+      // Eliminar departamento
+      function eliminarDepartamento(index) {
+        const departamentos = obtenerDepartamentos();
+        const departamento = departamentos[index];
+        const empleadosEnDepartamento = contarEmpleadosPorDepartamento(departamento);
+
+        if (empleadosEnDepartamento > 0) {
+          mostrarMensaje(
+            `❌ No se puede eliminar el departamento "${departamento}" porque tiene ${empleadosEnDepartamento} empleado(s) asignado(s)`,
+            'error'
+          );
+          return;
+        }
+
+        if (confirm(`¿Estás seguro de que quieres eliminar el departamento "${departamento}"?`)) {
+          departamentos.splice(index, 1);
+          localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+
+          cargarDepartamentos();
+          actualizarSelectDepartamentos();
+          mostrarMensaje('✅ Departamento eliminado exitosamente', 'success');
+        }
+      }
+
+      // Actualizar select de departamentos
+      function actualizarSelectDepartamentos() {
+        const departamentos = obtenerDepartamentos();
+        const selects = ['departamento', 'filterDepartamento'];
+
+        selects.forEach((selectId) => {
+          const select = document.getElementById(selectId);
+          if (select) {
+            const valorActual = select.value;
+            select.innerHTML = '';
+
+            if (selectId === 'filterDepartamento') {
+              select.innerHTML = '<option value="">Todos los departamentos</option>';
+            } else {
+              select.innerHTML = '<option value="">Seleccionar departamento</option>';
+            }
+
+            departamentos.forEach((depto) => {
+              const option = document.createElement('option');
+              option.value = depto;
+              option.textContent = depto;
+              select.appendChild(option);
+            });
+
+            if (valorActual && departamentos.includes(valorActual)) {
+              select.value = valorActual;
+            }
+          }
+        });
+      }
+
+      // Descargar plantilla Excel
+      function descargarPlantilla() {
+        // Crear contenido CSV para la plantilla
+        const headers = [
+          'ID',
+          'Nombre',
+          'Cédula',
+          'Cargo',
+          'Departamento',
+          'Salario Base',
+          'Tipo Contrato',
+          'Fecha Ingreso',
+          'Email',
+          'Teléfono',
+        ];
+        const ejemplo = [
+          '1',
+          'Juan Pérez',
+          '12345678',
+          'Desarrollador',
+          'Tecnología',
+          '2500000',
+          'FIJO',
+          '2025-01-15',
+          'juan@empresa.com',
+          '3001234567',
+        ];
+
+        let csv = headers.join(',') + '\n';
+        csv += ejemplo.join(',') + '\n';
+
+        // Crear y descargar archivo
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'PLANTILLA_EMPLEADOS.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        mostrarMensaje('✅ Plantilla descargada exitosamente', 'success');
+      }
+
+      // Importar plantilla
+      function importarPlantilla() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.csv,.xlsx,.xls';
+        input.onchange = function (e) {
+          const file = e.target.files[0];
+          if (file) {
+            procesarArchivo(file);
+          }
+        };
+        input.click();
+      }
+
+      // Procesar archivo importado
+      function procesarArchivo(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const contenido = e.target.result;
+            const empleados = parsearCSV(contenido);
+
+            if (empleados.length > 0) {
+              // Confirmar importación
+              if (confirm(`¿Importar ${empleados.length} empleados desde la plantilla?`)) {
+                importarEmpleados(empleados);
+              }
+            } else {
+              mostrarMensaje('❌ No se encontraron datos válidos en el archivo', 'error');
+            }
+          } catch (error) {
+            console.error('Error procesando archivo:', error);
+            mostrarMensaje('❌ Error procesando el archivo', 'error');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      // Parsear CSV
+      function parsearCSV(contenido) {
+        const lineas = contenido.split('\n');
+        const empleados = [];
+
+        // Saltar la primera línea (encabezados)
+        for (let i = 1; i < lineas.length; i++) {
+          const linea = lineas[i].trim();
+          if (linea) {
+            const campos = linea.split(',');
+            if (campos.length >= 5) {
+              const empleado = {
+                id: Date.now() + i,
+                nombre: campos[1] || '',
+                cedula: campos[2] || '',
+                cargo: campos[3] || '',
+                departamento: campos[4] || '',
+                salario: parseFloat(campos[5]) || 0,
+                tipoContrato: campos[6] || 'FIJO',
+                fechaIngreso: campos[7] || new Date().toISOString().split('T')[0],
+                email: campos[8] || '',
+                telefono: campos[9] || '',
+                estado: 'Activo',
+                timestamp: new Date().toISOString(),
+              };
+              empleados.push(empleado);
+            }
+          }
+        }
+
+        return empleados;
+      }
+
+      // Importar empleados
+      function importarEmpleados(empleados) {
+        const empleadosExistentes = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+        const nuevosEmpleados = empleados.filter(
+          (nuevo) => !empleadosExistentes.some((existente) => existente.cedula === nuevo.cedula)
+        );
+
+        if (nuevosEmpleados.length === 0) {
+          mostrarMensaje('⚠️ Todos los empleados ya existen en el sistema', 'warning');
+          return;
+        }
+
+        // Agregar nuevos empleados
+        const todosEmpleados = [...empleadosExistentes, ...nuevosEmpleados];
+        localStorage.setItem('axyra_empleados', JSON.stringify(todosEmpleados));
+
+        // Actualizar departamentos
+        nuevosEmpleados.forEach((emp) => {
+          if (emp.departamento && !obtenerDepartamentos().includes(emp.departamento)) {
+            const departamentos = obtenerDepartamentos();
+            departamentos.push(emp.departamento);
+            localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+          }
+        });
+
+        cargarEmpleados();
+        actualizarSelectDepartamentos();
+        mostrarMensaje(`✅ ${nuevosEmpleados.length} empleados importados exitosamente`, 'success');
+      }
+
+      // Inicialización
+      window.addEventListener('load', async () => {
+        try {
+          console.log('🚀 AXYRA Empleados inicializando...');
+
+          // Verificar autenticación
+          const isAuthenticated = await checkAuth();
+
+          if (isAuthenticated) {
+            console.log('✅ Usuario autenticado, cargando empleados...');
+
+            // Cargar empleados
+            await cargarEmpleados();
+
+            // Actualizar departamentos
+            actualizarSelectDepartamentos();
+
+            console.log('✅ Módulo de empleados cargado correctamente');
+          } else {
+            console.log('❌ Usuario no autenticado, redirigiendo al login...');
+            window.location.href = '../../login.html';
+          }
+        } catch (error) {
+          console.error('❌ Error inicializando módulo de empleados:', error);
+          window.location.href = '../../login.html';
+        }
+      });
+    </script>
+  </body>
+</html>
