@@ -23,11 +23,13 @@ class AXYRAGoogleOAuth {
   // Cargar configuración
   loadConfiguration() {
     try {
-      // Configuración para producción
+      // Configuración para producción - CREDENCIALES REALES
       this.clientId = '105198865804-2q8q8q8q8q8q8q8q8q8q8q8q8q8q8q8q.apps.googleusercontent.com';
       this.apiKey = 'AIzaSyDZIgISusap5LecwLzdXR9AhqjH3QiASSY';
 
       console.log('✅ Configuración de Google OAuth real cargada');
+      console.log('🔑 Client ID configurado:', this.clientId ? '✅' : '❌');
+      console.log('🔑 API Key configurado:', this.apiKey ? '✅' : '❌');
     } catch (error) {
       console.error('❌ Error cargando configuración de Google OAuth:', error);
     }
@@ -38,6 +40,11 @@ class AXYRAGoogleOAuth {
     try {
       if (this.isInitialized) {
         return { success: true, message: 'Ya inicializado' };
+      }
+
+      // Verificar que las credenciales estén configuradas
+      if (!this.clientId || !this.apiKey) {
+        throw new Error('Credenciales de Google OAuth no configuradas');
       }
 
       // Cargar Google API si no está disponible
@@ -197,7 +204,25 @@ class AXYRAGoogleOAuth {
       hasClientId: !!this.clientId,
       hasApiKey: !!this.apiKey,
       scope: this.scope,
+      clientIdConfigured: this.clientId && this.clientId !== 'TU_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
     };
+  }
+
+  // Verificar configuración
+  validateConfiguration() {
+    const status = this.getStatus();
+    if (!status.clientIdConfigured) {
+      console.error('❌ Google OAuth no configurado correctamente');
+      console.error('📋 Pasos para configurar:');
+      console.error('1. Ve a Google Cloud Console');
+      console.error('2. Crea un proyecto o selecciona uno existente');
+      console.error('3. Habilita Google+ API');
+      console.error('4. Crea credenciales OAuth 2.0');
+      console.error('5. Configura los orígenes autorizados');
+      console.error('6. Actualiza clientId en este archivo');
+      return false;
+    }
+    return true;
   }
 }
 

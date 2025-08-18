@@ -17,6 +17,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
 
     <!-- AXYRA Firebase Scripts -->
+    <script src="../../static/environment-config.js"></script>
     <script src="../../static/firebase-config.js"></script>
     <script src="../../static/firebase-user-system.js"></script>
     <script src="../../static/firebase-data-system.js"></script>
@@ -494,10 +495,7 @@
           }
 
           // Verificar Firebase si está disponible
-          if (
-            window.axyraFirebaseUserSystem &&
-            window.axyraFirebaseUserSystem.hasActiveSession
-          ) {
+          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession) {
             try {
               currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
               console.log('✅ Usuario autenticado con Firebase:', currentUser.email);
@@ -1701,10 +1699,7 @@
         }
 
         // Configurar listener de cambios de autenticación
-        if (
-          window.axyraFirebaseUserSystem &&
-          window.axyraFirebaseUserSystem.auth
-        ) {
+        if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.auth) {
           window.axyraFirebaseUserSystem.auth.onAuthStateChanged((user) => {
             if (!user) {
               console.log('⚠️ Usuario desconectado de Firebase, redirigiendo al login');

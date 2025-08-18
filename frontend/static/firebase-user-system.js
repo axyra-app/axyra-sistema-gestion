@@ -1,7 +1,7 @@
 /**
  * AXYRA Firebase User System
  * Sistema de usuarios basado en Firebase Authentication y Firestore
- * Versión: 2.0 - Sistema simplificado y estable
+ * Versión: 3.0 - Sistema robusto y estable
  */
 
 class AXYRAFirebaseUserSystem {
@@ -10,6 +10,8 @@ class AXYRAFirebaseUserSystem {
     this.db = null;
     this.currentUser = null;
     this.isInitialized = false;
+    this.initRetries = 0;
+    this.maxInitRetries = 3;
 
     this.init();
   }
@@ -22,17 +24,35 @@ class AXYRAFirebaseUserSystem {
         this.isInitialized = true;
         this.setupAuthListeners();
         console.log('✅ AXYRA Firebase User System inicializado');
+        console.log('🔐 Auth disponible:', !!this.auth);
+        console.log('🗄️ Firestore disponible:', !!this.db);
       } else {
         console.error('❌ Firebase no está disponible');
+        this.retryInit();
       }
     } catch (error) {
       console.error('❌ Error inicializando Firebase User System:', error);
+      this.retryInit();
+    }
+  }
+
+  // Reintentar inicialización
+  retryInit() {
+    if (this.initRetries < this.maxInitRetries) {
+      this.initRetries++;
+      console.log(`🔄 Reintentando inicialización (${this.initRetries}/${this.maxInitRetries})...`);
+      setTimeout(() => this.init(), 2000);
+    } else {
+      console.error('❌ Máximo de reintentos alcanzado. Firebase User System no disponible.');
     }
   }
 
   // Configurar listeners de autenticación
   setupAuthListeners() {
-    if (!this.auth) return;
+    if (!this.auth) {
+      console.error('❌ Auth no disponible para configurar listeners');
+      return;
+    }
 
     this.auth.onAuthStateChanged((user) => {
       if (user) {
@@ -75,14 +95,45 @@ class AXYRAFirebaseUserSystem {
   // Cargar datos del usuario desde Firestore
   async loadUserData(userId) {
     try {
+      if (!this.db) {
+        console.warn('⚠️ Firestore no disponible, saltando carga de datos del usuario');
+        return;
+      }
+
       const userDoc = await this.db.collection('users').doc(userId).get();
       if (userDoc.exists) {
         const userData = userDoc.data();
         this.currentUser = { ...this.currentUser, ...userData };
         console.log('✅ Datos del usuario cargados:', userData);
+      } else {
+        console.log('ℹ️ Usuario no encontrado en Firestore, creando documento...');
+        await this.createUserDocument(userId);
       }
     } catch (error) {
       console.error('❌ Error cargando datos del usuario:', error);
+    }
+  }
+
+  // Crear documento de usuario en Firestore
+  async createUserDocument(userId) {
+    try {
+      if (!this.db) return;
+
+      const user = this.currentUser;
+      await this.db.collection('users').doc(userId).set({
+        email: user.email,
+        fullName: user.displayName || user.email.split('@')[0],
+        username: user.email.split('@')[0],
+        role: 'user',
+        emailVerified: user.emailVerified || false,
+        createdAt: new Date().toISOString(),
+        userId: user.email.split('@')[0],
+        lastLogin: new Date().toISOString(),
+      });
+
+      console.log('✅ Documento de usuario creado en Firestore');
+    } catch (error) {
+      console.error('❌ Error creando documento de usuario:', error);
     }
   }
 
@@ -288,7 +339,24 @@ class AXYRAFirebaseUserSystem {
       hasCurrentUser: !!this.currentUser,
       userEmail: this.currentUser ? this.currentUser.email : null,
       emailVerified: this.currentUser ? this.currentUser.emailVerified : false,
+      initRetries: this.initRetries,
+      maxInitRetries: this.maxInitRetries,
     };
+  }
+
+  // Verificar salud del sistema
+  checkHealth() {
+    const status = this.getStatus();
+    const health = {
+      firebase: status.isInitialized,
+      auth: status.hasAuth,
+      firestore: status.hasDb,
+      user: status.hasCurrentUser,
+      overall: status.isInitialized && status.hasAuth && status.hasDb
+    };
+
+    console.log('🏥 Estado del sistema:', health);
+    return health;
   }
 }
 
