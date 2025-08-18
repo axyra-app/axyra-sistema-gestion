@@ -152,10 +152,10 @@ window.axyraAuthGuard = axyraAuthGuard;
         window.location.pathname !== '/' &&
         !window.location.pathname.includes('index.html')) {
       console.log('🛡️ Verificando acceso a módulo protegido...');
-      // Delay para evitar conflictos con Firebase
+      // Delay más largo para evitar conflictos con Firebase
       setTimeout(() => {
         axyraAuthGuard.checkModuleAccess();
-      }, 1000);
+      }, 3000);
     }
   });
 
