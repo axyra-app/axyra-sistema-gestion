@@ -283,19 +283,19 @@
       <form id="registerForm">
         <div class="form-group">
           <label for="fullName" class="form-label">Nombre Completo</label>
-          <input type="text" id="fullName" class="form-input" placeholder="Juan Fernando Uran" required />
+          <input type="text" id="fullName" class="form-input" placeholder="Ingresa tu nombre completo" required />
           <span class="form-hint">Mínimo 3 caracteres, solo letras y espacios</span>
         </div>
 
         <div class="form-group">
           <label for="username" class="form-label">Nombre de Usuario</label>
-          <input type="text" id="username" class="form-input" placeholder="juano" required />
+          <input type="text" id="username" class="form-input" placeholder="Elige un nombre de usuario" required />
           <span class="form-hint">Mínimo 3 caracteres, solo letras y números</span>
         </div>
 
         <div class="form-group">
           <label for="email" class="form-label">Correo Electrónico</label>
-          <input type="email" id="email" class="form-input" placeholder="jfuran.va@gmail.com" required />
+          <input type="email" id="email" class="form-input" placeholder="tu@email.com" required />
           <span class="form-hint">Se enviará un código de verificación a este correo</span>
         </div>
 
@@ -584,7 +584,7 @@
           showSuccess('Iniciando sesión con Google...');
 
           // Verificar que Firebase esté disponible
-          if (!window.axyraFirebaseUtils || !window.axyraFirebaseUtils.isAvailable()) {
+          if (typeof firebase === 'undefined' || !firebase.auth) {
             throw new Error('Firebase no está disponible. Intenta con registro normal.');
           }
 
