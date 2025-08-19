@@ -10,7 +10,15 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Scripts removidos por limpieza del sistema -->
 
-    <!-- SISTEMA AISLADO - SIN FIREBASE -->
+    <!-- FIREBASE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Configuración de Firebase AXYRA -->
+    <script src="../../static/firebase-config.js"></script>
+
+    <!-- SISTEMA AISLADO -->
     <script src="../../static/isolated-auth.js"></script>
     <script src="../../static/debug-auth.js"></script>
   </head>
@@ -518,12 +526,34 @@
     </div>
 
     <script>
-      // Verificar autenticación - SISTEMA AISLADO MEJORADO
+      // Verificar autenticación - FIREBASE + SISTEMA AISLADO
       async function checkAuth() {
         try {
-          console.log('🔐 Verificando autenticación con sistema aislado...');
+          console.log('🔐 Verificando autenticación...');
 
-          // PRIMERO: Verificar localStorage directamente
+          // PRIMERO: Verificar Firebase
+          if (typeof firebase !== 'undefined' && firebase.auth) {
+            const firebaseUser = firebase.auth().currentUser;
+            if (firebaseUser) {
+              console.log('🔥 Usuario autenticado con Firebase:', firebaseUser.email);
+              currentUser = {
+                id: firebaseUser.uid,
+                username: firebaseUser.email.split('@')[0],
+                email: firebaseUser.email,
+                nombre: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+                rol: 'usuario',
+                createdAt: new Date().toISOString()
+              };
+              
+              // Guardar en localStorage para compatibilidad
+              localStorage.setItem('axyra_firebase_user', JSON.stringify(firebaseUser));
+              localStorage.setItem('axyra_isolated_user', JSON.stringify(currentUser));
+              
+              return true;
+            }
+          }
+
+          // SEGUNDO: Verificar localStorage
           const isolatedUser = localStorage.getItem('axyra_isolated_user');
           if (isolatedUser) {
             try {
@@ -545,7 +575,7 @@
             }
           }
 
-          // SEGUNDO: Verificar sistema aislado
+          // TERCERO: Verificar sistema aislado
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             const user = window.axyraIsolatedAuth.getCurrentUser();
             console.log('✅ Usuario autenticado con sistema aislado:', user.username);

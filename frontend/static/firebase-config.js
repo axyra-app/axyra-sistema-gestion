@@ -1,71 +1,107 @@
-/**
- * AXYRA Firebase Configuration
- * Configuración para Firebase Authentication y Firestore
- * Versión: 2.0 - Con validación de configuración
- */
+// ========================================
+// CONFIGURACIÓN DE FIREBASE AXYRA
+// ========================================
 
-// Configuración de Firebase (reemplaza con tu configuración real)
+// Configuración de Firebase para AXYRA
 const firebaseConfig = {
-  apiKey: 'AIzaSyDZIgISusap5LecwLzdXR9AhqjH3QiASSY',
-  authDomain: 'axyra-32d95.firebaseapp.com',
-  projectId: 'axyra-32d95',
-  storageBucket: 'axyra-32d95.firebasestorage.app',
-  messagingSenderId: '105198865804',
-  appId: '1:105198865804:web:2656885e240ad6a4bedaa9',
-  measurementId: 'G-Y6H4Y6QX1G',
+  // 🔑 API Key de Firebase
+  apiKey: "AIzaSyBXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  
+  // 🌐 Dominio de autenticación
+  authDomain: "axyra-sistema-gestion.firebaseapp.com",
+  
+  // 📁 ID del proyecto
+  projectId: "axyra-sistema-gestion",
+  
+  // 🗄️ Bucket de almacenamiento
+  storageBucket: "axyra-sistema-gestion.appspot.com",
+  
+  // 📱 ID del remitente de mensajes
+  messagingSenderId: "123456789012",
+  
+  // 🆔 ID de la aplicación
+  appId: "1:123456789012:web:abcdefghijklmnop"
 };
 
-// Validar configuración
-function validateFirebaseConfig() {
-  const requiredFields = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
-  const missingFields = requiredFields.filter(field => !firebaseConfig[field]);
+// Inicializar Firebase
+if (typeof firebase !== 'undefined') {
+  firebase.initializeApp(firebaseConfig);
   
-  if (missingFields.length > 0) {
-    console.error('❌ Configuración de Firebase incompleta. Campos faltantes:', missingFields);
-    return false;
-  }
+  // Inicializar servicios
+  const firebaseAuth = firebase.auth();
+  const firebaseFirestore = firebase.firestore();
   
-  if (firebaseConfig.apiKey === 'TU_API_KEY' || firebaseConfig.projectId === 'TU_PROJECT_ID') {
-    console.error('❌ Configuración de Firebase no personalizada. Usa credenciales reales.');
-    return false;
-  }
+  console.log('🔥 Firebase AXYRA inicializado correctamente');
   
-  console.log('✅ Configuración de Firebase válida');
-  return true;
+  // Exportar para uso global
+  window.axyraFirebase = {
+    auth: firebaseAuth,
+    firestore: firebaseFirestore,
+    config: firebaseConfig
+  };
+} else {
+  console.error('❌ Firebase SDK no está disponible');
 }
 
-// Inicializar Firebase
-if (validateFirebaseConfig()) {
-  try {
-    firebase.initializeApp(firebaseConfig);
-    
-    // Inicializar servicios
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    
-    // Configuración de Firestore
-    const firestoreSettings = {
-      cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-    };
-    
-    db.settings(firestoreSettings);
-    
-    // Exportar para uso en otros módulos
-    window.axyraFirebase = {
-      auth: auth,
-      db: db,
-      firebase: firebase,
-    };
-    
-    console.log('✅ Firebase inicializado correctamente');
-    console.log('🔐 Auth disponible:', auth);
-    console.log('🗄️ Firestore disponible:', db);
-    console.log('📊 Proyecto:', firebaseConfig.projectId);
-    console.log('🌐 Dominio:', firebaseConfig.authDomain);
-    
-  } catch (error) {
-    console.error('❌ Error inicializando Firebase:', error);
-  }
-} else {
-  console.error('❌ Firebase no se inicializó debido a configuración inválida');
+// ========================================
+// FUNCIONES DE AUTENTICACIÓN FIREBASE
+// ========================================
+
+// Función para verificar si Firebase está disponible
+function isFirebaseAvailable() {
+  return typeof firebase !== 'undefined' && firebase.auth;
 }
+
+// Función para obtener el usuario actual de Firebase
+function getCurrentFirebaseUser() {
+  if (isFirebaseAvailable()) {
+    return firebase.auth().currentUser;
+  }
+  return null;
+}
+
+// Función para verificar si hay un usuario autenticado
+function isFirebaseUserAuthenticated() {
+  const user = getCurrentFirebaseUser();
+  return user !== null;
+}
+
+// Función para hacer logout de Firebase
+async function firebaseLogout() {
+  if (isFirebaseAvailable()) {
+    try {
+      await firebase.auth().signOut();
+      console.log('✅ Logout de Firebase exitoso');
+      return true;
+    } catch (error) {
+      console.error('❌ Error en logout de Firebase:', error);
+      return false;
+    }
+  }
+  return false;
+}
+
+// Función para obtener información del usuario
+function getFirebaseUserInfo() {
+  const user = getCurrentFirebaseUser();
+  if (user) {
+    return {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoURL: user.photoURL,
+      emailVerified: user.emailVerified,
+      providerData: user.providerData
+    };
+  }
+  return null;
+}
+
+// Exportar funciones para uso global
+window.axyraFirebaseUtils = {
+  isAvailable: isFirebaseAvailable,
+  getCurrentUser: getCurrentFirebaseUser,
+  isAuthenticated: isFirebaseUserAuthenticated,
+  logout: firebaseLogout,
+  getUserInfo: getFirebaseUserInfo
+};
