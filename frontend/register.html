@@ -111,24 +111,24 @@
 
       .form-input {
         width: 100%;
-        padding: 15px;
+        padding: 12px;
         border: 2px solid #e2e8f0;
-        border-radius: 10px;
-        font-size: 16px;
-        transition: all 0.3s ease;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+        box-sizing: border-box;
       }
 
       .form-input:focus {
         outline: none;
         border-color: #667eea;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       }
 
       .form-hint {
         font-size: 12px;
-        color: #a0aec0;
+        color: #718096;
         margin-top: 5px;
-        font-style: italic;
+        display: block;
       }
 
       .password-container {
@@ -139,7 +139,7 @@
 
       .password-toggle {
         position: absolute;
-        right: 15px;
+        right: 12px;
         background: none;
         border: none;
         cursor: pointer;
@@ -153,34 +153,78 @@
         color: #667eea;
       }
 
-      .register-btn {
+      .btn {
         width: 100%;
-        padding: 15px;
+        padding: 14px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
-        border-radius: 10px;
+        border-radius: 8px;
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
-        margin-top: 20px;
+        transition: transform 0.3s ease;
+        margin-bottom: 20px;
       }
 
-      .register-btn:hover {
+      .btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
       }
 
-      .register-btn:disabled {
+      .btn:disabled {
         opacity: 0.6;
         cursor: not-allowed;
         transform: none;
       }
 
+      .btn-google {
+        background: #4285f4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .btn-google:hover {
+        background: #3367d6;
+      }
+
+      .loading {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #ffffff;
+        border-top: 2px solid transparent;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .message {
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .message.error {
+        background: #fed7d7;
+        color: #c53030;
+        border: 1px solid #feb2b2;
+      }
+
+      .message.success {
+        background: #c6f6d5;
+        color: #22543d;
+        border: 1px solid #9ae6b4;
+      }
+
       .login-link {
-        margin-top: 25px;
-        font-size: 14px;
+        margin-top: 20px;
         color: #718096;
       }
 
@@ -194,186 +238,27 @@
         text-decoration: underline;
       }
 
-      .verification-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .verification-content {
-        background: white;
-        border-radius: 15px;
-        padding: 30px;
-        max-width: 400px;
-        width: 90%;
-        text-align: center;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-      }
-
-      .verification-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: #2d3748;
-        margin-bottom: 15px;
-      }
-
-      .verification-text {
-        color: #718096;
-        margin-bottom: 20px;
-        line-height: 1.5;
-      }
-
-      .verification-input {
-        width: 100%;
-        padding: 12px;
-        border: 2px solid #e2e8f0;
-        border-radius: 8px;
-        font-size: 16px;
-        text-align: center;
-        margin-bottom: 20px;
-      }
-
-      .verification-btn {
-        padding: 12px 24px;
-        background: #667eea;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        margin: 0 10px;
-      }
-
-      .verification-btn:hover {
-        background: #5a67d8;
-      }
-
-      .error-message {
-        background: #fed7d7;
-        color: #c53030;
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        display: none;
-      }
-
-      .success-message {
-        background: #c6f6d5;
-        color: #2f855a;
-        padding: 12px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        display: none;
-      }
-
-      .footer {
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #e2e8f0;
-        font-size: 12px;
-        color: #a0aec0;
-      }
-
-      .divider {
+      .separator {
         margin: 20px 0;
         text-align: center;
-      }
-
-      .divider span {
-        display: inline-block;
         position: relative;
-        padding: 0 10px;
-        font-size: 14px;
-        color: #a0aec0;
       }
 
-      .divider span::before,
-      .divider span::after {
+      .separator::before {
         content: '';
         position: absolute;
         top: 50%;
-        width: 100px;
+        left: 0;
+        right: 0;
         height: 1px;
         background: #e2e8f0;
       }
 
-      .divider span::before {
-        left: 0;
-      }
-
-      .divider span::after {
-        right: 0;
-      }
-
-      .google-btn {
-        width: 100%;
-        padding: 15px;
-        background: #4285f4;
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        transition: all 0.3s ease;
-        margin-top: 10px;
-      }
-
-      .google-btn:hover {
-        background: #357abd;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(66, 133, 244, 0.3);
-      }
-
-      .google-btn img {
-        width: 24px;
-        height: 24px;
-        border-radius: 4px;
-      }
-
-      .verification-hint {
-        margin-top: 20px;
-        text-align: center;
-        font-weight: 600;
-        color: #667eea;
-        padding: 15px;
-        background: rgba(102, 126, 234, 0.1);
-        border-radius: 8px;
-        border: 1px solid rgba(102, 126, 234, 0.2);
-      }
-
-      .verification-hint i {
-        margin-right: 8px;
-        color: #667eea;
-      }
-
-      @media (max-width: 600px) {
-        .register-container {
-          padding: 30px 20px;
-          margin: 10px;
-        }
-
-        .logo-text {
-          font-size: 28px;
-        }
-
-        .title {
-          font-size: 24px;
-        }
+      .separator span {
+        background: white;
+        padding: 0 15px;
+        color: #718096;
+        font-size: 14px;
       }
     </style>
   </head>
@@ -385,213 +270,83 @@
           <div class="logo-text">AXYRA</div>
         </div>
         <h1 class="title">Crear Cuenta</h1>
-        <p class="subtitle">Únete al sistema de gestión empresarial más profesional y confiable del mercado</p>
+        <p class="subtitle">
+          Únete al sistema de gestión empresarial más profesional y confiable del mercado
+        </p>
       </div>
 
-      <div id="errorMessage" class="error-message"></div>
-      <div id="successMessage" class="success-message"></div>
+      <!-- Mensajes de error y éxito -->
+      <div id="errorMessage" class="message error"></div>
+      <div id="successMessage" class="message success"></div>
 
+      <!-- Formulario de registro -->
       <form id="registerForm">
         <div class="form-group">
           <label for="fullName" class="form-label">Nombre Completo</label>
-          <input type="text" id="fullName" class="form-input" placeholder="Ingrese su nombre completo" required />
-          <div class="form-hint">Mínimo 3 caracteres, solo letras y espacios</div>
+          <input type="text" id="fullName" class="form-input" placeholder="Juan Fernando Uran" required />
+          <span class="form-hint">Mínimo 3 caracteres, solo letras y espacios</span>
         </div>
 
         <div class="form-group">
           <label for="username" class="form-label">Nombre de Usuario</label>
-          <input type="text" id="username" class="form-input" placeholder="Ingrese un nombre de usuario" required />
-          <div class="form-hint">Mínimo 3 caracteres, solo letras y números</div>
+          <input type="text" id="username" class="form-input" placeholder="juano" required />
+          <span class="form-hint">Mínimo 3 caracteres, solo letras y números</span>
         </div>
 
         <div class="form-group">
           <label for="email" class="form-label">Correo Electrónico</label>
-          <input type="email" id="email" class="form-input" placeholder="Ingrese su correo electrónico" required />
-          <div class="form-hint">Se enviará un código de verificación a este correo</div>
+          <input type="email" id="email" class="form-input" placeholder="jfuran.va@gmail.com" required />
+          <span class="form-hint">Se enviará un código de verificación a este correo</span>
         </div>
 
         <div class="form-group">
           <label for="password" class="form-label">Contraseña</label>
           <div class="password-container">
-            <input
-              type="password"
-              id="password"
-              class="form-input"
-              placeholder="Ingrese una contraseña segura"
-              required
-            />
+            <input type="password" id="password" class="form-input" placeholder="Contraseña" required />
             <button type="button" class="password-toggle" onclick="togglePassword()">
-              <i class="fas fa-eye" id="passwordIcon"></i>
+              <i class="fas fa-eye"></i>
             </button>
           </div>
-          <div class="form-hint">Mínimo 8 caracteres, incluir mayúsculas y números</div>
+          <span class="form-hint">Mínimo 8 caracteres, incluir mayúsculas y números</span>
         </div>
 
         <div class="form-group">
           <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
           <div class="password-container">
-            <input
-              type="password"
-              id="confirmPassword"
-              class="form-input"
-              placeholder="Confirme su contraseña"
-              required
-            />
+            <input type="password" id="confirmPassword" class="form-input" placeholder="Confirmar Contraseña" required />
             <button type="button" class="password-toggle" onclick="toggleConfirmPassword()">
-              <i class="fas fa-eye" id="confirmPasswordIcon"></i>
+              <i class="fas fa-eye"></i>
             </button>
           </div>
         </div>
 
-        <div class="form-hint verification-hint">
-          <i class="fas fa-envelope"></i> Recibirás un código de verificación por correo
-        </div>
-
-        <button type="submit" class="register-btn" id="registerBtn">
+        <button type="submit" class="btn" id="registerBtn">
           <span id="btnText">Crear Cuenta</span>
-          <span id="btnLoading" style="display: none"> <i class="fas fa-spinner fa-spin"></i> Creando cuenta... </span>
-        </button>
-
-        <div class="divider">
-          <span>o</span>
-        </div>
-
-        <button type="button" class="google-btn" onclick="signInWithGoogle()">
-          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" />
-          Continuar con Google
+          <div id="btnLoading" class="loading"></div>
         </button>
       </form>
 
-      <div class="login-link">¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a></div>
+      <div class="separator">
+        <span>o</span>
+      </div>
 
-      <div class="footer">
-        <p>&copy; 2025 AXYRA. Todos los derechos reservados.</p>
-        <p>Sistema de Gestión Empresarial Profesional</p>
+      <button type="button" class="btn btn-google" onclick="signInWithGoogle()">
+        <i class="fab fa-google"></i> Continuar con Google
+      </button>
+
+      <div class="login-link">
+        ¿Ya tienes cuenta? <a href="login.html">Inicia sesión aquí</a>
       </div>
     </div>
 
-    <!-- Modal de Verificación -->
-    <div id="verificationModal" class="verification-modal">
-      <div class="verification-content">
-        <h3 class="verification-title">Verificar tu Email</h3>
-        <p class="verification-text">
-          Hemos enviado un código de verificación a tu correo electrónico. Ingresa el código de 6 dígitos para completar
-          tu registro.
-        </p>
-
-        <div class="verification-code-display" id="verificationCodeDisplay" style="display: none">
-          <p style="margin: 15px 0 10px 0; font-weight: 600; color: #667eea">🔑 Código de verificación:</p>
-          <div
-            class="code-box"
-            id="codeBox"
-            style="
-              background: #f7fafc;
-              border: 2px solid #667eea;
-              border-radius: 8px;
-              padding: 20px;
-              text-align: center;
-              font-size: 28px;
-              font-weight: bold;
-              color: #667eea;
-              margin: 15px 0;
-              font-family: 'Courier New', monospace;
-              letter-spacing: 3px;
-            "
-          ></div>
-          <p style="font-size: 14px; color: #666; margin: 10px 0">⚠️ Este código es válido por 10 minutos</p>
-        </div>
-        <input
-          type="text"
-          id="verificationCode"
-          class="verification-input"
-          placeholder="Código de verificación"
-          maxlength="6"
-        />
-        <button class="verification-btn" onclick="verifyCode()">Verificar</button>
-        <button class="verification-btn" onclick="closeVerificationModal()">Cancelar</button>
-      </div>
-    </div>
-
-    <!-- Scripts -->
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
-
-    <!-- EmailJS para verificación real -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-
-    <!-- AXYRA Scripts -->
-    <script src="static/axyra-auth-api.js"></script>
-    <script src="static/professional-user-system.js"></script>
-    <script src="static/email-verification-system.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <script>
-      let currentVerificationEmail = '';
-      let currentVerificationUsername = '';
+      // Variables globales
+      let currentUser = null;
 
-      // Validar datos del usuario
-      function validateUserData() {
-        const fullName = document.getElementById('fullName').value.trim();
-        const username = document.getElementById('username').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        // Validar nombre completo
-        if (fullName.length < 3) {
-          showError('El nombre completo debe tener al menos 3 caracteres');
-          return false;
-        }
-        if (!/^[a-zA-Z\s]+$/.test(fullName)) {
-          showError('El nombre completo solo puede contener letras y espacios');
-          return false;
-        }
-
-        // Validar nombre de usuario
-        if (username.length < 3) {
-          showError('El nombre de usuario debe tener al menos 3 caracteres');
-          return false;
-        }
-        if (!/^[a-zA-Z0-9]+$/.test(username)) {
-          showError('El nombre de usuario solo puede contener letras y números');
-          return false;
-        }
-
-        // Validar correo electrónico
-        if (!email) {
-          showError('Por favor ingrese un correo electrónico');
-          return false;
-        }
-        if (!/\S+@\S+\.\S/.test(email)) {
-          showError('Por favor ingrese un correo electrónico válido');
-          return false;
-        }
-
-        // Validar contraseña
-        if (password.length < 8) {
-          showError('La contraseña debe tener al menos 8 caracteres');
-          return false;
-        }
-        if (!/[A-Z]/.test(password)) {
-          showError('La contraseña debe contener al menos una mayúscula');
-          return false;
-        }
-        if (!/[0-9]/.test(password)) {
-          showError('La contraseña debe contener al menos un número');
-          return false;
-        }
-
-        // Validar confirmación de contraseña
-        if (password !== confirmPassword) {
-          showError('Las contraseñas no coinciden');
-          return false;
-        }
-
-        return true;
-      }
-
-      // Mostrar error
+      // Función para mostrar error
       function showError(message) {
         const errorDiv = document.getElementById('errorMessage');
         errorDiv.textContent = message;
@@ -599,7 +354,7 @@
         document.getElementById('successMessage').style.display = 'none';
       }
 
-      // Mostrar éxito
+      // Función para mostrar éxito
       function showSuccess(message) {
         const successDiv = document.getElementById('successMessage');
         successDiv.textContent = message;
@@ -613,51 +368,93 @@
         document.getElementById('successMessage').style.display = 'none';
       }
 
-      // Mostrar modal de verificación
-      function showVerificationModal() {
-        document.getElementById('verificationModal').style.display = 'flex';
-      }
-
-      // Cerrar modal de verificación
-      function closeVerificationModal() {
-        document.getElementById('verificationModal').style.display = 'none';
-        document.getElementById('verificationCode').value = '';
-      }
-
-      // Verificar código
-      async function verifyCode() {
-        const code = document.getElementById('verificationCode').value.trim();
-
-        if (!code) {
-          showError('Por favor ingrese el código de verificación');
-          return;
-        }
-
+      // Función para verificar si el usuario ya existe en Firebase
+      async function checkUserExists(email, username) {
         try {
-          // Usar el sistema real de verificación
-          const result = await axyraRealEmailVerification.verifyCode(currentVerificationEmail, code);
-
-          if (result.success) {
-            // Marcar usuario como verificado
-            axyraRealEmailVerification.markUserAsVerified(currentVerificationEmail);
-
-            // Enviar email de bienvenida
-            await axyraRealEmailVerification.sendWelcomeEmail(currentVerificationEmail, currentVerificationUsername);
-
-            showSuccess('¡Cuenta creada exitosamente! Redirigiendo al login...');
-            closeVerificationModal();
-
-            // Redirigir al login después de 2 segundos
-            setTimeout(() => {
-              window.location.href = 'login.html';
-            }, 2000);
-          } else {
-            showError(result.message);
+          // Verificar email en Firebase
+          const methods = await firebase.auth().fetchSignInMethodsForEmail(email);
+          if (methods.length > 0) {
+            return { exists: true, field: 'email', message: 'Este email ya está registrado. Puedes iniciar sesión o usar otro email.' };
           }
+
+          // Verificar username en Firestore
+          if (window.axyraFirebaseUtils && window.axyraFirebaseUtils.isAvailable()) {
+            const usernameQuery = await firebase.firestore()
+              .collection('users')
+              .where('username', '==', username)
+              .get();
+            
+            if (!usernameQuery.empty) {
+              return { exists: true, field: 'username', message: 'Este nombre de usuario ya está en uso.' };
+            }
+          }
+
+          return { exists: false };
         } catch (error) {
-          console.error('Error verificando código:', error);
-          showError('Error al verificar el código');
+          console.error('Error verificando usuario:', error);
+          return { exists: false };
         }
+      }
+
+      // Validar datos del formulario
+      function validateUserData() {
+        const fullName = document.getElementById('fullName').value.trim();
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        // Validar nombre completo
+        if (fullName.length < 3) {
+          showError('El nombre completo debe tener al menos 3 caracteres');
+          return false;
+        }
+
+        if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(fullName)) {
+          showError('El nombre solo puede contener letras y espacios');
+          return false;
+        }
+
+        // Validar username
+        if (username.length < 3) {
+          showError('El nombre de usuario debe tener al menos 3 caracteres');
+          return false;
+        }
+
+        if (!/^[a-zA-Z0-9]+$/.test(username)) {
+          showError('El nombre de usuario solo puede contener letras y números');
+          return false;
+        }
+
+        // Validar email
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showError('El formato del email no es válido');
+          return false;
+        }
+
+        // Validar contraseña
+        if (password.length < 8) {
+          showError('La contraseña debe tener al menos 8 caracteres');
+          return false;
+        }
+
+        if (!/(?=.*[A-Z])/.test(password)) {
+          showError('La contraseña debe contener al menos una mayúscula');
+          return false;
+        }
+
+        if (!/(?=.*[0-9])/.test(password)) {
+          showError('La contraseña debe contener al menos un número');
+          return false;
+        }
+
+        // Validar confirmación de contraseña
+        if (password !== confirmPassword) {
+          showError('Las contraseñas no coinciden');
+          return false;
+        }
+
+        return true;
       }
 
       // Manejar envío del formulario
@@ -675,78 +472,72 @@
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
-        // Verificar si el usuario ya existe
-        const existingUsers = JSON.parse(localStorage.getItem('axyra_users') || '[]');
-        if (existingUsers.find((user) => user.username === username)) {
-          showError('El nombre de usuario ya está en uso');
-          return;
-        }
-        if (existingUsers.find((user) => user.email === email)) {
-          showError('El correo electrónico ya está en uso');
-          return;
-        }
-
         try {
           // Mostrar loading
           document.getElementById('btnText').style.display = 'none';
           document.getElementById('btnLoading').style.display = 'inline-block';
           document.getElementById('registerBtn').disabled = true;
 
+          // Verificar si el usuario ya existe en Firebase
+          const userCheck = await checkUserExists(email, username);
+          if (userCheck.exists) {
+            showError(userCheck.message);
+            return;
+          }
+
           // Crear usuario en Firebase
-          try {
-            const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
-            
-            if (userCredential.user) {
-              console.log('✅ Usuario creado en Firebase:', userCredential.user.email);
+          const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+          
+          if (userCredential.user) {
+            console.log('✅ Usuario creado en Firebase:', userCredential.user.email);
 
-              // Crear perfil de usuario en Firestore
-              const userData = {
-                uid: userCredential.user.uid,
-                email: userCredential.user.email,
-                displayName: fullName,
-                username: username,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                provider: 'email',
-                hasPassword: true,
-                emailVerified: false
-              };
+            // Crear perfil de usuario en Firestore
+            const userData = {
+              uid: userCredential.user.uid,
+              email: userCredential.user.email,
+              displayName: fullName,
+              username: username,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+              provider: 'email',
+              hasPassword: true,
+              emailVerified: false
+            };
 
-              // Guardar en Firestore
-              await firebase.firestore().collection('users').doc(userCredential.user.uid).set(userData);
-              console.log('✅ Usuario guardado en Firestore');
+            // Guardar en Firestore
+            await firebase.firestore().collection('users').doc(userCredential.user.uid).set(userData);
+            console.log('✅ Usuario guardado en Firestore');
 
-              // Enviar email de verificación
-              await userCredential.user.sendEmailVerification();
-              console.log('✅ Email de verificación enviado');
+            // Enviar email de verificación
+            await userCredential.user.sendEmailVerification();
+            console.log('✅ Email de verificación enviado');
 
-              // Mostrar mensaje de éxito
-              showSuccess('¡Cuenta creada exitosamente! Se ha enviado un email de verificación.');
+            // Mostrar mensaje de éxito
+            showSuccess('¡Cuenta creada exitosamente! Se ha enviado un email de verificación.');
 
-              // Limpiar formulario
-              document.getElementById('registerForm').reset();
+            // Limpiar formulario
+            document.getElementById('registerForm').reset();
 
-              // Redirigir al login después de 3 segundos
-              setTimeout(() => {
-                window.location.href = 'login.html';
-              }, 3000);
+            // Redirigir al login después de 3 segundos
+            setTimeout(() => {
+              window.location.href = 'login.html';
+            }, 3000);
 
-            } else {
-              showError('Error al crear usuario en Firebase');
-            }
-          } catch (firebaseError) {
-            console.error('Error de Firebase:', firebaseError);
-            
-            // Manejar errores específicos
-            if (firebaseError.code === 'auth/email-already-in-use') {
-              showError('Este email ya está registrado. Puedes iniciar sesión o usar otro email.');
-            } else if (firebaseError.code === 'auth/weak-password') {
-              showError('La contraseña es muy débil. Usa al menos 8 caracteres con mayúsculas y números.');
-            } else if (firebaseError.code === 'auth/invalid-email') {
-              showError('El formato del email no es válido.');
-            } else {
-              showError(`Error creando cuenta: ${firebaseError.message}`);
-            }
+          } else {
+            showError('Error al crear usuario en Firebase');
+          }
+        } catch (firebaseError) {
+          console.error('Error de Firebase:', firebaseError);
+          
+          // Manejar errores específicos
+          if (firebaseError.code === 'auth/email-already-in-use') {
+            showError('Este email ya está registrado. Puedes iniciar sesión o usar otro email.');
+          } else if (firebaseError.code === 'auth/weak-password') {
+            showError('La contraseña es muy débil. Usa al menos 8 caracteres con mayúsculas y números.');
+          } else if (firebaseError.code === 'auth/invalid-email') {
+            showError('El formato del email no es válido.');
+          } else {
+            showError(`Error creando cuenta: ${firebaseError.message}`);
           }
         } catch (error) {
           console.error('Error creando usuario:', error);
@@ -762,28 +553,28 @@
       // Función para mostrar/ocultar contraseña
       function togglePassword() {
         const passwordInput = document.getElementById('password');
-        const passwordIcon = document.getElementById('passwordIcon');
+        const passwordIcon = document.getElementById('password').nextElementSibling.querySelector('i');
 
         if (passwordInput.type === 'password') {
           passwordInput.type = 'text';
-          passwordIcon.innerHTML = '<i class="fas fa-eye-slash"></i>';
+          passwordIcon.className = 'fas fa-eye-slash';
         } else {
           passwordInput.type = 'password';
-          passwordIcon.innerHTML = '<i class="fas fa-eye"></i>';
+          passwordIcon.className = 'fas fa-eye';
         }
       }
 
       // Función para mostrar/ocultar confirmar contraseña
       function toggleConfirmPassword() {
         const confirmPasswordInput = document.getElementById('confirmPassword');
-        const confirmPasswordIcon = document.getElementById('confirmPasswordIcon');
+        const confirmPasswordIcon = document.getElementById('confirmPassword').nextElementSibling.querySelector('i');
 
         if (confirmPasswordInput.type === 'password') {
           confirmPasswordInput.type = 'text';
-          confirmPasswordIcon.innerHTML = '<i class="fas fa-eye-slash"></i>';
+          confirmPasswordIcon.className = 'fas fa-eye-slash';
         } else {
           confirmPasswordInput.type = 'password';
-          confirmPasswordIcon.innerHTML = '<i class="fas fa-eye"></i>';
+          confirmPasswordIcon.className = 'fas fa-eye';
         }
       }
 
@@ -877,30 +668,6 @@
           }
         }
       }
-            showSuccess('¡Inicio de sesión exitoso! Redirigiendo al dashboard...');
-
-            // Redirigir al dashboard
-            setTimeout(() => {
-              window.location.href = 'modulos/dashboard/dashboard.html';
-            }, 2000);
-          } else {
-            showError('Error al iniciar sesión con Google: ' + result.error);
-          }
-        } catch (error) {
-          console.error('Error con Google OAuth:', error);
-          showError('Error al conectar con Google');
-        }
-      }
-
-      // Inicialización
-      document.addEventListener('DOMContentLoaded', function () {
-        console.log('AXYRA Registration Page cargada');
-
-        // Verificar si ya hay sesión activa
-        if (window.axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-          window.location.href = 'modulos/dashboard/dashboard.html';
-        }
-      });
     </script>
   </body>
 </html>

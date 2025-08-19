@@ -1434,15 +1434,15 @@
                     <strong>${emp.nombre}</strong>
                     <span>${emp.cargo}</span>
                     <span class="axyra-salario-monto">Salario base configurado</span>
-                  </div>
-                </div>
+              </div>
+              </div>
               `;
             });
             detalleHTML += `
               <div class="axyra-salario-total">
                 <strong>Total Empleados: ${empleados.length}</strong>
-              </div>
-            `;
+            </div>
+          `;
             detalleHTML += '</div>';
           } else {
             detalleHTML += '<p>No hay empleados registrados</p>';
@@ -1467,7 +1467,7 @@
           <div class="axyra-message-content">
             <span class="axyra-message-text">${mensaje}</span>
             <button class="axyra-message-close" onclick="this.parentElement.parentElement.remove()">×</button>
-          </div>
+              </div>
         `;
 
         document.body.appendChild(mensajeDiv);
@@ -1500,9 +1500,9 @@
               <button class="axyra-btn axyra-btn-primary" onclick="cerrarModal(this)">
                 <i class="fas fa-check"></i> Entendido
               </button>
+              </div>
             </div>
-          </div>
-        `;
+          `;
         document.body.appendChild(modal);
 
         // Agregar funcionalidad para cerrar con Escape
@@ -2119,11 +2119,10 @@
       // Actualizar mensaje de bienvenida
       function updateWelcomeMessage() {
         try {
-          const currentUser = window.axyraIsolatedAuth.getCurrentUser();
           if (currentUser) {
             const welcomeTitle = document.getElementById('welcomeTitle');
             if (welcomeTitle) {
-              welcomeTitle.textContent = `¡Bienvenido, ${currentUser.username}!`;
+              welcomeTitle.textContent = `¡Bienvenido, ${currentUser.username || currentUser.nombre}!`;
             }
           }
         } catch (error) {

@@ -210,7 +210,7 @@
                 <div class="axyra-summary-label">Total Nóminas</div>
               </div>
             </div>
-            
+
             <div class="axyra-summary-card">
               <div class="axyra-summary-icon">
                 <i class="fas fa-dollar-sign"></i>
@@ -220,7 +220,7 @@
                 <div class="axyra-summary-label">Total Salarios</div>
               </div>
             </div>
-            
+
             <div class="axyra-summary-card">
               <div class="axyra-summary-icon">
                 <i class="fas fa-users"></i>
@@ -230,7 +230,7 @@
                 <div class="axyra-summary-label">Empleados Pagados</div>
               </div>
             </div>
-            
+
             <div class="axyra-summary-card">
               <div class="axyra-summary-icon">
                 <i class="fas fa-calendar-check"></i>
@@ -245,7 +245,12 @@
           <!-- Filtros Mejorados -->
           <div class="axyra-filters-enhanced">
             <div class="axyra-search-box">
-              <input type="text" id="searchNomina" class="axyra-form-input" placeholder="Buscar por período o empleado..." />
+              <input
+                type="text"
+                id="searchNomina"
+                class="axyra-form-input"
+                placeholder="Buscar por período o empleado..."
+              />
               <i class="fas fa-search"></i>
             </div>
             <div class="axyra-filter-group">
@@ -321,9 +326,7 @@
     <div id="modalDetalleNomina" class="axyra-modal">
       <div class="axyra-modal-content">
         <div class="axyra-modal-header">
-          <h3 class="axyra-modal-title">
-            <i class="fas fa-file-invoice-dollar"></i> Detalle de Nómina
-          </h3>
+          <h3 class="axyra-modal-title"><i class="fas fa-file-invoice-dollar"></i> Detalle de Nómina</h3>
           <button class="axyra-modal-close" onclick="cerrarModalDetalleNomina()">
             <i class="fas fa-times"></i>
           </button>
@@ -341,9 +344,7 @@
           </div>
         </div>
         <div class="axyra-modal-footer">
-          <button class="axyra-btn axyra-btn-primary" onclick="cerrarModalDetalleNomina()">
-            Entendido
-          </button>
+          <button class="axyra-btn axyra-btn-primary" onclick="cerrarModalDetalleNomina()">Entendido</button>
         </div>
       </div>
     </div>
@@ -398,12 +399,12 @@
       // Cerrar sesión - SISTEMA AISLADO
       function logout() {
         console.log('🔄 Cerrando sesión desde gestión de nómina...');
-        
+
         // Usar el sistema aislado
         if (window.axyraIsolatedAuth) {
           window.axyraIsolatedAuth.logout();
         }
-        
+
         console.log('✅ Sesión cerrada desde gestión de nómina');
         window.location.href = '../../login.html';
       }
@@ -488,9 +489,7 @@
 
             // Filtrar solo empleados activos
             const empleadosActivos = empleados.filter((emp) => emp.estado === 'Activo');
-            console.log(
-              `✅ Empleados activos para nómina: ${empleadosActivos.length}`
-            );
+            console.log(`✅ Empleados activos para nómina: ${empleadosActivos.length}`);
 
             if (empleadosActivos.length > 0) {
               empleados = empleadosActivos;
@@ -923,10 +922,14 @@
             <td><span class="axyra-badge axyra-badge-success">Completada</span></td>
             <td>
               <div class="axyra-action-buttons">
-                <button class="axyra-btn axyra-btn-info axyra-btn-small" onclick="verDetalleNomina('${nomina.id}')" title="Ver Detalle">
-                  <i class="fas fa-eye"></i>
-                </button>
-                <button class="axyra-btn axyra-btn-danger axyra-btn-small" onclick="eliminarNomina('${nomina.id}')" title="Eliminar">
+                <button class="axyra-btn axyra-btn-info axyra-btn-small" onclick="verDetalleNomina('${
+                  nomina.id
+                }')" title="Ver Detalle">
+                <i class="fas fa-eye"></i>
+              </button>
+                <button class="axyra-btn axyra-btn-danger axyra-btn-small" onclick="eliminarNomina('${
+                  nomina.id
+                }')" title="Eliminar">
                   <i class="fas fa-trash"></i>
                 </button>
               </div>
@@ -941,7 +944,7 @@
       function verDetalleNomina(id) {
         mostrarModalDetalleNomina(id);
       }
-      
+
       // Mostrar modal de detalle de nómina
       function mostrarModalDetalleNomina(id) {
         const modal = document.getElementById('modalDetalleNomina');
@@ -952,7 +955,7 @@
           modal.style.justifyContent = 'center';
         }
       }
-      
+
       // Cerrar modal de detalle de nómina
       function cerrarModalDetalleNomina() {
         const modal = document.getElementById('modalDetalleNomina');
@@ -964,8 +967,8 @@
       // Eliminar nómina
       function eliminarNomina(id) {
         const historial = JSON.parse(localStorage.getItem('axyra_historial') || '[]');
-        const nomina = historial.find(n => n.id === id);
-        
+        const nomina = historial.find((n) => n.id === id);
+
         if (!nomina) {
           mostrarMensaje('❌ Nómina no encontrada', 'error');
           return;
@@ -1004,7 +1007,7 @@
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', modalHTML);
       }
 
@@ -1020,9 +1023,9 @@
       function confirmarEliminarNomina(id) {
         try {
           const historial = JSON.parse(localStorage.getItem('axyra_historial') || '[]');
-          const historialFiltrado = historial.filter(n => n.id !== id);
+          const historialFiltrado = historial.filter((n) => n.id !== id);
           localStorage.setItem('axyra_historial', JSON.stringify(historialFiltrado));
-          
+
           cerrarModalConfirmarEliminarNomina();
           cargarHistorial();
           actualizarResumen();
@@ -1054,78 +1057,91 @@
                 departamento: empleado.departamento,
                 salarioBase: empleado.salario,
                 horasTrabajadas: horas,
-                salarioNeto: salarioNeto
+                salarioNeto: salarioNeto,
               });
             }
           });
 
           // Crear nuevo workbook
           const workbook = XLSX.utils.book_new();
-          
+
           // Preparar datos con formato profesional
           const excelContent = [];
-          
+
           // Título principal
           excelContent.push(['REPORTE DE NÓMINA - AXYRA']);
           excelContent.push([]);
-          
+
           // Información del período
-          excelContent.push(['PERÍODO:', document.getElementById('fechaInicio').value, 'a', document.getElementById('fechaFin').value]);
+          excelContent.push([
+            'PERÍODO:',
+            document.getElementById('fechaInicio').value,
+            'a',
+            document.getElementById('fechaFin').value,
+          ]);
           excelContent.push(['FECHA DE EXPORTACIÓN:', new Date().toLocaleDateString('es-ES')]);
           excelContent.push(['TOTAL EMPLEADOS:', datosExportacion.length]);
           excelContent.push([]);
-          
+
           // Encabezados de la tabla
           excelContent.push(['Empleado', 'Cargo', 'Departamento', 'Salario Base', 'Horas Trabajadas', 'Salario Neto']);
-          
+
           // Datos de empleados
-          datosExportacion.forEach(emp => {
+          datosExportacion.forEach((emp) => {
             excelContent.push([
               emp.nombre,
               emp.cargo,
               emp.departamento,
               emp.salarioBase,
               emp.horasTrabajadas,
-              emp.salarioNeto
+              emp.salarioNeto,
             ]);
           });
-          
+
           // Resumen por departamento
           excelContent.push([]);
           excelContent.push(['RESUMEN POR DEPARTAMENTO']);
           excelContent.push(['Departamento', 'Cantidad', 'Total Salarios']);
-          
+
           const resumenDepartamentos = {};
-          datosExportacion.forEach(emp => {
+          datosExportacion.forEach((emp) => {
             if (!resumenDepartamentos[emp.departamento]) {
               resumenDepartamentos[emp.departamento] = { cantidad: 0, totalSalarios: 0 };
             }
             resumenDepartamentos[emp.departamento].cantidad++;
             resumenDepartamentos[emp.departamento].totalSalarios += emp.salarioNeto;
           });
-          
+
           Object.entries(resumenDepartamentos).forEach(([depto, datos]) => {
             excelContent.push([depto, datos.cantidad, `$${datos.totalSalarios.toLocaleString('es-CO')}`]);
           });
-          
+
           // Totales finales
           excelContent.push([]);
           excelContent.push(['TOTALES FINALES']);
           excelContent.push(['Concepto', 'Valor']);
           excelContent.push(['Total Empleados', datosExportacion.length]);
-          excelContent.push(['Total Salarios', `$${datosExportacion.reduce((sum, emp) => sum + emp.salarioNeto, 0).toLocaleString('es-CO')}`]);
-          excelContent.push(['Promedio Salario', `$${(datosExportacion.reduce((sum, emp) => sum + emp.salarioNeto, 0) / datosExportacion.length).toLocaleString('es-CO')}`]);
-          
+          excelContent.push([
+            'Total Salarios',
+            `$${datosExportacion.reduce((sum, emp) => sum + emp.salarioNeto, 0).toLocaleString('es-CO')}`,
+          ]);
+          excelContent.push([
+            'Promedio Salario',
+            `$${(
+              datosExportacion.reduce((sum, emp) => sum + emp.salarioNeto, 0) / datosExportacion.length
+            ).toLocaleString('es-CO')}`,
+          ]);
+
           // Crear worksheet
           const worksheet = XLSX.utils.aoa_to_sheet(excelContent);
-          
+
           // Agregar worksheet al workbook
           XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
-          
+
           // Generar archivo
           const nombreArchivo = `NOMINA_${new Date().toISOString().split('T')[0]}.xlsx`;
           XLSX.writeFile(workbook, nombreArchivo);
-          
+
           mostrarMensaje(`✅ Nómina exportada a Excel correctamente: ${nombreArchivo}`, 'success');
         } catch (error) {
           console.error('❌ Error exportando nómina:', error);

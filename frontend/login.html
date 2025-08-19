@@ -487,7 +487,7 @@
         <div class="form-group">
           <label for="username" class="form-label">Usuario o Email</label>
           <input type="text" id="username" class="form-input" placeholder="Usuario o Email" required />
-        </div>
+            </div>
         <div class="form-group">
           <label for="password" class="form-label">Contraseña</label>
           <div class="password-input-container">
@@ -495,8 +495,8 @@
             <button type="button" class="password-toggle" onclick="togglePassword()">
               <i class="fas fa-eye" id="passwordIcon"></i>
             </button>
+            </div>
           </div>
-        </div>
         <div class="form-group">
           <label class="checkbox-label">
             <input type="checkbox" id="rememberSession" />
@@ -511,8 +511,8 @@
       
       <div class="separator">
         <span>o</span>
-      </div>
-      
+        </div>
+
       <button type="button" class="axyra-btn axyra-btn-google" onclick="loginWithGoogle()">
         <i class="fab fa-google"></i> Continuar con Google
       </button>
@@ -521,11 +521,11 @@
       
       <div class="register-link">
         ¿No tienes cuenta? <a href="register.html">Regístrate aquí</a>
-      </div>
-      
+          </div>
+
       <div class="copyright">
         © 2025 AXYRA. Todos los derechos reservados.
-      </div>
+          </div>
 
     <!-- Modal para crear contraseña para usuarios de Google -->
     <div id="modalCrearContrasena" class="axyra-modal" style="display: none;">
@@ -536,8 +536,8 @@
           </h3>
           <button class="axyra-modal-close" onclick="cerrarModalCrearContrasena()">
             <i class="fas fa-times"></i>
-          </button>
-        </div>
+            </button>
+          </div>
         <div class="axyra-modal-body">
           <p class="axyra-modal-text">
             Para completar tu registro con Google, necesitamos que crees una contraseña para futuros inicios de sesión.
@@ -556,7 +556,7 @@
               required 
             />
           </div>
-          
+
           <div class="axyra-form-group">
             <label for="confirmPasswordGoogle" class="axyra-form-label">Confirmar Contraseña</label>
             <input 
@@ -574,8 +574,8 @@
           </button>
           <button class="axyra-btn axyra-btn-primary" onclick="crearContrasenaGoogle()">
             <i class="fas fa-check"></i> Crear Contraseña
-          </button>
-        </div>
+            </button>
+          </div>
       </div>
     </div>
 
@@ -864,9 +864,9 @@
                     }
                     
                     showSuccess('¡Login exitoso! Redirigiendo al dashboard...');
-                    
-                    setTimeout(() => {
-                      window.location.href = 'modulos/dashboard/dashboard.html';
+
+          setTimeout(() => {
+            window.location.href = 'modulos/dashboard/dashboard.html';
                     }, 2000);
                     
                     return;
@@ -902,10 +902,10 @@
               }
               
               showSuccess('¡Login exitoso! Redirigiendo al dashboard...');
-              
-              setTimeout(() => {
-                window.location.href = 'modulos/dashboard/dashboard.html';
-              }, 2000);
+
+          setTimeout(() => {
+            window.location.href = 'modulos/dashboard/dashboard.html';
+        }, 2000);
               
             } else {
               showError(result.error || 'Credenciales incorrectas');
