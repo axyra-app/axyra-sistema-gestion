@@ -229,7 +229,7 @@
     </div>
 
     <!-- Modal de Confirmación -->
-    <div id="modalConfirmacion" class="axyra-modal" style="display: none;">
+    <div id="modalConfirmacion" class="axyra-modal" style="display: none">
       <div class="axyra-modal-content">
         <div class="axyra-modal-header">
           <h3 class="axyra-modal-title"><i class="fas fa-question-circle"></i> Confirmar Acción</h3>
@@ -244,9 +244,7 @@
           <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModal('modalConfirmacion')">
             <i class="fas fa-times"></i> Cancelar
           </button>
-          <button id="btnConfirmar" class="axyra-btn axyra-btn-error">
-            <i class="fas fa-check"></i> Confirmar
-          </button>
+          <button id="btnConfirmar" class="axyra-btn axyra-btn-error"><i class="fas fa-check"></i> Confirmar</button>
         </div>
       </div>
     </div>
@@ -291,12 +289,12 @@
       // Cerrar sesión - SISTEMA AISLADO
       function logout() {
         console.log('🔄 Cerrando sesión desde gestión de empleados...');
-        
+
         // Usar el sistema aislado
         if (window.axyraIsolatedAuth) {
           window.axyraIsolatedAuth.logout();
         }
-        
+
         console.log('✅ Sesión cerrada desde gestión de empleados');
         window.location.href = '../../login.html';
       }
@@ -367,35 +365,41 @@
           empleadosPaginados.forEach((empleado) => {
             const tr = document.createElement('tr');
             tr.innerHTML = `
-              <td>${empleado.id}</td>
-              <td>
-                <div class="axyra-avatar">
-                  <i class="fas fa-user"></i>
-                </div>
-              </td>
-              <td>${empleado.nombre}</td>
-              <td>${empleado.departamento}</td>
-              <td>${empleado.cargo}</td>
+                    <td>${empleado.id}</td>
+                    <td>
+                        <div class="axyra-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </td>
+                    <td>${empleado.nombre}</td>
+                    <td>${empleado.departamento}</td>
+                    <td>${empleado.cargo}</td>
               <td>$${(empleado.salario || 0).toFixed(2)}</td>
-              <td>
+                    <td>
                 <span class="axyra-status axyra-status-${empleado.estado.toLowerCase()}">
-                  ${empleado.estado}
-                </span>
-              </td>
-              <td>
+                            ${empleado.estado}
+                        </span>
+                    </td>
+                    <td>
                 <div class="axyra-action-buttons">
-                  <button class="axyra-btn-action axyra-btn-edit" onclick="editarEmpleado(${empleado.id})" title="Editar">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="axyra-btn-action axyra-btn-view" onclick="verEmpleado(${empleado.id})" title="Ver Detalles">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  <button class="axyra-btn-action axyra-btn-delete" onclick="eliminarEmpleado(${empleado.id})" title="Eliminar">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </td>
-            `;
+                  <button class="axyra-btn-action axyra-btn-edit" onclick="editarEmpleado(${
+                    empleado.id
+                  })" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                  <button class="axyra-btn-action axyra-btn-view" onclick="verEmpleado(${
+                    empleado.id
+                  })" title="Ver Detalles">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                  <button class="axyra-btn-action axyra-btn-delete" onclick="eliminarEmpleado(${
+                    empleado.id
+                  })" title="Eliminar">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
             tbody.appendChild(tr);
           });
         }
@@ -489,8 +493,9 @@
       function eliminarEmpleado(id) {
         const empleado = empleados.find((e) => e.id === id);
         if (empleado) {
-          document.getElementById('confirmacionMensaje').textContent = 
-            `¿Estás seguro de que deseas eliminar a ${empleado.nombre}? Esta acción no se puede deshacer.`;
+          document.getElementById(
+            'confirmacionMensaje'
+          ).textContent = `¿Estás seguro de que deseas eliminar a ${empleado.nombre}? Esta acción no se puede deshacer.`;
 
           document.getElementById('btnConfirmar').onclick = () => {
             empleados = empleados.filter((e) => e.id !== id);
@@ -557,7 +562,9 @@
                     <div class="axyra-detail-row">
                       <span class="axyra-detail-label">Estado:</span>
                       <span class="axyra-detail-value">
-                        <span class="axyra-status axyra-status-${empleado.estado.toLowerCase()}">${empleado.estado}</span>
+                        <span class="axyra-status axyra-status-${empleado.estado.toLowerCase()}">${
+            empleado.estado
+          }</span>
                       </span>
                     </div>
                     <div class="axyra-detail-row">
@@ -567,7 +574,9 @@
                   </div>
                 </div>
                 <div class="axyra-modal-footer">
-                  <button class="axyra-btn axyra-btn-primary" onclick="editarEmpleado(${empleado.id}); cerrarModalDetalles();">
+                  <button class="axyra-btn axyra-btn-primary" onclick="editarEmpleado(${
+                    empleado.id
+                  }); cerrarModalDetalles();">
                     <i class="fas fa-edit"></i> Editar
                   </button>
                   <button class="axyra-btn axyra-btn-outline" onclick="cerrarModalDetalles()">
@@ -753,7 +762,7 @@
       function editarDepartamento(index) {
         const departamentos = obtenerDepartamentos();
         const nombreActual = departamentos[index];
-        
+
         // Crear modal para editar departamento
         const modalHTML = `
           <div id="modalEditarDepartamento" class="axyra-modal" style="display: flex;">
@@ -783,10 +792,10 @@
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', modalHTML);
       }
-      
+
       // Cerrar modal editar departamento
       function cerrarModalEditarDepartamento() {
         const modal = document.getElementById('modalEditarDepartamento');
@@ -794,28 +803,28 @@
           modal.remove();
         }
       }
-      
+
       // Confirmar editar departamento
       function confirmarEditarDepartamento(index) {
         const departamentos = obtenerDepartamentos();
         const nombreActual = departamentos[index];
         const nuevoNombre = document.getElementById('nuevoNombreDepartamento').value.trim();
-        
+
         if (!nuevoNombre) {
           mostrarMensaje('❌ El nombre del departamento no puede estar vacío', 'error');
           return;
         }
-        
+
         if (nuevoNombre === nombreActual) {
           cerrarModalEditarDepartamento();
           return;
         }
-        
+
         if (departamentos.includes(nuevoNombre)) {
           mostrarMensaje('❌ El departamento ya existe', 'error');
           return;
         }
-        
+
         // Actualizar empleados que usan este departamento
         empleados.forEach((emp) => {
           if (emp.departamento === nombreActual) {
@@ -823,11 +832,11 @@
           }
         });
         guardarEmpleados();
-        
+
         // Actualizar departamento
         departamentos[index] = nuevoNombre;
         localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
-        
+
         cerrarModalEditarDepartamento();
         cargarDepartamentos();
         mostrarEmpleados();
@@ -877,10 +886,10 @@
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', modalHTML);
       }
-      
+
       // Cerrar modal confirmar eliminar departamento
       function cerrarModalConfirmarEliminarDepartamento() {
         const modal = document.getElementById('modalConfirmarEliminarDepartamento');
@@ -888,12 +897,12 @@
           modal.remove();
         }
       }
-      
+
       // Confirmar eliminar departamento
       function confirmarEliminarDepartamento(index) {
         const departamentos = obtenerDepartamentos();
         const departamento = departamentos[index];
-        
+
         departamentos.splice(index, 1);
         localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
 
@@ -990,13 +999,19 @@
               </td>
               <td>
                 <div class="axyra-action-buttons">
-                  <button class="axyra-btn-action axyra-btn-edit" onclick="editarEmpleado(${empleado.id})" title="Editar">
+                  <button class="axyra-btn-action axyra-btn-edit" onclick="editarEmpleado(${
+                    empleado.id
+                  })" title="Editar">
                     <i class="fas fa-edit"></i>
                   </button>
-                  <button class="axyra-btn-action axyra-btn-view" onclick="verEmpleado(${empleado.id})" title="Ver Detalles">
+                  <button class="axyra-btn-action axyra-btn-view" onclick="verEmpleado(${
+                    empleado.id
+                  })" title="Ver Detalles">
                     <i class="fas fa-eye"></i>
                   </button>
-                  <button class="axyra-btn-action axyra-btn-delete" onclick="eliminarEmpleado(${empleado.id})" title="Eliminar">
+                  <button class="axyra-btn-action axyra-btn-delete" onclick="eliminarEmpleado(${
+                    empleado.id
+                  })" title="Eliminar">
                     <i class="fas fa-trash"></i>
                   </button>
                 </div>
