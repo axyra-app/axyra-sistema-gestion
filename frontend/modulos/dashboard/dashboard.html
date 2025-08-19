@@ -19,8 +19,8 @@
     <script src="../../static/firebase-config.js"></script>
 
     <!-- SISTEMA AISLADO -->
-    <script src="../../static/isolated-auth.js"></script>
-    <script src="../../static/debug-auth.js"></script>
+    <!-- <script src="../../static/isolated-auth.js"></script> -->
+    <!-- <script src="../../static/debug-auth.js"></script> -->
   </head>
   <body>
     <!-- Header -->
@@ -984,16 +984,43 @@
           }
 
           // Intentar cargar datos desde Firebase primero
-          if (window.axyraFirebaseDataSystem && currentUser.uid) {
+          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser.id) {
             console.log('🔥 Cargando datos desde Firebase...');
 
             try {
               // Cargar empleados desde Firebase
-              const empleados = await window.axyraFirebaseDataSystem.getEmployees();
+              const empleadosSnapshot = await firebase.firestore()
+                .collection('empleados')
+                .where('userId', '==', currentUser.id)
+                .get();
+              
+              let empleados = [];
+              if (!empleadosSnapshot.empty) {
+                empleadosSnapshot.forEach(doc => {
+                  empleados.push({
+                    id: doc.id,
+                    ...doc.data()
+                  });
+                });
+              }
               document.getElementById('totalEmpleados').textContent = empleados.length;
 
               // Cargar horas desde Firebase
-              const horas = await window.axyraFirebaseDataSystem.getHours();
+              const horasSnapshot = await firebase.firestore()
+                .collection('horas')
+                .where('userId', '==', currentUser.id)
+                .get();
+              
+              let horas = [];
+              if (!horasSnapshot.empty) {
+                horasSnapshot.forEach(doc => {
+                  horas.push({
+                    id: doc.id,
+                    ...doc.data()
+                  });
+                });
+              }
+              
               const totalHorasTrabajadas = horas.reduce((total, registro) => {
                 const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
                 const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
@@ -1003,7 +1030,20 @@
               }, 0);
 
               // Cargar comprobantes desde Firebase
-              const comprobantes = await window.axyraFirebaseDataSystem.getReceipts();
+              const comprobantesSnapshot = await firebase.firestore()
+                .collection('comprobantes')
+                .where('userId', '==', currentUser.id)
+                .get();
+              
+              let comprobantes = [];
+              if (!comprobantesSnapshot.empty) {
+                comprobantesSnapshot.forEach(doc => {
+                  comprobantes.push({
+                    id: doc.id,
+                    ...doc.data()
+                  });
+                });
+              }
               document.getElementById('comprobantesGenerados').textContent = comprobantes.length;
 
               // Calcular total de salarios base
@@ -1046,7 +1086,7 @@
 
           // Empleados FILTRADOS POR USUARIO
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
-            (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email
+            (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
           );
 
           // Buscar elemento totalEmpleados de forma segura
@@ -1060,7 +1100,7 @@
 
           // Comprobantes FILTRADOS POR USUARIO
           const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
-            (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email
+            (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email || comp.userId === currentUser.id
           );
 
           // Buscar elemento comprobantesGenerados de forma segura
@@ -1086,7 +1126,7 @@
 
           // Calcular horas trabajadas
           const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
-            (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email
+            (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
           );
           const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
             const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
@@ -2053,11 +2093,15 @@
 
         if (isAuthenticated) {
           console.log('✅ Usuario autenticado, cargando dashboard...');
-          loadDashboardData();
-          updateWelcomeMessage();
-
+          
           // Configurar listener de Firebase para mantener sesión
           setupFirebaseAuthListener();
+          
+          // Cargar datos después de configurar la autenticación
+          setTimeout(() => {
+            loadDashboardData();
+            updateWelcomeMessage();
+          }, 500);
         } else {
           console.log('⚠️ Usuario no autenticado, mostrando mensaje de login');
         }
@@ -2066,23 +2110,54 @@
       // Configurar listener de Firebase para mantener sesión sincronizada
       function setupFirebaseAuthListener() {
         if (typeof firebase !== 'undefined' && firebase.auth) {
-          firebase.auth().onAuthStateChanged(function (user) {
+          firebase.auth().onAuthStateChanged(async function (user) {
             if (user) {
               console.log('🔥 Usuario Firebase autenticado en dashboard:', user.email);
 
-              // Actualizar usuario actual
-              currentUser = {
-                id: user.uid,
-                username: user.email.split('@')[0],
-                email: user.email,
-                nombre: user.displayName || user.email.split('@')[0],
-                rol: 'usuario',
-                createdAt: new Date().toISOString(),
-              };
+              // Intentar obtener datos del usuario desde Firestore
+              try {
+                const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                let username = user.email.split('@')[0]; // Fallback
+                let displayName = user.displayName || user.email.split('@')[0];
+                
+                if (userDoc.exists) {
+                  const userData = userDoc.data();
+                  username = userData.username || username;
+                  displayName = userData.displayName || displayName;
+                  console.log('✅ Datos del usuario obtenidos desde Firestore:', userData);
+                }
+                
+                // Actualizar usuario actual
+                currentUser = {
+                  id: user.uid,
+                  username: username,
+                  email: user.email,
+                  nombre: displayName,
+                  rol: 'usuario',
+                  createdAt: new Date().toISOString(),
+                };
 
-              // Sincronizar localStorage
-              localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
-              localStorage.setItem('axyra_isolated_user', JSON.stringify(currentUser));
+                // Sincronizar localStorage
+                localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+                localStorage.setItem('axyra_isolated_user', JSON.stringify(currentUser));
+                
+                console.log('✅ Usuario actualizado:', currentUser);
+              } catch (error) {
+                console.error('❌ Error obteniendo datos del usuario desde Firestore:', error);
+                
+                // Usar datos básicos como fallback
+                currentUser = {
+                  id: user.uid,
+                  username: user.email.split('@')[0],
+                  email: user.email,
+                  nombre: user.displayName || user.email.split('@')[0],
+                  rol: 'usuario',
+                  createdAt: new Date().toISOString(),
+                };
+                
+                localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+                localStorage.setItem('axyra_isolated_user', JSON.stringify(currentUser));
+              }
             } else {
               console.log('🔥 Usuario Firebase no autenticado, limpiando sesión...');
 
@@ -2105,11 +2180,11 @@
       }
 
       // Cargar datos del dashboard
-      function loadDashboardData() {
+      async function loadDashboardData() {
         console.log('📊 Cargando datos del dashboard...');
 
         // Cargar estadísticas
-        loadEmpleadosStats();
+        await loadEmpleadosStats();
         loadHorasStats();
         loadNominaStats();
         loadCuadreStats();
@@ -2181,17 +2256,21 @@
             // Obtener ID de empresa actual
             const companyId = localStorage.getItem('axyra_company_id');
             
-            if (companyId) {
-              // Generar nombre de empresa basado en el ID
-              const companyName = `Empresa ${companyId.split('_')[2].substring(0, 6).toUpperCase()}`;
-              const companyNIT = `NIT: ${companyId.split('_')[1].substring(0, 8)}`;
-              
-              companyNameElement.textContent = companyName;
-              companyNITElement.textContent = companyNIT;
-            } else {
-              companyNameElement.textContent = 'Empresa Nueva';
+                      // Intentar obtener información de empresa desde configuración
+          const config = localStorage.getItem('axyra_configuracion');
+          if (config) {
+            try {
+              const configData = JSON.parse(config);
+              companyNameElement.textContent = configData.nombreEmpresa || 'AXYRA';
+              companyNITElement.textContent = `NIT: ${configData.nit || 'Pendiente'}`;
+            } catch (e) {
+              companyNameElement.textContent = 'AXYRA';
               companyNITElement.textContent = 'NIT: Pendiente';
             }
+          } else {
+            companyNameElement.textContent = 'AXYRA';
+            companyNITElement.textContent = 'NIT: Pendiente';
+          }
           }
         } catch (error) {
           console.error('❌ Error actualizando información de empresa:', error);
@@ -2199,43 +2278,90 @@
       }
 
       // Funciones para cargar estadísticas básicas
-      function loadEmpleadosStats() {
+      async function loadEmpleadosStats() {
         try {
+          // Intentar cargar desde Firebase primero
+          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser && currentUser.id) {
+            try {
+              console.log('🔥 Cargando empleados desde Firebase...');
+              const empleadosSnapshot = await firebase.firestore()
+                .collection('empleados')
+                .where('userId', '==', currentUser.id)
+                .get();
+              
+              if (!empleadosSnapshot.empty) {
+                const empleados = [];
+                empleadosSnapshot.forEach(doc => {
+                  empleados.push({
+                    id: doc.id,
+                    ...doc.data()
+                  });
+                });
+                
+                console.log(`✅ Empleados cargados desde Firebase: ${empleados.length}`);
+                document.getElementById('totalEmpleados').textContent = empleados.length;
+                return;
+              } else {
+                console.log('ℹ️ No hay empleados en Firebase para este usuario');
+                document.getElementById('totalEmpleados').textContent = '0';
+                return;
+              }
+            } catch (firebaseError) {
+              console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
+            }
+          }
+          
+          // Fallback a localStorage con filtrado por usuario
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          const totalEmpleados = empleados.length;
-          document.getElementById('totalEmpleados').textContent = totalEmpleados;
+          const empleadosFiltrados = empleados.filter(emp => 
+            !emp.userId || emp.userId === currentUser?.username || emp.userId === currentUser?.email || emp.userId === currentUser?.id
+          );
+          document.getElementById('totalEmpleados').textContent = empleadosFiltrados.length;
         } catch (error) {
           console.error('❌ Error cargando estadísticas de empleados:', error);
+          document.getElementById('totalEmpleados').textContent = '0';
         }
       }
 
       function loadHorasStats() {
         try {
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-          const totalHoras = horas.reduce((sum, h) => sum + (h.horas || 0), 0);
+          const horasFiltradas = horas.filter(h => 
+            !h.userId || h.userId === currentUser?.username || h.userId === currentUser?.email
+          );
+          const totalHoras = horasFiltradas.reduce((sum, h) => sum + (h.horas || 0), 0);
           document.getElementById('horasTrabajadas').textContent = totalHoras;
         } catch (error) {
           console.error('❌ Error cargando estadísticas de horas:', error);
+          document.getElementById('horasTrabajadas').textContent = '0';
         }
       }
 
       function loadNominaStats() {
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
-          const totalNominas = nominas.length;
+          const nominasFiltradas = nominas.filter(n => 
+            !n.userId || n.userId === currentUser?.username || n.userId === currentUser?.email
+          );
+          const totalNominas = nominasFiltradas.length;
           document.getElementById('totalNominas').textContent = totalNominas;
         } catch (error) {
           console.error('❌ Error cargando estadísticas de nóminas:', error);
+          document.getElementById('totalNominas').textContent = '0';
         }
       }
 
       function loadCuadreStats() {
         try {
           const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
-          const totalFacturas = facturas.length;
+          const facturasFiltradas = facturas.filter(f => 
+            !f.userId || f.userId === currentUser?.username || f.userId === currentUser?.email
+          );
+          const totalFacturas = facturasFiltradas.length;
           document.getElementById('totalFacturas').textContent = totalFacturas;
         } catch (error) {
           console.error('❌ Error cargando estadísticas de facturas:', error);
+          document.getElementById('totalFacturas').textContent = '0';
         }
       }
 
@@ -2278,6 +2404,19 @@
           if (newUsername.length < 3) {
             mostrarMensaje('❌ El nombre de usuario debe tener al menos 3 caracteres', 'error');
             return;
+          }
+          
+          // Actualizar en Firebase si está disponible
+          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser && currentUser.id) {
+            try {
+              await firebase.firestore().collection('users').doc(currentUser.id).update({
+                username: newUsername,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+              });
+              console.log('✅ Username actualizado en Firebase');
+            } catch (firebaseError) {
+              console.warn('⚠️ Error actualizando en Firebase:', firebaseError);
+            }
           }
           
           // Actualizar en localStorage
