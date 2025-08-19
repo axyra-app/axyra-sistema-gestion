@@ -135,16 +135,16 @@
         right: 15px;
         top: 50%;
         transform: translateY(-50%);
-        background: #000000 !important;
-        border: 2px solid #000000 !important;
-        border-radius: 6px;
+        background: none;
+        border: none;
         cursor: pointer;
-        color: #ffffff !important;
-        font-size: 18px;
+        color: #5f6368;
+        font-size: 20px;
         padding: 8px;
-        transition: all 0.3s ease;
-        width: 40px;
-        height: 40px;
+        transition: all 0.2s ease;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -152,13 +152,28 @@
       }
 
       .password-toggle:hover {
-        background: #333333 !important;
-        border-color: #333333 !important;
-        transform: translateY(-50%) scale(1.1);
+        background: rgba(95, 99, 104, 0.1);
+        color: #202124;
+        transform: translateY(-50%);
       }
 
       .password-toggle:active {
+        background: rgba(95, 99, 104, 0.2);
         transform: translateY(-50%) scale(0.95);
+      }
+
+      /* Iconos específicos para el estado de la contraseña */
+      .password-toggle .fa-eye {
+        color: #5f6368;
+      }
+
+      .password-toggle .fa-eye-slash {
+        color: #5f6368;
+      }
+
+      .password-toggle:hover .fa-eye,
+      .password-toggle:hover .fa-eye-slash {
+        color: #202124;
       }
 
       .password-container .form-input {
