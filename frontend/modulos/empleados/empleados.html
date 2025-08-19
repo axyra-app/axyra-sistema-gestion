@@ -629,7 +629,13 @@
         }
 
         try {
-          // Usar el nuevo sistema de Excel profesional
+          // Verificar si el exportador está disponible
+          if (typeof window.axyraExcelExporter === 'undefined') {
+            // Crear instancia del exportador si no existe
+            window.axyraExcelExporter = new AXYRAExcelExporter();
+          }
+
+          // Usar el sistema de Excel profesional
           const nombreArchivo = window.axyraExcelExporter.exportarEmpleados(empleados);
           mostrarMensaje(`✅ Empleados exportados a Excel correctamente: ${nombreArchivo}`, 'success');
         } catch (error) {

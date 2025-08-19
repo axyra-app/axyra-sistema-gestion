@@ -339,6 +339,76 @@
       // Variables globales
       let currentUser = null;
 
+      // Verificar sesión guardada al cargar la página
+      document.addEventListener('DOMContentLoaded', function() {
+          checkSavedSession();
+      });
+
+      // Función para verificar sesión guardada
+      function checkSavedSession() {
+          const savedUser = localStorage.getItem('axyra_firebase_user');
+          const rememberMe = localStorage.getItem('axyra_remember_me');
+          
+          if (savedUser && rememberMe === 'true') {
+              try {
+                  const userData = JSON.parse(savedUser);
+                  
+                  // Verificar si la sesión no ha expirado (7 días)
+                  const sessionTimestamp = localStorage.getItem('axyra_session_timestamp');
+                  if (sessionTimestamp) {
+                      const sessionAge = Date.now() - parseInt(sessionTimestamp);
+                      const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 días
+                      
+                      if (sessionAge > maxAge) {
+                          // Sesión expirada, limpiar
+                          clearSavedSession();
+                          return;
+                      }
+                  }
+                  
+                  // Verificar si Firebase está disponible
+                  if (typeof firebase !== 'undefined' && firebase.auth) {
+                      // Intentar restaurar sesión
+                      firebase.auth().onAuthStateChanged(function(user) {
+                          if (user) {
+                              console.log('✅ Sesión restaurada automáticamente');
+                              // Redirigir al dashboard
+                              window.location.href = 'modulos/dashboard/dashboard.html';
+                          } else {
+                              // No hay sesión activa, limpiar datos guardados
+                              clearSavedSession();
+                          }
+                      });
+                  }
+                  
+              } catch (error) {
+                  console.error('❌ Error verificando sesión guardada:', error);
+                  clearSavedSession();
+              }
+          }
+      }
+
+      // Función para limpiar sesión guardada
+      function clearSavedSession() {
+          localStorage.removeItem('axyra_firebase_user');
+          localStorage.removeItem('axyra_isolated_user');
+          localStorage.removeItem('axyra_remember_me');
+          localStorage.removeItem('axyra_session_timestamp');
+      }
+
+      // Función para guardar sesión
+      function saveSession(user, rememberMe) {
+          if (rememberMe) {
+              localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+              localStorage.setItem('axyra_remember_me', 'true');
+              localStorage.setItem('axyra_session_timestamp', Date.now().toString());
+              console.log('✅ Sesión guardada para recordar');
+          } else {
+              // Solo guardar temporalmente para la sesión actual
+              sessionStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+          }
+      }
+
       // Función para mostrar error
       function showError(message) {
           const errorDiv = document.getElementById('errorMessage');
@@ -407,18 +477,7 @@
                   }
 
                   // Guardar en localStorage
-                  localStorage.setItem('axyra_firebase_user', JSON.stringify(userCredential.user));
-                  localStorage.setItem('axyra_isolated_user', JSON.stringify({
-                      id: userCredential.user.uid,
-                      email: userCredential.user.email,
-                      nombre: userCredential.user.displayName || userCredential.user.email.split('@')[0],
-                      rol: 'usuario',
-                      createdAt: new Date().toISOString()
-                  }));
-
-                  if (rememberMe) {
-                      localStorage.setItem('axyra_remember_me', 'true');
-                  }
+                  saveSession(userCredential.user, rememberMe);
 
                   // Mostrar mensaje de éxito
                   showSuccess('¡Login exitoso! Redirigiendo al dashboard...');
@@ -495,15 +554,7 @@
                       console.log('✅ Usuario guardado en Firestore');
 
                       // Guardar en localStorage para compatibilidad
-                      localStorage.setItem('axyra_firebase_user', JSON.stringify(result.user));
-                      localStorage.setItem('axyra_isolated_user', JSON.stringify({
-                          id: result.user.uid,
-                          username: result.user.email.split('@')[0],
-                          email: result.user.email,
-                          nombre: result.user.displayName || result.user.email.split('@')[0],
-                          rol: 'usuario',
-                          createdAt: new Date().toISOString()
-                      }));
+                      saveSession(result.user, false); // No recordar sesión para Google
 
                       // Mostrar mensaje de éxito
                       showSuccess('¡Login con Google exitoso! Redirigiendo al dashboard...');

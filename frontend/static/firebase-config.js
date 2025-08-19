@@ -26,10 +26,31 @@ const firebaseConfig = {
   measurementId: "G-Y6H4Y6QX1G"
 };
 
+// Dominios autorizados para OAuth
+const authorizedDomains = [
+  'axyra.vercel.app',
+  'axyra-sistema-gestion.vercel.app',
+  'axyra-sistema-gestion-imj6s312h-axyras-projects.vercel.app',
+  'localhost',
+  '127.0.0.1'
+];
+
+// Verificar si el dominio actual está autorizado
+function isDomainAuthorized() {
+  const currentDomain = window.location.hostname;
+  return authorizedDomains.includes(currentDomain);
+}
+
 // Inicializar Firebase cuando el SDK esté disponible
 function initializeFirebase() {
   if (typeof firebase !== 'undefined') {
     try {
+      // Verificar dominio autorizado
+      if (!isDomainAuthorized()) {
+        console.warn('⚠️ Dominio no autorizado:', window.location.hostname);
+        console.warn('📝 Agrega este dominio en Firebase Console -> Authentication -> Settings -> Authorized domains');
+      }
+
       // Verificar si ya está inicializado
       if (firebase.apps.length === 0) {
         firebase.initializeApp(firebaseConfig);
@@ -52,7 +73,8 @@ function initializeFirebase() {
       window.axyraFirebase = {
         auth: firebaseAuth,
         firestore: firebaseFirestore,
-        config: firebaseConfig
+        config: firebaseConfig,
+        isDomainAuthorized: isDomainAuthorized()
       };
       
       console.log('✅ Servicios de Firebase disponibles');
@@ -108,6 +130,24 @@ function isFirebaseUserAuthenticated() {
   return user !== null;
 }
 
+// Función para generar ID único de empresa
+function generateCompanyId() {
+  return 'company_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+// Función para obtener o crear ID de empresa
+function getOrCreateCompanyId() {
+  let companyId = localStorage.getItem('axyra_company_id');
+  
+  if (!companyId) {
+    companyId = generateCompanyId();
+    localStorage.setItem('axyra_company_id', companyId);
+    console.log('🏢 Nueva empresa creada con ID:', companyId);
+  }
+  
+  return companyId;
+}
+
 // Función para hacer logout de Firebase
 async function firebaseLogout() {
   if (isFirebaseAvailable()) {
@@ -115,9 +155,12 @@ async function firebaseLogout() {
       await firebase.auth().signOut();
       console.log('✅ Logout de Firebase exitoso');
       
-      // Limpiar localStorage
-      localStorage.removeItem('axyra_firebase_user');
-      localStorage.removeItem('axyra_isolated_user');
+      // Limpiar localStorage pero mantener ID de empresa
+      const companyId = localStorage.getItem('axyra_company_id');
+      localStorage.clear();
+      if (companyId) {
+        localStorage.setItem('axyra_company_id', companyId);
+      }
       
       return true;
     } catch (error) {
@@ -138,25 +181,125 @@ function getFirebaseUserInfo() {
       displayName: user.displayName,
       photoURL: user.photoURL,
       emailVerified: user.emailVerified,
-      providerData: user.providerData
+      providerData: user.providerData,
+      companyId: getOrCreateCompanyId()
     };
   }
   return null;
 }
 
-// Función para crear usuario en Firestore
+// Función para crear usuario en Firestore con aislamiento por empresa
 async function createFirebaseUser(userData) {
   if (isFirebaseAvailable() && userData) {
     try {
+      const companyId = getOrCreateCompanyId();
+      
+      // Agregar ID de empresa al usuario
+      const userWithCompany = {
+        ...userData,
+        companyId: companyId,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      
       await window.axyraFirebase.firestore
         .collection('users')
         .doc(userData.uid)
-        .set(userData, { merge: true });
+        .set(userWithCompany, { merge: true });
       
-      console.log('✅ Usuario creado en Firestore:', userData.email);
+      console.log('✅ Usuario creado en Firestore con empresa:', companyId);
       return true;
     } catch (error) {
       console.error('❌ Error creando usuario en Firestore:', error);
+      return false;
+    }
+  }
+  return false;
+}
+
+// Función para obtener datos de Firestore con aislamiento por empresa
+async function getFirestoreData(collection, options = {}) {
+  if (isFirebaseAvailable()) {
+    try {
+      const companyId = getOrCreateCompanyId();
+      let query = window.axyraFirebase.firestore.collection(collection);
+      
+      // Aplicar filtro de empresa si no se especifica lo contrario
+      if (!options.ignoreCompany) {
+        query = query.where('companyId', '==', companyId);
+      }
+      
+      // Aplicar otros filtros si se especifican
+      if (options.filters) {
+        options.filters.forEach(filter => {
+          query = query.where(filter.field, filter.operator, filter.value);
+        });
+      }
+      
+      // Aplicar ordenamiento si se especifica
+      if (options.orderBy) {
+        query = query.orderBy(options.orderBy.field, options.orderBy.direction || 'asc');
+      }
+      
+      // Aplicar límite si se especifica
+      if (options.limit) {
+        query = query.limit(options.limit);
+      }
+      
+      const snapshot = await query.get();
+      return snapshot;
+      
+    } catch (error) {
+      console.error('❌ Error obteniendo datos de Firestore:', error);
+      return null;
+    }
+  }
+  return null;
+}
+
+// Función para guardar datos en Firestore con aislamiento por empresa
+async function saveFirestoreData(collection, docId, data, options = {}) {
+  if (isFirebaseAvailable()) {
+    try {
+      const companyId = getOrCreateCompanyId();
+      
+      // Agregar ID de empresa si no se especifica lo contrario
+      if (!options.ignoreCompany) {
+        data.companyId = companyId;
+      }
+      
+      // Agregar timestamp de actualización
+      data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+      
+      await window.axyraFirebase.firestore
+        .collection(collection)
+        .doc(docId)
+        .set(data, { merge: true });
+      
+      console.log('✅ Datos guardados en Firestore con empresa:', companyId);
+      return true;
+      
+    } catch (error) {
+      console.error('❌ Error guardando datos en Firestore:', error);
+      return false;
+    }
+  }
+  return false;
+}
+
+// Función para eliminar datos de Firestore con aislamiento por empresa
+async function deleteFirestoreData(collection, docId) {
+  if (isFirebaseAvailable()) {
+    try {
+      await window.axyraFirebase.firestore
+        .collection(collection)
+        .doc(docId)
+        .delete();
+      
+      console.log('✅ Datos eliminados de Firestore');
+      return true;
+      
+    } catch (error) {
+      console.error('❌ Error eliminando datos de Firestore:', error);
       return false;
     }
   }
@@ -171,5 +314,9 @@ window.axyraFirebaseUtils = {
   logout: firebaseLogout,
   getUserInfo: getFirebaseUserInfo,
   createUser: createFirebaseUser,
+  getData: getFirestoreData,
+  saveData: saveFirestoreData,
+  deleteData: deleteFirestoreData,
+  getCompanyId: getOrCreateCompanyId,
   initialize: initializeFirebase
 };

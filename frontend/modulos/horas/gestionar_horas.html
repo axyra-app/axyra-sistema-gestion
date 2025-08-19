@@ -319,6 +319,19 @@
           </form>
         </div>
 
+        <!-- Botones de Acción -->
+        <div class="axyra-actions-bar">
+          <button type="submit" form="registroHorasForm" class="axyra-btn axyra-btn-primary">
+            <i class="fas fa-save"></i> Registrar Horas
+          </button>
+          <button type="button" class="axyra-btn axyra-btn-secondary" onclick="calcularHoras()">
+            <i class="fas fa-calculator"></i> Calcular Horas
+          </button>
+          <button type="button" class="axyra-btn axyra-btn-info" onclick="exportarHoras()">
+            <i class="fas fa-download"></i> Exportar Horas
+          </button>
+        </div>
+
         <!-- Resumen de Horas -->
         <div class="axyra-card" id="resumenHoras" style="display: none">
           <div class="axyra-card-header">
@@ -661,6 +674,38 @@
         try {
           console.log('👥 Cargando empleados para selects...');
 
+          // Intentar cargar desde Firebase primero si está disponible
+          if (window.axyraFirebase && window.axyraFirebase.firestore) {
+            try {
+              console.log('🔥 Intentando cargar empleados desde Firebase...');
+              const empleadosSnapshot = await window.axyraFirebase.firestore
+                .collection('empleados')
+                .where('companyId', '==', window.axyraFirebaseUtils.getCompanyId())
+                .get();
+
+              if (!empleadosSnapshot.empty) {
+                const empleadosFirebase = [];
+                empleadosSnapshot.forEach(doc => {
+                  empleadosFirebase.push({
+                    id: doc.id,
+                    ...doc.data()
+                  });
+                });
+
+                console.log(`✅ Empleados cargados desde Firebase: ${empleadosFirebase.length}`);
+                
+                // Guardar en localStorage para sincronización
+                localStorage.setItem('axyra_empleados', JSON.stringify(empleadosFirebase));
+                
+                // Cargar en los selects
+                cargarEmpleadosEnSelects(empleadosFirebase);
+                return;
+              }
+            } catch (firebaseError) {
+              console.log('ℹ️ Firebase no disponible, usando localStorage:', firebaseError.message);
+            }
+          }
+
           // Cargar empleados desde localStorage
           console.log('💾 Cargando empleados desde localStorage...');
           const empleadosData = localStorage.getItem('axyra_empleados');
@@ -715,46 +760,53 @@
             return;
           }
 
-          const selectEmpleado = document.getElementById('empleadoHoras');
-          const selectComprobante = document.getElementById('empleadoComprobante');
+          // Cargar empleados en los selects
+          cargarEmpleadosEnSelects(empleados);
 
-          if (!selectEmpleado) {
-            console.error('❌ No se encontró el select empleadoHoras');
-            return;
-          }
-
-          if (!selectComprobante) {
-            console.error('❌ No se encontró el select empleadoComprobante');
-          }
-
-          // Limpiar selects
-          selectEmpleado.innerHTML = '<option value="">Seleccionar empleado</option>';
-          if (selectComprobante) {
-            selectComprobante.innerHTML = '<option value="">Seleccionar empleado</option>';
-          }
-
-          // Agregar empleados a los selects
-          empleados.forEach((empleado, index) => {
-            // Select principal de horas
-            const option = document.createElement('option');
-            option.value = empleado.id;
-            option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
-            selectEmpleado.appendChild(option);
-
-            // Select para comprobantes
-            if (selectComprobante) {
-              const optionComprobante = document.createElement('option');
-              optionComprobante.value = empleado.id;
-              optionComprobante.textContent = `${empleado.nombre} - ${empleado.cargo}`;
-              selectComprobante.appendChild(optionComprobante);
-            }
-          });
-
-          console.log(`✅ ${empleados.length} empleados cargados en los selects`);
         } catch (error) {
           console.error('❌ Error en cargarEmpleados:', error);
           mostrarMensaje('Error cargando empleados: ' + error.message, 'error');
         }
+      }
+
+      // Función auxiliar para cargar empleados en los selects
+      function cargarEmpleadosEnSelects(empleados) {
+        const selectEmpleado = document.getElementById('empleadoHoras');
+        const selectComprobante = document.getElementById('empleadoComprobante');
+
+        if (!selectEmpleado) {
+          console.error('❌ No se encontró el select empleadoHoras');
+          return;
+        }
+
+        if (!selectComprobante) {
+          console.error('❌ No se encontró el select empleadoComprobante');
+        }
+
+        // Limpiar selects
+        selectEmpleado.innerHTML = '<option value="">Seleccionar empleado</option>';
+        if (selectComprobante) {
+          selectComprobante.innerHTML = '<option value="">Seleccionar empleado</option>';
+        }
+
+        // Agregar empleados a los selects
+        empleados.forEach((empleado, index) => {
+          // Select principal de horas
+          const option = document.createElement('option');
+          option.value = empleado.id;
+          option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
+          selectEmpleado.appendChild(option);
+
+          // Select para comprobantes
+          if (selectComprobante) {
+            const optionComprobante = document.createElement('option');
+            optionComprobante.value = empleado.id;
+            optionComprobante.textContent = `${empleado.nombre} - ${empleado.cargo}`;
+            selectComprobante.appendChild(optionComprobante);
+          }
+        });
+
+        console.log(`✅ Empleados cargados en selects: ${empleados.length}`);
       }
 
       // Manejar formulario de registro masivo
@@ -817,75 +869,224 @@
         cargarHistorial();
       }
 
-      // Calcular horas según legislación colombiana 2025
+      // Función para calcular horas y mostrar modal
       function calcularHoras() {
-        const empleadoId = document.getElementById('empleadoHoras').value;
-        const fecha = document.getElementById('fechaHoras').value;
-        const horasOrdinarias = parseFloat(document.getElementById('horasOrdinarias').value) || 0;
-        const horasNocturnas = parseFloat(document.getElementById('horasNocturnas').value) || 0;
-        const horasExtraDiurnas = parseFloat(document.getElementById('horasExtraDiurnas').value) || 0;
-        const horasExtraNocturnas = parseFloat(document.getElementById('horasExtraNocturnas').value) || 0;
-        const horasDominicales = parseFloat(document.getElementById('horasDominicales').value) || 0;
-        const horasFestivas = parseFloat(document.getElementById('horasFestivas').value) || 0;
-        const horasDominicalesNocturnas = parseFloat(document.getElementById('horasDominicalesNocturnas').value) || 0;
-        const horasFestivasNocturnas = parseFloat(document.getElementById('horasFestivasNocturnas').value) || 0;
-        const horasExtraDominicales = parseFloat(document.getElementById('horasExtraDominicales').value) || 0;
-        const horasExtraDominicalesNocturnas =
-          parseFloat(document.getElementById('horasExtraDominicalesNocturnas').value) || 0;
-        const horasExtraFestivas = parseFloat(document.getElementById('horasExtraFestivas').value) || 0;
-        const horasExtraFestivasNocturnas =
-          parseFloat(document.getElementById('horasExtraFestivasNocturnas').value) || 0;
-        const salarioMinimo = parseFloat(document.getElementById('salarioMinimo').value.replace(/,/g, ''));
+        try {
+          // Obtener valores del formulario
+          const empleadoId = document.getElementById('empleadoHoras').value;
+          const fecha = document.getElementById('fechaHoras').value;
+          const horasOrdinarias = parseFloat(document.getElementById('horasOrdinarias').value) || 0;
+          const horasExtras = parseFloat(document.getElementById('horasExtras').value) || 0;
+          const horasExtrasFestivas = parseFloat(document.getElementById('horasExtrasFestivas').value) || 0;
+          const horasExtrasFestivasNocturnas = parseFloat(document.getElementById('horasExtrasFestivasNocturnas').value) || 0;
+          const salarioBase = parseFloat(document.getElementById('salarioBase').value) || 0;
 
-        if (!empleadoId || !fecha) {
-          mostrarMensaje('❌ Por favor completa todos los campos obligatorios', 'error');
-          return;
+          // Validar datos
+          if (!empleadoId) {
+            mostrarMensaje('❌ Selecciona un empleado', 'error');
+            return;
+          }
+
+          if (!fecha) {
+            mostrarMensaje('❌ Selecciona una fecha', 'error');
+            return;
+          }
+
+          if (horasOrdinarias === 0 && horasExtras === 0 && horasExtrasFestivas === 0 && horasExtrasFestivasNocturnas === 0) {
+            mostrarMensaje('❌ Ingresa al menos un tipo de horas', 'error');
+            return;
+          }
+
+          // Obtener información del empleado
+          const empleado = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').find(
+            (emp) => emp.id === parseInt(empleadoId)
+          );
+
+          if (!empleado) {
+            mostrarMensaje('❌ Empleado no encontrado', 'error');
+            return;
+          }
+
+          // Calcular totales
+          const totalHoras = horasOrdinarias + horasExtras + horasExtrasFestivas + horasExtrasFestivasNocturnas;
+          
+          // Calcular salarios según la ley colombiana
+          const salarioHora = salarioBase / 240; // 240 horas mensuales
+          const salarioOrdinario = horasOrdinarias * salarioHora;
+          const salarioExtras = horasExtras * (salarioHora * 1.25); // 25% extra
+          const salarioExtrasFestivas = horasExtrasFestivas * (salarioHora * 1.75); // 75% extra
+          const salarioExtrasFestivasNocturnas = horasExtrasFestivasNocturnas * (salarioHora * 2.1); // 110% extra
+
+          const totalSalario = salarioOrdinario + salarioExtras + salarioExtrasFestivas + salarioExtrasFestivasNocturnas;
+
+          // Mostrar modal con cálculos
+          mostrarModalCalculoHoras({
+            empleado,
+            fecha,
+            horas: {
+              ordinarias: horasOrdinarias,
+              extras: horasExtras,
+              extrasFestivas: horasExtrasFestivas,
+              extrasFestivasNocturnas,
+              total: totalHoras
+            },
+            salarios: {
+              base: salarioBase,
+              ordinario: salarioOrdinario,
+              extras: salarioExtras,
+              extrasFestivas: salarioExtrasFestivas,
+              extrasFestivasNocturnas: salarioExtrasFestivasNocturnas,
+              total: totalSalario
+            },
+            salarioHora
+          });
+
+        } catch (error) {
+          console.error('❌ Error calculando horas:', error);
+          mostrarMensaje('Error calculando horas: ' + error.message, 'error');
         }
+      }
 
-        // Calcular valor por hora
-        const valorHora = salarioMinimo / 160; // 160 horas por mes
+      // Función para mostrar modal de cálculo de horas
+      function mostrarModalCalculoHoras(datos) {
+        const modalHTML = `
+          <div id="modalCalculoHoras" class="axyra-modal" style="display: flex;">
+            <div class="axyra-modal-content axyra-modal-large">
+              <div class="axyra-modal-header">
+                <h3 class="axyra-modal-title">
+                  <i class="fas fa-calculator"></i> Cálculo de Horas - ${datos.empleado.nombre}
+                </h3>
+                <button class="axyra-modal-close" onclick="cerrarModalCalculoHoras()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-calculo-container">
+                  <!-- Información del empleado -->
+                  <div class="axyra-calculo-section">
+                    <h4><i class="fas fa-user"></i> Información del Empleado</h4>
+                    <div class="axyra-calculo-grid">
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Nombre:</span>
+                        <span class="axyra-calculo-value">${datos.empleado.nombre}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Cargo:</span>
+                        <span class="axyra-calculo-value">${datos.empleado.cargo}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Fecha:</span>
+                        <span class="axyra-calculo-value">${new Date(datos.fecha).toLocaleDateString('es-CO')}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Base:</span>
+                        <span class="axyra-calculo-value">$${datos.salarios.base.toLocaleString('es-CO')}</span>
+                      </div>
+                    </div>
+                  </div>
 
-        // Calcular totales
-        const totalHoras =
-          horasOrdinarias +
-          horasNocturnas +
-          horasExtraDiurnas +
-          horasExtraNocturnas +
-          horasDominicales +
-          horasFestivas +
-          horasDominicalesNocturnas +
-          horasFestivasNocturnas +
-          horasExtraDominicales +
-          horasExtraDominicalesNocturnas +
-          horasExtraFestivas +
-          horasExtraFestivasNocturnas;
+                  <!-- Desglose de horas -->
+                  <div class="axyra-calculo-section">
+                    <h4><i class="fas fa-clock"></i> Desglose de Horas</h4>
+                    <div class="axyra-calculo-grid">
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Ordinarias:</span>
+                        <span class="axyra-calculo-value">${datos.horas.ordinarias} hrs</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Extras:</span>
+                        <span class="axyra-calculo-value">${datos.horas.extras} hrs</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Extras Festivas:</span>
+                        <span class="axyra-calculo-value">${datos.horas.extrasFestivas} hrs</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Extras Festivas Nocturnas:</span>
+                        <span class="axyra-calculo-value">${datos.horas.extrasFestivasNocturnas} hrs</span>
+                      </div>
+                      <div class="axyra-calculo-item axyra-calculo-total">
+                        <span class="axyra-calculo-label">Total Horas:</span>
+                        <span class="axyra-calculo-value">${datos.horas.total} hrs</span>
+                      </div>
+                    </div>
+                  </div>
 
-        // Calcular valor total con recargos según ley colombiana 2025
-        let valorTotal = 0;
-        valorTotal += horasOrdinarias * valorHora; // Sin recargo
-        valorTotal += horasNocturnas * valorHora * 1.35; // 35% de recargo
-        valorTotal += horasExtraDiurnas * valorHora * 1.25; // 25% de recargo
-        valorTotal += horasExtraNocturnas * valorHora * 1.75; // 75% de recargo
-        valorTotal += horasDominicales * valorHora * 1.75; // 75% de recargo
-        valorTotal += horasFestivas * valorHora * 1.75; // 75% de recargo
-        valorTotal += horasDominicalesNocturnas * valorHora * 1.1; // 110% de recargo
-        valorTotal += horasFestivasNocturnas * valorHora * 1.1; // 110% de recargo
-        valorTotal += horasExtraDominicales * valorHora * 1.05; // 105% de recargo
-        valorTotal += horasExtraDominicalesNocturnas * valorHora * 1.85; // 185% de recargo
-        valorTotal += horasExtraFestivas * valorHora * 1.05; // 105% de recargo
-        valorTotal += horasExtraFestivasNocturnas * valorHora * 1.85; // 185% de recargo
+                  <!-- Cálculo de salarios -->
+                  <div class="axyra-calculo-section">
+                    <h4><i class="fas fa-dollar-sign"></i> Cálculo de Salarios</h4>
+                    <div class="axyra-calculo-grid">
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario por Hora:</span>
+                        <span class="axyra-calculo-value">$${datos.salarioHora.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Ordinario:</span>
+                        <span class="axyra-calculo-value">$${datos.salarios.ordinario.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Extras (25%):</span>
+                        <span class="axyra-calculo-value">$${datos.salarios.extras.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Extras Festivas (75%):</span>
+                        <span class="axyra-calculo-value">$${datos.salarios.extrasFestivas.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Extras Festivas Nocturnas (110%):</span>
+                        <span class="axyra-calculo-value">$${datos.salarios.extrasFestivasNocturnas.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item axyra-calculo-total">
+                        <span class="axyra-calculo-label">Total a Pagar:</span>
+                        <span class="axyra-calculo-value">$${datos.salarios.total.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
 
-        // Mostrar resumen
-        document.getElementById('resumenHoras').style.display = 'block';
-        document.getElementById('totalHorasNormales').textContent = horasOrdinarias;
-        document.getElementById('totalHorasNocturnas').textContent = horasNocturnas;
-        document.getElementById('totalHorasExtraDiurnas').textContent = horasExtraDiurnas;
-        document.getElementById('totalHorasExtraNocturnas').textContent = horasExtraNocturnas;
-        document.getElementById('totalHorasDominicales').textContent = horasDominicales;
-        document.getElementById('totalHorasFestivas').textContent = horasFestivas;
+                  <!-- Resumen final -->
+                  <div class="axyra-calculo-resumen">
+                    <div class="axyra-calculo-resumen-item">
+                      <span class="axyra-calculo-resumen-label">Total Horas Trabajadas:</span>
+                      <span class="axyra-calculo-resumen-value">${datos.horas.total} horas</span>
+                    </div>
+                    <div class="axyra-calculo-resumen-item">
+                      <span class="axyra-calculo-resumen-label">Total a Pagar:</span>
+                      <span class="axyra-calculo-resumen-value">$${datos.salarios.total.toLocaleString('es-CO')}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button type="button" class="axyra-btn axyra-btn-secondary" onclick="cerrarModalCalculoHoras()">
+                  <i class="fas fa-times"></i> Cerrar
+                </button>
+                <button type="button" class="axyra-btn axyra-btn-primary" onclick="confirmarRegistroHoras()">
+                  <i class="fas fa-save"></i> Confirmar y Registrar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
 
-        document.getElementById('totalHorasTrabajadas').textContent = totalHoras;
-        document.getElementById('valorTotalHoras').textContent = formatearMoneda(valorTotal);
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // Función para cerrar modal de cálculo
+      function cerrarModalCalculoHoras() {
+        const modal = document.getElementById('modalCalculoHoras');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Función para confirmar registro de horas
+      function confirmarRegistroHoras() {
+        cerrarModalCalculoHoras();
+        
+        // Simular envío del formulario
+        document.getElementById('registroHorasForm').dispatchEvent(new Event('submit'));
+        
+        mostrarMensaje('✅ Horas registradas correctamente', 'success');
       }
 
       // Previsualizar comprobante
@@ -1617,6 +1818,123 @@
         background: var(--axyra-green-100);
         color: var(--axyra-green-700);
         border: 1px solid var(--axyra-green-300);
+      }
+
+      /* Estilos específicos para gestión de horas */
+      .axyra-calculo-container {
+        max-width: 100%;
+        overflow-x: auto;
+      }
+
+      .axyra-calculo-section {
+        margin-bottom: 25px;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border-left: 4px solid #3b82f6;
+      }
+
+      .axyra-calculo-section h4 {
+        color: #1e40af;
+        margin-bottom: 15px;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .axyra-calculo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+      }
+
+      .axyra-calculo-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 16px;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+      }
+
+      .axyra-calculo-item:hover {
+        border-color: #3b82f6;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+      }
+
+      .axyra-calculo-total {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        font-weight: 600;
+        border: none;
+      }
+
+      .axyra-calculo-label {
+        font-weight: 500;
+        color: #374151;
+      }
+
+      .axyra-calculo-value {
+        font-weight: 600;
+        color: #1f2937;
+      }
+
+      .axyra-calculo-total .axyra-calculo-label,
+      .axyra-calculo-total .axyra-calculo-value {
+        color: white;
+      }
+
+      .axyra-calculo-resumen {
+        margin-top: 25px;
+        padding: 20px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        border-radius: 12px;
+        color: white;
+      }
+
+      .axyra-calculo-resumen-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .axyra-calculo-resumen-item:last-child {
+        border-bottom: none;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .axyra-calculo-resumen-label {
+        font-weight: 500;
+      }
+
+      .axyra-calculo-resumen-value {
+        font-weight: 700;
+        font-size: 18px;
+      }
+
+      /* Modal grande para cálculos */
+      .axyra-modal-large {
+        max-width: 800px;
+        max-height: 90vh;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .axyra-calculo-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .axyra-calculo-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
       }
     </style>
   </body>

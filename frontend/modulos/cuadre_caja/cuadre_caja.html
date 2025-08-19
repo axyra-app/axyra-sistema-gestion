@@ -203,6 +203,46 @@
                   <div class="axyra-summary-label">Transferencias</div>
                 </div>
               </div>
+              
+              <div class="axyra-summary-card">
+                <div class="axyra-summary-icon">
+                  <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="axyra-summary-content">
+                  <div class="axyra-summary-number" id="totalDatafono">$0</div>
+                  <div class="axyra-summary-label">Datafono</div>
+                </div>
+              </div>
+              
+              <div class="axyra-summary-card">
+                <div class="axyra-summary-icon">
+                  <i class="fas fa-qrcode"></i>
+                </div>
+                <div class="axyra-summary-content">
+                  <div class="axyra-summary-number" id="totalQR">$0</div>
+                  <div class="axyra-summary-label">QR</div>
+                </div>
+              </div>
+              
+              <div class="axyra-summary-card">
+                <div class="axyra-summary-icon">
+                  <i class="fas fa-money-check"></i>
+                </div>
+                <div class="axyra-summary-content">
+                  <div class="axyra-summary-number" id="totalCheque">$0</div>
+                  <div class="axyra-summary-label">Cheque</div>
+                </div>
+              </div>
+              
+              <div class="axyra-summary-card">
+                <div class="axyra-summary-icon">
+                  <i class="fas fa-ellipsis-h"></i>
+                </div>
+                <div class="axyra-summary-content">
+                  <div class="axyra-summary-number" id="totalOtros">$0</div>
+                  <div class="axyra-summary-label">Otros</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -219,9 +259,12 @@
             </div>
           </div>
           <div class="axyra-card-content">
-            <div id="ultimaFactura" class="axyra-text-center">
-              <i class="fas fa-file-invoice" style="font-size: 3rem; color: var(--axyra-blue-200)"></i>
-              <p>No hay facturas registradas</p>
+            <div class="axyra-ultima-factura-container">
+              <div class="axyra-ultima-factura-info">
+                <div class="axyra-ultima-factura-monto" id="ultimaFactura">$0</div>
+                <div class="axyra-ultima-factura-details" id="ultimaFacturaInfo">No hay facturas registradas</div>
+                <div class="axyra-ultima-factura-time" id="ultimaFacturaTime"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -523,6 +566,7 @@
           const datafono = facturasHoy.filter(f => f.metodoPago === 'datafono').reduce((total, f) => total + parseFloat(f.monto), 0);
           const qr = facturasHoy.filter(f => f.metodoPago === 'qr').reduce((total, f) => total + parseFloat(f.monto), 0);
           const cheque = facturasHoy.filter(f => f.metodoPago === 'cheque').reduce((total, f) => total + parseFloat(f.monto), 0);
+          const otros = facturasHoy.filter(f => !['efectivo', 'transferencia', 'datafono', 'qr', 'cheque'].includes(f.metodoPago)).reduce((total, f) => total + parseFloat(f.monto), 0);
           
           // Actualizar resumen
           document.getElementById('totalFacturas').textContent = totalFacturas;
@@ -530,14 +574,37 @@
           document.getElementById('totalEfectivo').textContent = formatearMoneda(efectivo);
           document.getElementById('totalTransferencias').textContent = formatearMoneda(transferencia);
           
-          // Mostrar última factura
+          // Actualizar métodos de pago adicionales si existen los elementos
+          const totalDatafonoElement = document.getElementById('totalDatafono');
+          const totalQRElement = document.getElementById('totalQR');
+          const totalChequeElement = document.getElementById('totalCheque');
+          const totalOtrosElement = document.getElementById('totalOtros');
+          
+          if (totalDatafonoElement) totalDatafonoElement.textContent = formatearMoneda(datafono);
+          if (totalQRElement) totalQRElement.textContent = formatearMoneda(qr);
+          if (totalChequeElement) totalChequeElement.textContent = formatearMoneda(cheque);
+          if (totalOtrosElement) totalOtrosElement.textContent = formatearMoneda(otros);
+          
+          // Mostrar última factura con información completa
           if (facturasHoy.length > 0) {
             const ultimaFactura = facturasHoy[facturasHoy.length - 1]; // Tomar la última factura del día
-            document.getElementById('ultimaFactura').textContent = `$${parseFloat(ultimaFactura.monto).toLocaleString()}`;
-            document.getElementById('ultimaFacturaInfo').textContent = `${ultimaFactura.encargado} - ${ultimaFactura.area}`;
+            document.getElementById('ultimaFactura').textContent = formatearMoneda(ultimaFactura.monto);
+            document.getElementById('ultimaFacturaInfo').textContent = `#${ultimaFactura.numero} - ${ultimaFactura.encargado} - ${ultimaFactura.metodoPago.toUpperCase()}`;
+            
+            // Mostrar hora de la última factura
+            const ultimaFacturaTimeElement = document.getElementById('ultimaFacturaTime');
+            if (ultimaFacturaTimeElement) {
+              const fechaFactura = new Date(ultimaFactura.fecha);
+              ultimaFacturaTimeElement.textContent = `Registrada a las ${fechaFactura.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}`;
+            }
           } else {
-            document.getElementById('ultimaFactura').textContent = '$0';
+            document.getElementById('ultimaFactura').textContent = formatearMoneda(0);
             document.getElementById('ultimaFacturaInfo').textContent = 'No hay facturas hoy';
+            
+            const ultimaFacturaTimeElement = document.getElementById('ultimaFacturaTime');
+            if (ultimaFacturaTimeElement) {
+              ultimaFacturaTimeElement.textContent = '';
+            }
           }
           
           console.log('✅ Resumen del día actualizado');
@@ -624,15 +691,99 @@
 
       // Eliminar factura
       function eliminarFactura(id) {
-        if (confirm('¿Estás seguro de que deseas eliminar esta factura?')) {
-          facturas = facturas.filter((f) => f.id !== id);
-          localStorage.setItem('axyra_facturas', JSON.stringify(facturas));
-
-          mostrarFacturas();
-          cargarResumen();
-
-          mostrarMensaje('✅ Factura eliminada correctamente', 'success');
+        // Obtener información de la factura
+        const factura = facturas.find(f => f.id === id);
+        if (!factura) {
+          mostrarMensaje('❌ Factura no encontrada', 'error');
+          return;
         }
+
+        // Mostrar modal de confirmación
+        mostrarModalEliminarFactura(factura);
+      }
+
+      // Función para mostrar modal de eliminación
+      function mostrarModalEliminarFactura(factura) {
+        const modalHTML = `
+          <div id="modalEliminarFactura" class="axyra-modal" style="display: flex;">
+            <div class="axyra-modal-content">
+              <div class="axyra-modal-header">
+                <h3 class="axyra-modal-title">
+                  <i class="fas fa-exclamation-triangle" style="color: #ef4444;"></i> Confirmar Eliminación
+                </h3>
+                <button class="axyra-modal-close" onclick="cerrarModalEliminarFactura()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-confirmacion-container">
+                  <div class="axyra-confirmacion-icon">
+                    <i class="fas fa-trash-alt" style="color: #ef4444; font-size: 48px;"></i>
+                  </div>
+                  <div class="axyra-confirmacion-texto">
+                    <h4>¿Estás seguro de que deseas eliminar esta factura?</h4>
+                    <p>Esta acción no se puede deshacer.</p>
+                  </div>
+                  <div class="axyra-factura-info">
+                    <div class="axyra-factura-item">
+                      <span class="axyra-factura-label">Número:</span>
+                      <span class="axyra-factura-value">${factura.numero}</span>
+                    </div>
+                    <div class="axyra-factura-item">
+                      <span class="axyra-factura-label">Encargado:</span>
+                      <span class="axyra-factura-value">${factura.encargado}</span>
+                    </div>
+                    <div class="axyra-factura-item">
+                      <span class="axyra-factura-label">Área:</span>
+                      <span class="axyra-factura-value">${factura.area}</span>
+                    </div>
+                    <div class="axyra-factura-item">
+                      <span class="axyra-factura-label">Monto:</span>
+                      <span class="axyra-factura-value">$${factura.monto.toLocaleString('es-CO')}</span>
+                    </div>
+                    <div class="axyra-factura-item">
+                      <span class="axyra-factura-label">Fecha:</span>
+                      <span class="axyra-factura-value">${new Date(factura.fecha).toLocaleDateString('es-CO')}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button type="button" class="axyra-btn axyra-btn-secondary" onclick="cerrarModalEliminarFactura()">
+                  <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="button" class="axyra-btn axyra-btn-danger" onclick="confirmarEliminarFactura('${factura.id}')">
+                  <i class="fas fa-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // Función para cerrar modal de eliminación
+      function cerrarModalEliminarFactura() {
+        const modal = document.getElementById('modalEliminarFactura');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Función para confirmar eliminación
+      function confirmarEliminarFactura(id) {
+        // Cerrar modal
+        cerrarModalEliminarFactura();
+
+        // Eliminar factura
+        facturas = facturas.filter((f) => f.id !== id);
+        localStorage.setItem('axyra_facturas', JSON.stringify(facturas));
+
+        mostrarFacturas();
+        cargarResumen();
+
+        mostrarMensaje('✅ Factura eliminada correctamente', 'success');
       }
 
       // Exportar facturas a Excel profesional
@@ -736,6 +887,119 @@
         font-size: 0.9rem;
         line-height: 1.5;
         margin: 0;
+      }
+
+      /* Estilos para el modal de eliminación */
+      .axyra-confirmacion-container {
+        text-align: center;
+        padding: 20px;
+      }
+
+      .axyra-confirmacion-icon {
+        margin-bottom: 20px;
+      }
+
+      .axyra-confirmacion-texto h4 {
+        color: #1f2937;
+        margin-bottom: 10px;
+        font-size: 18px;
+      }
+
+      .axyra-confirmacion-texto p {
+        color: #6b7280;
+        margin-bottom: 25px;
+      }
+
+      .axyra-factura-info {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 20px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .axyra-factura-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .axyra-factura-item:last-child {
+        border-bottom: none;
+      }
+
+      .axyra-factura-label {
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .axyra-factura-value {
+        font-weight: 500;
+        color: #1f2937;
+      }
+
+      /* Botón de peligro */
+      .axyra-btn-danger {
+        background: #ef4444;
+        color: white;
+        border: none;
+      }
+
+      .axyra-btn-danger:hover {
+        background: #dc2626;
+      }
+
+      /* Estilos para última factura */
+      .axyra-ultima-factura-container {
+        text-align: center;
+        padding: 30px;
+      }
+
+      .axyra-ultima-factura-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .axyra-ultima-factura-monto {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #10b981;
+        text-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+      }
+
+      .axyra-ultima-factura-details {
+        font-size: 1.1rem;
+        color: #374151;
+        font-weight: 500;
+        max-width: 400px;
+        line-height: 1.4;
+      }
+
+      .axyra-ultima-factura-time {
+        font-size: 0.9rem;
+        color: #6b7280;
+        font-style: italic;
+      }
+
+      /* Responsive para resumen */
+      @media (max-width: 1200px) {
+        .axyra-summary-grid {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+      }
+
+      @media (max-width: 768px) {
+        .axyra-summary-grid {
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+        
+        .axyra-ultima-factura-monto {
+          font-size: 2rem;
+        }
       }
     </style>
   </body>
