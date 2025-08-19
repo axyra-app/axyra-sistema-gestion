@@ -235,12 +235,38 @@ class AXYRAIsolatedAuth {
     if (!this.isInitialized) {
       console.log('⚠️ Sistema no inicializado, verificando localStorage directamente');
       const userData = localStorage.getItem('axyra_isolated_user');
-      return userData !== null;
+      const hasUser = userData !== null;
+      console.log('🔍 Verificación directa de localStorage:', hasUser);
+      return hasUser;
     }
 
-    const hasSession = this.isAuthenticated && this.currentUser !== null;
-    console.log('🔍 Verificando autenticación aislada:', hasSession);
-    return hasSession;
+    // Verificar tanto el estado interno como localStorage
+    const internalAuth = this.isAuthenticated && this.currentUser !== null;
+    const localStorageAuth = localStorage.getItem('axyra_isolated_user') !== null;
+    
+    console.log('🔍 Verificando autenticación aislada:', {
+      internal: internalAuth,
+      localStorage: localStorageAuth,
+      currentUser: this.currentUser?.username || 'null'
+    });
+    
+    // Si hay sesión en localStorage pero no en el estado interno, restaurar
+    if (localStorageAuth && !internalAuth) {
+      console.log('🔄 Restaurando sesión desde localStorage...');
+      try {
+        const userData = JSON.parse(localStorage.getItem('axyra_isolated_user'));
+        this.currentUser = userData;
+        this.isAuthenticated = true;
+        console.log('✅ Sesión restaurada correctamente');
+        return true;
+      } catch (error) {
+        console.error('❌ Error restaurando sesión:', error);
+        localStorage.removeItem('axyra_isolated_user');
+        return false;
+      }
+    }
+    
+    return internalAuth || localStorageAuth;
   }
 
   // Obtener usuario actual

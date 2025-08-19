@@ -153,6 +153,8 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .axyra-security-status {
@@ -165,6 +167,7 @@ p {
   display: flex;
   align-items: center;
   gap: 16px;
+  flex-shrink: 0;
 }
 
 .axyra-logo-img {
@@ -220,6 +223,7 @@ p {
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
+  flex-wrap: wrap;
 }
 
 .axyra-header-actions {
@@ -231,6 +235,7 @@ p {
   border-radius: var(--border-radius-lg);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
 }
 
 .axyra-nav-link {
@@ -244,6 +249,7 @@ p {
   border: 2px solid transparent;
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
+  white-space: nowrap;
 }
 
 .axyra-nav-link:hover {
@@ -271,6 +277,137 @@ p {
   height: 3px;
   background: var(--axyra-light-blue);
   border-radius: 2px;
+}
+
+/* ========================================
+   RESPONSIVE PARA HEADER
+   ======================================== */
+@media (max-width: 1200px) {
+  .axyra-header-content {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .axyra-nav {
+    gap: var(--spacing-md);
+  }
+  
+  .axyra-nav-link {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .axyra-header-content {
+    flex-direction: column;
+    gap: 12px;
+    padding: 8px var(--spacing-md);
+  }
+  
+  .axyra-logo {
+    order: 1;
+  }
+  
+  .axyra-nav {
+    order: 2;
+    justify-content: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .axyra-header-actions {
+    order: 3;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .axyra-logo-title {
+    font-size: 1.2rem;
+  }
+  
+  .axyra-logo-subtitle {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .axyra-header {
+    padding: 6px 0;
+  }
+  
+  .axyra-header-content {
+    padding: 6px var(--spacing-sm);
+    gap: 8px;
+  }
+  
+  .axyra-logo {
+    gap: 12px;
+  }
+  
+  .axyra-logo-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+  
+  .axyra-logo-title {
+    font-size: 1.1rem;
+  }
+  
+  .axyra-logo-subtitle {
+    font-size: 0.7rem;
+  }
+  
+  .axyra-nav {
+    gap: 8px;
+  }
+  
+  .axyra-nav-link {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .axyra-header-actions {
+    gap: 12px;
+    padding: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .axyra-header-content {
+    padding: 4px var(--spacing-sm);
+  }
+  
+  .axyra-logo {
+    gap: 8px;
+  }
+  
+  .axyra-logo-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .axyra-logo-title {
+    font-size: 1rem;
+  }
+  
+  .axyra-logo-subtitle {
+    font-size: 0.65rem;
+  }
+  
+  .axyra-nav {
+    gap: 6px;
+  }
+  
+  .axyra-nav-link {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+  
+  .axyra-header-actions {
+    gap: 8px;
+    padding: 4px;
+  }
 }
 
 /* ========================================
