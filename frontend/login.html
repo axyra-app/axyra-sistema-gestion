@@ -528,7 +528,7 @@
         </button>
       </form>
       
-      <button type="button" class="axyra-btn axyra-btn-secondary" onclick="clearAXYRAStorage()" style="margin-top: 10px; width: 100%;">
+      <button type="button" class="axyra-btn axyra-btn-secondary" onclick="limpiarDatos()" style="margin-top: 10px; width: 100%;">
         🧹 Limpiar Datos (Si hay problemas)
       </button>
       
@@ -536,15 +536,15 @@
         🔍 Debug Autenticación
       </button>
       
-      <button type="button" class="axyra-btn axyra-btn-outline" onclick="createUsersManually()" style="margin-top: 10px; width: 100%;">
+      <button type="button" class="axyra-btn axyra-btn-outline" onclick="crearUsuariosManual()" style="margin-top: 10px; width: 100%;">
         👥 Crear Usuarios Manualmente
       </button>
       
-      <button type="button" class="axyra-btn axyra-btn-outline" onclick="testLogin()" style="margin-top: 10px; width: 100%;">
+      <button type="button" class="axyra-btn axyra-btn-outline" onclick="probarLogin()" style="margin-top: 10px; width: 100%;">
         🧪 Probar Login
       </button>
       
-      <button type="button" class="axyra-btn axyra-btn-outline" onclick="checkInterferences()" style="margin-top: 10px; width: 100%;">
+      <button type="button" class="axyra-btn axyra-btn-outline" onclick="verificarInterferencias()" style="margin-top: 10px; width: 100%;">
         🔍 Verificar Interferencias
       </button>
 
@@ -571,17 +571,283 @@
       </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Modal para crear contraseña para usuarios de Google -->
+    <div id="modalCrearContrasena" class="axyra-modal" style="display: none;">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3 class="axyra-modal-title">
+            <i class="fas fa-key"></i> Crear Contraseña
+          </h3>
+          <button class="axyra-modal-close" onclick="cerrarModalCrearContrasena()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="axyra-modal-body">
+          <p class="axyra-modal-text">
+            Para completar tu registro con Google, necesitamos que crees una contraseña para futuros inicios de sesión.
+          </p>
+          <p class="axyra-modal-text">
+            <strong>Email:</strong> <span id="userEmailGoogle"></span>
+          </p>
+          
+          <div class="axyra-form-group">
+            <label for="passwordGoogle" class="axyra-form-label">Contraseña</label>
+            <input 
+              type="password" 
+              id="passwordGoogle" 
+              class="axyra-form-input" 
+              placeholder="Mínimo 6 caracteres"
+              required 
+            />
+          </div>
+          
+          <div class="axyra-form-group">
+            <label for="confirmPasswordGoogle" class="axyra-form-label">Confirmar Contraseña</label>
+            <input 
+              type="password" 
+              id="confirmPasswordGoogle" 
+              class="axyra-form-input" 
+              placeholder="Repite tu contraseña"
+              required 
+            />
+          </div>
+        </div>
+        <div class="axyra-modal-footer">
+          <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalCrearContrasena()">
+            Cancelar
+          </button>
+          <button class="axyra-btn axyra-btn-primary" onclick="crearContrasenaGoogle()">
+            <i class="fas fa-check"></i> Crear Contraseña
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <!-- AXYRA Firebase Scripts -->
+    <script src="static/firebase-config.js"></script>
     <!-- SISTEMA AISLADO - SIN FIREBASE -->
     <script src="static/isolated-auth.js"></script>
-    <script src="static/clear-storage.js"></script>
     <script src="static/debug-auth.js"></script>
+    <script src="static/clear-storage.js"></script>
 
     <script>
-      // VERIFICACIÓN AUTOMÁTICA COMPLETAMENTE DESACTIVADA
-      function checkAuth() {
-        // NO HACER NADA - EVITAR CICLO INFINITO
-        console.log('🔒 Verificación automática desactivada para evitar ciclo infinito');
+      // Inicializar Firebase
+      let firebaseApp;
+      let firebaseAuth;
+      let firebaseFirestore;
+
+      // Inicializar cuando se carga la página
+      document.addEventListener('DOMContentLoaded', async function() {
+        try {
+          // Inicializar Firebase
+          firebaseApp = firebase.initializeApp(firebaseConfig);
+          firebaseAuth = firebase.auth();
+          firebaseFirestore = firebase.firestore();
+
+          // Configurar observador de estado de autenticación
+          firebaseAuth.onAuthStateChanged(async (user) => {
+            if (user) {
+              console.log('✅ Usuario autenticado con Google:', user.email);
+              
+              // Verificar si el usuario ya tiene contraseña en el sistema
+              const userDoc = await firebaseFirestore.collection('users').doc(user.uid).get();
+              
+              if (userDoc.exists && userDoc.data().hasPassword) {
+                // Usuario ya tiene contraseña, redirigir al dashboard
+                window.location.href = 'modulos/dashboard/dashboard.html';
+              } else {
+                // Usuario nuevo de Google, mostrar modal para crear contraseña
+                mostrarModalCrearContrasena(user);
+              }
+            }
+          });
+
+          console.log('✅ Firebase inicializado correctamente');
+        } catch (error) {
+          console.error('❌ Error inicializando Firebase:', error);
+        }
+      });
+
+      // Función para iniciar sesión con Google
+      async function loginWithGoogle() {
+        try {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          provider.addScope('email');
+          provider.addScope('profile');
+          
+          const result = await firebaseAuth.signInWithPopup(provider);
+          console.log('✅ Login con Google exitoso:', result.user.email);
+        } catch (error) {
+          console.error('❌ Error en login con Google:', error);
+          showError('Error al iniciar sesión con Google: ' + error.message);
+        }
+      }
+
+      // Función para crear contraseña para usuarios de Google
+      async function crearContrasenaGoogle() {
+        const password = document.getElementById('passwordGoogle').value;
+        const confirmPassword = document.getElementById('confirmPasswordGoogle').value;
+
+        if (password !== confirmPassword) {
+          showError('Las contraseñas no coinciden');
+          return;
+        }
+
+        if (password.length < 6) {
+          showError('La contraseña debe tener al menos 6 caracteres');
+          return;
+        }
+
+        try {
+          const user = firebaseAuth.currentUser;
+          if (!user) {
+            showError('No hay usuario autenticado');
+            return;
+          }
+
+          // Crear usuario en Firestore con contraseña
+          await firebaseFirestore.collection('users').doc(user.uid).set({
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            hasPassword: true,
+            password: password, // En producción, esto debería estar hasheado
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+          });
+
+          // Cerrar modal y redirigir
+          document.getElementById('modalCrearContrasena').style.display = 'none';
+          window.location.href = 'modulos/dashboard/dashboard.html';
+          
+        } catch (error) {
+          console.error('❌ Error creando contraseña:', error);
+          showError('Error al crear contraseña: ' + error.message);
+        }
+      }
+
+      // Función para mostrar modal de crear contraseña
+      function mostrarModalCrearContrasena(user) {
+        document.getElementById('modalCrearContrasena').style.display = 'flex';
+        document.getElementById('userEmailGoogle').textContent = user.email;
+      }
+
+      // Función para cerrar modal
+      function cerrarModalCrearContrasena() {
+        document.getElementById('modalCrearContrasena').style.display = 'none';
+      }
+
+      // Función para mostrar errores
+      function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        if (errorDiv) {
+          errorDiv.textContent = message;
+          errorDiv.style.display = 'block';
+          setTimeout(() => {
+            errorDiv.style.display = 'none';
+          }, 5000);
+        }
+      }
+
+      // Función para iniciar sesión normal
+      async function login() {
+        const usernameOrEmail = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const rememberMe = document.getElementById('rememberSession').checked;
+
+        if (!usernameOrEmail || !password) {
+          showError('Por favor completa todos los campos');
+          return;
+        }
+
+        try {
+          // Intentar login con Firebase primero
+          const userCredential = await firebaseAuth.signInWithEmailAndPassword(usernameOrEmail, password);
+          console.log('✅ Login exitoso con Firebase:', userCredential.user.email);
+          
+          // Redirigir al dashboard
+          window.location.href = 'modulos/dashboard/dashboard.html';
+          
+        } catch (firebaseError) {
+          console.log('⚠️ Firebase login falló, intentando con sistema local...');
+          
+          // Si falla Firebase, usar sistema local
+          if (window.axyraIsolatedAuth) {
+            const success = window.axyraIsolatedAuth.login(usernameOrEmail, password);
+            if (success) {
+              if (rememberMe) {
+                localStorage.setItem('axyra_remembered_user', usernameOrEmail);
+              }
+              window.location.href = 'modulos/dashboard/dashboard.html';
+            } else {
+              showError('Credenciales incorrectas');
+            }
+          } else {
+            showError('Error en el sistema de autenticación');
+          }
+        }
+      }
+
+      // Función para limpiar datos
+      function limpiarDatos() {
+        if (window.axyraClearStorage) {
+          window.axyraClearStorage.clearAXYRAStorage();
+          showError('Datos limpiados correctamente');
+        }
+      }
+
+      // Función para debug
+      function debugAuth() {
+        if (window.axyraDebugAuth) {
+          window.axyraDebugAuth.runDiagnostics();
+        }
+      }
+
+      // Función para crear usuarios manualmente
+      function crearUsuariosManual() {
+        if (window.axyraIsolatedAuth) {
+          window.axyraIsolatedAuth.setupDefaultUsers();
+          showError('Usuarios por defecto creados');
+        }
+      }
+
+      // Función para probar login
+      function probarLogin() {
+        const testUser = 'admin';
+        const testPass = 'admin123';
+        
+        document.getElementById('username').value = testUser;
+        document.getElementById('password').value = testPass;
+        
+        showError('Credenciales de prueba cargadas. Haz click en "Iniciar Sesión"');
+      }
+
+      // Función para verificar interferencias
+      function verificarInterferencias() {
+        console.log('🔍 Verificando interferencias...');
+        
+        // Verificar scripts cargados
+        const scripts = document.querySelectorAll('script');
+        console.log('📜 Scripts cargados:', scripts.length);
+        
+        // Verificar localStorage
+        const storageKeys = Object.keys(localStorage);
+        console.log('💾 Claves en localStorage:', storageKeys);
+        
+        // Verificar variables globales
+        console.log('🌐 Variables globales:', {
+          axyraIsolatedAuth: !!window.axyraIsolatedAuth,
+          axyraDebugAuth: !!window.axyraDebugAuth,
+          axyraClearStorage: !!window.axyraClearStorage,
+          firebase: !!window.firebase
+        });
+        
+        showError('Verificación completada. Revisa la consola.');
       }
 
       // Mostrar/ocultar contraseña
@@ -650,76 +916,6 @@
       // Mostrar ayuda 2FA
       function show2FAHelp() {
         alert('ℹ️ El código 2FA solo se requiere si tienes la autenticación de dos factores habilitada en tu cuenta.\n\nSi no tienes 2FA habilitado, puedes dejar este campo vacío.');
-      }
-
-      // Login con Google - DESHABILITADO TEMPORALMENTE
-      async function loginWithGoogle() {
-        showError('❌ Autenticación con Google temporalmente deshabilitada. Use usuario y contraseña.');
-      }
-
-      // Crear o obtener usuario de Google - DESHABILITADO TEMPORALMENTE
-      async function createOrGetGoogleUser(googleData) {
-        throw new Error('Autenticación con Google temporalmente deshabilitada');
-      }
-
-
-
-      // Mostrar error
-      function showError(message) {
-        const errorDiv = document.getElementById('errorMessage');
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-        document.getElementById('successMessage').style.display = 'none';
-      }
-
-      // Mostrar éxito
-      function showSuccess(message) {
-        const successDiv = document.getElementById('successMessage');
-        successDiv.textContent = message;
-        successDiv.style.display = 'block';
-        document.getElementById('errorMessage').style.display = 'none';
-      }
-
-      // Ocultar mensajes
-      function hideMessages() {
-        document.getElementById('errorMessage').style.display = 'none';
-        document.getElementById('successMessage').style.display = 'none';
-      }
-
-      // Función de login
-      async function login() {
-        const usernameOrEmail = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value;
-
-        if (!usernameOrEmail || !password) {
-          showError('Por favor complete usuario/email y contraseña');
-          return;
-        }
-
-        try {
-          // Usar el sistema aislado de autenticación
-          const result = window.axyraIsolatedAuth.login({
-            usernameOrEmail: usernameOrEmail,
-            password: password
-          });
-
-          if (result.success) {
-            // Recordar usuario si está marcado
-            const rememberSession = document.getElementById('rememberSession').checked;
-            rememberUser(usernameOrEmail, rememberSession);
-            
-            showSuccess('✅ Inicio de sesión exitoso. Redirigiendo...');
-            
-            setTimeout(() => {
-              window.location.href = 'modulos/dashboard/dashboard.html';
-            }, 1500);
-          } else {
-            showError(result.error);
-          }
-        } catch (error) {
-          console.error('Error en login:', error);
-          showError('Error al iniciar sesión. Intenta nuevamente.');
-        }
       }
 
       // Event listeners

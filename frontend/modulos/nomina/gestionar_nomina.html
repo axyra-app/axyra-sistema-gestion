@@ -196,11 +196,87 @@
               <p class="axyra-card-subtitle">Nóminas generadas anteriormente</p>
             </div>
           </div>
+
+          <!-- Resumen de Nóminas -->
+          <div class="axyra-nomina-summary">
+            <div class="axyra-summary-card">
+              <div class="axyra-summary-icon">
+                <i class="fas fa-file-invoice-dollar"></i>
+              </div>
+              <div class="axyra-summary-content">
+                <div class="axyra-summary-number" id="totalNominasGeneradas">0</div>
+                <div class="axyra-summary-label">Total Nóminas</div>
+              </div>
+            </div>
+            
+            <div class="axyra-summary-card">
+              <div class="axyra-summary-icon">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div class="axyra-summary-content">
+                <div class="axyra-summary-number" id="totalSalariosPagados">$0</div>
+                <div class="axyra-summary-label">Total Salarios</div>
+              </div>
+            </div>
+            
+            <div class="axyra-summary-card">
+              <div class="axyra-summary-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="axyra-summary-content">
+                <div class="axyra-summary-number" id="empleadosPagados">0</div>
+                <div class="axyra-summary-label">Empleados Pagados</div>
+              </div>
+            </div>
+            
+            <div class="axyra-summary-card">
+              <div class="axyra-summary-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="axyra-summary-content">
+                <div class="axyra-summary-number" id="ultimaNomina">-</div>
+                <div class="axyra-summary-label">Última Nómina</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filtros Mejorados -->
+          <div class="axyra-filters-enhanced">
+            <div class="axyra-search-box">
+              <input type="text" id="searchNomina" class="axyra-form-input" placeholder="Buscar por período o empleado..." />
+              <i class="fas fa-search"></i>
+            </div>
+            <div class="axyra-filter-group">
+              <select id="filterPeriodoNomina" class="axyra-form-select">
+                <option value="">Todos los períodos</option>
+                <option value="enero">Enero 2025</option>
+                <option value="febrero">Febrero 2025</option>
+                <option value="marzo">Marzo 2025</option>
+                <option value="abril">Abril 2025</option>
+                <option value="mayo">Mayo 2025</option>
+                <option value="junio">Junio 2025</option>
+              </select>
+              <select id="filterEstadoNomina" class="axyra-form-select">
+                <option value="">Todos los estados</option>
+                <option value="pagado">Pagado</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="anulado">Anulado</option>
+              </select>
+              <select id="filterDepartamentoNomina" class="axyra-form-select">
+                <option value="">Todos los departamentos</option>
+                <option value="Administración">Administración</option>
+                <option value="Ventas">Ventas</option>
+                <option value="Producción">Producción</option>
+                <option value="Tecnología">Tecnología</option>
+              </select>
+            </div>
+            <button class="axyra-btn axyra-btn-primary" onclick="exportarNomina()">
+              <i class="fas fa-download"></i> Exportar
+            </button>
+          </div>
+
           <div class="axyra-card-content">
             <div class="axyra-actions-bar">
-              <button class="axyra-btn axyra-btn-info" onclick="exportarNomina()">
-                <i class="fas fa-download"></i> Exportar Nómina
-              </button>
               <button class="axyra-btn axyra-btn-warning" onclick="limpiarHistorial()">
                 <i class="fas fa-trash"></i> Limpiar Historial
               </button>
@@ -222,6 +298,17 @@
                   <!-- El historial se cargará dinámicamente -->
                 </tbody>
               </table>
+            </div>
+
+            <!-- Paginación -->
+            <div class="axyra-pagination">
+              <button class="axyra-btn axyra-btn-outline" onclick="cambiarPaginaNomina(-1)">
+                <i class="fas fa-chevron-left"></i> Anterior
+              </button>
+              <span id="paginaNominaInfo">Página 1 de 1</span>
+              <button class="axyra-btn axyra-btn-outline" onclick="cambiarPaginaNomina(1)">
+                Siguiente <i class="fas fa-chevron-right"></i>
+              </button>
             </div>
           </div>
         </div>

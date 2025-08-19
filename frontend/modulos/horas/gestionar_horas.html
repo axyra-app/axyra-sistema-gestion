@@ -504,25 +504,81 @@
             </div>
           </div>
 
-          <!-- Filtros -->
-          <div class="axyra-filters">
+          <!-- Resumen de Horas -->
+          <div class="axyra-hours-summary">
+            <div class="axyra-summary-card">
+              <div class="axyra-summary-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="axyra-summary-content">
+                <div class="axyra-summary-number" id="totalHorasMes">0</div>
+                <div class="axyra-summary-label">Horas del Mes</div>
+              </div>
+            </div>
+            
+            <div class="axyra-summary-card">
+              <div class="axyra-summary-icon">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div class="axyra-summary-content">
+                <div class="axyra-summary-number" id="totalPagosMes">$0</div>
+                <div class="axyra-summary-label">Total Pagos</div>
+              </div>
+            </div>
+            
+            <div class="axyra-summary-card">
+              <div class="axyra-summary-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="axyra-summary-content">
+                <div class="axyra-summary-number" id="empleadosActivos">0</div>
+                <div class="axyra-summary-label">Empleados Activos</div>
+              </div>
+            </div>
+            
+            <div class="axyra-summary-card">
+              <div class="axyra-summary-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <div class="axyra-summary-content">
+                <div class="axyra-summary-number" id="diasTrabajados">0</div>
+                <div class="axyra-summary-label">Días Trabajados</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Filtros Mejorados -->
+          <div class="axyra-filters-enhanced">
             <div class="axyra-search-box">
               <input type="text" id="searchHoras" class="axyra-form-input" placeholder="Buscar por empleado..." />
               <i class="fas fa-search"></i>
             </div>
-            <select id="filterFechaHoras" class="axyra-form-select">
-              <option value="">Todas las fechas</option>
-              <option value="hoy">Hoy</option>
-              <option value="semana">Esta semana</option>
-              <option value="mes">Este mes</option>
-            </select>
-            <select id="filterTipoHoras" class="axyra-form-select">
-              <option value="">Todos los tipos</option>
-              <option value="normal">Horas Normales</option>
-              <option value="extra">Horas Extras</option>
-              <option value="nocturna">Horas Nocturnas</option>
-              <option value="dominical">Horas Dominicales</option>
-            </select>
+            <div class="axyra-filter-group">
+              <select id="filterFechaHoras" class="axyra-form-select">
+                <option value="">Todas las fechas</option>
+                <option value="hoy">Hoy</option>
+                <option value="semana">Esta semana</option>
+                <option value="mes">Este mes</option>
+                <option value="trimestre">Este trimestre</option>
+              </select>
+              <select id="filterTipoHoras" class="axyra-form-select">
+                <option value="">Todos los tipos</option>
+                <option value="normal">Horas Normales</option>
+                <option value="extra">Horas Extras</option>
+                <option value="nocturna">Horas Nocturnas</option>
+                <option value="dominical">Horas Dominicales</option>
+              </select>
+              <select id="filterDepartamento" class="axyra-form-select">
+                <option value="">Todos los departamentos</option>
+                <option value="Administración">Administración</option>
+                <option value="Ventas">Ventas</option>
+                <option value="Producción">Producción</option>
+                <option value="Tecnología">Tecnología</option>
+              </select>
+            </div>
+            <button class="axyra-btn axyra-btn-primary" onclick="exportarHistorialHoras()">
+              <i class="fas fa-download"></i> Exportar
+            </button>
           </div>
 
           <div class="axyra-table-container">
@@ -530,12 +586,15 @@
               <thead>
                 <tr>
                   <th>Empleado</th>
+                  <th>Departamento</th>
                   <th>Fecha</th>
                   <th>Entrada</th>
                   <th>Salida</th>
                   <th>Total</th>
                   <th>Tipo</th>
-                  <th>Observaciones</th>
+                  <th>Valor Hora</th>
+                  <th>Total Pago</th>
+                  <th>Estado</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -543,6 +602,17 @@
                 <!-- El historial se cargará dinámicamente -->
               </tbody>
             </table>
+          </div>
+
+          <!-- Paginación -->
+          <div class="axyra-pagination">
+            <button class="axyra-btn axyra-btn-outline" onclick="cambiarPaginaHoras(-1)">
+              <i class="fas fa-chevron-left"></i> Anterior
+            </button>
+            <span id="paginaHorasInfo">Página 1 de 1</span>
+            <button class="axyra-btn axyra-btn-outline" onclick="cambiarPaginaHoras(1)">
+              Siguiente <i class="fas fa-chevron-right"></i>
+            </button>
           </div>
         </div>
       </div>

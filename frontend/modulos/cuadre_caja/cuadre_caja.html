@@ -151,52 +151,76 @@
         </div>
 
         <!-- Resumen del Día -->
-        <div class="axyra-grid axyra-grid-2">
-          <div class="axyra-card">
-            <div class="axyra-card-header">
-              <div class="axyra-card-icon">
-                <i class="fas fa-chart-pie"></i>
-              </div>
-              <div>
-                <h3 class="axyra-card-title">Resumen del Día</h3>
-                <p class="axyra-card-subtitle">Total de ingresos y facturas</p>
-              </div>
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-chart-pie"></i>
             </div>
-            <div class="axyra-card-content">
-              <div class="axyra-stats-grid">
-                <div class="axyra-stat-card">
-                  <div class="axyra-stat-icon">
-                    <i class="fas fa-file-invoice"></i>
-                  </div>
-                  <div class="axyra-stat-number" id="totalFacturas">0</div>
-                  <div class="axyra-stat-label">Total Facturas</div>
+            <div>
+              <h3 class="axyra-card-title">Resumen del Día</h3>
+              <p class="axyra-card-subtitle">Total de ingresos y facturas del día</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <div class="axyra-caja-summary">
+              <div class="axyra-summary-card">
+                <div class="axyra-summary-icon">
+                  <i class="fas fa-file-invoice"></i>
                 </div>
-                <div class="axyra-stat-card">
-                  <div class="axyra-stat-icon">
-                    <i class="fas fa-dollar-sign"></i>
-                  </div>
-                  <div class="axyra-stat-number" id="totalIngresos">$0</div>
-                  <div class="axyra-stat-label">Total Ingresos</div>
+                <div class="axyra-summary-content">
+                  <div class="axyra-summary-number" id="totalFacturas">0</div>
+                  <div class="axyra-summary-label">Total Facturas</div>
+                </div>
+              </div>
+              
+              <div class="axyra-summary-card">
+                <div class="axyra-summary-icon">
+                  <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="axyra-summary-content">
+                  <div class="axyra-summary-number" id="totalIngresos">$0</div>
+                  <div class="axyra-summary-label">Total Ingresos</div>
+                </div>
+              </div>
+              
+              <div class="axyra-summary-card">
+                <div class="axyra-summary-icon">
+                  <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="axyra-summary-content">
+                  <div class="axyra-summary-number" id="totalEfectivo">$0</div>
+                  <div class="axyra-summary-label">Efectivo</div>
+                </div>
+              </div>
+              
+              <div class="axyra-summary-card">
+                <div class="axyra-summary-icon">
+                  <i class="fas fa-university"></i>
+                </div>
+                <div class="axyra-summary-content">
+                  <div class="axyra-summary-number" id="totalTransferencias">$0</div>
+                  <div class="axyra-summary-label">Transferencias</div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="axyra-card">
-            <div class="axyra-card-header">
-              <div class="axyra-card-icon">
-                <i class="fas fa-clock"></i>
-              </div>
-              <div>
-                <h3 class="axyra-card-title">Última Factura</h3>
-                <p class="axyra-card-subtitle">Información de la última factura registrada</p>
-              </div>
+        <!-- Última Factura -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-clock"></i>
             </div>
-            <div class="axyra-card-content">
-              <div id="ultimaFactura" class="axyra-text-center">
-                <i class="fas fa-file-invoice" style="font-size: 3rem; color: var(--axyra-blue-200)"></i>
-                <p>No hay facturas registradas</p>
-              </div>
+            <div>
+              <h3 class="axyra-card-title">Última Factura</h3>
+              <p class="axyra-card-subtitle">Información de la última factura registrada</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <div id="ultimaFactura" class="axyra-text-center">
+              <i class="fas fa-file-invoice" style="font-size: 3rem; color: var(--axyra-blue-200)"></i>
+              <p>No hay facturas registradas</p>
             </div>
           </div>
         </div>
@@ -212,11 +236,42 @@
               <p class="axyra-card-subtitle">Todas las facturas registradas</p>
             </div>
           </div>
+
+          <!-- Filtros Mejorados -->
+          <div class="axyra-filters-enhanced">
+            <div class="axyra-search-box">
+              <input type="text" id="searchFacturas" class="axyra-form-input" placeholder="Buscar por número o encargado..." />
+              <i class="fas fa-search"></i>
+            </div>
+            <div class="axyra-filter-group">
+              <select id="filterFechaFacturas" class="axyra-form-select">
+                <option value="">Todas las fechas</option>
+                <option value="hoy">Hoy</option>
+                <option value="semana">Esta semana</option>
+                <option value="mes">Este mes</option>
+                <option value="trimestre">Este trimestre</option>
+              </select>
+              <select id="filterAreaFacturas" class="axyra-form-select">
+                <option value="">Todas las áreas</option>
+                <option value="Administración">Administración</option>
+                <option value="Ventas">Ventas</option>
+                <option value="Producción">Producción</option>
+                <option value="Tecnología">Tecnología</option>
+              </select>
+              <select id="filterMetodoPago" class="axyra-form-select">
+                <option value="">Todos los métodos</option>
+                <option value="efectivo">Efectivo</option>
+                <option value="transferencia">Transferencia</option>
+                <option value="tarjeta">Tarjeta</option>
+              </select>
+            </div>
+            <button class="axyra-btn axyra-btn-primary" onclick="exportarFacturas()">
+              <i class="fas fa-download"></i> Exportar
+            </button>
+          </div>
+
           <div class="axyra-card-content">
             <div class="axyra-actions-bar">
-              <button class="axyra-btn axyra-btn-info" onclick="exportarFacturas()">
-                <i class="fas fa-download"></i> Exportar Facturas
-              </button>
               <button class="axyra-btn axyra-btn-success" onclick="exportarCuadreCaja()">
                 <i class="fas fa-file-excel"></i> Exportar Cuadre de Caja
               </button>
@@ -236,6 +291,7 @@
                     <th>Monto</th>
                     <th>Método de Pago</th>
                     <th>Descripción</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -243,6 +299,17 @@
                   <!-- Las facturas se cargarán dinámicamente -->
                 </tbody>
               </table>
+            </div>
+
+            <!-- Paginación -->
+            <div class="axyra-pagination">
+              <button class="axyra-btn axyra-btn-outline" onclick="cambiarPaginaFacturas(-1)">
+                <i class="fas fa-chevron-left"></i> Anterior
+              </button>
+              <span id="paginaFacturasInfo">Página 1 de 1</span>
+              <button class="axyra-btn axyra-btn-outline" onclick="cambiarPaginaFacturas(1)">
+                Siguiente <i class="fas fa-chevron-right"></i>
+              </button>
             </div>
           </div>
         </div>
