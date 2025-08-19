@@ -276,7 +276,7 @@
           }
 
           // Verificar sesión usando localStorage como fallback
-          const user = localStorage.getItem('axyra_user');
+          const user = localStorage.getItem('axyra_isolated_user');
           if (user) {
             try {
               const userData = JSON.parse(user);
@@ -325,7 +325,7 @@
             console.log('✅ Usuario Firebase:', currentUser.email);
           } else {
             // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
@@ -404,7 +404,7 @@
           if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
             currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
           } else {
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
@@ -745,7 +745,7 @@
       // Reparar empleados sin userId
       function repararEmpleados() {
         try {
-          const currentUser = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+          const currentUser = JSON.parse(localStorage.getItem('axyra_isolated_user') || '{}');
           if (!currentUser.username) {
             alert('❌ No hay usuario autenticado');
             return;
@@ -785,7 +785,7 @@
         const empleado = empleados.find((e) => e.id === id);
         if (empleado) {
           // Obtener usuario actual para asignar userId
-          const currentUser = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+          const currentUser = JSON.parse(localStorage.getItem('axyra_isolated_user') || '{}');
 
           // Generar comprobante con datos reales
           const comprobante = {
@@ -962,7 +962,7 @@
 
         const formData = new FormData(this);
         // Obtener usuario actual para asignar userId
-        const currentUser = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+        const currentUser = JSON.parse(localStorage.getItem('axyra_isolated_user') || '{}');
 
         const empleado = {
           nombre: formData.get('nombre'),

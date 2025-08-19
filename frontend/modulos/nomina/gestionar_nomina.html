@@ -251,7 +251,7 @@
           }
 
           // Verificar sesión usando localStorage como fallback
-          const user = localStorage.getItem('axyra_user');
+          const user = localStorage.getItem('axyra_isolated_user');
           if (user) {
             try {
               const userData = JSON.parse(user);
@@ -336,7 +336,7 @@
             console.log('✅ Usuario Firebase en nómina:', currentUser.email);
           } else {
             // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
@@ -781,7 +781,7 @@
         document.getElementById('totalHorasNomina').textContent = totalHoras;
 
         // Filtrar comprobantes por usuario actual
-        const currentUser = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+        const currentUser = JSON.parse(localStorage.getItem('axyra_isolated_user') || '{}');
         let comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]');
         if (currentUser.username) {
           comprobantes = comprobantes.filter((comp) => comp.userId === currentUser.username);

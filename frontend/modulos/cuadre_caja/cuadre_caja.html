@@ -272,7 +272,7 @@
           }
 
           // Verificar sesión usando localStorage como fallback
-          const user = localStorage.getItem('axyra_user');
+          const user = localStorage.getItem('axyra_isolated_user');
           if (user) {
             try {
               const userData = JSON.parse(user);
@@ -357,7 +357,7 @@
             console.log('✅ Usuario Firebase en cuadre de caja:', currentUser.email);
           } else {
             // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
