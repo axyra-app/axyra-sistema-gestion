@@ -378,15 +378,13 @@
           }
 
           // Verificar username en Firestore
-          if (window.axyraFirebaseUtils && window.axyraFirebaseUtils.isAvailable()) {
-            const usernameQuery = await firebase.firestore()
-              .collection('users')
-              .where('username', '==', username)
-              .get();
-            
-            if (!usernameQuery.empty) {
-              return { exists: true, field: 'username', message: 'Este nombre de usuario ya está en uso.' };
-            }
+          const usernameQuery = await firebase.firestore()
+            .collection('users')
+            .where('username', '==', username)
+            .get();
+          
+          if (!usernameQuery.empty) {
+            return { exists: true, field: 'username', message: 'Este nombre de usuario ya está en uso.' };
           }
 
           return { exists: false };
