@@ -520,7 +520,7 @@
                 <div class="axyra-summary-label">Horas del Mes</div>
               </div>
             </div>
-
+            
             <div class="axyra-summary-card">
               <div class="axyra-summary-icon">
                 <i class="fas fa-dollar-sign"></i>
@@ -530,7 +530,7 @@
                 <div class="axyra-summary-label">Total Pagos</div>
               </div>
             </div>
-
+            
             <div class="axyra-summary-card">
               <div class="axyra-summary-icon">
                 <i class="fas fa-users"></i>
@@ -540,7 +540,7 @@
                 <div class="axyra-summary-label">Empleados Activos</div>
               </div>
             </div>
-
+            
             <div class="axyra-summary-card">
               <div class="axyra-summary-icon">
                 <i class="fas fa-calendar-check"></i>
@@ -649,12 +649,12 @@
       // Cerrar sesión - SISTEMA AISLADO
       function logout() {
         console.log('🔄 Cerrando sesión desde gestión de horas...');
-
+        
         // Usar el sistema aislado
         if (window.axyraIsolatedAuth) {
           window.axyraIsolatedAuth.logout();
         }
-
+        
         console.log('✅ Sesión cerrada desde gestión de horas');
         window.location.href = '../../login.html';
       }
@@ -681,12 +681,12 @@
           }
 
           // Intentar cargar desde Firebase primero si está disponible
-          if (window.axyraFirebase && window.axyraFirebase.firestore) {
+          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser.id) {
             try {
               console.log('🔥 Intentando cargar empleados desde Firebase...');
-              const empleadosSnapshot = await window.axyraFirebase.firestore
+              const empleadosSnapshot = await firebase.firestore
                 .collection('empleados')
-                .where('companyId', '==', window.axyraFirebaseUtils.getCompanyId())
+                .where('userId', '==', currentUser.id)
                 .get();
 
               if (!empleadosSnapshot.empty) {
@@ -744,17 +744,17 @@
 
       // Función auxiliar para cargar empleados en los selects
       function cargarEmpleadosEnSelects(empleados) {
-        const selectEmpleado = document.getElementById('empleadoHoras');
-        const selectComprobante = document.getElementById('empleadoComprobante');
+          const selectEmpleado = document.getElementById('empleadoHoras');
+          const selectComprobante = document.getElementById('empleadoComprobante');
 
         if (!selectEmpleado || !selectComprobante) {
           console.error('❌ No se encontraron los selects de empleados');
-          return;
-        }
+            return;
+          }
 
-        // Limpiar selects
-        selectEmpleado.innerHTML = '<option value="">Seleccionar empleado</option>';
-        selectComprobante.innerHTML = '<option value="">Seleccionar empleado</option>';
+          // Limpiar selects
+          selectEmpleado.innerHTML = '<option value="">Seleccionar empleado</option>';
+            selectComprobante.innerHTML = '<option value="">Seleccionar empleado</option>';
 
         if (empleados.length === 0) {
           console.log('ℹ️ No hay empleados para mostrar');
@@ -768,13 +768,13 @@
           optionEmpleado.textContent = `${empleado.nombre} (${empleado.cargo || 'Sin cargo'})`;
           selectEmpleado.appendChild(optionEmpleado);
 
-          const optionComprobante = document.createElement('option');
-          optionComprobante.value = empleado.id;
+              const optionComprobante = document.createElement('option');
+              optionComprobante.value = empleado.id;
           optionComprobante.textContent = `${empleado.nombre} (${empleado.cargo || 'Sin cargo'})`;
-          selectComprobante.appendChild(optionComprobante);
-        });
+              selectComprobante.appendChild(optionComprobante);
+          });
 
-        console.log(`✅ ${empleados.length} empleados cargados en los selects`);
+          console.log(`✅ ${empleados.length} empleados cargados en los selects`);
       }
 
       // Manejar formulario de registro masivo
@@ -841,9 +841,9 @@
       function calcularHoras() {
         try {
           // Obtener valores del formulario
-          const empleadoId = document.getElementById('empleadoHoras').value;
-          const fecha = document.getElementById('fechaHoras').value;
-          const horasOrdinarias = parseFloat(document.getElementById('horasOrdinarias').value) || 0;
+        const empleadoId = document.getElementById('empleadoHoras').value;
+        const fecha = document.getElementById('fechaHoras').value;
+        const horasOrdinarias = parseFloat(document.getElementById('horasOrdinarias').value) || 0;
           const horasExtras = parseFloat(document.getElementById('horasExtras').value) || 0;
           const horasExtrasFestivas = parseFloat(document.getElementById('horasExtrasFestivas').value) || 0;
           const horasExtrasFestivasNocturnas =
@@ -853,8 +853,8 @@
           // Validar datos
           if (!empleadoId) {
             mostrarMensaje('❌ Selecciona un empleado', 'error');
-            return;
-          }
+          return;
+        }
 
           if (!fecha) {
             mostrarMensaje('❌ Selecciona una fecha', 'error');
@@ -881,7 +881,7 @@
             return;
           }
 
-          // Calcular totales
+        // Calcular totales
           const totalHoras = horasOrdinarias + horasExtras + horasExtrasFestivas + horasExtrasFestivasNocturnas;
 
           // Calcular salarios según la ley colombiana
@@ -1129,7 +1129,7 @@
             </div>
           </div>
         `;
-
+        
         document.body.insertAdjacentHTML('beforeend', modalHTML);
       }
 
@@ -1817,19 +1817,64 @@
         }
       }
 
-      // Función auxiliar para obtener ID del usuario actual
-      function getCurrentUserId() {
-        let currentUser = null;
-        if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
-          currentUser = window.axyraIsolatedAuth.getCurrentUser();
-        } else {
-          const userData = localStorage.getItem('axyra_isolated_user');
-          if (userData) {
-            currentUser = JSON.parse(userData);
-          }
-        }
-        return currentUser ? currentUser.username || currentUser.email : 'admin';
-      }
+             // Función auxiliar para obtener ID del usuario actual
+       function getCurrentUserId() {
+         let currentUser = null;
+         if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+           currentUser = window.axyraIsolatedAuth.getCurrentUser();
+         } else {
+           const userData = localStorage.getItem('axyra_isolated_user');
+           if (userData) {
+             currentUser = JSON.parse(userData);
+           }
+         }
+         return currentUser ? currentUser.username || currentUser.email : 'admin';
+       }
+
+       // Función para exportar historial de horas a Excel
+       function exportarHistorialHoras() {
+         try {
+           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+
+           if (horas.length === 0) {
+             mostrarMensaje('❌ No hay registros de horas para exportar', 'warning');
+             return;
+           }
+
+           // Verificar si el exportador está disponible
+           if (typeof window.axyraExcelExporter === 'undefined') {
+             window.axyraExcelExporter = new AXYRAExcelExporter();
+           }
+
+           // Preparar datos para exportar
+           const datosExportar = horas.map(registro => {
+             const empleado = empleados.find(emp => emp.id === registro.empleadoId);
+             return {
+               empleado: empleado ? empleado.nombre : 'Empleado no encontrado',
+               departamento: empleado ? empleado.departamento : 'N/A',
+               fecha: registro.fecha,
+               horasOrdinarias: registro.horasOrdinarias || 0,
+               horasNocturnas: registro.horasNocturnas || 0,
+               horasExtraDiurnas: registro.horasExtraDiurnas || 0,
+               horasExtraNocturnas: registro.horasExtraNocturnas || 0,
+               horasDominicales: registro.horasDominicales || 0,
+               horasFestivas: registro.horasFestivas || 0,
+               totalHoras: (registro.horasOrdinarias || 0) + (registro.horasNocturnas || 0) + 
+                          (registro.horasExtraDiurnas || 0) + (registro.horasExtraNocturnas || 0) +
+                          (registro.horasDominicales || 0) + (registro.horasFestivas || 0),
+               observaciones: registro.observaciones || ''
+             };
+           });
+
+           // Usar el sistema de Excel profesional
+           const nombreArchivo = window.axyraExcelExporter.exportarHoras(datosExportar);
+           mostrarMensaje(`✅ Historial de horas exportado a Excel correctamente: ${nombreArchivo}`, 'success');
+         } catch (error) {
+           console.error('❌ Error exportando historial de horas:', error);
+           mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
+         }
+       }
     </script>
 
     <style>

@@ -1062,75 +1062,22 @@
             }
           });
 
-          // Crear nuevo workbook
-          const workbook = XLSX.utils.book_new();
+          // Verificar si el exportador está disponible
+          if (typeof window.axyraExcelExporter === 'undefined') {
+            window.axyraExcelExporter = new AXYRAExcelExporter();
+          }
 
-          // Preparar datos con formato profesional
-          const excelContent = [];
+          // Obtener período
+          const periodo = `${document.getElementById('fechaInicio').value} a ${document.getElementById('fechaFin').value}`;
 
-          // Título principal
-          excelContent.push(['REPORTE DE NÓMINA - AXYRA']);
-          excelContent.push([]);
-
-          // Información del período
-          excelContent.push([
-            'PERÍODO:',
-            document.getElementById('fechaInicio').value,
-            'a',
-            document.getElementById('fechaFin').value,
-          ]);
-          excelContent.push(['FECHA DE EXPORTACIÓN:', new Date().toLocaleDateString('es-ES')]);
-          excelContent.push(['TOTAL EMPLEADOS:', datosExportacion.length]);
-          excelContent.push([]);
-
-          // Encabezados de la tabla
-          excelContent.push(['Empleado', 'Cargo', 'Departamento', 'Salario Base', 'Horas Trabajadas', 'Salario Neto']);
-
-          // Datos de empleados
-          datosExportacion.forEach((emp) => {
-            excelContent.push([
-              emp.nombre,
-              emp.cargo,
-              emp.departamento,
-              emp.salarioBase,
-              emp.horasTrabajadas,
-              emp.salarioNeto,
-            ]);
-          });
-
-          // Resumen por departamento
-          excelContent.push([]);
-          excelContent.push(['RESUMEN POR DEPARTAMENTO']);
-          excelContent.push(['Departamento', 'Cantidad', 'Total Salarios']);
-
-          const resumenDepartamentos = {};
-          datosExportacion.forEach((emp) => {
-            if (!resumenDepartamentos[emp.departamento]) {
-              resumenDepartamentos[emp.departamento] = { cantidad: 0, totalSalarios: 0 };
-            }
-            resumenDepartamentos[emp.departamento].cantidad++;
-            resumenDepartamentos[emp.departamento].totalSalarios += emp.salarioNeto;
-          });
-
-          Object.entries(resumenDepartamentos).forEach(([depto, datos]) => {
-            excelContent.push([depto, datos.cantidad, `$${datos.totalSalarios.toLocaleString('es-CO')}`]);
-          });
-
-          // Totales finales
-          excelContent.push([]);
-          excelContent.push(['TOTALES FINALES']);
-          excelContent.push(['Concepto', 'Valor']);
-          excelContent.push(['Total Empleados', datosExportacion.length]);
-          excelContent.push([
-            'Total Salarios',
-            `$${datosExportacion.reduce((sum, emp) => sum + emp.salarioNeto, 0).toLocaleString('es-CO')}`,
-          ]);
-          excelContent.push([
-            'Promedio Salario',
-            `$${(
-              datosExportacion.reduce((sum, emp) => sum + emp.salarioNeto, 0) / datosExportacion.length
-            ).toLocaleString('es-CO')}`,
-          ]);
+          // Usar el sistema de Excel profesional
+          const nombreArchivo = window.axyraExcelExporter.exportarNomina(datosExportacion, periodo);
+          mostrarMensaje(`✅ Nómina exportada a Excel correctamente: ${nombreArchivo}`, 'success');
+        } catch (error) {
+          console.error('❌ Error exportando nómina:', error);
+          mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
+        }
+      }
 
           // Crear worksheet
           const worksheet = XLSX.utils.aoa_to_sheet(excelContent);

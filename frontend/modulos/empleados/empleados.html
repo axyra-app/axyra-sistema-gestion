@@ -394,10 +394,63 @@
         }
       }
 
-      // Guardar empleados en localStorage
+      // Guardar empleados en Firebase y localStorage
       async function guardarEmpleados() {
         try {
-          // Guardar en localStorage
+          // Obtener usuario actual
+          let currentUser = null;
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
+          } else {
+            const userData = localStorage.getItem('axyra_isolated_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser) {
+            console.log('⚠️ No hay usuario autenticado');
+            return;
+          }
+
+          // Intentar guardar en Firebase primero
+          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser.id) {
+            try {
+              console.log('🔥 Guardando empleados en Firebase...');
+              
+              // Guardar cada empleado en Firebase
+              for (const empleado of empleados) {
+                if (empleado.id && typeof empleado.id === 'string' && empleado.id.length > 10) {
+                  // Es un ID de Firebase, actualizar
+                  await firebase.firestore()
+                    .collection('empleados')
+                    .doc(empleado.id)
+                    .update({
+                      ...empleado,
+                      updatedAt: new Date().toISOString()
+                    });
+                } else {
+                  // Es un nuevo empleado, crear
+                  const docRef = await firebase.firestore()
+                    .collection('empleados')
+                    .add({
+                      ...empleado,
+                      userId: currentUser.id,
+                      createdAt: new Date().toISOString(),
+                      updatedAt: new Date().toISOString()
+                    });
+                  // Actualizar el ID local con el ID de Firebase
+                  empleado.id = docRef.id;
+                }
+              }
+              
+              console.log('✅ Empleados guardados en Firebase');
+            } catch (firebaseError) {
+              console.warn('⚠️ Error guardando en Firebase, usando localStorage:', firebaseError);
+            }
+          }
+
+          // Guardar en localStorage como respaldo
           console.log('💾 Guardando empleados en localStorage...');
           localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
           console.log('✅ Empleados guardados en localStorage');

@@ -173,7 +173,7 @@
                   <div class="axyra-summary-label">Total Facturas</div>
                 </div>
               </div>
-              
+
               <div class="axyra-summary-card">
                 <div class="axyra-summary-icon">
                   <i class="fas fa-dollar-sign"></i>
@@ -183,7 +183,7 @@
                   <div class="axyra-summary-label">Total Ingresos</div>
                 </div>
               </div>
-              
+
               <div class="axyra-summary-card">
                 <div class="axyra-summary-icon">
                   <i class="fas fa-credit-card"></i>
@@ -193,7 +193,7 @@
                   <div class="axyra-summary-label">Efectivo</div>
                 </div>
               </div>
-              
+
               <div class="axyra-summary-card">
                 <div class="axyra-summary-icon">
                   <i class="fas fa-university"></i>
@@ -203,7 +203,7 @@
                   <div class="axyra-summary-label">Transferencias</div>
                 </div>
               </div>
-              
+
               <div class="axyra-summary-card">
                 <div class="axyra-summary-icon">
                   <i class="fas fa-credit-card"></i>
@@ -213,7 +213,7 @@
                   <div class="axyra-summary-label">Datafono</div>
                 </div>
               </div>
-              
+
               <div class="axyra-summary-card">
                 <div class="axyra-summary-icon">
                   <i class="fas fa-qrcode"></i>
@@ -223,7 +223,7 @@
                   <div class="axyra-summary-label">QR</div>
                 </div>
               </div>
-              
+
               <div class="axyra-summary-card">
                 <div class="axyra-summary-icon">
                   <i class="fas fa-money-check"></i>
@@ -233,7 +233,7 @@
                   <div class="axyra-summary-label">Cheque</div>
                 </div>
               </div>
-              
+
               <div class="axyra-summary-card">
                 <div class="axyra-summary-icon">
                   <i class="fas fa-ellipsis-h"></i>
@@ -284,7 +284,12 @@
           <!-- Filtros Mejorados -->
           <div class="axyra-filters-enhanced">
             <div class="axyra-search-box">
-              <input type="text" id="searchFacturas" class="axyra-form-input" placeholder="Buscar por número o encargado..." />
+              <input
+                type="text"
+                id="searchFacturas"
+                class="axyra-form-input"
+                placeholder="Buscar por número o encargado..."
+              />
               <i class="fas fa-search"></i>
             </div>
             <div class="axyra-filter-group">
@@ -416,12 +421,12 @@
       // Cerrar sesión - SISTEMA AISLADO
       function logout() {
         console.log('🔄 Cerrando sesión desde cuadre de caja...');
-        
+
         // Usar el sistema aislado
         if (window.axyraIsolatedAuth) {
           window.axyraIsolatedAuth.logout();
         }
-        
+
         console.log('✅ Sesión cerrada desde cuadre de caja');
         window.location.href = '../../login.html';
       }
@@ -468,13 +473,19 @@
           let currentUser = null;
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
-            console.log('✅ Usuario actual en cuadre de caja (sistema aislado):', currentUser.username || currentUser.email);
+            console.log(
+              '✅ Usuario actual en cuadre de caja (sistema aislado):',
+              currentUser.username || currentUser.email
+            );
           } else {
             // Fallback a localStorage
             const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
-              console.log('✅ Usuario actual en cuadre de caja (localStorage):', currentUser.username || currentUser.email);
+              console.log(
+                '✅ Usuario actual en cuadre de caja (localStorage):',
+                currentUser.username || currentUser.email
+              );
             }
           }
 
@@ -485,16 +496,57 @@
             return;
           }
 
-          // Cargar facturas desde localStorage
-          console.log('💾 Cargando facturas desde localStorage...');
-          facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+          // Intentar cargar desde Firebase primero
+          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser.id) {
+            try {
+              console.log('🔥 Intentando cargar facturas desde Firebase...');
+              const facturasSnapshot = await firebase.firestore
+                .collection('facturas')
+                .where('userId', '==', currentUser.id)
+                .get();
 
-          // Filtrar facturas por usuario actual
-          if (currentUser.username || currentUser.email) {
-            const userId = currentUser.username || currentUser.email;
-            const facturasFiltradas = facturas.filter((factura) => factura.userId === userId);
-            console.log(`✅ Facturas filtradas para usuario ${userId}: ${facturasFiltradas.length} de ${facturas.length} totales`);
-            facturas = facturasFiltradas;
+              if (!facturasSnapshot.empty) {
+                facturas = [];
+                facturasSnapshot.forEach((doc) => {
+                  facturas.push({
+                    id: doc.id,
+                    ...doc.data(),
+                  });
+                });
+                console.log(`✅ Facturas cargadas desde Firebase: ${facturas.length}`);
+              } else {
+                console.log('ℹ️ No hay facturas en Firebase para este usuario');
+                facturas = [];
+              }
+            } catch (firebaseError) {
+              console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError.message);
+              // Cargar desde localStorage como fallback
+              facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+              
+              // Filtrar facturas por usuario actual
+              if (currentUser.username || currentUser.email) {
+                const userId = currentUser.username || currentUser.email;
+                const facturasFiltradas = facturas.filter((factura) => factura.userId === userId);
+                console.log(
+                  `✅ Facturas filtradas para usuario ${userId}: ${facturasFiltradas.length} de ${facturas.length} totales`
+                );
+                facturas = facturasFiltradas;
+              }
+            }
+          } else {
+            // Firebase no disponible, usar localStorage
+            console.log('💾 Cargando facturas desde localStorage...');
+            facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+
+            // Filtrar facturas por usuario actual
+            if (currentUser.username || currentUser.email) {
+              const userId = currentUser.username || currentUser.email;
+              const facturasFiltradas = facturas.filter((factura) => factura.userId === userId);
+              console.log(
+                `✅ Facturas filtradas para usuario ${userId}: ${facturasFiltradas.length} de ${facturas.length} totales`
+              );
+              facturas = facturasFiltradas;
+            }
           }
 
           mostrarFacturas();
@@ -547,7 +599,7 @@
             style: 'currency',
             currency: 'COP',
             minimumFractionDigits: 0,
-            maximumFractionDigits: 0
+            maximumFractionDigits: 0,
           }).format(valor);
         }
         return valor;
@@ -560,7 +612,7 @@
             style: 'currency',
             currency: 'COP',
             minimumFractionDigits: 0,
-            maximumFractionDigits: 0
+            maximumFractionDigits: 0,
           });
         }
         return valor;
@@ -570,53 +622,67 @@
       function cargarResumen() {
         try {
           const fechaHoy = new Date().toISOString().split('T')[0];
-          const facturasHoy = facturas.filter(f => f.fecha === fechaHoy);
-          
+          const facturasHoy = facturas.filter((f) => f.fecha === fechaHoy);
+
           // Calcular totales
           const totalFacturas = facturasHoy.length;
           const totalIngresos = facturasHoy.reduce((total, f) => total + parseFloat(f.monto), 0);
-          
+
           // Calcular por método de pago
-          const efectivo = facturasHoy.filter(f => f.metodoPago === 'efectivo').reduce((total, f) => total + parseFloat(f.monto), 0);
-          const transferencia = facturasHoy.filter(f => f.metodoPago === 'transferencia').reduce((total, f) => total + parseFloat(f.monto), 0);
-          const datafono = facturasHoy.filter(f => f.metodoPago === 'datafono').reduce((total, f) => total + parseFloat(f.monto), 0);
-          const qr = facturasHoy.filter(f => f.metodoPago === 'qr').reduce((total, f) => total + parseFloat(f.monto), 0);
-          const cheque = facturasHoy.filter(f => f.metodoPago === 'cheque').reduce((total, f) => total + parseFloat(f.monto), 0);
-          const otros = facturasHoy.filter(f => !['efectivo', 'transferencia', 'datafono', 'qr', 'cheque'].includes(f.metodoPago)).reduce((total, f) => total + parseFloat(f.monto), 0);
-          
+          const efectivo = facturasHoy
+            .filter((f) => f.metodoPago === 'efectivo')
+            .reduce((total, f) => total + parseFloat(f.monto), 0);
+          const transferencia = facturasHoy
+            .filter((f) => f.metodoPago === 'transferencia')
+            .reduce((total, f) => total + parseFloat(f.monto), 0);
+          const datafono = facturasHoy
+            .filter((f) => f.metodoPago === 'datafono')
+            .reduce((total, f) => total + parseFloat(f.monto), 0);
+          const qr = facturasHoy
+            .filter((f) => f.metodoPago === 'qr')
+            .reduce((total, f) => total + parseFloat(f.monto), 0);
+          const cheque = facturasHoy
+            .filter((f) => f.metodoPago === 'cheque')
+            .reduce((total, f) => total + parseFloat(f.monto), 0);
+          const otros = facturasHoy
+            .filter((f) => !['efectivo', 'transferencia', 'datafono', 'qr', 'cheque'].includes(f.metodoPago))
+            .reduce((total, f) => total + parseFloat(f.monto), 0);
+
           // Actualizar resumen
           document.getElementById('totalFacturas').textContent = totalFacturas;
           document.getElementById('totalIngresos').textContent = formatearMoneda(totalIngresos);
           document.getElementById('totalEfectivo').textContent = formatearMoneda(efectivo);
           document.getElementById('totalTransferencias').textContent = formatearMoneda(transferencia);
-          
+
           // Actualizar métodos de pago adicionales si existen los elementos
           const totalDatafonoElement = document.getElementById('totalDatafono');
           const totalQRElement = document.getElementById('totalQR');
           const totalChequeElement = document.getElementById('totalCheque');
           const totalOtrosElement = document.getElementById('totalOtros');
-          
+
           if (totalDatafonoElement) totalDatafonoElement.textContent = formatearMoneda(datafono);
           if (totalQRElement) totalQRElement.textContent = formatearMoneda(qr);
           if (totalChequeElement) totalChequeElement.textContent = formatearMoneda(cheque);
           if (totalOtrosElement) totalOtrosElement.textContent = formatearMoneda(otros);
-          
+
           // Mostrar última factura con información completa
           if (facturasHoy.length > 0) {
             const ultimaFactura = facturasHoy[facturasHoy.length - 1];
             document.getElementById('ultimaFactura').textContent = formatearMoneda(ultimaFactura.monto);
-            document.getElementById('ultimaFacturaInfo').textContent = `#${ultimaFactura.numero} - ${ultimaFactura.encargado} - ${ultimaFactura.metodoPago.toUpperCase()}`;
-            
+            document.getElementById('ultimaFacturaInfo').textContent = `#${ultimaFactura.numero} - ${
+              ultimaFactura.encargado
+            } - ${ultimaFactura.metodoPago.toUpperCase()}`;
+
             const ultimaFacturaTimeElement = document.getElementById('ultimaFacturaTime');
             if (ultimaFacturaTimeElement) {
               const fechaFactura = new Date(ultimaFactura.fecha);
               // Formatear hora en zona horaria de Colombia
-              const horaColombia = fechaFactura.toLocaleTimeString('es-CO', { 
-                hour: '2-digit', 
+              const horaColombia = fechaFactura.toLocaleTimeString('es-CO', {
+                hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
                 hour12: true,
-                timeZone: 'America/Bogota'
+                timeZone: 'America/Bogota',
               });
               ultimaFacturaTimeElement.textContent = `Registrada a las ${horaColombia}`;
             }
@@ -628,7 +694,7 @@
               ultimaFacturaTimeElement.textContent = '';
             }
           }
-          
+
           console.log('✅ Resumen del día actualizado');
         } catch (error) {
           console.error('❌ Error cargando resumen:', error);
@@ -686,8 +752,8 @@
           monto: document.getElementById('monto').value,
           metodoPago: document.getElementById('metodoPago').value,
           descripcion: document.getElementById('descripcion').value,
-          userId: currentUser ? (currentUser.username || currentUser.email) : 'admin',
-          createdAt: new Date().toISOString()
+          userId: currentUser ? currentUser.username || currentUser.email : 'admin',
+          createdAt: new Date().toISOString(),
         };
 
         facturas.unshift(factura);
@@ -698,7 +764,7 @@
         limpiarFormulario();
 
         mostrarMensaje('✅ Factura registrada correctamente', 'success');
-        
+
         // Actualizar resumen del día en tiempo real
         setTimeout(() => {
           cargarResumen();
@@ -714,7 +780,7 @@
       // Eliminar factura
       function eliminarFactura(id) {
         // Obtener información de la factura
-        const factura = facturas.find(f => f.id === id);
+        const factura = facturas.find((f) => f.id === id);
         if (!factura) {
           mostrarMensaje('❌ Factura no encontrada', 'error');
           return;
@@ -774,7 +840,9 @@
                 <button type="button" class="axyra-btn axyra-btn-secondary" onclick="cerrarModalEliminarFactura()">
                   <i class="fas fa-times"></i> Cancelar
                 </button>
-                <button type="button" class="axyra-btn axyra-btn-danger" onclick="confirmarEliminarFactura('${factura.id}')">
+                <button type="button" class="axyra-btn axyra-btn-danger" onclick="confirmarEliminarFactura('${
+                  factura.id
+                }')">
                   <i class="fas fa-trash"></i> Eliminar
                 </button>
               </div>
@@ -1022,7 +1090,7 @@
         .axyra-summary-grid {
           grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         }
-        
+
         .axyra-ultima-factura-monto {
           font-size: 2rem;
         }

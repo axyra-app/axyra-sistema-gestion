@@ -331,6 +331,61 @@ class AXYRAExcelExporter {
       this.formatCurrencyCOP(data.totalSalarios),
     ]);
   }
+
+  // Exportar horas con diseño profesional
+  exportarHoras(horas) {
+    try {
+      console.log('📊 Exportando horas con diseño profesional...');
+
+      const workbook = XLSX.utils.book_new();
+
+      const data = [
+        ['REPORTE DE HORAS - ' + this.companyName],
+        ['EMPRESA: ' + this.companyName],
+        ['NIT: ' + this.companyNIT],
+        ['FECHA DE EXPORTACIÓN: ' + this.exportDate],
+        [],
+        ['EMPLEADO', 'DEPARTAMENTO', 'FECHA', 'HORAS ORDINARIAS', 'HORAS NOCTURNAS', 'HORAS EXTRA DIURNAS', 'HORAS EXTRA NOCTURNAS', 'HORAS DOMINICALES', 'HORAS FESTIVAS', 'TOTAL HORAS', 'OBSERVACIONES'],
+        ...horas.map((hora) => [
+          hora.empleado || 'N/A',
+          hora.departamento || 'N/A',
+          hora.fecha || 'N/A',
+          hora.horasOrdinarias || 0,
+          hora.horasNocturnas || 0,
+          hora.horasExtraDiurnas || 0,
+          hora.horasExtraNocturnas || 0,
+          hora.horasDominicales || 0,
+          hora.horasFestivas || 0,
+          hora.totalHoras || 0,
+          hora.observaciones || ''
+        ]),
+        [],
+        ['Total Registros: ' + horas.length],
+        ['Total Horas: ' + horas.reduce((sum, hora) => sum + (hora.totalHoras || 0), 0)],
+        ['Promedio Horas por Registro: ' + (horas.length > 0 ? (horas.reduce((sum, hora) => sum + (hora.totalHoras || 0), 0) / horas.length).toFixed(2) : 0)]
+      ];
+
+      const worksheet = XLSX.utils.aoa_to_sheet(data);
+      const dataRange = { s: { r: 0, c: 0 }, e: { r: data.length - 1, c: 10 } };
+
+      this.applyProfessionalStyles(worksheet, dataRange);
+
+      const colWidths = [25, 20, 15, 15, 15, 15, 15, 15, 15, 15, 30];
+      worksheet['!cols'] = colWidths.map((width) => ({ width }));
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Horas');
+
+      const fileName = `REPORTE_HORAS_${this.companyName}_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+      XLSX.writeFile(workbook, fileName);
+
+      console.log('✅ Horas exportadas con diseño profesional:', fileName);
+      return fileName;
+    } catch (error) {
+      console.error('❌ Error exportando horas:', error);
+      throw new Error('Error al exportar horas: ' + error.message);
+    }
+  }
 }
 
 // Exportar para uso global
