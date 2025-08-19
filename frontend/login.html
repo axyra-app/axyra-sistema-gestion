@@ -599,14 +599,14 @@
       // Sistema de autenticación COMPLETAMENTE AISLADO
       console.log('🚀 AXYRA Login - Sistema COMPLETAMENTE AISLADO');
 
-      // Función para iniciar sesión con Google - FIREBASE
+      // Función para iniciar sesión con Google - FIREBASE MEJORADO
       async function loginWithGoogle() {
         try {
           console.log('🔐 Intentando login con Google...');
           
           // Verificar que Firebase esté disponible
-          if (typeof firebase === 'undefined' || !firebase.auth) {
-            throw new Error('Firebase no está disponible');
+          if (!window.axyraFirebaseUtils || !window.axyraFirebaseUtils.isAvailable()) {
+            throw new Error('Firebase no está disponible. Intenta con usuario y contraseña.');
           }
           
           // Crear proveedor de Google
@@ -635,8 +635,8 @@
             };
             
             try {
-              // Guardar en Firestore
-              await firebaseFirestore.collection('users').doc(result.user.uid).set(userData, { merge: true });
+              // Guardar en Firestore usando la función utilitaria
+              await window.axyraFirebaseUtils.createUser(userData);
               console.log('✅ Usuario guardado en Firestore');
               
               // Guardar en localStorage para compatibilidad
@@ -680,6 +680,8 @@
             showError('Popup bloqueado. Permite popups para este sitio');
           } else if (error.code === 'auth/unauthorized-domain') {
             showError('Dominio no autorizado. Contacta al administrador');
+          } else if (error.code === 'auth/network-request-failed') {
+            showError('Error de conexión. Verifica tu internet');
           } else {
             showError('Error en login con Google: ' + error.message);
           }
@@ -772,7 +774,7 @@
         if (successDiv) successDiv.style.display = 'none';
       }
 
-      // Función para iniciar sesión normal
+      // Función para iniciar sesión normal - SISTEMA HÍBRIDO
       async function login() {
         const usernameOrEmail = document.getElementById('username').value;
         const password = document.getElementById('password').value;
@@ -786,11 +788,103 @@
         try {
           console.log('🔐 Intentando login con credenciales:', usernameOrEmail);
           
-          // Usar SOLO el sistema local aislado
+          // PRIMERO: Intentar con Firebase si está disponible
+          if (window.axyraFirebaseUtils && window.axyraFirebaseUtils.isAvailable()) {
+            console.log('🔥 Firebase disponible, intentando login...');
+            
+            try {
+              // Crear usuario temporal en Firebase (para compatibilidad)
+              const userCredential = await firebase.auth().createUserWithEmailAndPassword(usernameOrEmail, password);
+              
+              if (userCredential.user) {
+                console.log('✅ Usuario creado y logueado con Firebase:', userCredential.user.email);
+                
+                // Crear usuario en Firestore
+                const userData = {
+                  uid: userCredential.user.uid,
+                  email: userCredential.user.email,
+                  displayName: usernameOrEmail.split('@')[0],
+                  createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                  lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                  provider: 'email',
+                  hasPassword: true
+                };
+                
+                await window.axyraFirebaseUtils.createUser(userData);
+                
+                // Guardar en localStorage para compatibilidad
+                const localUser = {
+                  id: userCredential.user.uid,
+                  username: usernameOrEmail.split('@')[0],
+                  email: userCredential.user.email,
+                  nombre: usernameOrEmail.split('@')[0],
+                  rol: 'usuario',
+                  createdAt: new Date().toISOString()
+                };
+                
+                localStorage.setItem('axyra_firebase_user', JSON.stringify(userCredential.user));
+                localStorage.setItem('axyra_isolated_user', JSON.stringify(localUser));
+                
+                if (rememberMe) {
+                  localStorage.setItem('axyra_isolated_remember', JSON.stringify(localUser));
+                }
+                
+                showSuccess('¡Login exitoso con Firebase! Redirigiendo al dashboard...');
+                
+                setTimeout(() => {
+                  window.location.href = 'modulos/dashboard/dashboard.html';
+                }, 2000);
+                
+                return;
+              }
+            } catch (firebaseError) {
+              console.log('⚠️ Error con Firebase, intentando sistema aislado:', firebaseError.message);
+              
+              // Si Firebase falla, continuar con sistema aislado
+              if (firebaseError.code === 'auth/email-already-in-use') {
+                console.log('📧 Usuario ya existe, intentando login...');
+                try {
+                  const signInResult = await firebase.auth().signInWithEmailAndPassword(usernameOrEmail, password);
+                  
+                  if (signInResult.user) {
+                    console.log('✅ Login exitoso con Firebase:', signInResult.user.email);
+                    
+                    // Guardar en localStorage
+                    const localUser = {
+                      id: signInResult.user.uid,
+                      username: usernameOrEmail.split('@')[0],
+                      email: signInResult.user.email,
+                      nombre: usernameOrEmail.split('@')[0],
+                      rol: 'usuario',
+                      createdAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('axyra_firebase_user', JSON.stringify(signInResult.user));
+                    localStorage.setItem('axyra_isolated_user', JSON.stringify(localUser));
+                    
+                    if (rememberMe) {
+                      localStorage.setItem('axyra_isolated_remember', JSON.stringify(localUser));
+                    }
+                    
+                    showSuccess('¡Login exitoso! Redirigiendo al dashboard...');
+                    
+                    setTimeout(() => {
+                      window.location.href = 'modulos/dashboard/dashboard.html';
+                    }, 2000);
+                    
+                    return;
+                  }
+                } catch (signInError) {
+                  console.log('❌ Login con Firebase falló, usando sistema aislado');
+                }
+              }
+            }
+          }
+          
+          // SEGUNDO: Usar sistema aislado como respaldo
           if (window.axyraIsolatedAuth) {
             console.log('✅ Sistema aislado disponible, intentando login...');
             
-            // Verificar que el sistema esté inicializado
             if (!window.axyraIsolatedAuth.isInitialized) {
               console.log('⚠️ Sistema no inicializado, esperando...');
               await new Promise(resolve => setTimeout(resolve, 1000));
@@ -801,40 +895,25 @@
               password: password
             });
             
-            console.log('📋 Resultado del login:', result);
-            
             if (result && result.success) {
               console.log('✅ Login exitoso con sistema aislado:', result.user.username);
               
-              // Guardar en localStorage para persistencia
               localStorage.setItem('axyra_isolated_user', JSON.stringify(result.user));
-              console.log('💾 Usuario guardado en localStorage:', result.user.username);
               
-              // Si marcó "recordar sesión", guardar por 30 días
               if (rememberMe) {
                 localStorage.setItem('axyra_isolated_remember', JSON.stringify(result.user));
-                console.log('✅ Usuario recordado por 30 días');
               }
               
-              // Verificar que se guardó correctamente
-              const savedUser = localStorage.getItem('axyra_isolated_user');
-              console.log('🔍 Verificación de guardado:', savedUser ? 'EXITOSO' : 'FALLÓ');
-              
-              // Mostrar mensaje de éxito
               showSuccess('¡Login exitoso! Redirigiendo al dashboard...');
               
-              // Esperar un poco más para asegurar que se guarde
               setTimeout(() => {
-                console.log('🚀 Redirigiendo al dashboard...');
                 window.location.href = 'modulos/dashboard/dashboard.html';
               }, 2000);
               
             } else {
-              console.log('❌ Login falló con sistema aislado:', result.error);
               showError(result.error || 'Credenciales incorrectas');
             }
           } else {
-            console.error('❌ Sistema aislado no disponible');
             showError('Error en el sistema de autenticación');
           }
           
@@ -1007,36 +1086,49 @@
       });
 
       // Listener de estado de autenticación de Firebase
-      firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-          console.log('🔥 Usuario autenticado con Firebase:', user.email);
+      function setupFirebaseAuthListener() {
+        if (window.axyraFirebaseUtils && window.axyraFirebaseUtils.isAvailable()) {
+          firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+              console.log('🔥 Usuario autenticado con Firebase:', user.email);
+              
+              // Guardar en localStorage para compatibilidad
+              localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+              localStorage.setItem('axyra_isolated_user', JSON.stringify({
+                id: user.uid,
+                username: user.email.split('@')[0],
+                email: user.email,
+                nombre: user.displayName || user.email.split('@')[0],
+                rol: 'usuario',
+                createdAt: new Date().toISOString()
+              }));
+              
+              // Si estamos en la página de login, redirigir al dashboard
+              if (window.location.pathname.includes('login.html')) {
+                console.log('🔄 Usuario ya autenticado, redirigiendo al dashboard...');
+                setTimeout(() => {
+                  window.location.href = 'modulos/dashboard/dashboard.html';
+                }, 1000);
+              }
+            } else {
+              console.log('🔥 Usuario no autenticado con Firebase');
+              
+              // Limpiar localStorage si no hay usuario
+              localStorage.removeItem('axyra_firebase_user');
+              localStorage.removeItem('axyra_isolated_user');
+            }
+          });
           
-          // Guardar en localStorage para compatibilidad
-          localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
-          localStorage.setItem('axyra_isolated_user', JSON.stringify({
-            id: user.uid,
-            username: user.email.split('@')[0],
-            email: user.email,
-            nombre: user.displayName || user.email.email.split('@')[0],
-            rol: 'usuario',
-            createdAt: new Date().toISOString()
-          }));
-          
-          // Si estamos en la página de login, redirigir al dashboard
-          if (window.location.pathname.includes('login.html')) {
-            console.log('🔄 Usuario ya autenticado, redirigiendo al dashboard...');
-            setTimeout(() => {
-              window.location.href = 'modulos/dashboard/dashboard.html';
-            }, 1000);
-          }
+          console.log('✅ Listener de Firebase configurado');
         } else {
-          console.log('🔥 Usuario no autenticado con Firebase');
-          
-          // Limpiar localStorage si no hay usuario
-          localStorage.removeItem('axyra_firebase_user');
-          localStorage.removeItem('axyra_isolated_user');
+          console.log('⚠️ Firebase no disponible, configurando listener más tarde...');
+          // Intentar configurar más tarde
+          setTimeout(setupFirebaseAuthListener, 1000);
         }
-      });
+      }
+      
+      // Configurar listener cuando Firebase esté listo
+      setupFirebaseAuthListener();
     </script>
   </body>
 </html>
