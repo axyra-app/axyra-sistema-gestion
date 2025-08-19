@@ -16,9 +16,8 @@
 
     <!-- AXYRA Firebase Scripts -->
     <script src="../../static/firebase-config.js"></script>
-    <script src="../../static/firebase-user-system.js"></script>
-    <script src="../../static/firebase-data-system.js"></script>
-    <script src="../../static/ultra-simple-auth.js"></script>
+    <!-- SISTEMA AISLADO - SIN FIREBASE -->
+    <script src="../../static/isolated-auth.js"></script>
     <script src="../../static/debug-auth.js"></script>
   </head>
   <body>
@@ -301,35 +300,17 @@
         }
       }
 
-      // Cerrar sesión
-      async function logout() {
-        try {
-          console.log('🔄 Cerrando sesión...');
-
-          // Usar Firebase para cerrar sesión
-          if (window.axyraFirebaseUserSystem) {
-            await window.axyraFirebaseUserSystem.signOut();
-            console.log('✅ Sesión cerrada usando Firebase');
-          } else {
-            // Fallback si no hay Firebase
-            localStorage.removeItem('axyra_user');
-            console.log('✅ Sesión cerrada usando fallback');
-          }
-
-          // Limpiar datos de Firebase
-          if (window.axyraFirebaseDataSystem) {
-            window.axyraFirebaseDataSystem.clearUserData();
-            console.log('✅ Datos de Firebase limpiados');
-          }
-
-          // Redirigir al login
-          window.location.href = '../../login.html';
-        } catch (error) {
-          console.error('❌ Error al cerrar sesión:', error);
-          // Forzar limpieza y redirección
-          localStorage.removeItem('axyra_user');
-          window.location.href = '../../login.html';
+      // Cerrar sesión - SISTEMA AISLADO
+      function logout() {
+        console.log('🔄 Cerrando sesión desde gestión de empleados...');
+        
+        // Usar el sistema aislado
+        if (window.axyraIsolatedAuth) {
+          window.axyraIsolatedAuth.logout();
         }
+        
+        console.log('✅ Sesión cerrada desde gestión de empleados');
+        window.location.href = '../../login.html';
       }
 
       // Cargar empleados desde Firebase o localStorage

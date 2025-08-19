@@ -8,8 +8,9 @@
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="../../static/work-areas-config.js"></script>
-    <!-- AUTH GUARD DESACTIVADO TEMPORALMENTE -->
-    <!-- <script src="../../static/auth-guard.js"></script> -->
+    <!-- SISTEMA AISLADO - SIN FIREBASE -->
+    <script src="../../static/isolated-auth.js"></script>
+    <script src="../../static/debug-auth.js"></script>
   </head>
   <body>
     <!-- Header -->
@@ -457,9 +458,16 @@
         }
       }
 
-      // Cerrar sesión
+      // Cerrar sesión - SISTEMA AISLADO
       function logout() {
-        localStorage.removeItem('axyra_user');
+        console.log('🔄 Cerrando sesión desde configuración...');
+        
+        // Usar el sistema aislado
+        if (window.axyraIsolatedAuth) {
+          window.axyraIsolatedAuth.logout();
+        }
+        
+        console.log('✅ Sesión cerrada desde configuración');
         window.location.href = '../../login.html';
       }
 
