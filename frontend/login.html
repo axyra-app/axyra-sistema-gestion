@@ -438,6 +438,10 @@
           <span id="btnLoading" style="display: none">Iniciando sesión...</span>
         </button>
       </form>
+      
+      <button type="button" class="axyra-btn axyra-btn-secondary" onclick="clearAXYRAStorage()" style="margin-top: 10px; width: 100%;">
+        🧹 Limpiar Datos (Si hay problemas)
+      </button>
 
       <div class="divider">
         <span>o</span>
@@ -469,14 +473,14 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
 
     <!-- AXYRA Scripts -->
-    <script src="static/simple-auth.js"></script>
+    <script src="static/ultra-simple-auth.js"></script>
+    <script src="static/clear-storage.js"></script>
 
     <script>
-      // Verificar autenticación al cargar - SIN VERIFICACIONES AUTOMÁTICAS
+      // VERIFICACIÓN AUTOMÁTICA COMPLETAMENTE DESACTIVADA
       function checkAuth() {
-        if (window.axyraSimpleAuth && window.axyraSimpleAuth.isUserAuthenticated()) {
-          window.location.href = 'modulos/dashboard/dashboard.html';
-        }
+        // NO HACER NADA - EVITAR CICLO INFINITO
+        console.log('🔒 Verificación automática desactivada para evitar ciclo infinito');
       }
 
       // Mostrar/ocultar contraseña
@@ -591,8 +595,8 @@
         }
 
         try {
-          // Usar el sistema simple de autenticación
-          const result = window.axyraSimpleAuth.login({
+          // Usar el sistema ultra simple de autenticación
+          const result = window.axyraUltraSimpleAuth.login({
             usernameOrEmail: usernameOrEmail,
             password: password
           });
@@ -617,9 +621,7 @@
 
       document.addEventListener('DOMContentLoaded', function () {
         console.log('AXYRA Login Page cargada');
-        checkAuth();
-
-
+        // checkAuth(); // DESACTIVADO PARA EVITAR CICLO INFINITO
       });
 
       document.getElementById('loginForm').addEventListener('submit', function (e) {
@@ -628,13 +630,13 @@
         login();
       });
 
-      // Cerrar sesión si se navega desde otra página
-      window.addEventListener('pageshow', function (event) {
-        if (event.persisted) {
-          // Página cargada desde cache
-          checkAuth();
-        }
-      });
+      // VERIFICACIÓN AUTOMÁTICA DESACTIVADA PARA EVITAR CICLO INFINITO
+      // window.addEventListener('pageshow', function (event) {
+      //   if (event.persisted) {
+      //     // Página cargada desde cache
+      //     checkAuth();
+      //   }
+      // });
     </script>
   </body>
 </html>
