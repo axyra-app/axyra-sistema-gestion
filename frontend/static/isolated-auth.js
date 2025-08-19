@@ -72,24 +72,28 @@ class AXYRAIsolatedAuth {
 
   // Cargar sesión existente
   loadExistingSession() {
-    const userData = localStorage.getItem('axyra_isolated_user');
-    if (userData) {
+    // NO cargar sesión automáticamente - requerir login manual
+    console.log('⚠️ NO se carga sesión automáticamente - login manual requerido');
+    
+    // Limpiar cualquier sesión existente
+    this.clearSession();
+    
+    // Verificar si hay una sesión recordada
+    const rememberedUser = localStorage.getItem('axyra_isolated_remember');
+    if (rememberedUser) {
       try {
-        const user = JSON.parse(userData);
-
-        // Verificar que el usuario existe en la lista de usuarios
-        const userExists = this.users.find((u) => u.id === user.id);
+        const userData = JSON.parse(rememberedUser);
+        const userExists = this.users.find((u) => u.id === userData.id);
         if (userExists) {
-          this.currentUser = user;
-          this.isAuthenticated = true;
-          console.log('✅ Sesión existente cargada en sistema aislado:', user.username);
+          console.log('✅ Usuario recordado encontrado, pero NO se autentica automáticamente');
+          // NO establecer como autenticado automáticamente
         } else {
-          console.log('⚠️ Usuario de sesión no encontrado en lista, limpiando sesión');
-          this.clearSession();
+          console.log('⚠️ Usuario recordado no encontrado, limpiando');
+          localStorage.removeItem('axyra_isolated_remember');
         }
       } catch (error) {
-        console.error('❌ Error cargando sesión aislada:', error);
-        this.clearSession();
+        console.error('❌ Error con usuario recordado:', error);
+        localStorage.removeItem('axyra_isolated_remember');
       }
     }
   }

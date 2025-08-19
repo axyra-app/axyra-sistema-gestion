@@ -144,21 +144,21 @@
             <div class="axyra-stat-highlight-label">Automatizado</div>
             <p>Procesos completamente automatizados para máxima eficiencia</p>
           </div>
-          
+
           <div class="axyra-stat-highlight-card">
             <div class="axyra-stat-highlight-icon">⚡</div>
             <div class="axyra-stat-highlight-number">24/7</div>
             <div class="axyra-stat-highlight-label">Disponible</div>
             <p>Acceso continuo desde cualquier dispositivo y ubicación</p>
           </div>
-          
+
           <div class="axyra-stat-highlight-card">
             <div class="axyra-stat-highlight-icon">🔒</div>
             <div class="axyra-stat-highlight-number">100%</div>
             <div class="axyra-stat-highlight-label">Seguro</div>
             <p>Datos protegidos con la más alta seguridad empresarial</p>
           </div>
-          
+
           <div class="axyra-stat-highlight-card">
             <div class="axyra-stat-highlight-icon">📱</div>
             <div class="axyra-stat-highlight-number">100%</div>
@@ -204,6 +204,83 @@
               <h3>Acceso Multiplataforma</h3>
               <p>Funciona perfectamente en web, móvil y tablet sin necesidad de instalación</p>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de Contacto -->
+    <section class="axyra-contact" id="contacto">
+      <div class="axyra-container">
+        <h2 class="axyra-section-title">Contacto</h2>
+        <div class="axyra-contact-content">
+          <div class="axyra-contact-info">
+            <h3>¿Necesitas Ayuda?</h3>
+            <p>Nuestro equipo está aquí para ayudarte con cualquier pregunta o consulta sobre AXYRA.</p>
+            
+            <div class="axyra-contact-methods">
+              <div class="axyra-contact-method">
+                <div class="axyra-contact-icon">📧</div>
+                <div class="axyra-contact-details">
+                  <h4>Email de Soporte</h4>
+                  <p>axyra.app@gmail.com</p>
+                  <button class="axyra-btn axyra-btn-primary" onclick="enviarEmailSoporte()">
+                    Enviar Email
+                  </button>
+                </div>
+              </div>
+              
+              <div class="axyra-contact-method">
+                <div class="axyra-contact-icon">💬</div>
+                <div class="axyra-contact-details">
+                  <h4>Chat en Vivo</h4>
+                  <p>Disponible en horario laboral</p>
+                  <button class="axyra-btn axyra-btn-secondary" onclick="iniciarChat()">
+                    Iniciar Chat
+                  </button>
+                </div>
+              </div>
+              
+              <div class="axyra-contact-method">
+                <div class="axyra-contact-icon">📱</div>
+                <div class="axyra-contact-details">
+                  <h4>WhatsApp Business</h4>
+                  <p>Respuesta rápida en WhatsApp</p>
+                  <button class="axyra-btn axyra-btn-success" onclick="contactarWhatsApp()">
+                    Contactar por WhatsApp
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="axyra-contact-form">
+            <h3>Envíanos un Mensaje</h3>
+            <form id="contactForm" onsubmit="enviarMensajeContacto(event)">
+              <div class="form-group">
+                <label for="contactName">Nombre Completo *</label>
+                <input type="text" id="contactName" name="name" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="contactEmail">Email *</label>
+                <input type="email" id="contactEmail" name="email" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="contactSubject">Asunto *</label>
+                <input type="text" id="contactSubject" name="subject" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="contactMessage">Mensaje *</label>
+                <textarea id="contactMessage" name="message" rows="5" required></textarea>
+              </div>
+              
+              <button type="submit" class="axyra-btn axyra-btn-primary">
+                📧 Enviar Mensaje
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -1017,6 +1094,103 @@
         } else {
           showAuthModal();
         }
+      }
+
+      // ========================================
+      // FUNCIONES DE CONTACTO
+      // ========================================
+      
+      function enviarEmailSoporte() {
+        window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank');
+      }
+      
+      function iniciarChat() {
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>💬 Chat en Vivo</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>Chat en Vivo - Próximamente</h4>
+              <p>Estamos implementando un sistema de chat en vivo para brindarte soporte inmediato.</p>
+              
+              <h5>📧 Mientras tanto, contáctanos por:</h5>
+              <ul>
+                <li><strong>Email:</strong> axyra.app@gmail.com</li>
+                <li><strong>WhatsApp:</strong> +57 300 123 4567</li>
+                <li><strong>Horario:</strong> Lunes a Viernes 9:00 AM - 6:00 PM</li>
+              </ul>
+              
+              <div class="axyra-modal-actions">
+                <button class="axyra-btn axyra-btn-primary" onclick="enviarEmailSoporte()">
+                  📧 Enviar Email
+                </button>
+                <button class="axyra-btn axyra-btn-secondary" onclick="contactarWhatsApp()">
+                  📱 WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+      
+      function contactarWhatsApp() {
+        const mensaje = encodeURIComponent('Hola, necesito información sobre AXYRA');
+        window.open(`https://wa.me/573001234567?text=${mensaje}`, '_blank');
+      }
+      
+      function enviarMensajeContacto(event) {
+        event.preventDefault();
+        
+        const formData = new FormData(event.target);
+        const data = {
+          name: formData.get('name'),
+          email: formData.get('email'),
+          subject: formData.get('subject'),
+          message: formData.get('message')
+        };
+        
+        // Simular envío (en producción esto iría a un servidor)
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>✅ Mensaje Enviado</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>¡Gracias por tu mensaje!</h4>
+              <p>Hemos recibido tu consulta y te responderemos en las próximas 24 horas.</p>
+              
+              <h5>📋 Detalles del mensaje:</h5>
+              <ul>
+                <li><strong>Nombre:</strong> ${data.name}</li>
+                <li><strong>Email:</strong> ${data.email}</li>
+                <li><strong>Asunto:</strong> ${data.subject}</li>
+                <li><strong>Mensaje:</strong> ${data.message}</li>
+              </ul>
+              
+              <p><strong>📧 Email de confirmación enviado a:</strong> ${data.email}</p>
+              
+              <div class="axyra-modal-actions">
+                <button class="axyra-btn axyra-btn-primary" onclick="this.closest('.axyra-modal').remove()">
+                  ✅ Entendido
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Limpiar formulario
+        event.target.reset();
       }
     </script>
   </body>

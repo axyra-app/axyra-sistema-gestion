@@ -553,13 +553,60 @@
             }
           }
 
-          // No hay sesión activa - NO redirigir automáticamente para evitar bucles
-          console.log('⚠️ No hay sesión activa - NO redirigiendo automáticamente');
+          // No hay sesión activa - MOSTRAR MENSAJE EN LUGAR DE REDIRIGIR
+          console.log('⚠️ No hay sesión activa - mostrando mensaje de login');
+          mostrarMensajeNoAutenticado();
           return false;
         } catch (error) {
           console.error('❌ Error al verificar sesión:', error);
+          mostrarMensajeNoAutenticado();
           return false;
         }
+      }
+
+      // Función para mostrar mensaje cuando no hay autenticación
+      function mostrarMensajeNoAutenticado() {
+        const mainContent = document.querySelector('.axyra-section');
+        if (mainContent) {
+          mainContent.innerHTML = `
+            <div class="axyra-container">
+              <div class="axyra-page-header">
+                <h1 class="axyra-page-title">🔐 Acceso Requerido</h1>
+                <p class="axyra-page-subtitle">Necesitas iniciar sesión para acceder al dashboard</p>
+              </div>
+              
+              <div class="axyra-auth-required-card">
+                <div class="axyra-auth-required-icon">
+                  <i class="fas fa-lock"></i>
+                </div>
+                <h2>Inicia Sesión para Continuar</h2>
+                <p>Para acceder al dashboard y todas las funcionalidades de AXYRA, necesitas iniciar sesión con tu cuenta.</p>
+                
+                <div class="axyra-auth-actions">
+                  <button class="axyra-btn axyra-btn-primary" onclick="irALogin()">
+                    🔐 Iniciar Sesión
+                  </button>
+                  <button class="axyra-btn axyra-btn-secondary" onclick="irARegistro()">
+                    📝 Crear Cuenta
+                  </button>
+                  <button class="axyra-btn axyra-btn-ghost" onclick="irAInicio()">
+                    🏠 Volver al Inicio
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      // Función para ir al login
+      function irALogin() {
+        window.location.href = '../../login.html';
+      }
+
+      // Función para ir al registro
+      function irARegistro() {
+        window.location.href = '../../register.html';
       }
 
       // Ir a inicio
