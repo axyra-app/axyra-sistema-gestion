@@ -1274,7 +1274,7 @@ p {
   display: none;
   justify-content: center;
   align-items: center;
-  z-index: 10000;
+  z-index: 999999; /* VALOR MÁS ALTO QUE EL HEADER (99999) */
   backdrop-filter: blur(5px);
 }
 

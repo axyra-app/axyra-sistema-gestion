@@ -541,11 +541,11 @@
 
         // Obtener usuario actual para aislamiento de datos
         let currentUser = null;
-        if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-          currentUser = axyraUserSystem.getCurrentUser();
+        if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+          currentUser = window.axyraIsolatedAuth.getCurrentUser();
         } else {
           // Fallback a localStorage
-          const userData = localStorage.getItem('axyra_user');
+          const userData = localStorage.getItem('axyra_isolated_user');
           if (userData) {
             currentUser = JSON.parse(userData);
           }
@@ -595,11 +595,11 @@
 
         // Obtener usuario actual para aislamiento de datos
         let currentUser = null;
-        if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-          currentUser = axyraUserSystem.getCurrentUser();
+        if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+          currentUser = window.axyraIsolatedAuth.getCurrentUser();
         } else {
           // Fallback a localStorage
-          const userData = localStorage.getItem('axyra_user');
+          const userData = localStorage.getItem('axyra_isolated_user');
           if (userData) {
             currentUser = JSON.parse(userData);
           }
@@ -614,7 +614,7 @@
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          if (key && key.startsWith('axyra_') && key !== 'axyra_user') {
+          if (key && key.startsWith('axyra_') && key !== 'axyra_isolated_user') {
             keysToRemove.push(key);
           }
         }
@@ -648,11 +648,11 @@
 
         // Obtener usuario actual para aislamiento de datos
         let currentUser = null;
-        if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-          currentUser = axyraUserSystem.getCurrentUser();
+        if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+          currentUser = window.axyraIsolatedAuth.getCurrentUser();
         } else {
           // Fallback a localStorage
-          const userData = localStorage.getItem('axyra_user');
+          const userData = localStorage.getItem('axyra_isolated_user');
           if (userData) {
             currentUser = JSON.parse(userData);
           }
@@ -727,8 +727,8 @@
         if (!securityStatus) return;
 
         try {
-          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-            const user = axyraUserSystem.getCurrentUser();
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            const user = window.axyraIsolatedAuth.getCurrentUser();
             if (user) {
               securityStatus.className = 'axyra-security-indicator';
               securityStatus.innerHTML = '<i class="fas fa-shield-alt"></i><span>Sesión Activa</span>';
@@ -738,7 +738,7 @@
             }
           } else {
             // Verificar localStorage como fallback
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               try {
                 const user = JSON.parse(userData);
@@ -772,12 +772,12 @@
           if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
             currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
             console.log('✅ Usuario Firebase:', currentUser.email);
-          } else if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-            currentUser = axyraUserSystem.getCurrentUser();
+          } else if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
             console.log('✅ Usuario sistema profesional:', currentUser.username);
           } else {
             // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
@@ -972,11 +972,11 @@
 
         // Obtener usuario actual para aislamiento de datos
         let currentUser = null;
-        if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-          currentUser = axyraUserSystem.getCurrentUser();
+        if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+          currentUser = window.axyraIsolatedAuth.getCurrentUser();
         } else {
           // Fallback a localStorage
-          const userData = localStorage.getItem('axyra_user');
+          const userData = localStorage.getItem('axyra_isolated_user');
           if (userData) {
             currentUser = JSON.parse(userData);
           }
@@ -1056,11 +1056,11 @@
         try {
           // Obtener usuario actual
           let currentUser = null;
-          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-            currentUser = axyraUserSystem.getCurrentUser();
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
             // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
@@ -1105,11 +1105,11 @@
         try {
           // Obtener usuario actual
           let currentUser = null;
-          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-            currentUser = axyraUserSystem.getCurrentUser();
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
             // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
@@ -1159,11 +1159,11 @@
         try {
           // Obtener usuario actual
           let currentUser = null;
-          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-            currentUser = axyraUserSystem.getCurrentUser();
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
             // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
@@ -1211,11 +1211,11 @@
         try {
           // Obtener usuario actual
           let currentUser = null;
-          if (axyraUserSystem && axyraUserSystem.hasActiveSession()) {
-            currentUser = axyraUserSystem.getCurrentUser();
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
             // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
@@ -1722,7 +1722,7 @@
             if (!user) {
               console.log('⚠️ Usuario desconectado de Firebase, redirigiendo al login');
               localStorage.removeItem('axyra_firebase_user');
-              localStorage.removeItem('axyra_user');
+              localStorage.removeItem('axyra_isolated_user');
               window.location.href = '../../login.html';
             }
           });
@@ -2505,9 +2505,9 @@
           }
 
           // Actualizar en localStorage
-          const userData = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+          const userData = JSON.parse(localStorage.getItem('axyra_isolated_user') || '{}');
           userData.username = newUsername;
-          localStorage.setItem('axyra_user', JSON.stringify(userData));
+          localStorage.setItem('axyra_isolated_user', JSON.stringify(userData));
 
           // Actualizar mensaje de bienvenida
           personalizarBienvenida();
@@ -2565,9 +2565,9 @@
           }
 
           // Actualizar en localStorage
-          const userData = JSON.parse(localStorage.getItem('axyra_user') || '{}');
+          const userData = JSON.parse(localStorage.getItem('axyra_isolated_user') || '{}');
           userData.password = newPassword; // En producción, esto debería estar hasheado
-          localStorage.setItem('axyra_user', JSON.stringify(userData));
+          localStorage.setItem('axyra_isolated_user', JSON.stringify(userData));
 
           alert('✅ Contraseña actualizada correctamente');
           cerrarModalCambiarPassword();
@@ -2732,7 +2732,7 @@
           if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
             currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
           } else {
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
