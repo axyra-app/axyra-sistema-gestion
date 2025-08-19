@@ -3083,3 +3083,52 @@ p {
   background: #b91c1c;
   border-color: #b91c1c;
 }
+
+/* Temas del sistema */
+.tema-claro {
+  --axyra-bg-primary: #ffffff;
+  --axyra-bg-secondary: #f8fafc;
+  --axyra-bg-tertiary: #e2e8f0;
+  --axyra-text-primary: #1e293b;
+  --axyra-text-secondary: #475569;
+  --axyra-border-color: #cbd5e1;
+  --axyra-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.tema-oscuro {
+  --axyra-bg-primary: #0f172a;
+  --axyra-bg-secondary: #1e293b;
+  --axyra-bg-tertiary: #334155;
+  --axyra-text-primary: #f1f5f9;
+  --axyra-text-secondary: #cbd5e1;
+  --axyra-border-color: #475569;
+  --axyra-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+/* Aplicar variables de tema */
+body {
+  background-color: var(--axyra-bg-primary);
+  color: var(--axyra-text-primary);
+  transition: all 0.3s ease;
+}
+
+.axyra-card {
+  background-color: var(--axyra-bg-secondary);
+  border-color: var(--axyra-border-color);
+  box-shadow: var(--axyra-shadow);
+}
+
+.axyra-form-input,
+.axyra-form-select,
+.axyra-form-textarea {
+  background-color: var(--axyra-bg-primary);
+  border-color: var(--axyra-border-color);
+  color: var(--axyra-text-primary);
+}
+
+.axyra-form-input:focus,
+.axyra-form-select:focus,
+.axyra-form-textarea:focus {
+  border-color: var(--axyra-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}

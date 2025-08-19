@@ -267,6 +267,54 @@
                   />
                 </div>
               </div>
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="recargoExtraDominical" class="axyra-form-label">Recargo Extra Dominical (%)</label>
+                  <input
+                    type="number"
+                    id="recargoExtraDominical"
+                    name="recargoExtraDominical"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="recargoExtraDominicalNocturno" class="axyra-form-label">Recargo Extra Dominical Nocturno (%)</label>
+                  <input
+                    type="number"
+                    id="recargoExtraDominicalNocturno"
+                    name="recargoExtraDominicalNocturno"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="recargoExtraFestivo" class="axyra-form-label">Recargo Extra Festivo (%)</label>
+                  <input
+                    type="number"
+                    id="recargoExtraFestivo"
+                    name="recargoExtraFestivo"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+                <div class="axyra-form-group">
+                  <label for="recargoExtraFestivoNocturno" class="axyra-form-label">Recargo Extra Festivo Nocturno (%)</label>
+                  <input
+                    type="number"
+                    id="recargoExtraFestivoNocturno"
+                    name="recargoExtraFestivoNocturno"
+                    class="axyra-form-input"
+                    step="0.01"
+                    required
+                  />
+                </div>
+              </div>
               <div class="axyra-form-actions">
                 <button type="submit" class="axyra-btn axyra-btn-primary">
                   <i class="fas fa-save"></i> Guardar Recargos
@@ -339,7 +387,7 @@
         <div class="axyra-card">
           <div class="axyra-card-header">
             <div class="axyra-card-icon">
-              <i class="fas fa-cogs"></i>
+              <i class="fas fa-cog"></i>
             </div>
             <div>
               <h3 class="axyra-card-title">Configuración del Sistema</h3>
@@ -351,7 +399,7 @@
               <div class="axyra-form-row">
                 <div class="axyra-form-group">
                   <label for="zonaHoraria" class="axyra-form-label">Zona Horaria</label>
-                  <select id="zonaHoraria" name="zonaHoraria" class="axyra-form-select" required>
+                  <select id="zonaHoraria" name="zonaHoraria" class="axyra-form-select">
                     <option value="America/Bogota">Bogotá (UTC-5)</option>
                     <option value="America/New_York">Nueva York (UTC-5)</option>
                     <option value="America/Los_Angeles">Los Ángeles (UTC-8)</option>
@@ -359,34 +407,35 @@
                   </select>
                 </div>
                 <div class="axyra-form-group">
+                  <label for="idioma" class="axyra-form-label">Idioma</label>
+                  <select id="idioma" name="idioma" class="axyra-form-select">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                    <option value="pt">Português</option>
+                  </select>
+                </div>
+              </div>
+              <div class="axyra-form-row">
+                <div class="axyra-form-group">
+                  <label for="tema" class="axyra-form-label">Tema</label>
+                  <select id="tema" name="tema" class="axyra-form-select" onchange="cambiarTema(this.value)">
+                    <option value="light">Claro</option>
+                    <option value="dark">Oscuro</option>
+                    <option value="auto">Automático</option>
+                  </select>
+                </div>
+                <div class="axyra-form-group">
                   <label for="formatoFecha" class="axyra-form-label">Formato de Fecha</label>
-                  <select id="formatoFecha" name="formatoFecha" class="axyra-form-select" required>
+                  <select id="formatoFecha" name="formatoFecha" class="axyra-form-select">
                     <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                     <option value="MM/DD/YYYY">MM/DD/YYYY</option>
                     <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                   </select>
                 </div>
               </div>
-              <div class="axyra-form-row">
-                <div class="axyra-form-group">
-                  <label for="idioma" class="axyra-form-label">Idioma</label>
-                  <select id="idioma" name="idioma" class="axyra-form-select" required>
-                    <option value="es">Español</option>
-                    <option value="en">English</option>
-                  </select>
-                </div>
-                <div class="axyra-form-group">
-                  <label for="tema" class="axyra-form-label">Tema</label>
-                  <select id="tema" name="tema" class="axyra-form-select" required>
-                    <option value="light">Claro</option>
-                    <option value="dark">Oscuro</option>
-                    <option value="auto">Automático</option>
-                  </select>
-                </div>
-              </div>
               <div class="axyra-form-actions">
                 <button type="submit" class="axyra-btn axyra-btn-primary">
-                  <i class="fas fa-save"></i> Guardar Sistema
+                  <i class="fas fa-save"></i> Guardar Configuración
                 </button>
               </div>
             </form>
@@ -428,10 +477,10 @@
               <button class="axyra-btn axyra-btn-warning" onclick="importarConfiguracion()">
                 <i class="fas fa-upload"></i> Importar Configuración
               </button>
-              <button class="axyra-btn axyra-btn-secondary" onclick="restaurarValoresPorDefecto()">
+              <button class="axyra-btn axyra-btn-secondary" onclick="mostrarModalRestaurar()">
                 <i class="fas fa-undo"></i> Restaurar Valores por Defecto
               </button>
-              <button class="axyra-btn axyra-btn-error" onclick="limpiarDatos()">
+              <button class="axyra-btn axyra-btn-error" onclick="mostrarModalLimpiar()">
                 <i class="fas fa-trash"></i> Limpiar Todos los Datos
               </button>
             </div>
@@ -439,6 +488,77 @@
         </div>
       </div>
     </main>
+
+    <!-- Modal Restaurar Valores -->
+    <div id="modalRestaurar" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3 class="axyra-modal-title">
+            <i class="fas fa-undo"></i> Restaurar Valores por Defecto
+          </h3>
+          <button class="axyra-modal-close" onclick="cerrarModalRestaurar()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="axyra-modal-body">
+          <div class="axyra-modal-text">
+            <p>⚠️ ¿Estás seguro de que deseas restaurar todos los valores por defecto?</p>
+            <p>Esta acción:</p>
+            <ul>
+              <li>Restaurará la configuración de empresa a valores predeterminados</li>
+              <li>Restaurará los recargos por tipo de hora a valores legales colombianos</li>
+              <li>Restaurará la configuración de nómina a valores estándar</li>
+              <li><strong>NO afectará los datos de empleados, horas o facturas</strong></li>
+            </ul>
+          </div>
+        </div>
+        <div class="axyra-modal-footer">
+          <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalRestaurar()">
+            Cancelar
+          </button>
+          <button class="axyra-btn axyra-btn-warning" onclick="restaurarValoresPorDefecto()">
+            <i class="fas fa-undo"></i> Restaurar Valores
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Limpiar Datos -->
+    <div id="modalLimpiar" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3 class="axyra-modal-title">
+            <i class="fas fa-trash"></i> Limpiar Todos los Datos
+          </h3>
+          <button class="axyra-modal-close" onclick="cerrarModalLimpiar()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="axyra-modal-body">
+          <div class="axyra-modal-text">
+            <p>🚨 <strong>ADVERTENCIA CRÍTICA</strong></p>
+            <p>¿Estás completamente seguro de que deseas eliminar TODOS los datos del sistema?</p>
+            <p>Esta acción es <strong>IRREVERSIBLE</strong> y eliminará:</p>
+            <ul>
+              <li>✅ Todos los empleados registrados</li>
+              <li>✅ Todo el historial de horas trabajadas</li>
+              <li>✅ Todas las nóminas generadas</li>
+              <li>✅ Todas las facturas registradas</li>
+              <li>✅ Toda la configuración personalizada</li>
+            </ul>
+            <p><strong>Esta acción no se puede deshacer.</strong></p>
+          </div>
+        </div>
+        <div class="axyra-modal-footer">
+          <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalLimpiar()">
+            Cancelar
+          </button>
+          <button class="axyra-btn axyra-btn-error" onclick="limpiarTodosLosDatos()">
+            <i class="fas fa-trash"></i> Limpiar Todo
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer class="axyra-footer">
@@ -488,7 +608,7 @@
         document.getElementById('auxilioTransporte').value = config.auxilioTransporte || '100000';
         document.getElementById('porcentajeSalud').value = config.porcentajeSalud || '4';
         document.getElementById('porcentajePension').value = config.porcentajePension || '4';
-        document.getElementById('horasEstandar').value = config.horasEstandar || '160';
+        document.getElementById('horasEstandar').value = config.horasEstandar || '176'; // 44 horas semanales
         document.getElementById('periodoNomina').value = config.periodoNomina || 'quincenal';
 
         // Cargar recargos
@@ -498,12 +618,151 @@
         document.getElementById('recargoExtraNocturna').value = config.recargoExtraNocturna || '75';
         document.getElementById('recargoFestivo').value = config.recargoFestivo || '75';
         document.getElementById('recargoDominicalNocturno').value = config.recargoDominicalNocturno || '110';
+        document.getElementById('recargoExtraDominical').value = config.recargoExtraDominical || '50';
+        document.getElementById('recargoExtraDominicalNocturno').value = config.recargoExtraDominicalNocturno || '150';
+        document.getElementById('recargoExtraFestivo').value = config.recargoExtraFestivo || '100';
+        document.getElementById('recargoExtraFestivoNocturno').value = config.recargoExtraFestivoNocturno || '200';
 
         // Cargar sistema
         document.getElementById('zonaHoraria').value = config.zonaHoraria || 'America/Bogota';
         document.getElementById('formatoFecha').value = config.formatoFecha || 'DD/MM/YYYY';
         document.getElementById('idioma').value = config.idioma || 'es';
         document.getElementById('tema').value = config.tema || 'light';
+      }
+
+      // Cambiar tema
+      function cambiarTema(tema) {
+        const body = document.body;
+        const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
+        
+        // Remover clases de tema anteriores
+        body.classList.remove('tema-claro', 'tema-oscuro');
+        
+        if (tema === 'auto') {
+          // Detectar tema automáticamente basado en la hora
+          const hora = new Date().getHours();
+          if (hora >= 6 && hora < 18) {
+            body.classList.add('tema-claro');
+            config.temaReal = 'light';
+          } else {
+            body.classList.add('tema-oscuro');
+            config.temaReal = 'dark';
+          }
+        } else {
+          body.classList.add(`tema-${tema}`);
+          config.temaReal = tema;
+        }
+        
+        config.tema = tema;
+        localStorage.setItem('axyra_configuracion', JSON.stringify(config));
+        
+        console.log(`✅ Tema cambiado a: ${tema}`);
+      }
+
+      // Mostrar modal restaurar
+      function mostrarModalRestaurar() {
+        document.getElementById('modalRestaurar').style.display = 'flex';
+      }
+
+      // Cerrar modal restaurar
+      function cerrarModalRestaurar() {
+        document.getElementById('modalRestaurar').style.display = 'none';
+      }
+
+      // Mostrar modal limpiar
+      function mostrarModalLimpiar() {
+        document.getElementById('modalLimpiar').style.display = 'flex';
+      }
+
+      // Cerrar modal limpiar
+      function cerrarModalLimpiar() {
+        document.getElementById('modalLimpiar').style.display = 'none';
+      }
+
+      // Restaurar valores por defecto
+      function restaurarValoresPorDefecto() {
+        try {
+          // Configuración por defecto
+          const configPorDefecto = {
+            // Empresa
+            nombreEmpresa: 'MI EMPRESA',
+            nitEmpresa: '900.000.000-0',
+            direccionEmpresa: 'Dirección de la empresa',
+            telefonoEmpresa: '',
+            emailEmpresa: '',
+            sitioWebEmpresa: '',
+            
+            // Nómina
+            salarioMinimo: '1423500',
+            auxilioTransporte: '100000',
+            porcentajeSalud: '4',
+            porcentajePension: '4',
+            horasEstandar: '176', // 44 horas semanales
+            periodoNomina: 'quincenal',
+            
+            // Recargos (legales colombianos 2025)
+            recargoNocturno: '35',
+            recargoDominical: '75',
+            recargoExtraDiurna: '25',
+            recargoExtraNocturna: '75',
+            recargoFestivo: '75',
+            recargoDominicalNocturno: '110',
+            recargoExtraDominical: '50',
+            recargoExtraDominicalNocturno: '150',
+            recargoExtraFestivo: '100',
+            recargoExtraFestivoNocturno: '200',
+            
+            // Sistema
+            zonaHoraria: 'America/Bogota',
+            formatoFecha: 'DD/MM/YYYY',
+            idioma: 'es',
+            tema: 'light'
+          };
+          
+          localStorage.setItem('axyra_configuracion', JSON.stringify(configPorDefecto));
+          
+          // Recargar configuración
+          cargarConfiguracion();
+          
+          cerrarModalRestaurar();
+          mostrarMensaje('✅ Valores por defecto restaurados correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error restaurando valores:', error);
+          mostrarMensaje('❌ Error al restaurar valores', 'error');
+        }
+      }
+
+      // Limpiar todos los datos
+      function limpiarTodosLosDatos() {
+        try {
+          // Limpiar todos los datos del sistema
+          localStorage.removeItem('axyra_empleados');
+          localStorage.removeItem('axyra_horas');
+          localStorage.removeItem('axyra_nominas');
+          localStorage.removeItem('axyra_facturas');
+          localStorage.removeItem('axyra_comprobantes');
+          localStorage.removeItem('axyra_historial');
+          
+          // Mantener solo la configuración básica
+          const configBasica = {
+            nombreEmpresa: 'MI EMPRESA',
+            nitEmpresa: '900.000.000-0',
+            direccionEmpresa: 'Dirección de la empresa',
+            tema: 'light'
+          };
+          localStorage.setItem('axyra_configuracion', JSON.stringify(configBasica));
+          
+          cerrarModalLimpiar();
+          mostrarMensaje('✅ Todos los datos han sido eliminados del sistema', 'success');
+          
+          // Redirigir al dashboard
+          setTimeout(() => {
+            window.location.href = '../dashboard/dashboard.html';
+          }, 2000);
+        } catch (error) {
+          console.error('❌ Error limpiando datos:', error);
+          mostrarMensaje('❌ Error al limpiar datos', 'error');
+        }
       }
 
       // Guardar configuración de empresa
@@ -552,6 +811,10 @@
         config.recargoExtraNocturna = formData.get('recargoExtraNocturna');
         config.recargoFestivo = formData.get('recargoFestivo');
         config.recargoDominicalNocturno = formData.get('recargoDominicalNocturno');
+        config.recargoExtraDominical = formData.get('recargoExtraDominical');
+        config.recargoExtraDominicalNocturno = formData.get('recargoExtraDominicalNocturno');
+        config.recargoExtraFestivo = formData.get('recargoExtraFestivo');
+        config.recargoExtraFestivoNocturno = formData.get('recargoExtraFestivoNocturno');
 
         localStorage.setItem('axyra_configuracion', JSON.stringify(config));
         mostrarMensaje('✅ Recargos guardados', 'success');
@@ -610,33 +873,6 @@
           }
         };
         input.click();
-      }
-
-      // Restaurar valores por defecto
-      function restaurarValoresPorDefecto() {
-        if (confirm('¿Estás seguro de que quieres restaurar todos los valores por defecto?')) {
-          localStorage.removeItem('axyra_configuracion');
-          cargarConfiguracion();
-          mostrarMensaje('✅ Valores por defecto restaurados', 'success');
-        }
-      }
-
-      // Limpiar datos
-      function limpiarDatos() {
-        if (confirm('⚠️ ADVERTENCIA: Esta acción eliminará TODOS los datos del sistema. ¿Estás seguro?')) {
-          const keys = [
-            'axyra_empleados',
-            'axyra_horas',
-            'axyra_nominas',
-            'axyra_comprobantes',
-            'axyra_historial',
-            'axyra_cuadre_caja',
-            'axyra_facturas',
-          ];
-
-          keys.forEach((key) => localStorage.removeItem(key));
-          mostrarMensaje('✅ Todos los datos han sido eliminados', 'success');
-        }
       }
 
       // Mostrar mensajes

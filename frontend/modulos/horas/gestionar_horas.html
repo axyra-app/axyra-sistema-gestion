@@ -661,21 +661,6 @@
         try {
           console.log('👥 Cargando empleados para selects...');
 
-          // Obtener usuario actual para filtrar empleados
-          const userData = localStorage.getItem('axyra_isolated_user');
-          if (!userData) {
-            console.error('❌ No hay usuario autenticado');
-            return;
-          }
-
-          const currentUser = JSON.parse(userData);
-          if (!currentUser || (!currentUser.username && !currentUser.email)) {
-            console.error('❌ Usuario no válido');
-            return;
-          }
-
-          console.log('✅ Usuario actual:', currentUser.username || currentUser.email);
-
           // Cargar empleados desde localStorage
           console.log('💾 Cargando empleados desde localStorage...');
           const empleadosData = localStorage.getItem('axyra_empleados');
@@ -715,17 +700,17 @@
 
           // Si no hay empleados, mostrar mensaje de ayuda
           if (empleados.length === 0) {
-            console.log('⚠️ No hay empleados para el usuario actual');
+            console.log('⚠️ No hay empleados activos');
 
             // Mostrar mensaje informativo
             const selectEmpleado = document.getElementById('empleadoHoras');
             if (selectEmpleado) {
-              selectEmpleado.innerHTML = '<option value="">No hay empleados registrados</option>';
+              selectEmpleado.innerHTML = '<option value="">No hay empleados activos</option>';
             }
 
             // Mostrar mensaje informativo
             setTimeout(() => {
-              mostrarMensaje('No hay empleados registrados. Ve a la página de empleados para registrar uno.', 'warning');
+              mostrarMensaje('No hay empleados activos. Ve a la página de empleados para registrar uno.', 'warning');
             }, 1000);
             return;
           }
@@ -748,6 +733,7 @@
             selectComprobante.innerHTML = '<option value="">Seleccionar empleado</option>';
           }
 
+          // Agregar empleados a los selects
           empleados.forEach((empleado, index) => {
             // Select principal de horas
             const option = document.createElement('option');

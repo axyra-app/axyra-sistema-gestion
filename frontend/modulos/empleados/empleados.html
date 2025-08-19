@@ -306,29 +306,13 @@
         try {
           console.log('👥 Cargando empleados...');
 
-          // Obtener usuario actual
-          const userData = localStorage.getItem('axyra_isolated_user');
-          if (!userData) {
-            console.error('❌ No hay usuario autenticado');
-            return;
-          }
-
-          const currentUser = JSON.parse(userData);
-          console.log('✅ Usuario actual:', currentUser.username || currentUser.email);
-
           // Cargar desde localStorage
           console.log('💾 Cargando empleados desde localStorage...');
           const empleadosGuardados = localStorage.getItem('axyra_empleados');
           if (empleadosGuardados) {
             try {
               empleados = JSON.parse(empleadosGuardados);
-
-              // Filtrar empleados por usuario actual
-              if (currentUser.username || currentUser.email) {
-                const userId = currentUser.username || currentUser.email;
-                empleados = empleados.filter((emp) => emp.userId === userId);
-                console.log(`✅ Empleados filtrados para usuario: ${userId} - Total: ${empleados.length}`);
-              }
+              console.log(`✅ Empleados cargados desde localStorage: ${empleados.length}`);
             } catch (error) {
               console.error('Error parseando empleados:', error);
               empleados = [];
@@ -349,15 +333,6 @@
       // Guardar empleados en localStorage
       async function guardarEmpleados() {
         try {
-          // Obtener usuario actual
-          const userData = localStorage.getItem('axyra_isolated_user');
-          if (!userData) {
-            console.error('❌ No hay usuario autenticado para guardar empleados');
-            return;
-          }
-
-          const currentUser = JSON.parse(userData);
-
           // Guardar en localStorage
           console.log('💾 Guardando empleados en localStorage...');
           localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
@@ -469,14 +444,6 @@
       // Agregar empleado
       function agregarEmpleado(empleado) {
         empleado.id = empleados.length > 0 ? Math.max(...empleados.map((e) => e.id)) + 1 : 1;
-
-        // Obtener usuario actual para asignar userId
-        const userData = localStorage.getItem('axyra_isolated_user');
-        if (userData) {
-          const currentUser = JSON.parse(userData);
-          empleado.userId = currentUser.username || currentUser.email;
-        }
-
         empleado.createdAt = new Date().toISOString();
         empleados.push(empleado);
 
@@ -662,80 +629,6 @@
         }
       }
 
-
-            const contenido = e.target.result;
-            const empleados = parsearCSV(contenido);
-
-            if (empleados.length > 0) {
-              // Confirmar importación
-              if (confirm(`¿Importar ${empleados.length} empleados desde la plantilla?`)) {
-                importarEmpleados(empleados);
-              }
-            } else {
-              mostrarMensaje('❌ No se encontraron datos válidos en el archivo', 'error');
-            }
-          } catch (error) {
-            console.error('Error procesando archivo:', error);
-            mostrarMensaje('❌ Error procesando el archivo', 'error');
-          }
-        };
-        reader.readAsText(file);
-      }
-
-      // Parsear CSV
-      function parsearCSV(contenido) {
-        const lineas = contenido.split('\n');
-        const empleados = [];
-
-        // Saltar la primera línea (encabezados)
-        for (let i = 1; i < lineas.length; i++) {
-          const linea = lineas[i].trim();
-          if (linea) {
-            const campos = linea.split(',');
-            if (campos.length >= 5) {
-              const empleado = {
-                id: Date.now() + i,
-                nombre: campos[1] || '',
-                cedula: campos[2] || '',
-                cargo: campos[3] || '',
-                departamento: campos[4] || '',
-                salario: parseFloat(campos[5]) || 0,
-                tipoContrato: campos[6] || 'FIJO',
-                fechaIngreso: campos[7] || new Date().toISOString().split('T')[0],
-                email: campos[8] || '',
-                telefono: campos[9] || '',
-                estado: 'Activo',
-                timestamp: new Date().toISOString(),
-              };
-              empleados.push(empleado);
-            }
-          }
-        }
-
-        return empleados;
-      }
-
-      // Importar empleados
-      function importarEmpleados(empleados) {
-        const empleadosExistentes = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-        const nuevosEmpleados = empleados.filter(
-          (nuevo) => !empleadosExistentes.some((existente) => existente.cedula === nuevo.cedula)
-        );
-
-        if (nuevosEmpleados.length === 0) {
-          mostrarMensaje('⚠️ Todos los empleados ya existen en el sistema', 'warning');
-          return;
-        }
-
-        // Agregar nuevos empleados
-        const todosEmpleados = [...empleadosExistentes, ...nuevosEmpleados];
-        localStorage.setItem('axyra_empleados', JSON.stringify(todosEmpleados));
-
-        // Recargar la lista
-        cargarEmpleados();
-        mostrarMensaje(`✅ ${nuevosEmpleados.length} empleados importados exitosamente`, 'success');
-      }
-
       // Gestionar departamentos
       function gestionarDepartamentos() {
         const modalHTML = `
@@ -915,9 +808,6 @@
         e.preventDefault();
 
         const formData = new FormData(this);
-        // Obtener usuario actual para asignar userId
-        const userData = localStorage.getItem('axyra_isolated_user');
-        const currentUser = userData ? JSON.parse(userData) : {};
 
         const empleado = {
           nombre: formData.get('nombre'),
@@ -930,7 +820,6 @@
           fechaIngreso: formData.get('fechaIngreso'),
           estado: formData.get('estado'),
           direccion: formData.get('direccion'),
-          userId: currentUser.username || 'admin', // Asignar userId del usuario actual
           createdAt: new Date().toISOString(),
         };
 

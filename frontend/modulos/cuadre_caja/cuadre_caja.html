@@ -407,12 +407,12 @@
 
             console.log('✅ Módulo de cuadre de caja cargado correctamente');
           } else {
-            console.log('❌ Usuario no autenticado, redirigiendo al login...');
-            window.location.href = '../../login.html';
+            console.log('❌ Usuario no autenticado, mostrando mensaje...');
+            // NO redirigir automáticamente
           }
         } catch (error) {
           console.error('❌ Error inicializando módulo de cuadre de caja:', error);
-          window.location.href = '../../login.html';
+          // NO redirigir automáticamente
         }
       });
 
@@ -520,8 +520,8 @@
         const efectivo = facturasHoy.filter(f => f.metodoPago === 'efectivo').reduce((total, f) => total + parseFloat(f.monto), 0);
         const transferencias = facturasHoy.filter(f => f.metodoPago === 'transferencia').reduce((total, f) => total + parseFloat(f.monto), 0);
         
-        document.getElementById('efectivo').textContent = formatearMoneda(efectivo);
-        document.getElementById('transferencias').textContent = formatearMoneda(transferencias);
+        document.getElementById('totalEfectivo').textContent = formatearMoneda(efectivo);
+        document.getElementById('totalTransferencias').textContent = formatearMoneda(transferencias);
 
         // Mostrar última factura
         if (facturas.length > 0) {
