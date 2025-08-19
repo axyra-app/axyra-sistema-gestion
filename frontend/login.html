@@ -483,93 +483,47 @@
       <div id="errorMessage" class="error-message"></div>
       <div id="successMessage" class="success-message"></div>
 
-      <form id="loginForm">
+      <form id="loginForm" class="axyra-form">
         <div class="form-group">
-          <label for="username" class="form-label">Usuario o Correo Electrónico</label>
-          <input type="text" id="username" class="form-input" placeholder="Ingrese su usuario o correo electrónico" required />
+          <label for="username" class="form-label">Usuario o Email</label>
+          <input type="text" id="username" class="form-input" placeholder="admin" required />
         </div>
-
         <div class="form-group">
           <label for="password" class="form-label">Contraseña</label>
-          <div class="password-container">
-            <input type="password" id="password" class="form-input" placeholder="Ingrese su contraseña" required />
+          <div class="password-input-container">
+            <input type="password" id="password" class="form-input" placeholder="admin123" required />
             <button type="button" class="password-toggle" onclick="togglePassword()">
               <i class="fas fa-eye" id="passwordIcon"></i>
             </button>
           </div>
         </div>
-
         <div class="form-group">
-          <label class="checkbox-container">
+          <label class="checkbox-label">
             <input type="checkbox" id="rememberSession" />
             <span class="checkmark"></span>
             Recordar sesión por 30 días
           </label>
         </div>
-
-        <div class="form-group" id="twofaSection" style="display: none;">
-          <label for="twofaCode" class="form-label">Código 2FA (Opcional)</label>
-          <div class="twofa-section">
-            <input
-              type="text"
-              id="twofaCode"
-              class="form-input twofa-input"
-              placeholder="Código de 6 dígitos"
-              maxlength="6"
-            />
-            <button type="button" class="twofa-btn" onclick="show2FAHelp()">❓</button>
-          </div>
-          <div class="form-hint">Solo si tienes 2FA habilitado</div>
-        </div>
-
-        <button type="submit" class="login-btn" id="loginBtn">
-          <span id="btnText">Iniciar Sesión</span>
-          <span id="btnLoading" style="display: none">Iniciando sesión...</span>
+        <button type="button" class="axyra-btn axyra-btn-primary" onclick="login()">
+          Iniciar Sesión
         </button>
       </form>
       
-      <button type="button" class="axyra-btn axyra-btn-secondary" onclick="limpiarDatos()" style="margin-top: 10px; width: 100%;">
-        🧹 Limpiar Datos (Si hay problemas)
-      </button>
-      
-      <button type="button" class="axyra-btn axyra-btn-outline" onclick="debugAuth()" style="margin-top: 10px; width: 100%;">
-        🔍 Debug Autenticación
-      </button>
-      
-      <button type="button" class="axyra-btn axyra-btn-outline" onclick="crearUsuariosManual()" style="margin-top: 10px; width: 100%;">
-        👥 Crear Usuarios Manualmente
-      </button>
-      
-      <button type="button" class="axyra-btn axyra-btn-outline" onclick="probarLogin()" style="margin-top: 10px; width: 100%;">
-        🧪 Probar Login
-      </button>
-      
-      <button type="button" class="axyra-btn axyra-btn-outline" onclick="verificarInterferencias()" style="margin-top: 10px; width: 100%;">
-        🔍 Verificar Interferencias
-      </button>
-
-      <div class="divider">
+      <div class="separator">
         <span>o</span>
       </div>
-
-      <button class="google-btn" onclick="loginWithGoogle()">
-        <div class="google-icon">G</div>
-        Continuar con Google
-
+      
+      <button type="button" class="axyra-btn axyra-btn-google" onclick="loginWithGoogle()">
+        <i class="fab fa-google"></i> Continuar con Google
       </button>
-
-      <div class="google-controls" style="margin-top: 10px; text-align: center">
-
-
-      <div class="register-link">¿No tienes cuenta? <a href="register.html">Regístrate aquí</a></div>
-
-
-
-      <div class="footer">
-        <p>&copy; 2025 AXYRA. Todos los derechos reservados.</p>
-        <p>Sistema de Gestión Empresarial Profesional</p>
+      
+      <div class="register-link">
+        ¿No tienes cuenta? <a href="register.html">Regístrate aquí</a>
       </div>
-    </div>
+      
+      <div class="copyright">
+        © 2025 AXYRA. Todos los derechos reservados.
+      </div>
 
     <!-- Modal para crear contraseña para usuarios de Google -->
     <div id="modalCrearContrasena" class="axyra-modal" style="display: none;">

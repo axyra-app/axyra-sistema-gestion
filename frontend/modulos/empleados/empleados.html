@@ -265,14 +265,7 @@
         try {
           console.log('🔐 Verificando autenticación...');
 
-          // Verificar sesión usando Firebase
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
-            const currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
-            console.log('✅ Usuario autenticado con Firebase:', currentUser.email);
-            return true;
-          }
-
-          // Verificar sesión usando localStorage como fallback
+          // Verificar sesión usando localStorage
           const user = localStorage.getItem('axyra_isolated_user');
           if (user) {
             try {
@@ -310,69 +303,31 @@
         window.location.href = '../../login.html';
       }
 
-      // Cargar empleados desde Firebase o localStorage
+      // Cargar empleados desde localStorage
       async function cargarEmpleados() {
         try {
           console.log('👥 Cargando empleados...');
 
           // Obtener usuario actual
-          let currentUser = null;
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
-            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
-            console.log('✅ Usuario Firebase:', currentUser.email);
-          } else {
-            // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_isolated_user');
-            if (userData) {
-              currentUser = JSON.parse(userData);
-            }
-          }
-
-          if (!currentUser) {
+          const userData = localStorage.getItem('axyra_isolated_user');
+          if (!userData) {
             console.error('❌ No hay usuario autenticado');
             return;
           }
 
-          // Intentar cargar desde Firebase primero
-          if (window.axyraFirebaseDataSystem && currentUser.uid) {
-            console.log('🔥 Cargando empleados desde Firebase...');
+          const currentUser = JSON.parse(userData);
+          console.log('✅ Usuario actual:', currentUser.username || currentUser.email);
 
-            try {
-              empleados = await window.axyraFirebaseDataSystem.getEmployees();
-              console.log(`✅ Empleados cargados desde Firebase: ${empleados.length}`);
-              mostrarEmpleados();
-              return;
-            } catch (firebaseError) {
-              console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
-            }
-          }
-
-          // Fallback a localStorage
+          // Cargar desde localStorage
           console.log('💾 Cargando empleados desde localStorage...');
           const empleadosGuardados = localStorage.getItem('axyra_empleados');
           if (empleadosGuardados) {
             try {
               empleados = JSON.parse(empleadosGuardados);
 
-              // REPARACIÓN AUTOMÁTICA: Asignar userId a empleados que no lo tengan
+              // Filtrar empleados por usuario actual
               if (currentUser.username || currentUser.email) {
-                let empleadosReparados = false;
                 const userId = currentUser.username || currentUser.email;
-
-                empleados.forEach((emp) => {
-                  if (!emp.userId || emp.userId === 'undefined' || emp.userId === '') {
-                    console.log(`🔧 Reparando empleado ${emp.nombre} - Asignando userId: ${userId}`);
-                    emp.userId = userId;
-                    empleadosReparados = true;
-                  }
-                });
-
-                if (empleadosReparados) {
-                  console.log('💾 Guardando empleados reparados...');
-                  guardarEmpleados();
-                }
-
-                // Filtrar empleados por usuario actual
                 empleados = empleados.filter((emp) => emp.userId === userId);
                 console.log(`✅ Empleados filtrados para usuario: ${userId} - Total: ${empleados.length}`);
               }
@@ -393,53 +348,24 @@
         }
       }
 
-      // Guardar empleados en Firebase o localStorage
+      // Guardar empleados en localStorage
       async function guardarEmpleados() {
         try {
           // Obtener usuario actual
-          let currentUser = null;
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
-            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
-          } else {
-            const userData = localStorage.getItem('axyra_isolated_user');
-            if (userData) {
-              currentUser = JSON.parse(userData);
-            }
-          }
-
-          if (!currentUser) {
+          const userData = localStorage.getItem('axyra_isolated_user');
+          if (!userData) {
             console.error('❌ No hay usuario autenticado para guardar empleados');
             return;
           }
 
-          // Intentar guardar en Firebase primero
-          if (window.axyraFirebaseDataSystem && currentUser.uid) {
-            console.log('🔥 Guardando empleados en Firebase...');
+          const currentUser = JSON.parse(userData);
 
-            try {
-              // Asignar userId a todos los empleados
-              empleados.forEach((emp) => {
-                if (!emp.userId) {
-                  emp.userId = currentUser.uid;
-                }
-              });
-
-              await window.axyraFirebaseDataSystem.saveEmployees(empleados);
-              console.log('✅ Empleados guardados en Firebase');
-              return;
-            } catch (firebaseError) {
-              console.warn('⚠️ Error guardando en Firebase, usando localStorage:', firebaseError);
-            }
-          }
-
-          // Fallback a localStorage
+          // Guardar en localStorage
           console.log('💾 Guardando empleados en localStorage...');
           localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
           console.log('✅ Empleados guardados en localStorage');
         } catch (error) {
           console.error('❌ Error guardando empleados:', error);
-          // Forzar guardado en localStorage como último recurso
-          localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
         }
       }
 
@@ -452,51 +378,54 @@
 
         tbody.innerHTML = '';
 
-        empleadosPaginados.forEach((empleado) => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-                    <td>${empleado.id}</td>
-                    <td>
-                        <div class="axyra-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    </td>
-                    <td>${empleado.nombre}</td>
-                    <td>${empleado.departamento}</td>
-                    <td>${empleado.cargo}</td>
-                    <td>$${(empleado.salario || 0).toFixed(2)}</td>
-                    <td>
-                        <span class="axyra-badge axyra-badge-${empleado.estado.toLowerCase()}">
-                            ${empleado.estado}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="axyra-actions">
-                            <button class="axyra-btn axyra-btn-sm axyra-btn-info" onclick="editarEmpleado(${
-                              empleado.id
-                            })" title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="axyra-btn axyra-btn-sm axyra-btn-success" onclick="generarComprobante(${
-                              empleado.id
-                            })" title="Generar Comprobante">
-                                <i class="fas fa-file-invoice-dollar"></i>
-                            </button>
-                            <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="verEmpleado(${
-                              empleado.id
-                            })" title="Ver Detalles">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarEmpleado(${
-                              empleado.id
-                            })" title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-          tbody.appendChild(tr);
-        });
+        if (empleados.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" class="axyra-text-center">
+                <div style="padding: 40px; text-align: center; color: #64748b;">
+                  <i class="fas fa-users" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                  <p>No hay empleados registrados</p>
+                  <p>Haz clic en "Agregar Empleado" para comenzar</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          empleadosPaginados.forEach((empleado) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${empleado.id}</td>
+              <td>
+                <div class="axyra-avatar">
+                  <i class="fas fa-user"></i>
+                </div>
+              </td>
+              <td>${empleado.nombre}</td>
+              <td>${empleado.departamento}</td>
+              <td>${empleado.cargo}</td>
+              <td>$${(empleado.salario || 0).toFixed(2)}</td>
+              <td>
+                <span class="axyra-status axyra-status-${empleado.estado.toLowerCase()}">
+                  ${empleado.estado}
+                </span>
+              </td>
+              <td>
+                <div class="axyra-action-buttons">
+                  <button class="axyra-btn-action axyra-btn-edit" onclick="editarEmpleado(${empleado.id})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="axyra-btn-action axyra-btn-view" onclick="verEmpleado(${empleado.id})" title="Ver Detalles">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="axyra-btn-action axyra-btn-delete" onclick="eliminarEmpleado(${empleado.id})" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
 
         actualizarPaginacion();
       }
@@ -520,34 +449,12 @@
 
       // Mostrar modal
       function mostrarModal(modalId) {
-        document.getElementById(modalId).classList.add('show');
-      }
-
-      // Mostrar mensajes del sistema
-      function mostrarMensaje(mensaje, tipo = 'info') {
-        const mensajeDiv = document.createElement('div');
-        mensajeDiv.className = `axyra-message axyra-${tipo}-message`;
-        mensajeDiv.innerHTML = `
-          <div class="axyra-message-content">
-            <span class="axyra-message-text">${mensaje}</span>
-            <button class="axyra-message-close" onclick="this.parentElement.parentElement.remove()">×</button>
-          </div>
-        `;
-
-        // Agregar al body
-        document.body.appendChild(mensajeDiv);
-
-        // Auto-remover después de 5 segundos
-        setTimeout(() => {
-          if (mensajeDiv.parentElement) {
-            mensajeDiv.remove();
-          }
-        }, 5000);
+        document.getElementById(modalId).style.display = 'flex';
       }
 
       // Cerrar modal
       function cerrarModal(modalId) {
-        document.getElementById(modalId).classList.remove('show');
+        document.getElementById(modalId).style.display = 'none';
         if (modalId === 'modalAgregarEmpleado') {
           resetearFormulario();
         }
@@ -565,18 +472,20 @@
       function agregarEmpleado(empleado) {
         empleado.id = empleados.length > 0 ? Math.max(...empleados.map((e) => e.id)) + 1 : 1;
 
-        // DEPURACIÓN: Verificar empleado antes de agregar
-        console.log('🔍 Empleado a agregar:', empleado);
-        console.log('🔍 userId del empleado:', empleado.userId);
+        // Obtener usuario actual para asignar userId
+        const userData = localStorage.getItem('axyra_isolated_user');
+        if (userData) {
+          const currentUser = JSON.parse(userData);
+          empleado.userId = currentUser.username || currentUser.email;
+        }
 
+        empleado.createdAt = new Date().toISOString();
         empleados.push(empleado);
 
-        // DEPURACIÓN: Verificar empleados después de agregar
-        console.log('🔍 Empleados después de agregar:', empleados);
-        console.log('🔍 Último empleado agregado:', empleados[empleados.length - 1]);
-
+        console.log('✅ Empleado agregado:', empleado);
         guardarEmpleados();
         mostrarEmpleados();
+        mostrarMensaje('✅ Empleado agregado correctamente', 'success');
       }
 
       // Editar empleado
@@ -604,15 +513,10 @@
       function actualizarEmpleado(empleado) {
         const index = empleados.findIndex((e) => e.id === empleado.id);
         if (index !== -1) {
-          // Mantener el salario en 0 si no se han registrado horas
-          const empleadoExistente = empleados[index];
-          empleados[index] = {
-            ...empleadoExistente,
-            ...empleado,
-            salario: empleadoExistente.salario || 0, // Mantener salario en 0
-          };
+          empleados[index] = { ...empleados[index], ...empleado };
           guardarEmpleados();
           mostrarEmpleados();
+          mostrarMensaje('✅ Empleado actualizado correctamente', 'success');
         }
       }
 
@@ -620,15 +524,15 @@
       function eliminarEmpleado(id) {
         const empleado = empleados.find((e) => e.id === id);
         if (empleado) {
-          document.getElementById(
-            'confirmacionMensaje'
-          ).textContent = `¿Estás seguro de que deseas eliminar a ${empleado.nombre}? Esta acción no se puede deshacer.`;
+          document.getElementById('confirmacionMensaje').textContent = 
+            `¿Estás seguro de que deseas eliminar a ${empleado.nombre}? Esta acción no se puede deshacer.`;
 
           document.getElementById('btnConfirmar').onclick = () => {
             empleados = empleados.filter((e) => e.id !== id);
             guardarEmpleados();
             mostrarEmpleados();
             cerrarModal('modalConfirmacion');
+            mostrarMensaje('✅ Empleado eliminado correctamente', 'success');
           };
 
           mostrarModal('modalConfirmacion');
@@ -641,7 +545,7 @@
         if (empleado) {
           // Crear modal para mostrar detalles
           const modalHTML = `
-            <div id="modalDetallesEmpleado" class="axyra-modal show">
+            <div id="modalDetallesEmpleado" class="axyra-modal" style="display: flex;">
               <div class="axyra-modal-content">
                 <div class="axyra-modal-header">
                   <h3 class="axyra-modal-title">
@@ -692,31 +596,17 @@
                     <div class="axyra-detail-row">
                       <span class="axyra-detail-label">Estado:</span>
                       <span class="axyra-detail-value">
-                        <span class="axyra-badge axyra-badge-${empleado.estado.toLowerCase()}">${empleado.estado}</span>
+                        <span class="axyra-status axyra-status-${empleado.estado.toLowerCase()}">${empleado.estado}</span>
                       </span>
                     </div>
                     <div class="axyra-detail-row">
                       <span class="axyra-detail-label">Dirección:</span>
                       <span class="axyra-detail-value">${empleado.direccion || 'No especificada'}</span>
                     </div>
-                    <div class="axyra-detail-row">
-                      <span class="axyra-detail-label">Usuario Creador:</span>
-                      <span class="axyra-detail-value">${empleado.userId || 'No especificado'}</span>
-                    </div>
-                    <div class="axyra-detail-row">
-                      <span class="axyra-detail-label">Fecha de Creación:</span>
-                      <span class="axyra-detail-value">${
-                        empleado.createdAt
-                          ? new Date(empleado.createdAt).toLocaleDateString('es-CO')
-                          : 'No especificada'
-                      }</span>
-                    </div>
                   </div>
                 </div>
                 <div class="axyra-modal-footer">
-                  <button class="axyra-btn axyra-btn-primary" onclick="editarEmpleado(${
-                    empleado.id
-                  }); cerrarModalDetalles();">
+                  <button class="axyra-btn axyra-btn-primary" onclick="editarEmpleado(${empleado.id}); cerrarModalDetalles();">
                     <i class="fas fa-edit"></i> Editar
                   </button>
                   <button class="axyra-btn axyra-btn-outline" onclick="cerrarModalDetalles()">
@@ -739,80 +629,26 @@
         }
       }
 
-      // Reparar empleados sin userId
-      function repararEmpleados() {
-        try {
-          const currentUser = JSON.parse(localStorage.getItem('axyra_isolated_user') || '{}');
-          if (!currentUser.username) {
-            alert('❌ No hay usuario autenticado');
-            return;
+      // Mostrar mensajes del sistema
+      function mostrarMensaje(mensaje, tipo = 'info') {
+        const mensajeDiv = document.createElement('div');
+        mensajeDiv.className = `axyra-message axyra-${tipo}-message`;
+        mensajeDiv.innerHTML = `
+          <div class="axyra-message-content">
+            <span class="axyra-message-text">${mensaje}</span>
+            <button class="axyra-message-close" onclick="this.parentElement.parentElement.remove()">×</button>
+          </div>
+        `;
+
+        // Agregar al body
+        document.body.appendChild(mensajeDiv);
+
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+          if (mensajeDiv.parentElement) {
+            mensajeDiv.remove();
           }
-
-          const empleadosGuardados = localStorage.getItem('axyra_empleados');
-          if (!empleadosGuardados) {
-            alert('ℹ️ No hay empleados para reparar');
-            return;
-          }
-
-          const empleados = JSON.parse(empleadosGuardados);
-          let empleadosReparados = 0;
-
-          empleados.forEach((emp) => {
-            if (!emp.userId || emp.userId === 'undefined' || emp.userId === '') {
-              emp.userId = currentUser.username;
-              empleadosReparados++;
-            }
-          });
-
-          if (empleadosReparados > 0) {
-            localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
-            alert(`✅ ${empleadosReparados} empleados reparados correctamente`);
-            cargarEmpleados(); // Recargar la lista
-          } else {
-            alert('ℹ️ No hay empleados que necesiten reparación');
-          }
-        } catch (error) {
-          console.error('Error reparando empleados:', error);
-          alert('❌ Error reparando empleados: ' + error.message);
-        }
-      }
-
-      // Generar comprobante
-      function generarComprobante(id) {
-        const empleado = empleados.find((e) => e.id === id);
-        if (empleado) {
-          // Obtener usuario actual para asignar userId
-          const currentUser = JSON.parse(localStorage.getItem('axyra_isolated_user') || '{}');
-
-          // Generar comprobante con datos reales
-          const comprobante = {
-            id: Date.now(),
-            numeroFactura: `EMP-${empleado.id}-${Date.now()}`,
-            empleado: empleado.nombre,
-            fecha: new Date().toLocaleDateString('es-CO'),
-            salario: empleado.salario || 0,
-            departamento: empleado.departamento,
-            cargo: empleado.cargo,
-            userId: currentUser.username || 'admin',
-            createdAt: new Date().toISOString(),
-          };
-
-          // Guardar comprobante en localStorage
-          const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]');
-          comprobantes.push(comprobante);
-          localStorage.setItem('axyra_comprobantes', JSON.stringify(comprobantes));
-
-          mostrarMensaje(
-            `✅ Comprobante generado para ${empleado.nombre}\n\n` +
-              `ID: ${comprobante.id}\n` +
-              `Fecha: ${comprobante.fecha}\n` +
-              `Salario: $${comprobante.salario.toFixed(2)}\n` +
-              `Departamento: ${comprobante.departamento}\n` +
-              `Cargo: ${comprobante.cargo}\n\n` +
-              `El comprobante ha sido guardado y puede ser descargado desde la sección de nómina.`,
-            'success'
-          );
-        }
+        }, 5000);
       }
 
       // Exportar empleados a Excel
@@ -845,378 +681,7 @@
         mostrarMensaje('✅ Empleados exportados correctamente', 'success');
       }
 
-      // Importar empleados desde Excel (simulado)
-      function importarEmpleados() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.xlsx,.xls,.csv';
-        input.onchange = function (e) {
-          const file = e.target.files[0];
-          if (file) {
-            // Simular procesamiento de archivo
-            mostrarMensaje('📁 Procesando archivo: ' + file.name, 'info');
-
-            // Aquí iría la lógica real de importación
-            setTimeout(() => {
-              mostrarMensaje('✅ Archivo procesado correctamente. Se importaron 5 empleados.', 'success');
-              // Recargar la tabla
-              cargarEmpleados();
-            }, 2000);
-          }
-        };
-        input.click();
-      }
-
       // Descargar plantilla de Excel
-      function descargarPlantilla() {
-        const plantilla = `
-          ID,Nombre,Email,Teléfono,Fecha de Nacimiento,Departamento,Cargo,Salario,Fecha de Ingreso,Estado,Dirección
-          1,Juan Pérez,juan.perez@empresa.com,555-0101,1990-05-15,Administración,Gerente,5000.00,2020-01-15,Activo,Calle Principal 123,Ciudad
-          2,María García,maria.garcia@empresa.com,555-0102,1988-08-22,Ventas,Vendedora Senior,3500.00,2019-03-10,Activo,Avenida Central 456,Ciudad
-        `;
-        const blob = new Blob([plantilla], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'plantilla_empleados.csv';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
-
-      // Búsqueda y filtros
-      function aplicarFiltros() {
-        const busqueda = document.getElementById('searchInput').value.toLowerCase();
-        const departamento = document.getElementById('filterDepartamento').value;
-        const estado = document.getElementById('filterEstado').value;
-
-        const empleadosFiltrados = empleados.filter((empleado) => {
-          const coincideBusqueda =
-            empleado.nombre.toLowerCase().includes(busqueda) ||
-            empleado.email.toLowerCase().includes(busqueda) ||
-            empleado.cargo.toLowerCase().includes(busqueda);
-          const coincideDepartamento = !departamento || empleado.departamento === departamento;
-          const coincideEstado = !estado || empleado.estado === estado;
-
-          return coincideBusqueda && coincideDepartamento && coincideEstado;
-        });
-
-        // Mostrar empleados filtrados
-        const tbody = document.getElementById('empleadosTableBody');
-        tbody.innerHTML = '';
-
-        empleadosFiltrados.forEach((empleado) => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-                    <td>${empleado.id}</td>
-                    <td>
-                        <div class="axyra-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                    </td>
-             <td>${empleado.nombre}</td>
-                    <td>${empleado.departamento}</td>
-                    <td>${empleado.cargo}</td>
-                    <td>$${empleado.salario.toFixed(2)}</td>
-                    <td>
-                        <span class="axyra-badge axyra-badge-${empleado.estado.toLowerCase()}">
-                            ${empleado.estado}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="axyra-actions">
-                            <button class="axyra-btn axyra-btn-sm axyra-btn-info" onclick="editarEmpleado(${
-                              empleado.id
-                            })" title="Editar">
-                 <i class="fas fa-edit"></i>
-               </button>
-                            <button class="axyra-btn axyra-btn-sm axyra-btn-success" onclick="generarComprobante(${
-                              empleado.id
-                            })" title="Generar Comprobante">
-                                <i class="fas fa-file-invoice-dollar"></i>
-               </button>
-                            <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="verEmpleado(${
-                              empleado.id
-                            })" title="Ver Detalles">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                            <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarEmpleado(${
-                              empleado.id
-                            })" title="Eliminar">
-                 <i class="fas fa-trash"></i>
-               </button>
-                        </div>
-             </td>
-           `;
-          tbody.appendChild(tr);
-        });
-      }
-
-      // Eventos
-      document.getElementById('formEmpleado').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        // Obtener usuario actual para asignar userId
-        const currentUser = JSON.parse(localStorage.getItem('axyra_isolated_user') || '{}');
-
-        const empleado = {
-          nombre: formData.get('nombre'),
-          email: formData.get('email'),
-          telefono: formData.get('telefono'),
-          fechaNacimiento: formData.get('fechaNacimiento'),
-          departamento: formData.get('departamento'),
-          cargo: formData.get('cargo'),
-          salario: 0, // Salario inicial en 0 hasta que se registren horas
-          fechaIngreso: formData.get('fechaIngreso'),
-          estado: formData.get('estado'),
-          direccion: formData.get('direccion'),
-          userId: currentUser.username || 'admin', // Asignar userId del usuario actual
-          createdAt: new Date().toISOString(),
-        };
-
-        // DEPURACIÓN: Verificar datos del empleado antes de guardar
-        console.log('🔍 Datos del empleado a guardar:', empleado);
-        console.log('🔍 Usuario actual:', currentUser);
-        console.log('🔍 userId asignado:', empleado.userId);
-
-        if (empleadoEditando) {
-          empleado.id = empleadoEditando.id;
-          actualizarEmpleado(empleado);
-        } else {
-          agregarEmpleado(empleado);
-        }
-
-        cerrarModal('modalAgregarEmpleado');
-      });
-
-      // Eventos de filtros
-      document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
-      document.getElementById('filterDepartamento').addEventListener('change', aplicarFiltros);
-      document.getElementById('filterEstado').addEventListener('change', aplicarFiltros);
-
-      // Cerrar modal al hacer clic fuera
-      window.onclick = function (event) {
-        const modals = document.querySelectorAll('.axyra-modal');
-        modals.forEach((modal) => {
-          if (event.target === modal) {
-            modal.classList.remove('show');
-          }
-        });
-      };
-
-      // Gestionar departamentos
-      function gestionarDepartamentos() {
-        const modalHTML = `
-          <div id="modalDepartamentos" class="axyra-modal show">
-            <div class="axyra-modal-content">
-              <div class="axyra-modal-header">
-                <h3 class="axyra-modal-title">
-                  <i class="fas fa-building"></i> Gestión de Departamentos
-                </h3>
-                <button class="axyra-modal-close" onclick="cerrarModalDepartamentos()">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
-              <div class="axyra-modal-body">
-                <div class="axyra-departments-container">
-                  <div class="axyra-departments-list" id="listaDepartamentos">
-                    <!-- Los departamentos se cargarán dinámicamente -->
-                  </div>
-                  <div class="axyra-department-form">
-                    <h4>Agregar Nuevo Departamento</h4>
-                    <div class="axyra-form-row">
-                      <div class="axyra-form-group">
-                        <label for="nuevoDepartamento" class="axyra-form-label">Nombre del Departamento</label>
-                        <input type="text" id="nuevoDepartamento" class="axyra-form-input" placeholder="Ej: Marketing" />
-                      </div>
-                      <div class="axyra-form-group">
-                        <button class="axyra-btn axyra-btn-primary" onclick="agregarDepartamento()">
-                          <i class="fas fa-plus"></i> Agregar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        cargarDepartamentos();
-      }
-
-      // Cerrar modal de departamentos
-      function cerrarModalDepartamentos() {
-        const modal = document.getElementById('modalDepartamentos');
-        if (modal) {
-          modal.remove();
-        }
-      }
-
-      // Cargar departamentos
-      function cargarDepartamentos() {
-        const listaDepartamentos = document.getElementById('listaDepartamentos');
-        const departamentos = obtenerDepartamentos();
-
-        let departamentosHTML = '';
-
-        departamentos.forEach((depto, index) => {
-          departamentosHTML += `
-            <div class="axyra-department-item">
-              <div class="axyra-department-info">
-                <span class="axyra-department-name">${depto}</span>
-                <span class="axyra-department-count">${contarEmpleadosPorDepartamento(depto)} empleados</span>
-              </div>
-              <div class="axyra-department-actions">
-                <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="editarDepartamento(${index})" title="Editar">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarDepartamento(${index})" title="Eliminar">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          `;
-        });
-
-        if (departamentosHTML === '') {
-          departamentosHTML = '<p class="axyra-text-center">No hay departamentos configurados</p>';
-        }
-
-        listaDepartamentos.innerHTML = departamentosHTML;
-      }
-
-      // Obtener departamentos
-      function obtenerDepartamentos() {
-        const departamentosGuardados = localStorage.getItem('axyra_departamentos');
-        if (departamentosGuardados) {
-          return JSON.parse(departamentosGuardados);
-        }
-        // Departamentos por defecto
-        return ['Administración', 'Ventas', 'Producción', 'Recursos Humanos', 'Tecnología'];
-      }
-
-      // Contar empleados por departamento
-      function contarEmpleadosPorDepartamento(departamento) {
-        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-        return empleados.filter((emp) => emp.departamento === departamento).length;
-      }
-
-      // Agregar departamento
-      function agregarDepartamento() {
-        const nombre = document.getElementById('nuevoDepartamento').value.trim();
-        if (!nombre) {
-          mostrarMensaje('❌ El nombre del departamento no puede estar vacío', 'error');
-          return;
-        }
-
-        const departamentos = obtenerDepartamentos();
-        if (departamentos.includes(nombre)) {
-          mostrarMensaje('❌ El departamento ya existe', 'error');
-          return;
-        }
-
-        departamentos.push(nombre);
-        localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
-
-        document.getElementById('nuevoDepartamento').value = '';
-        cargarDepartamentos();
-        actualizarSelectDepartamentos();
-        mostrarMensaje('✅ Departamento agregado exitosamente', 'success');
-      }
-
-      // Editar departamento
-      function editarDepartamento(index) {
-        const departamentos = obtenerDepartamentos();
-        const nombreActual = departamentos[index];
-        const nuevoNombre = prompt('Nuevo nombre del departamento:', nombreActual);
-
-        if (nuevoNombre && nuevoNombre.trim() !== nombreActual) {
-          const nombreLimpio = nuevoNombre.trim();
-          if (departamentos.includes(nombreLimpio)) {
-            mostrarMensaje('❌ El departamento ya existe', 'error');
-            return;
-          }
-
-          // Actualizar empleados que usan este departamento
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          empleados.forEach((emp) => {
-            if (emp.departamento === nombreActual) {
-              emp.departamento = nombreLimpio;
-            }
-          });
-          localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
-
-          // Actualizar departamento
-          departamentos[index] = nombreLimpio;
-          localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
-
-          cargarDepartamentos();
-          actualizarSelectDepartamentos();
-          mostrarEmpleados();
-          mostrarMensaje('✅ Departamento actualizado exitosamente', 'success');
-        }
-      }
-
-      // Eliminar departamento
-      function eliminarDepartamento(index) {
-        const departamentos = obtenerDepartamentos();
-        const departamento = departamentos[index];
-        const empleadosEnDepartamento = contarEmpleadosPorDepartamento(departamento);
-
-        if (empleadosEnDepartamento > 0) {
-          mostrarMensaje(
-            `❌ No se puede eliminar el departamento "${departamento}" porque tiene ${empleadosEnDepartamento} empleado(s) asignado(s)`,
-            'error'
-          );
-          return;
-        }
-
-        if (confirm(`¿Estás seguro de que quieres eliminar el departamento "${departamento}"?`)) {
-          departamentos.splice(index, 1);
-          localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
-
-          cargarDepartamentos();
-          actualizarSelectDepartamentos();
-          mostrarMensaje('✅ Departamento eliminado exitosamente', 'success');
-        }
-      }
-
-      // Actualizar select de departamentos
-      function actualizarSelectDepartamentos() {
-        const departamentos = obtenerDepartamentos();
-        const selects = ['departamento', 'filterDepartamento'];
-
-        selects.forEach((selectId) => {
-          const select = document.getElementById(selectId);
-          if (select) {
-            const valorActual = select.value;
-            select.innerHTML = '';
-
-            if (selectId === 'filterDepartamento') {
-              select.innerHTML = '<option value="">Todos los departamentos</option>';
-            } else {
-              select.innerHTML = '<option value="">Seleccionar departamento</option>';
-            }
-
-            departamentos.forEach((depto) => {
-              const option = document.createElement('option');
-              option.value = depto;
-              option.textContent = depto;
-              select.appendChild(option);
-            });
-
-            if (valorActual && departamentos.includes(valorActual)) {
-              select.value = valorActual;
-            }
-          }
-        });
-      }
-
-      // Descargar plantilla Excel
       function descargarPlantilla() {
         // Crear contenido CSV para la plantilla
         const headers = [
@@ -1348,19 +813,303 @@
         const todosEmpleados = [...empleadosExistentes, ...nuevosEmpleados];
         localStorage.setItem('axyra_empleados', JSON.stringify(todosEmpleados));
 
-        // Actualizar departamentos
-        nuevosEmpleados.forEach((emp) => {
-          if (emp.departamento && !obtenerDepartamentos().includes(emp.departamento)) {
-            const departamentos = obtenerDepartamentos();
-            departamentos.push(emp.departamento);
-            localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
-          }
-        });
-
+        // Recargar la lista
         cargarEmpleados();
-        actualizarSelectDepartamentos();
         mostrarMensaje(`✅ ${nuevosEmpleados.length} empleados importados exitosamente`, 'success');
       }
+
+      // Gestionar departamentos
+      function gestionarDepartamentos() {
+        const modalHTML = `
+          <div id="modalDepartamentos" class="axyra-modal" style="display: flex;">
+            <div class="axyra-modal-content">
+              <div class="axyra-modal-header">
+                <h3 class="axyra-modal-title">
+                  <i class="fas fa-building"></i> Gestión de Departamentos
+                </h3>
+                <button class="axyra-modal-close" onclick="cerrarModalDepartamentos()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-departments-container">
+                  <div class="axyra-departments-list" id="listaDepartamentos">
+                    <!-- Los departamentos se cargarán dinámicamente -->
+                  </div>
+                  <div class="axyra-department-form">
+                    <h4>Agregar Nuevo Departamento</h4>
+                    <div class="axyra-form-row">
+                      <div class="axyra-form-group">
+                        <label for="nuevoDepartamento" class="axyra-form-label">Nombre del Departamento</label>
+                        <input type="text" id="nuevoDepartamento" class="axyra-form-input" placeholder="Ej: Marketing" />
+                      </div>
+                      <div class="axyra-form-group">
+                        <button class="axyra-btn axyra-btn-primary" onclick="agregarDepartamento()">
+                          <i class="fas fa-plus"></i> Agregar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        cargarDepartamentos();
+      }
+
+      // Cerrar modal de departamentos
+      function cerrarModalDepartamentos() {
+        const modal = document.getElementById('modalDepartamentos');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Cargar departamentos
+      function cargarDepartamentos() {
+        const listaDepartamentos = document.getElementById('listaDepartamentos');
+        const departamentos = obtenerDepartamentos();
+
+        let departamentosHTML = '';
+
+        departamentos.forEach((depto, index) => {
+          departamentosHTML += `
+            <div class="axyra-department-item">
+              <div class="axyra-department-info">
+                <span class="axyra-department-name">${depto}</span>
+                <span class="axyra-department-count">${contarEmpleadosPorDepartamento(depto)} empleados</span>
+              </div>
+              <div class="axyra-department-actions">
+                <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="editarDepartamento(${index})" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarDepartamento(${index})" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+
+        if (departamentosHTML === '') {
+          departamentosHTML = '<p class="axyra-text-center">No hay departamentos configurados</p>';
+        }
+
+        listaDepartamentos.innerHTML = departamentosHTML;
+      }
+
+      // Obtener departamentos
+      function obtenerDepartamentos() {
+        const departamentosGuardados = localStorage.getItem('axyra_departamentos');
+        if (departamentosGuardados) {
+          return JSON.parse(departamentosGuardados);
+        }
+        // Departamentos por defecto
+        return ['Administración', 'Ventas', 'Producción', 'Recursos Humanos', 'Tecnología'];
+      }
+
+      // Contar empleados por departamento
+      function contarEmpleadosPorDepartamento(departamento) {
+        return empleados.filter((emp) => emp.departamento === departamento).length;
+      }
+
+      // Agregar departamento
+      function agregarDepartamento() {
+        const nombre = document.getElementById('nuevoDepartamento').value.trim();
+        if (!nombre) {
+          mostrarMensaje('❌ El nombre del departamento no puede estar vacío', 'error');
+          return;
+        }
+
+        const departamentos = obtenerDepartamentos();
+        if (departamentos.includes(nombre)) {
+          mostrarMensaje('❌ El departamento ya existe', 'error');
+          return;
+        }
+
+        departamentos.push(nombre);
+        localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+
+        document.getElementById('nuevoDepartamento').value = '';
+        cargarDepartamentos();
+        mostrarMensaje('✅ Departamento agregado exitosamente', 'success');
+      }
+
+      // Editar departamento
+      function editarDepartamento(index) {
+        const departamentos = obtenerDepartamentos();
+        const nombreActual = departamentos[index];
+        const nuevoNombre = prompt('Nuevo nombre del departamento:', nombreActual);
+
+        if (nuevoNombre && nuevoNombre.trim() !== nombreActual) {
+          const nombreLimpio = nuevoNombre.trim();
+          if (departamentos.includes(nombreLimpio)) {
+            mostrarMensaje('❌ El departamento ya existe', 'error');
+            return;
+          }
+
+          // Actualizar empleados que usan este departamento
+          empleados.forEach((emp) => {
+            if (emp.departamento === nombreActual) {
+              emp.departamento = nombreLimpio;
+            }
+          });
+          guardarEmpleados();
+
+          // Actualizar departamento
+          departamentos[index] = nombreLimpio;
+          localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+
+          cargarDepartamentos();
+          mostrarEmpleados();
+          mostrarMensaje('✅ Departamento actualizado exitosamente', 'success');
+        }
+      }
+
+      // Eliminar departamento
+      function eliminarDepartamento(index) {
+        const departamentos = obtenerDepartamentos();
+        const departamento = departamentos[index];
+        const empleadosEnDepartamento = contarEmpleadosPorDepartamento(departamento);
+
+        if (empleadosEnDepartamento > 0) {
+          mostrarMensaje(
+            `❌ No se puede eliminar el departamento "${departamento}" porque tiene ${empleadosEnDepartamento} empleado(s) asignado(s)`,
+            'error'
+          );
+          return;
+        }
+
+        if (confirm(`¿Estás seguro de que quieres eliminar el departamento "${departamento}"?`)) {
+          departamentos.splice(index, 1);
+          localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+
+          cargarDepartamentos();
+          mostrarMensaje('✅ Departamento eliminado exitosamente', 'success');
+        }
+      }
+
+      // Eventos
+      document.getElementById('formEmpleado').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+        // Obtener usuario actual para asignar userId
+        const userData = localStorage.getItem('axyra_isolated_user');
+        const currentUser = userData ? JSON.parse(userData) : {};
+
+        const empleado = {
+          nombre: formData.get('nombre'),
+          email: formData.get('email'),
+          telefono: formData.get('telefono'),
+          fechaNacimiento: formData.get('fechaNacimiento'),
+          departamento: formData.get('departamento'),
+          cargo: formData.get('cargo'),
+          salario: parseFloat(formData.get('salario')) || 0,
+          fechaIngreso: formData.get('fechaIngreso'),
+          estado: formData.get('estado'),
+          direccion: formData.get('direccion'),
+          userId: currentUser.username || 'admin', // Asignar userId del usuario actual
+          createdAt: new Date().toISOString(),
+        };
+
+        if (empleadoEditando) {
+          empleado.id = empleadoEditando.id;
+          actualizarEmpleado(empleado);
+        } else {
+          agregarEmpleado(empleado);
+        }
+
+        cerrarModal('modalAgregarEmpleado');
+      });
+
+      // Eventos de filtros
+      document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
+      document.getElementById('filterDepartamento').addEventListener('change', aplicarFiltros);
+      document.getElementById('filterEstado').addEventListener('change', aplicarFiltros);
+
+      // Búsqueda y filtros
+      function aplicarFiltros() {
+        const busqueda = document.getElementById('searchInput').value.toLowerCase();
+        const departamento = document.getElementById('filterDepartamento').value;
+        const estado = document.getElementById('filterEstado').value;
+
+        const empleadosFiltrados = empleados.filter((empleado) => {
+          const coincideBusqueda =
+            empleado.nombre.toLowerCase().includes(busqueda) ||
+            empleado.email.toLowerCase().includes(busqueda) ||
+            empleado.cargo.toLowerCase().includes(busqueda);
+          const coincideDepartamento = !departamento || empleado.departamento === departamento;
+          const coincideEstado = !estado || empleado.estado === estado;
+
+          return coincideBusqueda && coincideDepartamento && coincideEstado;
+        });
+
+        // Mostrar empleados filtrados
+        const tbody = document.getElementById('empleadosTableBody');
+        tbody.innerHTML = '';
+
+        if (empleadosFiltrados.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" class="axyra-text-center">
+                <div style="padding: 40px; text-align: center; color: #64748b;">
+                  <i class="fas fa-search" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+                  <p>No se encontraron empleados con los filtros aplicados</p>
+                </div>
+              </td>
+            </tr>
+          `;
+        } else {
+          empleadosFiltrados.forEach((empleado) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td>${empleado.id}</td>
+              <td>
+                <div class="axyra-avatar">
+                  <i class="fas fa-user"></i>
+                </div>
+              </td>
+              <td>${empleado.nombre}</td>
+              <td>${empleado.departamento}</td>
+              <td>${empleado.cargo}</td>
+              <td>$${empleado.salario.toFixed(2)}</td>
+              <td>
+                <span class="axyra-status axyra-status-${empleado.estado.toLowerCase()}">
+                  ${empleado.estado}
+                </span>
+              </td>
+              <td>
+                <div class="axyra-action-buttons">
+                  <button class="axyra-btn-action axyra-btn-edit" onclick="editarEmpleado(${empleado.id})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="axyra-btn-action axyra-btn-view" onclick="verEmpleado(${empleado.id})" title="Ver Detalles">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="axyra-btn-action axyra-btn-delete" onclick="eliminarEmpleado(${empleado.id})" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      }
+
+      // Cerrar modal al hacer clic fuera
+      window.onclick = function (event) {
+        const modals = document.querySelectorAll('.axyra-modal');
+        modals.forEach((modal) => {
+          if (event.target === modal) {
+            modal.style.display = 'none';
+          }
+        });
+      };
 
       // Inicialización
       window.addEventListener('load', async () => {
@@ -1375,9 +1124,6 @@
 
             // Cargar empleados
             await cargarEmpleados();
-
-            // Actualizar departamentos
-            actualizarSelectDepartamentos();
 
             console.log('✅ Módulo de empleados cargado correctamente');
           } else {
