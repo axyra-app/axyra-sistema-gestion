@@ -178,6 +178,7 @@ p {
 }
 
 .axyra-logo-text {
+  color: #ffffff;
   display: flex;
   flex-direction: column;
 }
@@ -286,11 +287,11 @@ p {
   .axyra-header-content {
     padding: 0 var(--spacing-md);
   }
-  
+
   .axyra-nav {
     gap: var(--spacing-md);
   }
-  
+
   .axyra-nav-link {
     padding: 6px 12px;
     font-size: 0.9rem;
@@ -303,27 +304,27 @@ p {
     gap: 12px;
     padding: 8px var(--spacing-md);
   }
-  
+
   .axyra-logo {
     order: 1;
   }
-  
+
   .axyra-nav {
     order: 2;
     justify-content: center;
     gap: var(--spacing-sm);
   }
-  
+
   .axyra-header-actions {
     order: 3;
     justify-content: center;
     width: 100%;
   }
-  
+
   .axyra-logo-title {
     font-size: 1.2rem;
   }
-  
+
   .axyra-logo-subtitle {
     font-size: 0.75rem;
   }
@@ -333,39 +334,39 @@ p {
   .axyra-header {
     padding: 6px 0;
   }
-  
+
   .axyra-header-content {
     padding: 6px var(--spacing-sm);
     gap: 8px;
   }
-  
+
   .axyra-logo {
     gap: 12px;
   }
-  
+
   .axyra-logo-icon {
     width: 36px;
     height: 36px;
     font-size: 16px;
   }
-  
+
   .axyra-logo-title {
     font-size: 1.1rem;
   }
-  
+
   .axyra-logo-subtitle {
     font-size: 0.7rem;
   }
-  
+
   .axyra-nav {
     gap: 8px;
   }
-  
+
   .axyra-nav-link {
     padding: 6px 10px;
     font-size: 0.8rem;
   }
-  
+
   .axyra-header-actions {
     gap: 12px;
     padding: 6px;
@@ -376,34 +377,34 @@ p {
   .axyra-header-content {
     padding: 4px var(--spacing-sm);
   }
-  
+
   .axyra-logo {
     gap: 8px;
   }
-  
+
   .axyra-logo-icon {
     width: 32px;
     height: 32px;
     font-size: 14px;
   }
-  
+
   .axyra-logo-title {
     font-size: 1rem;
   }
-  
+
   .axyra-logo-subtitle {
     font-size: 0.65rem;
   }
-  
+
   .axyra-nav {
     gap: 6px;
   }
-  
+
   .axyra-nav-link {
     padding: 4px 8px;
     font-size: 0.75rem;
   }
-  
+
   .axyra-header-actions {
     gap: 8px;
     padding: 4px;
@@ -1938,7 +1939,12 @@ p {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent); /* CAMBIADO A COLOR DEL DASHBOARD */
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(59, 130, 246, 0.1),
+    transparent
+  ); /* CAMBIADO A COLOR DEL DASHBOARD */
   transition: left 0.5s ease;
 }
 
@@ -1984,20 +1990,20 @@ p {
     width: 95%;
     margin: var(--spacing-md);
   }
-  
+
   .axyra-modal-actions {
     flex-direction: column;
   }
-  
+
   .axyra-modal-actions .axyra-btn {
     width: 100%;
   }
-  
+
   .axyra-support-item {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .axyra-support-icon {
     align-self: center;
   }
@@ -2082,15 +2088,15 @@ p {
 /* ========================================
    DISEÑO PROFESIONAL - SECCIÓN HERO
    ======================================== */
-  .axyra-hero {
-    background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
-    padding: 200px 0 100px;
-    color: #ffffff;
-    position: relative;
-    overflow: hidden;
-    border-bottom: 4px solid rgba(255, 255, 255, 0.1);
-    margin-top: 0;
-  }
+.axyra-hero {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+  padding: 200px 0 100px;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 4px solid rgba(255, 255, 255, 0.1);
+  margin-top: 0;
+}
 
 .axyra-hero::before {
   content: '';
@@ -3154,7 +3160,7 @@ p {
   user-select: none;
 }
 
-.checkbox-label input[type="checkbox"] {
+.checkbox-label input[type='checkbox'] {
   margin-right: 12px;
   width: 18px;
   height: 18px;
@@ -3614,11 +3620,11 @@ body {
     grid-template-columns: 1fr;
     gap: 40px;
   }
-  
+
   .axyra-contact {
     padding: 60px 0;
   }
-  
+
   .axyra-contact-form {
     padding: 30px 20px;
   }

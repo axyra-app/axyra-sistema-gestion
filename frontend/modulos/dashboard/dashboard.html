@@ -526,7 +526,7 @@
     </div>
 
     <script>
-      // Verificar autenticación - FIREBASE + SISTEMA AISLADO
+      // Verificar autenticación - FIREBASE + SISTEMA AISLADO MEJORADO
       async function checkAuth() {
         try {
           console.log('🔐 Verificando autenticación...');
@@ -549,11 +549,35 @@
               localStorage.setItem('axyra_firebase_user', JSON.stringify(firebaseUser));
               localStorage.setItem('axyra_isolated_user', JSON.stringify(currentUser));
               
+              console.log('✅ Usuario autenticado, cargando dashboard...');
               return true;
             }
           }
 
-          // SEGUNDO: Verificar localStorage
+          // SEGUNDO: Verificar localStorage (Firebase user)
+          const firebaseUser = localStorage.getItem('axyra_firebase_user');
+          if (firebaseUser) {
+            try {
+              const userData = JSON.parse(firebaseUser);
+              console.log('✅ Usuario Firebase encontrado en localStorage:', userData.email);
+              currentUser = {
+                id: userData.uid,
+                username: userData.email.split('@')[0],
+                email: userData.email,
+                nombre: userData.displayName || userData.email.split('@')[0],
+                rol: 'usuario',
+                createdAt: new Date().toISOString()
+              };
+              
+              console.log('✅ Usuario autenticado, cargando dashboard...');
+              return true;
+            } catch (error) {
+              console.error('❌ Error parseando usuario Firebase:', error);
+              localStorage.removeItem('axyra_firebase_user');
+            }
+          }
+
+          // TERCERO: Verificar localStorage (sistema aislado)
           const isolatedUser = localStorage.getItem('axyra_isolated_user');
           if (isolatedUser) {
             try {
@@ -568,6 +592,7 @@
                 console.log('✅ Estado del sistema aislado restaurado');
               }
 
+              console.log('✅ Usuario autenticado, cargando dashboard...');
               return true;
             } catch (error) {
               console.error('❌ Error parseando sesión aislada:', error);
@@ -575,11 +600,12 @@
             }
           }
 
-          // TERCERO: Verificar sistema aislado
+          // CUARTO: Verificar sistema aislado
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             const user = window.axyraIsolatedAuth.getCurrentUser();
             console.log('✅ Usuario autenticado con sistema aislado:', user.username);
             currentUser = user;
+            console.log('✅ Usuario autenticado, cargando dashboard...');
             return true;
           }
 
@@ -1994,8 +2020,51 @@
           console.log('✅ Usuario autenticado, cargando dashboard...');
           loadDashboardData();
           updateWelcomeMessage();
+          
+          // Configurar listener de Firebase para mantener sesión
+          setupFirebaseAuthListener();
         } else {
           console.log('⚠️ Usuario no autenticado, mostrando mensaje de login');
+        }
+      }
+      
+      // Configurar listener de Firebase para mantener sesión sincronizada
+      function setupFirebaseAuthListener() {
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+          firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+              console.log('🔥 Usuario Firebase autenticado en dashboard:', user.email);
+              
+              // Actualizar usuario actual
+              currentUser = {
+                id: user.uid,
+                username: user.email.split('@')[0],
+                email: user.email,
+                nombre: user.displayName || user.email.split('@')[0],
+                rol: 'usuario',
+                createdAt: new Date().toISOString()
+              };
+              
+              // Sincronizar localStorage
+              localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+              localStorage.setItem('axyra_isolated_user', JSON.stringify(currentUser));
+              
+            } else {
+              console.log('🔥 Usuario Firebase no autenticado, limpiando sesión...');
+              
+              // Limpiar sesión
+              currentUser = null;
+              localStorage.removeItem('axyra_firebase_user');
+              localStorage.removeItem('axyra_isolated_user');
+              
+              // Mostrar mensaje de login requerido
+              mostrarMensajeNoAutenticado();
+            }
+          });
+          
+          console.log('✅ Listener de Firebase configurado en dashboard');
+        } else {
+          console.log('⚠️ Firebase no disponible en dashboard');
         }
       }
 
