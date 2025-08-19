@@ -660,62 +660,56 @@
           console.log('👥 Cargando empleados para selects...');
 
           // Obtener usuario actual para filtrar empleados
-          let currentUser = null;
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
-            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
-            console.log('✅ Usuario Firebase:', currentUser.email);
-          } else {
-            // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_isolated_user');
-            if (userData) {
-              currentUser = JSON.parse(userData);
-            }
-          }
-
-          if (!currentUser || (!currentUser.username && !currentUser.email)) {
+          const userData = localStorage.getItem('axyra_isolated_user');
+          if (!userData) {
             console.error('❌ No hay usuario autenticado');
             return;
           }
 
-          let empleados = [];
-
-          // Intentar cargar desde Firebase primero
-          if (window.axyraFirebaseDataSystem && currentUser.uid) {
-            console.log('🔥 Cargando empleados desde Firebase...');
-
-            try {
-              empleados = await window.axyraFirebaseDataSystem.getEmployees();
-              console.log('✅ Empleados cargados desde Firebase:', empleados.length);
-            } catch (firebaseError) {
-              console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
-            }
+          const currentUser = JSON.parse(userData);
+          if (!currentUser || (!currentUser.username && !currentUser.email)) {
+            console.error('❌ Usuario no válido');
+            return;
           }
 
-          // Fallback a localStorage si Firebase falló o no está disponible
-          if (empleados.length === 0) {
-            console.log('💾 Cargando empleados desde localStorage...');
-            const empleadosData = localStorage.getItem('axyra_empleados');
+          console.log('✅ Usuario actual:', currentUser.username || currentUser.email);
 
-            if (empleadosData) {
-              try {
-                empleados = JSON.parse(empleadosData);
-                console.log('👥 Empleados totales cargados desde localStorage:', empleados.length);
+          // Cargar empleados desde localStorage
+          console.log('💾 Cargando empleados desde localStorage...');
+          const empleadosData = localStorage.getItem('axyra_empleados');
 
-                // Filtrar empleados por usuario actual
-                const userId = currentUser.username || currentUser.email;
-                const empleadosFiltrados = empleados.filter((emp) => emp.userId === userId);
-                console.log(`✅ Empleados filtrados para usuario ${userId}:`, empleadosFiltrados.length);
-
-                if (empleadosFiltrados.length > 0) {
-                  empleados = empleadosFiltrados;
-                }
-              } catch (error) {
-                console.error('❌ Error parseando empleados:', error);
-                empleados = [];
-              }
-            } else {
-              console.log('ℹ️ No hay datos de empleados en localStorage');
+          if (!empleadosData) {
+            console.log('ℹ️ No hay datos de empleados en localStorage');
+            
+            // Mostrar mensaje informativo
+            const selectEmpleado = document.getElementById('empleadoHoras');
+            if (selectEmpleado) {
+              selectEmpleado.innerHTML = '<option value="">No hay empleados registrados</option>';
             }
+
+            // Mostrar mensaje informativo
+            setTimeout(() => {
+              mostrarMensaje('No hay empleados registrados. Ve a la página de empleados para registrar uno.', 'warning');
+            }, 1000);
+            return;
+          }
+
+          let empleados = [];
+          try {
+            empleados = JSON.parse(empleadosData);
+            console.log('👥 Empleados totales cargados desde localStorage:', empleados.length);
+
+            // Filtrar empleados por usuario actual
+            const userId = currentUser.username || currentUser.email;
+            const empleadosFiltrados = empleados.filter((emp) => emp.userId === userId);
+            console.log(`✅ Empleados filtrados para usuario ${userId}:`, empleadosFiltrados.length);
+
+            if (empleadosFiltrados.length > 0) {
+              empleados = empleadosFiltrados;
+            }
+          } catch (error) {
+            console.error('❌ Error parseando empleados:', error);
+            empleados = [];
           }
 
           // Si no hay empleados, mostrar mensaje de ayuda
@@ -728,11 +722,9 @@
               selectEmpleado.innerHTML = '<option value="">No hay empleados registrados</option>';
             }
 
-            // Mostrar alerta informativa
+            // Mostrar mensaje informativo
             setTimeout(() => {
-              if (confirm('No hay empleados registrados. ¿Deseas ir a la página de empleados para registrar uno?')) {
-                window.location.href = '../empleados/empleados.html';
-              }
+              mostrarMensaje('No hay empleados registrados. Ve a la página de empleados para registrar uno.', 'warning');
             }, 1000);
             return;
           }
@@ -766,13 +758,15 @@
             if (selectComprobante) {
               const optionComprobante = document.createElement('option');
               optionComprobante.value = empleado.id;
-              option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
+              optionComprobante.textContent = `${empleado.nombre} - ${empleado.cargo}`;
               selectComprobante.appendChild(optionComprobante);
             }
           });
+
+          console.log(`✅ ${empleados.length} empleados cargados en los selects`);
         } catch (error) {
           console.error('❌ Error en cargarEmpleados:', error);
-          alert('Error cargando empleados: ' + error.message);
+          mostrarMensaje('Error cargando empleados: ' + error.message, 'error');
         }
       }
 

@@ -1,287 +1,254 @@
-// Generador de PDFs para AXYRA - Sistema de Nómina
-// Basado en la función generar_pdf de Python
+/**
+ * AXYRA - Generador de PDF para Comprobantes
+ * Genera comprobantes exactamente como las imágenes de referencia
+ */
 
 class PDFGenerator {
   constructor() {
-    this.config = {
-      empresa: {
-        nombre: 'VILLA VENECIA',
-        nit: '900.123.456-7',
-        direccion: 'Calle 123 # 45-67, Bogotá D.C.',
-      },
-      salario_minimo: 1423500,
-      auxilio_transporte: 100000,
-      recargos: {
-        nocturno: 0.35,
-        dominical: 0.75,
-        nocturno_dominical: 1.1,
-        extra_diurna: 1.25,
-        extra_nocturna: 1.75,
-        diurna_dominical: 0.8,
-        nocturna_dominical: 1.1,
-        extra_diurna_dominical: 1.05,
-        extra_nocturna_dominical: 1.85,
-      },
-    };
+    this.doc = null;
   }
 
-  // Generar comprobante de pago
-  async generarComprobante(nombre, cedula, tipo, salario_base, horas_dict, deuda_comentario = '', deuda_valor = 0) {
+  /**
+   * Genera un comprobante de pago
+   */
+  async generarComprobante(empleado, horasTrabajadas, salarioBase, tipoContrato) {
     try {
       // Crear nuevo documento PDF
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
+      this.doc = new jsPDF();
+      
+      // Configurar fuente y tamaño
+      this.doc.setFont('helvetica');
+      this.doc.setFontSize(12);
 
-      // Configurar fuente y estilos
-      doc.setFont('helvetica');
-      doc.setFontSize(12);
+      // Agregar encabezado
+      this.agregarEncabezado();
+      
+      // Agregar información del empleado
+      this.agregarInformacionEmpleado(empleado, tipoContrato, salarioBase);
+      
+      // Agregar tabla de horas trabajadas
+      this.agregarTablaHoras(horasTrabajadas, salarioBase);
+      
+      // Agregar totales
+      this.agregarTotales(horasTrabajadas, salarioBase);
+      
+      // Agregar sección de firma
+      this.agregarFirma();
 
-      // Título principal - Formato exacto como en la captura
-      const fecha = new Date();
-      const dia = fecha.getDate().toString().padStart(2, '0');
-      const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
-      const año = fecha.getFullYear();
-      const hora = fecha.getHours().toString().padStart(2, '0');
-      const minutos = fecha.getMinutes().toString().padStart(2, '0');
-      const periodo = fecha.getHours() >= 12 ? 'PM' : 'AM';
-
-      const numeroOrden = `${mes}-${dia}-${año}_${hora}-${minutos}-${periodo}`;
-
-      doc.setFontSize(18);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`ORDEN DE TRABAJO N° ${numeroOrden}`, 105, 30, { align: 'center' });
-
-      // Información de la empresa - Formato exacto como en la captura
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`EMPRESA: VILLA VENECIA`, 20, 50);
-      doc.text(`NIT: 901.234.567-8`, 20, 60);
-      doc.text(`DIRECCIÓN: CRA. 43 SUCRE, VENECIA, ANTIOQUIA, COLOMBIA`, 20, 70);
-
-      // Información del empleado - Formato exacto como en la captura
-      doc.text(`PRESTADOR DEL SERVICIO: ${nombre.toUpperCase()}`, 20, 90);
-      doc.text(`CÉDULA: ${cedula.toUpperCase()}`, 20, 100);
-      doc.text(`TIPO DE CONTRATO: ${tipo === 'POR_HORAS' ? 'TEMPORAL' : 'EMPLEADO FIJO'}`, 20, 110);
-      doc.text(`SALARIO BASE LIQUIDACIÓN: $${this.formatearMoneda(salario_base)}`, 20, 120);
-      doc.text(`TOTAL HORAS TRABAJADAS: ${horas_dict.total_horas.toFixed(1)}`, 20, 130);
-
-      // Tabla de conceptos
-      this.crearTablaConceptos(doc, horas_dict, tipo, salario_base);
-
-      // Resumen de valores
-      const resumen = this.calcularResumen(horas_dict, tipo, salario_base, deuda_valor);
-      this.crearResumenValores(doc, resumen, deuda_comentario);
-
-      // Firmas
-      doc.text('FIRMA DEL TRABAJADOR: __________________________', 20, 250);
-      doc.text('CÉDULA: __________________________', 20, 260);
+      // Generar nombre del archivo
+      const fecha = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      const hora = new Date().toLocaleTimeString('es-CO', { 
+        hour12: false, 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }).replace(/:/g, '-');
+      const filename = `ORDEN_DE_TRABAJO_N°_${fecha}_${hora}.pdf`;
 
       // Guardar PDF
-      const nombreArchivo = `COMPROBANTE_${nombre.replace(/\s+/g, '_').toUpperCase()}_${cedula}_${fechaArchivo}.pdf`;
-      doc.save(nombreArchivo);
-
-      return { success: true, filename: nombreArchivo };
+      this.doc.save(filename);
+      
+      return {
+        success: true,
+        filename: filename
+      };
     } catch (error) {
       console.error('Error generando PDF:', error);
-      return { success: false, error: error.message };
+      return {
+        success: false,
+        error: error.message
+      };
     }
   }
 
-  // Crear tabla de conceptos
-  crearTablaConceptos(doc, horas_dict, tipo, salario_base) {
+  /**
+   * Agrega el encabezado del documento
+   */
+  agregarEncabezado() {
+    // Título principal
+    this.doc.setFontSize(18);
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.text('ORDEN DE TRABAJO', 105, 30, { align: 'center' });
+    
+    // Número de orden
+    const fecha = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    const hora = new Date().toLocaleTimeString('es-CO', { 
+      hour12: false, 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    }).replace(/:/g, '-');
+    this.doc.setFontSize(14);
+    this.doc.text(`N° ${fecha}_${hora}`, 105, 45, { align: 'center' });
+
+    // Información de la empresa
+    this.doc.setFontSize(12);
+    this.doc.setFont('helvetica', 'normal');
+    this.doc.text('EMPRESA: VILLA VENECIA', 20, 65);
+    this.doc.text('NIT: 901.234.567-8', 20, 75);
+    this.doc.text('DIRECCIÓN: CRA. 43 SUCRE, VENECIA, ANTIOQUIA, COLOMBIA', 20, 85);
+  }
+
+  /**
+   * Agrega la información del empleado
+   */
+  agregarInformacionEmpleado(empleado, tipoContrato, salarioBase) {
+    // Título de sección
+    this.doc.setFontSize(14);
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.text('PRESTADOR DEL SERVICIO', 20, 110);
+    
+    // Información del empleado
+    this.doc.setFontSize(12);
+    this.doc.setFont('helvetica', 'normal');
+    this.doc.text(`Name: ${empleado.nombre}`, 20, 125);
+    this.doc.text(`CÉDULA: ${empleado.cedula || 'N/A'}`, 20, 135);
+    this.doc.text(`TIPO DE CONTRATO: ${tipoContrato === 'POR_HORAS' ? 'TEMPORAL' : 'FIJO'}`, 20, 145);
+    
+    // Salario base y horas
+    this.doc.text(`SALARIO BASE LIQUIDACIÓN: $${this.formatearMoneda(salarioBase)}`, 20, 155);
+    
+    // Calcular total de horas
+    const totalHoras = this.calcularTotalHoras(empleado);
+    this.doc.text(`TOTAL HORAS TRABAJADAS: ${totalHoras.toFixed(1)}`, 20, 165);
+  }
+
+  /**
+   * Agrega la tabla de horas trabajadas
+   */
+  agregarTablaHoras(horasTrabajadas, salarioBase) {
+    // Título de la tabla
+    this.doc.setFontSize(14);
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.text('DETALLE DE HORAS Y VALORES', 20, 190);
+    
+    // Encabezados de la tabla
+    this.doc.setFontSize(10);
+    this.doc.setFont('helvetica', 'bold');
     const headers = ['CONCEPTO', 'VALOR HORA', 'VALOR RECARGO', 'VALOR TOTAL', 'HORAS', 'SUBTOTAL'];
-    const startY = 150;
-    const colWidths = [60, 25, 25, 25, 20, 30];
-    const startX = 20;
-
-    // Encabezados
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(8);
-
-    let currentX = startX;
+    const columnWidths = [50, 25, 25, 25, 20, 25];
+    let xPos = 20;
+    
     headers.forEach((header, index) => {
-      doc.text(header, currentX, startY, { align: 'center' });
-      currentX += colWidths[index];
+      this.doc.text(header, xPos, 205);
+      xPos += columnWidths[index];
     });
 
     // Línea separadora
-    doc.line(startX, startY + 5, startX + 185, startY + 5);
+    this.doc.line(20, 210, 190, 210);
 
-    // Datos de conceptos
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(8);
+    // Datos de la tabla
+    this.doc.setFontSize(9);
+    this.doc.setFont('helvetica', 'normal');
+    let yPos = 220;
 
-    const conceptos = this.calcularConceptos(horas_dict, tipo, salario_base);
-    let currentY = startY + 15;
+    const conceptos = [
+      { nombre: 'ORDINARIAS', recargo: 0, horas: horasTrabajadas.horas_ordinarias || 0 },
+      { nombre: 'RECARGO NOCTURNO', recargo: 35, horas: horasTrabajadas.horas_nocturnas || 0 },
+      { nombre: 'RECARGO DIURNO DOMINICAL', recargo: 75, horas: horasTrabajadas.horas_dominicales || 0 },
+      { nombre: 'RECARGO NOCTURNO DOMINICAL', recargo: 110, horas: horasTrabajadas.horas_dominicales_nocturnas || 0 },
+      { nombre: 'HORA EXTRA DIURNA', recargo: 25, horas: horasTrabajadas.horas_extra_diurnas || 0 },
+      { nombre: 'HORA EXTRA NOCTURNA', recargo: 75, horas: horasTrabajadas.horas_extra_nocturnas || 0 },
+      { nombre: 'HORA DIURNA DOMINICAL O FESTIVO', recargo: 75, horas: horasTrabajadas.horas_festivas || 0 },
+      { nombre: 'HORA EXTRA DIURNA DOMINICAL O FESTIVO', recargo: 25, horas: horasTrabajadas.horas_extra_dominicales || 0 },
+      { nombre: 'HORA NOCTURNA DOMINICAL O FESTIVO', recargo: 110, horas: horasTrabajadas.horas_dominicales_nocturnas || 0 },
+      { nombre: 'HORA EXTRA NOCTURNA DOMINICAL O FESTIVO', recargo: 110, horas: horasTrabajadas.horas_extra_dominicales_nocturnas || 0 }
+    ];
 
-    conceptos.forEach((concepto) => {
+    const valorHora = salarioBase / 160; // 160 horas por mes
+
+    conceptos.forEach(concepto => {
       if (concepto.horas > 0) {
-        currentX = startX;
-        doc.text(concepto.nombre, currentX, currentY);
-        currentX += colWidths[0];
+        const valorRecargo = valorHora * (concepto.recargo / 100);
+        const valorTotal = valorHora + valorRecargo;
+        const subtotal = valorTotal * concepto.horas;
 
-        doc.text(`$${this.formatearMoneda(concepto.valor_hora)}`, currentX, currentY, { align: 'center' });
-        currentX += colWidths[1];
+        // Concepto
+        this.doc.text(concepto.nombre, 20, yPos);
+        
+        // Valor hora
+        this.doc.text(`$${this.formatearMoneda(valorHora)}`, 70, yPos);
+        
+        // Valor recargo
+        this.doc.text(`$${this.formatearMoneda(valorRecargo)}`, 95, yPos);
+        
+        // Valor total
+        this.doc.text(`$${this.formatearMoneda(valorTotal)}`, 120, yPos);
+        
+        // Horas
+        this.doc.text(concepto.horas.toFixed(1), 145, yPos);
+        
+        // Subtotal
+        this.doc.text(`$${this.formatearMoneda(subtotal)}`, 165, yPos);
 
-        doc.text(`$${this.formatearMoneda(concepto.valor_recargo)}`, currentX, currentY, { align: 'center' });
-        currentX += colWidths[2];
-
-        doc.text(`$${this.formatearMoneda(concepto.valor_total)}`, currentX, currentY, { align: 'center' });
-        currentX += colWidths[3];
-
-        doc.text(concepto.horas.toFixed(1), currentX, currentY, { align: 'center' });
-        currentX += colWidths[4];
-
-        doc.text(`$${this.formatearMoneda(concepto.subtotal)}`, currentX, currentY, { align: 'center' });
-
-        currentY += 8;
+        yPos += 8;
       }
     });
   }
 
-  // Calcular conceptos según tipo de contrato
-  calcularConceptos(horas_dict, tipo, salario_base) {
-    const valorHoraBase = salario_base / 220; // 220 horas mensuales
-    const conceptos = [];
+  /**
+   * Agrega los totales del documento
+   */
+  agregarTotales(horasTrabajadas, salarioBase) {
+    // Calcular totales
+    const totalHoras = this.calcularTotalHoras(horasTrabajadas);
+    const valorHora = salarioBase / 160;
+    const totalSalario = totalHoras * valorHora;
 
-    if (tipo === 'FIJO') {
-      // Empleado fijo - salario fijo mensual
-      conceptos.push({
-        nombre: 'SALARIO MENSUAL',
-        valor_hora: valorHoraBase,
-        valor_recargo: 0,
-        valor_total: valorHoraBase,
-        horas: 160,
-        subtotal: salario_base,
-      });
-    } else {
-      // Empleado por horas
-      if (horas_dict.horas_ordinarias > 0) {
-        conceptos.push({
-          nombre: 'HORAS ORDINARIAS',
-          valor_hora: valorHoraBase,
-          valor_recargo: 0,
-          valor_total: valorHoraBase,
-          horas: horas_dict.horas_ordinarias,
-          subtotal: valorHoraBase * horas_dict.horas_ordinarias,
-        });
-      }
+    // Línea separadora
+    this.doc.line(20, 350, 190, 350);
 
-      if (horas_dict.horas_nocturnas > 0) {
-        conceptos.push({
-          nombre: 'HORAS NOCTURNAS',
-          valor_hora: valorHoraBase,
-          valor_recargo: valorHoraBase * this.config.recargos.nocturno,
-          valor_total: valorHoraBase * (1 + this.config.recargos.nocturno),
-          horas: horas_dict.horas_nocturnas,
-          subtotal: valorHoraBase * (1 + this.config.recargos.nocturno) * horas_dict.horas_nocturnas,
-        });
-      }
-
-      if (horas_dict.horas_dominicales > 0) {
-        conceptos.push({
-          nombre: 'HORAS DOMINICALES',
-          valor_hora: valorHoraBase,
-          valor_recargo: valorHoraBase * this.config.recargos.dominical,
-          valor_total: valorHoraBase * (1 + this.config.recargos.dominical),
-          horas: horas_dict.horas_dominicales,
-          subtotal: valorHoraBase * (1 + this.config.recargos.dominical) * horas_dict.horas_dominicales,
-        });
-      }
-
-      if (horas_dict.horas_extra_diurnas > 0) {
-        conceptos.push({
-          nombre: 'HORAS EXTRA DIURNAS',
-          valor_hora: valorHoraBase,
-          valor_recargo: valorHoraBase * this.config.recargos.extra_diurna,
-          valor_total: valorHoraBase * (1 + this.config.recargos.extra_diurna),
-          horas: horas_dict.horas_extra_diurnas,
-          subtotal: valorHoraBase * (1 + this.config.recargos.extra_diurna) * horas_dict.horas_extra_diurnas,
-        });
-      }
-
-      if (horas_dict.horas_extra_nocturnas > 0) {
-        conceptos.push({
-          nombre: 'HORAS EXTRA NOCTURNAS',
-          valor_hora: valorHoraBase,
-          valor_recargo: valorHoraBase * this.config.recargos.extra_nocturna,
-          valor_total: valorHoraBase * (1 + this.config.recargos.extra_nocturna),
-          horas: horas_dict.horas_extra_nocturnas,
-          subtotal: valorHoraBase * (1 + this.config.recargos.extra_nocturna) * horas_dict.horas_extra_nocturnas,
-        });
-      }
-    }
-
-    return conceptos;
+    // Total con auxilio
+    this.doc.setFontSize(12);
+    this.doc.setFont('helvetica', 'bold');
+    this.doc.text(`TOTAL (CON AUXILIO): $${this.formatearMoneda(totalSalario)}`, 20, 365);
+    
+    // Total neto a pagar
+    this.doc.text(`TOTAL NETO A PAGAR: $${this.formatearMoneda(totalSalario)}`, 20, 375);
   }
 
-  // Crear resumen de valores
-  crearResumenValores(doc, resumen, deuda_comentario) {
-    let currentY = 220;
-
-    if (resumen.auxilio > 0) {
-      doc.text(`AUXILIO DE TRANSPORTE: $${this.formatearMoneda(resumen.auxilio)}`, 20, currentY);
-      currentY += 10;
-    }
-
-    if (resumen.salud > 0) {
-      doc.text(`APORTE SALUD: ($${this.formatearMoneda(resumen.salud)})`, 20, currentY);
-      currentY += 10;
-    }
-
-    if (resumen.pension > 0) {
-      doc.text(`APORTE PENSIÓN: ($${this.formatearMoneda(resumen.pension)})`, 20, currentY);
-      currentY += 10;
-    }
-
-    if (resumen.deuda > 0) {
-      doc.text(`MOTIVO DE DEUDA: ${deuda_comentario.toUpperCase()}`, 20, currentY);
-      currentY += 10;
-      doc.text(`DEUDA: ($${this.formatearMoneda(resumen.deuda)})`, 20, currentY);
-      currentY += 10;
-    }
-
-    doc.setFont('helvetica', 'bold');
-    doc.text(`TOTAL (CON AUXILIO): $${this.formatearMoneda(resumen.total_con_auxilio)}`, 20, currentY);
-    currentY += 10;
-    doc.text(`TOTAL NETO A PAGAR: $${this.formatearMoneda(resumen.neto)}`, 20, currentY);
+  /**
+   * Agrega la sección de firma
+   */
+  agregarFirma() {
+    // Línea para firma
+    this.doc.line(20, 420, 80, 420);
+    this.doc.setFontSize(10);
+    this.doc.setFont('helvetica', 'normal');
+    this.doc.text('FIRMA DEL TRABAJADOR:', 20, 430);
+    
+    // Línea para cédula
+    this.doc.line(20, 440, 80, 440);
+    this.doc.text('CÉDULA:', 20, 450);
   }
 
-  // Calcular resumen de valores
-  calcularResumen(horas_dict, tipo, salario_base, deuda_valor) {
-    const conceptos = this.calcularConceptos(horas_dict, tipo, salario_base);
-    const total = conceptos.reduce((sum, concepto) => sum + concepto.subtotal, 0);
-
-    const auxilio = this.config.auxilio_transporte;
-    const salud = tipo === 'FIJO' ? salario_base * 0.04 : 0;
-    const pension = tipo === 'FIJO' ? salario_base * 0.04 : 0;
-    const deuda = deuda_valor || 0;
-
-    const total_con_auxilio = total + auxilio;
-    const neto = Math.max(0, total_con_auxilio - salud - pension - deuda);
-
-    return {
-      total,
-      auxilio,
-      salud,
-      pension,
-      deuda,
-      total_con_auxilio,
-      neto,
-    };
+  /**
+   * Calcula el total de horas trabajadas
+   */
+  calcularTotalHoras(empleado) {
+    // Obtener horas desde localStorage
+    const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+    const horasEmpleado = horas.filter(h => h.empleadoId === empleado.id);
+    
+    let total = 0;
+    horasEmpleado.forEach(registro => {
+      total += parseFloat(registro.horasOrdinarias) || 0;
+      total += parseFloat(registro.horasNocturnas) || 0;
+      total += parseFloat(registro.horasExtraDiurnas) || 0;
+      total += parseFloat(registro.horasExtraNocturnas) || 0;
+      total += parseFloat(registro.horasDominicales) || 0;
+      total += parseFloat(registro.horasFestivas) || 0;
+    });
+    
+    return total;
   }
 
-  // Formatear moneda colombiana
+  /**
+   * Formatea moneda
+   */
   formatearMoneda(valor) {
     return valor.toLocaleString('es-CO', {
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     });
-  }
-
-  // Actualizar configuración
-  actualizarConfiguracion(nuevaConfig) {
-    this.config = { ...this.config, ...nuevaConfig };
   }
 }
 

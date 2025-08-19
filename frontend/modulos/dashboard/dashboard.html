@@ -960,8 +960,11 @@
             return total + horasOrdinarias + horasNocturnas + horasExtras + horasDominicales;
           }, 0);
 
+          // Si no hay horas trabajadas, el total de salarios debe ser 0
+          const totalSalariosFinal = totalHorasTrabajadas > 0 ? totalSalarios : 0;
+
           // Formatear y mostrar datos de forma segura
-          formatearYMostrarDatos(totalSalarios, totalHorasTrabajadas);
+          formatearYMostrarDatos(totalSalariosFinal, totalHorasTrabajadas);
 
           // Cargar actividad reciente de forma segura
           if (typeof cargarActividadReciente === 'function') {

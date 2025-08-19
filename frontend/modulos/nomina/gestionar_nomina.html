@@ -417,19 +417,8 @@
           console.log('👥 Cargando empleados para nómina...');
 
           // Obtener usuario actual - SISTEMA AISLADO
-          let currentUser = null;
-          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
-            currentUser = window.axyraIsolatedAuth.getCurrentUser();
-            console.log('✅ Usuario sistema aislado en nómina:', currentUser.username);
-          } else {
-            // Fallback a localStorage aislado
-            const userData = localStorage.getItem('axyra_isolated_user');
-            if (userData) {
-              currentUser = JSON.parse(userData);
-            }
-          }
-
-          if (!currentUser || (!currentUser.username && !currentUser.email)) {
+          const userData = localStorage.getItem('axyra_isolated_user');
+          if (!userData) {
             console.log('⚠️ No hay usuario autenticado en nómina');
             empleados = [];
             mostrarEmpleadosNomina();
@@ -437,45 +426,46 @@
             return;
           }
 
-          // Intentar cargar desde Firebase primero
-          if (window.axyraFirebaseDataSystem && currentUser.uid) {
-            console.log('🔥 Cargando empleados desde Firebase para nómina...');
-
-            try {
-              empleados = await window.axyraFirebaseDataSystem.getEmployees();
-              console.log(`✅ Empleados cargados desde Firebase para nómina: ${empleados.length}`);
-            } catch (firebaseError) {
-              console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
-            }
+          const currentUser = JSON.parse(userData);
+          if (!currentUser || (!currentUser.username && !currentUser.email)) {
+            console.log('⚠️ Usuario no válido en nómina');
+            empleados = [];
+            mostrarEmpleadosNomina();
+            actualizarResumen();
+            return;
           }
 
-          // Fallback a localStorage si Firebase falló o no está disponible
-          if (empleados.length === 0) {
-            console.log('💾 Cargando empleados desde localStorage para nómina...');
-            const empleadosGuardados = localStorage.getItem('axyra_empleados');
+          console.log('✅ Usuario actual en nómina:', currentUser.username || currentUser.email);
 
-            if (empleadosGuardados) {
-              try {
-                empleados = JSON.parse(empleadosGuardados);
-                console.log('👥 Empleados totales en nómina desde localStorage:', empleados.length);
+          // Cargar empleados desde localStorage
+          console.log('💾 Cargando empleados desde localStorage para nómina...');
+          const empleadosGuardados = localStorage.getItem('axyra_empleados');
 
-                // Filtrar empleados por usuario actual
-                const userId = currentUser.username || currentUser.email;
-                const empleadosFiltrados = empleados.filter((emp) => emp.userId === userId);
-                console.log(
-                  `✅ Empleados filtrados para nómina - Usuario: ${userId} - Total: ${empleadosFiltrados.length}`
-                );
+          if (!empleadosGuardados) {
+            console.log('ℹ️ No hay empleados guardados en localStorage');
+            empleados = [];
+            mostrarEmpleadosNomina();
+            actualizarResumen();
+            return;
+          }
 
-                if (empleadosFiltrados.length > 0) {
-                  empleados = empleadosFiltrados;
-                }
-              } catch (error) {
-                console.error('Error cargando empleados para nómina:', error);
-                empleados = [];
-              }
-            } else {
-              empleados = [];
+          try {
+            empleados = JSON.parse(empleadosGuardados);
+            console.log('👥 Empleados totales en nómina desde localStorage:', empleados.length);
+
+            // Filtrar empleados por usuario actual
+            const userId = currentUser.username || currentUser.email;
+            const empleadosFiltrados = empleados.filter((emp) => emp.userId === userId);
+            console.log(
+              `✅ Empleados filtrados para nómina - Usuario: ${userId} - Total: ${empleadosFiltrados.length}`
+            );
+
+            if (empleadosFiltrados.length > 0) {
+              empleados = empleadosFiltrados;
             }
+          } catch (error) {
+            console.error('Error cargando empleados para nómina:', error);
+            empleados = [];
           }
 
           mostrarEmpleadosNomina();

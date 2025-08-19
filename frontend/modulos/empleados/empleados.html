@@ -233,7 +233,7 @@
     </div>
 
     <!-- Modal de Confirmación -->
-    <div id="modalConfirmacion" class="axyra-modal">
+    <div id="modalConfirmacion" class="axyra-modal" style="display: none;">
       <div class="axyra-modal-content">
         <div class="axyra-modal-header">
           <h3 class="axyra-modal-title"><i class="fas fa-question-circle"></i> Confirmar Acción</h3>
@@ -243,12 +243,14 @@
         </div>
         <div class="axyra-modal-body">
           <p id="confirmacionMensaje">¿Estás seguro de que deseas realizar esta acción?</p>
-          <div class="axyra-modal-footer">
-            <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModal('modalConfirmacion')">
-              <i class="fas fa-times"></i> Cancelar
-            </button>
-            <button id="btnConfirmar" class="axyra-btn axyra-btn-error"><i class="fas fa-check"></i> Confirmar</button>
-          </div>
+        </div>
+        <div class="axyra-modal-footer">
+          <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModal('modalConfirmacion')">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button id="btnConfirmar" class="axyra-btn axyra-btn-error">
+            <i class="fas fa-check"></i> Confirmar
+          </button>
         </div>
       </div>
     </div>
