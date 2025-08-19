@@ -553,6 +553,19 @@
         return valor;
       }
 
+      // Función para formatear moneda con separadores de miles
+      function formatearMonedaConSeparadores(valor) {
+        if (typeof valor === 'number') {
+          return valor.toLocaleString('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          });
+        }
+        return valor;
+      }
+
       // Cargar resumen del día
       function cargarResumen() {
         try {

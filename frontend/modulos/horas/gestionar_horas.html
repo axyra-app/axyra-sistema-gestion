@@ -661,11 +661,27 @@
         window.location.href = '../../login.html';
       }
 
-      // Cargar empleados en los selects
+      // Función para cargar empleados en los selects
       async function cargarEmpleados() {
         try {
           console.log('👥 Cargando empleados para selects...');
-
+          
+          // Obtener usuario actual
+          let currentUser = null;
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
+          } else {
+            const userData = localStorage.getItem('axyra_isolated_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+          
+          if (!currentUser) {
+            console.log('⚠️ No hay usuario autenticado');
+            return;
+          }
+          
           // Intentar cargar desde Firebase primero si está disponible
           if (window.axyraFirebase && window.axyraFirebase.firestore) {
             try {
@@ -674,7 +690,7 @@
                 .collection('empleados')
                 .where('companyId', '==', window.axyraFirebaseUtils.getCompanyId())
                 .get();
-
+              
               if (!empleadosSnapshot.empty) {
                 const empleadosFirebase = [];
                 empleadosSnapshot.forEach(doc => {
@@ -683,7 +699,7 @@
                     ...doc.data()
                   });
                 });
-
+                
                 console.log(`✅ Empleados cargados desde Firebase: ${empleadosFirebase.length}`);
                 
                 // Guardar en localStorage para sincronización
@@ -697,64 +713,32 @@
               console.log('ℹ️ Firebase no disponible, usando localStorage:', firebaseError.message);
             }
           }
-
-          // Cargar empleados desde localStorage
-          console.log('💾 Cargando empleados desde localStorage...');
+          
+          // Cargar empleados desde localStorage (fallback)
           const empleadosData = localStorage.getItem('axyra_empleados');
-
-          if (!empleadosData) {
-            console.log('ℹ️ No hay datos de empleados en localStorage');
-            
-            // Mostrar mensaje informativo
-            const selectEmpleado = document.getElementById('empleadoHoras');
-            if (selectEmpleado) {
-              selectEmpleado.innerHTML = '<option value="">No hay empleados registrados</option>';
+          if (empleadosData) {
+            try {
+              const empleados = JSON.parse(empleadosData);
+              console.log(`📦 Empleados cargados desde localStorage: ${empleados.length}`);
+              
+              // Filtrar por usuario actual si es necesario
+              const empleadosFiltrados = empleados.filter(emp => 
+                !emp.userId || emp.userId === currentUser.username || emp.userId === currentUser.email
+              );
+              
+              console.log(`✅ Empleados filtrados para usuario actual: ${empleadosFiltrados.length}`);
+              
+              // Cargar en los selects
+              cargarEmpleadosEnSelects(empleadosFiltrados);
+            } catch (error) {
+              console.error('❌ Error parseando empleados de localStorage:', error);
+              cargarEmpleadosEnSelects([]);
             }
-
-            // Mostrar mensaje informativo
-            setTimeout(() => {
-              mostrarMensaje('No hay empleados registrados. Ve a la página de empleados para registrar uno.', 'warning');
-            }, 1000);
-            return;
+          } else {
+            console.log('ℹ️ No hay empleados en localStorage');
+            cargarEmpleadosEnSelects([]);
           }
-
-          let empleados = [];
-          try {
-            empleados = JSON.parse(empleadosData);
-            console.log('👥 Empleados totales cargados desde localStorage:', empleados.length);
-
-            // Filtrar solo empleados activos
-            const empleadosActivos = empleados.filter((emp) => emp.estado === 'Activo');
-            console.log(`✅ Empleados activos:`, empleadosActivos.length);
-
-            if (empleadosActivos.length > 0) {
-              empleados = empleadosActivos;
-            }
-          } catch (error) {
-            console.error('❌ Error parseando empleados:', error);
-            empleados = [];
-          }
-
-          // Si no hay empleados, mostrar mensaje de ayuda
-          if (empleados.length === 0) {
-            console.log('⚠️ No hay empleados activos');
-
-            // Mostrar mensaje informativo
-            const selectEmpleado = document.getElementById('empleadoHoras');
-            if (selectEmpleado) {
-              selectEmpleado.innerHTML = '<option value="">No hay empleados activos</option>';
-            }
-
-            // Mostrar mensaje informativo
-            setTimeout(() => {
-              mostrarMensaje('No hay empleados activos. Ve a la página de empleados para registrar uno.', 'warning');
-            }, 1000);
-            return;
-          }
-
-          // Cargar empleados en los selects
-          cargarEmpleadosEnSelects(empleados);
-
+          
         } catch (error) {
           console.error('❌ Error en cargarEmpleados:', error);
           mostrarMensaje('Error cargando empleados: ' + error.message, 'error');
@@ -765,40 +749,35 @@
       function cargarEmpleadosEnSelects(empleados) {
         const selectEmpleado = document.getElementById('empleadoHoras');
         const selectComprobante = document.getElementById('empleadoComprobante');
-
-        if (!selectEmpleado) {
-          console.error('❌ No se encontró el select empleadoHoras');
+        
+        if (!selectEmpleado || !selectComprobante) {
+          console.error('❌ No se encontraron los selects de empleados');
           return;
         }
-
-        if (!selectComprobante) {
-          console.error('❌ No se encontró el select empleadoComprobante');
-        }
-
+        
         // Limpiar selects
         selectEmpleado.innerHTML = '<option value="">Seleccionar empleado</option>';
-        if (selectComprobante) {
-          selectComprobante.innerHTML = '<option value="">Seleccionar empleado</option>';
+        selectComprobante.innerHTML = '<option value="">Seleccionar empleado</option>';
+        
+        if (empleados.length === 0) {
+          console.log('ℹ️ No hay empleados para mostrar');
+          return;
         }
-
-        // Agregar empleados a los selects
-        empleados.forEach((empleado, index) => {
-          // Select principal de horas
-          const option = document.createElement('option');
-          option.value = empleado.id;
-          option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
-          selectEmpleado.appendChild(option);
-
-          // Select para comprobantes
-          if (selectComprobante) {
-            const optionComprobante = document.createElement('option');
-            optionComprobante.value = empleado.id;
-            optionComprobante.textContent = `${empleado.nombre} - ${empleado.cargo}`;
-            selectComprobante.appendChild(optionComprobante);
-          }
+        
+        // Agregar opciones
+        empleados.forEach(empleado => {
+          const optionEmpleado = document.createElement('option');
+          optionEmpleado.value = empleado.id;
+          optionEmpleado.textContent = `${empleado.nombre} (${empleado.cargo || 'Sin cargo'})`;
+          selectEmpleado.appendChild(optionEmpleado);
+          
+          const optionComprobante = document.createElement('option');
+          optionComprobante.value = empleado.id;
+          optionComprobante.textContent = `${empleado.nombre} (${empleado.cargo || 'Sin cargo'})`;
+          selectComprobante.appendChild(optionComprobante);
         });
-
-        console.log(`✅ Empleados cargados en selects: ${empleados.length}`);
+        
+        console.log(`✅ ${empleados.length} empleados cargados en los selects`);
       }
 
       // Manejar formulario de registro masivo
@@ -1745,6 +1724,105 @@
           alert('Error durante la inicialización: ' + error.message);
         }
       });
+
+      // Función para generar comprobante
+      async function generarComprobante() {
+        try {
+          const empleadoId = document.getElementById('empleadoComprobante').value;
+          
+          if (!empleadoId) {
+            mostrarMensaje('❌ Por favor selecciona un empleado', 'error');
+            return;
+          }
+          
+          // Obtener datos del empleado
+          const empleadosData = localStorage.getItem('axyra_empleados');
+          if (!empleadosData) {
+            mostrarMensaje('❌ No se encontraron datos de empleados', 'error');
+            return;
+          }
+          
+          const empleados = JSON.parse(empleadosData);
+          const empleado = empleados.find(emp => emp.id === empleadoId);
+          
+          if (!empleado) {
+            mostrarMensaje('❌ Empleado no encontrado', 'error');
+            return;
+          }
+          
+          console.log('📋 Generando comprobante para:', empleado.nombre);
+          
+          // Obtener horas del empleado
+          const horasData = localStorage.getItem('axyra_horas') || '[]';
+          const horas = JSON.parse(horasData);
+          const horasEmpleado = horas.filter(h => h.empleadoId === empleadoId);
+          
+          if (horasEmpleado.length === 0) {
+            mostrarMensaje('❌ No hay horas registradas para este empleado', 'warning');
+            return;
+          }
+          
+          // Calcular totales
+          const totalHoras = horasEmpleado.reduce((sum, h) => sum + (h.horasOrdinarias || 0), 0);
+          const totalHorasExtra = horasEmpleado.reduce((sum, h) => sum + (h.horasExtra || 0), 0);
+          const totalHorasFestivas = horasEmpleado.reduce((sum, h) => sum + (h.horasFestivas || 0), 0);
+          
+          // Calcular salario
+          const salarioBase = empleado.salario || 0;
+          const valorHora = salarioBase / 240; // 240 horas mensuales
+          const salarioNeto = (totalHoras * valorHora) + (totalHorasExtra * valorHora * 1.25) + (totalHorasFestivas * valorHora * 1.75);
+          
+          // Crear comprobante
+          const comprobante = {
+            id: Date.now().toString(),
+            empleadoId: empleado.id,
+            empleadoNombre: empleado.nombre,
+            empleadoCedula: empleado.cedula || 'N/A',
+            tipoContrato: empleado.tipoContrato || 'TEMPORAL',
+            salarioBase: salarioBase,
+            totalHoras: totalHoras + totalHorasExtra + totalHorasFestivas,
+            horasOrdinarias: totalHoras,
+            horasExtra: totalHorasExtra,
+            horasFestivas: totalHorasFestivas,
+            valorHora: valorHora,
+            salarioNeto: salarioNeto,
+            fecha: new Date().toISOString(),
+            userId: getCurrentUserId()
+          };
+          
+          // Guardar comprobante
+          const comprobantesData = localStorage.getItem('axyra_comprobantes') || '[]';
+          const comprobantes = JSON.parse(comprobantesData);
+          comprobantes.push(comprobante);
+          localStorage.setItem('axyra_comprobantes', JSON.stringify(comprobantes));
+          
+          // Mostrar mensaje de éxito
+          mostrarMensaje(`✅ Comprobante generado para ${empleado.nombre}`, 'success');
+          
+          // Limpiar selección
+          document.getElementById('empleadoComprobante').value = '';
+          
+          console.log('✅ Comprobante generado:', comprobante);
+          
+        } catch (error) {
+          console.error('❌ Error generando comprobante:', error);
+          mostrarMensaje('❌ Error al generar comprobante: ' + error.message, 'error');
+        }
+      }
+
+      // Función auxiliar para obtener ID del usuario actual
+      function getCurrentUserId() {
+        let currentUser = null;
+        if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+          currentUser = window.axyraIsolatedAuth.getCurrentUser();
+        } else {
+          const userData = localStorage.getItem('axyra_isolated_user');
+          if (userData) {
+            currentUser = JSON.parse(userData);
+          }
+        }
+        return currentUser ? (currentUser.username || currentUser.email) : 'admin';
+      }
     </script>
 
     <style>

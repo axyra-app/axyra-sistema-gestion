@@ -154,21 +154,38 @@ function clearPreviousCompanyData() {
   const currentCompanyId = localStorage.getItem('axyra_company_id');
   
   // Lista de claves a limpiar
-  const keysToClear = [
+  const keysToClean = [
     'axyra_empleados',
-    'axyra_facturas',
     'axyra_horas',
-    'axyra_nominas',
-    'axyra_departamentos',
-    'axyra_firebase_user',
-    'axyra_isolated_user'
+    'axyra_nomina',
+    'axyra_facturas',
+    'axyra_configuracion',
+    'axyra_areas_trabajo'
   ];
   
-  keysToClear.forEach(key => {
-    localStorage.removeItem(key);
+  keysToClean.forEach(key => {
+    if (localStorage.getItem(key)) {
+      localStorage.removeItem(key);
+      console.log(`🧹 Datos limpiados: ${key}`);
+    }
   });
   
-  console.log('🧹 Datos de empresa anterior limpiados');
+  console.log('✅ Datos de empresa anterior limpiados');
+}
+
+// Función para limpiar datos al cambiar de usuario
+function clearUserDataOnChange(newUserId) {
+  const currentUserId = localStorage.getItem('axyra_isolated_user_id');
+  
+  if (currentUserId && currentUserId !== newUserId) {
+    console.log('🔄 Usuario cambiado, limpiando datos...');
+    clearPreviousCompanyData();
+    
+    // Generar nuevo ID de empresa
+    const newCompanyId = generateCompanyId();
+    localStorage.setItem('axyra_company_id', newCompanyId);
+    console.log('🏢 Nueva empresa creada para nuevo usuario:', newCompanyId);
+  }
 }
 
 // Función para hacer logout de Firebase
@@ -252,8 +269,8 @@ async function getFirestoreData(collection, options = {}) {
       }
       
       // Aplicar otros filtros si se especifican
-      if (options.filters) {
-        options.filters.forEach(filter => {
+      if (options.where) {
+        options.where.forEach(filter => {
           query = query.where(filter.field, filter.operator, filter.value);
         });
       }
@@ -270,7 +287,6 @@ async function getFirestoreData(collection, options = {}) {
       
       const snapshot = await query.get();
       return snapshot;
-      
     } catch (error) {
       console.error('❌ Error obteniendo datos de Firestore:', error);
       return null;
@@ -285,48 +301,43 @@ async function saveFirestoreData(collection, docId, data, options = {}) {
     try {
       const companyId = getOrCreateCompanyId();
       
-      // Agregar ID de empresa si no se especifica lo contrario
+      // Agregar companyId si no se especifica lo contrario
       if (!options.ignoreCompany) {
         data.companyId = companyId;
       }
       
-      // Agregar timestamp de actualización
-      data.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+      // Agregar timestamp de creación/actualización
+      if (!data.createdAt) {
+        data.createdAt = new Date().toISOString();
+      }
+      data.updatedAt = new Date().toISOString();
       
-      await window.axyraFirebase.firestore
-        .collection(collection)
-        .doc(docId)
-        .set(data, { merge: true });
+      const docRef = window.axyraFirebase.firestore.collection(collection).doc(docId);
+      await docRef.set(data, { merge: true });
       
-      console.log('✅ Datos guardados en Firestore con empresa:', companyId);
-      return true;
-      
+      console.log(`✅ Datos guardados en ${collection}/${docId}`);
+      return docRef;
     } catch (error) {
       console.error('❌ Error guardando datos en Firestore:', error);
-      return false;
+      throw error;
     }
   }
-  return false;
+  throw new Error('Firebase no disponible');
 }
 
-// Función para eliminar datos de Firestore con aislamiento por empresa
+// Función para eliminar datos de Firestore
 async function deleteFirestoreData(collection, docId) {
   if (isFirebaseAvailable()) {
     try {
-      await window.axyraFirebase.firestore
-        .collection(collection)
-        .doc(docId)
-        .delete();
-      
-      console.log('✅ Datos eliminados de Firestore');
+      await window.axyraFirebase.firestore.collection(collection).doc(docId).delete();
+      console.log(`✅ Documento eliminado: ${collection}/${docId}`);
       return true;
-      
     } catch (error) {
-      console.error('❌ Error eliminando datos de Firestore:', error);
-      return false;
+      console.error('❌ Error eliminando documento:', error);
+      throw error;
     }
   }
-  return false;
+  throw new Error('Firebase no disponible');
 }
 
 // Exportar funciones para uso global
