@@ -61,9 +61,65 @@ class PDFGenerator {
   }
 
   /**
+   * Obtiene la configuración completa de la empresa
+   */
+  obtenerConfiguracionEmpresa() {
+    try {
+      const configuracion = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
+      
+      return {
+        nombreEmpresa: configuracion.nombreEmpresa || 'VILLA VENECIA',
+        nitEmpresa: configuracion.nitEmpresa || '901.234.567-8',
+        direccionEmpresa: configuracion.direccionEmpresa || 'CRA. 43 SUCRE, VENECIA, ANTIOQUIA, COLOMBIA',
+        telefonoEmpresa: configuracion.telefonoEmpresa || '',
+        emailEmpresa: configuracion.emailEmpresa || '',
+        sitioWebEmpresa: configuracion.sitioWebEmpresa || '',
+        // Configuración de nómina
+        salarioMinimo: parseFloat(configuracion.salarioMinimo) || 1423500,
+        auxilioTransporte: parseFloat(configuracion.auxilioTransporte) || 100000,
+        porcentajeSalud: parseFloat(configuracion.porcentajeSalud) || 4,
+        porcentajePension: parseFloat(configuracion.porcentajePension) || 4,
+        horasEstandar: parseFloat(configuracion.horasEstandar) || 160,
+        // Recargos
+        recargoNocturno: parseFloat(configuracion.recargoNocturno) || 35,
+        recargoDominical: parseFloat(configuracion.recargoDominical) || 75,
+        recargoExtraDiurna: parseFloat(configuracion.recargoExtraDiurna) || 25,
+        recargoExtraNocturna: parseFloat(configuracion.recargoExtraNocturna) || 75,
+        recargoFestivo: parseFloat(configuracion.recargoFestivo) || 75,
+        recargoDominicalNocturno: parseFloat(configuracion.recargoDominicalNocturno) || 110
+      };
+    } catch (error) {
+      console.error('Error obteniendo configuración de empresa:', error);
+      // Retornar valores por defecto
+      return {
+        nombreEmpresa: 'VILLA VENECIA',
+        nitEmpresa: '901.234.567-8',
+        direccionEmpresa: 'CRA. 43 SUCRE, VENECIA, ANTIOQUIA, COLOMBIA',
+        telefonoEmpresa: '',
+        emailEmpresa: '',
+        sitioWebEmpresa: '',
+        salarioMinimo: 1423500,
+        auxilioTransporte: 100000,
+        porcentajeSalud: 4,
+        porcentajePension: 4,
+        horasEstandar: 160,
+        recargoNocturno: 35,
+        recargoDominical: 75,
+        recargoExtraDiurna: 25,
+        recargoExtraNocturna: 75,
+        recargoFestivo: 75,
+        recargoDominicalNocturno: 110
+      };
+    }
+  }
+
+  /**
    * Agrega el encabezado del documento
    */
   agregarEncabezado() {
+    // Obtener configuración de la empresa
+    const config = this.obtenerConfiguracionEmpresa();
+
     // Título principal
     this.doc.setFontSize(18);
     this.doc.setFont('helvetica', 'bold');
@@ -79,12 +135,12 @@ class PDFGenerator {
     this.doc.setFontSize(14);
     this.doc.text(`N° ${fecha}_${hora}`, 105, 45, { align: 'center' });
 
-    // Información de la empresa
+    // Información de la empresa - DINÁMICA
     this.doc.setFontSize(12);
     this.doc.setFont('helvetica', 'normal');
-    this.doc.text('EMPRESA: VILLA VENECIA', 20, 65);
-    this.doc.text('NIT: 901.234.567-8', 20, 75);
-    this.doc.text('DIRECCIÓN: CRA. 43 SUCRE, VENECIA, ANTIOQUIA, COLOMBIA', 20, 85);
+    this.doc.text(`EMPRESA: ${config.nombreEmpresa.toUpperCase()}`, 20, 65);
+    this.doc.text(`NIT: ${config.nitEmpresa}`, 20, 75);
+    this.doc.text(`DIRECCIÓN: ${config.direccionEmpresa.toUpperCase()}`, 20, 85);
   }
 
   /**
@@ -115,6 +171,9 @@ class PDFGenerator {
    * Agrega la tabla de horas trabajadas
    */
   agregarTablaHoras(horasTrabajadas, salarioBase) {
+    // Obtener configuración de la empresa para recargos
+    const config = this.obtenerConfiguracionEmpresa();
+    
     // Título de la tabla
     this.doc.setFontSize(14);
     this.doc.setFont('helvetica', 'bold');
@@ -142,18 +201,19 @@ class PDFGenerator {
 
     const conceptos = [
       { nombre: 'ORDINARIAS', recargo: 0, horas: horasTrabajadas.horas_ordinarias || 0 },
-      { nombre: 'RECARGO NOCTURNO', recargo: 35, horas: horasTrabajadas.horas_nocturnas || 0 },
-      { nombre: 'RECARGO DIURNO DOMINICAL', recargo: 75, horas: horasTrabajadas.horas_dominicales || 0 },
-      { nombre: 'RECARGO NOCTURNO DOMINICAL', recargo: 110, horas: horasTrabajadas.horas_dominicales_nocturnas || 0 },
-      { nombre: 'HORA EXTRA DIURNA', recargo: 25, horas: horasTrabajadas.horas_extra_diurnas || 0 },
-      { nombre: 'HORA EXTRA NOCTURNA', recargo: 75, horas: horasTrabajadas.horas_extra_nocturnas || 0 },
-      { nombre: 'HORA DIURNA DOMINICAL O FESTIVO', recargo: 75, horas: horasTrabajadas.horas_festivas || 0 },
-      { nombre: 'HORA EXTRA DIURNA DOMINICAL O FESTIVO', recargo: 25, horas: horasTrabajadas.horas_extra_dominicales || 0 },
-      { nombre: 'HORA NOCTURNA DOMINICAL O FESTIVO', recargo: 110, horas: horasTrabajadas.horas_dominicales_nocturnas || 0 },
-      { nombre: 'HORA EXTRA NOCTURNA DOMINICAL O FESTIVO', recargo: 110, horas: horasTrabajadas.horas_extra_dominicales_nocturnas || 0 }
+      { nombre: 'RECARGO NOCTURNO', recargo: config.recargoNocturno, horas: horasTrabajadas.horas_nocturnas || 0 },
+      { nombre: 'RECARGO DIURNO DOMINICAL', recargo: config.recargoDominical, horas: horasTrabajadas.horas_dominicales || 0 },
+      { nombre: 'RECARGO NOCTURNO DOMINICAL', recargo: config.recargoDominicalNocturno, horas: horasTrabajadas.horas_dominicales_nocturnas || 0 },
+      { nombre: 'HORA EXTRA DIURNA', recargo: config.recargoExtraDiurna, horas: horasTrabajadas.horas_extra_diurnas || 0 },
+      { nombre: 'HORA EXTRA NOCTURNA', recargo: config.recargoExtraNocturna, horas: horasTrabajadas.horas_extra_nocturnas || 0 },
+      { nombre: 'HORA DIURNA DOMINICAL O FESTIVO', recargo: config.recargoFestivo, horas: horasTrabajadas.horas_festivas || 0 },
+      { nombre: 'HORA EXTRA DIURNA DOMINICAL O FESTIVO', recargo: config.recargoExtraDiurna, horas: horasTrabajadas.horas_extra_dominicales || 0 },
+      { nombre: 'HORA NOCTURNA DOMINICAL O FESTIVO', recargo: config.recargoDominicalNocturno, horas: horasTrabajadas.horas_dominicales_nocturnas || 0 },
+      { nombre: 'HORA EXTRA NOCTURNA DOMINICAL O FESTIVO', recargo: config.recargoDominicalNocturno, horas: horasTrabajadas.horas_extra_dominicales_nocturnas || 0 }
     ];
 
-    const valorHora = salarioBase / 160; // 160 horas por mes
+    // Usar horas estándar configuradas por la empresa
+    const valorHora = salarioBase / config.horasEstandar;
 
     conceptos.forEach(concepto => {
       if (concepto.horas > 0) {
@@ -188,9 +248,12 @@ class PDFGenerator {
    * Agrega los totales del documento
    */
   agregarTotales(horasTrabajadas, salarioBase) {
+    // Obtener configuración de la empresa
+    const config = this.obtenerConfiguracionEmpresa();
+    
     // Calcular totales
     const totalHoras = this.calcularTotalHoras(horasTrabajadas);
-    const valorHora = salarioBase / 160;
+    const valorHora = salarioBase / config.horasEstandar;
     const totalSalario = totalHoras * valorHora;
 
     // Línea separadora

@@ -1767,43 +1767,66 @@
         mostrarMensaje('✅ Configuración guardada', 'success');
       }
 
-      // Inicialización
-      window.addEventListener('load', async () => {
-        // Inicializar dashboard
-        console.log('🚀 AXYRA Dashboard cargando...');
-
-        // Verificar autenticación
-        const isAuthenticated = await checkAuth();
-        if (!isAuthenticated) {
-          console.log('⚠️ Usuario no autenticado, no se puede inicializar dashboard completo');
-          return; // No continuar con la inicialización completa
+      // Inicialización completa del dashboard
+      window.addEventListener('load', () => {
+        try {
+          console.log('🚀 Inicializando dashboard...');
+          
+          // Verificar autenticación
+          const isAuthenticated = checkAuth();
+          
+          if (isAuthenticated) {
+            console.log('✅ Usuario autenticado, cargando dashboard...');
+            
+            // Cargar estadísticas
+            cargarEstadisticas();
+            
+            // Actualizar indicador de seguridad
+            updateSecurityStatus();
+            
+            // Mostrar configuración de empresa
+            mostrarConfiguracionEmpresa();
+            
+            // Configurar intervalo de actualización de seguridad
+            setInterval(updateSecurityStatus, 30000); // Cada 30 segundos
+            
+            console.log('✅ Dashboard completamente inicializado');
+          } else {
+            console.log('❌ Usuario no autenticado, mostrando mensaje...');
+            // NO redirigir automáticamente
+          }
+        } catch (error) {
+          console.error('❌ Error inicializando dashboard:', error);
+          // NO redirigir automáticamente
         }
-
-        // Configurar listener de cambios de autenticación - SISTEMA AISLADO
-        console.log('✅ Sistema de autenticación aislado configurado');
-
-        // Verificar y corregir datos corruptos antes de cargar estadísticas
-        verificarDatosCorruptos();
-
-        // Cargar estadísticas
-        cargarEstadisticas();
-        cargarConfiguracion();
-
-        // Event listeners para configuración
-        document.getElementById('zonaHoraria').addEventListener('change', guardarConfiguracion);
-        document.getElementById('formatoFecha').addEventListener('change', guardarConfiguracion);
-
-        // Analytics deshabilitado temporalmente - SISTEMA AISLADO
-        console.log('✅ Analytics deshabilitado para sistema aislado');
-
-        // Actualizar estado de seguridad
-        updateSecurityStatus();
-
-        // Actualizar estado de seguridad cada 30 segundos
-        setInterval(updateSecurityStatus, 30000);
-
-        console.log('✅ Dashboard completamente inicializado');
       });
+
+      // Mostrar configuración actual de la empresa
+      function mostrarConfiguracionEmpresa() {
+        try {
+          const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
+          
+          if (config.nombreEmpresa) {
+            console.log('🏢 Configuración de empresa cargada:', {
+              nombre: config.nombreEmpresa,
+              nit: config.nitEmpresa,
+              direccion: config.direccionEmpresa
+            });
+            
+            // Actualizar el título del dashboard si hay configuración
+            const logoTitle = document.querySelector('.axyra-logo-title');
+            if (logoTitle && config.nombreEmpresa) {
+              logoTitle.textContent = config.nombreEmpresa.toUpperCase();
+            }
+          } else {
+            console.log('ℹ️ No hay configuración de empresa, usando valores por defecto');
+          }
+        } catch (error) {
+          console.error('❌ Error mostrando configuración de empresa:', error);
+        }
+      }
+
+      // Cargar actividad reciente
     </script>
 
     <style>
