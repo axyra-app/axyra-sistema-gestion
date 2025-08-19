@@ -217,20 +217,7 @@ const axyraIsolatedAuth = new AXYRAIsolatedAuth();
     window.AXYRAIsolatedAuth = AXYRAIsolatedAuth;
     window.axyraIsolatedAuth = axyraIsolatedAuth;
     
-    // 🚨 MONITOREO: Interceptar redirecciones
-    const originalLocationHref = Object.getOwnPropertyDescriptor(window.location, 'href');
-    Object.defineProperty(window.location, 'href', {
-      set: function(value) {
-        if (value.includes('dashboard') || value.includes('modulos')) {
-          console.log('🚨 ALERTA: Redirección detectada a:', value);
-          console.trace('🚨 STACK TRACE de redirección');
-          console.log('🚨 QUIEN LO LLAMÓ:', new Error().stack);
-        }
-        return originalLocationHref.set.call(this, value);
-      },
-      get: function() {
-        return originalLocationHref.get.call(this);
-      }
-    });
+         // 🚨 MONITOREO: Redirecciones deshabilitadas temporalmente para evitar errores
+     console.log('🚨 MONITOREO: Interceptación de redirecciones deshabilitada para estabilidad');
     
     console.log('🚀 AXYRA Isolated Auth cargado - SISTEMA COMPLETAMENTE AISLADO CON MONITOREO');
