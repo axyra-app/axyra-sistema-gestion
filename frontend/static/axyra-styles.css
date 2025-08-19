@@ -529,6 +529,18 @@ p {
   box-shadow: var(--shadow-lg);
 }
 
+/* Botones pequeños */
+.axyra-btn-small {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  min-height: auto;
+}
+
+.axyra-btn-small i {
+  font-size: 0.875rem;
+}
+
 /* Alertas de Seguridad */
 .axyra-security-alert {
   position: fixed;

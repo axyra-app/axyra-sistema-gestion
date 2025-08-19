@@ -8,8 +8,10 @@
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="../../static/colombian-labor-law.js"></script>
     <script src="../../static/pdf-generator.js"></script>
+    <script src="../../static/excel-export.js"></script>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
@@ -699,13 +701,12 @@
             empleados = JSON.parse(empleadosData);
             console.log('👥 Empleados totales cargados desde localStorage:', empleados.length);
 
-            // Filtrar empleados por usuario actual
-            const userId = currentUser.username || currentUser.email;
-            const empleadosFiltrados = empleados.filter((emp) => emp.userId === userId);
-            console.log(`✅ Empleados filtrados para usuario ${userId}:`, empleadosFiltrados.length);
+            // Filtrar solo empleados activos
+            const empleadosActivos = empleados.filter((emp) => emp.estado === 'Activo');
+            console.log(`✅ Empleados activos:`, empleadosActivos.length);
 
-            if (empleadosFiltrados.length > 0) {
-              empleados = empleadosFiltrados;
+            if (empleadosActivos.length > 0) {
+              empleados = empleadosActivos;
             }
           } catch (error) {
             console.error('❌ Error parseando empleados:', error);

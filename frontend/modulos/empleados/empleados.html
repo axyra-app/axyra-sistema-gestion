@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../static/axyra-styles.css" />
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
@@ -19,6 +20,7 @@
     <!-- SISTEMA AISLADO - SIN FIREBASE -->
     <script src="../../static/isolated-auth.js"></script>
     <script src="../../static/debug-auth.js"></script>
+    <script src="../../static/excel-export.js"></script>
   </head>
   <body>
     <!-- Header -->
@@ -74,12 +76,6 @@
           </button>
           <button class="axyra-btn axyra-btn-info" onclick="exportarEmpleados()">
             <i class="fas fa-download"></i> Exportar a Excel
-          </button>
-          <button class="axyra-btn axyra-btn-success" onclick="descargarPlantilla()">
-            <i class="fas fa-file-excel"></i> Descargar Plantilla
-          </button>
-          <button class="axyra-btn axyra-btn-warning" onclick="importarPlantilla()">
-            <i class="fas fa-upload"></i> Importar Plantilla
           </button>
         </div>
 
@@ -653,100 +649,24 @@
         }, 5000);
       }
 
-      // Exportar empleados a Excel
+      // Exportar empleados a Excel profesional
       function exportarEmpleados() {
         if (empleados.length === 0) {
           mostrarMensaje('❌ No hay empleados para exportar', 'warning');
           return;
         }
 
-        // Crear CSV con los empleados
-        let csv = 'ID,Nombre,Email,Teléfono,Departamento,Cargo,Salario,Fecha de Ingreso,Estado\n';
-
-        empleados.forEach((empleado) => {
-          csv += `${empleado.id},"${empleado.nombre}","${empleado.email}","${empleado.telefono || ''}","${
-            empleado.departamento
-          }","${empleado.cargo}",${empleado.salario},"${empleado.fechaIngreso}","${empleado.estado}"\n`;
-        });
-
-        // Descargar archivo
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `empleados_${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        mostrarMensaje('✅ Empleados exportados correctamente', 'success');
+        try {
+          // Usar el nuevo sistema de Excel profesional
+          const nombreArchivo = window.axyraExcelExporter.exportarEmpleados(empleados);
+          mostrarMensaje(`✅ Empleados exportados a Excel correctamente: ${nombreArchivo}`, 'success');
+        } catch (error) {
+          console.error('❌ Error exportando empleados:', error);
+          mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
+        }
       }
 
-      // Descargar plantilla de Excel
-      function descargarPlantilla() {
-        // Crear contenido CSV para la plantilla
-        const headers = [
-          'ID',
-          'Nombre',
-          'Cédula',
-          'Cargo',
-          'Departamento',
-          'Salario Base',
-          'Tipo Contrato',
-          'Fecha Ingreso',
-          'Email',
-          'Teléfono',
-        ];
-        const ejemplo = [
-          '1',
-          'Juan Pérez',
-          '12345678',
-          'Desarrollador',
-          'Tecnología',
-          '2500000',
-          'FIJO',
-          '2025-01-15',
-          'juan@empresa.com',
-          '3001234567',
-        ];
 
-        let csv = headers.join(',') + '\n';
-        csv += ejemplo.join(',') + '\n';
-
-        // Crear y descargar archivo
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'PLANTILLA_EMPLEADOS.csv';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        mostrarMensaje('✅ Plantilla descargada exitosamente', 'success');
-      }
-
-      // Importar plantilla
-      function importarPlantilla() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.csv,.xlsx,.xls';
-        input.onchange = function (e) {
-          const file = e.target.files[0];
-          if (file) {
-            procesarArchivo(file);
-          }
-        };
-        input.click();
-      }
-
-      // Procesar archivo importado
-      function procesarArchivo(file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          try {
             const contenido = e.target.result;
             const empleados = parsearCSV(contenido);
 

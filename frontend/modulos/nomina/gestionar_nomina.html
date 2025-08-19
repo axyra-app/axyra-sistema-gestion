@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../static/axyra-styles.css" />
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
@@ -18,6 +19,7 @@
     <!-- SISTEMA AISLADO - SIN FIREBASE -->
     <script src="../../static/isolated-auth.js"></script>
     <script src="../../static/debug-auth.js"></script>
+    <script src="../../static/excel-export.js"></script>
   </head>
   <body>
     <!-- Header -->
@@ -315,6 +317,37 @@
       </div>
     </main>
 
+    <!-- Modal Detalle de Nómina -->
+    <div id="modalDetalleNomina" class="axyra-modal">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3 class="axyra-modal-title">
+            <i class="fas fa-file-invoice-dollar"></i> Detalle de Nómina
+          </h3>
+          <button class="axyra-modal-close" onclick="cerrarModalDetalleNomina()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="axyra-modal-body">
+          <div class="axyra-modal-text">
+            <p>📋 Esta funcionalidad está en desarrollo y estará disponible próximamente.</p>
+            <p>Podrás ver el desglose completo de la nómina, incluyendo:</p>
+            <ul>
+              <li>Horas trabajadas por día</li>
+              <li>Recargos aplicados</li>
+              <li>Deducciones y bonificaciones</li>
+              <li>Desglose del salario neto</li>
+            </ul>
+          </div>
+        </div>
+        <div class="axyra-modal-footer">
+          <button class="axyra-btn axyra-btn-primary" onclick="cerrarModalDetalleNomina()">
+            Entendido
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
     <footer class="axyra-footer">
       <div class="axyra-container">
@@ -453,15 +486,14 @@
             empleados = JSON.parse(empleadosGuardados);
             console.log('👥 Empleados totales en nómina desde localStorage:', empleados.length);
 
-            // Filtrar empleados por usuario actual
-            const userId = currentUser.username || currentUser.email;
-            const empleadosFiltrados = empleados.filter((emp) => emp.userId === userId);
+            // Filtrar solo empleados activos
+            const empleadosActivos = empleados.filter((emp) => emp.estado === 'Activo');
             console.log(
-              `✅ Empleados filtrados para nómina - Usuario: ${userId} - Total: ${empleadosFiltrados.length}`
+              `✅ Empleados activos para nómina: ${empleadosActivos.length}`
             );
 
-            if (empleadosFiltrados.length > 0) {
-              empleados = empleadosFiltrados;
+            if (empleadosActivos.length > 0) {
+              empleados = empleadosActivos;
             }
           } catch (error) {
             console.error('Error cargando empleados para nómina:', error);
@@ -902,38 +934,123 @@
 
       // Ver detalle de nómina
       function verDetalleNomina(id) {
-        alert('📋 Funcionalidad de detalle de nómina en desarrollo');
+        mostrarModalDetalleNomina(id);
+      }
+      
+      // Mostrar modal de detalle de nómina
+      function mostrarModalDetalleNomina(id) {
+        const modal = document.getElementById('modalDetalleNomina');
+        if (modal) {
+          modal.style.display = 'block';
+        }
+      }
+      
+      // Cerrar modal de detalle de nómina
+      function cerrarModalDetalleNomina() {
+        const modal = document.getElementById('modalDetalleNomina');
+        if (modal) {
+          modal.style.display = 'none';
+        }
       }
 
-      // Exportar nómina
+      // Exportar nómina a Excel profesional
       function exportarNomina() {
         if (empleadosSeleccionados.size === 0) {
           mostrarMensaje('❌ Selecciona al menos un empleado', 'warning');
           return;
         }
 
-        let csv = 'Empleado,Cargo,Departamento,Salario Base,Horas Trabajadas,Salario Neto\n';
+        try {
+          // Preparar datos para exportación
+          const datosExportacion = [];
+          empleadosSeleccionados.forEach((empleadoId) => {
+            const empleado = empleados.find((e) => e.id === empleadoId);
+            if (empleado) {
+              const horas = calcularHorasTrabajadas(empleado.id);
+              const salarioNeto = calcularSalarioNeto(empleado.salario, horas);
+              datosExportacion.push({
+                nombre: empleado.nombre,
+                cargo: empleado.cargo,
+                departamento: empleado.departamento,
+                salarioBase: empleado.salario,
+                horasTrabajadas: horas,
+                salarioNeto: salarioNeto
+              });
+            }
+          });
 
-        empleadosSeleccionados.forEach((empleadoId) => {
-          const empleado = empleados.find((e) => e.id === empleadoId);
-          if (empleado) {
-            const horas = calcularHorasTrabajadas(empleado.id);
-            const salarioNeto = calcularSalarioNeto(empleado.salario, horas);
-            csv += `"${empleado.nombre}","${empleado.cargo}","${empleado.departamento}",${empleado.salario},${horas},${salarioNeto}\n`;
-          }
-        });
-
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `nomina_${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        mostrarMensaje('✅ Nómina exportada correctamente', 'success');
+          // Crear nuevo workbook
+          const workbook = XLSX.utils.book_new();
+          
+          // Preparar datos con formato profesional
+          const excelContent = [];
+          
+          // Título principal
+          excelContent.push(['REPORTE DE NÓMINA - AXYRA']);
+          excelContent.push([]);
+          
+          // Información del período
+          excelContent.push(['PERÍODO:', document.getElementById('fechaInicio').value, 'a', document.getElementById('fechaFin').value]);
+          excelContent.push(['FECHA DE EXPORTACIÓN:', new Date().toLocaleDateString('es-ES')]);
+          excelContent.push(['TOTAL EMPLEADOS:', datosExportacion.length]);
+          excelContent.push([]);
+          
+          // Encabezados de la tabla
+          excelContent.push(['Empleado', 'Cargo', 'Departamento', 'Salario Base', 'Horas Trabajadas', 'Salario Neto']);
+          
+          // Datos de empleados
+          datosExportacion.forEach(emp => {
+            excelContent.push([
+              emp.nombre,
+              emp.cargo,
+              emp.departamento,
+              emp.salarioBase,
+              emp.horasTrabajadas,
+              emp.salarioNeto
+            ]);
+          });
+          
+          // Resumen por departamento
+          excelContent.push([]);
+          excelContent.push(['RESUMEN POR DEPARTAMENTO']);
+          excelContent.push(['Departamento', 'Cantidad', 'Total Salarios']);
+          
+          const resumenDepartamentos = {};
+          datosExportacion.forEach(emp => {
+            if (!resumenDepartamentos[emp.departamento]) {
+              resumenDepartamentos[emp.departamento] = { cantidad: 0, totalSalarios: 0 };
+            }
+            resumenDepartamentos[emp.departamento].cantidad++;
+            resumenDepartamentos[emp.departamento].totalSalarios += emp.salarioNeto;
+          });
+          
+          Object.entries(resumenDepartamentos).forEach(([depto, datos]) => {
+            excelContent.push([depto, datos.cantidad, `$${datos.totalSalarios.toLocaleString('es-CO')}`]);
+          });
+          
+          // Totales finales
+          excelContent.push([]);
+          excelContent.push(['TOTALES FINALES']);
+          excelContent.push(['Concepto', 'Valor']);
+          excelContent.push(['Total Empleados', datosExportacion.length]);
+          excelContent.push(['Total Salarios', `$${datosExportacion.reduce((sum, emp) => sum + emp.salarioNeto, 0).toLocaleString('es-CO')}`]);
+          excelContent.push(['Promedio Salario', `$${(datosExportacion.reduce((sum, emp) => sum + emp.salarioNeto, 0) / datosExportacion.length).toLocaleString('es-CO')}`]);
+          
+          // Crear worksheet
+          const worksheet = XLSX.utils.aoa_to_sheet(excelContent);
+          
+          // Agregar worksheet al workbook
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
+          
+          // Generar archivo
+          const nombreArchivo = `NOMINA_${new Date().toISOString().split('T')[0]}.xlsx`;
+          XLSX.writeFile(workbook, nombreArchivo);
+          
+          mostrarMensaje(`✅ Nómina exportada a Excel correctamente: ${nombreArchivo}`, 'success');
+        } catch (error) {
+          console.error('❌ Error exportando nómina:', error);
+          mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
+        }
       }
 
       // Limpiar historial

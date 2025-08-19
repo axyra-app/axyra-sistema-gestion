@@ -11,6 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="../../static/work-areas-config.js"></script>
     <script src="../../static/cash-reconciliation-export.js"></script>
+    <script src="../../static/excel-export.js"></script>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
@@ -275,6 +276,9 @@
               <button class="axyra-btn axyra-btn-success" onclick="exportarCuadreCaja()">
                 <i class="fas fa-file-excel"></i> Exportar Cuadre de Caja
               </button>
+              <button class="axyra-btn axyra-btn-info" onclick="cargarResumen()">
+                <i class="fas fa-sync-alt"></i> Actualizar Resumen
+              </button>
               <button class="axyra-btn axyra-btn-warning" onclick="limpiarHistorial()">
                 <i class="fas fa-trash"></i> Limpiar Historial
               </button>
@@ -524,6 +528,13 @@
         const totalIngresos = facturasHoy.reduce((total, f) => total + parseFloat(f.monto), 0);
         document.getElementById('totalIngresos').textContent = formatearMoneda(totalIngresos);
 
+        // Calcular efectivo y transferencias
+        const efectivo = facturasHoy.filter(f => f.metodoPago === 'efectivo').reduce((total, f) => total + parseFloat(f.monto), 0);
+        const transferencias = facturasHoy.filter(f => f.metodoPago === 'transferencia').reduce((total, f) => total + parseFloat(f.monto), 0);
+        
+        document.getElementById('efectivo').textContent = formatearMoneda(efectivo);
+        document.getElementById('transferencias').textContent = formatearMoneda(transferencias);
+
         // Mostrar última factura
         if (facturas.length > 0) {
           const ultima = facturas[facturas.length - 1];
@@ -591,6 +602,11 @@
         limpiarFormulario();
 
         mostrarMensaje('✅ Factura registrada correctamente', 'success');
+        
+        // Actualizar resumen del día en tiempo real
+        setTimeout(() => {
+          cargarResumen();
+        }, 100);
       });
 
       // Limpiar formulario
@@ -612,7 +628,7 @@
         }
       }
 
-      // Exportar facturas en formato Excel profesional
+      // Exportar facturas a Excel profesional
       function exportarFacturas() {
         if (facturas.length === 0) {
           mostrarMensaje('❌ No hay facturas para exportar', 'warning');
@@ -620,98 +636,14 @@
         }
 
         try {
-          // Verificar si SheetJS está disponible
-          if (typeof XLSX === 'undefined') {
-            mostrarMensaje('❌ Librería Excel no disponible. Generando CSV...', 'warning');
-            exportarFacturasCSV();
-            return;
-          }
-
-          // Crear contenido del Excel
-          const excelContent = [];
-
-          // Título principal
-          excelContent.push(['REPORTE DE FACTURAS - VILLA VENECIA']);
-          excelContent.push([]);
-
-          // Información de la empresa
-          excelContent.push(['EMPRESA:', 'VILLA VENECIA']);
-          excelContent.push(['NIT:', '901.234.567-8']);
-          excelContent.push(['FECHA DE EXPORTACIÓN:', new Date().toLocaleDateString('es-CO')]);
-          excelContent.push(['TOTAL FACTURAS:', facturas.length]);
-          excelContent.push([]);
-
-          // Encabezados de la tabla
-          excelContent.push(['Fecha', 'Número', 'Encargado', 'Área', 'Monto', 'Método de Pago', 'Descripción']);
-
-          // Datos de las facturas
-          facturas.forEach((factura) => {
-            excelContent.push([
-              formatearFecha(factura.fecha),
-              factura.numero,
-              factura.encargado,
-              factura.area,
-              factura.monto,
-              factura.metodoPago || '',
-              factura.descripcion || '',
-            ]);
-          });
-
-          excelContent.push([]);
-
-          // Resumen por área
-          excelContent.push(['RESUMEN POR ÁREA']);
-          excelContent.push(['Área', 'Total Ventas', 'Cantidad Facturas']);
-
-          const resumenAreas = {};
-          facturas.forEach((factura) => {
-            const area = factura.area || 'SIN ÁREA';
-            if (!resumenAreas[area]) {
-              resumenAreas[area] = { total: 0, cantidad: 0 };
-            }
-            resumenAreas[area].total += parseFloat(factura.monto) || 0;
-            resumenAreas[area].cantidad += 1;
-          });
-
-          Object.keys(resumenAreas).forEach((area) => {
-            excelContent.push([area, resumenAreas[area].total, resumenAreas[area].cantidad]);
-          });
-
-          excelContent.push([]);
-
-          // Resumen por método de pago
-          excelContent.push(['RESUMEN POR MÉTODO DE PAGO']);
-          excelContent.push(['Método', 'Total']);
-
-          const resumenMetodos = {};
-          facturas.forEach((factura) => {
-            const metodo = factura.metodoPago || 'NO ESPECIFICADO';
-            if (!resumenMetodos[metodo]) {
-              resumenMetodos[metodo] = 0;
-            }
-            resumenMetodos[metodo] += parseFloat(factura.monto) || 0;
-          });
-
-          Object.keys(resumenMetodos).forEach((metodo) => {
-            excelContent.push([metodo, resumenMetodos[metodo]]);
-          });
-
-          excelContent.push([]);
-
-          // Totales finales
-          const totalIngresos = facturas.reduce((total, factura) => total + (parseFloat(factura.monto) || 0), 0);
-          excelContent.push(['TOTALES FINALES']);
-          excelContent.push(['Concepto', 'Valor']);
-          excelContent.push(['Total Facturas', facturas.length]);
-          excelContent.push(['Total Ingresos', totalIngresos]);
-          excelContent.push([
-            'Promedio por Factura',
-            facturas.length > 0 ? (totalIngresos / facturas.length).toFixed(2) : 0,
-          ]);
-
-          // Crear archivo Excel
-          const workbook = XLSX.utils.book_new();
-          const worksheet = XLSX.utils.aoa_to_sheet(excelContent);
+          // Usar el nuevo sistema de Excel profesional
+          const nombreArchivo = window.axyraExcelExporter.exportarFacturas(facturas);
+          mostrarMensaje(`✅ Facturas exportadas a Excel correctamente: ${nombreArchivo}`, 'success');
+        } catch (error) {
+          console.error('❌ Error exportando facturas:', error);
+          mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
+        }
+      }
 
           // Agregar hoja al libro
           XLSX.utils.book_append_sheet(workbook, worksheet, 'Facturas');
@@ -749,12 +681,20 @@
         mostrarMensaje('✅ Facturas exportadas en CSV correctamente', 'success');
       }
 
-      // Exportar cuadre de caja en formato exacto al Excel
+      // Exportar cuadre de caja a Excel profesional
       function exportarCuadreCaja() {
-        if (axyraCashExport) {
-          axyraCashExport.generateCashReconciliationReport();
-        } else {
-          mostrarMensaje('❌ Sistema de exportación no disponible', 'error');
+        if (facturas.length === 0) {
+          mostrarMensaje('❌ No hay datos para exportar', 'warning');
+          return;
+        }
+
+        try {
+          // Usar el nuevo sistema de Excel profesional
+          const nombreArchivo = window.axyraExcelExporter.exportarCuadreCaja(facturas);
+          mostrarMensaje(`✅ Cuadre de caja exportado a Excel correctamente: ${nombreArchivo}`, 'success');
+        } catch (error) {
+          console.error('❌ Error exportando cuadre de caja:', error);
+          mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
         }
       }
 
