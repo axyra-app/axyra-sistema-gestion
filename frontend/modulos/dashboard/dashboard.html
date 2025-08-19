@@ -518,28 +518,20 @@
     </div>
 
     <script>
-      // Verificar autenticación - SISTEMA AISLADO
+      // Verificar autenticación - SISTEMA AISLADO MEJORADO
       async function checkAuth() {
         try {
           console.log('🔐 Verificando autenticación con sistema aislado...');
 
-          // Verificar sistema aislado primero
-          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
-            const user = window.axyraIsolatedAuth.getCurrentUser();
-            console.log('✅ Usuario autenticado con sistema aislado:', user.username);
-            currentUser = user;
-            return true;
-          }
-
-          // Verificar sesión aislada en localStorage como fallback
+          // PRIMERO: Verificar localStorage directamente
           const isolatedUser = localStorage.getItem('axyra_isolated_user');
           if (isolatedUser) {
             try {
               const userData = JSON.parse(isolatedUser);
-              console.log('✅ Sesión aislada encontrada en localStorage:', userData.username);
+              console.log('✅ Sesión encontrada en localStorage:', userData.username);
               currentUser = userData;
 
-              // Restaurar el estado del sistema aislado
+              // Restaurar el estado del sistema aislado si está disponible
               if (window.axyraIsolatedAuth) {
                 window.axyraIsolatedAuth.currentUser = userData;
                 window.axyraIsolatedAuth.isAuthenticated = true;
@@ -553,7 +545,15 @@
             }
           }
 
-          // No hay sesión activa - MOSTRAR MENSAJE EN LUGAR DE REDIRIGIR
+          // SEGUNDO: Verificar sistema aislado
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            const user = window.axyraIsolatedAuth.getCurrentUser();
+            console.log('✅ Usuario autenticado con sistema aislado:', user.username);
+            currentUser = user;
+            return true;
+          }
+
+          // No hay sesión activa
           console.log('⚠️ No hay sesión activa - mostrando mensaje de login');
           mostrarMensajeNoAutenticado();
           return false;
