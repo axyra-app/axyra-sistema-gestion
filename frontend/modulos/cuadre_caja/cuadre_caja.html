@@ -540,14 +540,17 @@
         return new Date(fecha).toLocaleDateString('es-CO');
       }
 
-      // Formatear moneda
-      function formatearMoneda(monto) {
-        const simbolos = { COP: '$', USD: '$', EUR: '€' };
-        const simbolo = simbolos[monedaActual];
-        return `${simbolo}${parseFloat(monto).toLocaleString('es-CO', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}`;
+      // Función para formatear moneda sin decimales
+      function formatearMoneda(valor) {
+        if (typeof valor === 'number') {
+          return new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          }).format(valor);
+        }
+        return valor;
       }
 
       // Cargar resumen del día
@@ -587,20 +590,26 @@
           
           // Mostrar última factura con información completa
           if (facturasHoy.length > 0) {
-            const ultimaFactura = facturasHoy[facturasHoy.length - 1]; // Tomar la última factura del día
+            const ultimaFactura = facturasHoy[facturasHoy.length - 1];
             document.getElementById('ultimaFactura').textContent = formatearMoneda(ultimaFactura.monto);
             document.getElementById('ultimaFacturaInfo').textContent = `#${ultimaFactura.numero} - ${ultimaFactura.encargado} - ${ultimaFactura.metodoPago.toUpperCase()}`;
             
-            // Mostrar hora de la última factura
             const ultimaFacturaTimeElement = document.getElementById('ultimaFacturaTime');
             if (ultimaFacturaTimeElement) {
               const fechaFactura = new Date(ultimaFactura.fecha);
-              ultimaFacturaTimeElement.textContent = `Registrada a las ${fechaFactura.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' })}`;
+              // Formatear hora en zona horaria de Colombia
+              const horaColombia = fechaFactura.toLocaleTimeString('es-CO', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true,
+                timeZone: 'America/Bogota'
+              });
+              ultimaFacturaTimeElement.textContent = `Registrada a las ${horaColombia}`;
             }
           } else {
             document.getElementById('ultimaFactura').textContent = formatearMoneda(0);
             document.getElementById('ultimaFacturaInfo').textContent = 'No hay facturas hoy';
-            
             const ultimaFacturaTimeElement = document.getElementById('ultimaFacturaTime');
             if (ultimaFacturaTimeElement) {
               ultimaFacturaTimeElement.textContent = '';
@@ -803,17 +812,21 @@
         }
       }
 
-      // Exportar cuadre de caja a Excel profesional
+      // Función para exportar cuadre de caja
       function exportarCuadreCaja() {
-        if (facturas.length === 0) {
-          mostrarMensaje('❌ No hay datos para exportar', 'warning');
-          return;
-        }
-
         try {
-          // Usar el nuevo sistema de Excel profesional
-          const nombreArchivo = window.axyraExcelExporter.exportarCuadreCaja(facturas);
-          mostrarMensaje(`✅ Cuadre de caja exportado a Excel correctamente: ${nombreArchivo}`, 'success');
+          if (facturas.length === 0) {
+            mostrarMensaje('❌ No hay facturas para exportar', 'error');
+            return;
+          }
+
+          // Verificar si el exportador está disponible
+          if (typeof window.axyraExcelExporter === 'undefined') {
+            window.axyraExcelExporter = new AXYRAExcelExporter();
+          }
+
+          const nombreArchivo = window.axyraExcelExporter.exportarFacturas(facturas);
+          mostrarMensaje(`✅ Cuadre de caja exportado correctamente: ${nombreArchivo}`, 'success');
         } catch (error) {
           console.error('❌ Error exportando cuadre de caja:', error);
           mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
