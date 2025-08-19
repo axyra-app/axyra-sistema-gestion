@@ -457,44 +457,38 @@
     </div>
 
     <script>
-      // Verificar autenticación
+      // Verificar autenticación - SISTEMA AISLADO
       async function checkAuth() {
         try {
-          console.log('🔐 Verificando autenticación...');
+          console.log('🔐 Verificando autenticación con sistema aislado...');
 
-          // Verificar sesión en localStorage primero
-          const savedUser = localStorage.getItem('axyra_user');
-          if (savedUser) {
-            try {
-              const userData = JSON.parse(savedUser);
-              const lastLogin = new Date(userData.lastLogin);
-              const now = new Date();
-              const hoursDiff = (now - lastLogin) / (1000 * 60 * 60);
-
-              // Sesión válida por 24 horas
-              if (hoursDiff < 24) {
-                console.log('✅ Sesión válida encontrada:', userData.email);
-                currentUser = userData;
-                return true;
-              } else {
-                localStorage.removeItem('axyra_user');
-                localStorage.removeItem('axyra_firebase_user');
-              }
-            } catch (error) {
-              localStorage.removeItem('axyra_user');
-              localStorage.removeItem('axyra_firebase_user');
-            }
+          // Verificar sistema aislado primero
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            const user = window.axyraIsolatedAuth.getCurrentUser();
+            console.log('✅ Usuario autenticado con sistema aislado:', user.username);
+            currentUser = user;
+            return true;
           }
 
-          // Verificar Firebase si está disponible
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession) {
+          // Verificar sesión aislada en localStorage como fallback
+          const isolatedUser = localStorage.getItem('axyra_isolated_user');
+          if (isolatedUser) {
             try {
-              currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
-              console.log('✅ Usuario autenticado con Firebase:', currentUser.email);
-
+              const userData = JSON.parse(isolatedUser);
+              console.log('✅ Sesión aislada encontrada en localStorage:', userData.username);
+              currentUser = userData;
+              
+              // Restaurar el estado del sistema aislado
+              if (window.axyraIsolatedAuth) {
+                window.axyraIsolatedAuth.currentUser = userData;
+                window.axyraIsolatedAuth.isAuthenticated = true;
+                console.log('✅ Estado del sistema aislado restaurado');
+              }
+              
               return true;
             } catch (error) {
-              console.log('⚠️ Error con Firebase, usando sesión local');
+              console.error('❌ Error parseando sesión aislada:', error);
+              localStorage.removeItem('axyra_isolated_user');
             }
           }
 
@@ -2249,12 +2243,12 @@
       // Personalizar mensaje de bienvenida
       function personalizarBienvenida() {
         try {
-          // Obtener usuario actual
+          // Obtener usuario actual - SISTEMA AISLADO
           let currentUser = null;
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
-            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
@@ -2306,14 +2300,14 @@
 
       // ===== FUNCIONES DEL PANEL DE CONFIGURACIÓN =====
 
-      // Cargar configuración del usuario
+      // Cargar configuración del usuario - SISTEMA AISLADO
       function cargarConfiguracionUsuario() {
         try {
           let currentUser = null;
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
-            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
-            const userData = localStorage.getItem('axyra_user');
+            const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
             }
