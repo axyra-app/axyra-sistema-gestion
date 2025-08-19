@@ -671,19 +671,51 @@
       }
 
       // Cerrar sesión
-      // Cerrar sesión - SISTEMA AISLADO
-      function logout() {
+      // Cerrar sesión - SISTEMA COMPLETO
+      async function logout() {
         console.log('🔄 Cerrando sesión desde dashboard...');
 
-        // Usar el sistema aislado
-        if (window.axyraIsolatedAuth) {
-          window.axyraIsolatedAuth.logout();
+        try {
+          // PRIMERO: Cerrar sesión de Firebase
+          if (typeof firebase !== 'undefined' && firebase.auth) {
+            try {
+              await firebase.auth().signOut();
+              console.log('✅ Sesión de Firebase cerrada');
+            } catch (firebaseError) {
+              console.log('⚠️ Error cerrando Firebase:', firebaseError.message);
+            }
+          }
+
+          // SEGUNDO: Cerrar sesión del sistema aislado
+          if (window.axyraIsolatedAuth) {
+            window.axyraIsolatedAuth.logout();
+            console.log('✅ Sesión del sistema aislado cerrada');
+          }
+
+          // TERCERO: Limpiar localStorage completamente
+          localStorage.removeItem('axyra_firebase_user');
+          localStorage.removeItem('axyra_isolated_user');
+          localStorage.removeItem('axyra_isolated_remember');
+          console.log('✅ localStorage limpiado');
+
+          // CUARTO: Limpiar variables globales
+          currentUser = null;
+          console.log('✅ Variables globales limpiadas');
+
+          console.log('✅ Sesión completamente cerrada');
+
+          // Redirigir al login
+          window.location.href = '../../login.html';
+
+        } catch (error) {
+          console.error('❌ Error en logout:', error);
+          // Aún así, limpiar y redirigir
+          localStorage.removeItem('axyra_firebase_user');
+          localStorage.removeItem('axyra_isolated_user');
+          localStorage.removeItem('axyra_isolated_remember');
+          currentUser = null;
+          window.location.href = '../../login.html';
         }
-
-        console.log('✅ Sesión cerrada desde dashboard');
-
-        // Redirigir al login
-        window.location.href = '../../login.html';
       }
 
       // Función para limpiar datos corruptos del localStorage
@@ -2057,8 +2089,10 @@
               localStorage.removeItem('axyra_firebase_user');
               localStorage.removeItem('axyra_isolated_user');
               
-              // Mostrar mensaje de login requerido
-              mostrarMensajeNoAutenticado();
+              // NO mostrar mensaje automáticamente - solo si el usuario está en la página
+              if (document.visibilityState === 'visible') {
+                mostrarMensajeNoAutenticado();
+              }
             }
           });
           
