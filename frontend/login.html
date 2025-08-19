@@ -593,14 +593,55 @@
           // Mostrar contraseña
           passwordInput.type = 'text';
           passwordIcon.className = 'fas fa-eye-slash';
-          passwordIcon.style.color = '#374151'; // Color más oscuro cuando está visible
           console.log('👁️ Contraseña visible');
         } else {
           // Ocultar contraseña
           passwordInput.type = 'password';
           passwordIcon.className = 'fas fa-eye';
-          passwordIcon.style.color = '#6b7280'; // Color más claro cuando está oculta
           console.log('👁️ Contraseña oculta');
+        }
+      }
+
+      // Función para recordar usuario
+      function rememberUser(username, rememberSession) {
+        if (rememberSession) {
+          // Guardar usuario por 30 días
+          const userData = {
+            username: username,
+            timestamp: new Date().getTime(),
+            expires: new Date().getTime() + (30 * 24 * 60 * 60 * 1000) // 30 días
+          };
+          localStorage.setItem('axyra_remembered_user', JSON.stringify(userData));
+          console.log('✅ Usuario recordado por 30 días');
+        } else {
+          // Eliminar usuario recordado
+          localStorage.removeItem('axyra_remembered_user');
+          console.log('✅ Usuario recordado eliminado');
+        }
+      }
+
+      // Función para cargar usuario recordado
+      function loadRememberedUser() {
+        const rememberedUser = localStorage.getItem('axyra_remembered_user');
+        if (rememberedUser) {
+          try {
+            const userData = JSON.parse(rememberedUser);
+            const now = new Date().getTime();
+            
+            if (now < userData.expires) {
+              // Usuario recordado válido
+              document.getElementById('username').value = userData.username;
+              document.getElementById('rememberSession').checked = true;
+              console.log('✅ Usuario recordado cargado:', userData.username);
+            } else {
+              // Usuario recordado expirado
+              localStorage.removeItem('axyra_remembered_user');
+              console.log('⚠️ Usuario recordado expirado');
+            }
+          } catch (error) {
+            console.error('❌ Error cargando usuario recordado:', error);
+            localStorage.removeItem('axyra_remembered_user');
+          }
         }
       }
 
@@ -709,6 +750,10 @@
           });
 
           if (result.success) {
+            // Recordar usuario si está marcado
+            const rememberSession = document.getElementById('rememberSession').checked;
+            rememberUser(usernameOrEmail, rememberSession);
+            
             showSuccess('✅ Inicio de sesión exitoso. Redirigiendo...');
             
             setTimeout(() => {
@@ -729,6 +774,9 @@
       document.addEventListener('DOMContentLoaded', function () {
         console.log('AXYRA Login Page cargada');
         // checkAuth(); // DESACTIVADO PARA EVITAR CICLO INFINITO
+        
+        // Cargar usuario recordado si existe
+        loadRememberedUser();
       });
 
       document.getElementById('loginForm').addEventListener('submit', function (e) {

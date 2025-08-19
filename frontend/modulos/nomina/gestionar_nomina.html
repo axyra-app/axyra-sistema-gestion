@@ -265,12 +265,12 @@
           }
 
           // No hay sesión activa
-          console.log('⚠️ No hay sesión activa en nómina - redirigiendo al login');
-          window.location.href = '../../login.html';
+          console.log('⚠️ No hay sesión activa en nómina - mostrando mensaje');
+          // NO redirigir automáticamente
           return false;
         } catch (error) {
           console.error('❌ Error al verificar sesión en nómina:', error);
-          window.location.href = '../../login.html';
+          // NO redirigir automáticamente
           return false;
         }
       }
@@ -315,12 +315,12 @@
 
             console.log('✅ Módulo de nómina cargado correctamente');
           } else {
-            console.log('❌ Usuario no autenticado, redirigiendo al login...');
-            window.location.href = '../../login.html';
+            console.log('❌ Usuario no autenticado, mostrando mensaje...');
+            // NO redirigir automáticamente
           }
         } catch (error) {
           console.error('❌ Error inicializando módulo de nómina:', error);
-          window.location.href = '../../login.html';
+          // NO redirigir automáticamente
         }
       });
 
@@ -329,13 +329,13 @@
         try {
           console.log('👥 Cargando empleados para nómina...');
 
-          // Obtener usuario actual
+          // Obtener usuario actual - SISTEMA AISLADO
           let currentUser = null;
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
-            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
-            console.log('✅ Usuario Firebase en nómina:', currentUser.email);
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
+            console.log('✅ Usuario sistema aislado en nómina:', currentUser.username);
           } else {
-            // Fallback a localStorage
+            // Fallback a localStorage aislado
             const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
