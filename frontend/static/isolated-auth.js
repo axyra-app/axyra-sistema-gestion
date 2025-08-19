@@ -17,6 +17,9 @@ class AXYRAIsolatedAuth {
     console.log('🚀 AXYRA Isolated Auth inicializando...');
     this.setupDefaultUsers();
     this.loadExistingSession();
+    
+    // 🚨 MONITOREO: Observar cambios en localStorage
+    this.setupStorageMonitoring();
   }
 
   // Configurar usuarios por defecto
@@ -102,6 +105,36 @@ class AXYRAIsolatedAuth {
       currentUser: this.currentUser.username
     });
     
+    // 🚨 SUPERVIVENCIA: Verificar que la sesión persista
+    console.log('🚨 SUPERVIVENCIA: Verificando persistencia de sesión...');
+    
+    // Verificar inmediatamente después del login
+    setTimeout(() => {
+      console.log('🚨 SUPERVIVENCIA (100ms): Estado del sistema:', {
+        isAuthenticated: this.isAuthenticated,
+        currentUser: this.currentUser ? this.currentUser.username : 'NULL',
+        localStorage: localStorage.getItem('axyra_isolated_user') ? 'PERSISTE' : 'DESAPARECIÓ'
+      });
+    }, 100);
+    
+    // Verificar después de 500ms
+    setTimeout(() => {
+      console.log('🚨 SUPERVIVENCIA (500ms): Estado del sistema:', {
+        isAuthenticated: this.isAuthenticated,
+        currentUser: this.currentUser ? this.currentUser.username : 'NULL',
+        localStorage: localStorage.getItem('axyra_isolated_user') ? 'PERSISTE' : 'DESAPARECIÓ'
+      });
+    }, 500);
+    
+    // Verificar después de 1 segundo
+    setTimeout(() => {
+      console.log('🚨 SUPERVIVENCIA (1s): Estado del sistema:', {
+        isAuthenticated: this.isAuthenticated,
+        currentUser: this.currentUser ? this.currentUser.username : 'NULL',
+        localStorage: localStorage.getItem('axyra_isolated_user') ? 'PERSISTE' : 'DESAPARECIÓ'
+      });
+    }, 1000);
+    
     return { success: true, user: user };
   }
 
@@ -140,18 +173,64 @@ class AXYRAIsolatedAuth {
 
   // Limpiar sesión
   clearSession() {
+    console.log('🚨 ALERTA: clearSession() fue llamado - ¿QUIÉN LO LLAMÓ?');
+    console.trace('🚨 STACK TRACE de clearSession');
+    
     this.currentUser = null;
     this.isAuthenticated = false;
     localStorage.removeItem('axyra_isolated_user');
     console.log('🧹 Sesión aislada limpiada');
+  }
+  
+  // 🚨 MONITOREO: Observar cambios en localStorage
+  setupStorageMonitoring() {
+    console.log('🚨 MONITOREO: Configurando vigilancia de localStorage...');
+    
+    // Interceptar removeItem
+    const originalRemoveItem = localStorage.removeItem;
+    localStorage.removeItem = (key) => {
+      if (key === 'axyra_isolated_user') {
+        console.log('🚨 ALERTA: localStorage.removeItem("axyra_isolated_user") fue llamado');
+        console.trace('🚨 STACK TRACE de removeItem');
+        console.log('🚨 QUIEN LO LLAMÓ:', new Error().stack);
+      }
+      return originalRemoveItem.call(localStorage, key);
+    };
+    
+    // Interceptar clear
+    const originalClear = localStorage.clear;
+    localStorage.clear = () => {
+      console.log('🚨 ALERTA: localStorage.clear() fue llamado');
+      console.trace('🚨 STACK TRACE de clear');
+      console.log('🚨 QUIEN LO LLAMÓ:', new Error().stack);
+      return originalClear.call(localStorage);
+    };
+    
+    console.log('✅ MONITOREO: localStorage interceptado para detectar interferencias');
   }
 }
 
 // Instancia global aislada
 const axyraIsolatedAuth = new AXYRAIsolatedAuth();
 
-// Exportar para uso en otros módulos
-window.AXYRAIsolatedAuth = AXYRAIsolatedAuth;
-window.axyraIsolatedAuth = axyraIsolatedAuth;
-
-console.log('🚀 AXYRA Isolated Auth cargado - SISTEMA COMPLETAMENTE AISLADO');
+    // Exportar para uso en otros módulos
+    window.AXYRAIsolatedAuth = AXYRAIsolatedAuth;
+    window.axyraIsolatedAuth = axyraIsolatedAuth;
+    
+    // 🚨 MONITOREO: Interceptar redirecciones
+    const originalLocationHref = Object.getOwnPropertyDescriptor(window.location, 'href');
+    Object.defineProperty(window.location, 'href', {
+      set: function(value) {
+        if (value.includes('dashboard') || value.includes('modulos')) {
+          console.log('🚨 ALERTA: Redirección detectada a:', value);
+          console.trace('🚨 STACK TRACE de redirección');
+          console.log('🚨 QUIEN LO LLAMÓ:', new Error().stack);
+        }
+        return originalLocationHref.set.call(this, value);
+      },
+      get: function() {
+        return originalLocationHref.get.call(this);
+      }
+    });
+    
+    console.log('🚀 AXYRA Isolated Auth cargado - SISTEMA COMPLETAMENTE AISLADO CON MONITOREO');
