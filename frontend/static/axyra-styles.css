@@ -141,7 +141,7 @@ p {
   top: 0;
   left: 0;
   right: 0;
-  z-index: var(--z-fixed);
+  z-index: 99999; /* VALOR ALTO PARA ESTAR POR ENCIMA DE TODO */
   border-bottom: 4px solid #2563eb;
   backdrop-filter: blur(10px);
 }
