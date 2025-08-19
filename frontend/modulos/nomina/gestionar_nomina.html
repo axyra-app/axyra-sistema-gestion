@@ -908,7 +908,7 @@
       function mostrarHistorial(historial) {
         const tbody = document.getElementById('historialNominaTableBody');
         if (historial.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" class="axyra-text-center">No hay historial de nóminas</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="axyra-text-center">No hay historial de nóminas</td></tr>';
           return;
         }
 
@@ -922,9 +922,14 @@
             <td>${formatearMoneda(nomina.totalSalarios)}</td>
             <td><span class="axyra-badge axyra-badge-success">Completada</span></td>
             <td>
-              <button class="axyra-btn axyra-btn-info axyra-btn-small" onclick="verDetalleNomina('${nomina.id}')">
-                <i class="fas fa-eye"></i>
-              </button>
+              <div class="axyra-action-buttons">
+                <button class="axyra-btn axyra-btn-info axyra-btn-small" onclick="verDetalleNomina('${nomina.id}')" title="Ver Detalle">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="axyra-btn axyra-btn-danger axyra-btn-small" onclick="eliminarNomina('${nomina.id}')" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
             </td>
           </tr>
         `
@@ -941,7 +946,10 @@
       function mostrarModalDetalleNomina(id) {
         const modal = document.getElementById('modalDetalleNomina');
         if (modal) {
-          modal.style.display = 'block';
+          modal.style.display = 'flex';
+          // Centrar el modal
+          modal.style.alignItems = 'center';
+          modal.style.justifyContent = 'center';
         }
       }
       
@@ -950,6 +958,24 @@
         const modal = document.getElementById('modalDetalleNomina');
         if (modal) {
           modal.style.display = 'none';
+        }
+      }
+
+      // Eliminar nómina
+      function eliminarNomina(id) {
+        if (confirm('¿Estás seguro de que deseas eliminar esta nómina? Esta acción no se puede deshacer.')) {
+          try {
+            const historial = JSON.parse(localStorage.getItem('axyra_historial') || '[]');
+            const historialFiltrado = historial.filter(n => n.id !== id);
+            localStorage.setItem('axyra_historial', JSON.stringify(historialFiltrado));
+            
+            cargarHistorial();
+            actualizarResumen();
+            mostrarMensaje('✅ Nómina eliminada correctamente', 'success');
+          } catch (error) {
+            console.error('❌ Error eliminando nómina:', error);
+            mostrarMensaje('❌ Error al eliminar la nómina', 'error');
+          }
         }
       }
 

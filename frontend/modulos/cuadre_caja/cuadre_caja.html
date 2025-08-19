@@ -421,16 +421,17 @@
         try {
           console.log('📊 Cargando facturas...');
 
-          // Obtener usuario actual
+          // Obtener usuario actual - SISTEMA AISLADO
           let currentUser = null;
-          if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
-            currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
-            console.log('✅ Usuario Firebase en cuadre de caja:', currentUser.email);
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
+            console.log('✅ Usuario actual en cuadre de caja (sistema aislado):', currentUser.username || currentUser.email);
           } else {
             // Fallback a localStorage
             const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
+              console.log('✅ Usuario actual en cuadre de caja (localStorage):', currentUser.username || currentUser.email);
             }
           }
 
@@ -441,29 +442,16 @@
             return;
           }
 
-          // Intentar cargar desde Firebase primero
-          if (window.axyraFirebaseDataSystem && currentUser.uid) {
-            console.log('🔥 Cargando facturas desde Firebase...');
+          // Cargar facturas desde localStorage
+          console.log('💾 Cargando facturas desde localStorage...');
+          facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
 
-            try {
-              facturas = await window.axyraFirebaseDataSystem.getInvoices();
-              console.log(`✅ Facturas cargadas desde Firebase: ${facturas.length}`);
-            } catch (firebaseError) {
-              console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
-            }
-          }
-
-          // Fallback a localStorage si Firebase falló o no está disponible
-          if (facturas.length === 0) {
-            console.log('💾 Cargando facturas desde localStorage...');
-            facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
-
-            // Filtrar facturas por usuario actual si es necesario
-            if (currentUser.username || currentUser.email) {
-              const userId = currentUser.username || currentUser.email;
-              facturas = facturas.filter((factura) => factura.userId === userId);
-              console.log(`✅ Facturas filtradas para usuario ${userId}: ${facturas.length}`);
-            }
+          // Filtrar facturas por usuario actual
+          if (currentUser.username || currentUser.email) {
+            const userId = currentUser.username || currentUser.email;
+            const facturasFiltradas = facturas.filter((factura) => factura.userId === userId);
+            console.log(`✅ Facturas filtradas para usuario ${userId}: ${facturasFiltradas.length} de ${facturas.length} totales`);
+            facturas = facturasFiltradas;
           }
 
           mostrarFacturas();
@@ -583,6 +571,17 @@
       document.getElementById('formFactura').addEventListener('submit', function (e) {
         e.preventDefault();
 
+        // Obtener usuario actual
+        let currentUser = null;
+        if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+          currentUser = window.axyraIsolatedAuth.getCurrentUser();
+        } else {
+          const userData = localStorage.getItem('axyra_isolated_user');
+          if (userData) {
+            currentUser = JSON.parse(userData);
+          }
+        }
+
         const factura = {
           id: Date.now().toString(),
           fecha: document.getElementById('fecha').value,
@@ -592,6 +591,8 @@
           monto: document.getElementById('monto').value,
           metodoPago: document.getElementById('metodoPago').value,
           descripcion: document.getElementById('descripcion').value,
+          userId: currentUser ? (currentUser.username || currentUser.email) : 'admin',
+          createdAt: new Date().toISOString()
         };
 
         facturas.unshift(factura);
@@ -643,42 +644,6 @@
           console.error('❌ Error exportando facturas:', error);
           mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
         }
-      }
-
-          // Agregar hoja al libro
-          XLSX.utils.book_append_sheet(workbook, worksheet, 'Facturas');
-
-          // Generar archivo Excel
-          XLSX.writeFile(workbook, `FACTURAS_VILLA_VENECIA_${new Date().toISOString().split('T')[0]}.xlsx`);
-
-          mostrarMensaje('✅ Facturas exportadas en Excel correctamente', 'success');
-        } catch (error) {
-          console.error('Error exportando facturas:', error);
-          mostrarMensaje('❌ Error exportando facturas. Generando CSV...', 'error');
-          exportarFacturasCSV();
-        }
-      }
-
-      // Función de respaldo para CSV
-      function exportarFacturasCSV() {
-        let csv = 'Fecha,Número,Encargado,Área,Monto,Método de Pago,Descripción\n';
-        facturas.forEach((factura) => {
-          csv += `"${formatearFecha(factura.fecha)}","${factura.numero}","${factura.encargado}","${factura.area}",${
-            factura.monto
-          },"${factura.metodoPago || ''}","${factura.descripcion || ''}"\n`;
-        });
-
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `facturas_${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-
-        mostrarMensaje('✅ Facturas exportadas en CSV correctamente', 'success');
       }
 
       // Exportar cuadre de caja a Excel profesional

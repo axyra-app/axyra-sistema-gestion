@@ -411,7 +411,7 @@
             </button>
             <button
               onclick="mostrarModalConfirmacion('Resetear Todo', '⚠️ ADVERTENCIA: ¿Estás completamente seguro de que deseas eliminar TODOS los datos del sistema? Esta acción es IRREVERSIBLE y eliminará toda la información.', 'resetearLocalStorage')"
-              class="axyra-btn axyra-btn-danger"
+              class="axyra-btn axyra-btn-error"
             >
               <i class="fas fa-trash"></i> Resetear Todo
             </button>
@@ -1295,23 +1295,20 @@
           let detalleHTML = '<h4>💰 Detalle de Salarios</h4>';
           if (empleados.length > 0) {
             detalleHTML += '<div class="axyra-salarios-lista">';
-            let totalGeneral = 0;
             empleados.forEach((emp) => {
-              const salario = parseFloat(emp.salario) || 0;
-              totalGeneral += salario;
               detalleHTML += `
                 <div class="axyra-salario-item">
                   <div class="axyra-empleado-info">
                     <strong>${emp.nombre}</strong>
                     <span>${emp.cargo}</span>
-                    <span class="axyra-salario-monto">$${salario.toLocaleString('es-CO')}</span>
+                    <span class="axyra-salario-monto">Salario base configurado</span>
                   </div>
                 </div>
               `;
             });
             detalleHTML += `
               <div class="axyra-salario-total">
-                <strong>Total General: $${totalGeneral.toLocaleString('es-CO')}</strong>
+                <strong>Total Empleados: ${empleados.length}</strong>
               </div>
             `;
             detalleHTML += '</div>';
