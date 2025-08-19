@@ -533,9 +533,6 @@
                 } else {
                     showError(`Error creando cuenta: ${firebaseError.message}`);
                 }
-            } catch (error) {
-                console.error('Error creando usuario:', error);
-                showError('Error al crear la cuenta: ' + error.message);
             } finally {
                 // Restaurar botón
                 document.getElementById('btnText').style.display = 'inline-block';

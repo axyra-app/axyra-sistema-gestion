@@ -42,9 +42,10 @@ function initializeFirebase() {
       const firebaseAuth = firebase.auth();
       const firebaseFirestore = firebase.firestore();
       
-      // Configurar Firestore
+      // Configurar Firestore con merge: true para evitar warnings
       firebaseFirestore.settings({
-        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+        merge: true
       });
       
       // Exportar para uso global
