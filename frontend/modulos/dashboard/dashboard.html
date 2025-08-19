@@ -838,77 +838,132 @@
           cargarEstadisticasLocalStorage(currentUser);
         } catch (error) {
           console.error('❌ Error cargando estadísticas:', error);
+          // NO redirigir al login por errores de estadísticas
+          // Solo mostrar mensaje de error
+          console.log('⚠️ Continuando sin estadísticas...');
         }
       }
 
-      // Función auxiliar para cargar desde localStorage
+      // Función auxiliar para cargar desde localStorage - SISTEMA AISLADO
       function cargarEstadisticasLocalStorage(currentUser) {
-        // Empleados FILTRADOS POR USUARIO
-        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
-          (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email
-        );
-        document.getElementById('totalEmpleados').textContent = empleados.length;
+        try {
+          console.log('💾 Cargando estadísticas desde localStorage para usuario:', currentUser.username);
+          
+          // Empleados FILTRADOS POR USUARIO
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
+            (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email
+          );
+          
+          // Buscar elemento totalEmpleados de forma segura
+          const totalEmpleadosElement = document.getElementById('totalEmpleados');
+          if (totalEmpleadosElement) {
+            totalEmpleadosElement.textContent = empleados.length;
+            console.log('✅ Total empleados actualizado:', empleados.length);
+          } else {
+            console.log('⚠️ Elemento totalEmpleados no encontrado');
+          }
 
-        // Comprobantes FILTRADOS POR USUARIO
-        const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
-          (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email
-        );
-        document.getElementById('comprobantesGenerados').textContent = comprobantes.length;
+          // Comprobantes FILTRADOS POR USUARIO
+          const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
+            (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email
+          );
+          
+          // Buscar elemento comprobantesGenerados de forma segura
+          const comprobantesElement = document.getElementById('comprobantesGenerados');
+          if (comprobantesElement) {
+            comprobantesElement.textContent = comprobantes.length;
+            console.log('✅ Comprobantes generados actualizados:', comprobantes.length);
+          } else {
+            console.log('⚠️ Elemento comprobantesGenerados no encontrado');
+          }
 
-        // Calcular total de salarios base
-        const totalSalarios = empleados.reduce((total, empleado) => {
-          if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+          // Calcular total de salarios base
+          const totalSalarios = empleados.reduce((total, empleado) => {
+            if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+              return total;
+            }
+            const salario = parseFloat(empleado.salario);
+            if (!isNaN(salario) && salario > 0) {
+              return total + salario;
+            }
             return total;
+          }, 0);
+
+          // Calcular horas trabajadas
+          const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
+            (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email
+          );
+          const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
+            const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
+            const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
+            const horasExtras = parseFloat(registro.horasExtras) || 0;
+            const horasDominicales = parseFloat(registro.horasDominicales) || 0;
+            return total + horasOrdinarias + horasNocturnas + horasExtras + horasDominicales;
+          }, 0);
+
+          // Formatear y mostrar datos de forma segura
+          formatearYMostrarDatos(totalSalarios, totalHorasTrabajadas);
+
+          // Cargar actividad reciente de forma segura
+          if (typeof cargarActividadReciente === 'function') {
+            cargarActividadReciente();
+          } else {
+            console.log('⚠️ Función cargarActividadReciente no disponible');
           }
-          const salario = parseFloat(empleado.salario);
-          if (!isNaN(salario) && salario > 0) {
-            return total + salario;
-          }
-          return total;
-        }, 0);
-
-        // Calcular horas trabajadas
-        const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
-          (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email
-        );
-        const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
-          const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
-          const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
-          const horasExtras = parseFloat(registro.horasExtras) || 0;
-          const horasDominicales = parseFloat(registro.horasDominicales) || 0;
-          return total + horasOrdinarias + horasNocturnas + horasExtras + horasDominicales;
-        }, 0);
-
-        // Formatear y mostrar datos
-        formatearYMostrarDatos(totalSalarios, totalHorasTrabajadas);
-
-        // Cargar actividad reciente
-        cargarActividadReciente();
+          
+          console.log('✅ Estadísticas cargadas exitosamente');
+        } catch (error) {
+          console.error('❌ Error en cargarEstadisticasLocalStorage:', error);
+          // NO redirigir al login por errores de estadísticas
+        }
       }
 
-      // Función para formatear y mostrar datos
+      // Función para formatear y mostrar datos - SISTEMA AISLADO
       function formatearYMostrarDatos(totalSalarios, totalHorasTrabajadas) {
-        // Formatear salario con solo 1 decimal y ajustar tamaño
-        const formatearMoneda = (monto) => {
-          if (monto === 0) return '$0';
-          if (monto < 1000) return `$${monto.toFixed(1)}`;
-          if (monto < 1000000) return `$${(monto / 1000).toFixed(1)}K`;
-          if (monto < 1000000000) return `$${(monto / 1000000).toFixed(1)}M`;
-          return `$${(monto / 1000000000).toFixed(1)}B`;
-        };
+        try {
+          console.log('💹 Formateando datos:', { totalSalarios, totalHorasTrabajadas });
+          
+          // Formatear salario con solo 1 decimal y ajustar tamaño
+          const formatearMoneda = (monto) => {
+            if (monto === 0) return '$0';
+            if (monto < 1000) return `$${monto.toFixed(1)}`;
+            if (monto < 1000000) return `$${(monto / 1000).toFixed(1)}K`;
+            if (monto < 1000000000) return `$${(monto / 1000000).toFixed(1)}M`;
+            return `$${(monto / 1000000000).toFixed(1)}B`;
+          };
 
-        document.getElementById('totalSalarios').textContent = formatearMoneda(totalSalarios);
+          // Buscar elemento totalSalarios de forma segura
+          const totalSalariosElement = document.getElementById('totalSalarios');
+          if (totalSalariosElement) {
+            totalSalariosElement.textContent = formatearMoneda(totalSalarios);
+            console.log('✅ Total salarios actualizado:', formatearMoneda(totalSalarios));
+          } else {
+            console.log('⚠️ Elemento totalSalarios no encontrado');
+          }
 
-        // Formatear horas con solo 1 decimal y ajustar tamaño
-        const formatearHoras = (horas) => {
-          if (horas === 0) return '0';
-          if (horas < 100) return horas.toFixed(1);
-          if (horas < 1000) return (horas / 100).toFixed(1) + 'C';
-          if (horas < 1000000) return (horas / 1000).toFixed(1) + 'K';
-          return (horas / 1000000).toFixed(1) + 'M';
-        };
+          // Formatear horas con solo 1 decimal y ajustar tamaño
+          const formatearHoras = (horas) => {
+            if (horas === 0) return '0';
+            if (horas < 100) return horas.toFixed(1);
+            if (horas < 1000) return (horas / 100).toFixed(1) + 'C';
+            if (horas < 1000000) return (horas / 1000).toFixed(1) + 'K';
+            return (horas / 1000000).toFixed(1) + 'M';
+          };
 
-        document.getElementById('horasTrabajadas').textContent = formatearHoras(totalHorasTrabajadas);
+          // Buscar elemento horasTrabajadas de forma segura
+          const horasTrabajadasElement = document.getElementById('horasTrabajadas');
+          if (horasTrabajadasElement) {
+            horasTrabajadasElement.textContent = formatearHoras(totalHorasTrabajadas);
+            console.log('✅ Horas trabajadas actualizadas:', formatearHoras(totalHorasTrabajadas));
+          } else {
+            console.log('⚠️ Elemento horasTrabajadas no encontrado');
+          }
+          
+          console.log('✅ Datos formateados y mostrados exitosamente');
+        } catch (error) {
+          console.error('❌ Error en formatearYMostrarDatos:', error);
+          // NO redirigir al login por errores de formato
+        }
       }
 
       // Cargar actividad reciente
