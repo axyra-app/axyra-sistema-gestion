@@ -85,6 +85,7 @@ body {
   color: var(--axyra-dark-blue);
   background: var(--axyra-light-gray);
   overflow-x: hidden;
+  padding-top: 80px; /* Compensar header fijo */
 }
 
 /* ========================================
@@ -277,6 +278,7 @@ p {
    ======================================== */
 .axyra-section {
   padding: var(--spacing-xxl) 0;
+  margin-top: 20px; /* Compensar header fijo */
 }
 
 /* ========================================
@@ -286,6 +288,7 @@ p {
   max-width: 1400px;
   margin: 0 auto;
   padding: var(--spacing-xl) var(--spacing-lg);
+  margin-top: 20px; /* Compensar header fijo */
 }
 
 .axyra-page-header {
@@ -1841,15 +1844,15 @@ p {
 /* ========================================
    DISEÑO PROFESIONAL - SECCIÓN HERO
    ======================================== */
-.axyra-hero {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
-  padding: 180px 0 100px;
-  color: #ffffff;
-  position: relative;
-  overflow: hidden;
-  border-bottom: 4px solid rgba(255, 255, 255, 0.1);
-  margin-top: 0;
-}
+  .axyra-hero {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+    padding: 200px 0 100px;
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 4px solid rgba(255, 255, 255, 0.1);
+    margin-top: 0;
+  }
 
 .axyra-hero::before {
   content: '';
