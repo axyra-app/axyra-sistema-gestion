@@ -371,6 +371,20 @@
                       // Intentar restaurar sesión
                       firebase.auth().onAuthStateChanged(function(user) {
                           if (user) {
+                              // Verificar si es el mismo usuario
+                              const currentUserId = localStorage.getItem('axyra_isolated_user_id');
+                              if (currentUserId && currentUserId !== user.uid) {
+                                  // Usuario diferente, limpiar datos
+                                  console.log('🔄 Usuario diferente detectado, limpiando datos...');
+                                  if (window.axyraFirebaseUtils && window.axyraFirebaseUtils.clearCompanyData) {
+                                      window.axyraFirebaseUtils.clearCompanyData();
+                                  }
+                                  // Generar nuevo ID de empresa
+                                  if (window.axyraFirebaseUtils && window.axyraFirebaseUtils.getCompanyId) {
+                                      window.axyraFirebaseUtils.getCompanyId();
+                                  }
+                              }
+                              
                               console.log('✅ Sesión restaurada automáticamente');
                               // Redirigir al dashboard
                               window.location.href = 'modulos/dashboard/dashboard.html';
@@ -391,7 +405,7 @@
       // Función para limpiar sesión guardada
       function clearSavedSession() {
           localStorage.removeItem('axyra_firebase_user');
-          localStorage.removeItem('axyra_isolated_user');
+          localStorage.removeItem('axyra_isolated_user_id');
           localStorage.removeItem('axyra_remember_me');
           localStorage.removeItem('axyra_session_timestamp');
       }
@@ -400,12 +414,14 @@
       function saveSession(user, rememberMe) {
           if (rememberMe) {
               localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+              localStorage.setItem('axyra_isolated_user_id', user.uid);
               localStorage.setItem('axyra_remember_me', 'true');
               localStorage.setItem('axyra_session_timestamp', Date.now().toString());
               console.log('✅ Sesión guardada para recordar');
           } else {
               // Solo guardar temporalmente para la sesión actual
               sessionStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+              localStorage.setItem('axyra_isolated_user_id', user.uid);
           }
       }
 

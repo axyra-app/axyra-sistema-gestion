@@ -79,6 +79,10 @@
               Esperamos que tengas un excelente día gestionando tu empresa
             </p>
             <div class="axyra-welcome-time" id="welcomeTime"></div>
+            <div class="axyra-company-info" id="companyInfo">
+              <div class="axyra-company-name" id="companyName"></div>
+              <div class="axyra-company-nit" id="companyNIT"></div>
+            </div>
           </div>
         </div>
 
@@ -2125,8 +2129,72 @@
               welcomeTitle.textContent = `¡Bienvenido, ${currentUser.username || currentUser.nombre}!`;
             }
           }
+
+          // Actualizar hora y fecha
+          updateTimeAndDate();
+          
+          // Actualizar información de la empresa
+          updateCompanyInfo();
+          
         } catch (error) {
           console.error('❌ Error actualizando bienvenida:', error);
+        }
+      }
+
+      // Función para actualizar hora y fecha
+      function updateTimeAndDate() {
+        try {
+          const now = new Date();
+          const timeElement = document.getElementById('welcomeTime');
+          
+          if (timeElement) {
+            const timeString = now.toLocaleTimeString('es-CO', { 
+              hour: '2-digit', 
+              minute: '2-digit',
+              hour12: true 
+            });
+            const dateString = now.toLocaleDateString('es-CO', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            });
+            
+            timeElement.innerHTML = `
+              <i class="fas fa-clock"></i> ${timeString}
+              <br>
+              <i class="fas fa-calendar"></i> ${dateString}
+            `;
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando hora y fecha:', error);
+        }
+      }
+
+      // Función para actualizar información de la empresa
+      function updateCompanyInfo() {
+        try {
+          const companyNameElement = document.getElementById('companyName');
+          const companyNITElement = document.getElementById('companyNIT');
+          
+          if (companyNameElement && companyNITElement) {
+            // Obtener ID de empresa actual
+            const companyId = localStorage.getItem('axyra_company_id');
+            
+            if (companyId) {
+              // Generar nombre de empresa basado en el ID
+              const companyName = `Empresa ${companyId.split('_')[2].substring(0, 6).toUpperCase()}`;
+              const companyNIT = `NIT: ${companyId.split('_')[1].substring(0, 8)}`;
+              
+              companyNameElement.textContent = companyName;
+              companyNITElement.textContent = companyNIT;
+            } else {
+              companyNameElement.textContent = 'Empresa Nueva';
+              companyNITElement.textContent = 'NIT: Pendiente';
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando información de empresa:', error);
         }
       }
 
@@ -2333,8 +2401,31 @@
       }
 
       .axyra-welcome-time {
-        font-size: 14px;
-        opacity: 0.8;
+        font-size: 1.1rem;
+        color: #64748b;
+        margin-top: 10px;
+        font-weight: 500;
+      }
+
+      .axyra-company-info {
+        margin-top: 15px;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .axyra-company-name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .axyra-company-nit {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.9);
         font-weight: 500;
       }
 

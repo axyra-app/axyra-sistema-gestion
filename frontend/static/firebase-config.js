@@ -148,6 +148,29 @@ function getOrCreateCompanyId() {
   return companyId;
 }
 
+// Función para limpiar datos de empresa anterior
+function clearPreviousCompanyData() {
+  // Limpiar todos los datos excepto el ID de empresa actual
+  const currentCompanyId = localStorage.getItem('axyra_company_id');
+  
+  // Lista de claves a limpiar
+  const keysToClear = [
+    'axyra_empleados',
+    'axyra_facturas',
+    'axyra_horas',
+    'axyra_nominas',
+    'axyra_departamentos',
+    'axyra_firebase_user',
+    'axyra_isolated_user'
+  ];
+  
+  keysToClear.forEach(key => {
+    localStorage.removeItem(key);
+  });
+  
+  console.log('🧹 Datos de empresa anterior limpiados');
+}
+
 // Función para hacer logout de Firebase
 async function firebaseLogout() {
   if (isFirebaseAvailable()) {
@@ -318,5 +341,6 @@ window.axyraFirebaseUtils = {
   saveData: saveFirestoreData,
   deleteData: deleteFirestoreData,
   getCompanyId: getOrCreateCompanyId,
+  clearCompanyData: clearPreviousCompanyData,
   initialize: initializeFirebase
 };
