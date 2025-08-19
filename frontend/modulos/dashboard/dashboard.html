@@ -1069,8 +1069,8 @@
           }
 
           // Fallback a localStorage
-          console.log('💾 Cargando datos desde localStorage...');
-          cargarEstadisticasLocalStorage(currentUser);
+          console.log('💾 Cargando datos desde Firebase...');
+          await cargarEstadisticasLocalStorage(currentUser);
         } catch (error) {
           console.error('❌ Error cargando estadísticas:', error);
           // NO redirigir al login por errores de estadísticas
@@ -1080,14 +1080,47 @@
       }
 
       // Función auxiliar para cargar desde localStorage - SISTEMA AISLADO
-      function cargarEstadisticasLocalStorage(currentUser) {
+      async function cargarEstadisticasLocalStorage(currentUser) {
         try {
           console.log('💾 Cargando estadísticas desde localStorage para usuario:', currentUser.username);
 
-          // Empleados FILTRADOS POR USUARIO
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
-            (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
-          );
+          // Empleados FILTRADOS POR USUARIO - SOLO DESDE FIREBASE
+          let empleados = [];
+          
+          // Intentar cargar desde Firebase primero
+          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser && currentUser.id) {
+            try {
+              const empleadosSnapshot = await firebase.firestore()
+                .collection('empleados')
+                .where('userId', '==', currentUser.id)
+                .get();
+              
+              if (!empleadosSnapshot.empty) {
+                empleadosSnapshot.forEach(doc => {
+                  empleados.push({
+                    id: doc.id,
+                    ...doc.data()
+                  });
+                });
+                console.log(`✅ Empleados cargados desde Firebase: ${empleados.length}`);
+              } else {
+                console.log('ℹ️ No hay empleados en Firebase para este usuario');
+              }
+            } catch (firebaseError) {
+              console.warn('⚠️ Error cargando desde Firebase, usando localStorage como fallback:', firebaseError);
+              // Solo usar localStorage como fallback si Firebase falla
+              const empleadosLocal = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+              empleados = empleadosLocal.filter(
+                (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
+              );
+            }
+          } else {
+            console.log('ℹ️ Firebase no disponible, usando localStorage');
+            const empleadosLocal = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+            empleados = empleadosLocal.filter(
+              (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
+            );
+          }
 
           // Buscar elemento totalEmpleados de forma segura
           const totalEmpleadosElement = document.getElementById('totalEmpleados');
@@ -1098,10 +1131,43 @@
             console.log('⚠️ Elemento totalEmpleados no encontrado');
           }
 
-          // Comprobantes FILTRADOS POR USUARIO
-          const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
-            (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email || comp.userId === currentUser.id
-          );
+          // Comprobantes FILTRADOS POR USUARIO - SOLO DESDE FIREBASE
+          let comprobantes = [];
+          
+          // Intentar cargar desde Firebase primero
+          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser && currentUser.id) {
+            try {
+              const comprobantesSnapshot = await firebase.firestore()
+                .collection('comprobantes')
+                .where('userId', '==', currentUser.id)
+                .get();
+              
+              if (!comprobantesSnapshot.empty) {
+                comprobantesSnapshot.forEach(doc => {
+                  comprobantes.push({
+                    id: doc.id,
+                    ...doc.data()
+                  });
+                });
+                console.log(`✅ Comprobantes cargados desde Firebase: ${comprobantes.length}`);
+              } else {
+                console.log('ℹ️ No hay comprobantes en Firebase para este usuario');
+              }
+            } catch (firebaseError) {
+              console.warn('⚠️ Error cargando comprobantes desde Firebase, usando localStorage como fallback:', firebaseError);
+              // Solo usar localStorage como fallback si Firebase falla
+              const comprobantesLocal = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]');
+              comprobantes = comprobantesLocal.filter(
+                (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email || comp.userId === currentUser.id
+              );
+            }
+          } else {
+            console.log('ℹ️ Firebase no disponible, usando localStorage para comprobantes');
+            const comprobantesLocal = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]');
+            comprobantes = comprobantesLocal.filter(
+              (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email || comp.userId === currentUser.id
+            );
+          }
 
           // Buscar elemento comprobantesGenerados de forma segura
           const comprobantesElement = document.getElementById('comprobantesGenerados');
@@ -1124,10 +1190,43 @@
             return total;
           }, 0);
 
-          // Calcular horas trabajadas
-          const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
-            (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
-          );
+          // Calcular horas trabajadas - SOLO DESDE FIREBASE
+          let registrosHoras = [];
+          
+          // Intentar cargar desde Firebase primero
+          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser && currentUser.id) {
+            try {
+              const horasSnapshot = await firebase.firestore()
+                .collection('horas')
+                .where('userId', '==', currentUser.id)
+                .get();
+              
+              if (!horasSnapshot.empty) {
+                horasSnapshot.forEach(doc => {
+                  registrosHoras.push({
+                    id: doc.id,
+                    ...doc.data()
+                  });
+                });
+                console.log(`✅ Horas cargadas desde Firebase: ${registrosHoras.length}`);
+              } else {
+                console.log('ℹ️ No hay horas en Firebase para este usuario');
+              }
+            } catch (firebaseError) {
+              console.warn('⚠️ Error cargando horas desde Firebase, usando localStorage como fallback:', firebaseError);
+              // Solo usar localStorage como fallback si Firebase falla
+              const horasLocal = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+              registrosHoras = horasLocal.filter(
+                (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
+              );
+            }
+          } else {
+            console.log('ℹ️ Firebase no disponible, usando localStorage para horas');
+            const horasLocal = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+            registrosHoras = horasLocal.filter(
+              (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
+            );
+          }
           const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
             const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
             const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
@@ -2394,6 +2493,12 @@
       async function actualizarUsername() {
         try {
           const usernameInput = document.getElementById('usernameInput');
+          if (!usernameInput) {
+            console.error('❌ No se encontró el campo usernameInput');
+            mostrarMensaje('❌ Error: Campo de username no encontrado', 'error');
+            return;
+          }
+          
           const newUsername = usernameInput.value.trim();
           
           if (!newUsername) {
@@ -2687,21 +2792,38 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.7);
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1000;
+        z-index: 9999;
+        backdrop-filter: blur(5px);
       }
 
       .axyra-modal-content {
         background: white;
-        border-radius: 0.5rem;
+        border-radius: 20px;
         max-width: 600px;
         width: 90%;
         max-height: 80vh;
         overflow-y: auto;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: modalSlideIn 0.3s ease-out;
+        padding: 30px;
+        position: relative;
+        z-index: 10000;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-30px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
       }
 
       /* Estilos para tarjeta de bienvenida */
@@ -3031,15 +3153,23 @@
 
       .axyra-modal-header {
         padding: 1.5rem;
-        border-bottom: 1px solid var(--axyra-gray-200);
+        border-bottom: 2px solid #f1f5f9;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 20px 20px 0 0;
       }
 
       .axyra-modal-header h3 {
         margin: 0;
-        color: var(--axyra-gray-900);
+        color: #1e293b;
+        font-size: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       .axyra-modal-close {
@@ -3047,28 +3177,31 @@
         border: none;
         font-size: 1.5rem;
         cursor: pointer;
-        color: var(--axyra-gray-500);
-        padding: 0.25rem;
-        border-radius: 0.25rem;
+        color: #64748b;
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
       }
 
       .axyra-modal-close:hover {
-        background: var(--axyra-gray-100);
-        color: var(--axyra-gray-700);
+        background: #f1f5f9;
+        color: #374151;
+        transform: scale(1.1);
       }
 
       .axyra-modal-body {
-        padding: 1.5rem;
+        padding: 2rem;
+        background: white;
       }
 
       .axyra-modal-footer {
-        padding: 1rem 1.5rem;
-        border-top: 1px solid var(--axyra-gray-200);
+        padding: 1.5rem 2rem;
+        border-top: 2px solid #f1f5f9;
         display: flex;
         justify-content: flex-end;
         gap: 1rem;
-        background: var(--axyra-gray-50);
-        border-radius: 0 0 0.5rem 0.5rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 0 0 20px 20px;
       }
 
       /* Estilos para listas de detalles */
@@ -3120,6 +3253,47 @@
         position: relative;
         height: 300px;
         width: 100%;
+      }
+
+      /* Estilos para formularios del modal */
+      .axyra-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .axyra-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .axyra-form-group label {
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.875rem;
+      }
+
+      .axyra-form-group input {
+        padding: 0.75rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        background: #f9fafb;
+      }
+
+      .axyra-form-group input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .axyra-form-group small {
+        color: #6b7280;
+        font-size: 0.75rem;
+        font-style: italic;
       }
 
       @media (max-width: 768px) {
