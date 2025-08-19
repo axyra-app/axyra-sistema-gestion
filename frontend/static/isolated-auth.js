@@ -146,12 +146,42 @@ class AXYRAIsolatedAuth {
 
   // Cerrar sesión - COMPLETAMENTE AISLADO
   logout() {
-    console.log('🔒 Cerrando sesión en sistema aislado...');
-    this.currentUser = null;
-    this.isAuthenticated = false;
-    localStorage.removeItem('axyra_isolated_user');
-    console.log('✅ Sesión cerrada en sistema aislado');
-    return { success: true };
+    try {
+      console.log('🔄 Cerrando sesión...');
+      
+      // Limpiar sesión actual
+      this.currentUser = null;
+      this.isAuthenticated = false;
+      
+      // Limpiar localStorage
+      localStorage.removeItem('axyra_isolated_user');
+      localStorage.removeItem('axyra_isolated_session');
+      localStorage.removeItem('axyra_isolated_remember');
+      
+      // Limpiar cualquier otra sesión que pueda estar activa
+      localStorage.removeItem('axyra_firebase_user');
+      localStorage.removeItem('axyra_user_session');
+      localStorage.removeItem('axyra_remembered_user');
+      
+      // Limpiar cookies si existen
+      document.cookie.split(";").forEach(function(c) { 
+        document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+      });
+      
+      console.log('✅ Sesión cerrada completamente');
+      
+      // Redirigir al login
+      if (!this.isOnLoginPage()) {
+        window.location.href = '/login.html';
+      }
+    } catch (error) {
+      console.error('❌ Error cerrando sesión:', error);
+      // Forzar limpieza
+      this.currentUser = null;
+      this.isAuthenticated = false;
+      localStorage.clear();
+      window.location.href = '/login.html';
+    }
   }
 
   // Verificar autenticación - COMPLETAMENTE AISLADO

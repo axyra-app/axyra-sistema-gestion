@@ -276,7 +276,7 @@
               <button class="axyra-btn axyra-btn-success" onclick="exportarCuadreCaja()">
                 <i class="fas fa-file-excel"></i> Exportar Cuadre de Caja
               </button>
-              <button class="axyra-btn axyra-btn-info" onclick="cargarResumen()">
+              <button class="axyra-btn axyra-btn-primary" onclick="cargarResumen()">
                 <i class="fas fa-sync-alt"></i> Actualizar Resumen
               </button>
               <button class="axyra-btn axyra-btn-warning" onclick="limpiarHistorial()">
@@ -509,34 +509,40 @@
 
       // Cargar resumen del día
       function cargarResumen() {
-        const hoy = new Date().toISOString().split('T')[0];
-        const facturasHoy = facturas.filter((f) => f.fecha === hoy);
-
-        document.getElementById('totalFacturas').textContent = facturasHoy.length;
-        const totalIngresos = facturasHoy.reduce((total, f) => total + parseFloat(f.monto), 0);
-        document.getElementById('totalIngresos').textContent = formatearMoneda(totalIngresos);
-
-        // Calcular efectivo y transferencias
-        const efectivo = facturasHoy.filter(f => f.metodoPago === 'efectivo').reduce((total, f) => total + parseFloat(f.monto), 0);
-        const transferencias = facturasHoy.filter(f => f.metodoPago === 'transferencia').reduce((total, f) => total + parseFloat(f.monto), 0);
-        
-        document.getElementById('totalEfectivo').textContent = formatearMoneda(efectivo);
-        document.getElementById('totalTransferencias').textContent = formatearMoneda(transferencias);
-
-        // Mostrar última factura
-        if (facturas.length > 0) {
-          const ultima = facturas[facturas.length - 1];
-          document.getElementById('ultimaFactura').innerHTML = `
-            <div class="axyra-activity-item">
-              <div class="axyra-activity-icon">
-                <i class="fas fa-file-invoice"></i>
-              </div>
-              <div class="axyra-activity-content">
-                <div class="axyra-activity-title">Factura #${ultima.numero}</div>
-                <div class="axyra-activity-time">${ultima.encargado} - ${formatearMoneda(ultima.monto)}</div>
-              </div>
-            </div>
-          `;
+        try {
+          const fechaHoy = new Date().toISOString().split('T')[0];
+          const facturasHoy = facturas.filter(f => f.fecha === fechaHoy);
+          
+          // Calcular totales
+          const totalFacturas = facturasHoy.length;
+          const totalIngresos = facturasHoy.reduce((total, f) => total + parseFloat(f.monto), 0);
+          
+          // Calcular por método de pago
+          const efectivo = facturasHoy.filter(f => f.metodoPago === 'efectivo').reduce((total, f) => total + parseFloat(f.monto), 0);
+          const transferencia = facturasHoy.filter(f => f.metodoPago === 'transferencia').reduce((total, f) => total + parseFloat(f.monto), 0);
+          const datafono = facturasHoy.filter(f => f.metodoPago === 'datafono').reduce((total, f) => total + parseFloat(f.monto), 0);
+          const qr = facturasHoy.filter(f => f.metodoPago === 'qr').reduce((total, f) => total + parseFloat(f.monto), 0);
+          const cheque = facturasHoy.filter(f => f.metodoPago === 'cheque').reduce((total, f) => total + parseFloat(f.monto), 0);
+          
+          // Actualizar resumen
+          document.getElementById('totalFacturas').textContent = totalFacturas;
+          document.getElementById('totalIngresos').textContent = formatearMoneda(totalIngresos);
+          document.getElementById('totalEfectivo').textContent = formatearMoneda(efectivo);
+          document.getElementById('totalTransferencias').textContent = formatearMoneda(transferencia);
+          
+          // Mostrar última factura
+          if (facturasHoy.length > 0) {
+            const ultimaFactura = facturasHoy[facturasHoy.length - 1]; // Tomar la última factura del día
+            document.getElementById('ultimaFactura').textContent = `$${parseFloat(ultimaFactura.monto).toLocaleString()}`;
+            document.getElementById('ultimaFacturaInfo').textContent = `${ultimaFactura.encargado} - ${ultimaFactura.area}`;
+          } else {
+            document.getElementById('ultimaFactura').textContent = '$0';
+            document.getElementById('ultimaFacturaInfo').textContent = 'No hay facturas hoy';
+          }
+          
+          console.log('✅ Resumen del día actualizado');
+        } catch (error) {
+          console.error('❌ Error cargando resumen:', error);
         }
       }
 

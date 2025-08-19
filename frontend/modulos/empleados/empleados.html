@@ -753,31 +753,85 @@
       function editarDepartamento(index) {
         const departamentos = obtenerDepartamentos();
         const nombreActual = departamentos[index];
-        const nuevoNombre = prompt('Nuevo nombre del departamento:', nombreActual);
-
-        if (nuevoNombre && nuevoNombre.trim() !== nombreActual) {
-          const nombreLimpio = nuevoNombre.trim();
-          if (departamentos.includes(nombreLimpio)) {
-            mostrarMensaje('❌ El departamento ya existe', 'error');
-            return;
-          }
-
-          // Actualizar empleados que usan este departamento
-          empleados.forEach((emp) => {
-            if (emp.departamento === nombreActual) {
-              emp.departamento = nombreLimpio;
-            }
-          });
-          guardarEmpleados();
-
-          // Actualizar departamento
-          departamentos[index] = nombreLimpio;
-          localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
-
-          cargarDepartamentos();
-          mostrarEmpleados();
-          mostrarMensaje('✅ Departamento actualizado exitosamente', 'success');
+        
+        // Crear modal para editar departamento
+        const modalHTML = `
+          <div id="modalEditarDepartamento" class="axyra-modal" style="display: flex;">
+            <div class="axyra-modal-content">
+              <div class="axyra-modal-header">
+                <h3 class="axyra-modal-title">
+                  <i class="fas fa-edit"></i> Editar Departamento
+                </h3>
+                <button class="axyra-modal-close" onclick="cerrarModalEditarDepartamento()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-form-group">
+                  <label for="nuevoNombreDepartamento" class="axyra-form-label">Nuevo nombre del departamento:</label>
+                  <input type="text" id="nuevoNombreDepartamento" class="axyra-form-input" value="${nombreActual}" />
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalEditarDepartamento()">
+                  Cancelar
+                </button>
+                <button class="axyra-btn axyra-btn-warning" onclick="confirmarEditarDepartamento(${index})">
+                  <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+      
+      // Cerrar modal editar departamento
+      function cerrarModalEditarDepartamento() {
+        const modal = document.getElementById('modalEditarDepartamento');
+        if (modal) {
+          modal.remove();
         }
+      }
+      
+      // Confirmar editar departamento
+      function confirmarEditarDepartamento(index) {
+        const departamentos = obtenerDepartamentos();
+        const nombreActual = departamentos[index];
+        const nuevoNombre = document.getElementById('nuevoNombreDepartamento').value.trim();
+        
+        if (!nuevoNombre) {
+          mostrarMensaje('❌ El nombre del departamento no puede estar vacío', 'error');
+          return;
+        }
+        
+        if (nuevoNombre === nombreActual) {
+          cerrarModalEditarDepartamento();
+          return;
+        }
+        
+        if (departamentos.includes(nuevoNombre)) {
+          mostrarMensaje('❌ El departamento ya existe', 'error');
+          return;
+        }
+        
+        // Actualizar empleados que usan este departamento
+        empleados.forEach((emp) => {
+          if (emp.departamento === nombreActual) {
+            emp.departamento = nuevoNombre;
+          }
+        });
+        guardarEmpleados();
+        
+        // Actualizar departamento
+        departamentos[index] = nuevoNombre;
+        localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+        
+        cerrarModalEditarDepartamento();
+        cargarDepartamentos();
+        mostrarEmpleados();
+        mostrarMensaje('✅ Departamento actualizado exitosamente', 'success');
       }
 
       // Eliminar departamento
@@ -794,13 +848,58 @@
           return;
         }
 
-        if (confirm(`¿Estás seguro de que quieres eliminar el departamento "${departamento}"?`)) {
-          departamentos.splice(index, 1);
-          localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
-
-          cargarDepartamentos();
-          mostrarMensaje('✅ Departamento eliminado exitosamente', 'success');
+        // Crear modal de confirmación
+        const modalHTML = `
+          <div id="modalConfirmarEliminarDepartamento" class="axyra-modal" style="display: flex;">
+            <div class="axyra-modal-content">
+              <div class="axyra-modal-header">
+                <h3 class="axyra-modal-title">
+                  <i class="fas fa-trash"></i> Confirmar Eliminación
+                </h3>
+                <button class="axyra-modal-close" onclick="cerrarModalConfirmarEliminarDepartamento()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-modal-text">
+                  <p>¿Estás seguro de que quieres eliminar el departamento <strong>"${departamento}"</strong>?</p>
+                  <p>Esta acción no se puede deshacer.</p>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalConfirmarEliminarDepartamento()">
+                  Cancelar
+                </button>
+                <button class="axyra-btn axyra-btn-error" onclick="confirmarEliminarDepartamento(${index})">
+                  <i class="fas fa-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+      
+      // Cerrar modal confirmar eliminar departamento
+      function cerrarModalConfirmarEliminarDepartamento() {
+        const modal = document.getElementById('modalConfirmarEliminarDepartamento');
+        if (modal) {
+          modal.remove();
         }
+      }
+      
+      // Confirmar eliminar departamento
+      function confirmarEliminarDepartamento(index) {
+        const departamentos = obtenerDepartamentos();
+        const departamento = departamentos[index];
+        
+        departamentos.splice(index, 1);
+        localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+
+        cerrarModalConfirmarEliminarDepartamento();
+        cargarDepartamentos();
+        mostrarMensaje('✅ Departamento eliminado exitosamente', 'success');
       }
 
       // Eventos

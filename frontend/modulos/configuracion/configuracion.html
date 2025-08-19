@@ -657,6 +657,33 @@
         localStorage.setItem('axyra_configuracion', JSON.stringify(config));
         
         console.log(`✅ Tema cambiado a: ${tema}`);
+        
+        // Aplicar tema inmediatamente
+        aplicarTema(tema);
+      }
+
+      // Aplicar tema
+      function aplicarTema(tema) {
+        const body = document.body;
+        
+        // Remover clases anteriores
+        body.classList.remove('tema-claro', 'tema-oscuro');
+        
+        if (tema === 'auto') {
+          const hora = new Date().getHours();
+          if (hora >= 6 && hora < 18) {
+            body.classList.add('tema-claro');
+          } else {
+            body.classList.add('tema-oscuro');
+          }
+        } else {
+          body.classList.add(`tema-${tema}`);
+        }
+        
+        // Guardar en localStorage
+        const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
+        config.tema = tema;
+        localStorage.setItem('axyra_configuracion', JSON.stringify(config));
       }
 
       // Mostrar modal restaurar

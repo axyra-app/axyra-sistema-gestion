@@ -963,19 +963,73 @@
 
       // Eliminar nómina
       function eliminarNomina(id) {
-        if (confirm('¿Estás seguro de que deseas eliminar esta nómina? Esta acción no se puede deshacer.')) {
-          try {
-            const historial = JSON.parse(localStorage.getItem('axyra_historial') || '[]');
-            const historialFiltrado = historial.filter(n => n.id !== id);
-            localStorage.setItem('axyra_historial', JSON.stringify(historialFiltrado));
-            
-            cargarHistorial();
-            actualizarResumen();
-            mostrarMensaje('✅ Nómina eliminada correctamente', 'success');
-          } catch (error) {
-            console.error('❌ Error eliminando nómina:', error);
-            mostrarMensaje('❌ Error al eliminar la nómina', 'error');
-          }
+        const historial = JSON.parse(localStorage.getItem('axyra_historial') || '[]');
+        const nomina = historial.find(n => n.id === id);
+        
+        if (!nomina) {
+          mostrarMensaje('❌ Nómina no encontrada', 'error');
+          return;
+        }
+
+        // Crear modal de confirmación
+        const modalHTML = `
+          <div id="modalConfirmarEliminarNomina" class="axyra-modal" style="display: flex;">
+            <div class="axyra-modal-content">
+              <div class="axyra-modal-header">
+                <h3 class="axyra-modal-title">
+                  <i class="fas fa-trash"></i> Confirmar Eliminación
+                </h3>
+                <button class="axyra-modal-close" onclick="cerrarModalConfirmarEliminarNomina()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-modal-text">
+                  <p>¿Estás seguro de que deseas eliminar esta nómina?</p>
+                  <p><strong>Período:</strong> ${nomina.periodo}</p>
+                  <p><strong>Fecha de Pago:</strong> ${nomina.fechaPago}</p>
+                  <p><strong>Empleados:</strong> ${nomina.empleados}</p>
+                  <p><strong>Total Salarios:</strong> ${nomina.totalSalarios}</p>
+                  <p>Esta acción no se puede deshacer.</p>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalConfirmarEliminarNomina()">
+                  Cancelar
+                </button>
+                <button class="axyra-btn axyra-btn-error" onclick="confirmarEliminarNomina('${id}')">
+                  <i class="fas fa-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // Cerrar modal confirmar eliminar nómina
+      function cerrarModalConfirmarEliminarNomina() {
+        const modal = document.getElementById('modalConfirmarEliminarNomina');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Confirmar eliminar nómina
+      function confirmarEliminarNomina(id) {
+        try {
+          const historial = JSON.parse(localStorage.getItem('axyra_historial') || '[]');
+          const historialFiltrado = historial.filter(n => n.id !== id);
+          localStorage.setItem('axyra_historial', JSON.stringify(historialFiltrado));
+          
+          cerrarModalConfirmarEliminarNomina();
+          cargarHistorial();
+          actualizarResumen();
+          mostrarMensaje('✅ Nómina eliminada correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error eliminando nómina:', error);
+          mostrarMensaje('❌ Error al eliminar la nómina', 'error');
         }
       }
 

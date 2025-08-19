@@ -298,13 +298,13 @@
               </div>
               <div class="axyra-form-group">
                 <label for="observaciones" class="axyra-form-label">Observaciones</label>
-                <input
-                  type="text"
+                <textarea
                   id="observaciones"
                   name="observaciones"
-                  class="axyra-form-input"
+                  class="axyra-form-textarea"
+                  rows="3"
                   placeholder="Comentarios adicionales sobre las horas trabajadas"
-                />
+                ></textarea>
               </div>
             </div>
 
@@ -888,124 +888,128 @@
         document.getElementById('valorTotalHoras').textContent = formatearMoneda(valorTotal);
       }
 
-      // Generar comprobante PDF
-      async function generarComprobantePDF(formData) {
-        try {
-          const empleadoId = formData.get('empleado');
-          const tipoContrato = formData.get('tipoContrato');
-          const salarioBase = parseFloat(formData.get('salarioBase'));
-          const deudaComentario = formData.get('deudaComentario') || '';
-          const deudaValor = parseFloat(formData.get('deudaValor')) || 0;
-
-          if (!empleadoId || !tipoContrato || !salarioBase) {
-            mostrarMensaje('❌ Por favor completa todos los campos requeridos', 'error');
-            return;
-          }
-
-          // Obtener empleado
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          const empleado = empleados.find((e) => e.id === parseInt(empleadoId));
-
-          if (!empleado) {
-            mostrarMensaje('❌ Empleado no encontrado', 'error');
-            return;
-          }
-
-          // Obtener horas trabajadas del empleado
-          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-          const horasEmpleado = horas.filter((h) => h.empleadoId === parseInt(empleadoId));
-
-          // Calcular total de horas trabajadas
-          let totalHoras = 0;
-          let distribucionHoras = {
-            horas_ordinarias: 0,
-            horas_nocturnas: 0,
-            horas_dominicales: 0,
-            horas_dominicales_nocturnas: 0,
-            horas_festivas: 0,
-            horas_festivas_nocturnas: 0,
-            horas_extra_diurnas: 0,
-            horas_extra_nocturnas: 0,
-            horas_extra_dominicales: 0,
-            horas_extra_dominicales_nocturnas: 0,
-            horas_extra_festivas: 0,
-            horas_extra_festivas_nocturnas: 0,
-            total_horas: 0,
-          };
-
-          if (tipoContrato === 'POR_HORAS' && horasEmpleado.length > 0) {
-            // Calcular distribución real de horas
-            const laborLaw = new ColombianLaborLaw();
-            horasEmpleado.forEach((registro) => {
-              const distribucion = laborLaw.calcularDistribucionHoras(
-                registro.fecha,
-                registro.horaEntrada,
-                registro.horaSalida,
-                salarioBase
-              );
-
-              // Sumar horas
-              Object.keys(distribucion).forEach((key) => {
-                if (key !== 'total_horas') {
-                  distribucionHoras[key] += distribucion[key];
-                }
-              });
-            });
-
-            distribucionHoras.total_horas = Object.keys(distribucionHoras)
-              .filter((key) => key !== 'total_horas')
-              .reduce((sum, key) => sum + distribucionHoras[key], 0);
-          } else {
-            // Empleado fijo - 160 horas mensuales estándar
-            distribucionHoras.total_horas = 160;
-          }
-
-          // Generar PDF
-          const pdfGenerator = new PDFGenerator();
-          const resultado = await pdfGenerator.generarComprobante(
-            empleado.nombre,
-            empleado.cedula || 'N/A',
-            tipoContrato,
-            salarioBase,
-            distribucionHoras,
-            deudaComentario,
-            deudaValor
-          );
-
-          if (resultado.success) {
-            mostrarMensaje(`✅ Comprobante generado exitosamente: ${resultado.filename}`, 'success');
-          } else {
-            mostrarMensaje(`❌ Error generando PDF: ${resultado.error}`, 'error');
-          }
-        } catch (error) {
-          console.error('Error generando comprobante:', error);
-          mostrarMensaje(`❌ Error generando comprobante: ${error.message}`, 'error');
-        }
-      }
-
       // Previsualizar comprobante
       function previsualizarComprobante() {
-        const formData = new FormData(document.getElementById('formComprobante'));
-        const empleadoId = formData.get('empleado');
-        const tipoContrato = formData.get('tipoContrato');
-        const salarioBase = formData.get('salarioBase');
+        const empleadoId = document.getElementById('empleadoComprobante').value;
+        const tipoContrato = document.getElementById('tipoContrato').value;
+        const salarioBase = document.getElementById('salarioBase').value;
+        const deudaComentario = document.getElementById('deudaComentario').value;
+        const deudaValor = document.getElementById('deudaValor').value;
 
-        if (!empleadoId || !tipoContrato || !salarioBase) {
-          mostrarMensaje('❌ Por favor completa todos los campos requeridos', 'error');
+        if (!empleadoId || !salarioBase) {
+          mostrarMensaje('❌ Por favor completa todos los campos obligatorios', 'warning');
           return;
         }
 
-        // Mostrar resumen del comprobante
+        // Obtener información del empleado
         const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-        const empleado = empleados.find((e) => e.id === parseInt(empleadoId));
+        const empleado = empleados.find(emp => emp.id == empleadoId);
 
-        if (empleado) {
-          mostrarMensaje(
-            `📋 Previsualización: Comprobante para ${empleado.nombre} - ${tipoContrato} - Salario: $${parseFloat(
-              salarioBase
-            ).toLocaleString('es-CO')}`,
-            'info'
-          );
+        if (!empleado) {
+          mostrarMensaje('❌ Empleado no encontrado', 'error');
+          return;
+        }
+
+        // Crear modal de previsualización
+        const modalHTML = `
+          <div id="modalPrevisualizacion" class="axyra-modal" style="display: flex;">
+            <div class="axyra-modal-content" style="max-width: 800px;">
+              <div class="axyra-modal-header">
+                <h3 class="axyra-modal-title">
+                  <i class="fas fa-eye"></i> Previsualización del Comprobante
+                </h3>
+                <button class="axyra-modal-close" onclick="cerrarModalPrevisualizacion()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-comprobante-preview">
+                  <div class="axyra-preview-header">
+                    <h4>Información del Empleado</h4>
+                    <p><strong>Nombre:</strong> ${empleado.nombre}</p>
+                    <p><strong>Cargo:</strong> ${empleado.cargo}</p>
+                    <p><strong>Departamento:</strong> ${empleado.departamento}</p>
+                    <p><strong>Tipo de Contrato:</strong> ${tipoContrato === 'FIJO' ? 'Empleado Fijo' : 'Por Horas'}</p>
+                    <p><strong>Salario Base:</strong> $${parseFloat(salarioBase).toLocaleString()}</p>
+                    ${deudaComentario ? `<p><strong>Motivo de Deuda:</strong> ${deudaComentario}</p>` : ''}
+                    ${deudaValor ? `<p><strong>Valor de Deuda:</strong> $${parseFloat(deudaValor).toLocaleString()}</p>` : ''}
+                  </div>
+                  <div class="axyra-preview-note">
+                    <p><em>Esta es una previsualización del comprobante. Para generar el PDF final, haz clic en "Generar Comprobante PDF".</em></p>
+                  </div>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalPrevisualizacion()">
+                  Cerrar
+                </button>
+                <button class="axyra-btn axyra-btn-primary" onclick="generarComprobantePDF()">
+                  <i class="fas fa-file-pdf"></i> Generar PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // Cerrar modal de previsualización
+      function cerrarModalPrevisualizacion() {
+        const modal = document.getElementById('modalPrevisualizacion');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Generar comprobante PDF
+      function generarComprobantePDF() {
+        const empleadoId = document.getElementById('empleadoComprobante').value;
+        const tipoContrato = document.getElementById('tipoContrato').value;
+        const salarioBase = document.getElementById('salarioBase').value;
+        const deudaComentario = document.getElementById('deudaComentario').value;
+        const deudaValor = document.getElementById('deudaValor').value;
+
+        if (!empleadoId || !salarioBase) {
+          mostrarMensaje('❌ Por favor completa todos los campos obligatorios', 'warning');
+          return;
+        }
+
+        // Obtener información del empleado
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+        const empleado = empleados.find(emp => emp.id == empleadoId);
+
+        if (!empleado) {
+          mostrarMensaje('❌ Empleado no encontrado', 'error');
+          return;
+        }
+
+        try {
+          // Crear datos del comprobante
+          const comprobante = {
+            empleado: empleado.nombre,
+            cargo: empleado.cargo,
+            departamento: empleado.departamento,
+            tipoContrato: tipoContrato,
+            salarioBase: parseFloat(salarioBase),
+            deudaComentario: deudaComentario,
+            deudaValor: parseFloat(deudaValor) || 0,
+            fecha: new Date().toISOString().split('T')[0]
+          };
+
+          // Generar PDF usando la librería jsPDF
+          if (window.PDFGenerator) {
+            const pdf = new window.PDFGenerator();
+            pdf.generarComprobante(comprobante);
+            mostrarMensaje('✅ Comprobante PDF generado correctamente', 'success');
+          } else {
+            mostrarMensaje('❌ Error: Librería PDF no disponible', 'error');
+          }
+
+          cerrarModalPrevisualizacion();
+        } catch (error) {
+          console.error('❌ Error generando comprobante:', error);
+          mostrarMensaje('❌ Error al generar el comprobante', 'error');
         }
       }
 

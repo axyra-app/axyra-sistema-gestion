@@ -73,31 +73,37 @@ class AXYRAExcelExporter {
    * Exportar cuadre de caja a Excel profesional
    */
   exportarCuadreCaja(facturas, fechaSeleccionada = null) {
-    if (!facturas || facturas.length === 0) {
-      throw new Error('No hay datos para exportar');
+    try {
+      const fecha = fechaSeleccionada || new Date().toISOString().split('T')[0];
+      const facturasHoy = facturas.filter(f => f.fecha === fecha);
+      
+      // Crear workbook
+      const wb = XLSX.utils.book_new();
+      
+      // Datos del cuadre de caja
+      const datosCuadre = this.formatearDatosCuadreCaja(facturasHoy, fecha);
+      
+      // Crear worksheet
+      const ws = XLSX.utils.aoa_to_sheet(datosCuadre);
+      
+      // Aplicar formato profesional
+      this.aplicarFormatoCuadreCaja(ws, datosCuadre);
+      
+      // Agregar worksheet al workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Cuadre de Caja');
+      
+      // Generar nombre de archivo
+      const nombreArchivo = `CUADRE_CAJA_${fecha}.xlsx`;
+      
+      // Guardar archivo
+      XLSX.writeFile(wb, nombreArchivo);
+      
+      console.log('✅ Cuadre de caja exportado a Excel:', nombreArchivo);
+      return nombreArchivo;
+    } catch (error) {
+      console.error('❌ Error exportando cuadre de caja:', error);
+      throw error;
     }
-
-    // Crear nuevo workbook
-    this.workbook = XLSX.utils.book_new();
-    
-    // Preparar datos con formato profesional
-    const datosFormateados = this.formatearDatosCuadreCaja(facturas, fechaSeleccionada);
-    
-    // Crear worksheet
-    this.worksheet = XLSX.utils.aoa_to_sheet(datosFormateados);
-    
-    // Aplicar estilos y formato
-    this.aplicarFormatoCuadreCaja();
-    
-    // Agregar worksheet al workbook
-    XLSX.utils.book_append_sheet(this.workbook, this.worksheet, 'Cuadre de Caja');
-    
-    // Generar archivo
-    const fecha = fechaSeleccionada || new Date().toISOString().split('T')[0];
-    const nombreArchivo = `CUADRE_CAJA_${fecha}.xlsx`;
-    XLSX.writeFile(this.workbook, nombreArchivo);
-    
-    return nombreArchivo;
   }
 
   /**
@@ -263,90 +269,84 @@ class AXYRAExcelExporter {
   /**
    * Formatear datos de cuadre de caja para Excel
    */
-  formatearDatosCuadreCaja(facturas, fechaSeleccionada) {
+  formatearDatosCuadreCaja(facturas, fecha) {
     const datos = [];
-    const fecha = fechaSeleccionada || new Date().toISOString().split('T')[0];
     
-    // Título principal
+    // Encabezado principal
     datos.push(['CUADRE DE CAJA - AXYRA']);
     datos.push([]);
-    
-    // Información del cuadre
     datos.push(['FECHA DEL CUADRE:', fecha]);
     datos.push(['TOTAL FACTURAS:', facturas.length]);
-    datos.push(['TOTAL INGRESOS:', `$${facturas.reduce((sum, fact) => sum + (parseFloat(fact.monto) || 0), 0).toLocaleString('es-CO')}`]);
+    
+    const totalIngresos = facturas.reduce((total, f) => total + parseFloat(f.monto), 0);
+    datos.push(['TOTAL INGRESOS:', `$${totalIngresos.toLocaleString()}`]);
     datos.push([]);
     
     // Encabezados de la tabla
-    datos.push([
-      'Fecha',
-      'Número',
-      'Encargado',
-      'Área',
-      'Monto',
-      'Método de Pago',
-      'Descripción',
-      'Estado'
-    ]);
+    datos.push(['FECHA', 'NÚMERO', 'ENCARGADO', 'ÁREA', 'MONTO', 'MÉTODO DE PAGO', 'DESCRIPCIÓN', 'ESTADO']);
     
-    // Datos de facturas
+    // Datos de las facturas
     facturas.forEach(factura => {
       datos.push([
-        this.formatearFecha(factura.fecha),
+        factura.fecha,
         factura.numero,
         factura.encargado,
         factura.area,
-        factura.monto,
-        factura.metodoPago || '',
-        factura.descripcion || '',
+        `$${parseFloat(factura.monto).toLocaleString()}`,
+        factura.metodoPago,
+        factura.descripcion || '-',
         factura.estado || 'Activo'
       ]);
     });
     
-    // Resumen por método de pago
     datos.push([]);
+    
+    // Resumen por método de pago
     datos.push(['RESUMEN POR MÉTODO DE PAGO']);
     datos.push(['Método', 'Total', 'Cantidad']);
     
-    const resumenMetodos = {};
-    facturas.forEach(fact => {
-      const metodo = fact.metodoPago || 'No especificado';
-      if (!resumenMetodos[metodo]) {
-        resumenMetodos[metodo] = { total: 0, cantidad: 0 };
+    const metodosPago = {};
+    facturas.forEach(f => {
+      const metodo = f.metodoPago;
+      if (!metodosPago[metodo]) {
+        metodosPago[metodo] = { total: 0, cantidad: 0 };
       }
-      resumenMetodos[metodo].total += parseFloat(fact.monto) || 0;
-      resumenMetodos[metodo].cantidad++;
+      metodosPago[metodo].total += parseFloat(f.monto);
+      metodosPago[metodo].cantidad += 1;
     });
     
-    Object.entries(resumenMetodos).forEach(([metodo, datosMetodo]) => {
-      datos.push([metodo, `$${datosMetodo.total.toLocaleString('es-CO')}`, datosMetodo.cantidad]);
+    Object.entries(metodosPago).forEach(([metodo, datos]) => {
+      datos.push([metodo, `$${datos.total.toLocaleString()}`, datos.cantidad]);
     });
+    
+    datos.push([]);
     
     // Resumen por área
-    datos.push([]);
     datos.push(['RESUMEN POR ÁREA']);
-    datos.push(['Área', 'Total Ventas', 'Cantidad Facturas']);
+    datos.push(['Área', 'Total Venta', 'Cantidad Facturas']);
     
-    const resumenAreas = {};
-    facturas.forEach(fact => {
-      if (!resumenAreas[fact.area]) {
-        resumenAreas[fact.area] = { totalVentas: 0, cantidad: 0 };
+    const areas = {};
+    facturas.forEach(f => {
+      const area = f.area;
+      if (!areas[area]) {
+        areas[area] = { total: 0, cantidad: 0 };
       }
-      resumenAreas[fact.area].totalVentas += parseFloat(fact.monto) || 0;
-      resumenAreas[fact.area].cantidad++;
+      areas[area].total += parseFloat(f.monto);
+      areas[area].cantidad += 1;
     });
     
-    Object.entries(resumenAreas).forEach(([area, datosArea]) => {
-      datos.push([area, `$${datosArea.totalVentas.toLocaleString('es-CO')}`, datosArea.cantidad]);
+    Object.entries(areas).forEach(([area, datos]) => {
+      datos.push([area, `$${datos.total.toLocaleString()}`, datos.cantidad]);
     });
+    
+    datos.push([]);
     
     // Totales finales
-    datos.push([]);
     datos.push(['TOTALES FINALES']);
     datos.push(['Concepto', 'Valor']);
     datos.push(['Total Facturas', facturas.length]);
-    datos.push(['Total Ingreso', `$${facturas.reduce((sum, fact) => sum + (parseFloat(fact.monto) || 0), 0).toLocaleString('es-CO')}`]);
-    datos.push(['Promedio por Factura', `$${(facturas.reduce((sum, fact) => sum + (parseFloat(fact.monto) || 0), 0) / facturas.length).toLocaleString('es-CO')}`]);
+    datos.push(['Total Ingreso', `$${totalIngresos.toLocaleString()}`]);
+    datos.push(['Promedio por Factura', `$${(totalIngresos / facturas.length).toLocaleString()}`]);
     
     return datos;
   }
@@ -382,15 +382,85 @@ class AXYRAExcelExporter {
   /**
    * Aplicar formato profesional a la hoja de cuadre de caja
    */
-  aplicarFormatoCuadreCaja() {
-    // Configurar ancho de columnas
-    const anchosColumnas = [12, 10, 20, 15, 15, 15, 30, 12];
-    this.worksheet['!cols'] = anchosColumnas.map(ancho => ({ width: ancho }));
+  aplicarFormatoCuadreCaja(ws, datos) {
+    // Configurar anchos de columna
+    const anchos = [15, 12, 20, 15, 15, 18, 25, 12];
+    ws['!cols'] = anchos.map(ancho => ({ width: ancho }));
     
-    // Aplicar estilos a celdas específicas
-    this.aplicarEstilosCelda('A1', { font: { bold: true, size: 16 }, alignment: { horizontal: 'center' } });
-    this.aplicarEstilosCelda('A3:A5', { font: { bold: true } });
-    this.aplicarEstilosCelda('A7:H7', { font: { bold: true }, fill: { fgColor: { rgb: '4472C4' } }, font: { color: { rgb: 'FFFFFF' } } });
+    // Aplicar estilos a encabezado principal
+    this.aplicarEstilosCelda('A1:A1', {
+      font: { bold: true, size: 16, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: '1E40AF' } },
+      alignment: { horizontal: 'center' }
+    });
+    
+    // Aplicar estilos a información del cuadre
+    this.aplicarEstilosCelda('A3:A5', {
+      font: { bold: true, size: 12 },
+      fill: { fgColor: { rgb: 'F3F4F6' } }
+    });
+    
+    // Aplicar estilos a encabezados de tabla
+    const filaEncabezados = 7;
+    this.aplicarEstilosCelda(`A${filaEncabezados}:H${filaEncabezados}`, {
+      font: { bold: true, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: '1E40AF' } },
+      alignment: { horizontal: 'center' }
+    });
+    
+    // Aplicar estilos a datos de facturas
+    const filaInicioDatos = 8;
+    const filaFinDatos = filaInicioDatos + datos.length - 1;
+    
+    // Filas alternadas para mejor legibilidad
+    for (let fila = filaInicioDatos; fila <= filaFinDatos; fila++) {
+      const colorFondo = fila % 2 === 0 ? 'FFFFFF' : 'F8FAFC';
+      this.aplicarEstilosCelda(`A${fila}:H${fila}`, {
+        fill: { fgColor: { rgb: colorFondo } },
+        border: {
+          top: { style: 'thin', color: { rgb: 'E2E8F0' } },
+          bottom: { style: 'thin', color: { rgb: 'E2E8F0' } }
+        }
+      });
+    }
+    
+    // Aplicar estilos a resúmenes
+    const filaResumenMetodos = filaFinDatos + 3;
+    this.aplicarEstilosCelda(`A${filaResumenMetodos}:A${filaResumenMetodos}`, {
+      font: { bold: true, size: 14, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: '059669' } }
+    });
+    
+    const filaResumenAreas = filaResumenMetodos + Object.keys(metodosPago).length + 4;
+    this.aplicarEstilosCelda(`A${filaResumenAreas}:A${filaResumenAreas}`, {
+      font: { bold: true, size: 14, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: 'DC2626' } }
+    });
+    
+    const filaTotalesFinales = filaResumenAreas + Object.keys(areas).length + 4;
+    this.aplicarEstilosCelda(`A${filaTotalesFinales}:A${filaTotalesFinales}`, {
+      font: { bold: true, size: 14, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: '7C3AED' } }
+    });
+    
+    // Aplicar estilos a encabezados de resúmenes
+    this.aplicarEstilosCelda(`A${filaResumenMetodos + 1}:C${filaResumenMetodos + 1}`, {
+      font: { bold: true, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: '059669' } },
+      alignment: { horizontal: 'center' }
+    });
+    
+    this.aplicarEstilosCelda(`A${filaResumenAreas + 1}:C${filaResumenAreas + 1}`, {
+      font: { bold: true, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: 'DC2626' } },
+      alignment: { horizontal: 'center' }
+    });
+    
+    this.aplicarEstilosCelda(`A${filaTotalesFinales + 1}:B${filaTotalesFinales + 1}`, {
+      font: { bold: true, color: { rgb: 'FFFFFF' } },
+      fill: { fgColor: { rgb: '7C3AED' } },
+      alignment: { horizontal: 'center' }
+    });
   }
 
   /**
