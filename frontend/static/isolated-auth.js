@@ -113,14 +113,19 @@ class AXYRAIsolatedAuth {
       return { success: false, error: 'Usuario/email y contraseña son requeridos' };
     }
 
+    console.log('🔍 Buscando usuario:', usernameOrEmail);
+
     // Buscar usuario
     const user = this.users.find(
       (u) => (u.username === usernameOrEmail || u.email === usernameOrEmail) && u.password === password && u.isActive
     );
 
     if (!user) {
+      console.log('❌ Usuario no encontrado o credenciales incorrectas');
       return { success: false, error: 'Credenciales incorrectas' };
     }
+
+    console.log('✅ Usuario encontrado:', user.username);
 
     // Crear sesión aislada
     this.currentUser = user;

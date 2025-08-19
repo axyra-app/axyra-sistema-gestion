@@ -708,6 +708,26 @@
         }
       }
 
+      // Función para mostrar mensajes de éxito
+      function showSuccess(message) {
+        const successDiv = document.getElementById('successMessage');
+        if (successDiv) {
+          successDiv.textContent = message;
+          successDiv.style.display = 'block';
+          setTimeout(() => {
+            successDiv.style.display = 'none';
+          }, 5000);
+        }
+      }
+
+      // Función para ocultar mensajes
+      function hideMessages() {
+        const errorDiv = document.getElementById('errorMessage');
+        const successDiv = document.getElementById('successMessage');
+        if (errorDiv) errorDiv.style.display = 'none';
+        if (successDiv) successDiv.style.display = 'none';
+      }
+
       // Función para iniciar sesión normal
       async function login() {
         const usernameOrEmail = document.getElementById('username').value;
@@ -720,30 +740,51 @@
         }
 
         try {
-          // Intentar login con Firebase primero
-          const userCredential = await firebaseAuth.signInWithEmailAndPassword(usernameOrEmail, password);
-          console.log('✅ Login exitoso con Firebase:', userCredential.user.email);
+          console.log('🔐 Intentando login con credenciales:', usernameOrEmail);
           
-          // Redirigir al dashboard
-          window.location.href = 'modulos/dashboard/dashboard.html';
-          
-        } catch (firebaseError) {
-          console.log('⚠️ Firebase login falló, intentando con sistema local...');
-          
-          // Si falla Firebase, usar sistema local
+          // Usar SOLO el sistema local aislado (no Firebase)
           if (window.axyraIsolatedAuth) {
-            const success = window.axyraIsolatedAuth.login(usernameOrEmail, password);
-            if (success) {
+            console.log('✅ Sistema aislado disponible, intentando login...');
+            
+            const result = window.axyraIsolatedAuth.login({
+              usernameOrEmail: usernameOrEmail,
+              password: password
+            });
+            
+            console.log('📋 Resultado del login:', result);
+            
+            if (result && result.success) {
+              console.log('✅ Login exitoso con sistema aislado:', result.user.username);
+              
+              // Guardar en localStorage para persistencia
+              localStorage.setItem('axyra_isolated_user', JSON.stringify(result.user));
+              
+              // Si marcó "recordar sesión", guardar por 30 días
               if (rememberMe) {
-                localStorage.setItem('axyra_remembered_user', usernameOrEmail);
+                localStorage.setItem('axyra_isolated_remember', JSON.stringify(result.user));
+                console.log('✅ Usuario recordado por 30 días');
               }
-              window.location.href = 'modulos/dashboard/dashboard.html';
+              
+              // Mostrar mensaje de éxito
+              showSuccess('¡Login exitoso! Redirigiendo al dashboard...');
+              
+              // Redirigir después de 1 segundo para mostrar el mensaje
+              setTimeout(() => {
+                window.location.href = 'modulos/dashboard/dashboard.html';
+              }, 1000);
+              
             } else {
-              showError('Credenciales incorrectas');
+              console.log('❌ Login falló con sistema aislado:', result.error);
+              showError(result.error || 'Credenciales incorrectas');
             }
           } else {
+            console.error('❌ Sistema aislado no disponible');
             showError('Error en el sistema de autenticación');
           }
+          
+        } catch (error) {
+          console.error('❌ Error en login:', error);
+          showError('Error interno del sistema: ' + error.message);
         }
       }
 
