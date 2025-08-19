@@ -299,25 +299,91 @@
         window.location.href = '../../login.html';
       }
 
-      // Cargar empleados desde localStorage
+      // Cargar empleados desde Firebase
       async function cargarEmpleados() {
         try {
           console.log('👥 Cargando empleados...');
 
-          // Cargar desde localStorage
-          console.log('💾 Cargando empleados desde localStorage...');
-          const empleadosGuardados = localStorage.getItem('axyra_empleados');
-          if (empleadosGuardados) {
+          // Obtener usuario actual
+          let currentUser = null;
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
+          } else {
+            const userData = localStorage.getItem('axyra_isolated_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser) {
+            console.log('⚠️ No hay usuario autenticado');
+            empleados = [];
+            mostrarEmpleados();
+            return;
+          }
+
+          // Intentar cargar desde Firebase primero
+          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser.id) {
             try {
-              empleados = JSON.parse(empleadosGuardados);
-              console.log(`✅ Empleados cargados desde localStorage: ${empleados.length}`);
-            } catch (error) {
-              console.error('Error parseando empleados:', error);
-              empleados = [];
+              console.log('🔥 Cargando empleados desde Firebase...');
+              const empleadosSnapshot = await firebase.firestore()
+                .collection('empleados')
+                .where('userId', '==', currentUser.id)
+                .get();
+              
+              if (!empleadosSnapshot.empty) {
+                empleados = [];
+                empleadosSnapshot.forEach(doc => {
+                  empleados.push({
+                    id: doc.id,
+                    ...doc.data()
+                  });
+                });
+                console.log(`✅ Empleados cargados desde Firebase: ${empleados.length}`);
+              } else {
+                console.log('ℹ️ No hay empleados en Firebase para este usuario');
+                empleados = [];
+              }
+            } catch (firebaseError) {
+              console.warn('⚠️ Error cargando desde Firebase, usando localStorage como fallback:', firebaseError);
+              // Solo usar localStorage como fallback si Firebase falla
+              const empleadosGuardados = localStorage.getItem('axyra_empleados');
+              if (empleadosGuardados) {
+                try {
+                  const empleadosLocal = JSON.parse(empleadosGuardados);
+                  // Filtrar solo empleados del usuario actual
+                  empleados = empleadosLocal.filter(emp => 
+                    emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
+                  );
+                  console.log(`✅ Empleados cargados desde localStorage (filtrados): ${empleados.length}`);
+                } catch (error) {
+                  console.error('Error parseando empleados de localStorage:', error);
+                  empleados = [];
+                }
+              } else {
+                empleados = [];
+                console.log('ℹ️ No hay empleados registrados. El usuario debe crear empleados reales.');
+              }
             }
           } else {
-            empleados = [];
-            console.log('ℹ️ No hay empleados registrados. El usuario debe crear empleados reales.');
+            console.log('ℹ️ Firebase no disponible, usando localStorage');
+            const empleadosGuardados = localStorage.getItem('axyra_empleados');
+            if (empleadosGuardados) {
+              try {
+                const empleadosLocal = JSON.parse(empleadosGuardados);
+                // Filtrar solo empleados del usuario actual
+                empleados = empleadosLocal.filter(emp => 
+                  emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
+                );
+                console.log(`✅ Empleados cargados desde localStorage (filtrados): ${empleados.length}`);
+              } catch (error) {
+                console.error('Error parseando empleados de localStorage:', error);
+                empleados = [];
+              }
+            } else {
+              empleados = [];
+              console.log('ℹ️ No hay empleados registrados. El usuario debe crear empleados reales.');
+            }
           }
 
           mostrarEmpleados();

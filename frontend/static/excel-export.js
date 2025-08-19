@@ -39,81 +39,88 @@ class AXYRAExcelExporter {
 
   // Aplicar estilos profesionales a una hoja
   applyProfessionalStyles(worksheet, dataRange) {
-    // Estilos para encabezados
-    const headerStyle = {
-      font: { bold: true, color: { rgb: 'FFFFFF' }, size: 12 },
-      fill: {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { rgb: '1E3A8A' },
-      },
-      alignment: { horizontal: 'center', vertical: 'center' },
-      border: {
-        top: { style: 'thin', color: { rgb: '1E40AF' } },
-        bottom: { style: 'thin', color: { rgb: '1E40AF' } },
-        left: { style: 'thin', color: { rgb: '1E40AF' } },
-        right: { style: 'thin', color: { rgb: '1E40AF' } },
-      },
-    };
+    try {
+      // Estilos para encabezados
+      const headerStyle = {
+        font: { bold: true, color: { rgb: 'FFFFFF' }, size: 12 },
+        fill: {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { rgb: '1E3A8A' },
+        },
+        alignment: { horizontal: 'center', vertical: 'center' },
+        border: {
+          top: { style: 'thin', color: { rgb: '1E40AF' } },
+          bottom: { style: 'thin', color: { rgb: '1E40AF' } },
+          left: { style: 'thin', color: { rgb: '1E40AF' } },
+          right: { style: 'thin', color: { rgb: '1E40AF' } },
+        },
+      };
 
-    // Estilos para datos
-    const dataStyle = {
-      font: { size: 11, color: { rgb: '1F2937' } },
-      fill: {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { rgb: 'F8FAFC' },
-      },
-      border: {
-        top: { style: 'thin', color: { rgb: 'E2E8F0' } },
-        bottom: { style: 'thin', color: { rgb: 'E2E8F0' } },
-        left: { style: 'thin', color: { rgb: 'E2E8F0' } },
-        right: { style: 'thin', color: { rgb: 'E2E8F0' } },
-      },
-    };
+      // Estilos para datos
+      const dataStyle = {
+        font: { size: 11, color: { rgb: '1F2937' } },
+        fill: {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { rgb: 'F8FAFC' },
+        },
+        border: {
+          top: { style: 'thin', color: { rgb: 'E2E8F0' } },
+          bottom: { style: 'thin', color: { rgb: 'E2E8F0' } },
+          left: { style: 'thin', color: { rgb: 'E2E8F0' } },
+          right: { style: 'thin', color: { rgb: 'E2E8F0' } },
+        },
+      };
 
-    // Estilos para totales
-    const totalStyle = {
-      font: { bold: true, size: 12, color: { rgb: 'FFFFFF' } },
-      fill: {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { rgb: '059669' },
-      },
-      border: {
-        top: { style: 'thin', color: { rgb: '047857' } },
-        bottom: { style: 'thin', color: { rgb: '047857' } },
-        left: { style: 'thin', color: { rgb: '047857' } },
-        right: { style: 'thin', color: { rgb: '047857' } },
-      },
-    };
+      // Estilos para totales
+      const totalStyle = {
+        font: { bold: true, size: 12, color: { rgb: 'FFFFFF' } },
+        fill: {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { rgb: '059669' },
+        },
+        border: {
+          top: { style: 'thin', color: { rgb: '047857' } },
+          bottom: { style: 'thin', color: { rgb: '047857' } },
+          left: { style: 'thin', color: { rgb: '047857' } },
+          right: { style: 'thin', color: { rgb: '047857' } },
+        },
+      };
 
-    // Aplicar estilos a encabezados
-    for (let col = 0; col < dataRange.e.c + 1; col++) {
-      const cellRef = XLSX.utils.encode_cell({ r: 0, c: col });
-      worksheet[cellRef].s = headerStyle;
-    }
-
-    // Aplicar estilos a datos
-    for (let row = 1; row <= dataRange.e.r; row++) {
+      // Aplicar estilos a encabezados (solo si la celda existe)
       for (let col = 0; col <= dataRange.e.c; col++) {
-        const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+        const cellRef = XLSX.utils.encode_cell({ r: 0, c: col });
         if (worksheet[cellRef]) {
-          worksheet[cellRef].s = dataStyle;
+          worksheet[cellRef].s = headerStyle;
         }
       }
-    }
 
-    // Aplicar estilos a totales (última fila)
-    const lastRow = dataRange.e.r;
-    for (let col = 0; col <= dataRange.e.c; col++) {
-      const cellRef = XLSX.utils.encode_cell({ r: lastRow, c: col });
-      if (worksheet[cellRef]) {
-        worksheet[cellRef].s = totalStyle;
+      // Aplicar estilos a datos (solo si la celda existe)
+      for (let row = 1; row < dataRange.e.r; row++) {
+        for (let col = 0; col <= dataRange.e.c; col++) {
+          const cellRef = XLSX.utils.encode_cell({ r: row, c: col });
+          if (worksheet[cellRef]) {
+            worksheet[cellRef].s = dataStyle;
+          }
+        }
       }
-    }
 
-    return worksheet;
+      // Aplicar estilos a totales (última fila, solo si la celda existe)
+      const lastRow = dataRange.e.r;
+      for (let col = 0; col <= dataRange.e.c; col++) {
+        const cellRef = XLSX.utils.encode_cell({ r: lastRow, c: col });
+        if (worksheet[cellRef]) {
+          worksheet[cellRef].s = totalStyle;
+        }
+      }
+
+      return worksheet;
+    } catch (error) {
+      console.warn('⚠️ Error aplicando estilos:', error);
+      return worksheet; // Retornar worksheet sin estilos si hay error
+    }
   }
 
   // Formatear moneda colombiana sin decimales
