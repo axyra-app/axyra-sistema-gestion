@@ -16,6 +16,10 @@ class AXYRAIsolatedAuth {
 
   init() {
     console.log('🚀 AXYRA Isolated Auth inicializando...');
+    
+    // LIMPIAR COMPLETAMENTE EL LOCALSTORAGE PARA EVITAR CONFLICTOS
+    this.clearAllStorage();
+    
     this.setupDefaultUsers();
     this.loadExistingSession();
 
@@ -24,6 +28,39 @@ class AXYRAIsolatedAuth {
 
     this.isInitialized = true;
     console.log('✅ AXYRA Isolated Auth inicializado correctamente');
+  }
+
+  // Limpiar todo el localStorage para evitar conflictos
+  clearAllStorage() {
+    console.log('🧹 LIMPIANDO COMPLETAMENTE EL LOCALSTORAGE...');
+    
+    // Lista de claves a eliminar
+    const keysToRemove = [
+      'axyra_isolated_user',
+      'axyra_isolated_session', 
+      'axyra_isolated_remember',
+      'axyra_firebase_user',
+      'axyra_user_session',
+      'axyra_remembered_user',
+      'axyra_2fa_enabled',
+      'axyra_2fa_secret',
+      'axyra_2fa_backup_codes'
+    ];
+    
+    // Eliminar cada clave
+    keysToRemove.forEach(key => {
+      if (localStorage.getItem(key)) {
+        localStorage.removeItem(key);
+        console.log(`🗑️ Eliminada clave: ${key}`);
+      }
+    });
+    
+    // Limpiar cookies también
+    document.cookie.split(";").forEach(function(c) { 
+      document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+    });
+    
+    console.log('✅ LocalStorage completamente limpiado');
   }
 
   // Configurar usuarios por defecto

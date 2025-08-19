@@ -1869,6 +1869,202 @@
       }
 
       // Cargar actividad reciente
+      function cargarActividadReciente() {
+        const actividadReciente = document.getElementById('actividadReciente');
+
+        // Obtener usuario actual para aislamiento de datos
+        let currentUser = null;
+        if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+          currentUser = window.axyraIsolatedAuth.getCurrentUser();
+        } else {
+          // Fallback a localStorage
+          const userData = localStorage.getItem('axyra_isolated_user');
+          if (userData) {
+            currentUser = JSON.parse(userData);
+          }
+        }
+
+        if (!currentUser || !currentUser.username) {
+          console.error('No hay usuario autenticado para actividad reciente');
+          return;
+        }
+
+        // Filtrar datos por usuario
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
+          (emp) => emp.userId === currentUser.username
+        );
+        const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
+          (comp) => comp.userId === currentUser.username
+        );
+
+        let actividadHTML = '';
+
+        // Actividad de empleados
+        if (empleados.length > 0) {
+          const ultimoEmpleado = empleados[empleados.length - 1];
+          actividadHTML += `
+                    <div class="axyra-activity-item">
+                        <div class="axyra-activity-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="axyra-activity-content">
+                            <div class="axyra-activity-title">Empleado agregado</div>
+                            <div class="axyra-activity-time">${
+                              ultimoEmpleado.nombre
+                            } - ${new Date().toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Actividad de comprobantes
+        if (comprobantes.length > 0) {
+          const ultimoComprobante = comprobantes[comprobantes.length - 1];
+          actividadHTML += `
+                    <div class="axyra-activity-item">
+                        <div class="axyra-activity-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="axyra-activity-content">
+                            <div class="axyra-activity-title">Comprobante generado</div>
+                            <div class="axyra-activity-time">${ultimoComprobante.empleado} - ${ultimoComprobante.fecha}</div>
+                        </div>
+                    </div>
+                `;
+        }
+
+        // Actividad del sistema
+        actividadHTML += `
+                <div class="axyra-activity-item">
+                    <div class="axyra-activity-icon">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <div class="axyra-activity-content">
+                        <div class="axyra-activity-title">Sesión iniciada</div>
+                        <div class="axyra-activity-time">Administrador - ${new Date().toLocaleDateString()}</div>
+                    </div>
+                </div>
+            `;
+
+        if (actividadHTML === '') {
+          actividadHTML = '<p class="axyra-text-center">No hay actividad reciente</p>';
+        }
+
+        actividadReciente.innerHTML = actividadHTML;
+      }
+
+      // Inicializar dashboard
+      async function initializeDashboard() {
+        console.log('🚀 Inicializando dashboard...');
+        
+        // Verificar autenticación
+        const isAuthenticated = await checkAuth();
+        
+        if (isAuthenticated) {
+          console.log('✅ Usuario autenticado, cargando dashboard...');
+          loadDashboardData();
+          updateWelcomeMessage();
+        } else {
+          console.log('⚠️ Usuario no autenticado, mostrando mensaje de login');
+        }
+      }
+
+      // Cargar datos del dashboard
+      function loadDashboardData() {
+        console.log('📊 Cargando datos del dashboard...');
+        
+        // Cargar estadísticas
+        loadEmpleadosStats();
+        loadHorasStats();
+        loadNominaStats();
+        loadCuadreStats();
+        loadDepartamentosStats();
+        loadTareasStats();
+        
+        // Cargar gráficos
+        loadCharts();
+      }
+
+      // Actualizar mensaje de bienvenida
+      function updateWelcomeMessage() {
+        try {
+          const currentUser = window.axyraIsolatedAuth.getCurrentUser();
+          if (currentUser) {
+            const welcomeTitle = document.getElementById('welcomeTitle');
+            if (welcomeTitle) {
+              welcomeTitle.textContent = `¡Bienvenido, ${currentUser.username}!`;
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando bienvenida:', error);
+        }
+      }
+
+      // Funciones para cargar estadísticas básicas
+      function loadEmpleadosStats() {
+        try {
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const totalEmpleados = empleados.length;
+          document.getElementById('totalEmpleados').textContent = totalEmpleados;
+        } catch (error) {
+          console.error('❌ Error cargando estadísticas de empleados:', error);
+        }
+      }
+
+      function loadHorasStats() {
+        try {
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const totalHoras = horas.reduce((sum, h) => sum + (h.horas || 0), 0);
+          document.getElementById('horasTrabajadas').textContent = totalHoras;
+        } catch (error) {
+          console.error('❌ Error cargando estadísticas de horas:', error);
+        }
+      }
+
+      function loadNominaStats() {
+        try {
+          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+          const totalNominas = nominas.length;
+          document.getElementById('totalNominas').textContent = totalNominas;
+        } catch (error) {
+          console.error('❌ Error cargando estadísticas de nóminas:', error);
+        }
+      }
+
+      function loadCuadreStats() {
+        try {
+          const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+          const totalFacturas = facturas.length;
+          document.getElementById('totalFacturas').textContent = totalFacturas;
+        } catch (error) {
+          console.error('❌ Error cargando estadísticas de facturas:', error);
+        }
+      }
+
+      function loadDepartamentosStats() {
+        try {
+          const departamentos = JSON.parse(localStorage.getItem('axyra_departamentos') || '[]');
+          const totalDepartamentos = departamentos.length;
+          document.getElementById('totalDepartamentos').textContent = totalDepartamentos;
+        } catch (error) {
+          console.error('❌ Error cargando estadísticas de departamentos:', error);
+        }
+      }
+
+      function loadTareasStats() {
+        try {
+          const tareas = JSON.parse(localStorage.getItem('axyra_tareas') || '[]');
+          const tareasPendientes = tareas.filter(t => !t.completada).length;
+          document.getElementById('tareasPendientes').textContent = tareasPendientes;
+        } catch (error) {
+          console.error('❌ Error cargando estadísticas de tareas:', error);
+        }
+      }
+
+      function loadCharts() {
+        // Por ahora solo cargar datos básicos
+        console.log('📊 Gráficos cargados (básico)');
+      }
     </script>
 
     <style>

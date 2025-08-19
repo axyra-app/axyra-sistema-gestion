@@ -577,69 +577,18 @@
       </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
-
-    <!-- AXYRA Firebase Scripts -->
-    <script src="static/firebase-config.js"></script>
     <!-- SISTEMA AISLADO - SIN FIREBASE -->
     <script src="static/isolated-auth.js"></script>
     <script src="static/debug-auth.js"></script>
     <script src="static/clear-storage.js"></script>
 
     <script>
-      // Inicializar Firebase
-      let firebaseApp;
-      let firebaseAuth;
-      let firebaseFirestore;
-
-      // Inicializar cuando se carga la página
-      document.addEventListener('DOMContentLoaded', async function() {
-        try {
-          // Inicializar Firebase
-          firebaseApp = firebase.initializeApp(firebaseConfig);
-          firebaseAuth = firebase.auth();
-          firebaseFirestore = firebase.firestore();
-
-          // Configurar observador de estado de autenticación
-          firebaseAuth.onAuthStateChanged(async (user) => {
-            if (user) {
-              console.log('✅ Usuario autenticado con Google:', user.email);
-              
-              // Verificar si el usuario ya tiene contraseña en el sistema
-              const userDoc = await firebaseFirestore.collection('users').doc(user.uid).get();
-              
-              if (userDoc.exists && userDoc.data().hasPassword) {
-                // Usuario ya tiene contraseña, redirigir al dashboard
-                window.location.href = 'modulos/dashboard/dashboard.html';
-              } else {
-                // Usuario nuevo de Google, mostrar modal para crear contraseña
-                mostrarModalCrearContrasena(user);
-              }
-            }
-          });
-
-          console.log('✅ Firebase inicializado correctamente');
-        } catch (error) {
-          console.error('❌ Error inicializando Firebase:', error);
-        }
-      });
+      // Sistema de autenticación COMPLETAMENTE AISLADO
+      console.log('🚀 AXYRA Login - Sistema COMPLETAMENTE AISLADO');
 
       // Función para iniciar sesión con Google
       async function loginWithGoogle() {
-        try {
-          const provider = new firebase.auth.GoogleAuthProvider();
-          provider.addScope('email');
-          provider.addScope('profile');
-          
-          const result = await firebaseAuth.signInWithPopup(provider);
-          console.log('✅ Login con Google exitoso:', result.user.email);
-        } catch (error) {
-          console.error('❌ Error en login con Google:', error);
-          showError('Error al iniciar sesión con Google: ' + error.message);
-        }
+        alert('⚠️ Login con Google temporalmente deshabilitado. Por favor usa el login normal con admin/admin123');
       }
 
       // Función para crear contraseña para usuarios de Google
@@ -742,9 +691,15 @@
         try {
           console.log('🔐 Intentando login con credenciales:', usernameOrEmail);
           
-          // Usar SOLO el sistema local aislado (no Firebase)
+          // Usar SOLO el sistema local aislado
           if (window.axyraIsolatedAuth) {
             console.log('✅ Sistema aislado disponible, intentando login...');
+            
+            // Verificar que el sistema esté inicializado
+            if (!window.axyraIsolatedAuth.isInitialized) {
+              console.log('⚠️ Sistema no inicializado, esperando...');
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
             
             const result = window.axyraIsolatedAuth.login({
               usernameOrEmail: usernameOrEmail,
