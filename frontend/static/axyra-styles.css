@@ -1885,14 +1885,14 @@ p {
 }
 
 .axyra-feature-card h3 {
-  color: #ffffff !important; /* CAMBIADO A BLANCO PARA MEJOR VISIBILIDAD */
+  color: #1e293b !important; /* RESTAURADO AL COLOR ORIGINAL */
   font-weight: 700 !important;
   font-size: 1.2rem !important; /* REDUCIDO DE 1.4rem A 1.2rem */
   margin-bottom: 12px !important; /* REDUCIDO DE 16px A 12px */
 }
 
 .axyra-feature-card p {
-  color: #e2e8f0 !important; /* CAMBIADO A GRIS CLARO PARA MEJOR VISIBILIDAD */
+  color: #64748b !important; /* RESTAURADO AL COLOR ORIGINAL */
   font-weight: 500 !important;
   font-size: 0.9rem !important; /* REDUCIDO DE 1rem A 0.9rem */
   line-height: 1.5 !important; /* REDUCIDO DE 1.6 A 1.5 */
@@ -1916,18 +1916,18 @@ p {
 }
 
 .axyra-quick-card {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%); /* CAMBIADO A FONDO OSCURO */
-  border: 2px solid #475569; /* CAMBIADO A BORDE OSCURO */
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); /* RESTAURADO AL FONDO ORIGINAL */
+  border: 2px solid #e2e8f0; /* RESTAURADO AL BORDE ORIGINAL */
   border-radius: 16px; /* REDUCIDO DE 12px A 16px */
   padding: 20px 16px; /* REDUCIDO DE 24px A 20px 16px */
   text-align: center;
   transition: all 0.3s ease;
   cursor: pointer;
   text-decoration: none;
-  color: #ffffff; /* CAMBIADO A BLANCO PARA MEJOR VISIBILIDAD */
+  color: #1e293b; /* RESTAURADO AL COLOR ORIGINAL */
   display: block;
   width: 100%;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* MEJORADO PARA FONDO OSCURO */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* RESTAURADO AL ORIGINAL */
   position: relative;
   overflow: hidden;
 }
@@ -1950,9 +1950,9 @@ p {
 
 .axyra-quick-card:hover {
   transform: translateY(-4px); /* REDUCIDO DE -6px A -4px */
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3); /* MEJORADO PARA FONDO OSCURO */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); /* RESTAURADO AL ORIGINAL */
   border-color: #3b82f6; /* CAMBIADO A COLOR DEL DASHBOARD */
-  background: linear-gradient(135deg, #334155 0%, #475569 100%); /* FONDO OSCURO MÁS CLARO EN HOVER */
+  background: #f8fafc; /* RESTAURADO AL ORIGINAL */
 }
 
 .axyra-quick-card:hover::before {
@@ -1964,14 +1964,14 @@ p {
 }
 
 .axyra-quick-card h3 {
-  color: #ffffff !important; /* CAMBIADO A BLANCO PARA MEJOR VISIBILIDAD */
+  color: #1e293b !important; /* RESTAURADO AL COLOR ORIGINAL */
   font-weight: 700 !important;
   font-size: 1.1rem !important; /* REDUCIDO DE 1.2rem A 1.1rem */
   margin-bottom: 6px !important; /* REDUCIDO DE 8px A 6px */
 }
 
 .axyra-quick-card p {
-  color: #cbd5e1 !important; /* CAMBIADO A GRIS CLARO PARA MEJOR VISIBILIDAD */
+  color: #64748b !important; /* RESTAURADO AL COLOR ORIGINAL */
   font-weight: 500 !important;
   font-size: 0.85rem !important; /* REDUCIDO DE 0.95rem A 0.85rem */
 }
@@ -2126,6 +2126,16 @@ p {
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6);
   letter-spacing: -1.5px;
   margin-top: 0;
+}
+
+/* Clase única para el título principal del index */
+.axyra-index-main-title {
+  color: #ffffff !important;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8) !important;
+  font-weight: 800 !important;
+  font-size: 3.5rem !important;
+  text-align: center !important;
+  margin-bottom: 1.5rem !important;
 }
 
 .axyra-hero-highlight {

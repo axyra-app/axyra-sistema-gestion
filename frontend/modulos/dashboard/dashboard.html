@@ -14,7 +14,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
+
     <!-- Configuración de Firebase AXYRA -->
     <script src="../../static/firebase-config.js"></script>
 
@@ -542,13 +542,13 @@
                 email: firebaseUser.email,
                 nombre: firebaseUser.displayName || firebaseUser.email.split('@')[0],
                 rol: 'usuario',
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
               };
-              
+
               // Guardar en localStorage para compatibilidad
               localStorage.setItem('axyra_firebase_user', JSON.stringify(firebaseUser));
               localStorage.setItem('axyra_isolated_user', JSON.stringify(currentUser));
-              
+
               console.log('✅ Usuario autenticado, cargando dashboard...');
               return true;
             }
@@ -566,9 +566,9 @@
                 email: userData.email,
                 nombre: userData.displayName || userData.email.split('@')[0],
                 rol: 'usuario',
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
               };
-              
+
               console.log('✅ Usuario autenticado, cargando dashboard...');
               return true;
             } catch (error) {
@@ -706,7 +706,6 @@
 
           // Redirigir al login
           window.location.href = '../../login.html';
-
         } catch (error) {
           console.error('❌ Error en logout:', error);
           // Aún así, limpiar y redirigir
@@ -1901,25 +1900,25 @@
       window.addEventListener('load', () => {
         try {
           console.log('🚀 Inicializando dashboard...');
-          
+
           // Verificar autenticación
           const isAuthenticated = checkAuth();
-          
+
           if (isAuthenticated) {
             console.log('✅ Usuario autenticado, cargando dashboard...');
-            
+
             // Cargar estadísticas
             cargarEstadisticas();
-            
+
             // Actualizar indicador de seguridad
             updateSecurityStatus();
-            
+
             // Mostrar configuración de empresa
             mostrarConfiguracionEmpresa();
-            
+
             // Configurar intervalo de actualización de seguridad
             setInterval(updateSecurityStatus, 30000); // Cada 30 segundos
-            
+
             console.log('✅ Dashboard completamente inicializado');
           } else {
             console.log('❌ Usuario no autenticado, mostrando mensaje...');
@@ -1935,14 +1934,14 @@
       function mostrarConfiguracionEmpresa() {
         try {
           const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
-          
+
           if (config.nombreEmpresa) {
             console.log('🏢 Configuración de empresa cargada:', {
               nombre: config.nombreEmpresa,
               nit: config.nitEmpresa,
-              direccion: config.direccionEmpresa
+              direccion: config.direccionEmpresa,
             });
-            
+
             // Actualizar el título del dashboard si hay configuración
             const logoTitle = document.querySelector('.axyra-logo-title');
             if (logoTitle && config.nombreEmpresa) {
@@ -2044,29 +2043,29 @@
       // Inicializar dashboard
       async function initializeDashboard() {
         console.log('🚀 Inicializando dashboard...');
-        
+
         // Verificar autenticación
         const isAuthenticated = await checkAuth();
-        
+
         if (isAuthenticated) {
           console.log('✅ Usuario autenticado, cargando dashboard...');
           loadDashboardData();
           updateWelcomeMessage();
-          
+
           // Configurar listener de Firebase para mantener sesión
           setupFirebaseAuthListener();
         } else {
           console.log('⚠️ Usuario no autenticado, mostrando mensaje de login');
         }
       }
-      
+
       // Configurar listener de Firebase para mantener sesión sincronizada
       function setupFirebaseAuthListener() {
         if (typeof firebase !== 'undefined' && firebase.auth) {
-          firebase.auth().onAuthStateChanged(function(user) {
+          firebase.auth().onAuthStateChanged(function (user) {
             if (user) {
               console.log('🔥 Usuario Firebase autenticado en dashboard:', user.email);
-              
+
               // Actualizar usuario actual
               currentUser = {
                 id: user.uid,
@@ -2074,28 +2073,27 @@
                 email: user.email,
                 nombre: user.displayName || user.email.split('@')[0],
                 rol: 'usuario',
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
               };
-              
+
               // Sincronizar localStorage
               localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
               localStorage.setItem('axyra_isolated_user', JSON.stringify(currentUser));
-              
             } else {
               console.log('🔥 Usuario Firebase no autenticado, limpiando sesión...');
-              
+
               // Limpiar sesión
               currentUser = null;
               localStorage.removeItem('axyra_firebase_user');
               localStorage.removeItem('axyra_isolated_user');
-              
+
               // NO mostrar mensaje automáticamente - solo si el usuario está en la página
               if (document.visibilityState === 'visible') {
                 mostrarMensajeNoAutenticado();
               }
             }
           });
-          
+
           console.log('✅ Listener de Firebase configurado en dashboard');
         } else {
           console.log('⚠️ Firebase no disponible en dashboard');
@@ -2105,7 +2103,7 @@
       // Cargar datos del dashboard
       function loadDashboardData() {
         console.log('📊 Cargando datos del dashboard...');
-        
+
         // Cargar estadísticas
         loadEmpleadosStats();
         loadHorasStats();
@@ -2113,7 +2111,7 @@
         loadCuadreStats();
         loadDepartamentosStats();
         loadTareasStats();
-        
+
         // Cargar gráficos
         loadCharts();
       }
@@ -2187,7 +2185,7 @@
       function loadTareasStats() {
         try {
           const tareas = JSON.parse(localStorage.getItem('axyra_tareas') || '[]');
-          const tareasPendientes = tareas.filter(t => !t.completada).length;
+          const tareasPendientes = tareas.filter((t) => !t.completada).length;
           document.getElementById('tareasPendientes').textContent = tareasPendientes;
         } catch (error) {
           console.error('❌ Error cargando estadísticas de tareas:', error);
@@ -2706,9 +2704,9 @@
     <!-- Inicialización automática del dashboard -->
     <script>
       // Inicializar dashboard cuando se carga la página
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         console.log('🚀 Dashboard cargado, verificando autenticación...');
-        
+
         // Esperar un poco para que se carguen todos los scripts
         setTimeout(async () => {
           await initializeDashboard();
