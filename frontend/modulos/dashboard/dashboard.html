@@ -2291,7 +2291,17 @@
           }
         } catch (error) {
           console.error('❌ Error inicializando dashboard:', error);
-          window.location.href = '../../login.html';
+          // NO redirigir al login por errores de inicialización
+          // Solo mostrar mensaje de error y continuar
+          console.log('⚠️ Continuando con dashboard básico...');
+          
+          // Intentar cargar elementos básicos
+          try {
+            personalizarBienvenida();
+            console.log('✅ Bienvenida personalizada cargada');
+          } catch (bienvenidaError) {
+            console.error('❌ Error en bienvenida:', bienvenidaError);
+          }
         }
       });
 
@@ -2310,14 +2320,21 @@
           }
 
           if (currentUser) {
+            console.log('👤 Personalizando bienvenida para usuario:', currentUser.username);
+            
             const username =
               currentUser.username || currentUser.displayName || currentUser.email?.split('@')[0] || 'Usuario';
+            
+            // Buscar elementos de forma segura
             const welcomeTitle = document.getElementById('welcomeTitle');
             const welcomeMessage = document.getElementById('welcomeMessage');
             const welcomeTime = document.getElementById('welcomeTime');
 
             if (welcomeTitle) {
               welcomeTitle.textContent = `¡Bienvenido, ${username}!`;
+              console.log('✅ Título de bienvenida actualizado');
+            } else {
+              console.log('⚠️ Elemento welcomeTitle no encontrado');
             }
 
             if (welcomeMessage) {
@@ -2333,6 +2350,9 @@
               }
 
               welcomeMessage.textContent = mensaje;
+              console.log('✅ Mensaje de bienvenida actualizado');
+            } else {
+              console.log('⚠️ Elemento welcomeMessage no encontrado');
             }
 
             if (welcomeTime) {
@@ -2346,7 +2366,14 @@
                 minute: '2-digit',
               };
               welcomeTime.textContent = ahora.toLocaleDateString('es-CO', opciones);
+              console.log('✅ Hora de bienvenida actualizada');
+            } else {
+              console.log('⚠️ Elemento welcomeTime no encontrado');
             }
+            
+            console.log('✅ Bienvenida personalizada completada');
+          } else {
+            console.log('⚠️ No hay usuario para personalizar bienvenida');
           }
         } catch (error) {
           console.error('❌ Error personalizando bienvenida:', error);
@@ -2369,7 +2396,9 @@
           }
 
           if (currentUser) {
-            // Cargar datos en el formulario
+            console.log('⚙️ Cargando configuración para usuario:', currentUser.username);
+            
+            // Cargar datos en el formulario de forma segura
             const configUsername = document.getElementById('configUsername');
             const configEmail = document.getElementById('configEmail');
             const emailStatus = document.getElementById('emailStatus');
@@ -2381,10 +2410,16 @@
             if (configUsername) {
               configUsername.value =
                 currentUser.username || currentUser.displayName || currentUser.email?.split('@')[0] || '';
+              console.log('✅ Username configurado');
+            } else {
+              console.log('⚠️ Elemento configUsername no encontrado');
             }
 
             if (configEmail) {
               configEmail.value = currentUser.email || '';
+              console.log('✅ Email configurado');
+            } else {
+              console.log('⚠️ Elemento configEmail no encontrado');
             }
 
             if (emailStatus) {
@@ -2395,31 +2430,51 @@
                 emailStatus.textContent = 'No verificado';
                 emailStatus.className = 'axyra-config-status';
               }
+              console.log('✅ Estado de email configurado');
+            } else {
+              console.log('⚠️ Elemento emailStatus no encontrado');
             }
 
-            // Cargar estado del 2FA
-            const twoFAEnabled = localStorage.getItem('axyra_2fa_enabled') === 'true';
-            if (btn2FA) {
-              if (twoFAEnabled) {
-                btn2FA.innerHTML = '<i class="fas fa-toggle-on"></i> Habilitado';
-                btn2FA.style.background = '#48bb78';
-                if (btnGoogleAuth) btnGoogleAuth.style.display = 'inline-flex';
+            // Cargar estado del 2FA de forma segura
+            try {
+              const twoFAEnabled = localStorage.getItem('axyra_2fa_enabled') === 'true';
+              if (btn2FA) {
+                if (twoFAEnabled) {
+                  btn2FA.innerHTML = '<i class="fas fa-toggle-on"></i> Habilitado';
+                  btn2FA.style.background = '#48bb78';
+                  if (btnGoogleAuth) btnGoogleAuth.style.display = 'inline-flex';
+                } else {
+                  btn2FA.innerHTML = '<i class="fas fa-toggle-off"></i> Deshabilitado';
+                  btn2FA.style.background = '#718096';
+                  if (btnGoogleAuth) btnGoogleAuth.style.display = 'none';
+                }
+                console.log('✅ Estado de 2FA configurado');
               } else {
-                btn2FA.innerHTML = '<i class="fas fa-toggle-off"></i> Deshabilitado';
-                btn2FA.style.background = '#718096';
-                if (btnGoogleAuth) btnGoogleAuth.style.display = 'none';
+                console.log('⚠️ Elemento btn2FA no encontrado');
               }
+            } catch (twoFAError) {
+              console.error('❌ Error configurando 2FA:', twoFAError);
             }
 
-            // Cargar preferencias
-            const rememberSession = localStorage.getItem('axyra_remember_session') || '0';
-            if (configRememberSession) {
-              configRememberSession.value = rememberSession;
-            }
+            // Cargar preferencias de forma segura
+            try {
+              const rememberSession = localStorage.getItem('axyra_remember_session') || '0';
+              if (configRememberSession) {
+                configRememberSession.value = rememberSession;
+                console.log('✅ Preferencia de sesión configurada');
+              } else {
+                console.log('⚠️ Elemento configRememberSession no encontrado');
+              }
 
-            const notificaciones = localStorage.getItem('axyra_notificaciones') === 'true';
-            if (configNotificaciones) {
-              configNotificaciones.checked = notificaciones;
+              const notificaciones = localStorage.getItem('axyra_notificaciones') === 'true';
+              if (configNotificaciones) {
+                configNotificaciones.checked = notificaciones;
+                console.log('✅ Preferencia de notificaciones configurada');
+              } else {
+                console.log('⚠️ Elemento configNotificaciones no encontrado');
+              }
+            } catch (prefError) {
+              console.error('❌ Error configurando preferencias:', prefError);
             }
           }
         } catch (error) {
