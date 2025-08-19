@@ -475,14 +475,14 @@
               const userData = JSON.parse(isolatedUser);
               console.log('✅ Sesión aislada encontrada en localStorage:', userData.username);
               currentUser = userData;
-              
+
               // Restaurar el estado del sistema aislado
               if (window.axyraIsolatedAuth) {
                 window.axyraIsolatedAuth.currentUser = userData;
                 window.axyraIsolatedAuth.isAuthenticated = true;
                 console.log('✅ Estado del sistema aislado restaurado');
               }
-              
+
               return true;
             } catch (error) {
               console.error('❌ Error parseando sesión aislada:', error);
@@ -490,13 +490,11 @@
             }
           }
 
-          // No hay sesión activa
-          console.log('⚠️ No hay sesión activa - redirigiendo al login');
-          window.location.href = '../../login.html';
+          // No hay sesión activa - NO redirigir automáticamente para evitar bucles
+          console.log('⚠️ No hay sesión activa - NO redirigiendo automáticamente');
           return false;
         } catch (error) {
           console.error('❌ Error al verificar sesión:', error);
-          window.location.href = '../../login.html';
           return false;
         }
       }
@@ -512,14 +510,14 @@
       // Cerrar sesión - SISTEMA AISLADO
       function logout() {
         console.log('🔄 Cerrando sesión desde dashboard...');
-        
+
         // Usar el sistema aislado
         if (window.axyraIsolatedAuth) {
           window.axyraIsolatedAuth.logout();
         }
-        
+
         console.log('✅ Sesión cerrada desde dashboard');
-        
+
         // Redirigir al login
         window.location.href = '../../login.html';
       }
@@ -846,12 +844,12 @@
       function cargarEstadisticasLocalStorage(currentUser) {
         try {
           console.log('💾 Cargando estadísticas desde localStorage para usuario:', currentUser.username);
-          
+
           // Empleados FILTRADOS POR USUARIO
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
             (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email
           );
-          
+
           // Buscar elemento totalEmpleados de forma segura
           const totalEmpleadosElement = document.getElementById('totalEmpleados');
           if (totalEmpleadosElement) {
@@ -865,7 +863,7 @@
           const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
             (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email
           );
-          
+
           // Buscar elemento comprobantesGenerados de forma segura
           const comprobantesElement = document.getElementById('comprobantesGenerados');
           if (comprobantesElement) {
@@ -908,7 +906,7 @@
           } else {
             console.log('⚠️ Función cargarActividadReciente no disponible');
           }
-          
+
           console.log('✅ Estadísticas cargadas exitosamente');
         } catch (error) {
           console.error('❌ Error en cargarEstadisticasLocalStorage:', error);
@@ -920,7 +918,7 @@
       function formatearYMostrarDatos(totalSalarios, totalHorasTrabajadas) {
         try {
           console.log('💹 Formateando datos:', { totalSalarios, totalHorasTrabajadas });
-          
+
           // Formatear salario con solo 1 decimal y ajustar tamaño
           const formatearMoneda = (monto) => {
             if (monto === 0) return '$0';
@@ -956,7 +954,7 @@
           } else {
             console.log('⚠️ Elemento horasTrabajadas no encontrado');
           }
-          
+
           console.log('✅ Datos formateados y mostrados exitosamente');
         } catch (error) {
           console.error('❌ Error en formatearYMostrarDatos:', error);
@@ -1711,20 +1709,12 @@
         // Verificar autenticación
         const isAuthenticated = await checkAuth();
         if (!isAuthenticated) {
-          return; // checkAuth ya redirige al login
+          console.log('⚠️ Usuario no autenticado, no se puede inicializar dashboard completo');
+          return; // No continuar con la inicialización completa
         }
 
-        // Configurar listener de cambios de autenticación
-        if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.auth) {
-          window.axyraFirebaseUserSystem.auth.onAuthStateChanged((user) => {
-            if (!user) {
-              console.log('⚠️ Usuario desconectado de Firebase, redirigiendo al login');
-              localStorage.removeItem('axyra_firebase_user');
-              localStorage.removeItem('axyra_isolated_user');
-              window.location.href = '../../login.html';
-            }
-          });
-        }
+        // Configurar listener de cambios de autenticación - SISTEMA AISLADO
+        console.log('✅ Sistema de autenticación aislado configurado');
 
         // Verificar y corregir datos corruptos antes de cargar estadísticas
         verificarDatosCorruptos();
@@ -1737,12 +1727,8 @@
         document.getElementById('zonaHoraria').addEventListener('change', guardarConfiguracion);
         document.getElementById('formatoFecha').addEventListener('change', guardarConfiguracion);
 
-        // Inicializar analytics si está disponible
-        if (window.axyraDashboardAnalytics) {
-          setTimeout(() => {
-            window.axyraDashboardAnalytics.loadMetrics();
-          }, 1000);
-        }
+        // Analytics deshabilitado temporalmente - SISTEMA AISLADO
+        console.log('✅ Analytics deshabilitado para sistema aislado');
 
         // Actualizar estado de seguridad
         updateSecurityStatus();
@@ -2284,15 +2270,37 @@
 
             console.log('✅ Dashboard cargado correctamente');
           } else {
-            console.log('❌ Usuario no autenticado, redirigiendo al login...');
-            window.location.href = '../../login.html';
+            console.log('❌ Usuario no autenticado, mostrando mensaje de login...');
+
+            // Mostrar mensaje de login en lugar de redirigir automáticamente
+            const welcomeCard = document.getElementById('welcomeCard');
+            if (welcomeCard) {
+              welcomeCard.innerHTML = `
+                <div class="axyra-welcome-icon">
+                  <i class="fas fa-lock"></i>
+                </div>
+                <div class="axyra-welcome-content">
+                  <h2 class="axyra-welcome-title">Sesión no iniciada</h2>
+                  <p class="axyra-welcome-message">
+                    Para acceder al dashboard, por favor inicia sesión
+                  </p>
+                  <button class="axyra-btn axyra-btn-primary" onclick="window.location.href='../../login.html'">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                  </button>
+                </div>
+              `;
+            }
+
+            // Ocultar estadísticas y otros elementos sensibles
+            const statsGrid = document.querySelector('.axyra-stats-grid');
+            if (statsGrid) {
+              statsGrid.style.display = 'none';
+            }
           }
         } catch (error) {
           console.error('❌ Error inicializando dashboard:', error);
-          // NO redirigir al login por errores de inicialización
-          // Solo mostrar mensaje de error y continuar
           console.log('⚠️ Continuando con dashboard básico...');
-          
+
           // Intentar cargar elementos básicos
           try {
             personalizarBienvenida();
@@ -2319,10 +2327,10 @@
 
           if (currentUser) {
             console.log('👤 Personalizando bienvenida para usuario:', currentUser.username);
-            
+
             const username =
               currentUser.username || currentUser.displayName || currentUser.email?.split('@')[0] || 'Usuario';
-            
+
             // Buscar elementos de forma segura
             const welcomeTitle = document.getElementById('welcomeTitle');
             const welcomeMessage = document.getElementById('welcomeMessage');
@@ -2368,7 +2376,7 @@
             } else {
               console.log('⚠️ Elemento welcomeTime no encontrado');
             }
-            
+
             console.log('✅ Bienvenida personalizada completada');
           } else {
             console.log('⚠️ No hay usuario para personalizar bienvenida');
@@ -2395,7 +2403,7 @@
 
           if (currentUser) {
             console.log('⚙️ Cargando configuración para usuario:', currentUser.username);
-            
+
             // Cargar datos en el formulario de forma segura
             const configUsername = document.getElementById('configUsername');
             const configEmail = document.getElementById('configEmail');

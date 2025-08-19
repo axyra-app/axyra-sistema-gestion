@@ -652,60 +652,14 @@
         alert('ℹ️ El código 2FA solo se requiere si tienes la autenticación de dos factores habilitada en tu cuenta.\n\nSi no tienes 2FA habilitado, puedes dejar este campo vacío.');
       }
 
-      // Login con Google usando Firebase
+      // Login con Google - DESHABILITADO TEMPORALMENTE
       async function loginWithGoogle() {
-        try {
-          showSuccess('🔄 Iniciando autenticación con Google...');
-
-          // Usar Firebase para autenticación con Google
-          const authResult = await axyraFirebaseUserSystem.signInWithGoogle();
-
-          if (authResult.success) {
-            showSuccess('✅ Autenticación con Google exitosa');
-            showSuccess('✅ Inicio de sesión exitoso. Redirigiendo...');
-
-            setTimeout(() => {
-              window.location.href = 'modulos/dashboard/dashboard.html';
-            }, 1500);
-          } else {
-            showError(`❌ Error en autenticación: ${authResult.error}`);
-          }
-        } catch (error) {
-          console.error('Error en login con Google:', error);
-          showError('❌ Error al iniciar sesión con Google');
-        }
+        showError('❌ Autenticación con Google temporalmente deshabilitada. Use usuario y contraseña.');
       }
 
-      // Crear o obtener usuario de Google
+      // Crear o obtener usuario de Google - DESHABILITADO TEMPORALMENTE
       async function createOrGetGoogleUser(googleData) {
-        try {
-          const users = JSON.parse(localStorage.getItem('axyra_users') || '[]');
-          let user = users.find((u) => u.email === googleData.email);
-
-          if (!user) {
-            // Crear nuevo usuario de Google
-            user = {
-              username: googleData.email.split('@')[0],
-              fullName: googleData.name,
-              email: googleData.email,
-              googleId: googleData.id,
-              picture: googleData.picture,
-              role: 'user',
-              emailVerified: true,
-              createdAt: new Date().toISOString(),
-              userId: googleData.email.split('@')[0],
-            };
-
-            users.push(user);
-            localStorage.setItem('axyra_users', JSON.stringify(users));
-            console.log(`✅ Usuario de Google creado: ${user.username}`);
-          }
-
-          return user;
-        } catch (error) {
-          console.error('Error creando/obteniendo usuario de Google:', error);
-          throw error;
-        }
+        throw new Error('Autenticación con Google temporalmente deshabilitada');
       }
 
 
