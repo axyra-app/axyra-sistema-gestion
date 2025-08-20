@@ -2379,8 +2379,19 @@
               </div>
               <script>
                 function exportarReporteExcel() {
-                  // Función para exportar a Excel (implementar si es necesario)
-                  alert('Función de exportación a Excel en desarrollo');
+                  try {
+                    // Verificar si el exportador está disponible
+                    if (typeof window.axyraExcelExport === 'undefined') {
+                      window.axyraExcelExport = new AXYRAExcelExporter();
+                    }
+
+                    // Usar el sistema de Excel profesional
+                    const nombreArchivo = window.axyraExcelExport.exportarNomina();
+                    console.log('✅ Reporte de nómina exportado correctamente:', nombreArchivo);
+                  } catch (error) {
+                    console.error('❌ Error exportando reporte de nómina:', error);
+                    alert('Error al exportar: ' + error.message);
+                  }
                 }
               </script>
             </body>

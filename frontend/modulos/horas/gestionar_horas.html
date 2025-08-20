@@ -520,7 +520,7 @@
                 <div class="axyra-summary-label">Horas del Mes</div>
               </div>
             </div>
-            
+
             <div class="axyra-summary-card">
               <div class="axyra-summary-icon">
                 <i class="fas fa-dollar-sign"></i>
@@ -530,7 +530,7 @@
                 <div class="axyra-summary-label">Total Pagos</div>
               </div>
             </div>
-            
+
             <div class="axyra-summary-card">
               <div class="axyra-summary-icon">
                 <i class="fas fa-users"></i>
@@ -540,7 +540,7 @@
                 <div class="axyra-summary-label">Empleados Activos</div>
               </div>
             </div>
-            
+
             <div class="axyra-summary-card">
               <div class="axyra-summary-icon">
                 <i class="fas fa-calendar-check"></i>
@@ -649,12 +649,12 @@
       // Cerrar sesión - SISTEMA AISLADO
       function logout() {
         console.log('🔄 Cerrando sesión desde gestión de horas...');
-        
+
         // Usar el sistema aislado
         if (window.axyraIsolatedAuth) {
           window.axyraIsolatedAuth.logout();
         }
-        
+
         console.log('✅ Sesión cerrada desde gestión de horas');
         window.location.href = '../../login.html';
       }
@@ -684,7 +684,8 @@
           if (typeof firebase !== 'undefined' && firebase.firestore && currentUser.id) {
             try {
               console.log('🔥 Intentando cargar empleados desde Firebase...');
-              const empleadosSnapshot = await firebase.firestore
+              const empleadosSnapshot = await firebase
+                .firestore()
                 .collection('empleados')
                 .where('userId', '==', currentUser.id)
                 .get();
@@ -723,9 +724,9 @@
 
               // Filtrar por usuario actual
               const empleadosFiltrados = empleados.filter(
-                (emp) => 
-                  emp.userId === currentUser.username || 
-                  emp.userId === currentUser.email || 
+                (emp) =>
+                  emp.userId === currentUser.username ||
+                  emp.userId === currentUser.email ||
                   emp.userId === currentUser.id ||
                   !emp.userId // Incluir empleados sin userId (datos globales)
               );
@@ -735,7 +736,7 @@
               // Verificar que no haya empleados duplicados
               const empleadosUnicos = [];
               const idsVistos = new Set();
-              
+
               for (const empleado of empleadosFiltrados) {
                 if (empleado.id && !idsVistos.has(empleado.id)) {
                   idsVistos.add(empleado.id);
@@ -744,7 +745,9 @@
               }
 
               if (empleadosUnicos.length !== empleadosFiltrados.length) {
-                console.log(`⚠️ Se encontraron empleados duplicados. Limpiando de ${empleadosFiltrados.length} a ${empleadosUnicos.length}`);
+                console.log(
+                  `⚠️ Se encontraron empleados duplicados. Limpiando de ${empleadosFiltrados.length} a ${empleadosUnicos.length}`
+                );
               }
 
               // Cargar en los selects
@@ -765,17 +768,17 @@
 
       // Función auxiliar para cargar empleados en los selects
       function cargarEmpleadosEnSelects(empleados) {
-          const selectEmpleado = document.getElementById('empleadoHoras');
-          const selectComprobante = document.getElementById('empleadoComprobante');
+        const selectEmpleado = document.getElementById('empleadoHoras');
+        const selectComprobante = document.getElementById('empleadoComprobante');
 
         if (!selectEmpleado || !selectComprobante) {
           console.error('❌ No se encontraron los selects de empleados');
-            return;
-          }
+          return;
+        }
 
-          // Limpiar selects
-          selectEmpleado.innerHTML = '<option value="">Seleccionar empleado</option>';
-            selectComprobante.innerHTML = '<option value="">Seleccionar empleado</option>';
+        // Limpiar selects
+        selectEmpleado.innerHTML = '<option value="">Seleccionar empleado</option>';
+        selectComprobante.innerHTML = '<option value="">Seleccionar empleado</option>';
 
         if (empleados.length === 0) {
           console.log('ℹ️ No hay empleados para mostrar');
@@ -789,13 +792,13 @@
           optionEmpleado.textContent = `${empleado.nombre} (${empleado.cargo || 'Sin cargo'})`;
           selectEmpleado.appendChild(optionEmpleado);
 
-              const optionComprobante = document.createElement('option');
-              optionComprobante.value = empleado.id;
+          const optionComprobante = document.createElement('option');
+          optionComprobante.value = empleado.id;
           optionComprobante.textContent = `${empleado.nombre} (${empleado.cargo || 'Sin cargo'})`;
-              selectComprobante.appendChild(optionComprobante);
-          });
+          selectComprobante.appendChild(optionComprobante);
+        });
 
-          console.log(`✅ ${empleados.length} empleados cargados en los selects`);
+        console.log(`✅ ${empleados.length} empleados cargados en los selects`);
       }
 
       // Manejar formulario de registro masivo
@@ -862,9 +865,9 @@
       function calcularHoras() {
         try {
           // Obtener valores del formulario
-        const empleadoId = document.getElementById('empleadoHoras').value;
-        const fecha = document.getElementById('fechaHoras').value;
-        const horasOrdinarias = parseFloat(document.getElementById('horasOrdinarias').value) || 0;
+          const empleadoId = document.getElementById('empleadoHoras').value;
+          const fecha = document.getElementById('fechaHoras').value;
+          const horasOrdinarias = parseFloat(document.getElementById('horasOrdinarias').value) || 0;
           const horasExtras = parseFloat(document.getElementById('horasExtras').value) || 0;
           const horasExtrasFestivas = parseFloat(document.getElementById('horasExtrasFestivas').value) || 0;
           const horasExtrasFestivasNocturnas =
@@ -874,8 +877,8 @@
           // Validar datos
           if (!empleadoId) {
             mostrarMensaje('❌ Selecciona un empleado', 'error');
-          return;
-        }
+            return;
+          }
 
           if (!fecha) {
             mostrarMensaje('❌ Selecciona una fecha', 'error');
@@ -902,7 +905,7 @@
             return;
           }
 
-        // Calcular totales
+          // Calcular totales
           const totalHoras = horasOrdinarias + horasExtras + horasExtrasFestivas + horasExtrasFestivasNocturnas;
 
           // Calcular salarios según la ley colombiana
@@ -1150,7 +1153,7 @@
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', modalHTML);
       }
 
@@ -1502,47 +1505,52 @@
 
       // Exportar horas a Excel
       function exportarHoras() {
-        const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+        try {
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
 
-        if (horas.length === 0) {
-          mostrarMensaje('❌ No hay registros de horas para exportar', 'warning');
-          return;
-        }
-
-        // Crear CSV con formato profesional
-        let csv = 'Empleado,Fecha,Hora Entrada,Hora Salida,Tipo Horas,Total Horas,Observaciones\n';
-
-        horas.forEach((registro) => {
-          const empleado = empleados.find((e) => e.id === registro.empleadoId);
-          const nombre = empleado ? empleado.nombre : 'Empleado no encontrado';
-
-          // Calcular total de horas
-          const entrada = new Date(`2000-01-01T${registro.horaEntrada}`);
-          const salida = new Date(`2000-01-01T${registro.horaSalida}`);
-          let diferencia = salida - entrada;
-          if (diferencia <= 0) {
-            diferencia += 24 * 60 * 60 * 1000; // Agregar 24 horas
+          if (horas.length === 0) {
+            mostrarMensaje('❌ No hay registros de horas para exportar', 'warning');
+            return;
           }
-          const totalHoras = (diferencia / (1000 * 60 * 60)).toFixed(2);
 
-          csv += `"${nombre}","${registro.fecha}","${registro.horaEntrada}","${registro.horaSalida}","${
-            registro.tipo
-          }","${totalHoras}","${registro.observaciones || ''}"\n`;
-        });
+          // Verificar si el exportador está disponible
+          if (typeof window.axyraExcelExport === 'undefined') {
+            window.axyraExcelExport = new AXYRAExcelExporter();
+          }
 
-        // Descargar archivo
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `REGISTRO_HORAS_${new Date().toISOString().split('T')[0]}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+          // Preparar datos para exportar
+          const datosExportar = horas.map((registro) => {
+            const empleado = empleados.find((e) => e.id === registro.empleadoId);
+            
+            // Calcular total de horas
+            const entrada = new Date(`2000-01-01T${registro.horaEntrada}`);
+            const salida = new Date(`2000-01-01T${registro.horaSalida}`);
+            let diferencia = salida - entrada;
+            if (diferencia <= 0) {
+              diferencia += 24 * 60 * 60 * 1000; // Agregar 24 horas
+            }
+            const totalHoras = (diferencia / (1000 * 60 * 60)).toFixed(2);
 
-        mostrarMensaje('✅ Archivo Excel exportado exitosamente', 'success');
+            return {
+              empleado: empleado ? empleado.nombre : 'Empleado no encontrado',
+              departamento: empleado ? empleado.departamento : 'N/A',
+              fecha: registro.fecha,
+              horaEntrada: registro.horaEntrada,
+              horaSalida: registro.horaSalida,
+              tipo: registro.tipo,
+              totalHoras: parseFloat(totalHoras),
+              observaciones: registro.observaciones || '',
+            };
+          });
+
+          // Usar el sistema de Excel profesional
+          const nombreArchivo = window.axyraExcelExport.exportarHoras(datosExportar);
+          mostrarMensaje(`✅ Horas exportadas a Excel correctamente: ${nombreArchivo}`, 'success');
+        } catch (error) {
+          console.error('❌ Error exportando horas:', error);
+          mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
+        }
       }
 
       // Cargar historial de horas
@@ -1747,7 +1755,7 @@
           cargarHistorialHoras();
           configurarFecha();
           actualizarValorHora(); // Inicializar valor por hora
-          
+
           // Configurar listener para cambios en empleados
           configurarListenerCambiosEmpleados();
         } catch (error) {
@@ -1841,124 +1849,131 @@
         }
       }
 
-             // Función auxiliar para obtener ID del usuario actual
-       function getCurrentUserId() {
-         let currentUser = null;
-         if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
-           currentUser = window.axyraIsolatedAuth.getCurrentUser();
-         } else {
-           const userData = localStorage.getItem('axyra_isolated_user');
-           if (userData) {
-             currentUser = JSON.parse(userData);
-           }
-         }
-         return currentUser ? currentUser.username || currentUser.email : 'admin';
-       }
+      // Función auxiliar para obtener ID del usuario actual
+      function getCurrentUserId() {
+        let currentUser = null;
+        if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+          currentUser = window.axyraIsolatedAuth.getCurrentUser();
+        } else {
+          const userData = localStorage.getItem('axyra_isolated_user');
+          if (userData) {
+            currentUser = JSON.parse(userData);
+          }
+        }
+        return currentUser ? currentUser.username || currentUser.email : 'admin';
+      }
 
-       // Función para exportar historial de horas a Excel
-       function exportarHistorialHoras() {
-         try {
-           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+      // Función para exportar historial de horas a Excel
+      function exportarHistorialHoras() {
+        try {
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
 
-           if (horas.length === 0) {
-             mostrarMensaje('❌ No hay registros de horas para exportar', 'warning');
-             return;
-           }
+          if (horas.length === 0) {
+            mostrarMensaje('❌ No hay registros de horas para exportar', 'warning');
+            return;
+          }
 
-           // Verificar si el exportador está disponible
-           if (typeof window.axyraExcelExporter === 'undefined') {
-             window.axyraExcelExporter = new AXYRAExcelExporter();
-           }
+          // Verificar si el exportador está disponible
+          if (typeof window.axyraExcelExporter === 'undefined') {
+            window.axyraExcelExporter = new AXYRAExcelExporter();
+          }
 
-           // Preparar datos para exportar
-           const datosExportar = horas.map(registro => {
-             const empleado = empleados.find(emp => emp.id === registro.empleadoId);
-             return {
-               empleado: empleado ? empleado.nombre : 'Empleado no encontrado',
-               departamento: empleado ? empleado.departamento : 'N/A',
-               fecha: registro.fecha,
-               horasOrdinarias: registro.horasOrdinarias || 0,
-               horasNocturnas: registro.horasNocturnas || 0,
-               horasExtraDiurnas: registro.horasExtraDiurnas || 0,
-               horasExtraNocturnas: registro.horasExtraNocturnas || 0,
-               horasDominicales: registro.horasDominicales || 0,
-               horasFestivas: registro.horasFestivas || 0,
-               totalHoras: (registro.horasOrdinarias || 0) + (registro.horasNocturnas || 0) + 
-                          (registro.horasExtraDiurnas || 0) + (registro.horasExtraNocturnas || 0) +
-                          (registro.horasDominicales || 0) + (registro.horasFestivas || 0),
-               observaciones: registro.observaciones || ''
-             };
-           });
+          // Preparar datos para exportar
+          const datosExportar = horas.map((registro) => {
+            const empleado = empleados.find((emp) => emp.id === registro.empleadoId);
+            return {
+              empleado: empleado ? empleado.nombre : 'Empleado no encontrado',
+              departamento: empleado ? empleado.departamento : 'N/A',
+              fecha: registro.fecha,
+              horasOrdinarias: registro.horasOrdinarias || 0,
+              horasNocturnas: registro.horasNocturnas || 0,
+              horasExtraDiurnas: registro.horasExtraDiurnas || 0,
+              horasExtraNocturnas: registro.horasExtraNocturnas || 0,
+              horasDominicales: registro.horasDominicales || 0,
+              horasFestivas: registro.horasFestivas || 0,
+              totalHoras:
+                (registro.horasOrdinarias || 0) +
+                (registro.horasNocturnas || 0) +
+                (registro.horasExtraDiurnas || 0) +
+                (registro.horasExtraNocturnas || 0) +
+                (registro.horasDominicales || 0) +
+                (registro.horasFestivas || 0),
+              observaciones: registro.observaciones || '',
+            };
+          });
 
-           // Usar el sistema de Excel profesional
-           const nombreArchivo = window.axyraExcelExporter.exportarHoras(datosExportar);
-           mostrarMensaje(`✅ Historial de horas exportado a Excel correctamente: ${nombreArchivo}`, 'success');
-         } catch (error) {
-           console.error('❌ Error exportando historial de horas:', error);
-           mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
-         }
-       }
+          // Usar el sistema de Excel profesional
+          const nombreArchivo = window.axyraExcelExporter.exportarHoras(datosExportar);
+          mostrarMensaje(`✅ Historial de horas exportado a Excel correctamente: ${nombreArchivo}`, 'success');
+        } catch (error) {
+          console.error('❌ Error exportando historial de horas:', error);
+          mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
+        }
+      }
 
-       // Configurar listener para cambios en empleados
-       function configurarListenerCambiosEmpleados() {
-         try {
-           console.log('👂 Configurando listener para cambios en empleados...');
-           
-           // Escuchar eventos personalizados
-           window.addEventListener('axyraEmpleadosCambiados', async (event) => {
-             console.log('📢 Evento de cambio en empleados recibido:', event.detail);
-             
-             // Verificar que el cambio sea para el usuario actual
-             let currentUser = null;
-             if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
-               currentUser = window.axyraIsolatedAuth.getCurrentUser();
-             } else {
-               const userData = localStorage.getItem('axyra_isolated_user');
-               if (userData) {
-                 currentUser = JSON.parse(userData);
-               }
-             }
-             
-             if (currentUser && event.detail.userId === (currentUser.id || currentUser.username || currentUser.email)) {
-               console.log('🔄 Refrescando horas por cambio en empleados...');
-               await cargarEmpleados();
-             }
-           });
-           
-           // También escuchar cambios en localStorage para compatibilidad
-           window.addEventListener('storage', (event) => {
-             if (event.key === 'axyra_last_employee_change') {
-               try {
-                 const changeData = JSON.parse(event.newValue);
-                 console.log('📢 Cambio en empleados detectado vía localStorage:', changeData);
-                 
-                 // Verificar que el cambio sea para el usuario actual
-                 let currentUser = null;
-                 if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
-                   currentUser = window.axyraIsolatedAuth.getCurrentUser();
-                 } else {
-                   const userData = localStorage.getItem('axyra_isolated_user');
-                   if (userData) {
-                     currentUser = JSON.parse(userData);
-                   }
-                 }
-                 
-                 if (currentUser && changeData.userId === (currentUser.id || currentUser.username || currentUser.email)) {
-                   console.log('🔄 Refrescando horas por cambio en empleados (localStorage)...');
-                   setTimeout(() => cargarEmpleados(), 100);
-                 }
-               } catch (error) {
-                 console.error('❌ Error procesando cambio vía localStorage:', error);
-               }
-             }
-           });
-           
-           console.log('✅ Listener configurado correctamente');
-         } catch (error) {
-           console.error('❌ Error configurando listener:', error);
-         }
-       }
+      // Configurar listener para cambios en empleados
+      function configurarListenerCambiosEmpleados() {
+        try {
+          console.log('👂 Configurando listener para cambios en empleados...');
+
+          // Escuchar eventos personalizados
+          window.addEventListener('axyraEmpleadosCambiados', async (event) => {
+            console.log('📢 Evento de cambio en empleados recibido:', event.detail);
+
+            // Verificar que el cambio sea para el usuario actual
+            let currentUser = null;
+            if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+              currentUser = window.axyraIsolatedAuth.getCurrentUser();
+            } else {
+              const userData = localStorage.getItem('axyra_isolated_user');
+              if (userData) {
+                currentUser = JSON.parse(userData);
+              }
+            }
+
+            if (currentUser && event.detail.userId === (currentUser.id || currentUser.username || currentUser.email)) {
+              console.log('🔄 Refrescando horas por cambio en empleados...');
+              await cargarEmpleados();
+            }
+          });
+
+          // También escuchar cambios en localStorage para compatibilidad
+          window.addEventListener('storage', (event) => {
+            if (event.key === 'axyra_last_employee_change') {
+              try {
+                const changeData = JSON.parse(event.newValue);
+                console.log('📢 Cambio en empleados detectado vía localStorage:', changeData);
+
+                // Verificar que el cambio sea para el usuario actual
+                let currentUser = null;
+                if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+                  currentUser = window.axyraIsolatedAuth.getCurrentUser();
+                } else {
+                  const userData = localStorage.getItem('axyra_isolated_user');
+                  if (userData) {
+                    currentUser = JSON.parse(userData);
+                  }
+                }
+
+                if (
+                  currentUser &&
+                  changeData.userId === (currentUser.id || currentUser.username || currentUser.email)
+                ) {
+                  console.log('🔄 Refrescando horas por cambio en empleados (localStorage)...');
+                  setTimeout(() => cargarEmpleados(), 100);
+                }
+              } catch (error) {
+                console.error('❌ Error procesando cambio vía localStorage:', error);
+              }
+            }
+          });
+
+          console.log('✅ Listener configurado correctamente');
+        } catch (error) {
+          console.error('❌ Error configurando listener:', error);
+        }
+      }
     </script>
 
     <style>

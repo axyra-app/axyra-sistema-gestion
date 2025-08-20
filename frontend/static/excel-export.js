@@ -327,32 +327,27 @@ class AXYRAExcelExporter {
 
       this.showNotification('Reporte de nóminas exportado correctamente con estilos profesionales', 'success');
       console.log('✅ Nóminas exportadas con estilos profesionales');
+      return fileName;
     } catch (error) {
       console.error('❌ Error exportando nóminas:', error);
       this.showNotification('Error exportando nóminas: ' + error.message, 'error');
+      throw error;
     }
   }
 
   // Exportar facturas con estilos profesionales
-  exportarFacturas() {
+  exportarFacturas(facturas) {
     try {
-      // Obtener datos de facturas desde localStorage
-      const facturasData = localStorage.getItem('axyra_facturas');
-      if (!facturasData) {
-        this.showNotification('No hay facturas para exportar', 'warning');
-        return;
+      if (!facturas || facturas.length === 0) {
+        throw new Error('No hay facturas para exportar');
       }
 
-      const facturas = JSON.parse(facturasData);
-      if (facturas.length === 0) {
-        this.showNotification('No hay facturas registradas para exportar', 'warning');
-        return;
-      }
+      console.log('📊 Exportando facturas con estilos profesionales...');
 
       // Preparar datos para exportación
       const data = [
         // Encabezados
-        ['FECHA', 'NÚMERO', 'ENCARGADO', 'ÁREA', 'MONTO', 'MÉTODO PAGO', 'DESCRIPCIÓN'],
+        ['FECHA', 'NÚMERO', 'ENCARGADO', 'ÁREA', 'MONTO', 'MÉTODO PAGO', 'DESCRIPCIÓN', 'ESTADO'],
       ];
 
       // Agregar datos de facturas
@@ -365,6 +360,7 @@ class AXYRAExcelExporter {
           this.formatCurrency(factura.monto || 0),
           factura.metodoPago || 'N/A',
           factura.descripcion || '-',
+          factura.estado || 'Registrada',
         ]);
       });
 
@@ -372,9 +368,9 @@ class AXYRAExcelExporter {
       const totalFacturas = facturas.length;
       const totalIngresos = facturas.reduce((sum, f) => sum + (f.monto || 0), 0);
 
-      data.push(['', '', '', '', '', '', '']);
-      data.push(['Total Facturas:', totalFacturas, '', '', '', '', '']);
-      data.push(['Total Ingresos:', '', '', '', this.formatCurrency(totalIngresos), '', '']);
+      data.push(['', '', '', '', '', '', '', '']);
+      data.push(['Total Facturas:', totalFacturas, '', '', '', '', '', '']);
+      data.push(['Total Ingresos:', '', '', '', this.formatCurrency(totalIngresos), '', '', '']);
 
       // Crear hoja de trabajo
       const worksheet = XLSX.utils.aoa_to_sheet(data);
@@ -403,27 +399,22 @@ class AXYRAExcelExporter {
 
       this.showNotification('Reporte de facturas exportado correctamente con estilos profesionales', 'success');
       console.log('✅ Facturas exportadas con estilos profesionales');
+      return fileName;
     } catch (error) {
       console.error('❌ Error exportando facturas:', error);
       this.showNotification('Error exportando facturas: ' + error.message, 'error');
+      throw error;
     }
   }
 
   // Exportar empleados con estilos profesionales
-  exportarEmpleados() {
+  exportarEmpleados(empleados) {
     try {
-      // Obtener datos de empleados desde localStorage
-      const empleadosData = localStorage.getItem('axyra_empleados');
-      if (!empleadosData) {
-        this.showNotification('No hay empleados para exportar', 'warning');
-        return;
+      if (!empleados || empleados.length === 0) {
+        throw new Error('No hay empleados para exportar');
       }
 
-      const empleados = JSON.parse(empleadosData);
-      if (empleados.length === 0) {
-        this.showNotification('No hay empleados registrados para exportar', 'warning');
-        return;
-      }
+      console.log('📊 Exportando empleados con estilos profesionales...');
 
       // Preparar datos para exportación
       const data = [
@@ -497,9 +488,98 @@ class AXYRAExcelExporter {
 
       this.showNotification('Reporte de empleados exportado correctamente con estilos profesionales', 'success');
       console.log('✅ Empleados exportados con estilos profesionales');
+      return fileName;
     } catch (error) {
       console.error('❌ Error exportando empleados:', error);
       this.showNotification('Error exportando empleados: ' + error.message, 'error');
+      throw error;
+    }
+  }
+
+  // Exportar horas con estilos profesionales
+  exportarHoras(datosHoras) {
+    try {
+      if (!datosHoras || datosHoras.length === 0) {
+        throw new Error('No hay registros de horas para exportar');
+      }
+
+      console.log('📊 Exportando horas con estilos profesionales...');
+
+      // Preparar datos para exportación
+      const data = [
+        // Encabezados
+        [
+          'Empleado',
+          'Departamento',
+          'Fecha',
+          'Horas Ordinarias',
+          'Horas Nocturnas',
+          'Horas Extra Diurnas',
+          'Horas Extra Nocturnas',
+          'Horas Dominicales',
+          'Horas Festivas',
+          'Total Horas',
+          'Observaciones',
+        ],
+      ];
+
+      // Agregar datos de horas
+      datosHoras.forEach((registro) => {
+        data.push([
+          registro.empleado || 'N/A',
+          registro.departamento || 'N/A',
+          registro.fecha || 'N/A',
+          this.formatNumberWithSeparators(registro.horasOrdinarias || 0),
+          this.formatNumberWithSeparators(registro.horasNocturnas || 0),
+          this.formatNumberWithSeparators(registro.horasExtraDiurnas || 0),
+          this.formatNumberWithSeparators(registro.horasExtraNocturnas || 0),
+          this.formatNumberWithSeparators(registro.horasDominicales || 0),
+          this.formatNumberWithSeparators(registro.horasFestivas || 0),
+          this.formatNumberWithSeparators(registro.totalHoras || 0),
+          registro.observaciones || '-',
+        ]);
+      });
+
+      // Agregar fila de totales
+      const totalRegistros = datosHoras.length;
+      const totalHoras = datosHoras.reduce((sum, h) => sum + (h.totalHoras || 0), 0);
+
+      data.push(['', '', '', '', '', '', '', '', '', '', '']);
+      data.push(['Total Registros:', totalRegistros, '', '', '', '', '', '', '', '', '']);
+      data.push(['Total Horas:', '', '', '', '', '', '', '', '', this.formatNumberWithSeparators(totalHoras), '']);
+
+      // Crear hoja de trabajo
+      const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+      // Crear encabezado del reporte
+      this.createReportHeader(worksheet, 'REPORTE DE HORAS - Villa Venecia');
+
+      // Aplicar estilos profesionales
+      const dataRange = XLSX.utils.decode_range(worksheet['!ref']);
+      this.applyProfessionalStyles(worksheet, dataRange);
+
+      // Crear libro de trabajo
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Horas');
+
+      // Generar nombre de archivo con fecha y hora de Colombia
+      const now = new Date();
+      const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+      const fileName = `REPORTE_HORAS_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime
+        .getHours()
+        .toString()
+        .padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
+
+      // Exportar archivo
+      XLSX.writeFile(workbook, fileName);
+
+      this.showNotification('Reporte de horas exportado correctamente con estilos profesionales', 'success');
+      console.log('✅ Horas exportadas con estilos profesionales');
+      return fileName;
+    } catch (error) {
+      console.error('❌ Error exportando horas:', error);
+      this.showNotification('Error exportando horas: ' + error.message, 'error');
+      throw error;
     }
   }
 
@@ -599,3 +679,4 @@ console.log('📊 Funciones disponibles:');
 console.log('- axyraExcelExport.exportarNomina()');
 console.log('- axyraExcelExport.exportarFacturas()');
 console.log('- axyraExcelExport.exportarEmpleados()');
+console.log('- axyraExcelExport.exportarHoras()');

@@ -522,7 +522,7 @@
               console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError.message);
               // Cargar desde localStorage como fallback
               facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
-              
+
               // Filtrar facturas por usuario actual
               if (currentUser.username || currentUser.email) {
                 const userId = currentUser.username || currentUser.email;
@@ -594,15 +594,18 @@
 
       // Función para formatear moneda sin decimales
       function formatearMoneda(valor) {
-        if (typeof valor === 'number') {
-          return new Intl.NumberFormat('es-CO', {
-            style: 'currency',
-            currency: 'COP',
+        if (valor === null || valor === undefined) return '$0';
+        const numero = parseFloat(valor);
+        if (isNaN(numero)) return '$0';
+
+        // Usar separadores de miles con formato colombiano
+        return (
+          '$' +
+          numero.toLocaleString('es-CO', {
             minimumFractionDigits: 0,
             maximumFractionDigits: 0,
-          }).format(valor);
-        }
-        return valor;
+          })
+        );
       }
 
       // Función para formatear moneda con separadores de miles

@@ -7,6 +7,7 @@ class AxyraDebug {
   constructor() {
     this.isEnabled = true;
     this.logLevel = 'info'; // 'debug', 'info', 'warn', 'error'
+    this.errorHandlingSetup = false; // Prevenir recursión infinita
     this.init();
   }
 
@@ -22,31 +23,57 @@ class AxyraDebug {
 
   // Configurar manejo global de errores
   setupGlobalErrorHandling() {
-    // Capturar errores no manejados
-    window.addEventListener('error', (event) => {
-      this.logError('Error no manejado', {
-        message: event.message,
-        filename: event.filename,
-        lineno: event.lineno,
-        colno: event.colno,
-        error: event.error,
-      });
-    });
+    try {
+      // Prevenir recursión infinita
+      if (this.errorHandlingSetup) {
+        console.log('[DEBUG] Error handling ya configurado, saltando...');
+        return;
+      }
 
-    // Capturar promesas rechazadas
-    window.addEventListener('unhandledrejection', (event) => {
-      this.logError('Promesa rechazada no manejada', {
-        reason: event.reason,
-        promise: event.promise,
-      });
-    });
+      this.errorHandlingSetup = true;
 
-    // Interceptar console.error para logging adicional
-    const originalConsoleError = console.error;
-    console.error = (...args) => {
-      this.logError('Console Error', { args });
-      originalConsoleError.apply(console, args);
-    };
+      // Capturar errores no manejados
+      window.addEventListener('error', (event) => {
+        if (this.debugLevel >= 3) {
+          this.logError('Error no manejado', {
+            message: event.message,
+            filename: event.filename,
+            lineno: event.lineno,
+            colno: event.colno,
+            error: event.error,
+          });
+        }
+      });
+
+      // Capturar promesas rechazadas
+      window.addEventListener('unhandledrejection', (event) => {
+        if (this.debugLevel >= 3) {
+          this.logError('Promesa rechazada no manejada', {
+            reason: event.reason,
+            promise: event.promise,
+          });
+        }
+      });
+
+      // Interceptar console.error para logging adicional (con protección anti-recursión)
+      const originalConsoleError = console.error;
+      console.error = (...args) => {
+        // Prevenir recursión infinita
+        if (args[0] && typeof args[0] === 'string' && args[0].includes('Maximum call stack size exceeded')) {
+          originalConsoleError.apply(console, args);
+          return;
+        }
+
+        if (this.debugLevel >= 3) {
+          this.logError('Console Error', { args });
+        }
+        originalConsoleError.apply(console, args);
+      };
+
+      console.log('[DEBUG] Error handling configurado correctamente');
+    } catch (error) {
+      console.error('[DEBUG] Error configurando error handling:', error);
+    }
   }
 
   // Configurar monitoreo de rendimiento
