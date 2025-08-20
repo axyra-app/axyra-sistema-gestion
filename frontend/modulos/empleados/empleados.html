@@ -507,6 +507,9 @@
           console.log('💾 Guardando empleados en localStorage...');
           localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
           console.log('✅ Empleados guardados en localStorage');
+          
+          // Notificar a otros módulos sobre el cambio de datos
+          notificarCambioEmpleados();
         } catch (error) {
           console.error('❌ Error guardando empleados:', error);
         }
@@ -703,6 +706,9 @@
               
               // Guardar en localStorage
               localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
+              
+              // Notificar a otros módulos sobre el cambio de datos
+              notificarCambioEmpleados();
               
               // Actualizar la vista
               mostrarEmpleados();
@@ -1330,6 +1336,60 @@
           setTimeout(limpiarDatosInconsistentes, 500);
         }
       });
+
+      // Función para notificar cambios en empleados a otros módulos
+      function notificarCambioEmpleados() {
+        try {
+          console.log('📢 Notificando cambio en empleados a otros módulos...');
+          
+          // Crear un evento personalizado para notificar cambios
+          const eventoCambio = new CustomEvent('axyraEmpleadosCambiados', {
+            detail: {
+              timestamp: new Date().toISOString(),
+              userId: (() => {
+                let currentUser = null;
+                if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+                  currentUser = window.axyraIsolatedAuth.getCurrentUser();
+                } else {
+                  const userData = localStorage.getItem('axyra_isolated_user');
+                  if (userData) {
+                    currentUser = JSON.parse(userData);
+                  }
+                }
+                return currentUser?.id || currentUser?.username || currentUser?.email;
+              })(),
+              action: 'dataChanged'
+            }
+          });
+          
+          // Disparar el evento
+          window.dispatchEvent(eventoCambio);
+          
+          // También notificar a través de localStorage para compatibilidad
+          localStorage.setItem('axyra_last_employee_change', JSON.stringify({
+            timestamp: new Date().toISOString(),
+            userId: (() => {
+              let currentUser = null;
+              if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+                currentUser = window.axyraIsolatedAuth.getCurrentUser();
+                return currentUser?.id || currentUser?.username || currentUser?.email;
+              } else {
+                const userData = localStorage.getItem('axyra_isolated_user');
+                if (userData) {
+                  currentUser = JSON.parse(userData);
+                  return currentUser?.id || currentUser?.username || currentUser?.email;
+                }
+              }
+              return null;
+            })(),
+            action: 'dataChanged'
+          }));
+          
+          console.log('✅ Notificación enviada a otros módulos');
+        } catch (error) {
+          console.error('❌ Error notificando cambios:', error);
+        }
+      }
     </script>
   </body>
 </html>

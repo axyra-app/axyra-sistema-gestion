@@ -1747,6 +1747,9 @@
           cargarHistorialHoras();
           configurarFecha();
           actualizarValorHora(); // Inicializar valor por hora
+          
+          // Configurar listener para cambios en empleados
+          configurarListenerCambiosEmpleados();
         } catch (error) {
           console.error('❌ Error durante la inicialización:', error);
           alert('Error durante la inicialización: ' + error.message);
@@ -1894,6 +1897,66 @@
          } catch (error) {
            console.error('❌ Error exportando historial de horas:', error);
            mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
+         }
+       }
+
+       // Configurar listener para cambios en empleados
+       function configurarListenerCambiosEmpleados() {
+         try {
+           console.log('👂 Configurando listener para cambios en empleados...');
+           
+           // Escuchar eventos personalizados
+           window.addEventListener('axyraEmpleadosCambiados', async (event) => {
+             console.log('📢 Evento de cambio en empleados recibido:', event.detail);
+             
+             // Verificar que el cambio sea para el usuario actual
+             let currentUser = null;
+             if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+               currentUser = window.axyraIsolatedAuth.getCurrentUser();
+             } else {
+               const userData = localStorage.getItem('axyra_isolated_user');
+               if (userData) {
+                 currentUser = JSON.parse(userData);
+               }
+             }
+             
+             if (currentUser && event.detail.userId === (currentUser.id || currentUser.username || currentUser.email)) {
+               console.log('🔄 Refrescando horas por cambio en empleados...');
+               await cargarEmpleados();
+             }
+           });
+           
+           // También escuchar cambios en localStorage para compatibilidad
+           window.addEventListener('storage', (event) => {
+             if (event.key === 'axyra_last_employee_change') {
+               try {
+                 const changeData = JSON.parse(event.newValue);
+                 console.log('📢 Cambio en empleados detectado vía localStorage:', changeData);
+                 
+                 // Verificar que el cambio sea para el usuario actual
+                 let currentUser = null;
+                 if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+                   currentUser = window.axyraIsolatedAuth.getCurrentUser();
+                 } else {
+                   const userData = localStorage.getItem('axyra_isolated_user');
+                   if (userData) {
+                     currentUser = JSON.parse(userData);
+                   }
+                 }
+                 
+                 if (currentUser && changeData.userId === (currentUser.id || currentUser.username || currentUser.email)) {
+                   console.log('🔄 Refrescando horas por cambio en empleados (localStorage)...');
+                   setTimeout(() => cargarEmpleados(), 100);
+                 }
+               } catch (error) {
+                 console.error('❌ Error procesando cambio vía localStorage:', error);
+               }
+             }
+           });
+           
+           console.log('✅ Listener configurado correctamente');
+         } catch (error) {
+           console.error('❌ Error configurando listener:', error);
          }
        }
     </script>

@@ -463,6 +463,9 @@
           // Renderizar tabla
           renderizarTablaNominas();
 
+          // Configurar listener para cambios en empleados
+          configurarListenerCambiosEmpleados();
+
           console.log('✅ Módulo de nómina inicializado correctamente');
         } catch (error) {
           console.error('❌ Error inicializando nómina:', error);
@@ -2415,6 +2418,52 @@
           }
         } catch (error) {
           console.error('❌ Error cargando configuración:', error);
+        }
+      }
+
+      // Configurar listener para cambios en empleados
+      function configurarListenerCambiosEmpleados() {
+        try {
+          console.log('👂 Configurando listener para cambios en empleados...');
+          
+          // Escuchar eventos personalizados
+          window.addEventListener('axyraEmpleadosCambiados', async (event) => {
+            console.log('📢 Evento de cambio en empleados recibido:', event.detail);
+            
+            // Verificar que el cambio sea para el usuario actual
+            if (currentUser && event.detail.userId === (currentUser.id || currentUser.username || currentUser.email)) {
+              console.log('🔄 Refrescando nómina por cambio en empleados...');
+              await cargarDatos();
+              llenarSelects();
+              renderizarTablaNominas();
+            }
+          });
+          
+          // También escuchar cambios en localStorage para compatibilidad
+          window.addEventListener('storage', (event) => {
+            if (event.key === 'axyra_last_employee_change') {
+              try {
+                const changeData = JSON.parse(event.newValue);
+                console.log('📢 Cambio en empleados detectado vía localStorage:', changeData);
+                
+                // Verificar que el cambio sea para el usuario actual
+                if (currentUser && changeData.userId === (currentUser.id || currentUser.username || currentUser.email)) {
+                  console.log('🔄 Refrescando nómina por cambio en empleados (localStorage)...');
+                  setTimeout(async () => {
+                    await cargarDatos();
+                    llenarSelects();
+                    renderizarTablaNominas();
+                  }, 100);
+                }
+              } catch (error) {
+                console.error('❌ Error procesando cambio vía localStorage:', error);
+              }
+            }
+          });
+          
+          console.log('✅ Listener configurado correctamente');
+        } catch (error) {
+          console.error('❌ Error configurando listener:', error);
         }
       }
     </script>
