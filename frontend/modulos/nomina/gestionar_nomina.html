@@ -19,6 +19,9 @@
     <!-- AXYRA Firebase Scripts -->
     <script src="../../static/firebase-config.js"></script>
     <script src="../../static/excel-export.js"></script>
+    <script src="../../static/isolated-auth.js"></script>
+    <script src="../../static/debug-auth.js"></script>
+    <script src="../../static/gmail-notifications.js"></script>
   </head>
   <body>
     <!-- Header -->
@@ -470,6 +473,14 @@
       // Verificar autenticación
       async function verificarAutenticacion() {
         try {
+          // Usar el sistema de autenticación si está disponible
+          if (window.axyraAuth && window.axyraAuth.isAuthenticated) {
+            currentUser = window.axyraAuth.currentUser;
+            console.log('✅ Usuario autenticado con sistema AXYRA:', currentUser?.username);
+            return;
+          }
+
+          // Fallback: verificar localStorage
           const userData = localStorage.getItem('axyra_isolated_user');
           if (!userData) {
             window.location.href = '../../login.html';
@@ -477,7 +488,7 @@
           }
 
           currentUser = JSON.parse(userData);
-          console.log('✅ Usuario autenticado:', currentUser.username);
+          console.log('✅ Usuario autenticado con localStorage:', currentUser.username);
         } catch (error) {
           console.error('❌ Error verificando autenticación:', error);
           window.location.href = '../../login.html';
@@ -491,32 +502,49 @@
           const empleadosData = localStorage.getItem('axyra_empleados');
           if (empleadosData) {
             empleados = JSON.parse(empleadosData);
-            empleados = empleados.filter(
-              (e) => !e.userId || e.userId === currentUser?.username || e.userId === currentUser?.email
-            );
+            // Filtrar por usuario actual
+            empleados = empleados.filter((e) => {
+              if (!e.userId) return true; // Datos globales
+              return e.userId === currentUser?.username || e.userId === currentUser?.email;
+            });
           }
 
           // Cargar horas
           const horasData = localStorage.getItem('axyra_horas');
           if (horasData) {
             horas = JSON.parse(horasData);
-            horas = horas.filter(
-              (h) => !h.userId || h.userId === currentUser?.username || h.userId === currentUser?.email
-            );
+            // Filtrar por usuario actual
+            horas = horas.filter((h) => {
+              if (!h.userId) return true; // Datos globales
+              return h.userId === currentUser?.username || h.userId === currentUser?.email;
+            });
           }
 
           // Cargar nóminas
           const nominasData = localStorage.getItem('axyra_nominas');
           if (nominasData) {
             nominas = JSON.parse(nominasData);
-            nominas = nominas.filter(
-              (n) => !n.userId || n.userId === currentUser?.username || n.userId === currentUser?.email
-            );
+            // Filtrar por usuario actual
+            nominas = nominas.filter((n) => {
+              if (!n.userId) return true; // Datos globales
+              return n.userId === currentUser?.username || n.userId === currentUser?.email;
+            });
           }
 
           console.log(
             `✅ Datos cargados: ${empleados.length} empleados, ${horas.length} horas, ${nominas.length} nóminas`
           );
+          
+          // Verificar si hay datos y mostrar notificación si no
+          if (empleados.length === 0) {
+            console.warn('⚠️ No hay empleados registrados para el usuario actual');
+          }
+          if (horas.length === 0) {
+            console.warn('⚠️ No hay horas registradas para el usuario actual');
+          }
+          if (nominas.length === 0) {
+            console.warn('⚠️ No hay nóminas generadas para el usuario actual');
+          }
         } catch (error) {
           console.error('❌ Error cargando datos:', error);
         }
@@ -772,6 +800,11 @@
           // Cargar configuración si es el modal de configuración
           if (modalId === 'modalConfiguracionNomina') {
             cargarConfiguracionGuardada();
+          }
+
+          // Verificar que el modal esté por encima del header
+          if (modal.style.zIndex !== '9999') {
+            modal.style.zIndex = '9999';
           }
         }
       }
@@ -1058,7 +1091,7 @@
             costo_total_empresa: costoTotalEmpresa,
             estado: 'Generada',
             fecha_generacion: new Date().toISOString(),
-            userId: currentUser?.username || currentUser?.email,
+            userId: currentUser?.username || currentUser?.email || 'axyra',
           };
 
           // Agregar a la lista de nóminas
@@ -1209,39 +1242,78 @@
       // Exportar nómina
       function exportarNomina() {
         try {
+          if (nominas.length === 0) {
+            mostrarNotificacion('No hay nóminas generadas para exportar', 'warning');
+            return;
+          }
+
           if (typeof window.axyraExcelExport !== 'undefined' && window.axyraExcelExport.exportarNomina) {
             window.axyraExcelExport.exportarNomina();
           } else {
-            // Fallback: exportar manualmente
-            const data = nominas.map((n) => {
+            // Fallback: exportar manualmente con estilos básicos
+            const data = [
+              ['REPORTE DE NÓMINAS - Villa Venecia'],
+              ['EMPRESA: Villa Venecia'],
+              ['NIT: NIT Pendiente'],
+              [`FECHA DE EXPORTACIÓN: ${new Date().toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })}`],
+              [],
+              ['ID', 'Empleado', 'Cédula', 'Período', 'Horas Normales', 'Horas Extras', 'Horas Nocturnas', 'Horas Dominicales', 'Salario Base', 'Bonificaciones', 'Deducciones', 'Salario Neto', 'Costo Empresa', 'Estado', 'Fecha Generación']
+            ];
+
+            nominas.forEach((n) => {
               const empleado = empleados.find((e) => e.id === n.empleado_id);
-              return {
-                ID: n.id,
-                Empleado: empleado ? empleado.nombre : 'Empleado no encontrado',
-                Cédula: empleado ? empleado.cedula : 'N/A',
-                Período: `${obtenerNombreMes(n.mes)} ${n.anio}`,
-                'Horas Trabajadas': n.horas_trabajadas,
-                'Horas Extras': n.horas_extras,
-                'Horas Nocturnas': n.horas_nocturnas,
-                'Horas Dominicales': n.horas_dominicales,
-                'Salario Base': n.salario_base,
-                Bonificaciones: n.bonificaciones,
-                Deducciones: n.deducciones,
-                'Salario Neto': n.salario_neto,
-                'Costo Empresa': n.costo_total_empresa,
-                Estado: n.estado,
-                'Fecha Generación': new Date(n.fecha_generacion).toLocaleDateString('es-ES'),
-              };
+              data.push([
+                n.id || 'N/A',
+                empleado ? empleado.nombre : 'Empleado no encontrado',
+                empleado ? empleado.cedula || 'N/A' : 'N/A',
+                `${obtenerNombreMes(n.mes)} ${n.anio}`,
+                (n.horas_trabajadas || 0).toLocaleString('es-CO'),
+                (n.horas_extras || 0).toLocaleString('es-CO'),
+                (n.horas_nocturnas || 0).toLocaleString('es-CO'),
+                (n.horas_dominicales || 0).toLocaleString('es-CO'),
+                formatearMoneda(n.salario_base),
+                formatearMoneda(n.bonificaciones || 0),
+                formatearMoneda(n.deducciones || 0),
+                formatearMoneda(n.salario_neto),
+                formatearMoneda(n.costo_total_empresa),
+                n.estado || 'Generada',
+                new Date(n.fecha_generacion).toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })
+              ]);
             });
 
-            const ws = XLSX.utils.json_to_sheet(data);
+            // Agregar totales
+            data.push([]);
+            data.push(['TOTALES', '', '', '', 
+              nominas.reduce((sum, n) => sum + (n.horas_trabajadas || 0), 0).toLocaleString('es-CO'),
+              nominas.reduce((sum, n) => sum + (n.horas_extras || 0), 0).toLocaleString('es-CO'),
+              nominas.reduce((sum, n) => sum + (n.horas_nocturnas || 0), 0).toLocaleString('es-CO'),
+              nominas.reduce((sum, n) => sum + (n.horas_dominicales || 0), 0).toLocaleString('es-CO'),
+              formatearMoneda(nominas.reduce((sum, n) => sum + (n.salario_base || 0), 0)),
+              formatearMoneda(nominas.reduce((sum, n) => sum + (n.bonificaciones || 0), 0)),
+              formatearMoneda(nominas.reduce((sum, n) => sum + (n.deducciones || 0), 0)),
+              formatearMoneda(nominas.reduce((sum, n) => sum + (n.salario_neto || 0), 0)),
+              formatearMoneda(nominas.reduce((sum, n) => sum + (n.costo_total_empresa || 0), 0)),
+              '', ''
+            ]);
+
+            const ws = XLSX.utils.aoa_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Nóminas');
 
-            const fileName = `Nominas_AXYRA_${new Date().toISOString().split('T')[0]}.xlsx`;
-            XLSX.writeFile(wb, fileName);
+            // Ajustar ancho de columnas
+            ws['!cols'] = [
+              { width: 8 }, { width: 25 }, { width: 15 }, { width: 15 },
+              { width: 15 }, { width: 15 }, { width: 15 }, { width: 15 },
+              { width: 18 }, { width: 18 }, { width: 18 }, { width: 18 },
+              { width: 18 }, { width: 12 }, { width: 20 }
+            ];
 
-            mostrarNotificacion('Nóminas exportadas correctamente', 'success');
+            const now = new Date();
+            const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+            const fileName = `REPORTE_NOMINAS_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime.getHours().toString().padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
+            
+            XLSX.writeFile(wb, fileName);
+            mostrarNotificacion('Nóminas exportadas correctamente con formato profesional', 'success');
           }
         } catch (error) {
           console.error('❌ Error exportando nóminas:', error);
@@ -1510,6 +1582,15 @@
         }).format(amount);
       }
 
+      // Formatear número con separadores de miles
+      function formatearNumero(numero) {
+        if (!numero || numero === 0) return '0';
+        return numero.toLocaleString('es-CO', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        });
+      }
+
       function obtenerNombreMes(mes) {
         const meses = [
           'Enero',
@@ -1530,9 +1611,15 @@
 
       function logout() {
         try {
-          localStorage.removeItem('axyra_isolated_user');
-          localStorage.removeItem('axyra_firebase_user');
-          window.location.href = '../../login.html';
+          // Usar el sistema de autenticación si está disponible
+          if (window.axyraAuth && typeof window.axyraAuth.logout === 'function') {
+            window.axyraAuth.logout();
+          } else {
+            // Fallback: limpiar localStorage manualmente
+            localStorage.removeItem('axyra_isolated_user');
+            localStorage.removeItem('axyra_firebase_user');
+            window.location.href = '../../login.html';
+          }
         } catch (error) {
           console.error('❌ Error en logout:', error);
           window.location.href = '../../login.html';
@@ -2131,29 +2218,168 @@
             <head>
               <title>${titulo} - AXYRA</title>
               <style>
-                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f8f9fa; }
-                .reporte-container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-                .no-print { text-align: center; margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px; }
-                .btn { padding: 10px 20px; margin: 5px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
-                .btn-primary { background: #667eea; color: white; }
-                .btn-secondary { background: #6c757d; color: white; }
+                body { 
+                  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                  margin: 0; 
+                  padding: 20px; 
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  min-height: 100vh;
+                }
+                .reporte-container { 
+                  max-width: 1200px; 
+                  margin: 0 auto; 
+                  background: white; 
+                  padding: 30px; 
+                  border-radius: 16px; 
+                  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+                  position: relative;
+                  overflow: hidden;
+                }
+                .reporte-container::before {
+                  content: '';
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  height: 4px;
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                }
+                .no-print { 
+                  text-align: center; 
+                  margin-bottom: 30px; 
+                  padding: 25px; 
+                  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+                  border-radius: 12px;
+                  border: 1px solid #e2e8f0;
+                }
+                .no-print h2 {
+                  color: #1e3a8a;
+                  margin: 0 0 15px 0;
+                  font-size: 1.8rem;
+                  font-weight: 600;
+                }
+                .no-print p {
+                  color: #64748b;
+                  margin: 0 0 20px 0;
+                  font-size: 1rem;
+                }
+                .btn { 
+                  padding: 12px 24px; 
+                  margin: 8px; 
+                  border: none; 
+                  border-radius: 8px; 
+                  cursor: pointer; 
+                  font-size: 14px; 
+                  font-weight: 600;
+                  transition: all 0.3s ease;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                }
+                .btn:hover {
+                  transform: translateY(-2px);
+                  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                }
+                .btn-primary { 
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                  color: white; 
+                }
+                .btn-secondary { 
+                  background: linear-gradient(135deg, #6c757d 0%, #495057 100%); 
+                  color: white; 
+                }
+                .btn-success {
+                  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                  color: white;
+                }
+                .reporte-content {
+                  background: white;
+                  border-radius: 8px;
+                  overflow: hidden;
+                }
+                .reporte-content h2 {
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  color: white;
+                  padding: 20px;
+                  margin: 0;
+                  text-align: center;
+                  font-size: 1.5rem;
+                  font-weight: 600;
+                }
+                .reporte-content table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin: 20px 0;
+                }
+                .reporte-content th {
+                  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+                  color: #1e3a8a;
+                  padding: 15px;
+                  text-align: left;
+                  font-weight: 600;
+                  border-bottom: 2px solid #cbd5e1;
+                }
+                .reporte-content td {
+                  padding: 12px 15px;
+                  border-bottom: 1px solid #e2e8f0;
+                }
+                .reporte-content tr:nth-child(even) {
+                  background: #f8fafc;
+                }
+                .reporte-content tr:hover {
+                  background: #f1f5f9;
+                }
                 @media print {
-                  body { background: white; }
+                  body { 
+                    background: white; 
+                    padding: 0;
+                  }
                   .no-print { display: none; }
-                  .reporte-container { box-shadow: none; padding: 0; }
+                  .reporte-container { 
+                    box-shadow: none; 
+                    padding: 0; 
+                    border-radius: 0;
+                  }
+                  .reporte-container::before {
+                    display: none;
+                  }
+                }
+                @media (max-width: 768px) {
+                  body { padding: 10px; }
+                  .reporte-container { padding: 20px; }
+                  .no-print { padding: 20px; }
+                  .btn { 
+                    width: 100%; 
+                    margin: 5px 0; 
+                  }
                 }
               </style>
             </head>
             <body>
               <div class="reporte-container">
                 <div class="no-print">
-                  <h2 style="color: #667eea; margin-bottom: 20px;">${titulo}</h2>
-                  <p>Presiona Ctrl+P para imprimir o guardar como PDF</p>
-                  <button class="btn btn-primary" onclick="window.print()">Imprimir / Guardar PDF</button>
-                  <button class="btn btn-secondary" onclick="window.close()">Cerrar</button>
+                  <h2>${titulo}</h2>
+                  <p>📊 Reporte generado automáticamente por el sistema AXYRA</p>
+                  <p>💡 Presiona Ctrl+P para imprimir o guardar como PDF</p>
+                  <button class="btn btn-primary" onclick="window.print()">
+                    🖨️ Imprimir / Guardar PDF
+                  </button>
+                  <button class="btn btn-success" onclick="exportarReporteExcel()">
+                    📊 Exportar a Excel
+                  </button>
+                  <button class="btn btn-secondary" onclick="window.close()">
+                    ❌ Cerrar
+                  </button>
                 </div>
-                ${contenido}
+                <div class="reporte-content">
+                  ${contenido}
+                </div>
               </div>
+              <script>
+                function exportarReporteExcel() {
+                  // Función para exportar a Excel (implementar si es necesario)
+                  alert('Función de exportación a Excel en desarrollo');
+                }
+              </script>
             </body>
           </html>
         `);
