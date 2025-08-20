@@ -1522,7 +1522,7 @@
           // Preparar datos para exportar
           const datosExportar = horas.map((registro) => {
             const empleado = empleados.find((e) => e.id === registro.empleadoId);
-            
+
             // Calcular total de horas
             const entrada = new Date(`2000-01-01T${registro.horaEntrada}`);
             const salida = new Date(`2000-01-01T${registro.horaSalida}`);

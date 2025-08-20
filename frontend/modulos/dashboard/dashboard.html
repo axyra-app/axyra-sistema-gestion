@@ -753,7 +753,7 @@
 
         // Limpiar empleados con salarios inválidos FILTRADOS POR USUARIO
         const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
-          (emp) => emp.userId === currentUser.username
+          (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
         );
         console.log('Empleados del usuario antes de limpieza:', empleados);
 
@@ -809,7 +809,7 @@
         const keysToRemove = [];
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          if (key && key.startsWith('axyra_') && key !== 'axyra_isolated_user') {
+          if (key && key.startsWith('axyra_') && key !== 'axyra_isolated_user' && key !== 'axyra_firebase_user') {
             keysToRemove.push(key);
           }
         }
@@ -860,7 +860,7 @@
 
         // Verificar empleados FILTRADOS POR USUARIO
         const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
-          (emp) => emp.userId === currentUser.username
+          (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
         );
         const empleadosLimpios = empleados.filter((empleado) => {
           if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
@@ -887,10 +887,10 @@
 
         // Verificar otros datos FILTRADOS POR USUARIO
         const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
-          (hr) => hr.userId === currentUser.username
+          (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
         );
         const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
-          (comp) => comp.userId === currentUser.username
+          (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email || emp.userId === currentUser.id
         );
 
         // Verificar que no haya valores extremadamente altos
@@ -1003,7 +1003,12 @@
                   });
                 });
               }
-              document.getElementById('totalEmpleados').textContent = empleados.length;
+              // Solo mostrar empleados si hay horas trabajadas
+              if (totalHorasTrabajadas > 0) {
+                document.getElementById('totalEmpleados').textContent = empleados.length;
+              } else {
+                document.getElementById('totalEmpleados').textContent = '0';
+              }
 
               // Cargar horas desde Firebase
               const horasSnapshot = await firebase.firestore()
@@ -1046,17 +1051,20 @@
               }
               document.getElementById('comprobantesGenerados').textContent = comprobantes.length;
 
-              // Calcular total de salarios base
-              const totalSalarios = empleados.reduce((total, empleado) => {
-                if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+              // Calcular total de salarios base SOLO si hay horas trabajadas
+              let totalSalarios = 0;
+              if (totalHorasTrabajadas > 0) {
+                totalSalarios = empleados.reduce((total, empleado) => {
+                  if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+                    return total;
+                  }
+                  const salario = parseFloat(empleado.salario);
+                  if (!isNaN(salario) && salario > 0) {
+                    return total + salario;
+                  }
                   return total;
-                }
-                const salario = parseFloat(empleado.salario);
-                if (!isNaN(salario) && salario > 0) {
-                  return total + salario;
-                }
-                return total;
-              }, 0);
+                }, 0);
+              }
 
               // Formatear y mostrar datos
               formatearYMostrarDatos(totalSalarios, totalHorasTrabajadas);
@@ -1125,8 +1133,14 @@
           // Buscar elemento totalEmpleados de forma segura
           const totalEmpleadosElement = document.getElementById('totalEmpleados');
           if (totalEmpleadosElement) {
-            totalEmpleadosElement.textContent = empleados.length;
-            console.log('✅ Total empleados actualizado:', empleados.length);
+            // Solo mostrar empleados si hay horas trabajadas
+            if (totalHorasTrabajadas > 0) {
+              totalEmpleadosElement.textContent = empleados.length;
+              console.log('✅ Total empleados actualizado:', empleados.length);
+            } else {
+              totalEmpleadosElement.textContent = '0';
+              console.log('ℹ️ No hay horas trabajadas, mostrando 0 empleados');
+            }
           } else {
             console.log('⚠️ Elemento totalEmpleados no encontrado');
           }
@@ -1178,17 +1192,20 @@
             console.log('⚠️ Elemento comprobantesGenerados no encontrado');
           }
 
-          // Calcular total de salarios base
-          const totalSalarios = empleados.reduce((total, empleado) => {
-            if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+          // Calcular total de salarios base SOLO si hay horas trabajadas
+          let totalSalarios = 0;
+          if (totalHorasTrabajadas > 0) {
+            totalSalarios = empleados.reduce((total, empleado) => {
+              if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+                return total;
+              }
+              const salario = parseFloat(empleado.salario);
+              if (!isNaN(salario) && salario > 0) {
+                return total + salario;
+              }
               return total;
-            }
-            const salario = parseFloat(empleado.salario);
-            if (!isNaN(salario) && salario > 0) {
-              return total + salario;
-            }
-            return total;
-          }, 0);
+            }, 0);
+          }
 
           // Calcular horas trabajadas - SOLO DESDE FIREBASE
           let registrosHoras = [];
@@ -1408,8 +1425,26 @@
             return;
           }
 
+          // Verificar si hay horas trabajadas primero
+          const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
+            (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
+          );
+          
+          const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
+            const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
+            const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
+            const horasExtras = parseFloat(registro.horasExtras) || 0;
+            const horasDominicales = parseFloat(registro.horasDominicales) || 0;
+            return total + horasOrdinarias + horasNocturnas + horasExtras + horasDominicales;
+          }, 0);
+
+          if (totalHorasTrabajadas === 0) {
+            mostrarModal('Detalle de Empleados', '<h4>📋 Lista de Empleados</h4><p>No hay horas registradas para mostrar empleados activos.</p>');
+            return;
+          }
+
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
-            (emp) => emp.userId === currentUser.username
+            (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
           );
 
           let detalleHTML = '<h4>📋 Lista de Empleados</h4>';
@@ -1419,8 +1454,8 @@
               detalleHTML += `
                 <div class="axyra-empleado-item">
                   <div class="axyra-empleado-info">
-                    <strong>${emp.nombre}</strong>
-                    <span>${emp.cargo} - ${emp.departamento}</span>
+                    <strong>${emp.nombre || 'Sin nombre'}</strong>
+                    <span>${emp.cargo || 'Sin cargo'} - ${emp.departamento || 'Sin departamento'}</span>
                     <span>Salario: $${emp.salario?.toLocaleString('es-CO') || '0'}</span>
                   </div>
                 </div>
@@ -1458,7 +1493,7 @@
           }
 
           const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
-            (hr) => hr.userId === currentUser.username
+            (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
           );
 
           let detalleHTML = '<h4>⏰ Detalle de Horas Trabajadas</h4>';
@@ -1473,8 +1508,8 @@
               detalleHTML += `
                 <div class="axyra-hora-item">
                   <div class="axyra-hora-info">
-                    <strong>${hr.empleado}</strong>
-                    <span>Fecha: ${hr.fecha}</span>
+                    <strong>${hr.empleado || 'Sin empleado'}</strong>
+                    <span>Fecha: ${hr.fecha || 'Sin fecha'}</span>
                     <span>Total: ${totalHoras} horas</span>
                   </div>
                 </div>
@@ -1512,7 +1547,7 @@
           }
 
           const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
-            (comp) => comp.userId === currentUser.username
+            (comp) => comp.userId === currentUser.username || comp.userId === currentUser.email || comp.userId === currentUser.id
           );
 
           let detalleHTML = '<h4>🧾 Detalle de Comprobantes</h4>';
@@ -1522,8 +1557,8 @@
               detalleHTML += `
                 <div class="axyra-comprobante-item">
                   <div class="axyra-comprobante-info">
-                    <strong>${comp.numeroFactura}</strong>
-                    <span>${comp.encargado} - ${comp.area}</span>
+                    <strong>${comp.numeroFactura || 'Sin número'}</strong>
+                    <span>${comp.encargado || 'Sin encargado'} - ${comp.area || 'Sin área'}</span>
                     <span>$${comp.monto?.toLocaleString('es-CO') || '0'}</span>
                 </div>
                 <button class="axyra-btn axyra-btn-sm axyra-btn-secondary" onclick="descargarComprobante('${comp.id}')">
@@ -1563,8 +1598,26 @@
             return;
           }
 
+          // Verificar si hay horas trabajadas primero
+          const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
+            (hr) => hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
+          );
+          
+          const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
+            const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
+            const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
+            const horasExtras = parseFloat(registro.horasExtras) || 0;
+            const horasDominicales = parseFloat(registro.horasDominicales) || 0;
+            return total + horasOrdinarias + horasNocturnas + horasExtras + horasDominicales;
+          }, 0);
+
+          if (totalHorasTrabajadas === 0) {
+            mostrarModal('Detalle de Salarios', '<h4>💰 Detalle de Salarios</h4><p>No hay horas registradas para calcular salarios.</p>');
+            return;
+          }
+
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
-            (emp) => emp.userId === currentUser.username
+            (emp) => emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
           );
 
           let detalleHTML = '<h4>💰 Detalle de Salarios</h4>';
@@ -1574,9 +1627,9 @@
               detalleHTML += `
                 <div class="axyra-salario-item">
                   <div class="axyra-empleado-info">
-                    <strong>${emp.nombre}</strong>
-                    <span>${emp.cargo}</span>
-                    <span class="axyra-salario-monto">Salario base configurado</span>
+                    <strong>${emp.nombre || 'Sin nombre'}</strong>
+                    <span>${emp.cargo || 'Sin cargo'}</span>
+                    <span class="axyra-salario-monto">Salario base configurado: $${emp.salario?.toLocaleString('es-CO') || '0'}</span>
               </div>
               </div>
               `;
@@ -2095,6 +2148,28 @@
             }
           } else {
             console.log('ℹ️ No hay configuración de empresa, usando valores por defecto');
+            
+            // Intentar obtener desde Firebase si está disponible
+            if (typeof firebase !== 'undefined' && firebase.firestore && currentUser && currentUser.id) {
+              try {
+                firebase.firestore().collection('company_config').doc(currentUser.id).get().then((doc) => {
+                  if (doc.exists) {
+                    const companyData = doc.data();
+                    console.log('🏢 Configuración de empresa obtenida desde Firebase:', companyData);
+                    
+                    // Actualizar el título del dashboard si hay configuración
+                    const logoTitle = document.querySelector('.axyra-logo-title');
+                    if (logoTitle && companyData.nombreEmpresa) {
+                      logoTitle.textContent = companyData.nombreEmpresa.toUpperCase();
+                    }
+                  }
+                }).catch((error) => {
+                  console.log('⚠️ Error obteniendo configuración de empresa desde Firebase:', error);
+                });
+              } catch (error) {
+                console.log('⚠️ Firebase no disponible para configuración de empresa:', error);
+              }
+            }
           }
         } catch (error) {
           console.error('❌ Error mostrando configuración de empresa:', error);
@@ -2370,8 +2445,32 @@
               companyNITElement.textContent = 'NIT: Pendiente';
             }
           } else {
-            companyNameElement.textContent = 'AXYRA';
-            companyNITElement.textContent = 'NIT: Pendiente';
+            // Intentar obtener desde Firebase si está disponible
+            if (typeof firebase !== 'undefined' && firebase.firestore && currentUser && currentUser.id) {
+              try {
+                firebase.firestore().collection('company_config').doc(currentUser.id).get().then((doc) => {
+                  if (doc.exists) {
+                    const companyData = doc.data();
+                    companyNameElement.textContent = companyData.nombreEmpresa || 'AXYRA';
+                    companyNITElement.textContent = `NIT: ${companyData.nit || 'Pendiente'}`;
+                  } else {
+                    companyNameElement.textContent = 'AXYRA';
+                    companyNITElement.textContent = 'NIT: Pendiente';
+                  }
+                }).catch((error) => {
+                  console.log('⚠️ Error obteniendo configuración de empresa desde Firebase:', error);
+                  companyNameElement.textContent = 'AXYRA';
+                  companyNITElement.textContent = 'NIT: Pendiente';
+                });
+              } catch (error) {
+                console.log('⚠️ Firebase no disponible para configuración de empresa:', error);
+                companyNameElement.textContent = 'AXYRA';
+                companyNITElement.textContent = 'NIT: Pendiente';
+              }
+            } else {
+              companyNameElement.textContent = 'AXYRA';
+              companyNITElement.textContent = 'NIT: Pendiente';
+            }
           }
           }
         } catch (error) {
@@ -2418,7 +2517,21 @@
           const empleadosFiltrados = empleados.filter(emp => 
             !emp.userId || emp.userId === currentUser?.username || emp.userId === currentUser?.email || emp.userId === currentUser?.id
           );
-          document.getElementById('totalEmpleados').textContent = empleadosFiltrados.length;
+          
+          // Verificar si hay horas trabajadas
+          const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const horasFiltradas = registrosHoras.filter(hr => 
+            !hr.userId || hr.userId === currentUser?.username || hr.userId === currentUser?.email || hr.userId === currentUser?.id
+          );
+          
+          const totalHorasTrabajadas = horasFiltradas.reduce((sum, h) => sum + (h.horas || 0), 0);
+          
+          // Solo mostrar empleados si hay horas trabajadas
+          if (totalHorasTrabajadas > 0) {
+            document.getElementById('totalEmpleados').textContent = empleadosFiltrados.length;
+          } else {
+            document.getElementById('totalEmpleados').textContent = '0';
+          }
         } catch (error) {
           console.error('❌ Error cargando estadísticas de empleados:', error);
           document.getElementById('totalEmpleados').textContent = '0';
@@ -2429,7 +2542,7 @@
         try {
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
           const horasFiltradas = horas.filter(h => 
-            !h.userId || h.userId === currentUser?.username || h.userId === currentUser?.email
+            !h.userId || h.userId === currentUser?.username || h.userId === currentUser?.email || h.userId === currentUser?.id
           );
           const totalHoras = horasFiltradas.reduce((sum, h) => sum + (h.horas || 0), 0);
           document.getElementById('horasTrabajadas').textContent = totalHoras;
@@ -2443,13 +2556,13 @@
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const nominasFiltradas = nominas.filter(n => 
-            !n.userId || n.userId === currentUser?.username || n.userId === currentUser?.email
+            !n.userId || n.userId === currentUser?.username || n.userId === currentUser?.email || n.userId === currentUser?.id
           );
           const totalNominas = nominasFiltradas.length;
           document.getElementById('totalNominas').textContent = totalNominas;
         } catch (error) {
           console.error('❌ Error cargando estadísticas de nóminas:', error);
-          document.getElementById('totalNominas').textContent = '0';
+          document.getElementById('totalNominados').textContent = '0';
         }
       }
 
@@ -2457,7 +2570,7 @@
         try {
           const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
           const facturasFiltradas = facturas.filter(f => 
-            !f.userId || f.userId === currentUser?.username || f.userId === currentUser?.email
+            !f.userId || f.userId === currentUser?.username || f.userId === currentUser?.email || f.userId === currentUser?.id
           );
           const totalFacturas = facturasFiltradas.length;
           document.getElementById('totalFacturas').textContent = totalFacturas;
@@ -2471,7 +2584,7 @@
         try {
           const departamentos = JSON.parse(localStorage.getItem('axyra_departamentos') || '[]');
           const totalDepartamentos = departamentos.length;
-          document.getElementById('totalDepartamentos').textContent = totalDepartamentos;
+          document.getElementById('departamentos').textContent = totalDepartamentos;
         } catch (error) {
           console.error('❌ Error cargando estadísticas de departamentos:', error);
         }
@@ -2490,6 +2603,21 @@
       function loadCharts() {
         // Por ahora solo cargar datos básicos
         console.log('📊 Gráficos cargados (básico)');
+        
+        // Verificar si hay datos para mostrar gráficos
+        try {
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          
+          if (empleados.length === 0 || horas.length === 0) {
+            console.log('ℹ️ No hay suficientes datos para mostrar gráficos');
+            return;
+          }
+          
+          console.log('✅ Datos suficientes para gráficos disponibles');
+        } catch (error) {
+          console.error('❌ Error verificando datos para gráficos:', error);
+        }
       }
 
       // Función para actualizar username
@@ -2762,6 +2890,18 @@
                 }
               } catch (error) {
                 console.error('❌ Error procesando cambio vía localStorage:', error);
+              }
+            }
+          });
+          
+          // También escuchar cambios en horas para actualizar estadísticas
+          window.addEventListener('storage', (event) => {
+            if (event.key === 'axyra_horas') {
+              try {
+                console.log('📢 Cambio en horas detectado, actualizando estadísticas...');
+                setTimeout(() => cargarEstadisticas(), 100);
+              } catch (error) {
+                console.error('❌ Error procesando cambio en horas:', error);
               }
             }
           });
