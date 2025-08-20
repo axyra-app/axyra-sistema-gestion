@@ -22,6 +22,601 @@
     <script src="../../static/isolated-auth.js"></script>
     <script src="../../static/debug-auth.js"></script>
     <script src="../../static/gmail-notifications.js"></script>
+
+    <style>
+      /* Estilos específicos para el módulo de nómina */
+      .detalle-nomina-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .detalle-section {
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .detalle-section h4 {
+        color: #1e3a8a;
+        margin: 0 0 15px 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-bottom: 2px solid #cbd5e1;
+        padding-bottom: 8px;
+      }
+
+      .detalle-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .detalle-row:last-child {
+        border-bottom: none;
+      }
+
+      .detalle-row.total {
+        font-weight: 600;
+        color: #1e3a8a;
+        border-top: 2px solid #cbd5e1;
+        padding-top: 12px;
+        margin-top: 8px;
+      }
+
+      .detalle-label {
+        color: #64748b;
+        font-weight: 500;
+      }
+
+      .detalle-value {
+        color: #1e293b;
+        font-weight: 600;
+      }
+
+      .reportes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .reporte-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .reporte-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        border-color: #667eea;
+      }
+
+      .reporte-icon {
+        font-size: 2.5rem;
+        color: #667eea;
+        margin-bottom: 15px;
+      }
+
+      .reporte-content h4 {
+        color: #1e3a8a;
+        margin: 0 0 10px 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .reporte-content p {
+        color: #64748b;
+        margin: 0;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+
+      .resumen-nomina {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      .resumen-nomina h4 {
+        color: #1e3a8a;
+        margin: 0 0 15px 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group label {
+        color: #374151;
+        font-weight: 500;
+        margin-bottom: 5px;
+        font-size: 0.9rem;
+      }
+
+      .form-input, .form-select {
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-input:focus, .form-select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      }
+
+      .btn-primary {
+        background: #667eea;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #5a67d8;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .btn-success {
+        background: #10b981;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #059669;
+      }
+
+      .btn-danger {
+        background: #ef4444;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #dc2626;
+      }
+
+      .btn-warning {
+        background: #f59e0b;
+        color: white;
+      }
+
+      .btn-warning:hover {
+        background: #d97706;
+      }
+
+      .btn-info {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .btn-info:hover {
+        background: #2563eb;
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 12px;
+        max-width: 90%;
+        max-height: 90%;
+        overflow-y: auto;
+        position: relative;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6b7280;
+        z-index: 10;
+      }
+
+      .modal-close:hover {
+        color: #374151;
+      }
+
+      .modal-header {
+        padding: 25px 25px 20px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .modal-header h3 {
+        margin: 0 0 5px 0;
+        color: #1f2937;
+        font-size: 1.5rem;
+        font-weight: 600;
+      }
+
+      .modal-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      .modal-body {
+        padding: 20px 25px;
+      }
+
+      .modal-footer {
+        padding: 20px 25px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: white;
+        border-radius: 8px;
+        padding: 15px 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        border-left: 4px solid;
+        z-index: 10000;
+        max-width: 400px;
+        animation: slideIn 0.3s ease;
+      }
+
+      .notification.success {
+        border-left-color: #10b981;
+      }
+
+      .notification.error {
+        border-left-color: #ef4444;
+      }
+
+      .notification.warning {
+        border-left-color: #f59e0b;
+      }
+
+      .notification.info {
+        border-left-color: #3b82f6;
+      }
+
+      .notification-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .notification-message {
+        color: #374151;
+        font-size: 0.9rem;
+        margin-right: 15px;
+      }
+
+      .notification-close {
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 1.1rem;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .notification-close:hover {
+        color: #6b7280;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .detalle-nomina-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .reportes-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        
+        .modal-content {
+          max-width: 95%;
+          margin: 10px;
+        }
+        
+        .modal-header, .modal-body, .modal-footer {
+          padding: 15px;
+        }
+      }
+
+      /* Estilos para botones pequeños */
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        border-radius: 4px;
+      }
+
+      /* Estilos para badges */
+      .badge {
+        display: inline-block;
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-success {
+        background-color: #d1fae5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+      }
+
+      .badge-warning {
+        background-color: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+
+      .badge-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+      }
+
+      .badge-info {
+        background-color: #dbeafe;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+      }
+
+      /* Estilos para botones de acción */
+      .action-buttons {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .action-buttons .btn {
+        min-width: 32px;
+        height: 32px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Estilos para métricas */
+      .axyra-metrics-dashboard {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .metric-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        border-color: #667eea;
+      }
+
+      .metric-icon {
+        font-size: 2rem;
+        color: #667eea;
+        margin-bottom: 15px;
+      }
+
+      .metric-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 5px;
+      }
+
+      .metric-label {
+        color: #64748b;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      /* Estilos para filtros */
+      .axyra-filters {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .axyra-search-box {
+        position: relative;
+        flex: 1;
+        min-width: 250px;
+      }
+
+      .axyra-search-box input {
+        width: 100%;
+        padding: 10px 40px 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.9rem;
+      }
+
+      .axyra-search-box i {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+      }
+
+      .axyra-form-select {
+        padding: 10px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        min-width: 150px;
+      }
+
+      /* Estilos para tabla */
+      .axyra-table-container {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 20px;
+      }
+
+      .axyra-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .axyra-table th {
+        background: #f8fafc;
+        color: #1e3a8a;
+        padding: 15px 12px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #e2e8f0;
+        font-size: 0.9rem;
+      }
+
+      .axyra-table td {
+        padding: 12px;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 0.9rem;
+      }
+
+      .axyra-table tr:hover {
+        background: #f8fafc;
+      }
+
+      /* Estilos para paginación */
+      .axyra-pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .axyra-pagination button {
+        padding: 8px 16px;
+        border: 1px solid #d1d5db;
+        background: white;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .axyra-pagination button:hover:not(:disabled) {
+        background: #f8fafc;
+        border-color: #667eea;
+      }
+
+      .axyra-pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      #paginaInfo {
+        color: #64748b;
+        font-weight: 500;
+      }
+    </style>
   </head>
   <body>
     <!-- Header -->
@@ -78,10 +673,10 @@
           <button class="axyra-btn axyra-btn-success" onclick="generarComprobantePDF()">
             <i class="fas fa-file-pdf"></i> Generar PDF
           </button>
-          <button class="axyra-btn axyra-btn-warning" onclick="mostrarModal('modalReportesAvanzados')">
+          <button class="axyra-btn axyra-btn-warning" onclick="generarReportes()">
             <i class="fas fa-chart-bar"></i> Reportes
           </button>
-          <button class="axyra-btn axyra-btn-info" onclick="mostrarModal('modalConfiguracionNomina')">
+          <button class="axyra-btn axyra-btn-info" onclick="configuracionNomina()">
             <i class="fas fa-cog"></i> Configuración
           </button>
         </div>
@@ -430,6 +1025,124 @@
       </div>
     </div>
 
+    <!-- Modal Detalle de Nómina -->
+    <div id="modalDetalleNomina" class="modal-overlay" style="display: none">
+      <div class="modal-content" style="max-width: 800px">
+        <button class="modal-close" onclick="cerrarModal('modalDetalleNomina')">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="modal-header">
+          <h3 id="detalleNominaTitulo">Detalle de Nómina</h3>
+          <p>Información completa de la nómina generada</p>
+        </div>
+        <div class="modal-body">
+          <div class="detalle-nomina-grid">
+            <div class="detalle-section">
+              <h4>Información General</h4>
+              <div class="detalle-row">
+                <span class="detalle-label">Empleado:</span>
+                <span class="detalle-value" id="detalleNominaEmpleado"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Período:</span>
+                <span class="detalle-value" id="detalleNominaPeriodo"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Tipo:</span>
+                <span class="detalle-value" id="detalleNominaTipo"></span>
+              </div>
+            </div>
+
+            <div class="detalle-section">
+              <h4>Horas Trabajadas</h4>
+              <div class="detalle-row">
+                <span class="detalle-label">Normales:</span>
+                <span class="detalle-value" id="detalleHorasNormales"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Extras:</span>
+                <span class="detalle-value" id="detalleHorasExtras"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Nocturnas:</span>
+                <span class="detalle-value" id="detalleHorasNocturnas"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Dominicales:</span>
+                <span class="detalle-value" id="detalleHorasDominicales"></span>
+              </div>
+            </div>
+
+            <div class="detalle-section">
+              <h4>Liquidación</h4>
+              <div class="detalle-row">
+                <span class="detalle-label">Salario Base:</span>
+                <span class="detalle-value" id="detalleSalarioBase"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Subtotal:</span>
+                <span class="detalle-value" id="detalleSubtotalSalario"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Bonificaciones:</span>
+                <span class="detalle-value" id="detalleBonificaciones"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Deducciones:</span>
+                <span class="detalle-value" id="detalleDeducciones"></span>
+              </div>
+              <div class="detalle-row total">
+                <span class="detalle-label">Salario Neto:</span>
+                <span class="detalle-value" id="detalleSalarioNeto"></span>
+              </div>
+            </div>
+
+            <div class="detalle-section">
+              <h4>Prestaciones Sociales</h4>
+              <div class="detalle-row">
+                <span class="detalle-label">Cesantías:</span>
+                <span class="detalle-value" id="detalleCesantias"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Prima Servicios:</span>
+                <span class="detalle-value" id="detallePrimaServicios"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Intereses:</span>
+                <span class="detalle-value" id="detalleInteresesCesantias"></span>
+              </div>
+            </div>
+
+            <div class="detalle-section">
+              <h4>Costos del Empleador</h4>
+              <div class="detalle-row">
+                <span class="detalle-label">Salud:</span>
+                <span class="detalle-value" id="detalleSaludEmpleador"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Pensión:</span>
+                <span class="detalle-value" id="detallePensionEmpleador"></span>
+              </div>
+              <div class="detalle-row">
+                <span class="detalle-label">Riesgos Laborales:</span>
+                <span class="detalle-value" id="detalleRiesgosLaborales"></span>
+              </div>
+              <div class="detalle-row total">
+                <span class="detalle-label">Costo Total:</span>
+                <span class="detalle-value" id="detalleCostoTotalEmpresa"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="cerrarModal('modalDetalleNomina')">Cerrar</button>
+          <button class="btn btn-primary" onclick="generarComprobantePDFIndividual()">
+            <i class="fas fa-file-pdf"></i> Generar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Sistema de Notificaciones -->
     <div id="notificationContainer"></div>
 
@@ -599,201 +1312,268 @@
 
       // Configurar eventos
       function configurarEventos() {
-        // Búsqueda
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-          searchInput.addEventListener('input', filtrarNominas);
-        }
+        try {
+          // Evento de búsqueda
+          const searchInput = document.getElementById('searchInput');
+          if (searchInput) {
+            searchInput.addEventListener('input', () => {
+              paginaActual = 1; // Resetear a primera página
+              renderizarTablaNominas();
+            });
+          }
 
-        // Filtros
-        const filterEmpleado = document.getElementById('filterEmpleado');
-        if (filterEmpleado) {
-          filterEmpleado.addEventListener('change', filtrarNominas);
-        }
+          // Eventos de filtros
+          const filterEmpleado = document.getElementById('filterEmpleado');
+          if (filterEmpleado) {
+            filterEmpleado.addEventListener('change', () => {
+              paginaActual = 1;
+              renderizarTablaNominas();
+            });
+          }
 
-        const filterMes = document.getElementById('filterMes');
-        if (filterMes) {
-          filterMes.addEventListener('change', filtrarNominas);
-        }
+          const filterMes = document.getElementById('filterMes');
+          if (filterMes) {
+            filterMes.addEventListener('change', () => {
+              paginaActual = 1;
+              renderizarTablaNominas();
+            });
+          }
 
-        const filterAnio = document.getElementById('filterAnio');
-        if (filterAnio) {
-          filterAnio.addEventListener('change', filtrarNominas);
-        }
+          const filterAnio = document.getElementById('filterAnio');
+          if (filterAnio) {
+            filterAnio.addEventListener('change', () => {
+              paginaActual = 1;
+              renderizarTablaNominas();
+            });
+          }
 
-        // Cambio de empleado en nómina
-        const empleadoNomina = document.getElementById('empleadoNomina');
-        if (empleadoNomina) {
-          empleadoNomina.addEventListener('change', calcularResumenNomina);
-        }
+          // Configurar eventos de modales
+          configurarEventosModales();
 
-        // Cambio de mes en nómina
-        const mesNomina = document.getElementById('mesNomina');
-        if (mesNomina) {
-          mesNomina.addEventListener('change', calcularResumenNomina);
+          console.log('✅ Eventos configurados correctamente');
+        } catch (error) {
+          console.error('❌ Error configurando eventos:', error);
         }
-
-        // Cambio de año en nómina
-        const anioNomina = document.getElementById('anioNomina');
-        if (anioNomina) {
-          anioNomina.addEventListener('change', calcularResumenNomina);
-        }
-
-        // Configurar event listeners de modales
-        window.configurarEventosModales();
       }
 
-      // Renderizar tabla de nóminas
-      function renderizarTablaNominas() {
-        const tbody = document.getElementById('nominasTableBody');
-        if (!tbody) return;
+      // Función para obtener nombre del mes
+      function obtenerNombreMes(mes) {
+        const meses = [
+          'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ];
+        return meses[mes - 1] || 'Mes inválido';
+      }
 
-        const nominasFiltradas = filtrarNominasPorPagina();
-
-        if (nominasFiltradas.length === 0) {
-          tbody.innerHTML = `
-            <tr>
-              <td colspan="10" class="text-center">
-                <p style="text-align: center; color: #718096; font-style: italic;">
-                  No hay nóminas generadas
-                </p>
-              </td>
-            </tr>
-          `;
-          return;
+      // Función para formatear moneda
+      function formatearMoneda(valor) {
+        if (typeof valor !== 'number' || isNaN(valor)) {
+          return '$0';
         }
+        return new Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).format(valor);
+      }
 
-        let html = '';
-        nominasFiltradas.forEach((nomina) => {
-          const empleado = empleados.find((e) => e.id === nomina.empleado_id);
+      // Función para renderizar tabla de nóminas
+      function renderizarTablaNominas() {
+        try {
+          const tbody = document.getElementById('nominasTableBody');
+          if (!tbody) return;
 
-          html += `
-            <tr>
-              <td>${nomina.id || 'N/A'}</td>
-              <td>${empleado ? empleado.nombre : 'Empleado no encontrado'}</td>
+          tbody.innerHTML = '';
+
+          if (nominas.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="14" style="text-align: center; padding: 40px; color: #6b7280;">
+                  <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 10px; display: block; color: #d1d5db;"></i>
+                  <p>No hay nóminas generadas</p>
+                  <p style="font-size: 0.9rem; margin-top: 5px;">Genera tu primera nómina usando el botón "Generar Nómina"</p>
+                </td>
+              </tr>
+            `;
+            return;
+          }
+
+          // Aplicar filtros si existen
+          let nominasFiltradas = nominas;
+          const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase();
+          const filterEmpleado = document.getElementById('filterEmpleado')?.value;
+          const filterMes = document.getElementById('filterMes')?.value;
+          const filterAnio = document.getElementById('filterAnio')?.value;
+
+          if (searchTerm || filterEmpleado || filterMes || filterAnio) {
+            nominasFiltradas = nominas.filter((nomina) => {
+              const empleado = empleados.find((e) => e.id === nomina.empleado_id);
+              if (!empleado) return false;
+
+              // Filtro de búsqueda
+              if (searchTerm && !empleado.nombre.toLowerCase().includes(searchTerm)) {
+                return false;
+              }
+
+              // Filtro de empleado
+              if (filterEmpleado && nomina.empleado_id != filterEmpleado) {
+                return false;
+              }
+
+              // Filtro de mes
+              if (filterMes && nomina.mes != filterMes) {
+                return false;
+              }
+
+              // Filtro de año
+              if (filterAnio && nomina.anio != filterAnio) {
+                return false;
+              }
+
+              return true;
+            });
+          }
+
+          // Aplicar paginación
+          const inicio = (paginaActual - 1) * nominasPorPagina;
+          const fin = inicio + nominasPorPagina;
+          const nominasPaginadas = nominasFiltradas.slice(inicio, fin);
+
+          // Renderizar filas
+          nominasPaginadas.forEach((nomina) => {
+            const empleado = empleados.find((e) => e.id === nomina.empleado_id);
+            if (!empleado) return;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${nomina.id}</td>
+              <td>${empleado.nombre}</td>
               <td>${obtenerNombreMes(nomina.mes)} ${nomina.anio}</td>
-              <td>${nomina.horas_trabajadas || 0} hrs</td>
-              <td>${nomina.horas_extras || 0} hrs</td>
-              <td>${nomina.horas_nocturnas || 0} hrs</td>
-              <td>${nomina.horas_dominicales || 0} hrs</td>
-              <td>${formatearMoneda(nomina.salario_base) || 'N/A'}</td>
-              <td>${formatearMoneda(nomina.bonificaciones) || '$0'}</td>
-              <td>${formatearMoneda(nomina.deducciones) || '$0'}</td>
-              <td>${formatearMoneda(nomina.salario_neto) || 'N/A'}</td>
-              <td>${formatearMoneda(nomina.costo_total_empresa) || 'N/A'}</td>
+              <td>${(nomina.horas_trabajadas || 0).toLocaleString('es-CO')}</td>
+              <td>${(nomina.horas_extras || 0).toLocaleString('es-CO')}</td>
+              <td>${(nomina.horas_nocturnas || 0).toLocaleString('es-CO')}</td>
+              <td>${(nomina.horas_dominicales || 0).toLocaleString('es-CO')}</td>
+              <td>${formatearMoneda(nomina.salario_base)}</td>
+              <td>${formatearMoneda(nomina.bonificaciones || 0)}</td>
+              <td>${formatearMoneda(nomina.deducciones || 0)}</td>
+              <td>${formatearMoneda(nomina.salario_neto)}</td>
+              <td>${formatearMoneda(nomina.costo_total_empresa)}</td>
               <td>
-                <span class="estado-badge estado-${nomina.estado?.toLowerCase() || 'generada'}">
-                  ${nomina.estado || 'Generada'}
-                </span>
+                <span class="badge badge-success">${nomina.estado || 'Generada'}</span>
               </td>
               <td>
-                <div class="acciones-nomina">
-                  <button class="btn-accion btn-ver" onclick="verNomina(${nomina.id})" title="Ver detalles">
+                <div class="action-buttons">
+                  <button class="btn btn-sm btn-info" onclick="verNomina(${nomina.id})" title="Ver detalles">
                     <i class="fas fa-eye"></i>
                   </button>
-                  <button class="btn-accion btn-eliminar" onclick="eliminarNomina(${nomina.id})" title="Eliminar">
+                  <button class="btn btn-sm btn-success" onclick="generarComprobantePDFIndividual()" title="Generar PDF">
+                    <i class="fas fa-file-pdf"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger" onclick="eliminarNomina(${nomina.id})" title="Eliminar">
                     <i class="fas fa-trash"></i>
                   </button>
                 </div>
               </td>
-            </tr>
-          `;
-        });
+            `;
+            tbody.appendChild(row);
+          });
 
-        tbody.innerHTML = html;
-        actualizarPaginacion();
-        actualizarMetricasDashboard();
+          // Actualizar información de paginación
+          actualizarPaginacion(nominasFiltradas.length);
+
+          // Actualizar métricas
+          actualizarMetricas();
+        } catch (error) {
+          console.error('❌ Error renderizando tabla de nóminas:', error);
+        }
       }
 
-      // Actualizar métricas del dashboard
-      function actualizarMetricasDashboard() {
+      // Función para actualizar paginación
+      function actualizarPaginacion(totalNominas) {
+        const totalPaginas = Math.ceil(totalNominas / nominasPorPagina);
+        const paginaInfo = document.getElementById('paginaInfo');
+        
+        if (paginaInfo) {
+          paginaInfo.textContent = `Página ${paginaActual} de ${totalPaginas}`;
+        }
+
+        // Habilitar/deshabilitar botones de paginación
+        const btnAnterior = document.querySelector('button[onclick="cambiarPagina(-1)"]');
+        const btnSiguiente = document.querySelector('button[onclick="cambiarPagina(1)"]');
+        
+        if (btnAnterior) {
+          btnAnterior.disabled = paginaActual <= 1;
+        }
+        
+        if (btnSiguiente) {
+          btnSiguiente.disabled = paginaActual >= totalPaginas;
+        }
+      }
+
+      // Función para cambiar página
+      window.cambiarPagina = function(direccion) {
+        const totalPaginas = Math.ceil(nominas.length / nominasPorPagina);
+        const nuevaPagina = paginaActual + direccion;
+        
+        if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+          paginaActual = nuevaPagina;
+          renderizarTablaNominas();
+        }
+      }
+
+      // Función para actualizar métricas
+      function actualizarMetricas() {
         try {
           // Total empleados
-          const totalEmpleados = empleados.length;
-          document.getElementById('totalEmpleados').textContent = totalEmpleados;
+          const totalEmpleadosElement = document.getElementById('totalEmpleados');
+          if (totalEmpleadosElement) {
+            totalEmpleadosElement.textContent = empleados.length;
+          }
 
           // Total nóminas
-          const totalNominas = nominas.length;
-          document.getElementById('totalNominas').textContent = totalNominas;
+          const totalNominasElement = document.getElementById('totalNominas');
+          if (totalNominasElement) {
+            totalNominasElement.textContent = nominas.length;
+          }
 
           // Costo total empresa
-          const costoTotalEmpresa = nominas.reduce((sum, n) => sum + (n.costo_total_empresa || 0), 0);
-          document.getElementById('costoTotalEmpresa').textContent = formatearMoneda(costoTotalEmpresa);
+          const costoTotalEmpresaElement = document.getElementById('costoTotalEmpresa');
+          if (costoTotalEmpresaElement) {
+            const costoTotal = nominas.reduce((sum, n) => sum + (n.costo_total_empresa || 0), 0);
+            costoTotalEmpresaElement.textContent = formatearMoneda(costoTotal);
+          }
 
           // Total horas trabajadas
-          const totalHorasTrabajadas = nominas.reduce((sum, n) => sum + (n.horas_trabajadas || 0), 0);
-          document.getElementById('totalHorasTrabajadas').textContent = `${totalHorasTrabajadas.toFixed(2)} hrs`;
+          const totalHorasTrabajadasElement = document.getElementById('totalHorasTrabajadas');
+          if (totalHorasTrabajadasElement) {
+            const totalHoras = nominas.reduce((sum, n) => sum + (n.horas_trabajadas || 0), 0);
+            totalHorasTrabajadasElement.textContent = `${totalHoras.toLocaleString('es-CO')} hrs`;
+          }
 
           // Promedio salario
-          const promedioSalario =
-            empleados.length > 0 ? empleados.reduce((sum, e) => sum + (e.salario || 0), 0) / empleados.length : 0;
-          document.getElementById('promedioSalario').textContent = formatearMoneda(promedioSalario);
+          const promedioSalarioElement = document.getElementById('promedioSalario');
+          if (promedioSalarioElement) {
+            const promedio = nominas.length > 0 ? 
+              nominas.reduce((sum, n) => sum + (n.salario_neto || 0), 0) / nominas.length : 0;
+            promedioSalarioElement.textContent = formatearMoneda(promedio);
+          }
 
           // Nóminas este mes
-          const mesActual = new Date().getMonth() + 1;
-          const anioActual = new Date().getFullYear();
-          const nominasEsteMes = nominas.filter((n) => n.mes === mesActual && n.anio === anioActual).length;
-          document.getElementById('nominasEsteMes').textContent = nominasEsteMes;
+          const nominasEsteMesElement = document.getElementById('nominasEsteMes');
+          if (nominasEsteMesElement) {
+            const mesActual = new Date().getMonth() + 1;
+            const anioActual = new Date().getFullYear();
+            const nominasMes = nominas.filter(n => n.mes === mesActual && n.anio === anioActual);
+            nominasEsteMesElement.textContent = nominasMes.length;
+          }
         } catch (error) {
           console.error('❌ Error actualizando métricas:', error);
         }
       }
 
-      // Filtrar nóminas
-      function filtrarNominas() {
-        const searchTerm = document.getElementById('searchInput')?.value?.toLowerCase() || '';
-        const empleadoId = document.getElementById('filterEmpleado')?.value || '';
-        const mes = document.getElementById('filterMes')?.value || '';
-        const anio = document.getElementById('filterAnio')?.value || '';
-
-        let nominasFiltradas = nominas.filter((nomina) => {
-          const empleado = empleados.find((e) => e.id === nomina.empleado_id);
-          const cumpleBusqueda = !searchTerm || empleado?.nombre?.toLowerCase().includes(searchTerm);
-
-          const cumpleEmpleado = !empleadoId || nomina.empleado_id == empleadoId;
-          const cumpleMes = !mes || nomina.mes == mes;
-          const cumpleAnio = !anio || nomina.anio == anio;
-
-          return cumpleBusqueda && cumpleEmpleado && cumpleMes && cumpleAnio;
-        });
-
-        // Actualizar paginación
-        paginaActual = 1;
-        renderizarTablaNominas();
-      }
-
-      // Filtrar nóminas por página
-      function filtrarNominasPorPagina() {
-        const startIndex = (paginaActual - 1) * nominasPorPagina;
-        const endIndex = startIndex + nominasPorPagina;
-        return nominas.slice(startIndex, endIndex);
-      }
-
-      // Actualizar paginación
-      function actualizarPaginacion() {
-        const totalPaginas = Math.ceil(nominas.length / nominasPorPagina);
-        const paginaInfo = document.getElementById('paginaInfo');
-
-        if (paginaInfo) {
-          paginaInfo.textContent = `Página ${paginaActual} de ${totalPaginas}`;
-        }
-      }
-
-      // Cambiar página
-      function cambiarPagina(direccion) {
-        const totalPaginas = Math.ceil(nominas.length / nominasPorPagina);
-
-        if (direccion === -1 && paginaActual > 1) {
-          paginaActual--;
-        } else if (direccion === 1 && paginaActual < totalPaginas) {
-          paginaActual++;
-        }
-
-        renderizarTablaNominas();
-      }
-
-      // Mostrar modal
-      function mostrarModal(modalId) {
+      // Mostrar modal (función global)
+      window.mostrarModal = function(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
           modal.classList.add('active');
@@ -994,8 +1774,8 @@
         document.getElementById('resumenNomina').style.display = 'block';
       }
 
-      // Generar nómina
-      function generarNomina(event) {
+      // Generar nómina (función global)
+      window.generarNomina = function(event) {
         if (event) {
           event.preventDefault();
         }
@@ -1141,8 +1921,8 @@
         }
       }
 
-      // Ver nómina
-      function verNomina(id) {
+      // Ver nómina (función global)
+      window.verNomina = function(id) {
         const nomina = nominas.find((n) => n.id === id);
         if (!nomina) {
           mostrarNotificacion('Nómina no encontrada', 'error');
@@ -1187,66 +1967,111 @@
           <strong>Fecha generación:</strong> ${new Date(nomina.fecha_generacion).toLocaleDateString('es-ES')}
         `;
 
-        mostrarNotificacion(info, 'info', 15000);
+        // Mostrar modal con información detallada
+        mostrarModalDetalleNomina(nomina, empleado);
       }
 
-      // Eliminar nómina
-      function eliminarNomina(id) {
-        const nomina = nominas.find((n) => n.id === id);
-        if (!nomina) {
-          mostrarNotificacion('Nómina no encontrada', 'error');
-          return;
+      // Mostrar modal de detalle de nómina
+      function mostrarModalDetalleNomina(nomina, empleado) {
+        const modal = document.getElementById('modalDetalleNomina');
+        if (modal) {
+          // Llenar contenido del modal
+          document.getElementById('detalleNominaTitulo').textContent = `Nómina #${nomina.id}`;
+          document.getElementById('detalleNominaEmpleado').textContent = empleado ? empleado.nombre : 'No encontrado';
+          document.getElementById('detalleNominaPeriodo').textContent = `${obtenerNombreMes(nomina.mes)} ${nomina.anio}`;
+          document.getElementById('detalleNominaTipo').textContent = nomina.tipo_nomina || 'Mensual';
+          
+          // Llenar detalles de horas
+          document.getElementById('detalleHorasNormales').textContent = `${nomina.horas_trabajadas || 0} hrs`;
+          document.getElementById('detalleHorasExtras').textContent = `${nomina.horas_extras || 0} hrs`;
+          document.getElementById('detalleHorasNocturnas').textContent = `${nomina.horas_nocturnas || 0} hrs`;
+          document.getElementById('detalleHorasDominicales').textContent = `${nomina.horas_dominicales || 0} hrs`;
+          
+          // Llenar valores monetarios
+          document.getElementById('detalleSalarioBase').textContent = formatearMoneda(nomina.salario_base);
+          document.getElementById('detalleSubtotalSalario').textContent = formatearMoneda(nomina.subtotal_salario || nomina.salario_base);
+          document.getElementById('detalleBonificaciones').textContent = formatearMoneda(nomina.bonificaciones);
+          document.getElementById('detalleDeducciones').textContent = formatearMoneda(nomina.deducciones);
+          document.getElementById('detalleSalarioNeto').textContent = formatearMoneda(nomina.salario_neto);
+          
+          // Llenar prestaciones sociales
+          document.getElementById('detalleCesantias').textContent = formatearMoneda(nomina.cesantias);
+          document.getElementById('detallePrimaServicios').textContent = formatearMoneda(nomina.prima_servicios);
+          document.getElementById('detalleInteresesCesantias').textContent = formatearMoneda(nomina.intereses_cesantias);
+          
+          // Llenar costos del empleador
+          document.getElementById('detalleSaludEmpleador').textContent = formatearMoneda(nomina.salud_empleador);
+          document.getElementById('detallePensionEmpleador').textContent = formatearMoneda(nomina.pension_empleador);
+          document.getElementById('detalleRiesgosLaborales').textContent = formatearMoneda(nomina.riesgos_laborales);
+          document.getElementById('detalleCostoTotalEmpresa').textContent = formatearMoneda(nomina.costo_total_empresa);
+          
+          // Mostrar modal
+          mostrarModal('modalDetalleNomina');
         }
-
-        // Mostrar modal de confirmación
-        document.getElementById('modalConfirmacionTitulo').textContent = 'Eliminar Nómina';
-        document.getElementById(
-          'modalConfirmacionMensaje'
-        ).textContent = `¿Estás seguro de que quieres eliminar la nómina del ${obtenerNombreMes(nomina.mes)} ${
-          nomina.anio
-        }? Esta acción no se puede deshacer.`;
-
-        // Configurar botón de confirmación
-        const btnConfirmar = document.getElementById('btnConfirmarAccion');
-        btnConfirmar.onclick = () => confirmarEliminarNomina(id);
-
-        // Mostrar modal
-        mostrarModal('modalConfirmacion');
       }
 
-      // Confirmar eliminación de nómina
-      function confirmarEliminarNomina(id) {
+      // Eliminar nómina (función global)
+      window.eliminarNomina = function(id) {
         try {
-          // Filtrar nómina a eliminar
-          nominas = nominas.filter((n) => n.id !== id);
+          const nomina = nominas.find((n) => n.id === id);
+          if (!nomina) {
+            mostrarNotificacion('Nómina no encontrada', 'error');
+            return;
+          }
 
-          // Guardar en localStorage
-          localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
+          const empleado = empleados.find((e) => e.id === nomina.empleado_id);
+          const nombreEmpleado = empleado ? empleado.nombre : 'Empleado no encontrado';
 
-          // Cerrar modal y actualizar tabla
-          cerrarModal('modalConfirmacion');
-          renderizarTablaNominas();
+          // Mostrar modal de confirmación
+          mostrarModalConfirmacion(
+            'Eliminar Nómina',
+            `¿Estás seguro de que quieres eliminar la nómina #${id} de ${nombreEmpleado}? Esta acción no se puede deshacer.`,
+            () => {
+              // Eliminar de la lista
+              nominas = nominas.filter((n) => n.id !== id);
 
-          mostrarNotificacion('Nómina eliminada correctamente', 'success');
+              // Guardar en localStorage
+              localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
+
+              // Actualizar tabla
+              renderizarTablaNominas();
+
+              // Cerrar modal
+              cerrarModal('modalConfirmacion');
+
+              // Mostrar notificación
+              mostrarNotificacion(`Nómina #${id} eliminada correctamente`, 'success');
+            }
+          );
         } catch (error) {
           console.error('❌ Error eliminando nómina:', error);
           mostrarNotificacion('Error eliminando nómina: ' + error.message, 'error');
         }
       }
 
-      // Guardar configuración de nómina
-      function guardarConfiguracionNomina() {
+      // Mostrar modal de confirmación (función global)
+      window.mostrarModalConfirmacion = function(titulo, mensaje, accion) {
+        document.getElementById('modalConfirmacionTitulo').textContent = titulo;
+        document.getElementById('modalConfirmacionMensaje').textContent = mensaje;
+        
+        const btnConfirmar = document.getElementById('btnConfirmarAccion');
+        btnConfirmar.onclick = accion;
+        
+        mostrarModal('modalConfirmacion');
+      }
+
+      // Guardar configuración de nómina (función global)
+      window.guardarConfiguracionNomina = function() {
         try {
           const configuracion = {
-            salarioMinimo: parseFloat(document.getElementById('salarioMinimo')?.value || 0),
-            porcentajeCesantias: parseFloat(document.getElementById('porcentajeCesantias')?.value || 0),
-            porcentajePrima: parseFloat(document.getElementById('porcentajePrima')?.value || 0),
-            porcentajeInteresesCesantias: parseFloat(
-              document.getElementById('porcentajeInteresesCesantias')?.value || 0
-            ),
-            porcentajeSalud: parseFloat(document.getElementById('porcentajeSalud')?.value || 0),
-            porcentajePension: parseFloat(document.getElementById('porcentajePension')?.value || 0),
-            fecha_actualizacion: new Date().toISOString(),
+            salarioMinimo: parseFloat(document.getElementById('salarioMinimo')?.value) || 0,
+            porcentajeCesantias: parseFloat(document.getElementById('porcentajeCesantias')?.value) || 8.33,
+            porcentajePrima: parseFloat(document.getElementById('porcentajePrima')?.value) || 8.33,
+            porcentajeInteresesCesantias: parseFloat(document.getElementById('porcentajeInteresesCesantias')?.value) || 12,
+            porcentajeSalud: parseFloat(document.getElementById('porcentajeSalud')?.value) || 4,
+            porcentajePension: parseFloat(document.getElementById('porcentajePension')?.value) || 4,
+            fechaActualizacion: new Date().toISOString(),
+            userId: currentUser?.username || currentUser?.email || 'axyra'
           };
 
           // Guardar en localStorage
@@ -1255,16 +2080,62 @@
           // Cerrar modal
           cerrarModal('modalConfiguracionNomina');
 
-          // Mostrar notificación de éxito
-          mostrarNotificacion('Configuración de nómina guardada correctamente', 'success');
+          // Mostrar notificación
+          mostrarNotificacion('Configuración guardada correctamente', 'success');
+
+          console.log('✅ Configuración guardada:', configuracion);
         } catch (error) {
           console.error('❌ Error guardando configuración:', error);
           mostrarNotificacion('Error guardando configuración: ' + error.message, 'error');
         }
       }
 
-      // Exportar nómina
-      function exportarNomina() {
+      // Generar reportes avanzados (función global)
+      window.generarReporte = function(tipoReporte) {
+        try {
+          let contenido = '';
+          let titulo = '';
+
+          switch (tipoReporte) {
+            case 'costosLaborales':
+              contenido = generarReporteCostosLaborales();
+              titulo = 'Reporte de Costos Laborales';
+              break;
+            case 'prestacionesSociales':
+              contenido = generarReportePrestacionesSociales();
+              titulo = 'Reporte de Prestaciones Sociales';
+              break;
+            case 'horasTrabajadas':
+              contenido = generarReporteHorasTrabajadas();
+              titulo = 'Análisis de Horas Trabajadas';
+              break;
+            case 'comparativoSalarios':
+              contenido = generarReporteComparativoSalarios();
+              titulo = 'Comparativo de Salarios';
+              break;
+            case 'tendenciasSalariales':
+              contenido = generarReporteTendenciasSalariales();
+              titulo = 'Tendencias Salariales';
+              break;
+            case 'resumenMensual':
+              contenido = generarReporteResumenMensual();
+              titulo = 'Resumen Mensual de Nómina';
+              break;
+            default:
+              mostrarNotificacion('Tipo de reporte no válido', 'error');
+              return;
+          }
+
+          // Mostrar reporte en nueva ventana
+          mostrarReporte(titulo, contenido);
+        } catch (error) {
+          console.error('❌ Error generando reporte:', error);
+          mostrarNotificacion('Error generando reporte: ' + error.message, 'error');
+        }
+      }
+
+      // Exportar nómina (función global)
+      window.exportarNomina = function() {
         try {
           if (nominas.length === 0) {
             mostrarNotificacion('No hay nóminas generadas para exportar', 'warning');
@@ -1345,8 +2216,8 @@
         }
       }
 
-      // Generar comprobante PDF
-      function generarComprobantePDF() {
+      // Generar comprobante PDF (función global)
+      window.generarComprobantePDF = function() {
         try {
           // Verificar si hay nóminas seleccionadas
           const nominasSeleccionadas = nominas.filter((n) => n.estado === 'Generada');
@@ -1633,17 +2504,15 @@
         return meses[mes - 1] || 'Mes inválido';
       }
 
-      function logout() {
+      // Función de logout (función global)
+      window.logout = function() {
         try {
-          // Usar el sistema de autenticación si está disponible
-          if (window.axyraAuth && typeof window.axyraAuth.logout === 'function') {
-            window.axyraAuth.logout();
-          } else {
-            // Fallback: limpiar localStorage manualmente
-            localStorage.removeItem('axyra_isolated_user');
-            localStorage.removeItem('axyra_firebase_user');
-            window.location.href = '../../login.html';
-          }
+          // Limpiar datos de sesión
+          localStorage.removeItem('axyra_isolated_user');
+          localStorage.removeItem('axyra_firebase_user');
+          
+          // Redirigir al login
+          window.location.href = '../../login.html';
         } catch (error) {
           console.error('❌ Error en logout:', error);
           window.location.href = '../../login.html';
@@ -1686,48 +2555,14 @@
         });
       };
 
-      // Generar reportes avanzados
-      function generarReporte(tipoReporte) {
-        try {
-          let contenido = '';
-          let titulo = '';
+      // Generar reportes (función global)
+      window.generarReportes = function() {
+        mostrarModal('modalReportesAvanzados');
+      }
 
-          switch (tipoReporte) {
-            case 'costosLaborales':
-              contenido = generarReporteCostosLaborales();
-              titulo = 'Reporte de Costos Laborales';
-              break;
-            case 'prestacionesSociales':
-              contenido = generarReportePrestacionesSociales();
-              titulo = 'Reporte de Prestaciones Sociales';
-              break;
-            case 'horasTrabajadas':
-              contenido = generarReporteHorasTrabajadas();
-              titulo = 'Análisis de Horas Trabajadas';
-              break;
-            case 'comparativoSalarios':
-              contenido = generarReporteComparativoSalarios();
-              titulo = 'Comparativo de Salarios';
-              break;
-            case 'tendenciasSalariales':
-              contenido = generarReporteTendenciasSalariales();
-              titulo = 'Tendencias Salariales';
-              break;
-            case 'resumenMensual':
-              contenido = generarReporteResumenMensual();
-              titulo = 'Resumen Mensual de Nómina';
-              break;
-            default:
-              mostrarNotificacion('Tipo de reporte no válido', 'error');
-              return;
-          }
-
-          // Mostrar reporte en nueva ventana
-          mostrarReporte(titulo, contenido);
-        } catch (error) {
-          console.error('❌ Error generando reporte:', error);
-          mostrarNotificacion('Error generando reporte: ' + error.message, 'error');
-        }
+      // Configuración de nómina (función global)
+      window.configuracionNomina = function() {
+        mostrarModal('modalConfiguracionNomina');
       }
 
       // Generar reporte de costos laborales
@@ -2497,6 +3332,342 @@
         } catch (error) {
           console.error('❌ Error configurando listener:', error);
         }
+      }
+
+      // Función para generar PDF individual (función global)
+      window.generarComprobantePDFIndividual = function() {
+        try {
+          // Obtener la nómina actual del modal
+          const modal = document.getElementById('modalDetalleNomina');
+          if (!modal) {
+            mostrarNotificacion('Error: Modal no encontrado', 'error');
+            return;
+          }
+
+          // Buscar la nómina por el título que contiene el ID
+          const titulo = document.getElementById('detalleNominaTitulo').textContent;
+          const nominaId = parseInt(titulo.match(/#(\d+)/)?.[1]);
+          
+          if (!nominaId) {
+            mostrarNotificacion('Error: No se pudo identificar la nómina', 'error');
+            return;
+          }
+
+          const nomina = nominas.find(n => n.id === nominaId);
+          if (!nomina) {
+            mostrarNotificacion('Nómina no encontrada', 'error');
+            return;
+          }
+
+          // Generar PDF individual
+          generarPDFIndividual(nomina);
+        } catch (error) {
+          console.error('❌ Error generando PDF individual:', error);
+          mostrarNotificacion('Error generando PDF: ' + error.message, 'error');
+        }
+      }
+
+      // Función para generar PDF individual
+      function generarPDFIndividual(nomina) {
+        try {
+          const empleado = empleados.find(e => e.id === nomina.empleado_id);
+          if (!empleado) {
+            mostrarNotificacion('Empleado no encontrado', 'error');
+            return;
+          }
+
+          // Crear contenido del PDF
+          const contenido = crearContenidoPDFIndividual(nomina, empleado);
+
+          // Generar PDF usando jsPDF si está disponible
+          if (typeof window.jspdf !== 'undefined') {
+            generarPDFConJsPDFIndividual(contenido, nomina, empleado);
+          } else {
+            // Fallback: mostrar contenido en nueva ventana para imprimir
+            mostrarContenidoParaImprimirIndividual(contenido, nomina, empleado);
+          }
+
+          mostrarNotificacion('PDF individual generado correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error generando PDF individual:', error);
+          mostrarNotificacion('Error generando PDF individual: ' + error.message, 'error');
+        }
+      }
+
+      // Crear contenido del PDF individual
+      function crearContenidoPDFIndividual(nomina, empleado) {
+        return `
+          <div style="page-break-after: always; padding: 20px; font-family: Arial, sans-serif;">
+            <div style="text-align: center; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 30px;">
+              <h1 style="color: #667eea; margin: 0;">COMPROBANTE DE PAGO DE NÓMINA</h1>
+              <h2 style="color: #764ba2; margin: 10px 0;">AXYRA - Sistema de Gestión</h2>
+              <p style="margin: 5px 0;">Período: ${obtenerNombreMes(nomina.mes)} ${nomina.anio}</p>
+              <p style="margin: 5px 0;">Fecha de generación: ${new Date(nomina.fecha_generacion).toLocaleDateString('es-ES')}</p>
+            </div>
+            
+            <div style="margin-bottom: 30px;">
+              <h3 style="color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px;">INFORMACIÓN DEL EMPLEADO</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; width: 30%;">Nombre:</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${empleado.nombre}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Cédula:</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${empleado.cedula || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Cargo:</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${empleado.cargo || 'N/A'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Tipo Contrato:</td>
+                  <td style="padding: 8px; border: 1px solid #ddd;">${empleado.tipo_contrato || 'N/A'}</td>
+                </tr>
+              </table>
+            </div>
+            
+            <div style="margin-bottom: 30px;">
+              <h3 style="color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px;">HORAS TRABAJADAS</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background-color: #f8f9fa;">
+                  <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Tipo de Hora</th>
+                  <th style="padding: 12px; border: 1px solid #ddd; text-align: center;">Cantidad</th>
+                  <th style="padding: 12px; border: 1px solid #ddd; text-align: right;">Valor</th>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; border: 1px solid #ddd;">Horas Normales</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">${nomina.horas_trabajadas || 0} hrs</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.salario_base)}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; border: 1px solid #ddd;">Horas Extras</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">${nomina.horas_extras || 0} hrs</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.valor_horas_extras || 0)}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; border: 1px solid #ddd;">Horas Nocturnas</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">${nomina.horas_nocturnas || 0} hrs</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.valor_horas_nocturnas || 0)}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; border: 1px solid #ddd;">Horas Dominicales</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: center;">${nomina.horas_dominicales || 0} hrs</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.valor_horas_dominicales || 0)}</td>
+                </tr>
+              </table>
+            </div>
+            
+            <div style="margin-bottom: 30px;">
+              <h3 style="color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px;">LIQUIDACIÓN DE SALARIOS</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background-color: #f8f9fa;">
+                  <th style="padding: 12px; border: 1px solid #ddd; text-align: left;">Concepto</th>
+                  <th style="padding: 12px; border: 1px solid #ddd; text-align: right;">Valor</th>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; border: 1px solid #ddd;">Salario Base</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.salario_base)}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; border: 1px solid #ddd;">Bonificaciones</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.bonificaciones || 0)}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 12px; border: 1px solid #ddd;">Subtotal</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.subtotal_salario || nomina.salario_base)}</td>
+                </tr>
+                <tr style="background-color: #f8f9fa;">
+                  <td style="padding: 12px; border: 1px solid #ddd; font-weight: bold;">Deducciones</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">-${formatearMoneda(nomina.deducciones || 0)}</td>
+                </tr>
+                <tr style="background-color: #e8f5e8; font-weight: bold;">
+                  <td style="padding: 12px; border: 1px solid #ddd;">SALARIO NETO</td>
+                  <td style="padding: 12px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.salario_neto)}</td>
+                </tr>
+              </table>
+            </div>
+            
+            <div style="margin-bottom: 30px;">
+              <h3 style="color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px;">PRESTACIONES SOCIALES</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Cesantías (8.33%):</td>
+                  <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.cesantias || 0)}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Prima de Servicios (8.33%):</td>
+                  <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.prima_servicios || 0)}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Intereses sobre Cesantías (12%):</td>
+                  <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${formatearMoneda(nomina.intereses_cesantias || 0)}</td>
+                </tr>
+              </table>
+            </div>
+            
+            <div style="text-align: center; margin-top: 50px; padding-top: 20px; border-top: 2px solid #333;">
+              <p style="margin: 5px 0; color: #666;">Este documento es generado automáticamente por el sistema AXYRA</p>
+              <p style="margin: 5px 0; color: #666;">Fecha de impresión: ${new Date().toLocaleDateString('es-ES')}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      // Generar PDF con jsPDF individual
+      function generarPDFConJsPDFIndividual(contenido, nomina, empleado) {
+        try {
+          // Crear nueva ventana para el PDF
+          const ventanaPDF = window.open('', '_blank');
+          ventanaPDF.document.write(`
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <title>Comprobante de Nómina - ${empleado.nombre}</title>
+                <style>
+                  body { 
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                    margin: 0; 
+                    padding: 20px; 
+                    background: white;
+                  }
+                  .pdf-container { 
+                    max-width: 800px; 
+                    margin: 0 auto; 
+                    background: white; 
+                    padding: 30px; 
+                  }
+                  .no-print { 
+                    text-align: center; 
+                    margin-bottom: 30px; 
+                    padding: 25px; 
+                    background: #f8fafc;
+                    border-radius: 12px;
+                    border: 1px solid #e2e8f0;
+                  }
+                  .btn { 
+                    padding: 12px 24px; 
+                    margin: 8px; 
+                    border: none; 
+                    border-radius: 8px; 
+                    cursor: pointer; 
+                    font-size: 14px; 
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                  }
+                  .btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+                  }
+                  .btn-primary { 
+                    background: #667eea; 
+                    color: white; 
+                  }
+                  .btn-secondary { 
+                    background: #6c757d; 
+                    color: white; 
+                  }
+                  @media print {
+                    .no-print { display: none; }
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="pdf-container">
+                  <div class="no-print">
+                    <h2>Comprobante de Nómina - ${empleado.nombre}</h2>
+                    <p>📄 Documento generado automáticamente por el sistema AXYRA</p>
+                    <p>💡 Presiona Ctrl+P para imprimir o guardar como PDF</p>
+                    <button class="btn btn-primary" onclick="window.print()">
+                      🖨️ Imprimir / Guardar PDF
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.close()">
+                      ❌ Cerrar
+                    </button>
+                  </div>
+                  ${contenido}
+                </div>
+              </body>
+            </html>
+          `);
+          ventanaPDF.document.close();
+        } catch (error) {
+          console.error('❌ Error generando PDF con jsPDF:', error);
+          // Fallback a impresión directa
+          mostrarContenidoParaImprimirIndividual(contenido, nomina, empleado);
+        }
+      }
+
+      // Mostrar contenido para imprimir individual
+      function mostrarContenidoParaImprimirIndividual(contenido, nomina, empleado) {
+        const ventanaImpresion = window.open('', '_blank');
+        ventanaImpresion.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Comprobante de Nómina - ${empleado.nombre}</title>
+              <style>
+                body { 
+                  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+                  margin: 0; 
+                  padding: 20px; 
+                  background: white;
+                }
+                .print-container { 
+                  max-width: 800px; 
+                  margin: 0 auto; 
+                  background: white; 
+                  padding: 30px; 
+                }
+                .no-print { 
+                  text-align: center; 
+                  margin-bottom: 30px; 
+                  padding: 25px; 
+                  background: #f8fafc;
+                  border-radius: 12px;
+                  border: 1px solid #e2e8f0;
+                }
+                .btn { 
+                  padding: 12px 24px; 
+                  margin: 8px; 
+                  border: none; 
+                  border-radius: 8px; 
+                  cursor: pointer; 
+                  font-size: 14px; 
+                  font-weight: 600;
+                }
+                .btn-primary { 
+                  background: #667eea; 
+                  color: white; 
+                }
+                .btn-secondary { 
+                  background: #6c757d; 
+                  color: white; 
+                }
+                @media print {
+                  .no-print { display: none; }
+                }
+              </style>
+            </head>
+            <body>
+              <div class="print-container">
+                <div class="no-print">
+                  <h2>Comprobante de Nómina - ${empleado.nombre}</h2>
+                  <p>📄 Documento generado automáticamente por el sistema AXYRA</p>
+                  <p>💡 Presiona Ctrl+P para imprimir o guardar como PDF</p>
+                  <button class="btn btn-primary" onclick="window.print()">
+                    🖨️ Imprimir / Guardar PDF
+                  </button>
+                  <button class="btn btn-secondary" onclick="window.close()">
+                    ❌ Cerrar
+                  </button>
+                </div>
+                ${contenido}
+              </div>
+            </body>
+          </html>
+        `);
+        ventanaImpresion.document.close();
       }
     </script>
   </body>
