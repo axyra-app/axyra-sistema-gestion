@@ -340,9 +340,14 @@
                   });
                 });
                 console.log(`✅ Empleados cargados desde Firebase: ${empleados.length}`);
+                
+                // Sincronizar con localStorage
+                localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
               } else {
                 console.log('ℹ️ No hay empleados en Firebase para este usuario');
                 empleados = [];
+                // Limpiar localStorage también
+                localStorage.removeItem('axyra_empleados');
               }
             } catch (firebaseError) {
               console.warn('⚠️ Error cargando desde Firebase, usando localStorage como fallback:', firebaseError);
@@ -359,6 +364,7 @@
                 } catch (error) {
                   console.error('Error parseando empleados de localStorage:', error);
                   empleados = [];
+                  localStorage.removeItem('axyra_empleados');
                 }
               } else {
                 empleados = [];
@@ -379,10 +385,31 @@
               } catch (error) {
                 console.error('Error parseando empleados de localStorage:', error);
                 empleados = [];
+                localStorage.removeItem('axyra_empleados');
               }
             } else {
               empleados = [];
               console.log('ℹ️ No hay empleados registrados. El usuario debe crear empleados reales.');
+            }
+          }
+
+          // Verificar que no haya empleados duplicados o inconsistentes
+          const empleadosUnicos = [];
+          const idsVistos = new Set();
+          
+          for (const empleado of empleados) {
+            if (empleado.id && !idsVistos.has(empleado.id)) {
+              idsVistos.add(empleado.id);
+              empleadosUnicos.push(empleado);
+            }
+          }
+          
+          if (empleadosUnicos.length !== empleados.length) {
+            console.log(`⚠️ Se encontraron empleados duplicados. Limpiando de ${empleados.length} a ${empleadosUnicos.length}`);
+            empleados = empleadosUnicos;
+            // Guardar la versión limpia
+            if (typeof firebase !== 'undefined' && firebase.firestore && currentUser.id) {
+              localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
             }
           }
 
@@ -418,17 +445,31 @@
             try {
               console.log('🔥 Guardando empleados en Firebase...');
               
-              // Guardar cada empleado en Firebase
+              // Obtener todos los empleados actuales del usuario en Firebase
+              const empleadosSnapshot = await firebase.firestore()
+                .collection('empleados')
+                .where('userId', '==', currentUser.id)
+                .get();
+              
+              // Crear un mapa de IDs existentes en Firebase
+              const empleadosExistentes = new Map();
+              empleadosSnapshot.forEach(doc => {
+                empleadosExistentes.set(doc.id, doc.data());
+              });
+              
+              // Procesar cada empleado local
               for (const empleado of empleados) {
                 if (empleado.id && typeof empleado.id === 'string' && empleado.id.length > 10) {
                   // Es un ID de Firebase, actualizar
-                  await firebase.firestore()
-                    .collection('empleados')
-                    .doc(empleado.id)
-                    .update({
-                      ...empleado,
-                      updatedAt: new Date().toISOString()
-                    });
+                  if (empleadosExistentes.has(empleado.id)) {
+                    await firebase.firestore()
+                      .collection('empleados')
+                      .doc(empleado.id)
+                      .update({
+                        ...empleado,
+                        updatedAt: new Date().toISOString()
+                      });
+                  }
                 } else {
                   // Es un nuevo empleado, crear
                   const docRef = await firebase.firestore()
@@ -444,7 +485,19 @@
                 }
               }
               
-              console.log('✅ Empleados guardados en Firebase');
+              // Eliminar empleados que ya no están en la lista local
+              for (const [firebaseId, empleadoFirebase] of empleadosExistentes) {
+                const empleadoLocal = empleados.find(e => e.id === firebaseId);
+                if (!empleadoLocal) {
+                  console.log('🗑️ Eliminando empleado obsoleto de Firebase:', firebaseId);
+                  await firebase.firestore()
+                    .collection('empleados')
+                    .doc(firebaseId)
+                    .delete();
+                }
+              }
+              
+              console.log('✅ Empleados sincronizados con Firebase');
             } catch (firebaseError) {
               console.warn('⚠️ Error guardando en Firebase, usando localStorage:', firebaseError);
             }
@@ -609,19 +662,58 @@
       }
 
       // Eliminar empleado
-      function eliminarEmpleado(id) {
+      async function eliminarEmpleado(id) {
         const empleado = empleados.find((e) => e.id === id);
         if (empleado) {
           document.getElementById(
             'confirmacionMensaje'
           ).textContent = `¿Estás seguro de que deseas eliminar a ${empleado.nombre}? Esta acción no se puede deshacer.`;
 
-          document.getElementById('btnConfirmar').onclick = () => {
-            empleados = empleados.filter((e) => e.id !== id);
-            guardarEmpleados();
-            mostrarEmpleados();
-            cerrarModal('modalConfirmacion');
-            mostrarMensaje('✅ Empleado eliminado correctamente', 'success');
+          document.getElementById('btnConfirmar').onclick = async () => {
+            try {
+              console.log('🗑️ Eliminando empleado:', id);
+              
+              // Obtener usuario actual
+              let currentUser = null;
+              if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+                currentUser = window.axyraIsolatedAuth.getCurrentUser();
+              } else {
+                const userData = localStorage.getItem('axyra_isolated_user');
+                if (userData) {
+                  currentUser = JSON.parse(userData);
+                }
+              }
+
+              // Eliminar de Firebase si está disponible
+              if (typeof firebase !== 'undefined' && firebase.firestore && currentUser && empleado.id && empleado.id.length > 10) {
+                try {
+                  console.log('🔥 Eliminando empleado de Firebase...');
+                  await firebase.firestore()
+                    .collection('empleados')
+                    .doc(empleado.id)
+                    .delete();
+                  console.log('✅ Empleado eliminado de Firebase');
+                } catch (firebaseError) {
+                  console.warn('⚠️ Error eliminando de Firebase:', firebaseError);
+                }
+              }
+
+              // Eliminar del array local
+              empleados = empleados.filter((e) => e.id !== id);
+              
+              // Guardar en localStorage
+              localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
+              
+              // Actualizar la vista
+              mostrarEmpleados();
+              cerrarModal('modalConfirmacion');
+              mostrarMensaje('✅ Empleado eliminado correctamente', 'success');
+              
+              console.log('✅ Empleado eliminado completamente del sistema');
+            } catch (error) {
+              console.error('❌ Error eliminando empleado:', error);
+              mostrarMensaje('❌ Error al eliminar empleado', 'error');
+            }
           };
 
           mostrarModal('modalConfirmacion');
@@ -1157,6 +1249,52 @@
         });
       };
 
+      // Función para limpiar datos inconsistentes
+      function limpiarDatosInconsistentes() {
+        try {
+          console.log('🧹 Limpiando datos inconsistentes...');
+          
+          // Obtener usuario actual
+          let currentUser = null;
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
+          } else {
+            const userData = localStorage.getItem('axyra_isolated_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          if (!currentUser) {
+            console.log('⚠️ No hay usuario autenticado para limpiar datos');
+            return;
+          }
+
+          // Limpiar empleados obsoletos del localStorage
+          const empleadosGuardados = localStorage.getItem('axyra_empleados');
+          if (empleadosGuardados) {
+            try {
+              const empleadosLocal = JSON.parse(empleadosGuardados);
+              const empleadosFiltrados = empleadosLocal.filter(emp => 
+                emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
+              );
+              
+              if (empleadosFiltrados.length !== empleadosLocal.length) {
+                console.log(`🧹 Limpiando empleados obsoletos: ${empleadosLocal.length} -> ${empleadosFiltrados.length}`);
+                localStorage.setItem('axyra_empleados', JSON.stringify(empleadosFiltrados));
+              }
+            } catch (error) {
+              console.error('Error limpiando empleados obsoletos:', error);
+              localStorage.removeItem('axyra_empleados');
+            }
+          }
+
+          console.log('✅ Limpieza de datos completada');
+        } catch (error) {
+          console.error('❌ Error limpiando datos:', error);
+        }
+      }
+
       // Inicialización
       window.addEventListener('load', async () => {
         try {
@@ -1171,6 +1309,9 @@
             // Cargar empleados
             await cargarEmpleados();
 
+            // Limpiar datos inconsistentes después de cargar
+            setTimeout(limpiarDatosInconsistentes, 1000);
+
             console.log('✅ Módulo de empleados cargado correctamente');
           } else {
             console.log('❌ Usuario no autenticado, redirigiendo al login...');
@@ -1179,6 +1320,14 @@
         } catch (error) {
           console.error('❌ Error inicializando módulo de empleados:', error);
           window.location.href = '../../login.html';
+        }
+      });
+
+      // Limpiar datos cuando la página se vuelve visible
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+          console.log('👁️ Página visible, verificando datos...');
+          setTimeout(limpiarDatosInconsistentes, 500);
         }
       });
     </script>

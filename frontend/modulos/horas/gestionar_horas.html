@@ -706,6 +706,8 @@
                 // Cargar en los selects
                 cargarEmpleadosEnSelects(empleadosFirebase);
                 return;
+              } else {
+                console.log('ℹ️ No hay empleados en Firebase para este usuario');
               }
             } catch (firebaseError) {
               console.log('ℹ️ Firebase no disponible, usando localStorage:', firebaseError.message);
@@ -719,15 +721,34 @@
               const empleados = JSON.parse(empleadosData);
               console.log(`📦 Empleados cargados desde localStorage: ${empleados.length}`);
 
-              // Filtrar por usuario actual si es necesario
+              // Filtrar por usuario actual
               const empleadosFiltrados = empleados.filter(
-                (emp) => !emp.userId || emp.userId === currentUser.username || emp.userId === currentUser.email
+                (emp) => 
+                  emp.userId === currentUser.username || 
+                  emp.userId === currentUser.email || 
+                  emp.userId === currentUser.id ||
+                  !emp.userId // Incluir empleados sin userId (datos globales)
               );
 
               console.log(`✅ Empleados filtrados para usuario actual: ${empleadosFiltrados.length}`);
 
+              // Verificar que no haya empleados duplicados
+              const empleadosUnicos = [];
+              const idsVistos = new Set();
+              
+              for (const empleado of empleadosFiltrados) {
+                if (empleado.id && !idsVistos.has(empleado.id)) {
+                  idsVistos.add(empleado.id);
+                  empleadosUnicos.push(empleado);
+                }
+              }
+
+              if (empleadosUnicos.length !== empleadosFiltrados.length) {
+                console.log(`⚠️ Se encontraron empleados duplicados. Limpiando de ${empleadosFiltrados.length} a ${empleadosUnicos.length}`);
+              }
+
               // Cargar en los selects
-              cargarEmpleadosEnSelects(empleadosFiltrados);
+              cargarEmpleadosEnSelects(empleadosUnicos);
             } catch (error) {
               console.error('❌ Error parseando empleados de localStorage:', error);
               cargarEmpleadosEnSelects([]);
