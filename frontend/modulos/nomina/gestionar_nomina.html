@@ -478,37 +478,79 @@
       }
 
       .metric-card {
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 25px;
         text-align: center;
         transition: all 0.3s ease;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
       }
 
       .metric-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        border-color: #667eea;
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+      }
+
+      .metric-card:hover::before {
+        opacity: 1;
+      }
+
+      .metric-card:nth-child(1) {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .metric-card:nth-child(2) {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+
+      .metric-card:nth-child(3) {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+
+      .metric-card:nth-child(4) {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+      }
+
+      .metric-card:nth-child(5) {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
       }
 
       .metric-icon {
-        font-size: 2rem;
-        color: #667eea;
+        font-size: 2.5rem;
+        color: rgba(255, 255, 255, 0.9);
         margin-bottom: 15px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
 
       .metric-value {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #1e3a8a;
-        margin-bottom: 5px;
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
 
       .metric-label {
-        color: #64748b;
+        color: rgba(255, 255, 255, 0.9);
         font-size: 0.9rem;
-        font-weight: 500;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
       /* Estilos para filtros */
@@ -1161,14 +1203,166 @@
         configurarEventos();
       });
 
-      // Función de inicialización
+      // Función para obtener nombre del mes
+      function obtenerNombreMes(mes) {
+        const meses = [
+          'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ];
+        return meses[mes - 1] || 'Mes inválido';
+      }
+
+      // Función para formatear moneda
+      function formatearMoneda(valor) {
+        if (typeof valor !== 'number' || isNaN(valor)) {
+          return '$0';
+        }
+        return new Intl.NumberFormat('es-CO', {
+          style: 'currency',
+          currency: 'COP',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }).format(valor);
+      }
+
+      // Función para cargar datos desde Firebase
+      async function cargarDatosFirebase() {
+        try {
+          console.log('🔄 Cargando datos desde Firebase...');
+          
+          // Verificar si Firebase está disponible
+          if (typeof firebase === 'undefined' || !firebase.firestore) {
+            console.warn('⚠️ Firebase no disponible, usando localStorage como fallback');
+            await cargarDatosLocalStorage();
+            return;
+          }
+
+          const db = firebase.firestore();
+          const userId = currentUser?.id || currentUser?.username || currentUser?.email;
+
+          if (!userId) {
+            console.warn('⚠️ No se puede identificar usuario, usando localStorage');
+            await cargarDatosLocalStorage();
+            return;
+          }
+
+          // Cargar empleados desde Firebase
+          try {
+            const empleadosSnapshot = await db.collection('empleados')
+              .where('userId', '==', userId)
+              .get();
+            
+            empleados = empleadosSnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            console.log(`✅ ${empleados.length} empleados cargados desde Firebase`);
+          } catch (error) {
+            console.warn('⚠️ Error cargando empleados desde Firebase:', error);
+            empleados = [];
+          }
+
+          // Cargar horas desde Firebase
+          try {
+            const horasSnapshot = await db.collection('horas')
+              .where('userId', '==', userId)
+              .get();
+            
+            horas = horasSnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            console.log(`✅ ${horas.length} horas cargadas desde Firebase`);
+          } catch (error) {
+            console.warn('⚠️ Error cargando horas desde Firebase:', error);
+            horas = [];
+          }
+
+          // Cargar nóminas desde Firebase
+          try {
+            const nominasSnapshot = await db.collection('nominas')
+              .where('userId', '==', userId)
+              .get();
+            
+            nominas = nominasSnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            console.log(`✅ ${nominas.length} nóminas cargadas desde Firebase`);
+          } catch (error) {
+            console.warn('⚠️ Error cargando nóminas desde Firebase:', error);
+            nominas = [];
+          }
+
+          // Guardar en localStorage como backup
+          localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
+          localStorage.setItem('axyra_horas', JSON.stringify(horas));
+          localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
+
+        } catch (error) {
+          console.error('❌ Error cargando datos desde Firebase:', error);
+          // Fallback a localStorage
+          await cargarDatosLocalStorage();
+        }
+      }
+
+      // Función para cargar datos desde localStorage (fallback)
+      async function cargarDatosLocalStorage() {
+        try {
+          console.log('🔄 Cargando datos desde localStorage...');
+          
+          // Cargar empleados
+          const empleadosData = localStorage.getItem('axyra_empleados');
+          if (empleadosData) {
+            empleados = JSON.parse(empleadosData);
+            // Filtrar por usuario actual
+            empleados = empleados.filter((e) => {
+              if (!e.userId) return true; // Datos globales
+              return e.userId === currentUser?.username || e.userId === currentUser?.email;
+            });
+          }
+
+          // Cargar horas
+          const horasData = localStorage.getItem('axyra_horas');
+          if (horasData) {
+            horas = JSON.parse(horasData);
+            // Filtrar por usuario actual
+            horas = horas.filter((h) => {
+              if (!h.userId) return true; // Datos globales
+              return h.userId === currentUser?.username || h.userId === currentUser?.email;
+            });
+          }
+
+          // Cargar nóminas
+          const nominasData = localStorage.getItem('axyra_nominas');
+          if (nominasData) {
+            nominas = JSON.parse(nominasData);
+            // Filtrar por usuario actual
+            nominas = nominas.filter((n) => {
+              if (!n.userId) return true; // Datos globales
+              return n.userId === currentUser?.username || n.userId === currentUser?.email;
+            });
+          }
+
+          console.log(
+            `✅ Datos cargados desde localStorage: ${empleados.length} empleados, ${horas.length} horas, ${nominas.length} nóminas`
+          );
+          
+        } catch (error) {
+          console.error('❌ Error cargando datos desde localStorage:', error);
+        }
+      }
+
+      // Función de inicialización mejorada
       async function inicializarNomina() {
         try {
+          console.log('🚀 Inicializando módulo de nómina...');
+          
           // Verificar autenticación
           await verificarAutenticacion();
 
-          // Cargar datos
-          await cargarDatos();
+          // Intentar cargar desde Firebase primero
+          await cargarDatosFirebase();
 
           // Llenar selects
           llenarSelects();
@@ -1354,15 +1548,6 @@
         } catch (error) {
           console.error('❌ Error configurando eventos:', error);
         }
-      }
-
-      // Función para obtener nombre del mes
-      function obtenerNombreMes(mes) {
-        const meses = [
-          'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-        ];
-        return meses[mes - 1] || 'Mes inválido';
       }
 
       // Función para formatear moneda
@@ -2142,74 +2327,94 @@
             return;
           }
 
-          if (typeof window.axyraExcelExport !== 'undefined' && window.axyraExcelExport.exportarNomina) {
-            window.axyraExcelExport.exportarNomina();
-          } else {
-            // Fallback: exportar manualmente con estilos básicos
-            const data = [
-              ['REPORTE DE NÓMINAS - Villa Venecia'],
-              ['EMPRESA: Villa Venecia'],
-              ['NIT: NIT Pendiente'],
-              [`FECHA DE EXPORTACIÓN: ${new Date().toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })}`],
-              [],
-              ['ID', 'Empleado', 'Cédula', 'Período', 'Horas Normales', 'Horas Extras', 'Horas Nocturnas', 'Horas Dominicales', 'Salario Base', 'Bonificaciones', 'Deducciones', 'Salario Neto', 'Costo Empresa', 'Estado', 'Fecha Generación']
-            ];
+          console.log('📊 Iniciando exportación de nóminas...');
+          console.log('📋 Total de nóminas a exportar:', nominas.length);
 
-            nominas.forEach((n) => {
-              const empleado = empleados.find((e) => e.id === n.empleado_id);
-              data.push([
-                n.id || 'N/A',
-                empleado ? empleado.nombre : 'Empleado no encontrado',
-                empleado ? empleado.cedula || 'N/A' : 'N/A',
-                `${obtenerNombreMes(n.mes)} ${n.anio}`,
-                (n.horas_trabajadas || 0).toLocaleString('es-CO'),
-                (n.horas_extras || 0).toLocaleString('es-CO'),
-                (n.horas_nocturnas || 0).toLocaleString('es-CO'),
-                (n.horas_dominicales || 0).toLocaleString('es-CO'),
-                formatearMoneda(n.salario_base),
-                formatearMoneda(n.bonificaciones || 0),
-                formatearMoneda(n.deducciones || 0),
-                formatearMoneda(n.salario_neto),
-                formatearMoneda(n.costo_total_empresa),
-                n.estado || 'Generada',
-                new Date(n.fecha_generacion).toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })
-              ]);
-            });
-
-            // Agregar totales
-            data.push([]);
-            data.push(['TOTALES', '', '', '', 
-              nominas.reduce((sum, n) => sum + (n.horas_trabajadas || 0), 0).toLocaleString('es-CO'),
-              nominas.reduce((sum, n) => sum + (n.horas_extras || 0), 0).toLocaleString('es-CO'),
-              nominas.reduce((sum, n) => sum + (n.horas_nocturnas || 0), 0).toLocaleString('es-CO'),
-              nominas.reduce((sum, n) => sum + (n.horas_dominicales || 0), 0).toLocaleString('es-CO'),
-              formatearMoneda(nominas.reduce((sum, n) => sum + (n.salario_base || 0), 0)),
-              formatearMoneda(nominas.reduce((sum, n) => sum + (n.bonificaciones || 0), 0)),
-              formatearMoneda(nominas.reduce((sum, n) => sum + (n.deducciones || 0), 0)),
-              formatearMoneda(nominas.reduce((sum, n) => sum + (n.salario_neto || 0), 0)),
-              formatearMoneda(nominas.reduce((sum, n) => sum + (n.costo_total_empresa || 0), 0)),
-              '', ''
-            ]);
-
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Nóminas');
-
-            // Ajustar ancho de columnas
-            ws['!cols'] = [
-              { width: 8 }, { width: 25 }, { width: 15 }, { width: 15 },
-              { width: 15 }, { width: 15 }, { width: 15 }, { width: 15 },
-              { width: 18 }, { width: 18 }, { width: 18 }, { width: 18 },
-              { width: 18 }, { width: 12 }, { width: 20 }
-            ];
-
-            const now = new Date();
-            const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
-            const fileName = `REPORTE_NOMINAS_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime.getHours().toString().padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
-            
-            XLSX.writeFile(wb, fileName);
-            mostrarNotificacion('Nóminas exportadas correctamente con formato profesional', 'success');
+          // Verificar si XLSX está disponible
+          if (typeof XLSX === 'undefined') {
+            mostrarNotificacion('Error: Librería XLSX no está disponible', 'error');
+            return;
           }
+
+          // Crear datos para exportar
+          const data = [
+            ['REPORTE DE NÓMINAS - Villa Venecia'],
+            ['EMPRESA: Villa Venecia'],
+            ['NIT: NIT Pendiente'],
+            [`FECHA DE EXPORTACIÓN: ${new Date().toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })}`],
+            [],
+            ['ID', 'Empleado', 'Cédula', 'Período', 'Horas Normales', 'Horas Extras', 'Horas Nocturnas', 'Horas Dominicales', 'Salario Base', 'Bonificaciones', 'Deducciones', 'Salario Neto', 'Costo Empresa', 'Estado', 'Fecha Generación']
+          ];
+
+          // Agregar datos de cada nómina
+          nominas.forEach((n, index) => {
+            const empleado = empleados.find((e) => e.id === n.empleado_id);
+            console.log(`📝 Procesando nómina ${index + 1}:`, n.id, empleado?.nombre);
+            
+            data.push([
+              n.id || 'N/A',
+              empleado ? empleado.nombre : 'Empleado no encontrado',
+              empleado ? empleado.cedula || 'N/A' : 'N/A',
+              `${obtenerNombreMes(n.mes)} ${n.anio}`,
+              (n.horas_trabajadas || 0).toLocaleString('es-CO'),
+              (n.horas_extras || 0).toLocaleString('es-CO'),
+              (n.horas_nocturnas || 0).toLocaleString('es-CO'),
+              (n.horas_dominicales || 0).toLocaleString('es-CO'),
+              formatearMoneda(n.salario_base),
+              formatearMoneda(n.bonificaciones || 0),
+              formatearMoneda(n.deducciones || 0),
+              formatearMoneda(n.salario_neto),
+              formatearMoneda(n.costo_total_empresa),
+              n.estado || 'Generada',
+              new Date(n.fecha_generacion).toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })
+            ]);
+          });
+
+          // Agregar totales
+          data.push([]);
+          const totales = [
+            'TOTALES', '', '', '', 
+            nominas.reduce((sum, n) => sum + (n.horas_trabajadas || 0), 0).toLocaleString('es-CO'),
+            nominas.reduce((sum, n) => sum + (n.horas_extras || 0), 0).toLocaleString('es-CO'),
+            nominas.reduce((sum, n) => sum + (n.horas_nocturnas || 0), 0).toLocaleString('es-CO'),
+            nominas.reduce((sum, n) => sum + (n.horas_dominicales || 0), 0).toLocaleString('es-CO'),
+            formatearMoneda(nominas.reduce((sum, n) => sum + (n.salario_base || 0), 0)),
+            formatearMoneda(nominas.reduce((sum, n) => sum + (n.bonificaciones || 0), 0)),
+            formatearMoneda(nominas.reduce((sum, n) => sum + (n.deducciones || 0), 0)),
+            formatearMoneda(nominas.reduce((sum, n) => sum + (n.salario_neto || 0), 0)),
+            formatearMoneda(nominas.reduce((sum, n) => sum + (n.costo_total_empresa || 0), 0)),
+            '', ''
+          ];
+          data.push(totales);
+
+          console.log('📊 Datos preparados para exportación');
+
+          // Crear hoja de trabajo
+          const ws = XLSX.utils.aoa_to_sheet(data);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Nóminas');
+
+          // Ajustar ancho de columnas
+          ws['!cols'] = [
+            { width: 8 }, { width: 25 }, { width: 15 }, { width: 15 },
+            { width: 15 }, { width: 15 }, { width: 15 }, { width: 15 },
+            { width: 18 }, { width: 18 }, { width: 18 }, { width: 18 },
+            { width: 18 }, { width: 12 }, { width: 20 }
+          ];
+
+          // Generar nombre de archivo
+          const now = new Date();
+          const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+          const fileName = `REPORTE_NOMINAS_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime.getHours().toString().padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
+          
+          console.log('💾 Descargando archivo:', fileName);
+
+          // Descargar archivo
+          XLSX.writeFile(wb, fileName);
+          
+          console.log('✅ Exportación completada exitosamente');
+          mostrarNotificacion('Nóminas exportadas correctamente con formato profesional', 'success');
+          
         } catch (error) {
           console.error('❌ Error exportando nóminas:', error);
           mostrarNotificacion('Error exportando nóminas: ' + error.message, 'error');
@@ -3672,3 +3877,4 @@
     </script>
   </body>
 </html>
+
