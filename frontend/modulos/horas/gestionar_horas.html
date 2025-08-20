@@ -722,16 +722,18 @@
               const empleados = JSON.parse(empleadosData);
               console.log(`📦 Empleados cargados desde localStorage: ${empleados.length}`);
 
-              // Filtrar por usuario actual
+              // Filtrar por usuario actual - INCLUIR TODOS LOS EMPLEADOS PARA PRUEBAS
               const empleadosFiltrados = empleados.filter(
                 (emp) =>
                   emp.userId === currentUser.username ||
                   emp.userId === currentUser.email ||
                   emp.userId === currentUser.id ||
-                  !emp.userId // Incluir empleados sin userId (datos globales)
+                  !emp.userId || // Incluir empleados sin userId (datos globales)
+                  emp.userId === undefined // Incluir empleados sin userId definido
               );
 
               console.log(`✅ Empleados filtrados para usuario actual: ${empleadosFiltrados.length}`);
+              console.log('🔍 Empleados filtrados:', empleadosFiltrados);
 
               // Verificar que no haya empleados duplicados
               const empleadosUnicos = [];
@@ -1733,8 +1735,7 @@
       // Evento para formulario de comprobantes
       document.getElementById('formComprobante').addEventListener('submit', function (e) {
         e.preventDefault();
-        const formData = new FormData(this);
-        generarComprobantePDF(formData);
+        generarComprobante();
       });
 
       // Cerrar modal al hacer clic fuera
@@ -1768,9 +1769,18 @@
       async function generarComprobante() {
         try {
           const empleadoId = document.getElementById('empleadoComprobante').value;
+          const tipoContrato = document.getElementById('tipoContrato').value;
+          const salarioBase = parseFloat(document.getElementById('salarioBase').value) || 0;
+          const deudaComentario = document.getElementById('deudaComentario').value;
+          const deudaValor = parseFloat(document.getElementById('deudaValor').value) || 0;
 
           if (!empleadoId) {
             mostrarMensaje('❌ Por favor selecciona un empleado', 'error');
+            return;
+          }
+
+          if (!salarioBase || salarioBase <= 0) {
+            mostrarMensaje('❌ Por favor ingresa un salario base válido', 'error');
             return;
           }
 
@@ -1791,26 +1801,76 @@
 
           console.log('📋 Generando comprobante para:', empleado.nombre);
 
-          // Obtener horas del empleado
+          // Obtener horas del empleado del mes actual
           const horasData = localStorage.getItem('axyra_horas') || '[]';
           const horas = JSON.parse(horasData);
-          const horasEmpleado = horas.filter((h) => h.empleadoId === empleadoId);
+          const mesActual = new Date().getMonth();
+          const añoActual = new Date().getFullYear();
 
-          if (horasEmpleado.length === 0) {
-            mostrarMensaje('❌ No hay horas registradas para este empleado', 'warning');
-            return;
+          const horasEmpleado = horas.filter((h) => {
+            if (h.empleadoId !== empleadoId) return false;
+            const fechaHora = new Date(h.fecha);
+            return fechaHora.getMonth() === mesActual && fechaHora.getFullYear() === añoActual;
+          });
+
+          // Calcular totales de horas
+          const totalHoras = horasEmpleado.reduce((sum, h) => sum + (parseFloat(h.horasOrdinarias) || 0), 0);
+          const totalHorasExtra = horasEmpleado.reduce((sum, h) => sum + (parseFloat(h.horasExtra) || 0), 0);
+          const totalHorasNocturnas = horasEmpleado.reduce((sum, h) => sum + (parseFloat(h.horasNocturnas) || 0), 0);
+          const totalHorasDominicales = horasEmpleado.reduce(
+            (sum, h) => sum + (parseFloat(h.horasDominicales) || 0),
+            0
+          );
+          const totalHorasFestivas = horasEmpleado.reduce((sum, h) => sum + (parseFloat(h.horasFestivas) || 0), 0);
+
+          // Calcular salario según tipo de contrato
+          let salarioNeto = 0;
+          let valorHora = 0;
+
+          if (tipoContrato === 'FIJO') {
+            // Empleado fijo: salario base + bonificaciones por horas extra
+            salarioNeto = salarioBase;
+            valorHora = salarioBase / 240; // 240 horas mensuales
+
+            // Agregar bonificaciones por horas extra
+            if (totalHorasExtra > 0) {
+              salarioNeto += totalHorasExtra * valorHora * 0.25; // 25% extra por horas extra
+            }
+            if (totalHorasNocturnas > 0) {
+              salarioNeto += totalHorasNocturnas * valorHora * 0.35; // 35% extra por horas nocturnas
+            }
+            if (totalHorasDominicales > 0) {
+              salarioNeto += totalHorasDominicales * valorHora * 0.75; // 75% extra por horas dominicales
+            }
+            if (totalHorasFestivas > 0) {
+              salarioNeto += totalHorasFestivas * valorHora * 0.75; // 75% extra por horas festivas
+            }
+          } else {
+            // Empleado por horas: calcular por horas trabajadas
+            valorHora = salarioBase / 240; // 240 horas mensuales
+            salarioNeto =
+              (totalHoras + totalHorasExtra + totalHorasNocturnas + totalHorasDominicales + totalHorasFestivas) *
+              valorHora;
+
+            // Agregar bonificaciones
+            if (totalHorasExtra > 0) {
+              salarioNeto += totalHorasExtra * valorHora * 0.25;
+            }
+            if (totalHorasNocturnas > 0) {
+              salarioNeto += totalHorasNocturnas * valorHora * 0.35;
+            }
+            if (totalHorasDominicales > 0) {
+              salarioNeto += totalHorasDominicales * valorHora * 0.75;
+            }
+            if (totalHorasFestivas > 0) {
+              salarioNeto += totalHorasFestivas * valorHora * 0.75;
+            }
           }
 
-          // Calcular totales
-          const totalHoras = horasEmpleado.reduce((sum, h) => sum + (h.horasOrdinarias || 0), 0);
-          const totalHorasExtra = horasEmpleado.reduce((sum, h) => sum + (h.horasExtra || 0), 0);
-          const totalHorasFestivas = horasEmpleado.reduce((sum, h) => sum + (h.horasFestivas || 0), 0);
-
-          // Calcular salario
-          const salarioBase = empleado.salario || 0;
-          const valorHora = salarioBase / 240; // 240 horas mensuales
-          const salarioNeto =
-            totalHoras * valorHora + totalHorasExtra * valorHora * 1.25 + totalHorasFestivas * valorHora * 1.75;
+          // Descontar deuda si existe
+          if (deudaValor > 0) {
+            salarioNeto -= deudaValor;
+          }
 
           // Crear comprobante
           const comprobante = {
@@ -1818,15 +1878,20 @@
             empleadoId: empleado.id,
             empleadoNombre: empleado.nombre,
             empleadoCedula: empleado.cedula || 'N/A',
-            tipoContrato: empleado.tipoContrato || 'TEMPORAL',
+            tipoContrato: tipoContrato,
             salarioBase: salarioBase,
-            totalHoras: totalHoras + totalHorasExtra + totalHorasFestivas,
+            totalHoras: totalHoras + totalHorasExtra + totalHorasNocturnas + totalHorasDominicales + totalHorasFestivas,
             horasOrdinarias: totalHoras,
             horasExtra: totalHorasExtra,
+            horasNocturnas: totalHorasNocturnas,
+            horasDominicales: totalHorasDominicales,
             horasFestivas: totalHorasFestivas,
             valorHora: valorHora,
-            salarioNeto: salarioNeto,
+            salarioNeto: Math.max(0, salarioNeto), // No permitir salario negativo
+            deudaComentario: deudaComentario,
+            deudaValor: deudaValor,
             fecha: new Date().toISOString(),
+            fechaGeneracion: new Date().toLocaleDateString('es-ES'),
             userId: getCurrentUserId(),
           };
 
@@ -1841,11 +1906,158 @@
 
           // Limpiar selección
           document.getElementById('empleadoComprobante').value = '';
+          document.getElementById('salarioBase').value = '';
+          document.getElementById('deudaComentario').value = '';
+          document.getElementById('deudaValor').value = '';
 
           console.log('✅ Comprobante generado:', comprobante);
+
+          // Mostrar resumen del comprobante
+          mostrarResumenComprobante(comprobante);
         } catch (error) {
           console.error('❌ Error generando comprobante:', error);
           mostrarMensaje('❌ Error al generar comprobante: ' + error.message, 'error');
+        }
+      }
+
+      // Función para mostrar resumen del comprobante generado
+      function mostrarResumenComprobante(comprobante) {
+        const resumenHTML = `
+          <div class="axyra-comprobante-resumen">
+            <h4>✅ Comprobante Generado Exitosamente</h4>
+            <div class="axyra-resumen-details">
+              <p><strong>Empleado:</strong> ${comprobante.empleadoNombre}</p>
+              <p><strong>Cédula:</strong> ${comprobante.empleadoCedula}</p>
+              <p><strong>Tipo de Contrato:</strong> ${comprobante.tipoContrato}</p>
+              <p><strong>Salario Base:</strong> $${comprobante.salarioBase.toLocaleString()}</p>
+              <p><strong>Total Horas:</strong> ${comprobante.totalHoras}</p>
+              <p><strong>Salario Neto:</strong> $${comprobante.salarioNeto.toLocaleString()}</p>
+              ${
+                comprobante.deudaValor > 0
+                  ? `<p><strong>Deuda Descontada:</strong> $${comprobante.deudaValor.toLocaleString()}</p>`
+                  : ''
+              }
+              <p><strong>Fecha:</strong> ${comprobante.fechaGeneracion}</p>
+            </div>
+          </div>
+        `;
+
+        // Crear modal de resumen
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal show';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>Comprobante Generado</h3>
+              <span class="axyra-modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+            </div>
+            <div class="axyra-modal-body">
+              ${resumenHTML}
+            </div>
+            <div class="axyra-modal-footer">
+              <button class="axyra-btn axyra-btn-primary" onclick="descargarComprobante('${comprobante.id}')">
+                <i class="fas fa-download"></i> Descargar PDF
+              </button>
+              <button class="axyra-btn axyra-btn-ghost" onclick="this.parentElement.parentElement.parentElement.remove()">
+                Cerrar
+              </button>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+      }
+
+      // Función para descargar comprobante (placeholder)
+      function descargarComprobante(comprobanteId) {
+        mostrarMensaje('📋 Función de descarga de PDF en desarrollo', 'info');
+        // Aquí se implementaría la generación real del PDF
+      }
+
+      // Función para previsualizar comprobante
+      function previsualizarComprobante() {
+        try {
+          const empleadoId = document.getElementById('empleadoComprobante').value;
+          const tipoContrato = document.getElementById('tipoContrato').value;
+          const salarioBase = parseFloat(document.getElementById('salarioBase').value) || 0;
+          const deudaComentario = document.getElementById('deudaComentario').value;
+          const deudaValor = parseFloat(document.getElementById('deudaValor').value) || 0;
+
+          if (!empleadoId) {
+            mostrarMensaje('❌ Por favor selecciona un empleado', 'warning');
+            return;
+          }
+
+          if (!salarioBase || salarioBase <= 0) {
+            mostrarMensaje('❌ Por favor ingresa un salario base válido', 'warning');
+            return;
+          }
+
+          // Obtener datos del empleado
+          const empleadosData = localStorage.getItem('axyra_empleados');
+          if (!empleadosData) {
+            mostrarMensaje('❌ No se encontraron datos de empleados', 'warning');
+            return;
+          }
+
+          const empleados = JSON.parse(empleadosData);
+          const empleado = empleados.find((emp) => emp.id === empleadoId);
+
+          if (!empleado) {
+            mostrarMensaje('❌ Empleado no encontrado', 'warning');
+            return;
+          }
+
+          // Crear previsualización
+          const previsualizacionHTML = `
+            <div class="axyra-comprobante-resumen">
+              <h4>📋 Previsualización del Comprobante</h4>
+              <div class="axyra-resumen-details">
+                <p><strong>Empleado:</strong> ${empleado.nombre}</p>
+                <p><strong>Cédula:</strong> ${empleado.cedula || 'N/A'}</p>
+                <p><strong>Tipo de Contrato:</strong> ${tipoContrato}</p>
+                <p><strong>Salario Base:</strong> $${salarioBase.toLocaleString()}</p>
+                <p><strong>Departamento:</strong> ${empleado.departamento || 'N/A'}</p>
+                ${deudaValor > 0 ? `<p><strong>Deuda a Descontar:</strong> $${deudaValor.toLocaleString()}</p>` : ''}
+                ${deudaComentario ? `<p><strong>Motivo de Deuda:</strong> ${deudaComentario}</p>` : ''}
+                <p><strong>Fecha de Generación:</strong> ${new Date().toLocaleDateString('es-ES')}</p>
+              </div>
+              <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                <p style="margin: 0; color: #1e40af; font-weight: 600;">
+                  <i class="fas fa-info-circle"></i> 
+                  Este es solo un resumen. Para generar el comprobante completo, haz clic en "Generar Comprobante PDF"
+                </p>
+              </div>
+            </div>
+          `;
+
+          // Crear modal de previsualización
+          const modal = document.createElement('div');
+          modal.className = 'axyra-modal show';
+          modal.innerHTML = `
+            <div class="axyra-modal-content">
+              <div class="axyra-modal-header">
+                <h3>Previsualización del Comprobante</h3>
+                <span class="axyra-modal-close" onclick="this.parentElement.parentElement.parentElement.remove()">&times;</span>
+              </div>
+              <div class="axyra-modal-body">
+                ${previsualizacionHTML}
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-primary" onclick="generarComprobante()">
+                  <i class="fas fa-file-pdf"></i> Generar Comprobante
+                </button>
+                <button class="axyra-btn axyra-btn-ghost" onclick="this.parentElement.parentElement.parentElement.remove()">
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          `;
+
+          document.body.appendChild(modal);
+        } catch (error) {
+          console.error('❌ Error en previsualización:', error);
+          mostrarMensaje('❌ Error al previsualizar: ' + error.message, 'error');
         }
       }
 
@@ -2143,6 +2355,44 @@
       .axyra-modal-large {
         max-width: 800px;
         max-height: 90vh;
+      }
+
+      /* Estilos para resumen de comprobante */
+      .axyra-comprobante-resumen {
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .axyra-comprobante-resumen h4 {
+        color: #059669;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+
+      .axyra-resumen-details {
+        display: grid;
+        gap: 12px;
+      }
+
+      .axyra-resumen-details p {
+        margin: 0;
+        padding: 8px 0;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .axyra-resumen-details p:last-child {
+        border-bottom: none;
+      }
+
+      .axyra-resumen-details strong {
+        color: #374151;
+        font-weight: 600;
       }
 
       /* Responsive */

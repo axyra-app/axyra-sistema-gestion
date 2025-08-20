@@ -638,6 +638,9 @@
         if (anioNomina) {
           anioNomina.addEventListener('change', calcularResumenNomina);
         }
+
+        // Configurar event listeners de modales
+        window.configurarEventosModales();
       }
 
       // Renderizar tabla de nóminas
@@ -793,7 +796,7 @@
       function mostrarModal(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
-          modal.style.display = 'flex';
+          modal.classList.add('active');
 
           // Limpiar formulario si es el modal de nómina
           if (modalId === 'modalGenerarNomina') {
@@ -812,12 +815,30 @@
         }
       }
 
-      // Cerrar modal
-      function cerrarModal(modalId) {
+      // Cerrar modal (función global)
+      window.cerrarModal = function(modalId) {
         const modal = document.getElementById(modalId);
         if (modal) {
           modal.style.display = 'none';
+          modal.classList.remove('active');
         }
+      }
+
+      // Función para cerrar modal al hacer clic fuera
+      window.cerrarModalClickOutside = function(event) {
+        if (event.target.classList.contains('modal-overlay')) {
+          const modalId = event.target.id;
+          cerrarModal(modalId);
+        }
+      }
+
+      // Función para configurar event listeners de modales
+      window.configurarEventosModales = function() {
+        const modals = document.querySelectorAll('.modal-overlay');
+        modals.forEach(modal => {
+          modal.addEventListener('click', cerrarModalClickOutside);
+        });
+        console.log('✅ Event listeners de modales configurados');
       }
 
       // Limpiar formulario de nómina

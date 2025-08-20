@@ -10,7 +10,7 @@
   width: 100% !important;
   height: 100% !important;
   background-color: rgba(0, 0, 0, 0.5) !important;
-  display: flex !important;
+  display: none !important; /* Por defecto oculto */
   justify-content: center !important;
   align-items: center !important;
   z-index: 9999 !important; /* Z-index muy alto para estar por encima de todo */
@@ -175,6 +175,11 @@
 .btn-danger:hover {
   background: #c82333 !important;
   transform: translateY(-2px) !important;
+}
+
+/* Clase para mostrar modal activo */
+.modal-overlay.active {
+  display: flex !important;
 }
 
 /* Responsive para modales */

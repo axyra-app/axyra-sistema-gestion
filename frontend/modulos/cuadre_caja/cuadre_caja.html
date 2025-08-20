@@ -293,12 +293,19 @@
               <i class="fas fa-search"></i>
             </div>
             <div class="axyra-filter-group">
+              <div class="axyra-date-filters">
+                <input type="date" id="filterFechaDesde" class="axyra-form-input" placeholder="Desde" />
+                <input type="date" id="filterFechaHasta" class="axyra-form-input" placeholder="Hasta" />
+              </div>
               <select id="filterFechaFacturas" class="axyra-form-select">
-                <option value="">Todas las fechas</option>
+                <option value="">Filtros rápidos</option>
                 <option value="hoy">Hoy</option>
+                <option value="ayer">Ayer</option>
                 <option value="semana">Esta semana</option>
                 <option value="mes">Este mes</option>
+                <option value="mesAnterior">Mes anterior</option>
                 <option value="trimestre">Este trimestre</option>
+                <option value="año">Este año</option>
               </select>
               <select id="filterAreaFacturas" class="axyra-form-select">
                 <option value="">Todas las áreas</option>
@@ -312,8 +319,17 @@
                 <option value="efectivo">Efectivo</option>
                 <option value="transferencia">Transferencia</option>
                 <option value="tarjeta">Tarjeta</option>
+                <option value="datafono">Datafono</option>
+                <option value="qr">QR</option>
+                <option value="cheque">Cheque</option>
               </select>
             </div>
+            <button class="axyra-btn axyra-btn-primary" onclick="aplicarFiltrosFacturas()">
+              <i class="fas fa-filter"></i> Aplicar Filtros
+            </button>
+            <button class="axyra-btn axyra-btn-secondary" onclick="limpiarFiltrosFacturas()">
+              <i class="fas fa-times"></i> Limpiar
+            </button>
             <button class="axyra-btn axyra-btn-primary" onclick="exportarFacturas()">
               <i class="fas fa-download"></i> Exportar
             </button>
@@ -725,6 +741,40 @@
         mostrarMensaje(`✅ Moneda cambiada a ${moneda}`, 'success');
       }
 
+      // Función para actualizar inmediatamente la última factura
+      function actualizarUltimaFactura(factura) {
+        try {
+          const ultimaFacturaElement = document.getElementById('ultimaFactura');
+          const ultimaFacturaInfoElement = document.getElementById('ultimaFacturaInfo');
+          const ultimaFacturaTimeElement = document.getElementById('ultimaFacturaTime');
+
+          if (ultimaFacturaElement && ultimaFacturaInfoElement && ultimaFacturaTimeElement) {
+            // Actualizar monto
+            ultimaFacturaElement.textContent = formatearMoneda(parseFloat(factura.monto));
+
+            // Actualizar información
+            ultimaFacturaInfoElement.textContent = `#${factura.numero} - ${
+              factura.encargado
+            } - ${factura.metodoPago.toUpperCase()}`;
+
+            // Actualizar tiempo
+            const fechaFactura = new Date(factura.fecha);
+            const horaColombia = fechaFactura.toLocaleTimeString('es-CO', {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: true,
+              timeZone: 'America/Bogota',
+            });
+            ultimaFacturaTimeElement.textContent = `Registrada a las ${horaColombia}`;
+
+            console.log('✅ Última factura actualizada inmediatamente:', factura.numero);
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando última factura:', error);
+        }
+      }
+
       // Cargar configuración
       function cargarConfiguracion() {
         const moneda = localStorage.getItem('axyra_moneda') || 'COP';
@@ -763,10 +813,12 @@
         localStorage.setItem('axyra_facturas', JSON.stringify(facturas));
 
         mostrarFacturas();
-        cargarResumen();
         limpiarFormulario();
 
         mostrarMensaje('✅ Factura registrada correctamente', 'success');
+
+        // Actualizar inmediatamente la última factura
+        actualizarUltimaFactura(factura);
 
         // Actualizar resumen del día en tiempo real
         setTimeout(() => {
@@ -791,6 +843,147 @@
 
         // Mostrar modal de confirmación
         mostrarModalEliminarFactura(factura);
+      }
+
+      // Función para aplicar filtros de facturas
+      function aplicarFiltrosFacturas() {
+        try {
+          const fechaDesde = document.getElementById('filterFechaDesde').value;
+          const fechaHasta = document.getElementById('filterFechaHasta').value;
+          const filtroRapido = document.getElementById('filterFechaFacturas').value;
+          const filtroArea = document.getElementById('filterAreaFacturas').value;
+          const filtroMetodo = document.getElementById('filterMetodoPago').value;
+          const busqueda = document.getElementById('searchFacturas').value.toLowerCase();
+
+          // Obtener todas las facturas
+          const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+          let facturasFiltradas = [...facturas];
+
+          // Aplicar filtro de fechas
+          if (fechaDesde || fechaHasta || filtroRapido) {
+            facturasFiltradas = facturasFiltradas.filter((factura) => {
+              const fechaFactura = new Date(factura.fecha);
+
+              // Filtros rápidos
+              if (filtroRapido) {
+                const hoy = new Date();
+                const inicioDia = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+
+                switch (filtroRapido) {
+                  case 'hoy':
+                    return fechaFactura >= inicioDia;
+                  case 'ayer':
+                    const ayer = new Date(inicioDia);
+                    ayer.setDate(ayer.getDate() - 1);
+                    return fechaFactura >= ayer && fechaFactura < inicioDia;
+                  case 'semana':
+                    const inicioSemana = new Date(inicioDia);
+                    inicioSemana.setDate(inicioSemana.getDate() - inicioSemana.getDay());
+                    return fechaFactura >= inicioSemana;
+                  case 'mes':
+                    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+                    return fechaFactura >= inicioMes;
+                  case 'mesAnterior':
+                    const inicioMesAnterior = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
+                    const finMesAnterior = new Date(hoy.getFullYear(), hoy.getMonth(), 0);
+                    return fechaFactura >= inicioMesAnterior && fechaFactura <= finMesAnterior;
+                  case 'trimestre':
+                    const trimestre = Math.floor(hoy.getMonth() / 3);
+                    const inicioTrimestre = new Date(hoy.getFullYear(), trimestre * 3, 1);
+                    return fechaFactura >= inicioTrimestre;
+                  case 'año':
+                    const inicioAño = new Date(hoy.getFullYear(), 0, 1);
+                    return fechaFactura >= inicioAño;
+                }
+              }
+
+              // Filtros de fecha específica
+              if (fechaDesde && fechaFactura < new Date(fechaDesde)) {
+                return false;
+              }
+              if (fechaHasta) {
+                const fechaHastaObj = new Date(fechaHasta);
+                fechaHastaObj.setHours(23, 59, 59, 999);
+                if (fechaFactura > fechaHastaObj) {
+                  return false;
+                }
+              }
+
+              return true;
+            });
+          }
+
+          // Aplicar filtro de área
+          if (filtroArea) {
+            facturasFiltradas = facturasFiltradas.filter((factura) => factura.area === filtroArea);
+          }
+
+          // Aplicar filtro de método de pago
+          if (filtroMetodo) {
+            facturasFiltradas = facturasFiltradas.filter((factura) => factura.metodoPago === filtroMetodo);
+          }
+
+          // Aplicar búsqueda por texto
+          if (busqueda) {
+            facturasFiltradas = facturasFiltradas.filter(
+              (factura) =>
+                factura.numero.toLowerCase().includes(busqueda) ||
+                factura.encargado.toLowerCase().includes(busqueda) ||
+                factura.descripcion.toLowerCase().includes(busqueda)
+            );
+          }
+
+          // Mostrar facturas filtradas
+          mostrarFacturasFiltradas(facturasFiltradas);
+
+          // Mostrar resumen de filtros aplicados
+          const totalFiltradas = facturasFiltradas.length;
+          const totalOriginal = facturas.length;
+          mostrarMensaje(`✅ Filtros aplicados: ${totalFiltradas} de ${totalOriginal} facturas`, 'success');
+        } catch (error) {
+          console.error('❌ Error aplicando filtros:', error);
+          mostrarMensaje('❌ Error al aplicar filtros: ' + error.message, 'error');
+        }
+      }
+
+      // Función para mostrar facturas filtradas
+      function mostrarFacturasFiltradas(facturasFiltradas) {
+        const tbody = document.getElementById('facturasTableBody');
+        if (!tbody) return;
+
+        if (facturasFiltradas.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="9" class="axyra-text-center">
+                <div class="axyra-empty-state">
+                  <i class="fas fa-search" style="font-size: 3rem; color: #9ca3af; margin-bottom: 1rem;"></i>
+                  <p>No se encontraron facturas con los filtros aplicados</p>
+                  <button class="axyra-btn axyra-btn-primary" onclick="limpiarFiltrosFacturas()">
+                    Limpiar Filtros
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        // Mostrar facturas filtradas
+        mostrarFacturas(facturasFiltradas);
+      }
+
+      // Función para limpiar filtros
+      function limpiarFiltrosFacturas() {
+        document.getElementById('filterFechaDesde').value = '';
+        document.getElementById('filterFechaHasta').value = '';
+        document.getElementById('filterFechaFacturas').value = '';
+        document.getElementById('filterAreaFacturas').value = '';
+        document.getElementById('filterMetodoPago').value = '';
+        document.getElementById('searchFacturas').value = '';
+
+        // Recargar todas las facturas
+        mostrarFacturas();
+        mostrarMensaje('✅ Filtros limpiados', 'success');
       }
 
       // Función para mostrar modal de eliminación
@@ -1080,6 +1273,44 @@
         font-size: 0.9rem;
         color: #6b7280;
         font-style: italic;
+      }
+
+      /* Estilos para filtros de fecha */
+      .axyra-date-filters {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .axyra-date-filters input[type='date'] {
+        min-width: 140px;
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.9rem;
+      }
+
+      .axyra-date-filters input[type='date']:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      /* Estado vacío para tabla */
+      .axyra-empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #6b7280;
+      }
+
+      .axyra-empty-state i {
+        display: block;
+        margin-bottom: 1rem;
+      }
+
+      .axyra-empty-state p {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
       }
 
       /* Responsive para resumen */
