@@ -1080,9 +1080,77 @@
         }
 
         try {
-          // Usar el nuevo sistema de Excel profesional
-          const nombreArchivo = window.axyraExcelExporter.exportarFacturas(facturas);
-          mostrarMensaje(`✅ Facturas exportadas a Excel correctamente: ${nombreArchivo}`, 'success');
+          // Verificar si XLSX está disponible
+          if (typeof XLSX === 'undefined') {
+            mostrarMensaje('Error: Librería XLSX no está disponible', 'error');
+            return;
+          }
+
+          console.log('📊 Iniciando exportación de facturas...');
+          console.log('📋 Total de facturas a exportar:', facturas.length);
+
+          // Crear datos para exportar
+          const data = [
+            ['REPORTE DE FACTURAS - Villa Venecia'],
+            ['EMPRESA: Villa Venecia'],
+            ['NIT: NIT Pendiente'],
+            [`FECHA DE EXPORTACIÓN: ${new Date().toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })}`],
+            [],
+            ['ID', 'Empleado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones']
+          ];
+
+          // Agregar datos de cada factura
+          facturas.forEach((f, index) => {
+            const empleado = empleados.find((e) => e.id === f.empleado_id);
+            console.log(`📝 Procesando factura ${index + 1}:`, f.id, empleado?.nombre);
+            
+            data.push([
+              f.id || 'N/A',
+              empleado ? empleado.nombre : 'Empleado no encontrado',
+              empleado ? empleado.cedula || 'N/A' : 'N/A',
+              new Date(f.fecha).toLocaleDateString('es-CO', { timeZone: 'America/Bogota' }),
+              f.concepto || 'N/A',
+              formatearMoneda(f.valor),
+              f.estado || 'Activa',
+              f.observaciones || 'N/A'
+            ]);
+          });
+
+          // Agregar totales
+          data.push([]);
+          const totales = [
+            'TOTALES', '', '', '', 
+            formatearMoneda(facturas.reduce((sum, f) => sum + (f.valor || 0), 0)),
+            '', ''
+          ];
+          data.push(totales);
+
+          console.log('📊 Datos preparados para exportación');
+
+          // Crear hoja de trabajo
+          const ws = XLSX.utils.aoa_to_sheet(data);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Facturas');
+
+          // Ajustar ancho de columnas
+          ws['!cols'] = [
+            { width: 8 }, { width: 25 }, { width: 15 }, { width: 15 },
+            { width: 30 }, { width: 18 }, { width: 12 }, { width: 30 }
+          ];
+
+          // Generar nombre de archivo
+          const now = new Date();
+          const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+          const fileName = `REPORTE_FACTURAS_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime.getHours().toString().padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
+          
+          console.log('💾 Descargando archivo:', fileName);
+
+          // Descargar archivo
+          XLSX.writeFile(wb, fileName);
+          
+          console.log('✅ Exportación completada exitosamente');
+          mostrarMensaje('Facturas exportadas correctamente con formato profesional', 'success');
+          
         } catch (error) {
           console.error('❌ Error exportando facturas:', error);
           mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
@@ -1097,13 +1165,77 @@
             return;
           }
 
-          // Verificar si el exportador está disponible
-          if (typeof window.axyraExcelExporter === 'undefined') {
-            window.axyraExcelExporter = new AXYRAExcelExporter();
+          // Verificar si XLSX está disponible
+          if (typeof XLSX === 'undefined') {
+            mostrarMensaje('Error: Librería XLSX no está disponible', 'error');
+            return;
           }
 
-          const nombreArchivo = window.axyraExcelExporter.exportarFacturas(facturas);
-          mostrarMensaje(`✅ Cuadre de caja exportado correctamente: ${nombreArchivo}`, 'success');
+          console.log('📊 Iniciando exportación de cuadre de caja...');
+          console.log('📋 Total de facturas a exportar:', facturas.length);
+
+          // Crear datos para exportar
+          const data = [
+            ['CUADRE DE CAJA - Villa Venecia'],
+            ['EMPRESA: Villa Venecia'],
+            ['NIT: NIT Pendiente'],
+            [`FECHA DE EXPORTACIÓN: ${new Date().toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })}`],
+            [],
+            ['ID', 'Empleado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones']
+          ];
+
+          // Agregar datos de cada factura
+          facturas.forEach((f, index) => {
+            const empleado = empleados.find((e) => e.id === f.empleado_id);
+            console.log(`📝 Procesando factura ${index + 1}:`, f.id, empleado?.nombre);
+            
+            data.push([
+              f.id || 'N/A',
+              empleado ? empleado.nombre : 'Empleado no encontrado',
+              empleado ? empleado.cedula || 'N/A' : 'N/A',
+              new Date(f.fecha).toLocaleDateString('es-CO', { timeZone: 'America/Bogota' }),
+              f.concepto || 'N/A',
+              formatearMoneda(f.valor),
+              f.estado || 'Activa',
+              f.observaciones || 'N/A'
+            ]);
+          });
+
+          // Agregar totales
+          data.push([]);
+          const totales = [
+            'TOTALES', '', '', '', 
+            formatearMoneda(facturas.reduce((sum, f) => sum + (f.valor || 0), 0)),
+            '', ''
+          ];
+          data.push(totales);
+
+          console.log('📊 Datos preparados para exportación');
+
+          // Crear hoja de trabajo
+          const ws = XLSX.utils.aoa_to_sheet(data);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, 'Cuadre de Caja');
+
+          // Ajustar ancho de columnas
+          ws['!cols'] = [
+            { width: 8 }, { width: 25 }, { width: 15 }, { width: 15 },
+            { width: 30 }, { width: 18 }, { width: 12 }, { width: 30 }
+          ];
+
+          // Generar nombre de archivo
+          const now = new Date();
+          const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
+          const fileName = `CUADRE_CAJA_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime.getHours().toString().padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
+          
+          console.log('💾 Descargando archivo:', fileName);
+
+          // Descargar archivo
+          XLSX.writeFile(wb, fileName);
+          
+          console.log('✅ Exportación completada exitosamente');
+          mostrarMensaje('Cuadre de caja exportado correctamente con formato profesional', 'success');
+          
         } catch (error) {
           console.error('❌ Error exportando cuadre de caja:', error);
           mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
@@ -1482,8 +1614,7 @@
           // Intentar cargar desde Firebase primero
           await cargarDatosFirebase();
 
-          // Llenar selects
-          llenarSelects();
+          // Los selects no son necesarios en este módulo
 
           // Renderizar tabla
           renderizarTablaFacturas();

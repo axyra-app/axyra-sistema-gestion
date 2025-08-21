@@ -2475,6 +2475,20 @@
 
         // Actividad de empleados
         if (empleados.length > 0) {
+          // Mostrar total de empleados
+          actividadHTML += `
+                    <div class="axyra-activity-item">
+                        <div class="axyra-activity-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="axyra-activity-content">
+                            <div class="axyra-activity-title">Total de Empleados</div>
+                            <div class="axyra-activity-time">${empleados.length} empleados registrados</div>
+                        </div>
+                    </div>
+                `;
+          
+          // Mostrar último empleado agregado
           const ultimoEmpleado = empleados[empleados.length - 1];
           actividadHTML += `
                     <div class="axyra-activity-item">
@@ -2482,13 +2496,27 @@
                             <i class="fas fa-user-plus"></i>
                         </div>
                         <div class="axyra-activity-content">
-                            <div class="axyra-activity-title">Empleado agregado</div>
-                            <div class="axyra-activity-time">${
-                              ultimoEmpleado.nombre
-                            } - ${new Date().toLocaleDateString()}</div>
+                            <div class="axyra-activity-title">Último Empleado Agregado</div>
+                            <div class="axyra-activity-time">${ultimoEmpleado.nombre} - ${ultimoEmpleado.cargo || 'Sin cargo'} - ${new Date().toLocaleDateString()}</div>
                         </div>
                     </div>
                 `;
+          
+          // Mostrar lista de empleados recientes (máximo 3)
+          const empleadosRecientes = empleados.slice(-3).reverse();
+          empleadosRecientes.forEach(empleado => {
+            actividadHTML += `
+                    <div class="axyra-activity-item">
+                        <div class="axyra-activity-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="axyra-activity-content">
+                            <div class="axyra-activity-title">${empleado.nombre}</div>
+                            <div class="axyra-activity-time">${empleado.cargo || 'Sin cargo'} - ${empleado.cedula || 'Sin cédula'}</div>
+                        </div>
+                    </div>
+                `;
+          });
         }
 
         // Actividad de comprobantes
