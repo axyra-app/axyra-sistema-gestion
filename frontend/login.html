@@ -301,6 +301,18 @@
         max-height: 90vh;
         overflow-y: auto;
         position: relative;
+        animation: modalSlideIn 0.3s ease-out;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
       }
 
       .modal-header {
@@ -309,6 +321,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 20px 20px 0 0;
       }
 
       .modal-header h3 {
@@ -316,6 +330,10 @@
         font-weight: 700;
         color: #2d3748;
         margin: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
       }
 
       .modal-close {
@@ -327,11 +345,17 @@
         padding: 8px;
         border-radius: 8px;
         transition: all 0.2s ease;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .modal-close:hover {
         background: #f7fafc;
         color: #4a5568;
+        transform: scale(1.1);
       }
 
       .modal-body {
@@ -344,6 +368,10 @@
         line-height: 1.6;
         margin-bottom: 25px;
         text-align: center;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border-left: 4px solid #667eea;
       }
 
       .modal-form .form-group {
@@ -356,16 +384,19 @@
         color: #2d3748;
         margin-bottom: 8px;
         font-size: 14px;
+        text-align: left;
       }
 
       .modal-form .form-input {
         width: 100%;
-        padding: 12px 16px;
+        padding: 14px 16px;
         border: 2px solid #e2e8f0;
-        border-radius: 10px;
+        border-radius: 12px;
         font-size: 16px;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
         background: #f8fafc;
+        color: #2d3748;
+        font-family: inherit;
       }
 
       .modal-form .form-input:focus {
@@ -373,6 +404,12 @@
         border-color: #667eea;
         background: white;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        transform: translateY(-1px);
+      }
+
+      .modal-form .form-input::placeholder {
+        color: #a0aec0;
+        font-style: italic;
       }
 
       .modal-form .password-input-group {
@@ -395,19 +432,30 @@
         padding: 8px;
         border-radius: 6px;
         transition: all 0.2s ease;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .modal-form .password-toggle:hover {
         background: #f7fafc;
         color: #4a5568;
+        transform: scale(1.1);
       }
 
       .modal-form .form-hint {
         display: block;
         color: #718096;
         font-size: 12px;
-        margin-top: 5px;
+        margin-top: 8px;
         font-style: italic;
+        text-align: left;
+        padding: 8px 12px;
+        background: #f1f5f9;
+        border-radius: 6px;
+        border-left: 3px solid #cbd5e0;
       }
 
       .modal-actions {
@@ -419,39 +467,329 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
-        padding: 15px 30px;
-        border-radius: 10px;
+        padding: 16px 32px;
+        border-radius: 12px;
         font-size: 16px;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s ease;
-        min-width: 200px;
+        transition: all 0.3s ease;
+        min-width: 220px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
       }
 
       .modal-actions .btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+      }
+
+      .modal-actions .btn:active {
+        transform: translateY(0);
       }
 
       .modal-actions .btn:disabled {
         opacity: 0.7;
         cursor: not-allowed;
         transform: none;
+        box-shadow: none;
       }
 
       .modal-actions .btn-loading {
         display: none;
+        margin-left: 8px;
       }
 
       .modal-error {
         color: #e53e3e;
         background: #fed7d7;
         border: 1px solid #feb2b2;
-        padding: 12px;
-        border-radius: 8px;
+        padding: 16px;
+        border-radius: 12px;
         margin-bottom: 20px;
         font-size: 14px;
         text-align: center;
+        border-left: 4px solid #e53e3e;
+        animation: errorShake 0.5s ease-in-out;
+      }
+
+      @keyframes errorShake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 600px) {
+        .modal-content {
+          max-width: 95vw;
+          margin: 10px;
+        }
+        
+        .modal-header,
+        .modal-body {
+          padding: 20px;
+        }
+        
+        .modal-actions .btn {
+          min-width: 100%;
+          padding: 14px 20px;
+        }
+      }
+
+      /* Enhanced form validation styling */
+      .modal-form .form-input:valid {
+        border-color: #48bb78;
+        background: #f0fff4;
+      }
+
+      .modal-form .form-input:invalid:not(:placeholder-shown) {
+        border-color: #e53e3e;
+        background: #fff5f5;
+      }
+
+      .modal-form .form-input:focus:valid {
+        border-color: #48bb78;
+        box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.1);
+      }
+
+      .modal-form .form-input:focus:invalid:not(:placeholder-shown) {
+        border-color: #e53e3e;
+        box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+      }
+
+      /* Password strength indicator */
+      .password-strength {
+        margin-top: 8px;
+        font-size: 12px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        text-align: left;
+        transition: all 0.3s ease;
+      }
+
+      .password-strength.weak {
+        background: #fed7d7;
+        color: #c53030;
+        border-left: 3px solid #e53e3e;
+      }
+
+      .password-strength.medium {
+        background: #fef5e7;
+        color: #d69e2e;
+        border-left: 3px solid #ed8936;
+      }
+
+      .password-strength.strong {
+        background: #f0fff4;
+        color: #22543d;
+        border-left: 3px solid #48bb78;
+      }
+
+      /* Loading state improvements */
+      .btn-loading {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-loading i {
+        animation: spin 1s linear infinite;
+      }
+
+      /* Success state styling */
+      .success-checkmark {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #48bb78;
+        color: white;
+        text-align: center;
+        line-height: 20px;
+        margin-right: 8px;
+        animation: checkmarkPop 0.3s ease-out;
+      }
+
+      @keyframes checkmarkPop {
+        0% {
+          transform: scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.2);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Progress indicator */
+      .form-progress {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+        position: relative;
+      }
+
+      .form-progress::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e2e8f0;
+        transform: translateY(-50%);
+        z-index: 1;
+      }
+
+      .progress-step {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 600;
+        color: #718096;
+        position: relative;
+        z-index: 2;
+        transition: all 0.3s ease;
+      }
+
+      .progress-step.active {
+        border-color: #667eea;
+        background: #667eea;
+        color: white;
+        transform: scale(1.1);
+      }
+
+      .progress-step.completed {
+        border-color: #48bb78;
+        background: #48bb78;
+        color: white;
+      }
+
+      /* Form completion indicator */
+      .form-completion {
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f0fff4;
+        border-radius: 12px;
+        border-left: 4px solid #48bb78;
+        display: none;
+      }
+
+      .form-completion.show {
+        display: block;
+        animation: slideDown 0.3s ease-out;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Enhanced modal appearance */
+      .modal-content {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+      }
+
+      .modal-description {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        color: #4a5568;
+        font-weight: 500;
+      }
+
+      /* Enhanced form inputs */
+      .modal-form .form-input {
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border: 2px solid rgba(226, 232, 240, 0.8);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .modal-form .form-input:focus {
+        background: white;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 4px 12px rgba(102, 126, 234, 0.15);
+        transform: translateY(-2px);
+      }
+
+      /* Enhanced button styling */
+      .modal-actions .btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3), 0 2px 8px rgba(118, 75, 162, 0.2);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .modal-actions .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      .modal-actions .btn:hover::before {
+        left: 100%;
+      }
+
+      .modal-actions .btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4), 0 4px 15px rgba(118, 75, 162, 0.3);
+      }
+
+      /* Enhanced progress steps */
+      .progress-step {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .progress-step.active {
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        transform: scale(1.15);
+      }
+
+      .progress-step.completed {
+        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        transform: scale(1.1);
+      }
+
+      /* Enhanced validation indicators */
+      .password-strength {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        font-weight: 500;
+      }
+
+      /* Enhanced form hints */
+      .form-hint {
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        border: 1px solid rgba(203, 213, 224, 0.5);
+        font-weight: 500;
       }
     </style>
   </head>
@@ -806,37 +1144,57 @@
                           <p class="modal-description">
                               Para completar tu registro, necesitamos que definas un nombre de usuario y contraseña para futuros accesos.
                           </p>
+                          
+                          <!-- Progress indicator -->
+                          <div class="form-progress">
+                              <div class="progress-step active" data-step="1">1</div>
+                              <div class="progress-step" data-step="2">2</div>
+                              <div class="progress-step" data-step="3">3</div>
+                          </div>
+                          
+                          <!-- Form completion indicator -->
+                          <div class="form-completion" id="formCompletion">
+                              <i class="fas fa-check-circle" style="color: #48bb78; font-size: 20px; margin-right: 8px;"></i>
+                              <strong>Formulario completo</strong> - Todos los campos son válidos
+                          </div>
+                          
                           <form id="googleSetupForm" class="modal-form">
                               <div class="form-group">
-                                  <label for="setupUsername">Nombre de Usuario</label>
-                                  <input type="text" id="setupUsername" name="username" required 
+                                  <label for="setupUsername" class="form-label">Nombre de Usuario</label>
+                                  <input type="text" id="setupUsername" name="username" class="form-input" required 
                                          placeholder="Ej: juan_perez" 
                                          pattern="[a-zA-Z0-9\\s\\-_]+"
-                                         title="Solo letras, números, espacios, guiones y guiones bajos">
+                                         title="Solo letras, números, espacios, guiones y guiones bajos"
+                                         oninput="validateUsernameRealTime(this.value)">
                                   <small class="form-hint">Puedes usar letras, números, espacios, guiones (-) y guiones bajos (_)</small>
+                                  <div id="usernameValidation" class="password-strength" style="display: none;"></div>
                               </div>
                               <div class="form-group">
-                                  <label for="setupPassword">Contraseña</label>
+                                  <label for="setupPassword" class="form-label">Contraseña</label>
                                   <div class="password-input-group">
-                                      <input type="password" id="setupPassword" name="password" required 
-                                             placeholder="Mínimo 6 caracteres" minlength="6">
+                                      <input type="password" id="setupPassword" name="password" class="form-input" required 
+                                             placeholder="Mínimo 6 caracteres" minlength="6"
+                                             oninput="showPasswordStrength(this.value); updatePasswordProgress()">
                                       <button type="button" class="password-toggle" onclick="toggleSetupPassword()">
                                           <i class="fas fa-eye"></i>
                                       </button>
                                   </div>
+                                  <div id="passwordStrength" class="password-strength" style="display: none;"></div>
                               </div>
                               <div class="form-group">
-                                  <label for="setupConfirmPassword">Confirmar Contraseña</label>
+                                  <label for="setupConfirmPassword" class="form-label">Confirmar Contraseña</label>
                                   <div class="password-input-group">
-                                      <input type="password" id="setupConfirmPassword" name="confirmPassword" required 
-                                             placeholder="Repite tu contraseña" minlength="6">
+                                      <input type="password" id="setupConfirmPassword" name="confirmPassword" class="form-input" required 
+                                             placeholder="Repite tu contraseña" minlength="6"
+                                             oninput="validatePasswordConfirmation(document.getElementById('setupPassword').value, this.value); updatePasswordProgress()">
                                       <button type="button" class="password-toggle" onclick="toggleSetupConfirmPassword()">
                                           <i class="fas fa-eye"></i>
                                       </button>
                                   </div>
+                                  <div id="passwordConfirmIndicator" class="password-strength" style="display: none;"></div>
                               </div>
                               <div class="modal-actions">
-                                  <button type="submit" class="btn btn-primary">
+                                  <button type="submit" class="btn">
                                       <span class="btn-text">Completar Registro</span>
                                       <span class="btn-loading" style="display: none;">
                                           <i class="fas fa-spinner fa-spin"></i> Procesando...
@@ -908,8 +1266,8 @@
                   // Cerrar modal
                   closeGoogleSetupModal();
 
-                  // Mostrar mensaje de éxito
-                  showSuccess('¡Perfil completado exitosamente! Redirigiendo al dashboard...');
+                  // Mostrar mensaje de éxito con mejor styling
+                  showSuccess('<span class="success-checkmark">✓</span> ¡Perfil completado exitosamente! 🎉 Redirigiendo al dashboard...');
 
                   // Guardar sesión
                   saveSession(googleUser, false);
@@ -954,11 +1312,16 @@
           if (!errorDiv) {
               errorDiv = document.createElement('div');
               errorDiv.className = 'modal-error';
-              errorDiv.style.cssText = 'color: #e53e3e; background: #fed7d7; border: 1px solid #feb2b2; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 14px;';
               const form = document.getElementById('googleSetupForm');
               form.insertBefore(errorDiv, form.firstChild);
           }
           errorDiv.textContent = message;
+          errorDiv.style.display = 'block';
+          
+          // Auto-hide error after 5 seconds
+          setTimeout(() => {
+              errorDiv.style.display = 'none';
+          }, 5000);
       }
 
       // Función para mostrar/ocultar contraseña en modal
@@ -987,6 +1350,167 @@
               passwordInput.type = 'password';
               icon.className = 'fas fa-eye';
           }
+      }
+
+      // Función para validar contraseña en tiempo real
+      function validatePasswordStrength(password) {
+          let strength = 0;
+          let feedback = '';
+          
+          if (password.length >= 6) strength++;
+          if (password.length >= 8) strength++;
+          if (/[a-z]/.test(password)) strength++;
+          if (/[A-Z]/.test(password)) strength++;
+          if (/[0-9]/.test(password)) strength++;
+          if (/[^A-Za-z0-9]/.test(password)) strength++;
+          
+          if (strength <= 2) {
+              return { level: 'weak', text: 'Débil - Agrega más caracteres y variedad' };
+          } else if (strength <= 4) {
+              return { level: 'medium', text: 'Media - Buena, pero puede mejorar' };
+          } else {
+              return { level: 'strong', text: 'Fuerte - Excelente contraseña' };
+          }
+        }
+
+      // Función para validar nombre de usuario en tiempo real
+      function validateUsername(username) {
+          if (username.length < 3) {
+              return { valid: false, message: 'El nombre de usuario debe tener al menos 3 caracteres' };
+          }
+          if (!/^[a-zA-Z0-9\s\-_]+$/.test(username)) {
+              return { valid: false, message: 'Solo se permiten letras, números, espacios, guiones y guiones bajos' };
+          }
+          return { valid: true, message: 'Nombre de usuario válido' };
+      }
+
+      // Función para mostrar indicador de fortaleza de contraseña
+      function showPasswordStrength(password) {
+          const strengthIndicator = document.getElementById('passwordStrength');
+          if (!strengthIndicator) return;
+          
+          if (password.length === 0) {
+              strengthIndicator.style.display = 'none';
+              return;
+          }
+          
+          const strength = validatePasswordStrength(password);
+          strengthIndicator.className = `password-strength ${strength.level}`;
+          strengthIndicator.textContent = strength.text;
+          strengthIndicator.style.display = 'block';
+      }
+
+      // Función para validar confirmación de contraseña en tiempo real
+      function validatePasswordConfirmation(password, confirmPassword) {
+          const confirmIndicator = document.getElementById('passwordConfirmIndicator');
+          if (!confirmIndicator) return;
+          
+          if (confirmPassword.length === 0) {
+              confirmIndicator.style.display = 'none';
+              return;
+          }
+          
+          if (password === confirmPassword) {
+              confirmIndicator.className = 'password-strength strong';
+              confirmIndicator.textContent = '✓ Las contraseñas coinciden';
+              confirmIndicator.style.display = 'block';
+          } else {
+              confirmIndicator.className = 'password-strength weak';
+              confirmIndicator.textContent = '✗ Las contraseñas no coinciden';
+              confirmIndicator.style.display = 'block';
+          }
+      }
+
+      // Función para validar nombre de usuario en tiempo real
+      function validateUsernameRealTime(username) {
+          const validationIndicator = document.getElementById('usernameValidation');
+          if (!validationIndicator) return;
+          
+          if (username.length === 0) {
+              validationIndicator.style.display = 'none';
+              return;
+          }
+          
+          const validation = validateUsername(username);
+          if (validation.valid) {
+              validationIndicator.className = 'password-strength strong';
+              validationIndicator.textContent = '✓ ' + validation.message;
+              validationIndicator.style.display = 'block';
+          } else {
+              validationIndicator.className = 'password-strength weak';
+              validationIndicator.textContent = '✗ ' + validation.message;
+              validationIndicator.style.display = 'block';
+          }
+          
+          // Update progress and check form completion
+          updateFormProgress();
+          checkFormCompletion();
+      }
+
+      // Función para actualizar el progreso del formulario
+      function updateFormProgress() {
+          const username = document.getElementById('setupUsername')?.value.trim() || '';
+          const password = document.getElementById('setupPassword')?.value || '';
+          const confirmPassword = document.getElementById('setupConfirmPassword')?.value || '';
+          
+          const steps = document.querySelectorAll('.progress-step');
+          
+          // Step 1: Username
+          if (username.length >= 3 && /^[a-zA-Z0-9\s\-_]+$/.test(username)) {
+              steps[0].classList.remove('active');
+              steps[0].classList.add('completed');
+              steps[1].classList.add('active');
+          } else {
+              steps[0].classList.add('active');
+              steps[0].classList.remove('completed');
+              steps[1].classList.remove('active');
+          }
+          
+          // Step 2: Password
+          if (password.length >= 6) {
+              steps[1].classList.remove('active');
+              steps[1].classList.add('completed');
+              steps[2].classList.add('active');
+          } else {
+              steps[1].classList.add('active');
+              steps[1].classList.remove('completed');
+              steps[2].classList.remove('active');
+          }
+          
+          // Step 3: Confirm Password
+          if (password === confirmPassword && password.length >= 6) {
+              steps[2].classList.remove('active');
+              steps[2].classList.add('completed');
+          } else {
+              steps[2].classList.add('active');
+              steps[2].classList.remove('completed');
+          }
+      }
+
+      // Función para verificar si el formulario está completo
+      function checkFormCompletion() {
+          const username = document.getElementById('setupUsername')?.value.trim() || '';
+          const password = document.getElementById('setupPassword')?.value || '';
+          const confirmPassword = document.getElementById('setupConfirmPassword')?.value || '';
+          
+          const usernameValid = username.length >= 3 && /^[a-zA-Z0-9\s\-_]+$/.test(username);
+          const passwordValid = password.length >= 6;
+          const confirmValid = password === confirmPassword && password.length >= 6;
+          
+          const formCompletion = document.getElementById('formCompletion');
+          if (!formCompletion) return;
+          
+          if (usernameValid && passwordValid && confirmValid) {
+              formCompletion.classList.add('show');
+          } else {
+              formCompletion.classList.remove('show');
+          }
+      }
+
+      // Función para actualizar progreso cuando cambia la contraseña
+      function updatePasswordProgress() {
+          updateFormProgress();
+          checkFormCompletion();
       }
     </script>
   </body>
