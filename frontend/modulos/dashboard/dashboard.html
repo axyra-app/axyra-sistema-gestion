@@ -805,7 +805,7 @@
 
         // Recargar estadísticas
         cargarEstadisticas();
-        cargarActividadReciente();
+        cargarActividadRecienteContinuacion();
 
         // Mostrar mensaje de confirmación usando modal
         mostrarMensaje(
@@ -866,7 +866,7 @@
         // Recargar las estadísticas sin recargar la página
         setTimeout(() => {
           cargarEstadisticas();
-          cargarActividadReciente();
+          cargarActividadRecienteContinuacion();
         }, 1000);
       }
 
@@ -920,10 +920,10 @@
       // Función para refrescar dashboard manualmente
       function refrescarDashboard() {
         try {
-          console.log('🔄 Refrescando dashboard manualmente...');
-          cargarEstadisticas();
-          cargarActividadReciente();
-          mostrarMensaje('✅ Dashboard actualizado', 'success');
+                  console.log('🔄 Refrescando dashboard manualmente...');
+        cargarEstadisticas();
+        cargarActividadRecienteContinuacion();
+        mostrarMensaje('✅ Dashboard actualizado', 'success');
         } catch (error) {
           console.error('❌ Error refrescando dashboard:', error);
           mostrarMensaje('❌ Error al actualizar dashboard', 'error');
@@ -1380,10 +1380,10 @@
           formatearYMostrarDatos(totalSalariosFinal, totalHorasTrabajadas);
 
           // Cargar actividad reciente de forma segura
-          if (typeof cargarActividadReciente === 'function') {
-            cargarActividadReciente();
+          if (typeof cargarActividadRecienteContinuacion === 'function') {
+            cargarActividadRecienteContinuacion();
           } else {
-            console.log('⚠️ Función cargarActividadReciente no disponible');
+            console.log('⚠️ Función cargarActividadRecienteContinuacion no disponible');
           }
 
           console.log('✅ Estadísticas cargadas exitosamente');
@@ -2447,7 +2447,8 @@
         }
       }
 
-
+      // Continuación de la función cargarActividadReciente
+      function cargarActividadRecienteContinuacion() {
         const actividadReciente = document.getElementById('actividadReciente');
 
         // Obtener usuario actual para aislamiento de datos
@@ -3552,7 +3553,7 @@
             if (currentUser && event.detail.userId === (currentUser.id || currentUser.username || currentUser.email)) {
               console.log('🔄 Refrescando dashboard por cambio en empleados...');
               await cargarEstadisticas();
-              cargarActividadReciente();
+              cargarActividadRecienteContinuacion();
             }
           });
 
@@ -3581,7 +3582,7 @@
                   console.log('🔄 Refrescando dashboard por cambio en empleados (localStorage)...');
                   setTimeout(() => {
                     cargarEstadisticas();
-                    cargarActividadReciente();
+                    cargarActividadRecienteContinuacion();
                   }, 100);
                 }
               } catch (error) {
