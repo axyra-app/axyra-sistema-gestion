@@ -3456,17 +3456,17 @@
                     ];
 
                     nominas.forEach(nomina => {
-                      const empleado = empleados.find(emp => emp.id === nomina.empleadoId);
+                      const empleado = empleados.find(emp => emp.id === nomina.empleado_id);
                       datosExcel.push([
                         nomina.id || 'N/A',
-                        empleado ? empleado.nombreCompleto : 'Empleado no encontrado',
-                        empleado ? empleado.departamento : 'N/A',
-                        empleado ? `$${empleado.salarioBase?.toLocaleString() || '0'}` : 'N/A',
-                        nomina.horasTrabajadas || '0',
-                        nomina.totalHoras || '0',
-                        nomina.valorPorHora ? `$${nomina.valorPorHora.toLocaleString()}` : 'N/A',
-                        nomina.totalAPagar ? `$${nomina.totalAPagar.toLocaleString()}` : 'N/A',
-                        nomina.fecha || 'N/A',
+                        empleado ? empleado.nombre : 'Empleado no encontrado',
+                        empleado ? empleado.cargo : 'N/A',
+                        `$${nomina.salario_base?.toLocaleString() || '0'}`,
+                        nomina.horas_trabajadas || '0',
+                        (nomina.horas_trabajadas + nomina.horas_extras + nomina.horas_nocturnas + nomina.horas_dominicales) || '0',
+                        `$${nomina.salario_por_hora?.toLocaleString() || '0'}`,
+                        `$${nomina.salario_neto?.toLocaleString() || '0'}`,
+                        nomina.fecha_generacion ? new Date(nomina.fecha_generacion).toLocaleDateString() : 'N/A',
                         nomina.estado || 'N/A'
                       ]);
                     });
