@@ -1081,8 +1081,32 @@
                                   lastLogin: firebase.firestore.FieldValue.serverTimestamp()
                               });
 
-                              // Guardar en localStorage para compatibilidad
-                              saveSession(result.user, false);
+                              // Establecer información del usuario para el dashboard
+                              const userInfo = {
+                                  uid: result.user.uid,
+                                  email: result.user.email,
+                                  displayName: result.user.displayName || result.user.email.split('@')[0],
+                                  username: userData.username || result.user.email.split('@')[0],
+                                  photoURL: result.user.photoURL,
+                                  provider: 'google',
+                                  hasPassword: true,
+                                  emailVerified: result.user.emailVerified,
+                                  id: result.user.uid,
+                                  isAuthenticated: true
+                              };
+
+                              // Guardar en localStorage en el formato que espera el dashboard
+                              localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
+                              localStorage.setItem('axyra_firebase_user', JSON.stringify(result.user));
+                              localStorage.setItem('axyra_isolated_user_id', result.user.uid);
+                              localStorage.setItem('axyra_session', JSON.stringify(userInfo));
+                              
+                              // Establecer variable global para compatibilidad
+                              if (window.axyraIsolatedAuth) {
+                                  window.axyraIsolatedAuth.currentUser = userInfo;
+                              }
+
+                              console.log('✅ Sesión establecida correctamente para usuario existente:', userInfo);
 
                               // Mostrar mensaje de éxito
                               showSuccess('¡Login con Google exitoso! Redirigiendo al dashboard...');
@@ -1271,6 +1295,33 @@
 
                   // Guardar sesión
                   saveSession(googleUser, false);
+
+                  // Establecer información adicional necesaria para el dashboard
+                  const userInfo = {
+                      uid: googleUser.uid,
+                      email: googleUser.email,
+                      displayName: googleUser.displayName || googleUser.email.split('@')[0],
+                      username: username,
+                      photoURL: googleUser.photoURL,
+                      provider: 'google',
+                      hasPassword: true,
+                      emailVerified: googleUser.emailVerified,
+                      id: googleUser.uid, // Importante: establecer id para compatibilidad con el dashboard
+                      isAuthenticated: true
+                  };
+
+                  // Guardar en localStorage en el formato que espera el dashboard
+                  localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
+                  localStorage.setItem('axyra_firebase_user', JSON.stringify(googleUser));
+                  localStorage.setItem('axyra_isolated_user_id', googleUser.uid);
+                  localStorage.setItem('axyra_session', JSON.stringify(userInfo));
+                  
+                  // Establecer variable global para compatibilidad
+                  if (window.axyraIsolatedAuth) {
+                      window.axyraIsolatedAuth.currentUser = userInfo;
+                  }
+
+                  console.log('✅ Sesión establecida correctamente para Google user:', userInfo);
 
                   // Redirigir al dashboard
                   setTimeout(() => {

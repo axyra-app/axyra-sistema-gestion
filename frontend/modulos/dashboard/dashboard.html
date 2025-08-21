@@ -567,6 +567,26 @@
             try {
               const userData = JSON.parse(firebaseUser);
               console.log('✅ Usuario Firebase encontrado en localStorage:', userData.email);
+              
+              // Verificar si es un usuario de Google
+              if (userData.provider === 'google') {
+                // Intentar obtener datos completos del usuario desde localStorage
+                const isolatedUser = localStorage.getItem('axyra_isolated_user');
+                if (isolatedUser) {
+                  try {
+                    const isolatedData = JSON.parse(isolatedUser);
+                    if (isolatedData.uid === userData.uid) {
+                      currentUser = isolatedData;
+                      console.log('✅ Usuario de Google autenticado:', currentUser);
+                      return true;
+                    }
+                  } catch (error) {
+                    console.warn('⚠️ Error parseando datos aislados:', error);
+                  }
+                }
+              }
+              
+              // Fallback a datos básicos
               currentUser = {
                 id: userData.uid,
                 username: userData.email.split('@')[0],
@@ -2392,6 +2412,18 @@
       // Mostrar configuración actual de la empresa
       function mostrarConfiguracionEmpresa() {
         try {
+          // Obtener usuario actual para aislamiento de datos
+          let currentUser = null;
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
+          } else {
+            // Fallback a localStorage
+            const userData = localStorage.getItem('axyra_isolated_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
           const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
 
           if (config.nombreEmpresa) {
@@ -2433,8 +2465,8 @@
                     console.log('⚠️ Error obteniendo configuración de empresa desde Firebase:', error);
                   });
               } catch (error) {
-                console.log('⚠️ Firebase no disponible para configuración de empresa:', error);
-              }
+                    console.log('⚠️ Firebase no disponible para configuración de empresa:', error);
+                  }
             }
           }
         } catch (error) {
@@ -4150,6 +4182,9 @@
 
     <!-- Inicialización automática del dashboard -->
     <script>
+      // Variable global para el usuario actual
+      let currentUser = null;
+
       // Inicializar dashboard cuando se carga la página
       document.addEventListener('DOMContentLoaded', function () {
         console.log('🚀 Dashboard cargado, verificando autenticación...');
