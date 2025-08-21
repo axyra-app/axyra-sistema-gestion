@@ -1689,37 +1689,16 @@
             return;
           }
 
-          // Verificar si hay horas trabajadas primero
-          const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
-            (hr) =>
-              hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
-          );
-
-          const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
-            const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
-            const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
-            const horasExtras = parseFloat(registro.horasExtras) || 0;
-            const horasDominicales = parseFloat(registro.horasDominicales) || 0;
-            return total + horasOrdinarias + horasNocturnas + horasExtras + horasDominicales;
-          }, 0);
-
-          if (totalHorasTrabajadas === 0) {
-            mostrarModal(
-              'Detalle de Empleados',
-              '<h4>📋 Lista de Empleados</h4><p>No hay horas registradas para mostrar empleados activos.</p>'
-            );
-            return;
-          }
-
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
-            (emp) =>
-              emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
-          );
+          // Obtener empleados del localStorage (que ya fueron filtrados por Firebase)
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          
+          // Filtrar por usuario actual usando la misma lógica que cargarActividadReciente
+          const empleadosFiltrados = empleados.filter((emp) => emp.userId === currentUser.username);
 
           let detalleHTML = '<h4>📋 Lista de Empleados</h4>';
-          if (empleados.length > 0) {
+          if (empleadosFiltrados.length > 0) {
             detalleHTML += '<div class="axyra-empleados-lista">';
-            empleados.forEach((emp) => {
+            empleadosFiltrados.forEach((emp) => {
               detalleHTML += `
                 <div class="axyra-empleado-item">
                   <div class="axyra-empleado-info">
@@ -1732,7 +1711,7 @@
             });
             detalleHTML += '</div>';
           } else {
-            detalleHTML += '<p>No hay empleados registrados</p>';
+            detalleHTML += '<p>No hay empleados registrados para este usuario</p>';
           }
 
           mostrarModal('Detalle de Empleados', detalleHTML);
@@ -1817,10 +1796,7 @@
           }
 
           const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
-            (comp) =>
-              comp.userId === currentUser.username ||
-              comp.userId === currentUser.email ||
-              comp.userId === currentUser.id
+            (comp) => comp.userId === currentUser.username
           );
 
           let detalleHTML = '<h4>🧾 Detalle de Comprobantes</h4>';
@@ -1871,10 +1847,9 @@
             return;
           }
 
-          // Verificar si hay horas trabajadas primero
+          // Obtener horas del localStorage (que ya fueron filtradas por Firebase)
           const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
-            (hr) =>
-              hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
+            (hr) => hr.userId === currentUser.username
           );
 
           const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
@@ -1894,8 +1869,7 @@
           }
 
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
-            (emp) =>
-              emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
+            (emp) => emp.userId === currentUser.username
           );
 
           let detalleHTML = '<h4>💰 Detalle de Salarios</h4>';

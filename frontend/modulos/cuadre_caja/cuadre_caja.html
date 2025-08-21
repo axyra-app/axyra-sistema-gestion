@@ -1579,7 +1579,7 @@
             // Filtrar por usuario actual
             empleados = empleados.filter((e) => {
               if (!e.userId) return true; // Datos globales
-              return e.userId === currentUser?.username || e.userId === currentUser?.email;
+              return e.userId === currentUser?.username;
             });
           }
 
@@ -1590,7 +1590,7 @@
             // Filtrar por usuario actual
             facturas = facturas.filter((f) => {
               if (!f.userId) return true; // Datos globales
-              return f.userId === currentUser?.username || f.userId === currentUser?.email;
+              return f.userId === currentUser?.username;
             });
           }
 

@@ -626,6 +626,11 @@
     <!-- Modal eliminado - convertido a cajón -->
 
     <script>
+      // Variables globales
+      let empleados = [];
+      let horas = [];
+      let currentUser = null;
+
       // Verificar autenticación
       function checkAuth() {
         try {
@@ -2525,7 +2530,7 @@
             // Filtrar por usuario actual
             empleados = empleados.filter((e) => {
               if (!e.userId) return true; // Datos globales
-              return e.userId === currentUser?.username || e.userId === currentUser?.email;
+              return e.userId === currentUser?.username;
             });
           }
 
@@ -2536,7 +2541,7 @@
             // Filtrar por usuario actual
             horas = horas.filter((h) => {
               if (!h.userId) return true; // Datos globales
-              return h.userId === currentUser?.username || h.userId === currentUser?.email;
+              return h.userId === currentUser?.username;
             });
           }
 

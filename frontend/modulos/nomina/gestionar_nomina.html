@@ -1318,7 +1318,7 @@
             // Filtrar por usuario actual
             empleados = empleados.filter((e) => {
               if (!e.userId) return true; // Datos globales
-              return e.userId === currentUser?.username || e.userId === currentUser?.email;
+              return e.userId === currentUser?.username;
             });
           }
 
@@ -1329,7 +1329,7 @@
             // Filtrar por usuario actual
             horas = horas.filter((h) => {
               if (!h.userId) return true; // Datos globales
-              return h.userId === currentUser?.username || h.userId === currentUser?.email;
+              return h.userId === currentUser?.username;
             });
           }
 
@@ -1340,7 +1340,7 @@
             // Filtrar por usuario actual
             nominas = nominas.filter((n) => {
               if (!n.userId) return true; // Datos globales
-              return n.userId === currentUser?.username || n.userId === currentUser?.email;
+              return n.userId === currentUser?.username;
             });
           }
 
@@ -1415,7 +1415,7 @@
             // Filtrar por usuario actual
             empleados = empleados.filter((e) => {
               if (!e.userId) return true; // Datos globales
-              return e.userId === currentUser?.username || e.userId === currentUser?.email;
+              return e.userId === currentUser?.username;
             });
           }
 
@@ -1426,7 +1426,7 @@
             // Filtrar por usuario actual
             horas = horas.filter((h) => {
               if (!h.userId) return true; // Datos globales
-              return h.userId === currentUser?.username || h.userId === currentUser?.email;
+              return h.userId === currentUser?.username;
             });
           }
 
@@ -1437,7 +1437,7 @@
             // Filtrar por usuario actual
             nominas = nominas.filter((n) => {
               if (!n.userId) return true; // Datos globales
-              return n.userId === currentUser?.username || n.userId === currentUser?.email;
+              return n.userId === currentUser?.username;
             });
           }
 
