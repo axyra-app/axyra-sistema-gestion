@@ -657,14 +657,14 @@
                 <h1 class="axyra-page-title">🔐 Acceso Requerido</h1>
                 <p class="axyra-page-subtitle">Necesitas iniciar sesión para acceder al dashboard</p>
               </div>
-
+              
               <div class="axyra-auth-required-card">
                 <div class="axyra-auth-required-icon">
                   <i class="fas fa-lock"></i>
                 </div>
                 <h2>Inicia Sesión para Continuar</h2>
                 <p>Para acceder al dashboard y todas las funcionalidades de AXYRA, necesitas iniciar sesión con tu cuenta.</p>
-
+                
                 <div class="axyra-auth-actions">
                   <button class="axyra-btn axyra-btn-primary" onclick="irALogin()">
                     🔐 Iniciar Sesión
@@ -1551,12 +1551,12 @@
             const fecha = ultimoEmpleado.fechaCreacion || ultimoEmpleado.fecha || new Date().toLocaleDateString();
 
             actividadHTML += `
-              <div class="axyra-activity-item">
-                <div class="axyra-activity-icon">
-                  <i class="fas fa-user-plus"></i>
-                </div>
-                <div class="axyra-activity-content">
-                  <div class="axyra-activity-title">Empleado agregado</div>
+                    <div class="axyra-activity-item">
+                        <div class="axyra-activity-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="axyra-activity-content">
+                            <div class="axyra-activity-title">Empleado agregado</div>
                   <div class="axyra-activity-time">${nombreEmpleado} - ${fecha}</div>
                 </div>
               </div>
@@ -1584,9 +1584,9 @@
                 <div class="axyra-activity-content">
                   <div class="axyra-activity-title">Sin empleados registrados</div>
                   <div class="axyra-activity-time">Agrega tu primer empleado</div>
-                </div>
-              </div>
-            `;
+                        </div>
+                    </div>
+                `;
           }
 
           // Actividad de comprobantes con fallback
@@ -1597,12 +1597,12 @@
               ultimoComprobante.fecha || ultimoComprobante.fechaGeneracion || new Date().toLocaleDateString();
 
             actividadHTML += `
-              <div class="axyra-activity-item">
-                <div class="axyra-activity-icon">
-                  <i class="fas fa-file-invoice-dollar"></i>
-                </div>
-                <div class="axyra-activity-content">
-                  <div class="axyra-activity-title">Comprobante generado</div>
+                    <div class="axyra-activity-item">
+                        <div class="axyra-activity-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="axyra-activity-content">
+                            <div class="axyra-activity-title">Comprobante generado</div>
                   <div class="axyra-activity-time">${empleadoComprobante} - ${fechaComprobante}</div>
                 </div>
               </div>
@@ -1617,25 +1617,25 @@
                 <div class="axyra-activity-content">
                   <div class="axyra-activity-title">Sin comprobantes generados</div>
                   <div class="axyra-activity-time">Genera tu primer comprobante</div>
-                </div>
-              </div>
-            `;
+                        </div>
+                    </div>
+                `;
           }
 
           // Actividad del sistema
           actividadHTML += `
-            <div class="axyra-activity-item">
-              <div class="axyra-activity-icon">
-                <i class="fas fa-sign-in-alt"></i>
-              </div>
-              <div class="axyra-activity-content">
-                <div class="axyra-activity-title">Sesión iniciada</div>
+                <div class="axyra-activity-item">
+                    <div class="axyra-activity-icon">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </div>
+                    <div class="axyra-activity-content">
+                        <div class="axyra-activity-title">Sesión iniciada</div>
                 <div class="axyra-activity-time">${
                   currentUser.username || 'Usuario'
                 } - ${new Date().toLocaleDateString()}</div>
-              </div>
-            </div>
-          `;
+                    </div>
+                </div>
+            `;
 
           // Mostrar actividad
           actividadReciente.innerHTML = actividadHTML;

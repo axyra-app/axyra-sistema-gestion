@@ -12,7 +12,6 @@
     <script src="../../static/work-areas-config.js"></script>
     <script src="../../static/cash-reconciliation-export.js"></script>
 
-
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
@@ -1097,14 +1096,14 @@
             ['NIT: NIT Pendiente'],
             [`FECHA DE EXPORTACIÓN: ${new Date().toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })}`],
             [],
-            ['ID', 'Empleado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones']
+            ['ID', 'Empleado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones'],
           ];
 
           // Agregar datos de cada factura
           facturas.forEach((f, index) => {
             const empleado = empleados.find((e) => e.id === f.empleado_id);
             console.log(`📝 Procesando factura ${index + 1}:`, f.id, empleado?.nombre);
-            
+
             data.push([
               f.id || 'N/A',
               empleado ? empleado.nombre : 'Empleado no encontrado',
@@ -1113,16 +1112,20 @@
               f.concepto || 'N/A',
               formatearMoneda(f.valor),
               f.estado || 'Activa',
-              f.observaciones || 'N/A'
+              f.observaciones || 'N/A',
             ]);
           });
 
           // Agregar totales
           data.push([]);
           const totales = [
-            'TOTALES', '', '', '', 
+            'TOTALES',
+            '',
+            '',
+            '',
             formatearMoneda(facturas.reduce((sum, f) => sum + (f.valor || 0), 0)),
-            '', ''
+            '',
+            '',
           ];
           data.push(totales);
 
@@ -1135,23 +1138,31 @@
 
           // Ajustar ancho de columnas
           ws['!cols'] = [
-            { width: 8 }, { width: 25 }, { width: 15 }, { width: 15 },
-            { width: 30 }, { width: 18 }, { width: 12 }, { width: 30 }
+            { width: 8 },
+            { width: 25 },
+            { width: 15 },
+            { width: 15 },
+            { width: 30 },
+            { width: 18 },
+            { width: 12 },
+            { width: 30 },
           ];
 
           // Generar nombre de archivo
           const now = new Date();
           const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
-          const fileName = `REPORTE_FACTURAS_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime.getHours().toString().padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
-          
+          const fileName = `REPORTE_FACTURAS_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime
+            .getHours()
+            .toString()
+            .padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
+
           console.log('💾 Descargando archivo:', fileName);
 
           // Descargar archivo
           XLSX.writeFile(wb, fileName);
-          
+
           console.log('✅ Exportación completada exitosamente');
           mostrarMensaje('Facturas exportadas correctamente con formato profesional', 'success');
-          
         } catch (error) {
           console.error('❌ Error exportando facturas:', error);
           mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
@@ -1182,14 +1193,14 @@
             ['NIT: NIT Pendiente'],
             [`FECHA DE EXPORTACIÓN: ${new Date().toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })}`],
             [],
-            ['ID', 'Empleado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones']
+            ['ID', 'Empleado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones'],
           ];
 
           // Agregar datos de cada factura
           facturas.forEach((f, index) => {
             const empleado = empleados.find((e) => e.id === f.empleado_id);
             console.log(`📝 Procesando factura ${index + 1}:`, f.id, empleado?.nombre);
-            
+
             data.push([
               f.id || 'N/A',
               empleado ? empleado.nombre : 'Empleado no encontrado',
@@ -1198,16 +1209,20 @@
               f.concepto || 'N/A',
               formatearMoneda(f.valor),
               f.estado || 'Activa',
-              f.observaciones || 'N/A'
+              f.observaciones || 'N/A',
             ]);
           });
 
           // Agregar totales
           data.push([]);
           const totales = [
-            'TOTALES', '', '', '', 
+            'TOTALES',
+            '',
+            '',
+            '',
             formatearMoneda(facturas.reduce((sum, f) => sum + (f.valor || 0), 0)),
-            '', ''
+            '',
+            '',
           ];
           data.push(totales);
 
@@ -1220,23 +1235,31 @@
 
           // Ajustar ancho de columnas
           ws['!cols'] = [
-            { width: 8 }, { width: 25 }, { width: 15 }, { width: 15 },
-            { width: 30 }, { width: 18 }, { width: 12 }, { width: 30 }
+            { width: 8 },
+            { width: 25 },
+            { width: 15 },
+            { width: 15 },
+            { width: 30 },
+            { width: 18 },
+            { width: 12 },
+            { width: 30 },
           ];
 
           // Generar nombre de archivo
           const now = new Date();
           const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
-          const fileName = `CUADRE_CAJA_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime.getHours().toString().padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
-          
+          const fileName = `CUADRE_CAJA_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime
+            .getHours()
+            .toString()
+            .padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
+
           console.log('💾 Descargando archivo:', fileName);
 
           // Descargar archivo
           XLSX.writeFile(wb, fileName);
-          
+
           console.log('✅ Exportación completada exitosamente');
           mostrarMensaje('Cuadre de caja exportado correctamente con formato profesional', 'success');
-          
         } catch (error) {
           console.error('❌ Error exportando cuadre de caja:', error);
           mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
@@ -1480,7 +1503,7 @@
       async function cargarDatosFirebase() {
         try {
           console.log('🔄 Cargando datos desde Firebase...');
-          
+
           // Verificar si Firebase está disponible
           if (typeof firebase === 'undefined' || !firebase.firestore) {
             console.warn('⚠️ Firebase no disponible, usando localStorage como fallback');
@@ -1489,10 +1512,10 @@
           }
 
           const db = firebase.firestore();
-          
+
           // Obtener userId del usuario autenticado en Firebase
           let userId = null;
-          
+
           // Intentar obtener el usuario actual de Firebase Auth
           if (firebase.auth().currentUser) {
             userId = firebase.auth().currentUser.uid;
@@ -1504,7 +1527,7 @@
               const user = JSON.parse(userData);
               userId = user.username || user.email;
             }
-            
+
             if (!userId) {
               console.warn('⚠️ No se puede identificar usuario, usando localStorage');
               await cargarDatosLocalStorage();
@@ -1516,23 +1539,21 @@
 
           // Cargar empleados desde Firebase - buscar por userId
           try {
-            const empleadosSnapshot = await db.collection('empleados')
-              .where('userId', '==', userId)
-              .get();
-            
-            empleados = empleadosSnapshot.docs.map(doc => ({
+            const empleadosSnapshot = await db.collection('empleados').where('userId', '==', userId).get();
+
+            empleados = empleadosSnapshot.docs.map((doc) => ({
               id: doc.id,
-              ...doc.data()
+              ...doc.data(),
             }));
             console.log(`✅ ${empleados.length} empleados cargados desde Firebase para userId: ${userId}`);
-            
+
             // Si no hay empleados con ese userId, intentar buscar sin filtro
             if (empleados.length === 0) {
               console.log('🔍 No se encontraron empleados con userId específico, buscando todos...');
               const allEmpleadosSnapshot = await db.collection('empleados').get();
-              empleados = allEmpleadosSnapshot.docs.map(doc => ({
+              empleados = allEmpleadosSnapshot.docs.map((doc) => ({
                 id: doc.id,
-                ...doc.data()
+                ...doc.data(),
               }));
               console.log(`✅ ${empleados.length} empleados totales encontrados en Firebase`);
             }
@@ -1543,13 +1564,11 @@
 
           // Cargar facturas desde Firebase
           try {
-            const facturasSnapshot = await db.collection('facturas')
-              .where('userId', '==', userId)
-              .get();
-            
-            facturas = facturasSnapshot.docs.map(doc => ({
+            const facturasSnapshot = await db.collection('facturas').where('userId', '==', userId).get();
+
+            facturas = facturasSnapshot.docs.map((doc) => ({
               id: doc.id,
-              ...doc.data()
+              ...doc.data(),
             }));
             console.log(`✅ ${facturas.length} facturas cargadas desde Firebase`);
           } catch (error) {
@@ -1560,7 +1579,6 @@
           // Guardar en localStorage como backup
           localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
           localStorage.setItem('axyra_facturas', JSON.stringify(facturas));
-
         } catch (error) {
           console.error('❌ Error cargando datos desde Firebase:', error);
           // Fallback a localStorage
@@ -1572,7 +1590,7 @@
       async function cargarDatosLocalStorage() {
         try {
           console.log('🔄 Cargando datos desde localStorage...');
-          
+
           // Cargar empleados
           const empleadosData = localStorage.getItem('axyra_empleados');
           if (empleadosData) {
@@ -1598,7 +1616,6 @@
           console.log(
             `✅ Datos cargados desde localStorage: ${empleados.length} empleados, ${facturas.length} facturas`
           );
-          
         } catch (error) {
           console.error('❌ Error cargando datos desde localStorage:', error);
         }
@@ -1608,7 +1625,7 @@
       async function inicializarCuadreCaja() {
         try {
           console.log('🚀 Inicializando módulo de cuadre de caja...');
-          
+
           // Verificar autenticación
           await verificarAutenticacion();
 
