@@ -567,7 +567,7 @@
             try {
               const userData = JSON.parse(firebaseUser);
               console.log('✅ Usuario Firebase encontrado en localStorage:', userData.email);
-              
+
               // Verificar si es un usuario de Google
               if (userData.provider === 'google') {
                 // Intentar obtener datos completos del usuario desde localStorage
@@ -585,7 +585,7 @@
                   }
                 }
               }
-              
+
               // Fallback a datos básicos
               currentUser = {
                 id: userData.uid,
@@ -657,14 +657,14 @@
                 <h1 class="axyra-page-title">🔐 Acceso Requerido</h1>
                 <p class="axyra-page-subtitle">Necesitas iniciar sesión para acceder al dashboard</p>
               </div>
-              
+
               <div class="axyra-auth-required-card">
                 <div class="axyra-auth-required-icon">
                   <i class="fas fa-lock"></i>
                 </div>
                 <h2>Inicia Sesión para Continuar</h2>
                 <p>Para acceder al dashboard y todas las funcionalidades de AXYRA, necesitas iniciar sesión con tu cuenta.</p>
-                
+
                 <div class="axyra-auth-actions">
                   <button class="axyra-btn axyra-btn-primary" onclick="irALogin()">
                     🔐 Iniciar Sesión
@@ -1349,7 +1349,7 @@
                 hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
             );
           }
-          
+
           const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
             const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
             const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
@@ -1693,7 +1693,7 @@
 
           // Obtener empleados del localStorage (que ya fueron filtrados por Firebase)
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           // Filtrar por usuario actual usando la misma lógica que cargarActividadReciente
           const empleadosFiltrados = empleados.filter((emp) => emp.userId === currentUser.username);
 
@@ -2491,7 +2491,7 @@
                         </div>
                     </div>
                 `;
-          
+
           // Mostrar último empleado agregado
           const ultimoEmpleado = empleados[empleados.length - 1];
           actividadHTML += `
@@ -2505,7 +2505,7 @@
                         </div>
                     </div>
                 `;
-          
+
           // Mostrar lista de empleados recientes (máximo 3)
           const empleadosRecientes = empleados.slice(-3).reverse();
           empleadosRecientes.forEach(empleado => {
@@ -2564,14 +2564,14 @@
         try {
           const moneda = document.getElementById('moneda').value;
           const idioma = document.getElementById('idioma').value;
-          
+
           // Guardar en localStorage
           localStorage.setItem('axyra_moneda', moneda);
           localStorage.setItem('axyra_idioma', idioma);
-          
+
           // Mostrar mensaje de confirmación
           mostrarMensaje('✅ Preferencias actualizadas correctamente', 'success');
-          
+
           // Recargar dashboard para aplicar cambios
           setTimeout(() => {
             refrescarDashboard();
@@ -2715,7 +2715,7 @@
       async function cargarDatosFirebase() {
         try {
           console.log('🔄 Cargando datos desde Firebase...');
-          
+
           // Verificar si Firebase está disponible
           if (typeof firebase === 'undefined' || !firebase.firestore) {
             console.warn('⚠️ Firebase no disponible, usando localStorage como fallback');
@@ -2723,10 +2723,10 @@
           }
 
           const db = firebase.firestore();
-          
+
           // Obtener userId del usuario autenticado en Firebase
           let userId = null;
-          
+
           // Intentar obtener el usuario actual de Firebase Auth
           if (firebase.auth().currentUser) {
             userId = firebase.auth().currentUser.uid;
@@ -2738,7 +2738,7 @@
               const user = JSON.parse(userData);
               userId = user.username || user.email;
             }
-            
+
             if (!userId) {
               console.warn('⚠️ No se puede identificar usuario, usando localStorage');
               return;
@@ -2752,13 +2752,13 @@
             const empleadosSnapshot = await db.collection('empleados')
               .where('userId', '==', userId)
               .get();
-            
+
             empleados = empleadosSnapshot.docs.map(doc => ({
               id: doc.id,
               ...doc.data()
             }));
             console.log(`✅ ${empleados.length} empleados cargados desde Firebase para userId: ${userId}`);
-            
+
             // Si no hay empleados con ese userId, intentar buscar sin filtro
             if (empleados.length === 0) {
               console.log('🔍 No se encontraron empleados con userId específico, buscando todos...');
@@ -2779,7 +2779,7 @@
             const horasSnapshot = await db.collection('horas')
               .where('userId', '==', userId)
               .get();
-            
+
             horas = horasSnapshot.docs.map(doc => ({
               id: doc.id,
               ...doc.data()
@@ -2795,7 +2795,7 @@
             const comprobantesSnapshot = await db.collection('comprobantes')
               .where('userId', '==', userId)
               .get();
-            
+
             comprobantes = comprobantesSnapshot.docs.map(doc => ({
               id: doc.id,
               ...doc.data()
@@ -2820,7 +2820,7 @@
       async function cargarDatosLocalStorage() {
         try {
           console.log('🔄 Cargando datos desde localStorage...');
-          
+
           // Cargar empleados
           const empleadosData = localStorage.getItem('axyra_empleados');
           if (empleadosData) {
@@ -2857,7 +2857,7 @@
           console.log(
             `✅ Datos cargados desde localStorage: ${empleados.length} empleados, ${horas.length} horas, ${comprobantes.length} comprobantes`
           );
-          
+
         } catch (error) {
           console.error('❌ Error cargando datos desde localStorage:', error);
         }
@@ -3214,7 +3214,7 @@
               n.userId === currentUser?.id
           );
           const totalNominas = nominasFiltradas.length;
-          
+
           // Usar el elemento correcto que existe en el HTML
           const nominasElement = document.getElementById('nominasGeneradas');
           if (nominasElement) {
@@ -3242,7 +3242,7 @@
               f.userId === currentUser?.id
           );
           const totalFacturas = facturasFiltradas.length;
-          
+
           // Usar el elemento correcto que existe en el HTML
           const facturasElement = document.getElementById('cuadresCaja');
           if (facturasElement) {
@@ -3263,7 +3263,7 @@
         try {
           const departamentos = JSON.parse(localStorage.getItem('axyra_departamentos') || '[]');
           const totalDepartamentos = departamentos.length;
-          
+
           const departamentosElement = document.getElementById('departamentos');
           if (departamentosElement) {
             departamentosElement.textContent = totalDepartamentos;
@@ -3279,7 +3279,7 @@
         try {
           const tareas = JSON.parse(localStorage.getItem('axyra_tareas') || '[]');
           const tareasPendientes = tareas.filter((t) => !t.completada).length;
-          
+
           const tareasElement = document.getElementById('tareasPendientes');
           if (tareasElement) {
             tareasElement.textContent = tareasPendientes;
