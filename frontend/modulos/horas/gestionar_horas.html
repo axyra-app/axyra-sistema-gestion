@@ -2408,5 +2408,173 @@
         }
       }
     </style>
+
+    <!-- Inicialización automática del módulo de horas -->
+    <script>
+      // Inicializar módulo de horas cuando se carga la página
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('🚀 Módulo de horas cargado, verificando autenticación...');
+
+        // Esperar un poco para que se carguen todos los scripts
+        setTimeout(async () => {
+          await inicializarHoras();
+        }, 500);
+      });
+
+      // Función para cargar datos desde Firebase
+      async function cargarDatosFirebase() {
+        try {
+          console.log('🔄 Cargando datos desde Firebase...');
+          
+          // Verificar si Firebase está disponible
+          if (typeof firebase === 'undefined' || !firebase.firestore) {
+            console.warn('⚠️ Firebase no disponible, usando localStorage como fallback');
+            await cargarDatosLocalStorage();
+            return;
+          }
+
+          const db = firebase.firestore();
+          
+          // Obtener userId del usuario autenticado en Firebase
+          let userId = null;
+          
+          // Intentar obtener el usuario actual de Firebase Auth
+          if (firebase.auth().currentUser) {
+            userId = firebase.auth().currentUser.uid;
+            console.log('✅ Usuario autenticado en Firebase:', userId);
+          } else {
+            // Fallback: buscar en localStorage o usar el usuario aislado
+            const userData = localStorage.getItem('axyra_isolated_user');
+            if (userData) {
+              const user = JSON.parse(userData);
+              userId = user.username || user.email;
+            }
+            
+            if (!userId) {
+              console.warn('⚠️ No se puede identificar usuario, usando localStorage');
+              await cargarDatosLocalStorage();
+              return;
+            }
+          }
+
+          console.log('🔍 Buscando datos para userId:', userId);
+
+          // Cargar empleados desde Firebase - buscar por userId
+          try {
+            const empleadosSnapshot = await db.collection('empleados')
+              .where('userId', '==', userId)
+              .get();
+            
+            empleados = empleadosSnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            console.log(`✅ ${empleados.length} empleados cargados desde Firebase para userId: ${userId}`);
+            
+            // Si no hay empleados con ese userId, intentar buscar sin filtro
+            if (empleados.length === 0) {
+              console.log('🔍 No se encontraron empleados con userId específico, buscando todos...');
+              const allEmpleadosSnapshot = await db.collection('empleados').get();
+              empleados = allEmpleadosSnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+              }));
+              console.log(`✅ ${empleados.length} empleados totales encontrados en Firebase`);
+            }
+          } catch (error) {
+            console.warn('⚠️ Error cargando empleados desde Firebase:', error);
+            empleados = [];
+          }
+
+          // Cargar horas desde Firebase
+          try {
+            const horasSnapshot = await db.collection('horas')
+              .where('userId', '==', userId)
+              .get();
+            
+            horas = horasSnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            console.log(`✅ ${horas.length} horas cargadas desde Firebase`);
+          } catch (error) {
+            console.warn('⚠️ Error cargando horas desde Firebase:', error);
+            horas = [];
+          }
+
+          // Guardar en localStorage como backup
+          localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
+          localStorage.setItem('axyra_horas', JSON.stringify(horas));
+
+        } catch (error) {
+          console.error('❌ Error cargando datos desde Firebase:', error);
+          // Fallback a localStorage
+          await cargarDatosLocalStorage();
+        }
+      }
+
+      // Función para cargar datos desde localStorage (fallback)
+      async function cargarDatosLocalStorage() {
+        try {
+          console.log('🔄 Cargando datos desde localStorage...');
+          
+          // Cargar empleados
+          const empleadosData = localStorage.getItem('axyra_empleados');
+          if (empleadosData) {
+            empleados = JSON.parse(empleadosData);
+            // Filtrar por usuario actual
+            empleados = empleados.filter((e) => {
+              if (!e.userId) return true; // Datos globales
+              return e.userId === currentUser?.username || e.userId === currentUser?.email;
+            });
+          }
+
+          // Cargar horas
+          const horasData = localStorage.getItem('axyra_horas');
+          if (horasData) {
+            horas = JSON.parse(horasData);
+            // Filtrar por usuario actual
+            horas = horas.filter((h) => {
+              if (!h.userId) return true; // Datos globales
+              return h.userId === currentUser?.username || h.userId === currentUser?.email;
+            });
+          }
+
+          console.log(
+            `✅ Datos cargados desde localStorage: ${empleados.length} empleados, ${horas.length} horas`
+          );
+          
+        } catch (error) {
+          console.error('❌ Error cargando datos desde localStorage:', error);
+        }
+      }
+
+      // Función de inicialización mejorada
+      async function inicializarHoras() {
+        try {
+          console.log('🚀 Inicializando módulo de horas...');
+          
+          // Verificar autenticación
+          await verificarAutenticacion();
+
+          // Intentar cargar desde Firebase primero
+          await cargarDatosFirebase();
+
+          // Llenar selects
+          llenarSelects();
+
+          // Renderizar tabla
+          renderizarTablaHoras();
+
+          // Configurar listener para cambios en empleados
+          configurarListenerCambiosEmpleados();
+
+          console.log('✅ Módulo de horas inicializado correctamente');
+        } catch (error) {
+          console.error('❌ Error inicializando horas:', error);
+          mostrarNotificacion('Error inicializando módulo de horas', 'error');
+        }
+      }
+    </script>
   </body>
 </html>
