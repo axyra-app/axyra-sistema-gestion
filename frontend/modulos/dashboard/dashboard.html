@@ -758,7 +758,6 @@
         }
 
         // Obtener usuario actual para aislamiento de datos
-        let currentUser = null;
         if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
           currentUser = window.axyraIsolatedAuth.getCurrentUser();
         } else {
@@ -819,7 +818,6 @@
         console.log('=== RESETEANDO LOCALSTORAGE ===');
 
         // Obtener usuario actual para aislamiento de datos
-        let currentUser = null;
         if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
           currentUser = window.axyraIsolatedAuth.getCurrentUser();
         } else {
@@ -937,7 +935,6 @@
         let datosCorruptos = false;
 
         // Obtener usuario actual para aislamiento de datos
-        let currentUser = null;
         if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
           currentUser = window.axyraIsolatedAuth.getCurrentUser();
         } else {
@@ -1060,7 +1057,6 @@
           console.log('📊 Cargando estadísticas...');
 
           // Obtener usuario actual para aislamiento de datos
-          let currentUser = null;
           if (window.axyraFirebaseUserSystem && window.axyraFirebaseUserSystem.hasActiveSession()) {
             currentUser = window.axyraFirebaseUserSystem.getCurrentUser();
             console.log('✅ Usuario Firebase:', currentUser.email);
@@ -1449,7 +1445,6 @@
           }
 
           // Obtener usuario actual con múltiples fallbacks
-          let currentUser = null;
 
           // 1. Intentar sistema aislado
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
@@ -1693,7 +1688,13 @@
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
 
           // Filtrar por usuario actual usando la misma lógica que cargarActividadReciente
-          const empleadosFiltrados = empleados.filter((emp) => emp.userId === currentUser.username);
+          const empleadosFiltrados = empleados.filter(
+            (emp) =>
+              emp.userId === currentUser.username ||
+              emp.userId === currentUser.email ||
+              emp.userId === currentUser.id ||
+              !emp.userId // Incluir empleados sin userId (datos globales)
+          );
 
           let detalleHTML = '<h4>📋 Lista de Empleados</h4>';
           if (empleadosFiltrados.length > 0) {
@@ -1741,7 +1742,10 @@
 
           const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
             (hr) =>
-              hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
+              hr.userId === currentUser.username ||
+              hr.userId === currentUser.email ||
+              hr.userId === currentUser.id ||
+              !hr.userId // Incluir horas sin userId (datos globales)
           );
 
           let detalleHTML = '<h4>⏰ Detalle de Horas Trabajadas</h4>';
@@ -1793,8 +1797,9 @@
             return;
           }
 
+          // Obtener comprobantes del localStorage, incluyendo los del usuario actual y los globales (sin userId)
           const comprobantes = JSON.parse(localStorage.getItem('axyra_comprobantes') || '[]').filter(
-            (comp) => comp.userId === currentUser.username
+            (comp) => !comp.userId || comp.userId === currentUser.username
           );
 
           let detalleHTML = '<h4>🧾 Detalle de Comprobantes</h4>';
@@ -1844,9 +1849,9 @@
             return;
           }
 
-          // Obtener horas del localStorage (que ya fueron filtradas por Firebase)
+          // Obtener horas del localStorage, incluyendo las del usuario actual y las globales (sin userId)
           const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]').filter(
-            (hr) => hr.userId === currentUser.username
+            (hr) => !hr.userId || hr.userId === currentUser.username
           );
 
           const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
@@ -1865,8 +1870,9 @@
             return;
           }
 
+          // Obtener empleados del localStorage, incluyendo los del usuario actual y los globales (sin userId)
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').filter(
-            (emp) => emp.userId === currentUser.username
+            (emp) => !emp.userId || emp.userId === currentUser.username
           );
 
           let detalleHTML = '<h4>💰 Detalle de Salarios</h4>';
@@ -2384,7 +2390,6 @@
       function mostrarConfiguracionEmpresa() {
         try {
           // Obtener usuario actual para aislamiento de datos
-          let currentUser = null;
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
@@ -2450,7 +2455,6 @@
         const actividadReciente = document.getElementById('actividadReciente');
 
         // Obtener usuario actual para aislamiento de datos
-        let currentUser = null;
         if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
           currentUser = window.axyraIsolatedAuth.getCurrentUser();
         } else {
@@ -2970,7 +2974,6 @@
           if (!companyInfo && typeof firebase !== 'undefined' && firebase.firestore) {
             try {
               // Obtener usuario actual
-              let currentUser = null;
               if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
                 currentUser = window.axyraIsolatedAuth.getCurrentUser();
               } else {
@@ -3092,7 +3095,6 @@
           }
 
           const companyData = JSON.parse(companyInfo);
-          let currentUser = null;
 
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
@@ -3100,7 +3102,7 @@
             const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
               currentUser = JSON.parse(userData);
-            }
+          }
           }
 
           if (currentUser && (currentUser.id || currentUser.username)) {
@@ -3565,7 +3567,6 @@
             console.log('📢 Evento de cambio en empleados recibido:', event.detail);
 
             // Verificar que el cambio sea para el usuario actual
-            let currentUser = null;
             if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
               currentUser = window.axyraIsolatedAuth.getCurrentUser();
             } else {
@@ -3590,7 +3591,6 @@
                 console.log('📢 Cambio en empleados detectado vía localStorage:', changeData);
 
                 // Verificar que el cambio sea para el usuario actual
-                let currentUser = null;
                 if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
                   currentUser = window.axyraIsolatedAuth.getCurrentUser();
                 } else {
@@ -4235,9 +4235,6 @@
 
     <!-- Inicialización automática del dashboard -->
     <script>
-      // Variable global para el usuario actual
-      let currentUser = null;
-
       // Inicializar dashboard cuando se carga la página
       document.addEventListener('DOMContentLoaded', function () {
         console.log('🚀 Dashboard cargado, verificando autenticación...');
