@@ -1101,13 +1101,6 @@
                   });
                 });
               }
-              // Solo mostrar empleados si hay horas trabajadas
-              if (totalHorasTrabajadas > 0) {
-                document.getElementById('totalEmpleados').textContent = empleados.length;
-              } else {
-                document.getElementById('totalEmpleados').textContent = '0';
-              }
-
               // Cargar horas desde Firebase
               const horasSnapshot = await firebase
                 .firestore()
@@ -1132,6 +1125,13 @@
                 const horasDominicales = parseFloat(registro.horasDominicales) || 0;
                 return total + horasOrdinarias + horasNocturnas + horasExtras + horasDominicales;
               }, 0);
+
+              // Solo mostrar empleados si hay horas trabajadas
+              if (totalHorasTrabajadas > 0) {
+                document.getElementById('totalEmpleados').textContent = empleados.length;
+              } else {
+                document.getElementById('totalEmpleados').textContent = '0';
+              }
 
               // Cargar comprobantes desde Firebase
               const comprobantesSnapshot = await firebase
@@ -1307,21 +1307,6 @@
             console.log('⚠️ Elemento comprobantesGenerados no encontrado');
           }
 
-          // Calcular total de salarios base SOLO si hay horas trabajadas
-          let totalSalarios = 0;
-          if (totalHorasTrabajadas > 0) {
-            totalSalarios = empleados.reduce((total, empleado) => {
-              if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
-                return total;
-              }
-              const salario = parseFloat(empleado.salario);
-              if (!isNaN(salario) && salario > 0) {
-                return total + salario;
-              }
-              return total;
-            }, 0);
-          }
-
           // Calcular horas trabajadas - SOLO DESDE FIREBASE
           let registrosHoras = [];
 
@@ -1362,6 +1347,7 @@
                 hr.userId === currentUser.username || hr.userId === currentUser.email || hr.userId === currentUser.id
             );
           }
+          
           const totalHorasTrabajadas = registrosHoras.reduce((total, registro) => {
             const horasOrdinarias = parseFloat(registro.horasOrdinarias) || 0;
             const horasNocturnas = parseFloat(registro.horasNocturnas) || 0;
@@ -1369,6 +1355,21 @@
             const horasDominicales = parseFloat(registro.horasDominicales) || 0;
             return total + horasOrdinarias + horasNocturnas + horasExtras + horasDominicales;
           }, 0);
+
+          // Calcular total de salarios base SOLO si hay horas trabajadas
+          let totalSalarios = 0;
+          if (totalHorasTrabajadas > 0) {
+            totalSalarios = empleados.reduce((total, empleado) => {
+              if (!empleado.salario || empleado.salario === '' || empleado.salario === 'undefined') {
+                return total;
+              }
+              const salario = parseFloat(empleado.salario);
+              if (!isNaN(salario) && salario > 0) {
+                return total + salario;
+              }
+              return total;
+            }, 0);
+          }
 
           // Si no hay horas trabajadas, el total de salarios debe ser 0
           const totalSalariosFinal = totalHorasTrabajadas > 0 ? totalSalarios : 0;
@@ -2448,8 +2449,7 @@
         }
       }
 
-      // Cargar actividad reciente
-      function cargarActividadReciente() {
+
         const actividadReciente = document.getElementById('actividadReciente');
 
         // Obtener usuario actual para aislamiento de datos
