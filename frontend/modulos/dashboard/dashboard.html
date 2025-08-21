@@ -1676,7 +1676,6 @@
       function mostrarDetalleEmpleados() {
         try {
           // Obtener usuario actual
-          let currentUser = null;
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
@@ -1727,7 +1726,6 @@
       function mostrarDetalleHoras() {
         try {
           // Obtener usuario actual
-          let currentUser = null;
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
@@ -1782,15 +1780,14 @@
       function mostrarDetalleComprobantes() {
         try {
           // Obtener usuario actual
-          let currentUser = null;
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
-            // Fallback a localStorage
-            const userData = localStorage.getItem('axyra_isolated_user');
-            if (userData) {
-              currentUser = JSON.parse(userData);
-            }
+                      // Fallback a localStorage
+          const userData = localStorage.getItem('axyra_isolated_user');
+          if (userData) {
+            currentUser = JSON.parse(userData);
+          }
           }
 
           if (!currentUser || !currentUser.username) {
@@ -1834,7 +1831,6 @@
       function mostrarDetalleSalarios() {
         try {
           // Obtener usuario actual
-          let currentUser = null;
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
@@ -2561,6 +2557,29 @@
         }
 
         actividadReciente.innerHTML = actividadHTML;
+      }
+
+      // Función para actualizar preferencias del usuario
+      function actualizarPreferencias() {
+        try {
+          const moneda = document.getElementById('moneda').value;
+          const idioma = document.getElementById('idioma').value;
+          
+          // Guardar en localStorage
+          localStorage.setItem('axyra_moneda', moneda);
+          localStorage.setItem('axyra_idioma', idioma);
+          
+          // Mostrar mensaje de confirmación
+          mostrarMensaje('✅ Preferencias actualizadas correctamente', 'success');
+          
+          // Recargar dashboard para aplicar cambios
+          setTimeout(() => {
+            refrescarDashboard();
+          }, 1000);
+        } catch (error) {
+          console.error('Error actualizando preferencias:', error);
+          mostrarMensaje('❌ Error al actualizar preferencias', 'error');
+        }
       }
 
       // Inicializar dashboard
