@@ -2680,8 +2680,8 @@
           // Intentar cargar desde Firebase primero
           await cargarDatosFirebase();
 
-          // Llenar selects
-          cargarEmpleadosEnSelects(empleados);
+          // Cargar empleados en los selects
+          await cargarEmpleados();
 
           // Renderizar tabla
           renderizarTablaHoras();
