@@ -340,8 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Agregar estilos CSS para las notificaciones
-const notificationStyles = document.createElement('style');
-notificationStyles.textContent = `
+const authNotificationStyles = document.createElement('style');
+authNotificationStyles.textContent = `
   @keyframes slideInRight {
     from {
       transform: translateX(100%);
@@ -353,7 +353,7 @@ notificationStyles.textContent = `
     }
   }
 `;
-document.head.appendChild(notificationStyles);
+document.head.appendChild(authNotificationStyles);
 
 // Exportar para uso global
 window.AxyraAuth = AxyraAuth;

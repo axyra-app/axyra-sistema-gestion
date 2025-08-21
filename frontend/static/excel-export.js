@@ -659,8 +659,8 @@ class AXYRAExcelExporter {
 window.axyraExcelExport = new AXYRAExcelExporter();
 
 // Agregar estilos CSS para las notificaciones
-const notificationStyles = document.createElement('style');
-notificationStyles.textContent = `
+const excelNotificationStyles = document.createElement('style');
+excelNotificationStyles.textContent = `
   @keyframes slideInRight {
     from {
       transform: translateX(100%);
@@ -672,7 +672,7 @@ notificationStyles.textContent = `
     }
   }
 `;
-document.head.appendChild(notificationStyles);
+document.head.appendChild(excelNotificationStyles);
 
 console.log('✅ Sistema de exportación Excel AXYRA cargado correctamente');
 console.log('📊 Funciones disponibles:');

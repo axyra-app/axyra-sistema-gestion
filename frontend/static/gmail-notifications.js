@@ -357,8 +357,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Agregar estilos CSS para las notificaciones
-const notificationStyles = document.createElement('style');
-notificationStyles.textContent = `
+const gmailNotificationStyles = document.createElement('style');
+gmailNotificationStyles.textContent = `
   @keyframes slideInRight {
     from {
       transform: translateX(100%);
@@ -370,7 +370,7 @@ notificationStyles.textContent = `
     }
   }
 `;
-document.head.appendChild(notificationStyles);
+document.head.appendChild(gmailNotificationStyles);
 
 // Exportar para uso global
 window.AxyraGmailNotifications = AxyraGmailNotifications;

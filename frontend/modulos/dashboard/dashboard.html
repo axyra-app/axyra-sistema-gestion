@@ -3193,10 +3193,20 @@
               n.userId === currentUser?.id
           );
           const totalNominas = nominasFiltradas.length;
-          document.getElementById('totalNominas').textContent = totalNominas;
+          
+          // Usar el elemento correcto que existe en el HTML
+          const nominasElement = document.getElementById('nominasGeneradas');
+          if (nominasElement) {
+            nominasElement.textContent = totalNominas;
+          } else {
+            console.warn('⚠️ Elemento nominasGeneradas no encontrado');
+          }
         } catch (error) {
           console.error('❌ Error cargando estadísticas de nóminas:', error);
-          document.getElementById('nominasGeneradas').textContent = '0';
+          const nominasElement = document.getElementById('nominasGeneradas');
+          if (nominasElement) {
+            nominasElement.textContent = '0';
+          }
         }
       }
 
@@ -3211,10 +3221,20 @@
               f.userId === currentUser?.id
           );
           const totalFacturas = facturasFiltradas.length;
-          document.getElementById('totalFacturas').textContent = totalFacturas;
+          
+          // Usar el elemento correcto que existe en el HTML
+          const facturasElement = document.getElementById('cuadresCaja');
+          if (facturasElement) {
+            facturasElement.textContent = totalFacturas;
+          } else {
+            console.warn('⚠️ Elemento cuadresCaja no encontrado');
+          }
         } catch (error) {
           console.error('❌ Error cargando estadísticas de facturas:', error);
-          document.getElementById('totalFacturas').textContent = '0';
+          const facturasElement = document.getElementById('cuadresCaja');
+          if (facturasElement) {
+            facturasElement.textContent = '0';
+          }
         }
       }
 
@@ -3222,7 +3242,13 @@
         try {
           const departamentos = JSON.parse(localStorage.getItem('axyra_departamentos') || '[]');
           const totalDepartamentos = departamentos.length;
-          document.getElementById('departamentos').textContent = totalDepartamentos;
+          
+          const departamentosElement = document.getElementById('departamentos');
+          if (departamentosElement) {
+            departamentosElement.textContent = totalDepartamentos;
+          } else {
+            console.warn('⚠️ Elemento departamentos no encontrado');
+          }
         } catch (error) {
           console.error('❌ Error cargando estadísticas de departamentos:', error);
         }
@@ -3232,7 +3258,13 @@
         try {
           const tareas = JSON.parse(localStorage.getItem('axyra_tareas') || '[]');
           const tareasPendientes = tareas.filter((t) => !t.completada).length;
-          document.getElementById('tareasPendientes').textContent = tareasPendientes;
+          
+          const tareasElement = document.getElementById('tareasPendientes');
+          if (tareasElement) {
+            tareasElement.textContent = tareasPendientes;
+          } else {
+            console.warn('⚠️ Elemento tareasPendientes no encontrado');
+          }
         } catch (error) {
           console.error('❌ Error cargando estadísticas de tareas:', error);
         }

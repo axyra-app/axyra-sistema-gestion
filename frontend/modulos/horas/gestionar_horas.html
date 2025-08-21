@@ -651,6 +651,36 @@
         }
       }
 
+      // Verificar autenticación (alias para compatibilidad)
+      async function verificarAutenticacion() {
+        try {
+          console.log('🔐 Verificando autenticación...');
+
+          // Verificar sesión usando localStorage
+          const user = localStorage.getItem('axyra_isolated_user');
+          if (user) {
+            try {
+              const userData = JSON.parse(user);
+              if (userData && (userData.username || userData.email)) {
+                console.log('✅ Usuario autenticado con localStorage:', userData.username || userData.email);
+                return true;
+              }
+            } catch (error) {
+              console.error('Error parseando sesión de localStorage:', error);
+            }
+          }
+
+          // No hay sesión activa
+          console.log('⚠️ No hay sesión activa - redirigiendo al login');
+          window.location.href = '../../login.html';
+          return false;
+        } catch (error) {
+          console.error('❌ Error al verificar sesión:', error);
+          window.location.href = '../../login.html';
+          return false;
+        }
+      }
+
       // Cerrar sesión - SISTEMA AISLADO
       function logout() {
         console.log('🔄 Cerrando sesión desde gestión de horas...');
@@ -808,11 +838,11 @@
         console.log(`✅ ${empleados.length} empleados cargados en los selects`);
       }
 
-      // Manejar formulario de registro masivo
-      document.getElementById('formRegistroMasivo').addEventListener('submit', function (e) {
-        e.preventDefault();
-        registrarHorasMasivas();
-      });
+      // Manejar formulario de registro masivo (comentado hasta que se implemente)
+      // document.getElementById('formRegistroMasivo').addEventListener('submit', function (e) {
+      //   e.preventDefault();
+      //   registrarHorasMasivas();
+      // });
 
       // Registrar horas masivas
       function registrarHorasMasivas() {
@@ -1415,6 +1445,11 @@
             mensajeDiv.remove();
           }
         }, 5000);
+      }
+
+      // Función para mostrar notificaciones (alias para compatibilidad)
+      function mostrarNotificacion(mensaje, tipo = 'info') {
+        mostrarMensaje(mensaje, tipo);
       }
 
       // Registrar horas
