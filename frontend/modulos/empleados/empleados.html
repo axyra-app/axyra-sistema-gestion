@@ -255,6 +255,7 @@
       let empleadoEditando = null;
       let paginaActual = 1;
       const empleadosPorPagina = 10;
+      let currentUser = null;
 
       // Verificar autenticación
       async function checkAuth() {
@@ -305,7 +306,6 @@
           console.log('👥 Cargando empleados...');
 
           // Obtener usuario actual
-          let currentUser = null;
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
@@ -425,7 +425,6 @@
       async function guardarEmpleados() {
         try {
           // Obtener usuario actual
-          let currentUser = null;
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
@@ -677,7 +676,6 @@
               console.log('🗑️ Eliminando empleado:', id);
               
               // Obtener usuario actual
-              let currentUser = null;
               if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
                 currentUser = window.axyraIsolatedAuth.getCurrentUser();
               } else {
@@ -846,14 +844,59 @@
         }
 
         try {
-          // Verificar si el exportador está disponible
-          if (typeof window.axyraExcelExporter === 'undefined') {
-            // Crear instancia del exportador si no existe
-            window.axyraExcelExporter = new AXYRAExcelExporter();
-          }
+          console.log('📊 Iniciando exportación de empleados...');
+          
+          // Preparar datos para Excel
+          const datosExcel = [
+            ['ID', 'Nombre Completo', 'Cargo', 'Departamento', 'Salario Base', 'Tipo de Salario', 'Fecha de Contratación', 'Estado', 'Teléfono', 'Email', 'Dirección']
+          ];
 
-          // Usar el sistema de Excel profesional
-          const nombreArchivo = window.axyraExcelExporter.exportarEmpleados(empleados);
+          empleados.forEach(emp => {
+            datosExcel.push([
+              emp.id || 'N/A',
+              emp.nombreCompleto || 'N/A',
+              emp.cargo || 'N/A',
+              emp.departamento || 'N/A',
+              emp.salarioBase ? `$${emp.salarioBase.toLocaleString()}` : 'N/A',
+              emp.tipoSalario || 'N/A',
+              emp.fechaContratacion || 'N/A',
+              emp.estado || 'N/A',
+              emp.telefono || 'N/A',
+              emp.email || 'N/A',
+              emp.direccion || 'N/A'
+            ]);
+          });
+
+          // Crear libro de Excel
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
+
+          // Aplicar estilos profesionales
+          worksheet['!cols'] = [
+            { width: 8 },   // ID
+            { width: 25 },  // Nombre
+            { width: 20 },  // Cargo
+            { width: 15 },  // Departamento
+            { width: 15 },  // Salario
+            { width: 15 },  // Tipo Salario
+            { width: 20 },  // Fecha
+            { width: 10 },  // Estado
+            { width: 15 },  // Teléfono
+            { width: 25 },  // Email
+            { width: 30 }   // Dirección
+          ];
+
+          // Agregar hoja al libro
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Empleados');
+
+          // Generar nombre de archivo con fecha
+          const fecha = new Date().toISOString().split('T')[0];
+          const nombreArchivo = `Empleados_Villa_Venecia_${fecha}.xlsx`;
+
+          // Descargar archivo
+          XLSX.writeFile(workbook, nombreArchivo);
+
+          console.log('✅ Exportación completada:', nombreArchivo);
           mostrarMensaje(`✅ Empleados exportados a Excel correctamente: ${nombreArchivo}`, 'success');
         } catch (error) {
           console.error('❌ Error exportando empleados:', error);
@@ -1261,7 +1304,6 @@
           console.log('🧹 Limpiando datos inconsistentes...');
           
           // Obtener usuario actual
-          let currentUser = null;
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
           } else {
@@ -1347,7 +1389,6 @@
             detail: {
               timestamp: new Date().toISOString(),
               userId: (() => {
-                let currentUser = null;
                 if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
                   currentUser = window.axyraIsolatedAuth.getCurrentUser();
                 } else {
@@ -1369,7 +1410,6 @@
           localStorage.setItem('axyra_last_employee_change', JSON.stringify({
             timestamp: new Date().toISOString(),
             userId: (() => {
-              let currentUser = null;
               if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
                 currentUser = window.axyraIsolatedAuth.getCurrentUser();
                 return currentUser?.id || currentUser?.username || currentUser?.email;
@@ -1390,6 +1430,28 @@
           console.error('❌ Error notificando cambios:', error);
         }
       }
+
+      // Hacer funciones globales para acceso desde HTML
+      window.exportarEmpleados = exportarEmpleados;
+      window.mostrarModal = mostrarModal;
+      window.cerrarModal = cerrarModal;
+      window.gestionarDepartamentos = gestionarDepartamentos;
+      window.cerrarModalDepartamentos = cerrarModalDepartamentos;
+      window.agregarDepartamento = agregarDepartamento;
+      window.editarDepartamento = editarDepartamento;
+      window.eliminarDepartamento = eliminarDepartamento;
+      window.cerrarModalEditarDepartamento = cerrarModalEditarDepartamento;
+      window.confirmarEditarDepartamento = confirmarEditarDepartamento;
+      window.cerrarModalConfirmarEliminarDepartamento = cerrarModalConfirmarEliminarDepartamento;
+      window.confirmarEliminarDepartamento = confirmarEliminarDepartamento;
+      window.verEmpleado = verEmpleado;
+      window.cerrarModalDetalles = cerrarModalDetalles;
+      window.editarEmpleado = editarEmpleado;
+      window.actualizarEmpleado = actualizarEmpleado;
+      window.eliminarEmpleado = eliminarEmpleado;
+      window.resetearFormulario = resetearFormulario;
+      window.aplicarFiltros = aplicarFiltros;
+      window.logout = logout;
     </script>
   </body>
 </html>
