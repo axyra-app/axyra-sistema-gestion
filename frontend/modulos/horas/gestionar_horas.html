@@ -891,7 +891,7 @@
         alert(`Se registraron ${registrosExitosos} empleados exitosamente`);
 
         // Limpiar formulario
-        document.getElementById('formRegistroMasivo').reset();
+        // document.getElementById('formRegistroMasivo').reset();
         document.querySelectorAll('#empleadosMasivos input[type="checkbox"]').forEach((cb) => (cb.checked = false));
 
         // Actualizar historial
@@ -1556,11 +1556,6 @@
             return;
           }
 
-          // Verificar si el exportador está disponible
-          if (typeof window.axyraExcelExport === 'undefined') {
-            window.axyraExcelExport = new AXYRAExcelExporter();
-          }
-
           // Preparar datos para exportar
           const datosExportar = horas.map((registro) => {
             const empleado = empleados.find((e) => e.id === registro.empleadoId);
@@ -1586,8 +1581,52 @@
             };
           });
 
-          // Usar el sistema de Excel profesional
-          const nombreArchivo = window.axyraExcelExport.exportarHoras(datosExportar);
+          // Crear libro de Excel
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.aoa_to_sheet([
+            [
+              'Empleado',
+              'Departamento',
+              'Fecha',
+              'Hora Entrada',
+              'Hora Salida',
+              'Tipo',
+              'Total Horas',
+              'Observaciones',
+            ],
+            ...datosExportar.map((registro) => [
+              registro.empleado,
+              registro.departamento,
+              registro.fecha,
+              registro.horaEntrada,
+              registro.horaSalida,
+              registro.tipo,
+              registro.totalHoras,
+              registro.observaciones,
+            ]),
+          ]);
+
+          // Aplicar estilos profesionales
+          worksheet['!cols'] = [
+            { width: 25 }, // Empleado
+            { width: 20 }, // Departamento
+            { width: 15 }, // Fecha
+            { width: 15 }, // Hora Entrada
+            { width: 15 }, // Hora Salida
+            { width: 12 }, // Tipo
+            { width: 15 }, // Total Horas
+            { width: 30 }, // Observaciones
+          ];
+
+          // Agregar hoja al libro
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Horas');
+
+          // Generar nombre de archivo con fecha
+          const fecha = new Date().toISOString().split('T')[0];
+          const nombreArchivo = `Horas_Villa_Venecia_${fecha}.xlsx`;
+
+          // Descargar archivo
+          XLSX.writeFile(workbook, nombreArchivo);
           mostrarMensaje(`✅ Horas exportadas a Excel correctamente: ${nombreArchivo}`, 'success');
         } catch (error) {
           console.error('❌ Error exportando horas:', error);
@@ -2127,10 +2166,6 @@
           }
 
           // Verificar si el exportador está disponible
-          if (typeof window.axyraExcelExporter === 'undefined') {
-            window.axyraExcelExporter = new AXYRAExcelExporter();
-          }
-
           // Preparar datos para exportar
           const datosExportar = horas.map((registro) => {
             const empleado = empleados.find((emp) => emp.id === registro.empleadoId);
@@ -2155,8 +2190,61 @@
             };
           });
 
-          // Usar el sistema de Excel profesional
-          const nombreArchivo = window.axyraExcelExporter.exportarHoras(datosExportar);
+          // Crear libro de Excel
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.aoa_to_sheet([
+            [
+              'Empleado',
+              'Departamento',
+              'Fecha',
+              'Horas Ordinarias',
+              'Horas Nocturnas',
+              'Horas Extra Diurnas',
+              'Horas Extra Nocturnas',
+              'Horas Dominicales',
+              'Horas Festivas',
+              'Total Horas',
+              'Observaciones',
+            ],
+            ...datosExportar.map((registro) => [
+              registro.empleado,
+              registro.departamento,
+              registro.fecha,
+              registro.horasOrdinarias,
+              registro.horasNocturnas,
+              registro.horasExtraDiurnas,
+              registro.horasExtraNocturnas,
+              registro.horasDominicales,
+              registro.horasFestivas,
+              registro.totalHoras,
+              registro.observaciones,
+            ]),
+          ]);
+
+          // Aplicar estilos profesionales
+          worksheet['!cols'] = [
+            { width: 25 }, // Empleado
+            { width: 20 }, // Departamento
+            { width: 15 }, // Fecha
+            { width: 18 }, // Horas Ordinarias
+            { width: 18 }, // Horas Nocturnas
+            { width: 18 }, // Horas Extra Diurnas
+            { width: 18 }, // Horas Extra Nocturnas
+            { width: 18 }, // Horas Dominicales
+            { width: 18 }, // Horas Festivas
+            { width: 15 }, // Total Horas
+            { width: 30 }, // Observaciones
+          ];
+
+          // Agregar hoja al libro
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Historial Horas');
+
+          // Generar nombre de archivo con fecha
+          const fecha = new Date().toISOString().split('T')[0];
+          const nombreArchivo = `Historial_Horas_Villa_Venecia_${fecha}.xlsx`;
+
+          // Descargar archivo
+          XLSX.writeFile(workbook, nombreArchivo);
           mostrarMensaje(`✅ Historial de horas exportado a Excel correctamente: ${nombreArchivo}`, 'success');
         } catch (error) {
           console.error('❌ Error exportando historial de horas:', error);
@@ -2465,7 +2553,7 @@
       async function cargarDatosFirebase() {
         try {
           console.log('🔄 Cargando datos desde Firebase...');
-          
+
           // Verificar si Firebase está disponible
           if (typeof firebase === 'undefined' || !firebase.firestore) {
             console.warn('⚠️ Firebase no disponible, usando localStorage como fallback');
@@ -2474,10 +2562,10 @@
           }
 
           const db = firebase.firestore();
-          
+
           // Obtener userId del usuario autenticado en Firebase
           let userId = null;
-          
+
           // Intentar obtener el usuario actual de Firebase Auth
           if (firebase.auth().currentUser) {
             userId = firebase.auth().currentUser.uid;
@@ -2489,7 +2577,7 @@
               const user = JSON.parse(userData);
               userId = user.username || user.email;
             }
-            
+
             if (!userId) {
               console.warn('⚠️ No se puede identificar usuario, usando localStorage');
               await cargarDatosLocalStorage();
@@ -2501,23 +2589,21 @@
 
           // Cargar empleados desde Firebase - buscar por userId
           try {
-            const empleadosSnapshot = await db.collection('empleados')
-              .where('userId', '==', userId)
-              .get();
-            
-            empleados = empleadosSnapshot.docs.map(doc => ({
+            const empleadosSnapshot = await db.collection('empleados').where('userId', '==', userId).get();
+
+            empleados = empleadosSnapshot.docs.map((doc) => ({
               id: doc.id,
-              ...doc.data()
+              ...doc.data(),
             }));
             console.log(`✅ ${empleados.length} empleados cargados desde Firebase para userId: ${userId}`);
-            
+
             // Si no hay empleados con ese userId, intentar buscar sin filtro
             if (empleados.length === 0) {
               console.log('🔍 No se encontraron empleados con userId específico, buscando todos...');
               const allEmpleadosSnapshot = await db.collection('empleados').get();
-              empleados = allEmpleadosSnapshot.docs.map(doc => ({
+              empleados = allEmpleadosSnapshot.docs.map((doc) => ({
                 id: doc.id,
-                ...doc.data()
+                ...doc.data(),
               }));
               console.log(`✅ ${empleados.length} empleados totales encontrados en Firebase`);
             }
@@ -2528,13 +2614,11 @@
 
           // Cargar horas desde Firebase
           try {
-            const horasSnapshot = await db.collection('horas')
-              .where('userId', '==', userId)
-              .get();
-            
-            horas = horasSnapshot.docs.map(doc => ({
+            const horasSnapshot = await db.collection('horas').where('userId', '==', userId).get();
+
+            horas = horasSnapshot.docs.map((doc) => ({
               id: doc.id,
-              ...doc.data()
+              ...doc.data(),
             }));
             console.log(`✅ ${horas.length} horas cargadas desde Firebase`);
           } catch (error) {
@@ -2545,7 +2629,6 @@
           // Guardar en localStorage como backup
           localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
           localStorage.setItem('axyra_horas', JSON.stringify(horas));
-
         } catch (error) {
           console.error('❌ Error cargando datos desde Firebase:', error);
           // Fallback a localStorage
@@ -2557,7 +2640,7 @@
       async function cargarDatosLocalStorage() {
         try {
           console.log('🔄 Cargando datos desde localStorage...');
-          
+
           // Cargar empleados
           const empleadosData = localStorage.getItem('axyra_empleados');
           if (empleadosData) {
@@ -2580,10 +2663,7 @@
             });
           }
 
-          console.log(
-            `✅ Datos cargados desde localStorage: ${empleados.length} empleados, ${horas.length} horas`
-          );
-          
+          console.log(`✅ Datos cargados desde localStorage: ${empleados.length} empleados, ${horas.length} horas`);
         } catch (error) {
           console.error('❌ Error cargando datos desde localStorage:', error);
         }
@@ -2593,7 +2673,7 @@
       async function inicializarHoras() {
         try {
           console.log('🚀 Inicializando módulo de horas...');
-          
+
           // Verificar autenticación
           await verificarAutenticacion();
 

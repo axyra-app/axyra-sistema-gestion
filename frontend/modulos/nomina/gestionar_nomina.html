@@ -3441,13 +3441,64 @@
               <script>
                 function exportarReporteExcel() {
                   try {
-                    // Verificar si el exportador está disponible
-                    if (typeof window.axyraExcelExport === 'undefined') {
-                      window.axyraExcelExport = new AXYRAExcelExporter();
+                    // Obtener datos de nómina
+                    const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+                    const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+                    
+                    if (nominas.length === 0) {
+                      alert('No hay datos de nómina para exportar');
+                      return;
                     }
 
-                    // Usar el sistema de Excel profesional
-                    const nombreArchivo = window.axyraExcelExport.exportarNomina();
+                    // Preparar datos para Excel
+                    const datosExcel = [
+                      ['ID', 'Empleado', 'Departamento', 'Salario Base', 'Horas Trabajadas', 'Total Horas', 'Valor por Hora', 'Total a Pagar', 'Fecha', 'Estado']
+                    ];
+
+                    nominas.forEach(nomina => {
+                      const empleado = empleados.find(emp => emp.id === nomina.empleadoId);
+                      datosExcel.push([
+                        nomina.id || 'N/A',
+                        empleado ? empleado.nombreCompleto : 'Empleado no encontrado',
+                        empleado ? empleado.departamento : 'N/A',
+                        empleado ? `$${empleado.salarioBase?.toLocaleString() || '0'}` : 'N/A',
+                        nomina.horasTrabajadas || '0',
+                        nomina.totalHoras || '0',
+                        nomina.valorPorHora ? `$${nomina.valorPorHora.toLocaleString()}` : 'N/A',
+                        nomina.totalAPagar ? `$${nomina.totalAPagar.toLocaleString()}` : 'N/A',
+                        nomina.fecha || 'N/A',
+                        nomina.estado || 'N/A'
+                      ]);
+                    });
+
+                    // Crear libro de Excel
+                    const workbook = XLSX.utils.book_new();
+                    const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
+
+                    // Aplicar estilos profesionales
+                    worksheet['!cols'] = [
+                      { width: 8 },   // ID
+                      { width: 25 },  // Empleado
+                      { width: 20 },  // Departamento
+                      { width: 15 },  // Salario Base
+                      { width: 18 },  // Horas Trabajadas
+                      { width: 15 },  // Total Horas
+                      { width: 18 },  // Valor por Hora
+                      { width: 18 },  // Total a Pagar
+                      { width: 15 },  // Fecha
+                      { width: 12 }   // Estado
+                    ];
+
+                    // Agregar hoja al libro
+                    XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
+
+                    // Generar nombre de archivo con fecha
+                    const fecha = new Date().toISOString().split('T')[0];
+                    const nombreArchivo = `Reporte_Nomina_Villa_Venecia_${fecha}.xlsx`;
+
+                    // Descargar archivo
+                    XLSX.writeFile(workbook, nombreArchivo);
+                    
                     console.log('✅ Reporte de nómina exportado correctamente:', nombreArchivo);
                   } catch (error) {
                     console.error('❌ Error exportando reporte de nómina:', error);

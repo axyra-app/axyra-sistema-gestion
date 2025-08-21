@@ -222,14 +222,29 @@ class AxyraDebug {
       axyraKeys.forEach((key) => {
         try {
           const value = localStorage.getItem(key);
-          const parsed = JSON.parse(value);
+
+          // Verificar si el valor es JSON válido o texto plano
+          let parsed;
+          let isJson = false;
+
+          try {
+            parsed = JSON.parse(value);
+            isJson = true;
+          } catch (parseError) {
+            // Si no es JSON, usar el valor como texto plano
+            parsed = value;
+            isJson = false;
+          }
+
           this.logDebug(`Contenido de ${key}`, {
             type: typeof parsed,
+            isJson: isJson,
             hasData: !!parsed,
             size: value ? value.length : 0,
+            value: isJson ? '[JSON Object]' : `"${parsed}"`,
           });
         } catch (error) {
-          this.logWarn(`Error parseando ${key}`, error);
+          this.logWarn(`Error procesando ${key}`, error);
         }
       });
     } catch (error) {

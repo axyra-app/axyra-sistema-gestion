@@ -20,7 +20,6 @@
     <!-- SISTEMA AISLADO - SIN FIREBASE -->
     <script src="../../static/isolated-auth.js"></script>
     <script src="../../static/debug-auth.js"></script>
-    <script src="../../static/excel-export.js"></script>
   </head>
   <body>
     <!-- Header -->
@@ -326,21 +325,22 @@
           if (typeof firebase !== 'undefined' && firebase.firestore && currentUser.id) {
             try {
               console.log('🔥 Cargando empleados desde Firebase...');
-              const empleadosSnapshot = await firebase.firestore()
+              const empleadosSnapshot = await firebase
+                .firestore()
                 .collection('empleados')
                 .where('userId', '==', currentUser.id)
                 .get();
-              
+
               if (!empleadosSnapshot.empty) {
                 empleados = [];
-                empleadosSnapshot.forEach(doc => {
+                empleadosSnapshot.forEach((doc) => {
                   empleados.push({
                     id: doc.id,
-                    ...doc.data()
+                    ...doc.data(),
                   });
                 });
                 console.log(`✅ Empleados cargados desde Firebase: ${empleados.length}`);
-                
+
                 // Sincronizar con localStorage
                 localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
               } else {
@@ -357,8 +357,11 @@
                 try {
                   const empleadosLocal = JSON.parse(empleadosGuardados);
                   // Filtrar solo empleados del usuario actual
-                  empleados = empleadosLocal.filter(emp => 
-                    emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
+                  empleados = empleadosLocal.filter(
+                    (emp) =>
+                      emp.userId === currentUser.username ||
+                      emp.userId === currentUser.email ||
+                      emp.userId === currentUser.id
                   );
                   console.log(`✅ Empleados cargados desde localStorage (filtrados): ${empleados.length}`);
                 } catch (error) {
@@ -378,8 +381,11 @@
               try {
                 const empleadosLocal = JSON.parse(empleadosGuardados);
                 // Filtrar solo empleados del usuario actual
-                empleados = empleadosLocal.filter(emp => 
-                  emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
+                empleados = empleadosLocal.filter(
+                  (emp) =>
+                    emp.userId === currentUser.username ||
+                    emp.userId === currentUser.email ||
+                    emp.userId === currentUser.id
                 );
                 console.log(`✅ Empleados cargados desde localStorage (filtrados): ${empleados.length}`);
               } catch (error) {
@@ -396,16 +402,18 @@
           // Verificar que no haya empleados duplicados o inconsistentes
           const empleadosUnicos = [];
           const idsVistos = new Set();
-          
+
           for (const empleado of empleados) {
             if (empleado.id && !idsVistos.has(empleado.id)) {
               idsVistos.add(empleado.id);
               empleadosUnicos.push(empleado);
             }
           }
-          
+
           if (empleadosUnicos.length !== empleados.length) {
-            console.log(`⚠️ Se encontraron empleados duplicados. Limpiando de ${empleados.length} a ${empleadosUnicos.length}`);
+            console.log(
+              `⚠️ Se encontraron empleados duplicados. Limpiando de ${empleados.length} a ${empleadosUnicos.length}`
+            );
             empleados = empleadosUnicos;
             // Guardar la versión limpia
             if (typeof firebase !== 'undefined' && firebase.firestore && currentUser.id) {
@@ -443,59 +451,59 @@
           if (typeof firebase !== 'undefined' && firebase.firestore && currentUser.id) {
             try {
               console.log('🔥 Guardando empleados en Firebase...');
-              
+
               // Obtener todos los empleados actuales del usuario en Firebase
-              const empleadosSnapshot = await firebase.firestore()
+              const empleadosSnapshot = await firebase
+                .firestore()
                 .collection('empleados')
                 .where('userId', '==', currentUser.id)
                 .get();
-              
+
               // Crear un mapa de IDs existentes en Firebase
               const empleadosExistentes = new Map();
-              empleadosSnapshot.forEach(doc => {
+              empleadosSnapshot.forEach((doc) => {
                 empleadosExistentes.set(doc.id, doc.data());
               });
-              
+
               // Procesar cada empleado local
               for (const empleado of empleados) {
                 if (empleado.id && typeof empleado.id === 'string' && empleado.id.length > 10) {
                   // Es un ID de Firebase, actualizar
                   if (empleadosExistentes.has(empleado.id)) {
-                    await firebase.firestore()
+                    await firebase
+                      .firestore()
                       .collection('empleados')
                       .doc(empleado.id)
                       .update({
                         ...empleado,
-                        updatedAt: new Date().toISOString()
+                        updatedAt: new Date().toISOString(),
                       });
                   }
                 } else {
                   // Es un nuevo empleado, crear
-                  const docRef = await firebase.firestore()
+                  const docRef = await firebase
+                    .firestore()
                     .collection('empleados')
                     .add({
                       ...empleado,
                       userId: currentUser.id,
                       createdAt: new Date().toISOString(),
-                      updatedAt: new Date().toISOString()
+                      updatedAt: new Date().toISOString(),
                     });
                   // Actualizar el ID local con el ID de Firebase
                   empleado.id = docRef.id;
                 }
               }
-              
+
               // Eliminar empleados que ya no están en la lista local
               for (const [firebaseId, empleadoFirebase] of empleadosExistentes) {
-                const empleadoLocal = empleados.find(e => e.id === firebaseId);
+                const empleadoLocal = empleados.find((e) => e.id === firebaseId);
                 if (!empleadoLocal) {
                   console.log('🗑️ Eliminando empleado obsoleto de Firebase:', firebaseId);
-                  await firebase.firestore()
-                    .collection('empleados')
-                    .doc(firebaseId)
-                    .delete();
+                  await firebase.firestore().collection('empleados').doc(firebaseId).delete();
                 }
               }
-              
+
               console.log('✅ Empleados sincronizados con Firebase');
             } catch (firebaseError) {
               console.warn('⚠️ Error guardando en Firebase, usando localStorage:', firebaseError);
@@ -506,7 +514,7 @@
           console.log('💾 Guardando empleados en localStorage...');
           localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
           console.log('✅ Empleados guardados en localStorage');
-          
+
           // Notificar a otros módulos sobre el cambio de datos
           notificarCambioEmpleados();
         } catch (error) {
@@ -674,7 +682,7 @@
           document.getElementById('btnConfirmar').onclick = async () => {
             try {
               console.log('🗑️ Eliminando empleado:', id);
-              
+
               // Obtener usuario actual
               if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
                 currentUser = window.axyraIsolatedAuth.getCurrentUser();
@@ -686,13 +694,16 @@
               }
 
               // Eliminar de Firebase si está disponible
-              if (typeof firebase !== 'undefined' && firebase.firestore && currentUser && empleado.id && empleado.id.length > 10) {
+              if (
+                typeof firebase !== 'undefined' &&
+                firebase.firestore &&
+                currentUser &&
+                empleado.id &&
+                empleado.id.length > 10
+              ) {
                 try {
                   console.log('🔥 Eliminando empleado de Firebase...');
-                  await firebase.firestore()
-                    .collection('empleados')
-                    .doc(empleado.id)
-                    .delete();
+                  await firebase.firestore().collection('empleados').doc(empleado.id).delete();
                   console.log('✅ Empleado eliminado de Firebase');
                 } catch (firebaseError) {
                   console.warn('⚠️ Error eliminando de Firebase:', firebaseError);
@@ -701,18 +712,18 @@
 
               // Eliminar del array local
               empleados = empleados.filter((e) => e.id !== id);
-              
+
               // Guardar en localStorage
               localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
-              
+
               // Notificar a otros módulos sobre el cambio de datos
               notificarCambioEmpleados();
-              
+
               // Actualizar la vista
               mostrarEmpleados();
               cerrarModal('modalConfirmacion');
               mostrarMensaje('✅ Empleado eliminado correctamente', 'success');
-              
+
               console.log('✅ Empleado eliminado completamente del sistema');
             } catch (error) {
               console.error('❌ Error eliminando empleado:', error);
@@ -845,13 +856,25 @@
 
         try {
           console.log('📊 Iniciando exportación de empleados...');
-          
+
           // Preparar datos para Excel
           const datosExcel = [
-            ['ID', 'Nombre Completo', 'Cargo', 'Departamento', 'Salario Base', 'Tipo de Salario', 'Fecha de Contratación', 'Estado', 'Teléfono', 'Email', 'Dirección']
+            [
+              'ID',
+              'Nombre Completo',
+              'Cargo',
+              'Departamento',
+              'Salario Base',
+              'Tipo de Salario',
+              'Fecha de Contratación',
+              'Estado',
+              'Teléfono',
+              'Email',
+              'Dirección',
+            ],
           ];
 
-          empleados.forEach(emp => {
+          empleados.forEach((emp) => {
             datosExcel.push([
               emp.id || 'N/A',
               emp.nombreCompleto || 'N/A',
@@ -863,7 +886,7 @@
               emp.estado || 'N/A',
               emp.telefono || 'N/A',
               emp.email || 'N/A',
-              emp.direccion || 'N/A'
+              emp.direccion || 'N/A',
             ]);
           });
 
@@ -873,17 +896,17 @@
 
           // Aplicar estilos profesionales
           worksheet['!cols'] = [
-            { width: 8 },   // ID
-            { width: 25 },  // Nombre
-            { width: 20 },  // Cargo
-            { width: 15 },  // Departamento
-            { width: 15 },  // Salario
-            { width: 15 },  // Tipo Salario
-            { width: 20 },  // Fecha
-            { width: 10 },  // Estado
-            { width: 15 },  // Teléfono
-            { width: 25 },  // Email
-            { width: 30 }   // Dirección
+            { width: 8 }, // ID
+            { width: 25 }, // Nombre
+            { width: 20 }, // Cargo
+            { width: 15 }, // Departamento
+            { width: 15 }, // Salario
+            { width: 15 }, // Tipo Salario
+            { width: 20 }, // Fecha
+            { width: 10 }, // Estado
+            { width: 15 }, // Teléfono
+            { width: 25 }, // Email
+            { width: 30 }, // Dirección
           ];
 
           // Agregar hoja al libro
@@ -1302,7 +1325,7 @@
       function limpiarDatosInconsistentes() {
         try {
           console.log('🧹 Limpiando datos inconsistentes...');
-          
+
           // Obtener usuario actual
           if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
             currentUser = window.axyraIsolatedAuth.getCurrentUser();
@@ -1323,12 +1346,17 @@
           if (empleadosGuardados) {
             try {
               const empleadosLocal = JSON.parse(empleadosGuardados);
-              const empleadosFiltrados = empleadosLocal.filter(emp => 
-                emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
+              const empleadosFiltrados = empleadosLocal.filter(
+                (emp) =>
+                  emp.userId === currentUser.username ||
+                  emp.userId === currentUser.email ||
+                  emp.userId === currentUser.id
               );
-              
+
               if (empleadosFiltrados.length !== empleadosLocal.length) {
-                console.log(`🧹 Limpiando empleados obsoletos: ${empleadosLocal.length} -> ${empleadosFiltrados.length}`);
+                console.log(
+                  `🧹 Limpiando empleados obsoletos: ${empleadosLocal.length} -> ${empleadosFiltrados.length}`
+                );
                 localStorage.setItem('axyra_empleados', JSON.stringify(empleadosFiltrados));
               }
             } catch (error) {
@@ -1372,7 +1400,7 @@
       });
 
       // Limpiar datos cuando la página se vuelve visible
-      document.addEventListener('visibilitychange', function() {
+      document.addEventListener('visibilitychange', function () {
         if (!document.hidden) {
           console.log('👁️ Página visible, verificando datos...');
           setTimeout(limpiarDatosInconsistentes, 500);
@@ -1383,7 +1411,7 @@
       function notificarCambioEmpleados() {
         try {
           console.log('📢 Notificando cambio en empleados a otros módulos...');
-          
+
           // Crear un evento personalizado para notificar cambios
           const eventoCambio = new CustomEvent('axyraEmpleadosCambiados', {
             detail: {
@@ -1399,32 +1427,35 @@
                 }
                 return currentUser?.id || currentUser?.username || currentUser?.email;
               })(),
-              action: 'dataChanged'
-            }
+              action: 'dataChanged',
+            },
           });
-          
+
           // Disparar el evento
           window.dispatchEvent(eventoCambio);
-          
+
           // También notificar a través de localStorage para compatibilidad
-          localStorage.setItem('axyra_last_employee_change', JSON.stringify({
-            timestamp: new Date().toISOString(),
-            userId: (() => {
-              if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
-                currentUser = window.axyraIsolatedAuth.getCurrentUser();
-                return currentUser?.id || currentUser?.username || currentUser?.email;
-              } else {
-                const userData = localStorage.getItem('axyra_isolated_user');
-                if (userData) {
-                  currentUser = JSON.parse(userData);
+          localStorage.setItem(
+            'axyra_last_employee_change',
+            JSON.stringify({
+              timestamp: new Date().toISOString(),
+              userId: (() => {
+                if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+                  currentUser = window.axyraIsolatedAuth.getCurrentUser();
                   return currentUser?.id || currentUser?.username || currentUser?.email;
+                } else {
+                  const userData = localStorage.getItem('axyra_isolated_user');
+                  if (userData) {
+                    currentUser = JSON.parse(userData);
+                    return currentUser?.id || currentUser?.username || currentUser?.email;
+                  }
                 }
-              }
-              return null;
-            })(),
-            action: 'dataChanged'
-          }));
-          
+                return null;
+              })(),
+              action: 'dataChanged',
+            })
+          );
+
           console.log('✅ Notificación enviada a otros módulos');
         } catch (error) {
           console.error('❌ Error notificando cambios:', error);
@@ -1435,6 +1466,7 @@
       window.exportarEmpleados = exportarEmpleados;
       window.mostrarModal = mostrarModal;
       window.cerrarModal = cerrarModal;
+      window.cambiarPagina = cambiarPagina;
       window.gestionarDepartamentos = gestionarDepartamentos;
       window.cerrarModalDepartamentos = cerrarModalDepartamentos;
       window.agregarDepartamento = agregarDepartamento;
