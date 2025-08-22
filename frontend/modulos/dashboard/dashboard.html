@@ -1908,29 +1908,38 @@
         }
       }
 
-      // Función para mostrar mensajes
+      // Función para mostrar mensajes/notificaciones
       function mostrarMensaje(mensaje, tipo = 'info') {
-        // Remover mensajes existentes
-        const existingMessages = document.querySelectorAll('.axyra-message');
-        existingMessages.forEach((msg) => msg.remove());
-
-        const mensajeDiv = document.createElement('div');
-        mensajeDiv.className = `axyra-message axyra-${tipo}-message`;
-        mensajeDiv.innerHTML = `
-          <div class="axyra-message-content">
-            <span class="axyra-message-text">${mensaje}</span>
-            <button class="axyra-message-close" onclick="this.parentElement.parentElement.remove()">×</button>
-              </div>
-        `;
-
-        document.body.appendChild(mensajeDiv);
-
-        // Auto-remover después de 5 segundos
-        setTimeout(() => {
-          if (mensajeDiv.parentElement) {
-            mensajeDiv.remove();
-          }
-        }, 5000);
+        try {
+          // Crear elemento de notificación
+          const notificacion = document.createElement('div');
+          notificacion.className = `axyra-notificacion axyra-notificacion-${tipo}`;
+          notificacion.innerHTML = `
+            <div class="axyra-notificacion-icono">
+              ${tipo === 'success' ? '✅' : tipo === 'error' ? '❌' : tipo === 'warning' ? '⚠️' : 'ℹ️'}
+            </div>
+            <div class="axyra-notificacion-contenido">
+              <div class="axyra-notificacion-mensaje">${mensaje}</div>
+            </div>
+            <button class="axyra-notificacion-cerrar" onclick="this.closest('.axyra-notificacion').remove()">
+              ×
+            </button>
+          `;
+          
+          // Agregar al DOM
+          document.body.appendChild(notificacion);
+          
+          // Auto-remover después de 5 segundos
+          setTimeout(() => {
+            if (notificacion.parentElement) {
+              notificacion.remove();
+            }
+          }, 5000);
+        } catch (error) {
+          console.error('❌ Error mostrando notificación:', error);
+          // Fallback a alert
+          alert(mensaje);
+        }
       }
 
       // Función para mostrar modal
@@ -3557,29 +3566,99 @@
         }
       }
 
-      // Configurar listener para cambios en empleados
+      // Función para actualizar estadísticas del dashboard
+      function actualizarEstadisticasDashboard() {
+        try {
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+          const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+
+          // Calcular empleados activos
+          const empleadosActivos = empleados.filter(emp => emp.estado === 'ACTIVO').length;
+          
+          // Calcular total de salarios
+          const totalSalarios = empleados.reduce((sum, emp) => {
+            return sum + (parseFloat(emp.salario) || 0);
+          }, 0);
+
+          // Calcular total de horas trabajadas
+          const totalHoras = horas.reduce((sum, h) => {
+            const horasOrdinarias = h.horas?.ordinarias || 0;
+            const horasExtras = h.horas?.extras || 0;
+            const horasFestivas = h.horas?.extrasFestivas || 0;
+            const horasNocturnas = h.horas?.extrasFestivasNocturnas || 0;
+            return sum + horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+          }, 0);
+
+          // Calcular total de nóminas
+          const totalNominas = nominas.length;
+
+          // Calcular total de facturas
+          const totalFacturas = facturas.reduce((sum, f) => {
+            return sum + (parseFloat(f.monto) || 0);
+          }, 0);
+
+          // Actualizar elementos del DOM
+          const empleadosElement = document.getElementById('totalEmpleados');
+          const salariosElement = document.getElementById('totalSalarios');
+          const horasElement = document.getElementById('totalHorasTrabajadas');
+          const nominasElement = document.getElementById('totalNominas');
+          const facturasElement = document.getElementById('totalFacturas');
+
+          if (empleadosElement) {
+            empleadosElement.textContent = empleadosActivos.toString();
+            console.log('✅ Total empleados actualizado:', empleadosActivos);
+          }
+
+          if (salariosElement) {
+            salariosElement.textContent = `$${totalSalarios.toLocaleString()}`;
+            console.log('✅ Total salarios actualizado:', totalSalarios);
+          }
+
+          if (horasElement) {
+            horasElement.textContent = totalHoras.toFixed(2);
+            console.log('✅ Total horas actualizado:', totalHoras);
+          }
+
+          if (nominasElement) {
+            nominasElement.textContent = totalNominas.toString();
+            console.log('✅ Total nóminas actualizado:', totalNominas);
+          }
+
+          if (facturasElement) {
+            facturasElement.textContent = `$${totalFacturas.toLocaleString()}`;
+            console.log('✅ Total facturas actualizado:', totalFacturas);
+          }
+
+          // Actualizar gráficos si existen
+          if (typeof actualizarGraficos === 'function') {
+            actualizarGraficos();
+          }
+
+        } catch (error) {
+          console.error('❌ Error actualizando estadísticas del dashboard:', error);
+        }
+      }
+
+      // Función para configurar listener de cambios en empleados
       function configurarListenerCambiosEmpleados() {
         try {
           console.log('👂 Configurando listener para cambios en empleados...');
-
+          
           // Escuchar eventos personalizados
           window.addEventListener('axyraEmpleadosCambiados', async (event) => {
             console.log('📢 Evento de cambio en empleados recibido:', event.detail);
-
+            
             // Verificar que el cambio sea para el usuario actual
-            if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
-              currentUser = window.axyraIsolatedAuth.getCurrentUser();
-            } else {
-              const userData = localStorage.getItem('axyra_isolated_user');
-              if (userData) {
-                currentUser = JSON.parse(userData);
-              }
-            }
-
-            if (currentUser && event.detail.userId === (currentUser.id || currentUser.username || currentUser.email)) {
+            if (event.detail.userId === 'axyra') {
               console.log('🔄 Refrescando dashboard por cambio en empleados...');
-              await cargarEstadisticas();
-              cargarActividadRecienteContinuacion();
+              
+              // Esperar un momento para que se complete la operación
+              setTimeout(() => {
+                actualizarEstadisticasDashboard();
+                cargarEmpleados();
+              }, 500);
             }
           });
 
@@ -3589,26 +3668,15 @@
               try {
                 const changeData = JSON.parse(event.newValue);
                 console.log('📢 Cambio en empleados detectado vía localStorage:', changeData);
-
+                
                 // Verificar que el cambio sea para el usuario actual
-                if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
-                  currentUser = window.axyraIsolatedAuth.getCurrentUser();
-                } else {
-                  const userData = localStorage.getItem('axyra_isolated_user');
-                  if (userData) {
-                    currentUser = JSON.parse(userData);
-                  }
-                }
-
-                if (
-                  currentUser &&
-                  changeData.userId === (currentUser.id || currentUser.username || currentUser.email)
-                ) {
+                if (changeData.userId === 'axyra') {
                   console.log('🔄 Refrescando dashboard por cambio en empleados (localStorage)...');
+                  
                   setTimeout(() => {
-                    cargarEstadisticas();
-                    cargarActividadRecienteContinuacion();
-                  }, 100);
+                    actualizarEstadisticasDashboard();
+                    cargarEmpleados();
+                  }, 500);
                 }
               } catch (error) {
                 console.error('❌ Error procesando cambio vía localStorage:', error);
@@ -3616,21 +3684,120 @@
             }
           });
 
-          // También escuchar cambios en horas para actualizar estadísticas
-          window.addEventListener('storage', (event) => {
-            if (event.key === 'axyra_horas') {
-              try {
-                console.log('📢 Cambio en horas detectado, actualizando estadísticas...');
-                setTimeout(() => cargarEstadisticas(), 100);
-              } catch (error) {
-                console.error('❌ Error procesando cambio en horas:', error);
-              }
-            }
-          });
-
           console.log('✅ Listener configurado correctamente');
         } catch (error) {
           console.error('❌ Error configurando listener:', error);
+        }
+      }
+
+      // Función para cargar empleados en el dashboard
+      function cargarEmpleados() {
+        try {
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const empleadosActivos = empleados.filter(emp => emp.estado === 'ACTIVO');
+          
+          console.log('✅ Empleados cargados en dashboard:', empleadosActivos.length);
+          
+          // Actualizar contador de empleados activos
+          const empleadosElement = document.getElementById('totalEmpleados');
+          if (empleadosElement) {
+            empleadosElement.textContent = empleadosActivos.length.toString();
+          }
+          
+          // Actualizar actividad reciente si existe
+          if (typeof cargarActividadRecienteContinuacion === 'function') {
+            cargarActividadRecienteContinuacion();
+          }
+          
+        } catch (error) {
+          console.error('❌ Error cargando empleados en dashboard:', error);
+        }
+      }
+
+      // Función para cargar preferencias del usuario
+      function cargarPreferencias() {
+        try {
+          // Buscar elementos de preferencias
+          const notificacionesToggle = document.getElementById('toggleNotificaciones');
+          const temaSelect = document.getElementById('selectTema');
+          const idiomaSelect = document.getElementById('selectIdioma');
+          
+          if (!notificacionesToggle && !temaSelect && !idiomaSelect) {
+            console.log('ℹ️ Elementos de preferencias no encontrados, usando valores por defecto');
+            return;
+          }
+          
+          // Cargar preferencias guardadas
+          const preferencias = JSON.parse(localStorage.getItem('axyra_preferencias') || '{}');
+          
+          // Aplicar preferencias a los elementos encontrados
+          if (notificacionesToggle) {
+            notificacionesToggle.checked = preferencias.notificaciones !== false;
+          }
+          
+          if (temaSelect) {
+            temaSelect.value = preferencias.tema || 'light';
+          }
+          
+          if (idiomaSelect) {
+            idiomaSelect.value = preferencias.idioma || 'es';
+          }
+          
+          console.log('✅ Preferencias cargadas correctamente');
+          
+        } catch (error) {
+          console.error('❌ Error cargando preferencias:', error);
+        }
+      }
+
+      // Función para guardar preferencias
+      function guardarPreferencias() {
+        try {
+          const notificacionesToggle = document.getElementById('toggleNotificaciones');
+          const temaSelect = document.getElementById('selectTema');
+          const idiomaSelect = document.getElementById('selectIdioma');
+          
+          const preferencias = {
+            notificaciones: notificacionesToggle ? notificacionesToggle.checked : true,
+            tema: temaSelect ? temaSelect.value : 'light',
+            idioma: idiomaSelect ? idiomaSelect.value : 'es',
+            fechaActualizacion: new Date().toISOString()
+          };
+          
+          localStorage.setItem('axyra_preferencias', JSON.stringify(preferencias));
+          
+          // Aplicar tema si se cambió
+          if (preferencias.tema) {
+            aplicarTema(preferencias.tema);
+          }
+          
+          console.log('✅ Preferencias guardadas:', preferencias);
+          mostrarMensaje('✅ Preferencias guardadas correctamente', 'success');
+          
+        } catch (error) {
+          console.error('❌ Error guardando preferencias:', error);
+          mostrarMensaje('Error guardando preferencias: ' + error.message, 'error');
+        }
+      }
+
+      // Función para aplicar tema
+      function aplicarTema(tema) {
+        try {
+          const body = document.body;
+          
+          // Remover clases de tema anteriores
+          body.classList.remove('tema-light', 'tema-dark', 'tema-azul');
+          
+          // Aplicar nuevo tema
+          body.classList.add(`tema-${tema}`);
+          
+          // Guardar tema en localStorage
+          localStorage.setItem('axyra_tema', tema);
+          
+          console.log('✅ Tema aplicado:', tema);
+          
+        } catch (error) {
+          console.error('❌ Error aplicando tema:', error);
         }
       }
     </script>
