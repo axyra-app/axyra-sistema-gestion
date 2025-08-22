@@ -87,13 +87,28 @@
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Encargado</label>
-                  <input
-                    type="text"
-                    id="encargado"
-                    class="axyra-form-input"
-                    placeholder="Nombre del encargado"
-                    required
-                  />
+                  <div class="axyra-form-select-container">
+                    <select id="encargado" class="axyra-form-select" required onchange="manejarCambioEncargado()">
+                      <option value="">Seleccionar encargado</option>
+                      <option value="JULIO CASTAÑO">JULIO CASTAÑO</option>
+                      <option value="MARIA GONZALEZ">MARIA GONZALEZ</option>
+                      <option value="CARLOS RODRIGUEZ">CARLOS RODRIGUEZ</option>
+                      <option value="ANA MARTINEZ">ANA MARTINEZ</option>
+                      <option value="LUIS PEREZ">LUIS PEREZ</option>
+                      <option value="otro">Otro (escribir)</option>
+                    </select>
+                    <input
+                      type="text"
+                      id="encargadoOtro"
+                      class="axyra-form-input"
+                      placeholder="Escribir nombre del encargado"
+                      style="display: none; margin-top: 8px;"
+                    />
+                  </div>
+                </div>
+                <div class="axyra-form-group">
+                  <label class="axyra-form-label">Cédula del Encargado</label>
+                  <input type="text" id="cedulaEncargado" class="axyra-form-input" placeholder="Ej: 12345678" required />
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Número de Factura</label>
@@ -101,41 +116,46 @@
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Área</label>
-                  <select id="area" class="axyra-form-select" required data-axyra-area-config="select">
+                  <select id="area" class="axyra-form-select" required>
                     <option value="">Seleccionar área</option>
+                    <option value="BAR">BAR</option>
+                    <option value="RESTAURANTE">RESTAURANTE</option>
+                    <option value="RECEPCIÓN">RECEPCIÓN</option>
+                    <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                    <option value="ADMINISTRACIÓN">ADMINISTRACIÓN</option>
+                    <option value="OTRO">OTRO</option>
                   </select>
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Monto</label>
-                  <input
-                    type="number"
-                    id="monto"
-                    class="axyra-form-input"
-                    placeholder="0.00"
-                    step="0.01"
-                    min="0"
-                    required
-                  />
+                  <input type="number" id="monto" class="axyra-form-input" placeholder="0" required />
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Método de Pago</label>
                   <select id="metodoPago" class="axyra-form-select" required>
                     <option value="">Seleccionar método</option>
                     <option value="efectivo">Efectivo</option>
+                    <option value="tarjeta">Tarjeta</option>
                     <option value="transferencia">Transferencia</option>
-                    <option value="datafono">Datafono</option>
-                    <option value="qr">QR</option>
-                    <option value="cheque">Cheque</option>
+                    <option value="otro">Otro</option>
                   </select>
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Descripción</label>
-                  <textarea
-                    id="descripcion"
-                    class="axyra-form-textarea"
-                    placeholder="Descripción de la factura"
-                    rows="3"
-                  ></textarea>
+                  <input type="text" id="descripcion" class="axyra-form-input" placeholder="Ej: Cocteles, Comida, etc." required />
+                </div>
+                <div class="axyra-form-group">
+                  <label class="axyra-form-label">Estado</label>
+                  <select id="estado" class="axyra-form-select" required>
+                    <option value="">Seleccionar estado</option>
+                    <option value="Pagada">Pagada</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Cancelada">Cancelada</option>
+                  </select>
+                </div>
+                <div class="axyra-form-group">
+                  <label class="axyra-form-label">Link de Factura (Opcional)</label>
+                  <input type="url" id="linkFactura" class="axyra-form-input" placeholder="https://ejemplo.com/factura" />
                 </div>
               </div>
               <div class="axyra-form-actions">
@@ -781,7 +801,95 @@
         cambiarMoneda(moneda);
       }
 
-      // Registrar factura
+      // Función para manejar cambio en encargado
+      function manejarCambioEncargado() {
+        const encargadoSelect = document.getElementById('encargado');
+        const encargadoOtro = document.getElementById('encargadoOtro');
+        
+        if (encargadoSelect.value === 'otro') {
+          encargadoOtro.style.display = 'block';
+          encargadoOtro.required = true;
+        } else {
+          encargadoOtro.style.display = 'none';
+          encargadoOtro.required = false;
+          encargadoOtro.value = '';
+        }
+      }
+
+      // Función para obtener el nombre del encargado
+      function obtenerNombreEncargado() {
+        const encargadoSelect = document.getElementById('encargado');
+        const encargadoOtro = document.getElementById('encargadoOtro');
+        
+        if (encargadoSelect.value === 'otro') {
+          return encargadoOtro.value;
+        }
+        return encargadoSelect.value;
+      }
+
+      // Función para exportar a Excel mejorada
+      function exportarFacturasExcel() {
+        try {
+          const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+          
+          if (facturas.length === 0) {
+            alert('No hay facturas para exportar');
+            return;
+          }
+
+          // Preparar datos para Excel con estructura mejorada
+          const datosExcel = [
+            ['Número de Factura', 'Encargado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones']
+          ];
+
+          facturas.forEach(factura => {
+            datosExcel.push([
+              factura.numero || 'N/A',
+              factura.encargado || 'N/A',
+              factura.cedulaEncargado || 'N/A',
+              factura.fecha || 'N/A',
+              factura.descripcion || 'N/A',
+              `$${parseFloat(factura.monto || 0).toLocaleString()}`,
+              factura.estado || 'N/A',
+              factura.linkFactura || 'N/A'
+            ]);
+          });
+
+          // Crear libro de Excel
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
+
+          // Aplicar estilos profesionales
+          worksheet['!cols'] = [
+            { width: 20 }, // Número de Factura
+            { width: 25 }, // Encargado
+            { width: 15 }, // Cédula
+            { width: 15 }, // Fecha
+            { width: 30 }, // Concepto
+            { width: 15 }, // Valor
+            { width: 15 }, // Estado
+            { width: 40 }  // Observaciones
+          ];
+
+          // Agregar hoja al libro
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Cuadre de Caja');
+
+          // Generar nombre de archivo con fecha
+          const fecha = new Date().toISOString().split('T')[0];
+          const nombreArchivo = `CUADRE_CAJA_Villa_Venecia_${fecha}.xlsx`;
+
+          // Descargar archivo
+          XLSX.writeFile(workbook, nombreArchivo);
+          
+          console.log('✅ Facturas exportadas correctamente:', nombreArchivo);
+          alert('Facturas exportadas correctamente');
+        } catch (error) {
+          console.error('❌ Error exportando facturas:', error);
+          alert('Error al exportar: ' + error.message);
+        }
+      }
+
+      // Función para registrar factura
       document.getElementById('formFactura').addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -799,12 +907,15 @@
         const factura = {
           id: Date.now().toString(),
           fecha: document.getElementById('fecha').value,
-          encargado: document.getElementById('encargado').value,
+          encargado: obtenerNombreEncargado(),
+          cedulaEncargado: document.getElementById('cedulaEncargado').value,
           numero: document.getElementById('numeroFactura').value,
           area: document.getElementById('area').value,
           monto: document.getElementById('monto').value,
           metodoPago: document.getElementById('metodoPago').value,
           descripcion: document.getElementById('descripcion').value,
+          estado: document.getElementById('estado').value,
+          linkFactura: document.getElementById('linkFactura').value,
           userId: currentUser ? currentUser.username || currentUser.email : 'admin',
           createdAt: new Date().toISOString(),
         };
@@ -830,6 +941,8 @@
       function limpiarFormulario() {
         document.getElementById('formFactura').reset();
         document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+        document.getElementById('encargadoOtro').style.display = 'none'; // Ocultar el input de texto
+        document.getElementById('cedulaEncargado').value = ''; // Limpiar cédula
       }
 
       // Eliminar factura

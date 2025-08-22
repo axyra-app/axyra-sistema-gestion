@@ -1702,156 +1702,179 @@
         reader.readAsArrayBuffer(file);
       }
 
-      // Exportar horas a Excel con cálculos monetarios y diseño profesional
+      // Función para exportar horas a Excel con estilos profesionales
       function exportarHoras() {
         try {
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-
+          
           if (horas.length === 0) {
-            mostrarMensaje('❌ No hay registros de horas para exportar', 'warning');
+            mostrarMensaje('No hay horas registradas para exportar', 'warning');
             return;
           }
 
-          // Preparar datos para exportar con cálculos monetarios
-          const datosExportar = horas
-            .map((registro) => {
-              const empleado = empleados.find((e) => e.id === registro.empleadoId);
-              if (!empleado) return null;
-
-              // Calcular total de horas
-              const entrada = new Date(`2000-01-01T${registro.horaEntrada}`);
-              const salida = new Date(`2000-01-01T${registro.horaSalida}`);
-              let diferencia = salida - entrada;
-              if (diferencia <= 0) {
-                diferencia += 24 * 60 * 60 * 1000; // Agregar 24 horas
-              }
-              const totalHoras = (diferencia / (1000 * 60 * 60)).toFixed(2);
-
-              // Calcular valores monetarios según tipo de hora
-              const salarioBase = parseFloat(empleado.salario) || 0;
-              const salarioHora = salarioBase / 240; // 240 horas mensuales
-
-              let valorHora = 0;
-              let tipoHoraDesc = '';
-
-              switch (registro.tipo) {
-                case 'ordinaria':
-                  valorHora = salarioHora;
-                  tipoHoraDesc = 'Hora Ordinaria';
-                  break;
-                case 'extra':
-                  valorHora = salarioHora * 1.25; // 25% extra
-                  tipoHoraDesc = 'Hora Extra';
-                  break;
-                case 'extra_festiva':
-                  valorHora = salarioHora * 1.75; // 75% extra
-                  tipoHoraDesc = 'Hora Extra Festiva';
-                  break;
-                case 'extra_festiva_nocturna':
-                  valorHora = salarioHora * 2.1; // 110% extra
-                  tipoHoraDesc = 'Hora Extra Festiva Nocturna';
-                  break;
-                default:
-                  valorHora = salarioHora;
-                  tipoHoraDesc = 'Hora Ordinaria';
-              }
-
-              const valorTotal = valorHora * parseFloat(totalHoras);
-
-              return {
-                empleado: empleado.nombre,
-                departamento: empleado.departamento || 'N/A',
-                fecha: registro.fecha,
-                horaEntrada: registro.horaEntrada,
-                horaSalida: registro.horaSalida,
-                tipo: tipoHoraDesc,
-                totalHoras: parseFloat(totalHoras),
-                valorHora: valorHora.toFixed(2),
-                valorTotal: valorTotal.toFixed(2),
-                salarioBase: salarioBase.toFixed(2),
-                observaciones: registro.observaciones || '',
-              };
-            })
-            .filter((registro) => registro !== null);
-
-          // Crear libro de Excel con diseño profesional
-          const workbook = XLSX.utils.book_new();
-
-          // Crear encabezados con formato
-          const encabezados = [
-            'Empleado',
-            'Departamento',
-            'Fecha',
-            'Hora Entrada',
-            'Hora Salida',
-            'Tipo de Hora',
-            'Total Horas',
-            'Valor por Hora',
-            'Valor Total',
-            'Salario Base',
-            'Observaciones',
+          // Preparar datos para Excel
+          const datosExcel = [
+            ['Empleado', 'Departamento/Cargo', 'Fecha', 'Horas Ordinarias', 'Horas Extras', 'Horas Festivas', 'Horas Nocturnas', 'Total Horas', 'Salario Base', 'Total a Pagar']
           ];
 
-          // Crear datos con formato
-          const datosFormateados = datosExportar.map((registro) => [
-            registro.empleado,
-            registro.departamento,
-            registro.fecha,
-            registro.horaEntrada,
-            registro.horaSalida,
-            registro.tipo,
-            registro.totalHoras,
-            `$${registro.valorHora}`,
-            `$${registro.valorTotal}`,
-            `$${registro.salarioBase}`,
-            registro.observaciones,
+          let totalHorasSistema = 0;
+          let totalPagosSistema = 0;
+
+          horas.forEach(registro => {
+            const empleado = empleados.find(e => e.id === registro.empleadoId);
+            if (empleado) {
+              const horasOrdinarias = registro.horas?.ordinarias || 0;
+              const horasExtras = registro.horas?.extras || 0;
+              const horasFestivas = registro.horas?.extrasFestivas || 0;
+              const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
+              const totalHoras = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+              const salarioBase = registro.salarios?.base || 0;
+              const totalPago = registro.salarios?.total || 0;
+
+              totalHorasSistema += totalHoras;
+              totalPagosSistema += totalPago;
+
+              datosExcel.push([
+                empleado.nombre || 'N/A',
+                empleado.cargo || empleado.departamento || 'N/A',
+                registro.fecha || 'N/A',
+                horasOrdinarias,
+                horasExtras,
+                horasFestivas,
+                horasNocturnas,
+                totalHoras,
+                salarioBase,
+                totalPago
+              ]);
+            }
+          });
+
+          // Agregar fila de totales
+          datosExcel.push([
+            'TOTALES DEL SISTEMA',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            totalHorasSistema,
+            '',
+            totalPagosSistema
           ]);
 
-          // Crear hoja de trabajo
-          const worksheet = XLSX.utils.aoa_to_sheet([encabezados, ...datosFormateados]);
+          // Crear libro de Excel
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
 
-          // Aplicar estilos profesionales y anchos de columna
+          // Aplicar estilos profesionales
           worksheet['!cols'] = [
             { width: 25 }, // Empleado
-            { width: 20 }, // Departamento
+            { width: 20 }, // Departamento/Cargo
             { width: 15 }, // Fecha
-            { width: 15 }, // Hora Entrada
-            { width: 15 }, // Hora Salida
-            { width: 25 }, // Tipo de Hora
+            { width: 18 }, // Horas Ordinarias
+            { width: 18 }, // Horas Extras
+            { width: 18 }, // Horas Festivas
+            { width: 18 }, // Horas Nocturnas
             { width: 15 }, // Total Horas
-            { width: 18 }, // Valor por Hora
-            { width: 18 }, // Valor Total
             { width: 18 }, // Salario Base
-            { width: 30 }, // Observaciones
+            { width: 18 }  // Total a Pagar
           ];
 
-          // Aplicar formato a la primera fila (encabezados)
+          // Aplicar estilos a las celdas
           const range = XLSX.utils.decode_range(worksheet['!ref']);
-          for (let col = range.s.c; col <= range.e.c; col++) {
-            const cellAddress = XLSX.utils.encode_cell({ r: 0, c: col });
-            if (worksheet[cellAddress]) {
-              worksheet[cellAddress].s = {
-                font: { bold: true, color: { rgb: 'FFFFFF' } },
-                fill: { fgColor: { rgb: '4472C4' } },
-                alignment: { horizontal: 'center', vertical: 'center' },
-              };
+          
+          for (let R = range.s.r; R <= range.e.r; R++) {
+            for (let C = range.s.c; C <= range.e.c; C++) {
+              const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+              if (!worksheet[cellAddress]) continue;
+
+              // Estilo para encabezados (primera fila)
+              if (R === 0) {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: "4F81BD" } }, // Azul profesional
+                  font: { 
+                    color: { rgb: "FFFFFF" }, 
+                    bold: true, 
+                    sz: 12 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  },
+                  border: {
+                    top: { style: "thin", color: { rgb: "000000" } },
+                    bottom: { style: "thin", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } }
+                  }
+                };
+              }
+              // Estilo para fila de totales (última fila)
+              else if (R === range.e.r) {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: "C6EFCE" } }, // Verde claro
+                  font: { 
+                    color: { rgb: "000000" }, 
+                    bold: true, 
+                    sz: 11 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  },
+                  border: {
+                    top: { style: "medium", color: { rgb: "000000" } },
+                    bottom: { style: "medium", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } }
+                  }
+                };
+              }
+              // Estilo para datos (filas intermedias)
+              else {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: R % 2 === 0 ? "FFFFFF" : "F8F9FA" } }, // Filas alternadas
+                  font: { 
+                    color: { rgb: "000000" }, 
+                    sz: 10 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  },
+                  border: {
+                    top: { style: "thin", color: { rgb: "D0D0D0" } },
+                    bottom: { style: "thin", color: { rgb: "D0D0D0" } },
+                    left: { style: "thin", color: { rgb: "D0D0D0" } },
+                    right: { style: "thin", color: { rgb: "D0D0D0" } }
+                  }
+                };
+
+                // Formato especial para columnas numéricas
+                if (C >= 3 && C <= 9) { // Columnas de horas y salarios
+                  worksheet[cellAddress].s.numberFormat = C === 8 || C === 9 ? '"$"#,##0.00' : '#,##0.00';
+                }
+              }
             }
           }
 
           // Agregar hoja al libro
-          XLSX.utils.book_append_sheet(workbook, worksheet, 'Horas_Trabajadas');
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Horas Trabajadas');
 
           // Generar nombre de archivo con fecha
           const fecha = new Date().toISOString().split('T')[0];
-          const nombreArchivo = `Horas_Villa_Venecia_${fecha}.xlsx`;
+          const nombreArchivo = `Horas_Trabajadas_Villa_Venecia_${fecha}.xlsx`;
 
           // Descargar archivo
           XLSX.writeFile(workbook, nombreArchivo);
-          mostrarMensaje(`✅ Horas exportadas a Excel con cálculos monetarios: ${nombreArchivo}`, 'success');
+          
+          console.log('✅ Horas exportadas correctamente:', nombreArchivo);
+          mostrarMensaje('✅ Horas exportadas a Excel con estilos profesionales', 'success');
         } catch (error) {
           console.error('❌ Error exportando horas:', error);
-          mostrarMensaje(`❌ Error al exportar: ${error.message}`, 'error');
+          mostrarMensaje('Error al exportar: ' + error.message, 'error');
         }
       }
 
@@ -2664,6 +2687,50 @@
       // Función para mostrar notificaciones (alias para compatibilidad)
       function mostrarNotificacion(mensaje, tipo = 'info') {
         mostrarMensaje(mensaje, tipo);
+      }
+
+      // Función para limpiar el formulario de horas
+      function limpiarFormularioHoras() {
+        try {
+          // Limpiar todos los campos del formulario
+          const form = document.getElementById('registroHorasForm');
+          if (form) {
+            form.reset();
+          }
+
+          // Limpiar campos específicos si existen
+          const campos = [
+            'empleadoHoras',
+            'fechaHoras',
+            'horasOrdinarias',
+            'horasExtras',
+            'horasExtrasFestivas',
+            'horasExtrasFestivasNocturnas',
+            'salarioBase'
+          ];
+
+          campos.forEach(campoId => {
+            const elemento = document.getElementById(campoId);
+            if (elemento) {
+              if (elemento.type === 'select-one') {
+                elemento.selectedIndex = 0;
+              } else {
+                elemento.value = '';
+              }
+            }
+          });
+
+          // Restaurar botón del formulario
+          const submitBtn = document.querySelector('#registroHorasForm button[type="submit"]');
+          if (submitBtn) {
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Registrar Horas';
+            submitBtn.onclick = null; // Restaurar evento original
+          }
+
+          console.log('✅ Formulario de horas limpiado correctamente');
+        } catch (error) {
+          console.error('❌ Error limpiando formulario:', error);
+        }
       }
     </script>
 
