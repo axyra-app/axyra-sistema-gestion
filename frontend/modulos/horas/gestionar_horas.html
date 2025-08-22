@@ -40,23 +40,23 @@
         align-items: flex-start;
         gap: 12px;
         animation: slideInRight 0.3s ease-out;
-        border-left: 4px solid #4F81BD;
+        border-left: 4px solid #4f81bd;
       }
 
       .axyra-notificacion-success {
-        border-left-color: #10B981;
+        border-left-color: #10b981;
       }
 
       .axyra-notificacion-error {
-        border-left-color: #EF4444;
+        border-left-color: #ef4444;
       }
 
       .axyra-notificacion-warning {
-        border-left-color: #F59E0B;
+        border-left-color: #f59e0b;
       }
 
       .axyra-notificacion-info {
-        border-left-color: #3B82F6;
+        border-left-color: #3b82f6;
       }
 
       .axyra-notificacion-icono {
@@ -70,7 +70,7 @@
       }
 
       .axyra-notificacion-mensaje {
-        color: #1F2937;
+        color: #1f2937;
         font-size: 14px;
         line-height: 1.5;
         margin: 0;
@@ -79,7 +79,7 @@
       .axyra-notificacion-cerrar {
         background: none;
         border: none;
-        color: #9CA3AF;
+        color: #9ca3af;
         font-size: 18px;
         cursor: pointer;
         padding: 4px;
@@ -89,8 +89,8 @@
       }
 
       .axyra-notificacion-cerrar:hover {
-        background: #F3F4F6;
-        color: #6B7280;
+        background: #f3f4f6;
+        color: #6b7280;
       }
 
       /* Estilos para modales adicionales */
@@ -105,9 +105,9 @@
         justify-content: space-between;
         align-items: center;
         padding: 12px;
-        background: #F8FAFC;
+        background: #f8fafc;
         border-radius: 8px;
-        border-left: 4px solid #4F81BD;
+        border-left: 4px solid #4f81bd;
       }
 
       .axyra-preview-item label {
@@ -116,7 +116,7 @@
       }
 
       .axyra-preview-item span {
-        color: #1F2937;
+        color: #1f2937;
         font-weight: 500;
       }
 
@@ -125,7 +125,7 @@
         justify-content: space-between;
         align-items: center;
         padding: 16px;
-        background: #4F81BD;
+        background: #4f81bd;
         border-radius: 8px;
         color: white;
         font-weight: 600;
@@ -143,9 +143,9 @@
         justify-content: space-between;
         align-items: center;
         padding: 12px;
-        background: #F8FAFC;
+        background: #f8fafc;
         border-radius: 8px;
-        border-left: 4px solid #4F81BD;
+        border-left: 4px solid #4f81bd;
       }
 
       .axyra-detalle-item label {
@@ -154,13 +154,13 @@
       }
 
       .axyra-detalle-item span {
-        color: #1F2937;
+        color: #1f2937;
         font-weight: 500;
       }
 
       /* Estilos para botones adicionales */
       .axyra-btn-primary {
-        background: linear-gradient(135deg, #4F81BD 0%, #3B82F6 100%);
+        background: linear-gradient(135deg, #4f81bd 0%, #3b82f6 100%);
         color: white;
         box-shadow: 0 4px 20px rgba(79, 129, 189, 0.3);
       }
@@ -182,7 +182,7 @@
       }
 
       .axyra-btn-ver {
-        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: white;
       }
 
@@ -192,7 +192,7 @@
       }
 
       .axyra-btn-generar {
-        background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         color: white;
       }
 
@@ -218,7 +218,7 @@
         background: white;
         border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         border: 1px solid #e2e8f0;
       }
 
@@ -435,8 +435,12 @@
 
       /* Animaciones para modales */
       @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
       }
 
       @keyframes slideInUp {
@@ -1387,7 +1391,8 @@
           }
 
           // Calcular totales
-          const totalHoras = horasOrdinariasVal + horasExtrasVal + horasExtrasFestivasVal + horasExtrasFestivasNocturnasVal;
+          const totalHoras =
+            horasOrdinariasVal + horasExtrasVal + horasExtrasFestivasVal + horasExtrasFestivasNocturnasVal;
 
           // Calcular salarios según la ley colombiana
           const salarioHora = salarioBaseVal / 240; // 240 horas mensuales
@@ -1994,7 +1999,7 @@
         try {
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           if (horas.length === 0) {
             mostrarMensaje('No hay horas registradas para exportar', 'warning');
             return;
@@ -2002,14 +2007,25 @@
 
           // Preparar datos para Excel
           const datosExcel = [
-            ['Empleado', 'Departamento/Cargo', 'Fecha', 'Horas Ordinarias', 'Horas Extras', 'Horas Festivas', 'Horas Nocturnas', 'Total Horas', 'Salario Base', 'Total a Pagar']
+            [
+              'Empleado',
+              'Departamento/Cargo',
+              'Fecha',
+              'Horas Ordinarias',
+              'Horas Extras',
+              'Horas Festivas',
+              'Horas Nocturnas',
+              'Total Horas',
+              'Salario Base',
+              'Total a Pagar',
+            ],
           ];
 
           let totalHorasSistema = 0;
           let totalPagosSistema = 0;
 
-          horas.forEach(registro => {
-            const empleado = empleados.find(e => e.id === registro.empleadoId);
+          horas.forEach((registro) => {
+            const empleado = empleados.find((e) => e.id === registro.empleadoId);
             if (empleado) {
               const horasOrdinarias = registro.horas?.ordinarias || 0;
               const horasExtras = registro.horas?.extras || 0;
@@ -2032,24 +2048,13 @@
                 horasNocturnas,
                 totalHoras,
                 salarioBase,
-                totalPago
+                totalPago,
               ]);
             }
           });
 
           // Agregar fila de totales
-          datosExcel.push([
-            'TOTALES DEL SISTEMA',
-            '',
-            '',
-            '',
-            '',
-            '',
-            '',
-            totalHorasSistema,
-            '',
-            totalPagosSistema
-          ]);
+          datosExcel.push(['TOTALES DEL SISTEMA', '', '', '', '', '', '', totalHorasSistema, '', totalPagosSistema]);
 
           // Crear libro de Excel
           const workbook = XLSX.utils.book_new();
@@ -2066,12 +2071,12 @@
             { width: 18 }, // Horas Nocturnas
             { width: 15 }, // Total Horas
             { width: 18 }, // Salario Base
-            { width: 18 }  // Total a Pagar
+            { width: 18 }, // Total a Pagar
           ];
 
           // Aplicar estilos a las celdas
           const range = XLSX.utils.decode_range(worksheet['!ref']);
-          
+
           for (let R = range.s.r; R <= range.e.r; R++) {
             for (let C = range.s.c; C <= range.e.c; C++) {
               const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
@@ -2080,67 +2085,68 @@
               // Estilo para encabezados (primera fila)
               if (R === 0) {
                 worksheet[cellAddress].s = {
-                  fill: { fgColor: { rgb: "4F81BD" } }, // Azul profesional
-                  font: { 
-                    color: { rgb: "FFFFFF" }, 
-                    bold: true, 
-                    sz: 12 
+                  fill: { fgColor: { rgb: '4F81BD' } }, // Azul profesional
+                  font: {
+                    color: { rgb: 'FFFFFF' },
+                    bold: true,
+                    sz: 12,
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: 'center',
+                    vertical: 'center',
                   },
                   border: {
-                    top: { style: "thin", color: { rgb: "000000" } },
-                    bottom: { style: "thin", color: { rgb: "000000" } },
-                    left: { style: "thin", color: { rgb: "000000" } },
-                    right: { style: "thin", color: { rgb: "000000" } }
-                  }
+                    top: { style: 'thin', color: { rgb: '000000' } },
+                    bottom: { style: 'thin', color: { rgb: '000000' } },
+                    left: { style: 'thin', color: { rgb: '000000' } },
+                    right: { style: 'thin', color: { rgb: '000000' } },
+                  },
                 };
               }
               // Estilo para fila de totales (última fila)
               else if (R === range.e.r) {
                 worksheet[cellAddress].s = {
-                  fill: { fgColor: { rgb: "C6EFCE" } }, // Verde claro
-                  font: { 
-                    color: { rgb: "000000" }, 
-                    bold: true, 
-                    sz: 11 
+                  fill: { fgColor: { rgb: 'C6EFCE' } }, // Verde claro
+                  font: {
+                    color: { rgb: '000000' },
+                    bold: true,
+                    sz: 11,
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: 'center',
+                    vertical: 'center',
                   },
                   border: {
-                    top: { style: "medium", color: { rgb: "000000" } },
-                    bottom: { style: "medium", color: { rgb: "000000" } },
-                    left: { style: "thin", color: { rgb: "000000" } },
-                    right: { style: "thin", color: { rgb: "000000" } }
-                  }
+                    top: { style: 'medium', color: { rgb: '000000' } },
+                    bottom: { style: 'medium', color: { rgb: '000000' } },
+                    left: { style: 'thin', color: { rgb: '000000' } },
+                    right: { style: 'thin', color: { rgb: '000000' } },
+                  },
                 };
               }
               // Estilo para datos (filas intermedias)
               else {
                 worksheet[cellAddress].s = {
-                  fill: { fgColor: { rgb: R % 2 === 0 ? "FFFFFF" : "F8F9FA" } }, // Filas alternadas
-                  font: { 
-                    color: { rgb: "000000" }, 
-                    sz: 10 
+                  fill: { fgColor: { rgb: R % 2 === 0 ? 'FFFFFF' : 'F8F9FA' } }, // Filas alternadas
+                  font: {
+                    color: { rgb: '000000' },
+                    sz: 10,
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: 'center',
+                    vertical: 'center',
                   },
                   border: {
-                    top: { style: "thin", color: { rgb: "D0D0D0" } },
-                    bottom: { style: "thin", color: { rgb: "D0D0D0" } },
-                    left: { style: "thin", color: { rgb: "D0D0D0" } },
-                    right: { style: "thin", color: { rgb: "D0D0D0" } }
-                  }
+                    top: { style: 'thin', color: { rgb: 'D0D0D0' } },
+                    bottom: { style: 'thin', color: { rgb: 'D0D0D0' } },
+                    left: { style: 'thin', color: { rgb: 'D0D0D0' } },
+                    right: { style: 'thin', color: { rgb: 'D0D0D0' } },
+                  },
                 };
 
                 // Formato especial para columnas numéricas
-                if (C >= 3 && C <= 9) { // Columnas de horas y salarios
+                if (C >= 3 && C <= 9) {
+                  // Columnas de horas y salarios
                   worksheet[cellAddress].s.numberFormat = C === 8 || C === 9 ? '"$"#,##0.00' : '#,##0.00';
                 }
               }
@@ -2156,7 +2162,7 @@
 
           // Descargar archivo
           XLSX.writeFile(workbook, nombreArchivo);
-          
+
           console.log('✅ Horas exportadas correctamente:', nombreArchivo);
           mostrarMensaje('✅ Horas exportadas a Excel con estilos profesionales', 'success');
         } catch (error) {
@@ -2189,10 +2195,11 @@
               // Calcular total de horas
               let totalHoras = 0;
               if (registro.horas) {
-                totalHoras = (registro.horas.ordinarias || 0) + 
-                            (registro.horas.extras || 0) + 
-                            (registro.horas.extrasFestivas || 0) + 
-                            (registro.horas.extrasFestivasNocturnas || 0);
+                totalHoras =
+                  (registro.horas.ordinarias || 0) +
+                  (registro.horas.extras || 0) +
+                  (registro.horas.extrasFestivas || 0) +
+                  (registro.horas.extrasFestivasNocturnas || 0);
               }
 
               html += `
@@ -2203,7 +2210,10 @@
                             <td>${totalHoras.toFixed(2)}h</td>
                             <td>
                                 <span class="axyra-badge axyra-badge-${registro.tipo || 'normal'}">
-                                    ${(registro.tipo || 'normal').charAt(0).toUpperCase() + (registro.tipo || 'normal').slice(1)}
+                                    ${
+                                      (registro.tipo || 'normal').charAt(0).toUpperCase() +
+                                      (registro.tipo || 'normal').slice(1)
+                                    }
                                 </span>
                             </td>
                             <td>
@@ -2254,7 +2264,8 @@
           if (horasOrdinariasInput) horasOrdinariasInput.value = registro.horas?.ordinarias || 0;
           if (horasExtrasInput) horasExtrasInput.value = registro.horas?.extras || 0;
           if (horasExtrasFestivasInput) horasExtrasFestivasInput.value = registro.horas?.extrasFestivas || 0;
-          if (horasExtrasFestivasNocturnasInput) horasExtrasFestivasNocturnasInput.value = registro.horas?.extrasFestivasNocturnas || 0;
+          if (horasExtrasFestivasNocturnasInput)
+            horasExtrasFestivasNocturnasInput.value = registro.horas?.extrasFestivasNocturnas || 0;
           if (salarioBaseInput) salarioBaseInput.value = registro.salarios?.base || 0;
 
           // Cambiar el botón del formulario
@@ -2289,7 +2300,9 @@
           const horasOrdinarias = parseFloat(document.getElementById('horasOrdinarias')?.value || 0);
           const horasExtras = parseFloat(document.getElementById('horasExtras')?.value || 0);
           const horasExtrasFestivas = parseFloat(document.getElementById('horasExtrasFestivas')?.value || 0);
-          const horasExtrasFestivasNocturnas = parseFloat(document.getElementById('horasExtrasFestivasNocturnas')?.value || 0);
+          const horasExtrasFestivasNocturnas = parseFloat(
+            document.getElementById('horasExtrasFestivasNocturnas')?.value || 0
+          );
           const salarioBase = parseFloat(document.getElementById('salarioBase')?.value || 0);
 
           if (!empleadoId || !fecha) {
@@ -2299,7 +2312,7 @@
 
           // Calcular totales
           const totalHoras = horasOrdinarias + horasExtras + horasExtrasFestivas + horasExtrasFestivasNocturnas;
-          
+
           if (totalHoras === 0) {
             mostrarMensaje('❌ Debes ingresar al menos un tipo de horas', 'error');
             return;
@@ -2312,12 +2325,13 @@
           const salarioExtrasFestivas = horasExtrasFestivas * (salarioHora * 1.75); // 75% extra
           const salarioExtrasFestivasNocturnas = horasExtrasFestivasNocturnas * (salarioHora * 2.1); // 110% extra
 
-          const totalSalario = salarioOrdinario + salarioExtras + salarioExtrasFestivas + salarioExtrasFestivasNocturnas;
+          const totalSalario =
+            salarioOrdinario + salarioExtras + salarioExtrasFestivas + salarioExtrasFestivasNocturnas;
 
           // Actualizar el registro
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-          const index = horas.findIndex(h => h.id === id);
-          
+          const index = horas.findIndex((h) => h.id === id);
+
           if (index !== -1) {
             horas[index] = {
               ...horas[index],
@@ -2342,13 +2356,13 @@
             };
 
             localStorage.setItem('axyra_horas', JSON.stringify(horas));
-            
+
             // Limpiar formulario y restaurar botón
             limpiarFormularioHoras();
-            
+
             // Actualizar tabla
             renderizarTablaHoras();
-            
+
             mostrarMensaje('✅ Horas actualizadas correctamente', 'success');
           } else {
             mostrarMensaje('❌ Registro no encontrado', 'error');
@@ -2405,7 +2419,7 @@
             </div>
           </div>
         `;
-        
+
         document.body.appendChild(modal);
       }
 
@@ -2415,24 +2429,24 @@
           // Deshabilitar botón para evitar doble clic
           button.disabled = true;
           button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando...';
-          
+
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-          const horasFiltradas = horas.filter(h => h.id !== id);
-          
+          const horasFiltradas = horas.filter((h) => h.id !== id);
+
           localStorage.setItem('axyra_horas', JSON.stringify(horasFiltradas));
-          
+
           // Cerrar modal
           const modal = button.closest('.axyra-modal-overlay');
           if (modal) modal.remove();
-          
+
           // Actualizar la tabla
           renderizarTablaHoras();
-          
+
           mostrarMensaje('✅ Registro de horas eliminado correctamente', 'success');
         } catch (error) {
           console.error('❌ Error eliminando horas:', error);
           mostrarMensaje('Error al eliminar horas: ' + error.message, 'error');
-          
+
           // Restaurar botón
           button.disabled = false;
           button.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
@@ -2504,14 +2518,14 @@
         try {
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
-          const registro = horas.find(h => h.id === id);
+
+          const registro = horas.find((h) => h.id === id);
           if (!registro) {
             mostrarMensaje('❌ Registro no encontrado', 'error');
             return;
           }
 
-          const empleado = empleados.find(e => e.id === registro.empleadoId);
+          const empleado = empleados.find((e) => e.id === registro.empleadoId);
           if (!empleado) {
             mostrarMensaje('❌ Empleado no encontrado', 'error');
             return;
@@ -2523,10 +2537,10 @@
           const horasFestivas = registro.horas?.extrasFestivas || 0;
           const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
           const totalHoras = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
-          
+
           const salarioBase = registro.salarios?.base || 0;
           const salarioHora = salarioBase / 240; // 240 horas mensuales
-          
+
           const salarioOrdinario = horasOrdinarias * salarioHora;
           const salarioExtras = horasExtras * (salarioHora * 1.25);
           const salarioFestivas = horasFestivas * (salarioHora * 1.75);
@@ -2574,26 +2588,42 @@
                     <tr>
                       <td style="padding: 12px; border: 1px solid #ddd;">Horas Ordinarias</td>
                       <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasOrdinarias}h</td>
-                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${salarioHora.toFixed(2)}</td>
-                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioOrdinario.toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${salarioHora.toFixed(
+                        2
+                      )}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioOrdinario.toFixed(
+                        2
+                      )}</td>
                     </tr>
                     <tr style="background: #f9f9f9;">
                       <td style="padding: 12px; border: 1px solid #ddd;">Horas Extras</td>
                       <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasExtras}h</td>
-                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.25).toFixed(2)}</td>
-                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioExtras.toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(
+                        salarioHora * 1.25
+                      ).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioExtras.toFixed(
+                        2
+                      )}</td>
                     </tr>
                     <tr>
                       <td style="padding: 12px; border: 1px solid #ddd;">Horas Festivas</td>
                       <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasFestivas}h</td>
-                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.75).toFixed(2)}</td>
-                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioFestivas.toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(
+                        salarioHora * 1.75
+                      ).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioFestivas.toFixed(
+                        2
+                      )}</td>
                     </tr>
                     <tr style="background: #f9f9f9;">
                       <td style="padding: 12px; border: 1px solid #ddd;">Horas Nocturnas</td>
                       <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasNocturnas}h</td>
-                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 2.1).toFixed(2)}</td>
-                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioNocturnas.toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(
+                        salarioHora * 2.1
+                      ).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioNocturnas.toFixed(
+                        2
+                      )}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -2980,7 +3010,7 @@
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
           const totalPaginas = Math.ceil(horas.length / 10); // 10 registros por página
           const paginaInfo = document.getElementById('paginaHorasInfo');
-          
+
           if (paginaInfo) {
             paginaInfo.textContent = `Página 1 de ${Math.max(1, totalPaginas)}`;
           }
@@ -3007,10 +3037,10 @@
               <button class="axyra-notificacion-cerrar" onclick="this.parentElement.parentElement.remove()">×</button>
             </div>
           `;
-          
+
           // Agregar al DOM
           document.body.appendChild(notificacion);
-          
+
           // Auto-remover después de 5 segundos
           setTimeout(() => {
             if (notificacion.parentElement) {
@@ -3046,10 +3076,10 @@
             'horasExtras',
             'horasExtrasFestivas',
             'horasExtrasFestivasNocturnas',
-            'salarioBase'
+            'salarioBase',
           ];
 
-          campos.forEach(campoId => {
+          campos.forEach((campoId) => {
             const elemento = document.getElementById(campoId);
             if (elemento) {
               if (elemento.type === 'select-one') {
@@ -3090,10 +3120,10 @@
               ×
             </button>
           `;
-          
+
           // Agregar al DOM
           document.body.appendChild(notificacion);
-          
+
           // Auto-remover después de 5 segundos
           setTimeout(() => {
             if (notificacion.parentElement) {
@@ -3128,8 +3158,8 @@
           }
 
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          const empleado = empleados.find(emp => emp.id === empleadoId);
-          
+          const empleado = empleados.find((emp) => emp.id === empleadoId);
+
           if (!empleado) {
             mostrarMensaje('❌ Empleado no encontrado', 'error');
             return;
@@ -3138,7 +3168,7 @@
           const totalHoras = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
           const salarioBase = empleado.salario || 0;
           const valorHora = salarioBase / 240; // 240 horas mensuales
-          
+
           const salarioOrdinario = horasOrdinarias * valorHora;
           const salarioExtras = horasExtras * (valorHora * 1.25);
           const salarioFestivas = horasFestivas * (valorHora * 1.75);
@@ -3200,9 +3230,8 @@
               </div>
             </div>
           `;
-          
+
           document.body.appendChild(modal);
-          
         } catch (error) {
           console.error('❌ Error en previsualización:', error);
           mostrarMensaje('Error en previsualización: ' + error.message, 'error');
@@ -3214,14 +3243,14 @@
         try {
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
-          const registro = horas.find(h => h.id === id);
+
+          const registro = horas.find((h) => h.id === id);
           if (!registro) {
             mostrarMensaje('❌ Registro no encontrado', 'error');
             return;
           }
 
-          const empleado = empleados.find(e => e.id === registro.empleadoId);
+          const empleado = empleados.find((e) => e.id === registro.empleadoId);
           if (!empleado) {
             mostrarMensaje('❌ Empleado no encontrado', 'error');
             return;
@@ -3233,10 +3262,10 @@
           const horasFestivas = registro.horas?.extrasFestivas || 0;
           const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
           const totalHoras = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
-          
+
           const salarioBase = empleado.salario || 0;
           const salarioHora = salarioBase / 240; // 240 horas mensuales
-          
+
           const salarioOrdinario = horasOrdinarias * salarioHora;
           const salarioExtras = horasExtras * (salarioHora * 1.25);
           const salarioFestivas = horasFestivas * (salarioHora * 1.75);
@@ -3284,26 +3313,42 @@
                     <tr>
                       <td style="padding: 12px; border: 1px solid #ddd;">Horas Ordinarias</td>
                       <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasOrdinarias}h</td>
-                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${salarioHora.toFixed(2)}</td>
-                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioOrdinario.toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${salarioHora.toFixed(
+                        2
+                      )}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioOrdinario.toFixed(
+                        2
+                      )}</td>
                     </tr>
                     <tr style="background: #f9f9f9;">
                       <td style="padding: 12px; border: 1px solid #ddd;">Horas Extras</td>
                       <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasExtras}h</td>
-                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.25).toFixed(2)}</td>
-                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioExtras.toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(
+                        salarioHora * 1.25
+                      ).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioExtras.toFixed(
+                        2
+                      )}</td>
                     </tr>
                     <tr>
                       <td style="padding: 12px; border: 1px solid #ddd;">Horas Festivas</td>
                       <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasFestivas}h</td>
-                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.75).toFixed(2)}</td>
-                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioFestivas.toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(
+                        salarioHora * 1.75
+                      ).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioFestivas.toFixed(
+                        2
+                      )}</td>
                     </tr>
                     <tr style="background: #f9f9f9;">
                       <td style="padding: 12px; border: 1px solid #ddd;">Horas Nocturnas</td>
                       <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasNocturnas}h</td>
-                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 2.1).toFixed(2)}</td>
-                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioNocturnas.toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(
+                        salarioHora * 2.1
+                      ).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioNocturnas.toFixed(
+                        2
+                      )}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -3362,60 +3407,59 @@
         try {
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           // Calcular totales
           let totalHorasMes = 0;
           let totalPagos = 0;
-          let empleadosActivos = empleados.filter(emp => emp.estado === 'ACTIVO').length;
-          
+          let empleadosActivos = empleados.filter((emp) => emp.estado === 'ACTIVO').length;
+
           // Agrupar horas por empleado
           const horasPorEmpleado = {};
-          
-          horas.forEach(registro => {
+
+          horas.forEach((registro) => {
             if (!horasPorEmpleado[registro.empleadoId]) {
               horasPorEmpleado[registro.empleadoId] = {
                 totalHoras: 0,
-                totalPago: 0
+                totalPago: 0,
               };
             }
-            
-            const empleado = empleados.find(emp => emp.id === registro.empleadoId);
+
+            const empleado = empleados.find((emp) => emp.id === registro.empleadoId);
             if (empleado) {
               const horasOrdinarias = registro.horas?.ordinarias || 0;
               const horasExtras = registro.horas?.extras || 0;
               const horasFestivas = registro.horas?.extrasFestivas || 0;
               const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
-              
+
               const totalHoras = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
               const salarioBase = empleado.salario || 0;
               const valorHora = salarioBase / 240;
-              
+
               const salarioOrdinario = horasOrdinarias * valorHora;
               const salarioExtras = horasExtras * (valorHora * 1.25);
               const salarioFestivas = horasFestivas * (valorHora * 1.75);
               const salarioNocturnas = horasNocturnas * (valorHora * 2.1);
               const totalPago = salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
-              
+
               horasPorEmpleado[registro.empleadoId].totalHoras += totalHoras;
               horasPorEmpleado[registro.empleadoId].totalPago += totalPago;
-              
+
               totalHorasMes += totalHoras;
               totalPagos += totalPago;
             }
           });
-          
+
           // Actualizar tarjetas de estadísticas
           const horasMesElement = document.getElementById('horasMes');
           const totalPagosElement = document.getElementById('totalPagos');
           const empleadosActivosElement = document.getElementById('empleadosActivos');
-          
+
           if (horasMesElement) horasMesElement.textContent = `${totalHorasMes.toFixed(2)} HORAS DEL MES`;
           if (totalPagosElement) totalPagosElement.textContent = `$${totalPagos.toFixed(2)} TOTAL PAGOS`;
           if (empleadosActivosElement) empleadosActivosElement.textContent = `${empleadosActivos} EMPLEADOS ACTIVOS`;
-          
+
           // Actualizar tabla con totales por empleado
           actualizarTablaHistorialPagos(horasPorEmpleado);
-          
         } catch (error) {
           console.error('❌ Error actualizando estadísticas:', error);
         }
@@ -3426,15 +3470,15 @@
         try {
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           const tablaBody = document.querySelector('#tablaHistorialPagos tbody');
-          
+
           if (!tablaBody) return;
-          
+
           tablaBody.innerHTML = '';
-          
-          empleados.forEach(empleado => {
+
+          empleados.forEach((empleado) => {
             if (empleado.estado === 'ACTIVO') {
               const horasEmpleado = horasPorEmpleado[empleado.id] || { totalHoras: 0, totalPago: 0 };
-              
+
               const fila = document.createElement('tr');
               fila.innerHTML = `
                 <td>${empleado.nombre}</td>
@@ -3443,19 +3487,22 @@
                 <td>${horasEmpleado.totalHoras.toFixed(2)}h</td>
                 <td>$${horasEmpleado.totalPago.toFixed(2)}</td>
                 <td>
-                  <button class="axyra-btn-accion axyra-btn-ver" onclick="verDetalleEmpleado('${empleado.id}')" title="Ver detalle">
+                  <button class="axyra-btn-accion axyra-btn-ver" onclick="verDetalleEmpleado('${
+                    empleado.id
+                  }')" title="Ver detalle">
                     👁️
                   </button>
-                  <button class="axyra-btn-accion axyra-btn-generar" onclick="generarComprobanteEmpleado('${empleado.id}')" title="Generar comprobante">
+                  <button class="axyra-btn-accion axyra-btn-generar" onclick="generarComprobanteEmpleado('${
+                    empleado.id
+                  }')" title="Generar comprobante">
                     📄
                   </button>
                 </td>
               `;
-              
+
               tablaBody.appendChild(fila);
             }
           });
-          
         } catch (error) {
           console.error('❌ Error actualizando tabla historial:', error);
         }
@@ -3466,15 +3513,15 @@
         try {
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-          
-          const empleado = empleados.find(emp => emp.id === empleadoId);
+
+          const empleado = empleados.find((emp) => emp.id === empleadoId);
           if (!empleado) {
             mostrarMensaje('❌ Empleado no encontrado', 'error');
             return;
           }
-          
-          const horasEmpleado = horas.filter(h => h.empleadoId === empleadoId);
-          
+
+          const horasEmpleado = horas.filter((h) => h.empleadoId === empleadoId);
+
           // Mostrar modal con detalle
           const modal = document.createElement('div');
           modal.className = 'axyra-modal-overlay';
@@ -3504,33 +3551,37 @@
                   </div>
                   <div class="axyra-detalle-item">
                     <label>Total Horas:</label>
-                    <span>${horasEmpleado.reduce((sum, h) => {
-                      const horasOrdinarias = h.horas?.ordinarias || 0;
-                      const horasExtras = h.horas?.extras || 0;
-                      const horasFestivas = h.horas?.extrasFestivas || 0;
-                      const horasNocturnas = h.horas?.extrasFestivasNocturnas || 0;
-                      return sum + horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
-                    }, 0).toFixed(2)}h</span>
+                    <span>${horasEmpleado
+                      .reduce((sum, h) => {
+                        const horasOrdinarias = h.horas?.ordinarias || 0;
+                        const horasExtras = h.horas?.extras || 0;
+                        const horasFestivas = h.horas?.extrasFestivas || 0;
+                        const horasNocturnas = h.horas?.extrasFestivasNocturnas || 0;
+                        return sum + horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+                      }, 0)
+                      .toFixed(2)}h</span>
                   </div>
                   <div class="axyra-detalle-item">
                     <label>Total Pago:</label>
-                    <span>$${horasEmpleado.reduce((sum, h) => {
-                      const empleado = empleados.find(emp => emp.id === h.empleadoId);
-                      if (!empleado) return sum;
-                      
-                      const horasOrdinarias = h.horas?.ordinarias || 0;
-                      const horasExtras = h.horas?.extras || 0;
-                      const horasFestivas = h.horas?.extrasFestivas || 0;
-                      const horasNocturnas = h.horas?.extrasFestivasNocturnas || 0;
-                      
-                      const valorHora = empleado.salario / 240;
-                      const salarioOrdinario = horasOrdinarias * valorHora;
-                      const salarioExtras = horasExtras * (valorHora * 1.25);
-                      const salarioFestivas = horasFestivas * (valorHora * 1.75);
-                      const salarioNocturnas = horasNocturnas * (valorHora * 2.1);
-                      
-                      return sum + salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
-                    }, 0).toFixed(2)}</span>
+                    <span>$${horasEmpleado
+                      .reduce((sum, h) => {
+                        const empleado = empleados.find((emp) => emp.id === h.empleadoId);
+                        if (!empleado) return sum;
+
+                        const horasOrdinarias = h.horas?.ordinarias || 0;
+                        const horasExtras = h.horas?.extras || 0;
+                        const horasFestivas = h.horas?.extrasFestivas || 0;
+                        const horasNocturnas = h.horas?.extrasFestivasNocturnas || 0;
+
+                        const valorHora = empleado.salario / 240;
+                        const salarioOrdinario = horasOrdinarias * valorHora;
+                        const salarioExtras = horasExtras * (valorHora * 1.25);
+                        const salarioFestivas = horasFestivas * (valorHora * 1.75);
+                        const salarioNocturnas = horasNocturnas * (valorHora * 2.1);
+
+                        return sum + salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
+                      }, 0)
+                      .toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -3541,9 +3592,8 @@
               </div>
             </div>
           `;
-          
+
           document.body.appendChild(modal);
-          
         } catch (error) {
           console.error('❌ Error mostrando detalle:', error);
           mostrarMensaje('Error mostrando detalle: ' + error.message, 'error');
@@ -3555,41 +3605,41 @@
         try {
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-          
-          const empleado = empleados.find(emp => emp.id === empleadoId);
+
+          const empleado = empleados.find((emp) => emp.id === empleadoId);
           if (!empleado) {
             mostrarMensaje('❌ Empleado no encontrado', 'error');
             return;
           }
-          
-          const horasEmpleado = horas.filter(h => h.empleadoId === empleadoId);
-          
+
+          const horasEmpleado = horas.filter((h) => h.empleadoId === empleadoId);
+
           if (horasEmpleado.length === 0) {
             mostrarMensaje('❌ Este empleado no tiene horas registradas', 'warning');
             return;
           }
-          
+
           // Calcular totales acumulados
           let totalHoras = 0;
           let totalPago = 0;
-          
-          horasEmpleado.forEach(registro => {
+
+          horasEmpleado.forEach((registro) => {
             const horasOrdinarias = registro.horas?.ordinarias || 0;
             const horasExtras = registro.horas?.extras || 0;
             const horasFestivas = registro.horas?.extrasFestivas || 0;
             const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
-            
+
             totalHoras += horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
-            
+
             const valorHora = empleado.salario / 240;
             const salarioOrdinario = horasOrdinarias * valorHora;
             const salarioExtras = horasExtras * (valorHora * 1.25);
             const salarioFestivas = horasFestivas * (valorHora * 1.75);
             const salarioNocturnas = horasNocturnas * (valorHora * 2.1);
-            
+
             totalPago += salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
           });
-          
+
           // Generar comprobante acumulado
           const contenido = `
             <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
@@ -3630,14 +3680,15 @@
                     </tr>
                   </thead>
                   <tbody>
-                    ${horasEmpleado.map(registro => {
-                      const horasOrdinarias = registro.horas?.ordinarias || 0;
-                      const horasExtras = registro.horas?.extras || 0;
-                      const horasFestivas = registro.horas?.extrasFestivas || 0;
-                      const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
-                      const total = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
-                      
-                      return `
+                    ${horasEmpleado
+                      .map((registro) => {
+                        const horasOrdinarias = registro.horas?.ordinarias || 0;
+                        const horasExtras = registro.horas?.extras || 0;
+                        const horasFestivas = registro.horas?.extrasFestivas || 0;
+                        const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
+                        const total = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+
+                        return `
                         <tr>
                           <td style="padding: 12px; border: 1px solid #ddd;">${registro.fecha}</td>
                           <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasOrdinarias}h</td>
@@ -3647,7 +3698,8 @@
                           <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${total}h</td>
                         </tr>
                       `;
-                    }).join('')}
+                      })
+                      .join('')}
                   </tbody>
                 </table>
               </div>
@@ -3694,7 +3746,6 @@
           ventanaImpresion.document.close();
 
           mostrarMensaje('✅ Comprobante acumulado generado correctamente', 'success');
-          
         } catch (error) {
           console.error('❌ Error generando comprobante acumulado:', error);
           mostrarMensaje('Error al generar comprobante: ' + error.message, 'error');

@@ -102,13 +102,19 @@
                       id="encargadoOtro"
                       class="axyra-form-input"
                       placeholder="Escribir nombre del encargado"
-                      style="display: none; margin-top: 8px;"
+                      style="display: none; margin-top: 8px"
                     />
                   </div>
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Cédula del Encargado</label>
-                  <input type="text" id="cedulaEncargado" class="axyra-form-input" placeholder="Ej: 12345678" required />
+                  <input
+                    type="text"
+                    id="cedulaEncargado"
+                    class="axyra-form-input"
+                    placeholder="Ej: 12345678"
+                    required
+                  />
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Número de Factura</label>
@@ -142,7 +148,13 @@
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Descripción</label>
-                  <input type="text" id="descripcion" class="axyra-form-input" placeholder="Ej: Cocteles, Comida, etc." required />
+                  <input
+                    type="text"
+                    id="descripcion"
+                    class="axyra-form-input"
+                    placeholder="Ej: Cocteles, Comida, etc."
+                    required
+                  />
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Estado</label>
@@ -155,7 +167,12 @@
                 </div>
                 <div class="axyra-form-group">
                   <label class="axyra-form-label">Link de Factura (Opcional)</label>
-                  <input type="url" id="linkFactura" class="axyra-form-input" placeholder="https://ejemplo.com/factura" />
+                  <input
+                    type="url"
+                    id="linkFactura"
+                    class="axyra-form-input"
+                    placeholder="https://ejemplo.com/factura"
+                  />
                 </div>
               </div>
               <div class="axyra-form-actions">
@@ -805,7 +822,7 @@
       function manejarCambioEncargado() {
         const encargadoSelect = document.getElementById('encargado');
         const encargadoOtro = document.getElementById('encargadoOtro');
-        
+
         if (encargadoSelect.value === 'otro') {
           encargadoOtro.style.display = 'block';
           encargadoOtro.required = true;
@@ -820,7 +837,7 @@
       function obtenerNombreEncargado() {
         const encargadoSelect = document.getElementById('encargado');
         const encargadoOtro = document.getElementById('encargadoOtro');
-        
+
         if (encargadoSelect.value === 'otro') {
           return encargadoOtro.value;
         }
@@ -831,7 +848,7 @@
       async function exportarFacturasExcel() {
         try {
           const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
-          
+
           if (facturas.length === 0) {
             mostrarMensaje('No hay facturas para exportar', 'warning');
             return;
@@ -839,7 +856,7 @@
 
           // Crear libro de Excel usando la plantilla
           const workbook = XLSX.utils.book_new();
-          
+
           // Crear hoja de trabajo con los datos
           const datosExcel = [
             ['CUADRE DE CAJA - Villa Venecia'],
@@ -847,15 +864,15 @@
             ['NIT: NIT Pendiente'],
             [`FECHA DE EXPORTACIÓN: ${new Date().toLocaleDateString()}`],
             [''], // Línea en blanco
-            ['ID', 'Empleado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones']
+            ['ID', 'Empleado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones'],
           ];
 
           let totalValor = 0;
 
-          facturas.forEach(factura => {
+          facturas.forEach((factura) => {
             const valor = parseFloat(factura.monto || 0);
             totalValor += valor;
-            
+
             datosExcel.push([
               factura.numero || 'N/A',
               factura.encargado || 'N/A',
@@ -864,7 +881,7 @@
               factura.descripcion || 'N/A',
               valor,
               factura.estado || 'N/A',
-              factura.linkFactura || 'N/A'
+              factura.linkFactura || 'N/A',
             ]);
           });
 
@@ -883,12 +900,12 @@
             { width: 30 }, // Concepto
             { width: 15 }, // Valor
             { width: 15 }, // Estado
-            { width: 40 }  // Observaciones
+            { width: 40 }, // Observaciones
           ];
 
           // Aplicar estilos a las celdas
           const range = XLSX.utils.decode_range(worksheet['!ref']);
-          
+
           for (let R = range.s.r; R <= range.e.r; R++) {
             for (let C = range.s.c; C <= range.e.c; C++) {
               const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
@@ -897,96 +914,97 @@
               // Estilo para título principal (primera fila)
               if (R === 0) {
                 worksheet[cellAddress].s = {
-                  fill: { fgColor: { rgb: "4F81BD" } }, // Azul profesional
-                  font: { 
-                    color: { rgb: "FFFFFF" }, 
-                    bold: true, 
-                    sz: 16 
+                  fill: { fgColor: { rgb: '4F81BD' } }, // Azul profesional
+                  font: {
+                    color: { rgb: 'FFFFFF' },
+                    bold: true,
+                    sz: 16,
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
-                  }
+                  alignment: {
+                    horizontal: 'center',
+                    vertical: 'center',
+                  },
                 };
               }
               // Estilo para información de empresa (filas 1-3)
               else if (R >= 1 && R <= 3) {
                 worksheet[cellAddress].s = {
-                  font: { 
-                    color: { rgb: "000000" }, 
-                    bold: true, 
-                    sz: 12 
+                  font: {
+                    color: { rgb: '000000' },
+                    bold: true,
+                    sz: 12,
                   },
-                  alignment: { 
-                    horizontal: "left", 
-                    vertical: "center" 
-                  }
+                  alignment: {
+                    horizontal: 'left',
+                    vertical: 'center',
+                  },
                 };
               }
               // Estilo para encabezados de tabla (fila 5)
               else if (R === 5) {
                 worksheet[cellAddress].s = {
-                  fill: { fgColor: { rgb: "D9E1F2" } }, // Azul claro
-                  font: { 
-                    color: { rgb: "000000" }, 
-                    bold: true, 
-                    sz: 11 
+                  fill: { fgColor: { rgb: 'D9E1F2' } }, // Azul claro
+                  font: {
+                    color: { rgb: '000000' },
+                    bold: true,
+                    sz: 11,
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: 'center',
+                    vertical: 'center',
                   },
                   border: {
-                    top: { style: "thin", color: { rgb: "000000" } },
-                    bottom: { style: "thin", color: { rgb: "000000" } },
-                    left: { style: "thin", color: { rgb: "000000" } },
-                    right: { style: "thin", color: { rgb: "000000" } }
-                  }
+                    top: { style: 'thin', color: { rgb: '000000' } },
+                    bottom: { style: 'thin', color: { rgb: '000000' } },
+                    left: { style: 'thin', color: { rgb: '000000' } },
+                    right: { style: 'thin', color: { rgb: '000000' } },
+                  },
                 };
               }
               // Estilo para fila de totales (última fila)
               else if (R === range.e.r) {
                 worksheet[cellAddress].s = {
-                  fill: { fgColor: { rgb: "C6EFCE" } }, // Verde claro
-                  font: { 
-                    color: { rgb: "000000" }, 
-                    bold: true, 
-                    sz: 12 
+                  fill: { fgColor: { rgb: 'C6EFCE' } }, // Verde claro
+                  font: {
+                    color: { rgb: '000000' },
+                    bold: true,
+                    sz: 12,
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: 'center',
+                    vertical: 'center',
                   },
                   border: {
-                    top: { style: "medium", color: { rgb: "000000" } },
-                    bottom: { style: "medium", color: { rgb: "000000" } },
-                    left: { style: "thin", color: { rgb: "000000" } },
-                    right: { style: "thin", color: { rgb: "000000" } }
-                  }
+                    top: { style: 'medium', color: { rgb: '000000' } },
+                    bottom: { style: 'medium', color: { rgb: '000000' } },
+                    left: { style: 'thin', color: { rgb: '000000' } },
+                    right: { style: 'thin', color: { rgb: '000000' } },
+                  },
                 };
               }
               // Estilo para datos (filas intermedias)
               else if (R > 5 && R < range.e.r) {
                 worksheet[cellAddress].s = {
-                  fill: { fgColor: { rgb: R % 2 === 0 ? "FFFFFF" : "F8F9FA" } }, // Filas alternadas
-                  font: { 
-                    color: { rgb: "000000" }, 
-                    sz: 10 
+                  fill: { fgColor: { rgb: R % 2 === 0 ? 'FFFFFF' : 'F8F9FA' } }, // Filas alternadas
+                  font: {
+                    color: { rgb: '000000' },
+                    sz: 10,
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: 'center',
+                    vertical: 'center',
                   },
                   border: {
-                    top: { style: "thin", color: { rgb: "D0D0D0" } },
-                    bottom: { style: "thin", color: { rgb: "D0D0D0" } },
-                    left: { style: "thin", color: { rgb: "D0D0D0" } },
-                    right: { style: "thin", color: { rgb: "D0D0D0" } }
-                  }
+                    top: { style: 'thin', color: { rgb: 'D0D0D0' } },
+                    bottom: { style: 'thin', color: { rgb: 'D0D0D0' } },
+                    left: { style: 'thin', color: { rgb: 'D0D0D0' } },
+                    right: { style: 'thin', color: { rgb: 'D0D0D0' } },
+                  },
                 };
 
                 // Formato especial para columna de valor
-                if (C === 5) { // Columna de valor
+                if (C === 5) {
+                  // Columna de valor
                   worksheet[cellAddress].s.numberFormat = '"$"#,##0.00';
                 }
               }
@@ -1002,7 +1020,7 @@
 
           // Descargar archivo
           XLSX.writeFile(workbook, nombreArchivo);
-          
+
           console.log('✅ Facturas exportadas correctamente:', nombreArchivo);
           mostrarMensaje('✅ Facturas exportadas a Excel con formato profesional', 'success');
         } catch (error) {

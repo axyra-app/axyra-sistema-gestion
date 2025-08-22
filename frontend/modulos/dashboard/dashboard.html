@@ -1917,7 +1917,7 @@
           notificacion.innerHTML = `
             <div class="axyra-notificacion-icono">
               ${tipo === 'success' ? '✅' : tipo === 'error' ? '❌' : tipo === 'warning' ? '⚠️' : 'ℹ️'}
-            </div>
+              </div>
             <div class="axyra-notificacion-contenido">
               <div class="axyra-notificacion-mensaje">${mensaje}</div>
             </div>
@@ -1925,10 +1925,10 @@
               ×
             </button>
           `;
-          
+
           // Agregar al DOM
           document.body.appendChild(notificacion);
-          
+
           // Auto-remover después de 5 segundos
           setTimeout(() => {
             if (notificacion.parentElement) {
@@ -3138,31 +3138,37 @@
       async function loadEmpleadosStats() {
         try {
           // Intentar cargar desde Firebase primero
-          if (typeof firebase !== 'undefined' && firebase.firestore && currentUser && currentUser.id) {
+          if (typeof firebase !== 'undefined' && firebase.firestore) {
             try {
-              console.log('🔥 Cargando empleados desde Firebase...');
-              const empleadosSnapshot = await firebase
-                .firestore()
-                .collection('empleados')
-                .where('userId', '==', currentUser.id)
-                .get();
+              const db = firebase.firestore();
+              const auth = firebase.auth();
+              const user = auth.currentUser;
 
-              if (!empleadosSnapshot.empty) {
-                const empleados = [];
-                empleadosSnapshot.forEach((doc) => {
-                  empleados.push({
-                    id: doc.id,
-                    ...doc.data(),
+              if (user) {
+                console.log('🔥 Cargando empleados desde Firebase para usuario:', user.uid);
+                
+                // Buscar empleados del usuario actual
+                const empleadosSnapshot = await db.collection('empleados')
+                  .where('userId', '==', user.uid)
+                  .get();
+
+                if (!empleadosSnapshot.empty) {
+                  const empleados = [];
+                  empleadosSnapshot.forEach((doc) => {
+                    empleados.push({
+                      id: doc.id,
+                      ...doc.data(),
+                    });
                   });
-                });
 
-                console.log(`✅ Empleados cargados desde Firebase: ${empleados.length}`);
-                document.getElementById('totalEmpleados').textContent = empleados.length;
-                return;
-              } else {
-                console.log('ℹ️ No hay empleados en Firebase para este usuario');
-                document.getElementById('totalEmpleados').textContent = '0';
-                return;
+                  console.log(`✅ Empleados cargados desde Firebase: ${empleados.length}`);
+                  document.getElementById('totalEmpleados').textContent = empleados.length;
+                  return;
+                } else {
+                  console.log('ℹ️ No hay empleados en Firebase para este usuario');
+                  document.getElementById('totalEmpleados').textContent = '0';
+                  return;
+                }
               }
             } catch (firebaseError) {
               console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
@@ -3179,24 +3185,10 @@
               emp.userId === currentUser?.id
           );
 
-          // Verificar si hay horas trabajadas
-          const registrosHoras = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-          const horasFiltradas = registrosHoras.filter(
-            (hr) =>
-              !hr.userId ||
-              hr.userId === currentUser?.username ||
-              hr.userId === currentUser?.email ||
-              hr.userId === currentUser?.id
-          );
-
-          const totalHorasTrabajadas = horasFiltradas.reduce((sum, h) => sum + (h.horas || 0), 0);
-
-          // Solo mostrar empleados si hay horas trabajadas
-          if (totalHorasTrabajadas > 0) {
-            document.getElementById('totalEmpleados').textContent = empleadosFiltrados.length;
-          } else {
-            document.getElementById('totalEmpleados').textContent = '0';
-          }
+          // Mostrar TODOS los empleados del usuario, sin depender de horas
+          console.log(`📊 Empleados encontrados en localStorage: ${empleadosFiltrados.length}`);
+          document.getElementById('totalEmpleados').textContent = empleadosFiltrados.length;
+          
         } catch (error) {
           console.error('❌ Error cargando estadísticas de empleados:', error);
           document.getElementById('totalEmpleados').textContent = '0';
@@ -3575,8 +3567,8 @@
           const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
 
           // Calcular empleados activos
-          const empleadosActivos = empleados.filter(emp => emp.estado === 'ACTIVO').length;
-          
+          const empleadosActivos = empleados.filter((emp) => emp.estado === 'ACTIVO').length;
+
           // Calcular total de salarios
           const totalSalarios = empleados.reduce((sum, emp) => {
             return sum + (parseFloat(emp.salario) || 0);
@@ -3635,7 +3627,6 @@
           if (typeof actualizarGraficos === 'function') {
             actualizarGraficos();
           }
-
         } catch (error) {
           console.error('❌ Error actualizando estadísticas del dashboard:', error);
         }
@@ -3645,15 +3636,15 @@
       function configurarListenerCambiosEmpleados() {
         try {
           console.log('👂 Configurando listener para cambios en empleados...');
-          
+
           // Escuchar eventos personalizados
           window.addEventListener('axyraEmpleadosCambiados', async (event) => {
             console.log('📢 Evento de cambio en empleados recibido:', event.detail);
-            
+
             // Verificar que el cambio sea para el usuario actual
             if (event.detail.userId === 'axyra') {
               console.log('🔄 Refrescando dashboard por cambio en empleados...');
-              
+
               // Esperar un momento para que se complete la operación
               setTimeout(() => {
                 actualizarEstadisticasDashboard();
@@ -3668,11 +3659,11 @@
               try {
                 const changeData = JSON.parse(event.newValue);
                 console.log('📢 Cambio en empleados detectado vía localStorage:', changeData);
-                
+
                 // Verificar que el cambio sea para el usuario actual
                 if (changeData.userId === 'axyra') {
                   console.log('🔄 Refrescando dashboard por cambio en empleados (localStorage)...');
-                  
+
                   setTimeout(() => {
                     actualizarEstadisticasDashboard();
                     cargarEmpleados();
@@ -3694,21 +3685,20 @@
       function cargarEmpleados() {
         try {
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          const empleadosActivos = empleados.filter(emp => emp.estado === 'ACTIVO');
-          
+          const empleadosActivos = empleados.filter((emp) => emp.estado === 'ACTIVO');
+
           console.log('✅ Empleados cargados en dashboard:', empleadosActivos.length);
-          
+
           // Actualizar contador de empleados activos
           const empleadosElement = document.getElementById('totalEmpleados');
           if (empleadosElement) {
             empleadosElement.textContent = empleadosActivos.length.toString();
           }
-          
+
           // Actualizar actividad reciente si existe
           if (typeof cargarActividadRecienteContinuacion === 'function') {
             cargarActividadRecienteContinuacion();
           }
-          
         } catch (error) {
           console.error('❌ Error cargando empleados en dashboard:', error);
         }
@@ -3721,30 +3711,29 @@
           const notificacionesToggle = document.getElementById('toggleNotificaciones');
           const temaSelect = document.getElementById('selectTema');
           const idiomaSelect = document.getElementById('selectIdioma');
-          
+
           if (!notificacionesToggle && !temaSelect && !idiomaSelect) {
             console.log('ℹ️ Elementos de preferencias no encontrados, usando valores por defecto');
             return;
           }
-          
+
           // Cargar preferencias guardadas
           const preferencias = JSON.parse(localStorage.getItem('axyra_preferencias') || '{}');
-          
+
           // Aplicar preferencias a los elementos encontrados
           if (notificacionesToggle) {
             notificacionesToggle.checked = preferencias.notificaciones !== false;
           }
-          
+
           if (temaSelect) {
             temaSelect.value = preferencias.tema || 'light';
           }
-          
+
           if (idiomaSelect) {
             idiomaSelect.value = preferencias.idioma || 'es';
           }
-          
+
           console.log('✅ Preferencias cargadas correctamente');
-          
         } catch (error) {
           console.error('❌ Error cargando preferencias:', error);
         }
@@ -3756,24 +3745,23 @@
           const notificacionesToggle = document.getElementById('toggleNotificaciones');
           const temaSelect = document.getElementById('selectTema');
           const idiomaSelect = document.getElementById('selectIdioma');
-          
+
           const preferencias = {
             notificaciones: notificacionesToggle ? notificacionesToggle.checked : true,
             tema: temaSelect ? temaSelect.value : 'light',
             idioma: idiomaSelect ? idiomaSelect.value : 'es',
-            fechaActualizacion: new Date().toISOString()
+            fechaActualizacion: new Date().toISOString(),
           };
-          
+
           localStorage.setItem('axyra_preferencias', JSON.stringify(preferencias));
-          
+
           // Aplicar tema si se cambió
           if (preferencias.tema) {
             aplicarTema(preferencias.tema);
           }
-          
+
           console.log('✅ Preferencias guardadas:', preferencias);
           mostrarMensaje('✅ Preferencias guardadas correctamente', 'success');
-          
         } catch (error) {
           console.error('❌ Error guardando preferencias:', error);
           mostrarMensaje('Error guardando preferencias: ' + error.message, 'error');
@@ -3784,18 +3772,17 @@
       function aplicarTema(tema) {
         try {
           const body = document.body;
-          
+
           // Remover clases de tema anteriores
           body.classList.remove('tema-light', 'tema-dark', 'tema-azul');
-          
+
           // Aplicar nuevo tema
           body.classList.add(`tema-${tema}`);
-          
+
           // Guardar tema en localStorage
           localStorage.setItem('axyra_tema', tema);
-          
+
           console.log('✅ Tema aplicado:', tema);
-          
         } catch (error) {
           console.error('❌ Error aplicando tema:', error);
         }
