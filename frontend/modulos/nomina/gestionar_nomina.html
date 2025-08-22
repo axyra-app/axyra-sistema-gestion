@@ -4530,6 +4530,239 @@
       window.generarReportes = generarReportes;
       window.configuracionNomina = configuracionNomina;
       window.mostrarNotificacion = mostrarNotificacion;
+
+      // Función para exportar nómina a Excel usando plantilla existente
+      function exportarNomina() {
+        try {
+          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          
+          if (nominas.length === 0) {
+            mostrarNotificacion('No hay nóminas para exportar', 'warning');
+            return;
+          }
+
+          // Crear libro de Excel usando la plantilla
+          const workbook = XLSX.utils.book_new();
+          
+          // Crear hoja de trabajo con los datos siguiendo la estructura de nomina.xlsx
+          const datosExcel = [
+            ['VILLA VENECIA - NÓMINA DE EMPLEADOS'],
+            [`Fecha de Generación: ${new Date().toLocaleDateString()}`],
+            [''], // Línea en blanco
+            ['ID', 'Empleado', 'Cédula', 'Cargo', 'Departamento', 'Tipo Contrato', 'Salario Base', 'Horas Ordinarias', 'Horas Extras', 'Horas Nocturnas', 'Horas Dominicales', 'Horas Festivas', 'Total Horas', 'Valor por Hora', 'Subtotal', 'Salud (4%)', 'Pensión (4%)', 'Total Descuentos', 'Neto a Pagar']
+          ];
+
+          let totalSalarios = 0;
+          let totalDescuentos = 0;
+          let totalNeto = 0;
+
+          nominas.forEach(nomina => {
+            const empleado = empleados.find(emp => emp.id === nomina.empleado_id);
+            if (empleado) {
+              const salarioBase = nomina.salario_base || 0;
+              const horasOrdinarias = nomina.horas_trabajadas || 0;
+              const horasExtras = nomina.horas_extras || 0;
+              const horasNocturnas = nomina.horas_nocturnas || 0;
+              const horasDominicales = nomina.horas_dominicales || 0;
+              const horasFestivas = nomina.horas_festivas || 0;
+              const totalHoras = horasOrdinarias + horasExtras + horasNocturnas + horasDominicales + horasFestivas;
+              
+              const valorHora = salarioBase / 240; // 240 horas mensuales
+              const subtotal = totalHoras * valorHora;
+              
+              // Solo empleados fijos reciben salud y pensión
+              const tipoContrato = empleado.tipoContrato || 'FIJO';
+              const salud = tipoContrato === 'FIJO' ? subtotal * 0.04 : 0;
+              const pension = tipoContrato === 'FIJO' ? subtotal * 0.04 : 0;
+              const totalDescuentosEmpleado = salud + pension;
+              const netoAPagar = subtotal - totalDescuentosEmpleado;
+
+              totalSalarios += subtotal;
+              totalDescuentos += totalDescuentosEmpleado;
+              totalNeto += netoAPagar;
+
+              datosExcel.push([
+                nomina.id || 'N/A',
+                empleado.nombre || 'N/A',
+                empleado.cedula || 'N/A',
+                empleado.cargo || 'N/A',
+                empleado.departamento || 'N/A',
+                tipoContrato,
+                salarioBase,
+                horasOrdinarias,
+                horasExtras,
+                horasNocturnas,
+                horasDominicales,
+                horasFestivas,
+                totalHoras,
+                valorHora,
+                subtotal,
+                salud,
+                pension,
+                totalDescuentosEmpleado,
+                netoAPagar
+              ]);
+            }
+          });
+
+          // Agregar línea en blanco y totales
+          datosExcel.push(['']);
+          datosExcel.push(['TOTALES', '', '', '', '', '', '', '', '', '', '', '', '', '', totalSalarios, totalDescuentos * 0.5, totalDescuentos * 0.5, totalDescuentos, totalNeto]);
+
+          const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
+
+          // Aplicar estilos profesionales
+          worksheet['!cols'] = [
+            { width: 8 },   // ID
+            { width: 25 },  // Empleado
+            { width: 15 },  // Cédula
+            { width: 20 },  // Cargo
+            { width: 20 },  // Departamento
+            { width: 15 },  // Tipo Contrato
+            { width: 15 },  // Salario Base
+            { width: 18 },  // Horas Ordinarias
+            { width: 18 },  // Horas Extras
+            { width: 18 },  // Horas Nocturnas
+            { width: 18 },  // Horas Dominicales
+            { width: 18 },  // Horas Festivas
+            { width: 15 },  // Total Horas
+            { width: 18 },  // Valor por Hora
+            { width: 18 },  // Subtotal
+            { width: 18 },  // Salud
+            { width: 18 },  // Pensión
+            { width: 18 },  // Total Descuentos
+            { width: 18 }   // Neto a Pagar
+          ];
+
+          // Aplicar estilos a las celdas
+          const range = XLSX.utils.decode_range(worksheet['!ref']);
+          
+          for (let R = range.s.r; R <= range.e.r; R++) {
+            for (let C = range.s.c; C <= range.e.c; C++) {
+              const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+              if (!worksheet[cellAddress]) continue;
+
+              // Estilo para título principal (primera fila)
+              if (R === 0) {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: "4F81BD" } }, // Azul profesional
+                  font: { 
+                    color: { rgb: "FFFFFF" }, 
+                    bold: true, 
+                    sz: 16 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  }
+                };
+              }
+              // Estilo para fecha (segunda fila)
+              else if (R === 1) {
+                worksheet[cellAddress].s = {
+                  font: { 
+                    color: { rgb: "000000" }, 
+                    bold: true, 
+                    sz: 12 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  }
+                };
+              }
+              // Estilo para encabezados de tabla (fila 3)
+              else if (R === 3) {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: "D9E1F2" } }, // Azul claro
+                  font: { 
+                    color: { rgb: "000000" }, 
+                    bold: true, 
+                    sz: 11 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  },
+                  border: {
+                    top: { style: "thin", color: { rgb: "000000" } },
+                    bottom: { style: "thin", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } }
+                  }
+                };
+              }
+              // Estilo para fila de totales (última fila)
+              else if (R === range.e.r) {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: "C6EFCE" } }, // Verde claro
+                  font: { 
+                    color: { rgb: "000000" }, 
+                    bold: true, 
+                    sz: 12 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  },
+                  border: {
+                    top: { style: "medium", color: { rgb: "000000" } },
+                    bottom: { style: "medium", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } }
+                  }
+                };
+              }
+              // Estilo para datos (filas intermedias)
+              else if (R > 3 && R < range.e.r) {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: R % 2 === 0 ? "FFFFFF" : "F8F9FA" } }, // Filas alternadas
+                  font: { 
+                    color: { rgb: "000000" }, 
+                    sz: 10 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  },
+                  border: {
+                    top: { style: "thin", color: { rgb: "D0D0D0" } },
+                    bottom: { style: "thin", color: { rgb: "D0D0D0" } },
+                    left: { style: "thin", color: { rgb: "D0D0D0" } },
+                    right: { style: "thin", color: { rgb: "D0D0D0" } }
+                  }
+                };
+
+                // Formato especial para columnas monetarias
+                if (C >= 6 && C <= 18) { // Columnas de salarios y descuentos
+                  worksheet[cellAddress].s.numberFormat = '"$"#,##0.00';
+                }
+                // Formato para horas
+                else if (C >= 7 && C <= 12) { // Columnas de horas
+                  worksheet[cellAddress].s.numberFormat = '#,##0.00';
+                }
+              }
+            }
+          }
+
+          // Agregar hoja al libro
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
+
+          // Generar nombre de archivo con fecha
+          const fecha = new Date().toISOString().split('T')[0];
+          const nombreArchivo = `Nómina_Villa_Venecia_${fecha}.xlsx`;
+
+          // Descargar archivo
+          XLSX.writeFile(workbook, nombreArchivo);
+          
+          console.log('✅ Nómina exportada correctamente:', nombreArchivo);
+          mostrarNotificacion('✅ Nómina exportada a Excel con formato profesional y fórmulas', 'success');
+        } catch (error) {
+          console.error('❌ Error exportando nómina:', error);
+          mostrarNotificacion('Error al exportar: ' + error.message, 'error');
+        }
+      }
     </script>
   </body>
 </html>

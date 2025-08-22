@@ -854,19 +854,24 @@
           console.log('✅ Configuración básica restablecida');
 
           // Mostrar mensaje de éxito
-          mostrarMensaje('🎉 ¡SISTEMA COMPLETAMENTE LIMPIO! Todos los datos han sido eliminados. El sistema se reiniciará en 3 segundos...', 'success');
+          mostrarMensaje('🎉 ¡SISTEMA COMPLETAMENTE LIMPIO! Todos los datos han sido eliminados. Cerrando sesión...', 'success');
 
-          // Reiniciar completamente el sistema
+          // Cerrar sesión y redirigir
           setTimeout(() => {
-            // Limpiar cualquier estado en memoria
-            if (typeof window !== 'undefined') {
-              // Forzar recarga completa
+            try {
+              // Limpiar sesión de usuario
+              localStorage.removeItem('axyra_isolated_user');
+              localStorage.removeItem('axyra_firebase_user');
+              sessionStorage.clear();
+              
+              // Redirigir al login
+              window.location.href = '../../login.html';
+            } catch (redirectError) {
+              console.error('Error en redirección:', redirectError);
+              // Fallback: recargar página
               window.location.reload(true);
-            } else {
-              // Fallback: redirigir al inicio
-              window.location.href = '../../index.html';
             }
-          }, 3000);
+          }, 2000);
 
         } catch (error) {
           console.error('❌ Error crítico limpiando datos:', error);
@@ -877,6 +882,11 @@
             localStorage.clear();
             sessionStorage.clear();
             mostrarMensaje('⚠️ Se realizó limpieza básica como fallback', 'warning');
+            
+            // Redirigir al login después de limpieza fallback
+            setTimeout(() => {
+              window.location.href = '../../login.html';
+            }, 2000);
           } catch (fallbackError) {
             console.error('❌ Error en limpieza fallback:', fallbackError);
             mostrarMensaje('❌ Error crítico en limpieza del sistema', 'error');

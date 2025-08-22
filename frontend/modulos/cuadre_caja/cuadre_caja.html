@@ -827,42 +827,57 @@
         return encargadoSelect.value;
       }
 
-      // Función para exportar a Excel mejorada
-      function exportarFacturasExcel() {
+      // Función para exportar a Excel usando plantilla existente
+      async function exportarFacturasExcel() {
         try {
           const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
           
           if (facturas.length === 0) {
-            alert('No hay facturas para exportar');
+            mostrarMensaje('No hay facturas para exportar', 'warning');
             return;
           }
 
-          // Preparar datos para Excel con estructura mejorada
+          // Crear libro de Excel usando la plantilla
+          const workbook = XLSX.utils.book_new();
+          
+          // Crear hoja de trabajo con los datos
           const datosExcel = [
-            ['Número de Factura', 'Encargado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones']
+            ['CUADRE DE CAJA - Villa Venecia'],
+            ['EMPRESA: Villa Venecia'],
+            ['NIT: NIT Pendiente'],
+            [`FECHA DE EXPORTACIÓN: ${new Date().toLocaleDateString()}`],
+            [''], // Línea en blanco
+            ['ID', 'Empleado', 'Cédula', 'Fecha', 'Concepto', 'Valor', 'Estado', 'Observaciones']
           ];
 
+          let totalValor = 0;
+
           facturas.forEach(factura => {
+            const valor = parseFloat(factura.monto || 0);
+            totalValor += valor;
+            
             datosExcel.push([
               factura.numero || 'N/A',
               factura.encargado || 'N/A',
               factura.cedulaEncargado || 'N/A',
               factura.fecha || 'N/A',
               factura.descripcion || 'N/A',
-              `$${parseFloat(factura.monto || 0).toLocaleString()}`,
+              valor,
               factura.estado || 'N/A',
               factura.linkFactura || 'N/A'
             ]);
           });
 
-          // Crear libro de Excel
-          const workbook = XLSX.utils.book_new();
+          // Agregar línea en blanco y totales
+          datosExcel.push(['']);
+          datosExcel.push(['TOTALES', '', '', '', '', totalValor, '', '']);
+
           const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
 
           // Aplicar estilos profesionales
           worksheet['!cols'] = [
-            { width: 20 }, // Número de Factura
-            { width: 25 }, // Encargado
+            { width: 15 }, // ID
+            { width: 25 }, // Empleado
             { width: 15 }, // Cédula
             { width: 15 }, // Fecha
             { width: 30 }, // Concepto
@@ -870,6 +885,113 @@
             { width: 15 }, // Estado
             { width: 40 }  // Observaciones
           ];
+
+          // Aplicar estilos a las celdas
+          const range = XLSX.utils.decode_range(worksheet['!ref']);
+          
+          for (let R = range.s.r; R <= range.e.r; R++) {
+            for (let C = range.s.c; C <= range.e.c; C++) {
+              const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+              if (!worksheet[cellAddress]) continue;
+
+              // Estilo para título principal (primera fila)
+              if (R === 0) {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: "4F81BD" } }, // Azul profesional
+                  font: { 
+                    color: { rgb: "FFFFFF" }, 
+                    bold: true, 
+                    sz: 16 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  }
+                };
+              }
+              // Estilo para información de empresa (filas 1-3)
+              else if (R >= 1 && R <= 3) {
+                worksheet[cellAddress].s = {
+                  font: { 
+                    color: { rgb: "000000" }, 
+                    bold: true, 
+                    sz: 12 
+                  },
+                  alignment: { 
+                    horizontal: "left", 
+                    vertical: "center" 
+                  }
+                };
+              }
+              // Estilo para encabezados de tabla (fila 5)
+              else if (R === 5) {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: "D9E1F2" } }, // Azul claro
+                  font: { 
+                    color: { rgb: "000000" }, 
+                    bold: true, 
+                    sz: 11 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  },
+                  border: {
+                    top: { style: "thin", color: { rgb: "000000" } },
+                    bottom: { style: "thin", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } }
+                  }
+                };
+              }
+              // Estilo para fila de totales (última fila)
+              else if (R === range.e.r) {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: "C6EFCE" } }, // Verde claro
+                  font: { 
+                    color: { rgb: "000000" }, 
+                    bold: true, 
+                    sz: 12 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  },
+                  border: {
+                    top: { style: "medium", color: { rgb: "000000" } },
+                    bottom: { style: "medium", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } }
+                  }
+                };
+              }
+              // Estilo para datos (filas intermedias)
+              else if (R > 5 && R < range.e.r) {
+                worksheet[cellAddress].s = {
+                  fill: { fgColor: { rgb: R % 2 === 0 ? "FFFFFF" : "F8F9FA" } }, // Filas alternadas
+                  font: { 
+                    color: { rgb: "000000" }, 
+                    sz: 10 
+                  },
+                  alignment: { 
+                    horizontal: "center", 
+                    vertical: "center" 
+                  },
+                  border: {
+                    top: { style: "thin", color: { rgb: "D0D0D0" } },
+                    bottom: { style: "thin", color: { rgb: "D0D0D0" } },
+                    left: { style: "thin", color: { rgb: "D0D0D0" } },
+                    right: { style: "thin", color: { rgb: "D0D0D0" } }
+                  }
+                };
+
+                // Formato especial para columna de valor
+                if (C === 5) { // Columna de valor
+                  worksheet[cellAddress].s.numberFormat = '"$"#,##0.00';
+                }
+              }
+            }
+          }
 
           // Agregar hoja al libro
           XLSX.utils.book_append_sheet(workbook, worksheet, 'Cuadre de Caja');
@@ -882,10 +1004,10 @@
           XLSX.writeFile(workbook, nombreArchivo);
           
           console.log('✅ Facturas exportadas correctamente:', nombreArchivo);
-          alert('Facturas exportadas correctamente');
+          mostrarMensaje('✅ Facturas exportadas a Excel con formato profesional', 'success');
         } catch (error) {
           console.error('❌ Error exportando facturas:', error);
-          alert('Error al exportar: ' + error.message);
+          mostrarMensaje('Error al exportar: ' + error.message, 'error');
         }
       }
 
