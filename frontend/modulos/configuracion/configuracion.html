@@ -462,27 +462,51 @@
         <div class="axyra-card">
           <div class="axyra-card-header">
             <div class="axyra-card-icon">
-              <i class="fas fa-tools"></i>
+              <i class="fas fa-exclamation-triangle"></i>
             </div>
             <div>
               <h3 class="axyra-card-title">Acciones del Sistema</h3>
-              <p class="axyra-card-subtitle">Mantenimiento y utilidades</p>
+              <p class="axyra-card-subtitle">Operaciones críticas del sistema</p>
             </div>
           </div>
           <div class="axyra-card-content">
-            <div class="axyra-actions-bar">
-              <button class="axyra-btn axyra-btn-info" onclick="exportarConfiguracion()">
-                <i class="fas fa-download"></i> Exportar Configuración
-              </button>
-              <button class="axyra-btn axyra-btn-warning" onclick="importarConfiguracion()">
-                <i class="fas fa-upload"></i> Importar Configuración
-              </button>
-              <button class="axyra-btn axyra-btn-secondary" onclick="mostrarModalRestaurar()">
-                <i class="fas fa-undo"></i> Restaurar Valores por Defecto
-              </button>
-              <button class="axyra-btn axyra-btn-error" onclick="mostrarModalLimpiar()">
-                <i class="fas fa-trash"></i> Limpiar Todos los Datos
-              </button>
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <button 
+                  type="button" 
+                  class="axyra-btn axyra-btn-warning" 
+                  onclick="verificarEstadoFirebase()"
+                  style="margin-right: 10px;"
+                >
+                  <i class="fas fa-check-circle"></i> Verificar Firebase
+                </button>
+                
+                <button 
+                  type="button" 
+                  class="axyra-btn axyra-btn-warning" 
+                  onclick="eliminarEmpleadosEspecificos()"
+                  style="margin-right: 10px;"
+                >
+                  <i class="fas fa-user-times"></i> Eliminar Solo Empleados
+                </button>
+                
+                <button 
+                  type="button" 
+                  class="axyra-btn axyra-btn-error" 
+                  onclick="limpiarTodosLosDatos()"
+                >
+                  <i class="fas fa-trash-alt"></i> Limpiar TODO el Sistema
+                </button>
+              </div>
+            </div>
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <p class="axyra-help-text">
+                  <strong>Verificar Firebase:</strong> Comprueba el estado de conexión y datos<br>
+                  <strong>Eliminar Solo Empleados:</strong> Elimina únicamente los empleados del sistema<br>
+                  <strong>Limpiar TODO:</strong> Elimina TODOS los datos del sistema (irreversible)
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -777,41 +801,77 @@
             if (typeof firebase !== 'undefined' && firebase.firestore) {
               const db = firebase.firestore();
               
-              // Obtener usuario actual
-              const currentUser = localStorage.getItem('axyra_isolated_user');
-              let userId = 'admin';
-              if (currentUser) {
-                try {
-                  const userData = JSON.parse(currentUser);
-                  userId = userData.username || userData.email || 'admin';
-                } catch (e) {
-                  console.warn('No se pudo parsear usuario actual');
-                }
+              // Obtener usuario autenticado de Firebase
+              const auth = firebase.auth();
+              const user = auth.currentUser;
+              
+              if (!user) {
+                console.warn('⚠️ No hay usuario autenticado en Firebase');
+                throw new Error('Usuario no autenticado en Firebase');
               }
 
-              // Eliminar colecciones completas
+              console.log('🔥 Usuario autenticado en Firebase:', user.uid);
+
+              // Eliminar colecciones completas usando el usuario autenticado
               const colecciones = ['empleados', 'horas', 'nominas', 'facturas', 'comprobantes', 'configuracion'];
               
               for (const coleccion of colecciones) {
                 try {
+                  console.log(`🗑️ Eliminando colección: ${coleccion}`);
+                  
+                  // Obtener todos los documentos de la colección
                   const snapshot = await db.collection(coleccion).get();
+                  
+                  if (snapshot.empty) {
+                    console.log(`ℹ️ Colección ${coleccion} ya está vacía`);
+                    continue;
+                  }
+
+                  // Crear batch para eliminar todos los documentos
                   const batch = db.batch();
+                  let deletedCount = 0;
                   
                   snapshot.docs.forEach((doc) => {
                     batch.delete(doc.ref);
+                    deletedCount++;
                   });
                   
+                  // Ejecutar el batch
                   await batch.commit();
-                  console.log(`✅ Colección ${coleccion} eliminada de Firebase`);
+                  console.log(`✅ ${deletedCount} documentos eliminados de ${coleccion}`);
+                  
                 } catch (error) {
-                  console.warn(`⚠️ No se pudo eliminar colección ${coleccion}:`, error);
+                  console.error(`❌ Error eliminando colección ${coleccion}:`, error);
+                  
+                  // Intentar eliminar documento por documento como fallback
+                  try {
+                    const snapshot = await db.collection(coleccion).get();
+                    let deletedCount = 0;
+                    
+                    for (const doc of snapshot.docs) {
+                      try {
+                        await doc.ref.delete();
+                        deletedCount++;
+                      } catch (docError) {
+                        console.warn(`⚠️ No se pudo eliminar documento ${doc.id}:`, docError);
+                      }
+                    }
+                    
+                    console.log(`✅ ${deletedCount} documentos eliminados de ${coleccion} (fallback)`);
+                  } catch (fallbackError) {
+                    console.error(`❌ Error en fallback para ${coleccion}:`, fallbackError);
+                  }
                 }
               }
 
               console.log('✅ Firebase limpiado completamente');
             }
           } catch (firebaseError) {
-            console.warn('⚠️ Firebase no disponible, continuando con limpieza local:', firebaseError);
+            console.error('❌ Error crítico con Firebase:', firebaseError);
+            mostrarMensaje('❌ Error con Firebase: ' + firebaseError.message, 'error');
+            
+            // Continuar con limpieza local aunque Firebase falle
+            mostrarMensaje('⚠️ Continuando con limpieza local...', 'warning');
           }
 
           // Limpiar localStorage completamente
@@ -859,6 +919,15 @@
           // Cerrar sesión y redirigir
           setTimeout(() => {
             try {
+              // Cerrar sesión de Firebase
+              if (typeof firebase !== 'undefined' && firebase.auth) {
+                firebase.auth().signOut().then(() => {
+                  console.log('✅ Sesión de Firebase cerrada');
+                }).catch((signOutError) => {
+                  console.warn('⚠️ Error cerrando sesión de Firebase:', signOutError);
+                });
+              }
+              
               // Limpiar sesión de usuario
               localStorage.removeItem('axyra_isolated_user');
               localStorage.removeItem('axyra_firebase_user');
@@ -1029,6 +1098,113 @@
         checkAuth();
         cargarConfiguracion();
       });
+
+      // Función para eliminar empleados específicos
+      async function eliminarEmpleadosEspecificos() {
+        try {
+          if (!confirm('⚠️ ¿Estás seguro de que deseas eliminar TODOS los empleados del sistema?')) {
+            return;
+          }
+
+          mostrarMensaje('🗑️ Eliminando empleados...', 'info');
+
+          // Eliminar de Firebase
+          try {
+            if (typeof firebase !== 'undefined' && firebase.firestore) {
+              const db = firebase.firestore();
+              const auth = firebase.auth();
+              const user = auth.currentUser;
+
+              if (!user) {
+                throw new Error('Usuario no autenticado en Firebase');
+              }
+
+              console.log('🔥 Eliminando empleados de Firebase...');
+
+              // Obtener todos los empleados
+              const empleadosSnapshot = await db.collection('empleados').get();
+              
+              if (empleadosSnapshot.empty) {
+                console.log('ℹ️ No hay empleados en Firebase');
+                mostrarMensaje('ℹ️ No hay empleados para eliminar', 'info');
+                return;
+              }
+
+              // Eliminar empleados uno por uno
+              let deletedCount = 0;
+              for (const doc of empleadosSnapshot.docs) {
+                try {
+                  await doc.ref.delete();
+                  deletedCount++;
+                  console.log(`✅ Empleado eliminado: ${doc.id}`);
+                } catch (docError) {
+                  console.warn(`⚠️ No se pudo eliminar empleado ${doc.id}:`, docError);
+                }
+              }
+
+              console.log(`✅ ${deletedCount} empleados eliminados de Firebase`);
+              mostrarMensaje(`✅ ${deletedCount} empleados eliminados de Firebase`, 'success');
+
+            } else {
+              throw new Error('Firebase no disponible');
+            }
+          } catch (firebaseError) {
+            console.error('❌ Error eliminando empleados de Firebase:', firebaseError);
+            mostrarMensaje('❌ Error con Firebase: ' + firebaseError.message, 'error');
+          }
+
+          // Limpiar localStorage
+          localStorage.removeItem('axyra_empleados');
+          localStorage.removeItem('axyra_horas');
+          localStorage.removeItem('axyra_nominas');
+          console.log('✅ Datos locales limpiados');
+
+          // Mostrar mensaje de éxito
+          mostrarMensaje('🎉 ¡Empleados eliminados completamente!', 'success');
+
+        } catch (error) {
+          console.error('❌ Error eliminando empleados:', error);
+          mostrarMensaje('Error al eliminar empleados: ' + error.message, 'error');
+        }
+      }
+
+      // Función para verificar estado de Firebase
+      async function verificarEstadoFirebase() {
+        try {
+          if (typeof firebase === 'undefined') {
+            mostrarMensaje('❌ Firebase no está disponible', 'error');
+            return;
+          }
+
+          const auth = firebase.auth();
+          const user = auth.currentUser;
+
+          if (!user) {
+            mostrarMensaje('❌ No hay usuario autenticado en Firebase', 'error');
+            return;
+          }
+
+          console.log('✅ Usuario autenticado en Firebase:', user.uid);
+          mostrarMensaje(`✅ Usuario autenticado: ${user.email}`, 'success');
+
+          // Verificar colecciones
+          const db = firebase.firestore();
+          const colecciones = ['empleados', 'horas', 'nominas', 'facturas'];
+          
+          for (const coleccion of colecciones) {
+            try {
+              const snapshot = await db.collection(coleccion).get();
+              console.log(`📊 Colección ${coleccion}: ${snapshot.size} documentos`);
+            } catch (error) {
+              console.warn(`⚠️ Error accediendo a ${coleccion}:`, error);
+            }
+          }
+
+        } catch (error) {
+          console.error('❌ Error verificando Firebase:', error);
+          mostrarMensaje('Error verificando Firebase: ' + error.message, 'error');
+        }
+      }
     </script>
 
     <style>
