@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AXYRA - Sistema de Inventario</title>
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+
+    <!-- XLSX para exportación -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="axyra-header">
+      <div class="axyra-container">
+        <div class="axyra-header-content">
+          <div class="axyra-logo">
+            <div class="axyra-logo-icon">
+              <i class="fas fa-boxes"></i>
+            </div>
+            <div class="axyra-logo-text">
+              <div class="axyra-logo-title">AXYRA</div>
+              <div class="axyra-logo-subtitle">Sistema de Inventario</div>
+            </div>
+          </div>
+          <nav class="axyra-nav">
+            <a href="../../index.html" class="axyra-nav-link"> <i class="fas fa-home"></i> Inicio </a>
+            <a href="../dashboard/dashboard.html" class="axyra-nav-link">
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="../empleados/empleados.html" class="axyra-nav-link"> <i class="fas fa-users"></i> Empleados </a>
+            <a href="../horas/gestionar_horas.html" class="axyra-nav-link"> <i class="fas fa-clock"></i> Horas </a>
+            <a href="../nomina/gestionar_nomina.html" class="axyra-nav-link">
+              <i class="fas fa-file-invoice-dollar"></i> Nómina
+            </a>
+            <a href="../cuadre_caja/cuadre_caja.html" class="axyra-nav-link">
+              <i class="fas fa-calculator"></i> Cuadre de Caja
+            </a>
+            <a href="../configuracion/configuracion.html" class="axyra-nav-link">
+              <i class="fas fa-cog"></i> Configuración
+            </a>
+            <a href="inventario.html" class="axyra-nav-link active"> <i class="fas fa-boxes"></i> Inventario </a>
+            <button class="axyra-btn axyra-btn-ghost" onclick="logout()">
+              <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="axyra-section">
+      <div class="axyra-container">
+        <div class="axyra-page-header">
+          <h1 class="axyra-page-title">Sistema de Inventario AXYRA</h1>
+          <p class="axyra-page-subtitle">Control total de productos, stock y movimientos en tiempo real</p>
+        </div>
+
+        <!-- Overview del Inventario -->
+        <div class="inventario-overview">
+          <div class="inventario-overview-grid">
+            <div class="inventario-stat-card">
+              <div class="inventario-stat-icon">
+                <i class="fas fa-box"></i>
+              </div>
+              <div class="inventario-stat-number" id="totalProductos">0</div>
+              <div class="inventario-stat-label">Total Productos</div>
+            </div>
+            <div class="inventario-stat-card">
+              <div class="inventario-stat-icon">
+                <i class="fas fa-warehouse"></i>
+              </div>
+              <div class="inventario-stat-number" id="stockTotal">0</div>
+              <div class="inventario-stat-label">Stock Total</div>
+            </div>
+            <div class="inventario-stat-card">
+              <div class="inventario-stat-icon">
+                <i class="fas fa-arrow-up"></i>
+              </div>
+              <div class="inventario-stat-number" id="entradasHoy">0</div>
+              <div class="inventario-stat-label">Entradas Hoy</div>
+            </div>
+            <div class="inventario-stat-card">
+              <div class="inventario-stat-icon">
+                <i class="fas fa-arrow-down"></i>
+              </div>
+              <div class="inventario-stat-number" id="salidasHoy">0</div>
+              <div class="inventario-stat-label">Salidas Hoy</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Búsqueda y Filtros -->
+        <div class="inventario-search-filters">
+          <div class="inventario-search-row">
+            <div class="inventario-search-box">
+              <input
+                type="text"
+                id="buscarProducto"
+                class="inventario-search-input"
+                placeholder="Buscar productos por nombre, código o categoría..."
+              />
+            </div>
+            <div class="inventario-filters">
+              <select id="filtroCategoria" class="inventario-filter-select">
+                <option value="">Todas las categorías</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="comida">Comida</option>
+                <option value="limpieza">Limpieza</option>
+                <option value="otros">Otros</option>
+              </select>
+              <select id="filtroEstado" class="inventario-filter-select">
+                <option value="">Todos los estados</option>
+                <option value="activo">Activo</option>
+                <option value="inactivo">Inactivo</option>
+                <option value="bajo">Stock Bajo</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="inventario-actions">
+          <button class="inventario-btn inventario-btn-primary" onclick="mostrarModalProducto()">
+            <i class="fas fa-plus"></i> Nuevo Producto
+          </button>
+          <button class="inventario-btn inventario-btn-success" onclick="mostrarModalEntrada()">
+            <i class="fas fa-arrow-up"></i> Registrar Entrada
+          </button>
+          <button class="inventario-btn inventario-btn-warning" onclick="mostrarModalSalida()">
+            <i class="fas fa-arrow-down"></i> Registrar Salida
+          </button>
+          <button class="inventario-btn inventario-btn-info" onclick="exportarInventarioExcel()">
+            <i class="fas fa-file-excel"></i> Exportar Excel
+          </button>
+        </div>
+
+        <!-- Tabla de Productos -->
+        <div class="inventario-table-container">
+          <h3 class="axyra-card-title">Productos del Inventario</h3>
+          <table class="inventario-table" id="tablaProductos">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Precio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpoTablaProductos">
+              <!-- Los productos se cargan dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tabla de Movimientos -->
+        <div class="inventario-table-container">
+          <h3 class="axyra-card-title">Historial de Movimientos</h3>
+          <table class="inventario-table" id="tablaMovimientos">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Usuario</th>
+                <th>Observación</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpoTablaMovimientos">
+              <!-- Los movimientos se cargan dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal para Agregar/Editar Producto -->
+    <div id="modalProducto" class="inventario-modal">
+      <div class="inventario-modal-content">
+        <div class="inventario-modal-header">
+          <h3 class="inventario-modal-title" id="tituloModalProducto">Nuevo Producto</h3>
+          <button class="inventario-modal-close" onclick="cerrarModalProducto()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form class="inventario-form" id="formProducto">
+          <div class="inventario-form-row">
+            <div class="inventario-form-group">
+              <label for="codigoProducto" class="inventario-form-label">Código del Producto *</label>
+              <input type="text" id="codigoProducto" class="inventario-form-input" required />
+            </div>
+            <div class="inventario-form-group">
+              <label for="nombreProducto" class="inventario-form-label">Nombre del Producto *</label>
+              <input type="text" id="nombreProducto" class="inventario-form-input" required />
+            </div>
+          </div>
+          <div class="inventario-form-row">
+            <div class="inventario-form-group">
+              <label for="categoriaProducto" class="inventario-form-label">Categoría *</label>
+              <select id="categoriaProducto" class="inventario-form-select" required>
+                <option value="">Seleccionar categoría</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="comida">Comida</option>
+                <option value="limpieza">Limpieza</option>
+                <option value="otros">Otros</option>
+              </select>
+            </div>
+            <div class="inventario-form-group">
+              <label for="stockInicial" class="inventario-form-label">Stock Inicial *</label>
+              <input type="number" id="stockInicial" class="inventario-form-input" min="0" required />
+            </div>
+          </div>
+          <div class="inventario-form-row">
+            <div class="inventario-form-group">
+              <label for="precioProducto" class="inventario-form-label">Precio Unitario *</label>
+              <input type="number" id="precioProducto" class="inventario-form-input" min="0" step="0.01" required />
+            </div>
+            <div class="inventario-form-group">
+              <label for="stockMinimo" class="inventario-form-label">Stock Mínimo</label>
+              <input type="number" id="stockMinimo" class="inventario-form-input" min="0" value="5" />
+            </div>
+          </div>
+          <div class="inventario-form-group">
+            <label for="descripcionProducto" class="inventario-form-label">Descripción</label>
+            <textarea
+              id="descripcionProducto"
+              class="inventario-form-textarea"
+              placeholder="Descripción detallada del producto..."
+            ></textarea>
+          </div>
+          <div class="inventario-form-actions">
+            <button type="button" class="axyra-btn axyra-btn-ghost" onclick="cerrarModalProducto()">Cancelar</button>
+            <button type="submit" class="axyra-btn axyra-btn-primary">
+              <i class="fas fa-save"></i> Guardar Producto
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal para Registrar Entrada -->
+    <div id="modalEntrada" class="inventario-modal">
+      <div class="inventario-modal-content">
+        <div class="inventario-modal-header">
+          <h3 class="inventario-modal-title">Registrar Entrada de Producto</h3>
+          <button class="inventario-modal-close" onclick="cerrarModalEntrada()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form class="inventario-form" id="formEntrada">
+          <div class="inventario-form-row">
+            <div class="inventario-form-group">
+              <label for="productoEntrada" class="inventario-form-label">Producto *</label>
+              <select id="productoEntrada" class="inventario-form-select" required>
+                <option value="">Seleccionar producto</option>
+              </select>
+            </div>
+            <div class="inventario-form-group">
+              <label for="cantidadEntrada" class="inventario-form-label">Cantidad *</label>
+              <input type="number" id="cantidadEntrada" class="inventario-form-input" min="1" required />
+            </div>
+          </div>
+          <div class="inventario-form-group">
+            <label for="observacionEntrada" class="inventario-form-label">Observación</label>
+            <textarea
+              id="observacionEntrada"
+              class="inventario-form-textarea"
+              placeholder="Motivo de la entrada, proveedor, etc..."
+            ></textarea>
+          </div>
+          <div class="inventario-form-actions">
+            <button type="button" class="axyra-btn axyra-btn-ghost" onclick="cerrarModalEntrada()">Cancelar</button>
+            <button type="submit" class="axyra-btn axyra-btn-success">
+              <i class="fas fa-arrow-up"></i> Registrar Entrada
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal para Registrar Salida -->
+    <div id="modalSalida" class="inventario-modal">
+      <div class="inventario-modal-content">
+        <div class="inventario-modal-header">
+          <h3 class="inventario-modal-title">Registrar Salida de Producto</h3>
+          <button class="inventario-modal-close" onclick="cerrarModalSalida()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <form class="inventario-form" id="formSalida">
+          <div class="inventario-form-row">
+            <div class="inventario-form-group">
+              <label for="productoSalida" class="inventario-form-label">Producto *</label>
+              <select id="productoSalida" class="inventario-form-select" required>
+                <option value="">Seleccionar producto</option>
+              </select>
+            </div>
+            <div class="inventario-form-group">
+              <label for="cantidadSalida" class="inventario-form-label">Cantidad *</label>
+              <input type="number" id="cantidadSalida" class="inventario-form-input" min="1" required />
+            </div>
+          </div>
+          <div class="inventario-form-group">
+            <label for="observacionSalida" class="inventario-form-label">Observación</label>
+            <textarea
+              id="observacionSalida"
+              class="inventario-form-textarea"
+              placeholder="Motivo de la salida, cliente, etc..."
+            ></textarea>
+          </div>
+          <div class="inventario-form-actions">
+            <button type="button" class="axyra-btn axyra-btn-ghost" onclick="cerrarModalSalida()">Cancelar</button>
+            <button type="submit" class="axyra-btn axyra-btn-warning">
+              <i class="fas fa-arrow-down"></i> Registrar Salida
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal para Ver Producto -->
+    <div id="modalVerProducto" class="inventario-modal">
+      <div class="inventario-modal-content">
+        <div class="inventario-modal-header">
+          <h3 class="inventario-modal-title">Detalles del Producto</h3>
+          <button class="inventario-modal-close" onclick="cerrarModalVerProducto()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div id="detallesProducto">
+          <!-- Los detalles se cargan dinámicamente -->
+        </div>
+        <div class="inventario-form-actions">
+          <button class="axyra-btn axyra-btn-ghost" onclick="cerrarModalVerProducto()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../static/firebase-config.js"></script>
+    <script src="../../static/isolated-auth.js"></script>
+    <script src="inventario.js"></script>
+  </body>
+</html>
