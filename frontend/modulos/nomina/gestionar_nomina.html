@@ -4340,10 +4340,15 @@
           const notificacion = document.createElement('div');
           notificacion.className = `axyra-notificacion axyra-notificacion-${tipo}`;
           notificacion.innerHTML = `
-            <div class="axyra-notificacion-contenido">
-              <span class="axyra-notificacion-mensaje">${mensaje}</span>
-              <button class="axyra-notificacion-cerrar" onclick="this.parentElement.parentElement.remove()">×</button>
+            <div class="axyra-notificacion-icono">
+              ${tipo === 'success' ? '✅' : tipo === 'error' ? '❌' : tipo === 'warning' ? '⚠️' : 'ℹ️'}
             </div>
+            <div class="axyra-notificacion-contenido">
+              <div class="axyra-notificacion-mensaje">${mensaje}</div>
+            </div>
+            <button class="axyra-notificacion-cerrar" onclick="this.closest('.axyra-notificacion').remove()">
+              ×
+            </button>
           `;
           
           // Agregar al DOM
@@ -4364,6 +4369,7 @@
 
       // Hacer funciones globales para onclick
       window.mostrarModal = mostrarModal;
+      window.cerrarModal = cerrarModal;
       window.exportarNomina = exportarNomina;
       window.generarComprobantePDF = generarComprobantePDF;
       window.generarReportes = generarReportes;
@@ -4395,141 +4401,6 @@
           console.error('❌ Error cerrando modal:', error);
         }
       }
-
-      // Función para exportar nómina a Excel
-      function exportarNomina() {
-        try {
-          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
-          if (nominas.length === 0) {
-            mostrarNotificacion('No hay nóminas para exportar', 'warning');
-            return;
-          }
-
-          // Preparar datos para Excel
-          const datosExcel = [
-            ['ID', 'Empleado', 'Departamento', 'Salario Base', 'Horas Trabajadas', 'Total Horas', 'Valor por Hora', 'Total a Pagar', 'Fecha', 'Estado']
-          ];
-
-          nominas.forEach(nomina => {
-            const empleado = empleados.find(emp => emp.id === nomina.empleado_id);
-            datosExcel.push([
-              nomina.id || 'N/A',
-              empleado ? empleado.nombre : 'Empleado no encontrado',
-              empleado ? empleado.cargo : 'N/A',
-              `$${nomina.salario_base?.toLocaleString() || '0'}`,
-              nomina.horas_trabajadas || '0',
-              (nomina.horas_trabajadas + nomina.horas_extras + nomina.horas_nocturnas + nomina.horas_dominicales) || '0',
-              `$${nomina.salario_por_hora?.toLocaleString() || '0'}`,
-              `$${nomina.salario_neto?.toLocaleString() || '0'}`,
-              nomina.fecha_generacion ? new Date(nomina.fecha_generacion).toLocaleDateString() : 'N/A',
-              nomina.estado || 'N/A'
-            ]);
-          });
-
-          // Crear libro de Excel
-          const workbook = XLSX.utils.book_new();
-          const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
-
-          // Aplicar estilos profesionales
-          worksheet['!cols'] = [
-            { width: 8 },   // ID
-            { width: 25 },  // Empleado
-            { width: 20 },  // Departamento
-            { width: 15 },  // Salario Base
-            { width: 18 },  // Horas Trabajadas
-            { width: 15 },  // Total Horas
-            { width: 18 },  // Valor por Hora
-            { width: 18 },  // Total a Pagar
-            { width: 15 },  // Fecha
-            { width: 12 }   // Estado
-          ];
-
-          // Agregar hoja al libro
-          XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
-
-          // Generar nombre de archivo con fecha
-          const fecha = new Date().toISOString().split('T')[0];
-          const nombreArchivo = `Nómina_Villa_Venecia_${fecha}.xlsx`;
-
-          // Descargar archivo
-          XLSX.writeFile(workbook, nombreArchivo);
-          
-          console.log('✅ Nómina exportada correctamente:', nombreArchivo);
-          mostrarNotificacion('Nómina exportada correctamente', 'success');
-        } catch (error) {
-          console.error('❌ Error exportando nómina:', error);
-          mostrarNotificacion('Error al exportar: ' + error.message, 'error');
-        }
-      }
-
-      // Función para generar comprobante PDF
-      function generarComprobantePDF() {
-        try {
-          mostrarNotificacion('Función de generación de PDF en desarrollo', 'info');
-        } catch (error) {
-          console.error('❌ Error generando PDF:', error);
-          mostrarNotificacion('Error al generar PDF: ' + error.message, 'error');
-        }
-      }
-
-      // Función para generar reportes
-      function generarReportes() {
-        try {
-          mostrarNotificacion('Función de reportes en desarrollo', 'info');
-        } catch (error) {
-          console.error('❌ Error generando reportes:', error);
-          mostrarNotificacion('Error al generar reportes: ' + error.message, 'error');
-        }
-      }
-
-      // Función para configuración de nómina
-      function configuracionNomina() {
-        try {
-          mostrarNotificacion('Función de configuración en desarrollo', 'info');
-        } catch (error) {
-          console.error('❌ Error en configuración:', error);
-          mostrarNotificacion('Error en configuración: ' + error.message, 'error');
-        }
-      }
-
-      // Función para mostrar notificaciones
-      function mostrarNotificacion(mensaje, tipo = 'info') {
-        try {
-          // Crear elemento de notificación
-          const notificacion = document.createElement('div');
-          notificacion.className = `axyra-notificacion axyra-notificacion-${tipo}`;
-          notificacion.innerHTML = `
-            <div class="axyra-notificacion-contenido">
-              <span class="axyra-notificacion-mensaje">${mensaje}</span>
-              <button class="axyra-notificacion-cerrar" onclick="this.parentElement.parentElement.remove()">×</button>
-            </div>
-          `;
-          
-          // Agregar al DOM
-          document.body.appendChild(notificacion);
-          
-          // Auto-remover después de 5 segundos
-          setTimeout(() => {
-            if (notificacion.parentElement) {
-              notificacion.remove();
-            }
-          }, 5000);
-        } catch (error) {
-          console.error('❌ Error mostrando notificación:', error);
-          // Fallback a alert
-          alert(mensaje);
-        }
-      }
-
-      // Hacer funciones globales para onclick
-      window.mostrarModal = mostrarModal;
-      window.exportarNomina = exportarNomina;
-      window.generarComprobantePDF = generarComprobantePDF;
-      window.generarReportes = generarReportes;
-      window.configuracionNomina = configuracionNomina;
-      window.mostrarNotificacion = mostrarNotificacion;
 
       // Función para exportar nómina a Excel usando plantilla existente
       function exportarNomina() {
@@ -4763,6 +4634,79 @@
           mostrarNotificacion('Error al exportar: ' + error.message, 'error');
         }
       }
+
+      // Función para generar comprobante PDF
+      function generarComprobantePDF() {
+        try {
+          mostrarNotificacion('Función de generación de PDF en desarrollo', 'info');
+        } catch (error) {
+          console.error('❌ Error generando PDF:', error);
+          mostrarNotificacion('Error al generar PDF: ' + error.message, 'error');
+        }
+      }
+
+      // Función para generar reportes
+      function generarReportes() {
+        try {
+          mostrarNotificacion('Función de reportes en desarrollo', 'info');
+        } catch (error) {
+          console.error('❌ Error generando reportes:', error);
+          mostrarNotificacion('Error al generar reportes: ' + error.message, 'error');
+        }
+      }
+
+      // Función para configuración de nómina
+      function configuracionNomina() {
+        try {
+          mostrarNotificacion('Función de configuración en desarrollo', 'info');
+        } catch (error) {
+          console.error('❌ Error en configuración:', error);
+          mostrarNotificacion('Error en configuración: ' + error.message, 'error');
+        }
+      }
+
+      // Función para mostrar notificaciones
+      function mostrarNotificacion(mensaje, tipo = 'info') {
+        try {
+          // Crear elemento de notificación
+          const notificacion = document.createElement('div');
+          notificacion.className = `axyra-notificacion axyra-notificacion-${tipo}`;
+          notificacion.innerHTML = `
+            <div class="axyra-notificacion-icono">
+              ${tipo === 'success' ? '✅' : tipo === 'error' ? '❌' : tipo === 'warning' ? '⚠️' : 'ℹ️'}
+            </div>
+            <div class="axyra-notificacion-contenido">
+              <div class="axyra-notificacion-mensaje">${mensaje}</div>
+            </div>
+            <button class="axyra-notificacion-cerrar" onclick="this.closest('.axyra-notificacion').remove()">
+              ×
+            </button>
+          `;
+          
+          // Agregar al DOM
+          document.body.appendChild(notificacion);
+          
+          // Auto-remover después de 5 segundos
+          setTimeout(() => {
+            if (notificacion.parentElement) {
+              notificacion.remove();
+            }
+          }, 5000);
+        } catch (error) {
+          console.error('❌ Error mostrando notificación:', error);
+          // Fallback a alert
+          alert(mensaje);
+        }
+      }
+
+      // Hacer funciones globales para onclick
+      window.mostrarModal = mostrarModal;
+      window.cerrarModal = cerrarModal;
+      window.exportarNomina = exportarNomina;
+      window.generarComprobantePDF = generarComprobantePDF;
+      window.generarReportes = generarReportes;
+      window.configuracionNomina = configuracionNomina;
+      window.mostrarNotificacion = mostrarNotificacion;
     </script>
   </body>
 </html>

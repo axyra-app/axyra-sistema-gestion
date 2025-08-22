@@ -29,80 +29,187 @@
         position: fixed;
         top: 20px;
         right: 20px;
-        z-index: 10000;
-        max-width: 400px;
         background: white;
         border-radius: 12px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-        border: 1px solid #e2e8f0;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+        padding: 16px;
+        min-width: 300px;
+        max-width: 400px;
+        z-index: 10001;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
         animation: slideInRight 0.3s ease-out;
-        overflow: hidden;
+        border-left: 4px solid #4F81BD;
+      }
+
+      .axyra-notificacion-success {
+        border-left-color: #10B981;
+      }
+
+      .axyra-notificacion-error {
+        border-left-color: #EF4444;
+      }
+
+      .axyra-notificacion-warning {
+        border-left-color: #F59E0B;
+      }
+
+      .axyra-notificacion-info {
+        border-left-color: #3B82F6;
+      }
+
+      .axyra-notificacion-icono {
+        font-size: 20px;
+        flex-shrink: 0;
+        margin-top: 2px;
       }
 
       .axyra-notificacion-contenido {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px 20px;
+        flex: 1;
       }
 
       .axyra-notificacion-mensaje {
-        color: #1e293b;
-        font-weight: 500;
-        margin-right: 12px;
+        color: #1F2937;
+        font-size: 14px;
+        line-height: 1.5;
+        margin: 0;
       }
 
       .axyra-notificacion-cerrar {
         background: none;
         border: none;
-        color: #94a3b8;
-        font-size: 20px;
+        color: #9CA3AF;
+        font-size: 18px;
         cursor: pointer;
-        padding: 0;
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        padding: 4px;
         border-radius: 50%;
         transition: all 0.2s ease;
+        flex-shrink: 0;
       }
 
       .axyra-notificacion-cerrar:hover {
-        background: #f1f5f9;
-        color: #64748b;
+        background: #F3F4F6;
+        color: #6B7280;
       }
 
-      /* Tipos de notificación */
-      .axyra-notificacion-success {
-        border-left: 4px solid #10b981;
-        background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      /* Estilos para modales adicionales */
+      .axyra-modal-preview .axyra-preview-grid {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 20px;
       }
 
-      .axyra-notificacion-error {
-        border-left: 4px solid #ef4444;
-        background: linear-gradient(135deg, #fef2f2 0%, #fef2f2 100%);
+      .axyra-preview-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background: #F8FAFC;
+        border-radius: 8px;
+        border-left: 4px solid #4F81BD;
       }
 
-      .axyra-notificacion-warning {
-        border-left: 4px solid #f59e0b;
-        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+      .axyra-preview-item label {
+        font-weight: 600;
+        color: #374151;
       }
 
-      .axyra-notificacion-info {
-        border-left: 4px solid #3b82f6;
-        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      .axyra-preview-item span {
+        color: #1F2937;
+        font-weight: 500;
       }
 
-      /* Animaciones */
+      .axyra-preview-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        background: #4F81BD;
+        border-radius: 8px;
+        color: white;
+        font-weight: 600;
+        font-size: 16px;
+      }
+
+      .axyra-modal-detalle .axyra-detalle-grid {
+        display: grid;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .axyra-detalle-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        background: #F8FAFC;
+        border-radius: 8px;
+        border-left: 4px solid #4F81BD;
+      }
+
+      .axyra-detalle-item label {
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .axyra-detalle-item span {
+        color: #1F2937;
+        font-weight: 500;
+      }
+
+      /* Estilos para botones adicionales */
+      .axyra-btn-primary {
+        background: linear-gradient(135deg, #4F81BD 0%, #3B82F6 100%);
+        color: white;
+        box-shadow: 0 4px 20px rgba(79, 129, 189, 0.3);
+      }
+
+      .axyra-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(79, 129, 189, 0.4);
+      }
+
+      /* Estilos para tabla del historial de pagos */
+      .axyra-btn-accion {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        margin: 2px;
+      }
+
+      .axyra-btn-ver {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        color: white;
+      }
+
+      .axyra-btn-ver:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      }
+
+      .axyra-btn-generar {
+        background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+        color: white;
+      }
+
+      .axyra-btn-generar:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      }
+
+      /* Animaciones adicionales */
       @keyframes slideInRight {
         from {
-          transform: translateX(100%);
           opacity: 0;
+          transform: translateX(100%);
         }
         to {
-          transform: translateX(0);
           opacity: 1;
+          transform: translateX(0);
         }
       }
 
@@ -2963,6 +3070,634 @@
           console.log('✅ Formulario de horas limpiado correctamente');
         } catch (error) {
           console.error('❌ Error limpiando formulario:', error);
+        }
+      }
+
+      // Función para mostrar notificaciones bonitas
+      function mostrarMensaje(mensaje, tipo = 'info') {
+        try {
+          // Crear elemento de notificación
+          const notificacion = document.createElement('div');
+          notificacion.className = `axyra-notificacion axyra-notificacion-${tipo}`;
+          notificacion.innerHTML = `
+            <div class="axyra-notificacion-icono">
+              ${tipo === 'success' ? '✅' : tipo === 'error' ? '❌' : tipo === 'warning' ? '⚠️' : 'ℹ️'}
+            </div>
+            <div class="axyra-notificacion-contenido">
+              <div class="axyra-notificacion-mensaje">${mensaje}</div>
+            </div>
+            <button class="axyra-notificacion-cerrar" onclick="this.closest('.axyra-notificacion').remove()">
+              ×
+            </button>
+          `;
+          
+          // Agregar al DOM
+          document.body.appendChild(notificacion);
+          
+          // Auto-remover después de 5 segundos
+          setTimeout(() => {
+            if (notificacion.parentElement) {
+              notificacion.remove();
+            }
+          }, 5000);
+        } catch (error) {
+          console.error('❌ Error mostrando notificación:', error);
+          // Fallback a alert
+          alert(mensaje);
+        }
+      }
+
+      // Función para previsualizar horas
+      function previsualizarHoras() {
+        try {
+          const empleadoId = document.getElementById('empleado').value;
+          const fecha = document.getElementById('fecha').value;
+          const horasOrdinarias = parseFloat(document.getElementById('horasOrdinarias').value) || 0;
+          const horasExtras = parseFloat(document.getElementById('horasExtras').value) || 0;
+          const horasFestivas = parseFloat(document.getElementById('horasFestivas').value) || 0;
+          const horasNocturnas = parseFloat(document.getElementById('horasNocturnas').value) || 0;
+
+          if (!empleadoId) {
+            mostrarMensaje('❌ Por favor selecciona un empleado', 'error');
+            return;
+          }
+
+          if (!fecha) {
+            mostrarMensaje('❌ Por favor ingresa una fecha', 'error');
+            return;
+          }
+
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const empleado = empleados.find(emp => emp.id === empleadoId);
+          
+          if (!empleado) {
+            mostrarMensaje('❌ Empleado no encontrado', 'error');
+            return;
+          }
+
+          const totalHoras = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+          const salarioBase = empleado.salario || 0;
+          const valorHora = salarioBase / 240; // 240 horas mensuales
+          
+          const salarioOrdinario = horasOrdinarias * valorHora;
+          const salarioExtras = horasExtras * (valorHora * 1.25);
+          const salarioFestivas = horasFestivas * (valorHora * 1.75);
+          const salarioNocturnas = horasNocturnas * (valorHora * 2.1);
+          const totalPago = salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
+
+          // Mostrar modal de previsualización
+          const modal = document.createElement('div');
+          modal.className = 'axyra-modal-overlay';
+          modal.innerHTML = `
+            <div class="axyra-modal axyra-modal-preview">
+              <div class="axyra-modal-header">
+                <h3>📋 Previsualización de Horas</h3>
+                <button class="axyra-modal-cerrar" onclick="this.closest('.axyra-modal-overlay').remove()">×</button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-preview-grid">
+                  <div class="axyra-preview-item">
+                    <label>Empleado:</label>
+                    <span>${empleado.nombre}</span>
+                  </div>
+                  <div class="axyra-preview-item">
+                    <label>Fecha:</label>
+                    <span>${fecha}</span>
+                  </div>
+                  <div class="axyra-preview-item">
+                    <label>Horas Ordinarias:</label>
+                    <span>${horasOrdinarias}h - $${salarioOrdinario.toFixed(2)}</span>
+                  </div>
+                  <div class="axyra-preview-item">
+                    <label>Horas Extras:</label>
+                    <span>${horasExtras}h - $${salarioExtras.toFixed(2)}</span>
+                  </div>
+                  <div class="axyra-preview-item">
+                    <label>Horas Festivas:</label>
+                    <span>${horasFestivas}h - $${salarioFestivas.toFixed(2)}</span>
+                  </div>
+                  <div class="axyra-preview-item">
+                    <label>Horas Nocturnas:</label>
+                    <span>${horasNocturnas}h - $${salarioNocturnas.toFixed(2)}</span>
+                  </div>
+                  <div class="axyra-preview-total">
+                    <label>Total Horas:</label>
+                    <span>${totalHoras}h</span>
+                  </div>
+                  <div class="axyra-preview-total">
+                    <label>Total a Pagar:</label>
+                    <span>$${totalPago.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-outline" onclick="this.closest('.axyra-modal-overlay').remove()">
+                  Cancelar
+                </button>
+                <button class="axyra-btn axyra-btn-primary" onclick="registrarHoras()">
+                  ✅ Registrar Horas
+                </button>
+              </div>
+            </div>
+          `;
+          
+          document.body.appendChild(modal);
+          
+        } catch (error) {
+          console.error('❌ Error en previsualización:', error);
+          mostrarMensaje('Error en previsualización: ' + error.message, 'error');
+        }
+      }
+
+      // Función para generar comprobante
+      function generarComprobante(id) {
+        try {
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          
+          const registro = horas.find(h => h.id === id);
+          if (!registro) {
+            mostrarMensaje('❌ Registro no encontrado', 'error');
+            return;
+          }
+
+          const empleado = empleados.find(e => e.id === registro.empleadoId);
+          if (!empleado) {
+            mostrarMensaje('❌ Empleado no encontrado', 'error');
+            return;
+          }
+
+          // Calcular totales
+          const horasOrdinarias = registro.horas?.ordinarias || 0;
+          const horasExtras = registro.horas?.extras || 0;
+          const horasFestivas = registro.horas?.extrasFestivas || 0;
+          const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
+          const totalHoras = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+          
+          const salarioBase = empleado.salario || 0;
+          const salarioHora = salarioBase / 240; // 240 horas mensuales
+          
+          const salarioOrdinario = horasOrdinarias * salarioHora;
+          const salarioExtras = horasExtras * (salarioHora * 1.25);
+          const salarioFestivas = horasFestivas * (salarioHora * 1.75);
+          const salarioNocturnas = horasNocturnas * (salarioHora * 2.1);
+          const totalPago = salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
+
+          // Crear contenido del comprobante
+          const contenido = `
+            <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+              <div style="text-align: center; border-bottom: 3px solid #4F81BD; padding-bottom: 20px; margin-bottom: 30px;">
+                <h1 style="color: #4F81BD; margin: 0; font-size: 28px;">VILLA VENECIA</h1>
+                <h2 style="color: #666; margin: 10px 0; font-size: 20px;">COMPROBANTE DE HORAS TRABAJADAS</h2>
+                <p style="color: #999; margin: 5px 0; font-size: 14px;">Fecha de Generación: ${new Date().toLocaleDateString()}</p>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                <div>
+                  <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">INFORMACIÓN DEL EMPLEADO</h3>
+                  <p><strong>Nombre:</strong> ${empleado.nombre}</p>
+                  <p><strong>Cargo:</strong> ${empleado.cargo || 'N/A'}</p>
+                  <p><strong>Departamento:</strong> ${empleado.departamento || 'N/A'}</p>
+                  <p><strong>Fecha de Registro:</strong> ${registro.fecha}</p>
+                </div>
+                
+                <div>
+                  <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">RESUMEN DE HORAS</h3>
+                  <p><strong>Total Horas:</strong> ${totalHoras.toFixed(2)}h</p>
+                  <p><strong>Salario Base:</strong> $${salarioBase.toLocaleString()}</p>
+                  <p><strong>Valor por Hora:</strong> $${salarioHora.toFixed(2)}</p>
+                </div>
+              </div>
+              
+              <div style="margin-bottom: 30px;">
+                <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">DETALLE DE HORAS</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                  <thead>
+                    <tr style="background: #4F81BD; color: white;">
+                      <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Tipo de Hora</th>
+                      <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Cantidad</th>
+                      <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Valor Unitario</th>
+                      <th style="padding: 12px; text-align: right; border: 1px solid #ddd;">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Ordinarias</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasOrdinarias}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${salarioHora.toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioOrdinario.toFixed(2)}</td>
+                    </tr>
+                    <tr style="background: #f9f9f9;">
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Extras</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasExtras}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.25).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioExtras.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Festivas</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasFestivas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.75).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioFestivas.toFixed(2)}</td>
+                    </tr>
+                    <tr style="background: #f9f9f9;">
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Nocturnas</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasNocturnas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 2.1).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioNocturnas.toFixed(2)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <div style="text-align: right; border-top: 3px solid #4F81BD; padding-top: 20px;">
+                <h2 style="color: #4F81BD; margin: 0; font-size: 24px;">TOTAL A PAGAR: $${totalPago.toFixed(2)}</h2>
+              </div>
+              
+              <div style="margin-top: 40px; text-align: center; color: #666; font-size: 12px;">
+                <p>Este documento es generado automáticamente por el sistema AXYRA</p>
+                <p>Villa Venecia - Sistema de Gestión de Horas</p>
+              </div>
+            </div>
+          `;
+
+          // Abrir ventana de impresión
+          const ventanaImpresion = window.open('', '_blank', 'width=800,height=600');
+          ventanaImpresion.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>Comprobante de Horas - ${empleado.nombre}</title>
+              <style>
+                body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+                @media print {
+                  body { padding: 0; }
+                  .no-print { display: none; }
+                }
+              </style>
+            </head>
+            <body>
+              ${contenido}
+              <div class="no-print" style="margin-top: 30px; text-align: center;">
+                <button onclick="window.print()" style="padding: 12px 24px; background: #4F81BD; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 0 10px;">
+                  🖨️ Imprimir
+                </button>
+                <button onclick="window.close()" style="padding: 12px 24px; background: #666; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 0 10px;">
+                  ❌ Cerrar
+                </button>
+              </div>
+            </body>
+            </html>
+          `);
+          ventanaImpresion.document.close();
+
+          mostrarMensaje('✅ Comprobante generado correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error generando comprobante:', error);
+          mostrarMensaje('Error al generar comprobante: ' + error.message, 'error');
+        }
+      }
+
+      // Función para actualizar estadísticas del historial de pagos
+      function actualizarEstadisticasHistorial() {
+        try {
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          
+          // Calcular totales
+          let totalHorasMes = 0;
+          let totalPagos = 0;
+          let empleadosActivos = empleados.filter(emp => emp.estado === 'ACTIVO').length;
+          
+          // Agrupar horas por empleado
+          const horasPorEmpleado = {};
+          
+          horas.forEach(registro => {
+            if (!horasPorEmpleado[registro.empleadoId]) {
+              horasPorEmpleado[registro.empleadoId] = {
+                totalHoras: 0,
+                totalPago: 0
+              };
+            }
+            
+            const empleado = empleados.find(emp => emp.id === registro.empleadoId);
+            if (empleado) {
+              const horasOrdinarias = registro.horas?.ordinarias || 0;
+              const horasExtras = registro.horas?.extras || 0;
+              const horasFestivas = registro.horas?.extrasFestivas || 0;
+              const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
+              
+              const totalHoras = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+              const salarioBase = empleado.salario || 0;
+              const valorHora = salarioBase / 240;
+              
+              const salarioOrdinario = horasOrdinarias * valorHora;
+              const salarioExtras = horasExtras * (valorHora * 1.25);
+              const salarioFestivas = horasFestivas * (valorHora * 1.75);
+              const salarioNocturnas = horasNocturnas * (valorHora * 2.1);
+              const totalPago = salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
+              
+              horasPorEmpleado[registro.empleadoId].totalHoras += totalHoras;
+              horasPorEmpleado[registro.empleadoId].totalPago += totalPago;
+              
+              totalHorasMes += totalHoras;
+              totalPagos += totalPago;
+            }
+          });
+          
+          // Actualizar tarjetas de estadísticas
+          const horasMesElement = document.getElementById('horasMes');
+          const totalPagosElement = document.getElementById('totalPagos');
+          const empleadosActivosElement = document.getElementById('empleadosActivos');
+          
+          if (horasMesElement) horasMesElement.textContent = `${totalHorasMes.toFixed(2)} HORAS DEL MES`;
+          if (totalPagosElement) totalPagosElement.textContent = `$${totalPagos.toFixed(2)} TOTAL PAGOS`;
+          if (empleadosActivosElement) empleadosActivosElement.textContent = `${empleadosActivos} EMPLEADOS ACTIVOS`;
+          
+          // Actualizar tabla con totales por empleado
+          actualizarTablaHistorialPagos(horasPorEmpleado);
+          
+        } catch (error) {
+          console.error('❌ Error actualizando estadísticas:', error);
+        }
+      }
+
+      // Función para actualizar tabla del historial de pagos
+      function actualizarTablaHistorialPagos(horasPorEmpleado) {
+        try {
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const tablaBody = document.querySelector('#tablaHistorialPagos tbody');
+          
+          if (!tablaBody) return;
+          
+          tablaBody.innerHTML = '';
+          
+          empleados.forEach(empleado => {
+            if (empleado.estado === 'ACTIVO') {
+              const horasEmpleado = horasPorEmpleado[empleado.id] || { totalHoras: 0, totalPago: 0 };
+              
+              const fila = document.createElement('tr');
+              fila.innerHTML = `
+                <td>${empleado.nombre}</td>
+                <td>${empleado.departamento || 'N/A'}</td>
+                <td>${empleado.cargo || 'N/A'}</td>
+                <td>${horasEmpleado.totalHoras.toFixed(2)}h</td>
+                <td>$${horasEmpleado.totalPago.toFixed(2)}</td>
+                <td>
+                  <button class="axyra-btn-accion axyra-btn-ver" onclick="verDetalleEmpleado('${empleado.id}')" title="Ver detalle">
+                    👁️
+                  </button>
+                  <button class="axyra-btn-accion axyra-btn-generar" onclick="generarComprobanteEmpleado('${empleado.id}')" title="Generar comprobante">
+                    📄
+                  </button>
+                </td>
+              `;
+              
+              tablaBody.appendChild(fila);
+            }
+          });
+          
+        } catch (error) {
+          console.error('❌ Error actualizando tabla historial:', error);
+        }
+      }
+
+      // Función para ver detalle de empleado
+      function verDetalleEmpleado(empleadoId) {
+        try {
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          
+          const empleado = empleados.find(emp => emp.id === empleadoId);
+          if (!empleado) {
+            mostrarMensaje('❌ Empleado no encontrado', 'error');
+            return;
+          }
+          
+          const horasEmpleado = horas.filter(h => h.empleadoId === empleadoId);
+          
+          // Mostrar modal con detalle
+          const modal = document.createElement('div');
+          modal.className = 'axyra-modal-overlay';
+          modal.innerHTML = `
+            <div class="axyra-modal axyra-modal-detalle">
+              <div class="axyra-modal-header">
+                <h3>👤 Detalle de ${empleado.nombre}</h3>
+                <button class="axyra-modal-cerrar" onclick="this.closest('.axyra-modal-overlay').remove()">×</button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-detalle-grid">
+                  <div class="axyra-detalle-item">
+                    <label>Nombre:</label>
+                    <span>${empleado.nombre}</span>
+                  </div>
+                  <div class="axyra-detalle-item">
+                    <label>Cargo:</label>
+                    <span>${empleado.cargo || 'N/A'}</span>
+                  </div>
+                  <div class="axyra-detalle-item">
+                    <label>Departamento:</label>
+                    <span>${empleado.departamento || 'N/A'}</span>
+                  </div>
+                  <div class="axyra-detalle-item">
+                    <label>Salario Base:</label>
+                    <span>$${empleado.salario?.toLocaleString() || '0'}</span>
+                  </div>
+                  <div class="axyra-detalle-item">
+                    <label>Total Horas:</label>
+                    <span>${horasEmpleado.reduce((sum, h) => {
+                      const horasOrdinarias = h.horas?.ordinarias || 0;
+                      const horasExtras = h.horas?.extras || 0;
+                      const horasFestivas = h.horas?.extrasFestivas || 0;
+                      const horasNocturnas = h.horas?.extrasFestivasNocturnas || 0;
+                      return sum + horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+                    }, 0).toFixed(2)}h</span>
+                  </div>
+                  <div class="axyra-detalle-item">
+                    <label>Total Pago:</label>
+                    <span>$${horasEmpleado.reduce((sum, h) => {
+                      const empleado = empleados.find(emp => emp.id === h.empleadoId);
+                      if (!empleado) return sum;
+                      
+                      const horasOrdinarias = h.horas?.ordinarias || 0;
+                      const horasExtras = h.horas?.extras || 0;
+                      const horasFestivas = h.horas?.extrasFestivas || 0;
+                      const horasNocturnas = h.horas?.extrasFestivasNocturnas || 0;
+                      
+                      const valorHora = empleado.salario / 240;
+                      const salarioOrdinario = horasOrdinarias * valorHora;
+                      const salarioExtras = horasExtras * (valorHora * 1.25);
+                      const salarioFestivas = horasFestivas * (valorHora * 1.75);
+                      const salarioNocturnas = horasNocturnas * (valorHora * 2.1);
+                      
+                      return sum + salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
+                    }, 0).toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-primary" onclick="this.closest('.axyra-modal-overlay').remove()">
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          `;
+          
+          document.body.appendChild(modal);
+          
+        } catch (error) {
+          console.error('❌ Error mostrando detalle:', error);
+          mostrarMensaje('Error mostrando detalle: ' + error.message, 'error');
+        }
+      }
+
+      // Función para generar comprobante de empleado
+      function generarComprobanteEmpleado(empleadoId) {
+        try {
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          
+          const empleado = empleados.find(emp => emp.id === empleadoId);
+          if (!empleado) {
+            mostrarMensaje('❌ Empleado no encontrado', 'error');
+            return;
+          }
+          
+          const horasEmpleado = horas.filter(h => h.empleadoId === empleadoId);
+          
+          if (horasEmpleado.length === 0) {
+            mostrarMensaje('❌ Este empleado no tiene horas registradas', 'warning');
+            return;
+          }
+          
+          // Calcular totales acumulados
+          let totalHoras = 0;
+          let totalPago = 0;
+          
+          horasEmpleado.forEach(registro => {
+            const horasOrdinarias = registro.horas?.ordinarias || 0;
+            const horasExtras = registro.horas?.extras || 0;
+            const horasFestivas = registro.horas?.extrasFestivas || 0;
+            const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
+            
+            totalHoras += horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+            
+            const valorHora = empleado.salario / 240;
+            const salarioOrdinario = horasOrdinarias * valorHora;
+            const salarioExtras = horasExtras * (valorHora * 1.25);
+            const salarioFestivas = horasFestivas * (valorHora * 1.75);
+            const salarioNocturnas = horasNocturnas * (valorHora * 2.1);
+            
+            totalPago += salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
+          });
+          
+          // Generar comprobante acumulado
+          const contenido = `
+            <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+              <div style="text-align: center; border-bottom: 3px solid #4F81BD; padding-bottom: 20px; margin-bottom: 30px;">
+                <h1 style="color: #4F81BD; margin: 0; font-size: 28px;">VILLA VENECIA</h1>
+                <h2 style="color: #666; margin: 10px 0; font-size: 20px;">COMPROBANTE ACUMULADO DE HORAS</h2>
+                <p style="color: #999; margin: 5px 0; font-size: 14px;">Fecha de Generación: ${new Date().toLocaleDateString()}</p>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                <div>
+                  <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">INFORMACIÓN DEL EMPLEADO</h3>
+                  <p><strong>Nombre:</strong> ${empleado.nombre}</p>
+                  <p><strong>Cargo:</strong> ${empleado.cargo || 'N/A'}</p>
+                  <p><strong>Departamento:</strong> ${empleado.departamento || 'N/A'}</p>
+                  <p><strong>Salario Base:</strong> $${empleado.salario?.toLocaleString() || '0'}</p>
+                </div>
+                
+                <div>
+                  <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">RESUMEN ACUMULADO</h3>
+                  <p><strong>Total Horas:</strong> ${totalHoras.toFixed(2)}h</p>
+                  <p><strong>Total a Pagar:</strong> $${totalPago.toFixed(2)}</p>
+                  <p><strong>Período:</strong> ${horasEmpleado.length} registros</p>
+                </div>
+              </div>
+              
+              <div style="margin-bottom: 30px;">
+                <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">DETALLE DE REGISTROS</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                  <thead>
+                    <tr style="background: #4F81BD; color: white;">
+                      <th style="padding: 12px; text-align: left; border: 1px solid #ddd;">Fecha</th>
+                      <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Horas Ordinarias</th>
+                      <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Horas Extras</th>
+                      <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Horas Festivas</th>
+                      <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Horas Nocturnas</th>
+                      <th style="padding: 12px; text-align: center; border: 1px solid #ddd;">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${horasEmpleado.map(registro => {
+                      const horasOrdinarias = registro.horas?.ordinarias || 0;
+                      const horasExtras = registro.horas?.extras || 0;
+                      const horasFestivas = registro.horas?.extrasFestivas || 0;
+                      const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
+                      const total = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+                      
+                      return `
+                        <tr>
+                          <td style="padding: 12px; border: 1px solid #ddd;">${registro.fecha}</td>
+                          <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasOrdinarias}h</td>
+                          <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasExtras}h</td>
+                          <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasFestivas}h</td>
+                          <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasNocturnas}h</td>
+                          <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${total}h</td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div style="text-align: right; border-top: 3px solid #4F81BD; padding-top: 20px;">
+                <h2 style="color: #4F81BD; margin: 0; font-size: 24px;">TOTAL ACUMULADO: $${totalPago.toFixed(2)}</h2>
+              </div>
+              
+              <div style="margin-top: 40px; text-align: center; color: #666; font-size: 12px;">
+                <p>Este documento es generado automáticamente por el sistema AXYRA</p>
+                <p>Villa Venecia - Sistema de Gestión de Horas</p>
+              </div>
+            </div>
+          `;
+
+          // Abrir ventana de impresión
+          const ventanaImpresion = window.open('', '_blank', 'width=800,height=600');
+          ventanaImpresion.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>Comprobante Acumulado - ${empleado.nombre}</title>
+              <style>
+                body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+                @media print {
+                  body { padding: 0; }
+                  .no-print { display: none; }
+                }
+              </style>
+            </head>
+            <body>
+              ${contenido}
+              <div class="no-print" style="margin-top: 30px; text-align: center;">
+                <button onclick="window.print()" style="padding: 12px 24px; background: #4F81BD; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 0 10px;">
+                  🖨️ Imprimir
+                </button>
+                <button onclick="window.close()" style="padding: 12px 24px; background: #666; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 0 10px;">
+                  ❌ Cerrar
+                </button>
+              </div>
+            </body>
+            </html>
+          `);
+          ventanaImpresion.document.close();
+
+          mostrarMensaje('✅ Comprobante acumulado generado correctamente', 'success');
+          
+        } catch (error) {
+          console.error('❌ Error generando comprobante acumulado:', error);
+          mostrarMensaje('Error al generar comprobante: ' + error.message, 'error');
         }
       }
     </script>
