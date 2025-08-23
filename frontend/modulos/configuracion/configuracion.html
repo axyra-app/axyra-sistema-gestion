@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../../static/modal-fixes.css" />
     <link rel="stylesheet" href="config-styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module">
       import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
       import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
@@ -100,6 +101,77 @@
         <h1 class="axyra-config-title">Configuración del Sistema</h1>
         <p class="axyra-config-subtitle">Gestiona la configuración de tu empresa y la seguridad del sistema</p>
 
+        <!-- Dashboard de Métricas del Sistema -->
+        <div class="axyra-system-dashboard">
+          <div class="axyra-system-header">
+            <h3>📊 Dashboard de Métricas del Sistema</h3>
+            <p>Monitoreo en tiempo real del rendimiento y estado del sistema</p>
+          </div>
+          
+          <div class="axyra-system-grid">
+            <!-- Métricas de Usuarios -->
+            <div class="axyra-system-card">
+              <div class="axyra-system-card-header">
+                <h4>👥 Usuarios del Sistema</h4>
+                <div class="axyra-system-controls">
+                  <select id="userMetricsPeriod" onchange="actualizarMetricasUsuarios()">
+                    <option value="today">Hoy</option>
+                    <option value="week" selected>Esta Semana</option>
+                    <option value="month">Este Mes</option>
+                  </select>
+                </div>
+              </div>
+              <div class="axyra-system-chart">
+                <canvas id="usuariosChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Métricas de Rendimiento -->
+            <div class="axyra-system-card">
+              <div class="axyra-system-card-header">
+                <h4>⚡ Rendimiento del Sistema</h4>
+                <p>Monitoreo de recursos y eficiencia</p>
+              </div>
+              <div class="axyra-system-chart">
+                <canvas id="rendimientoChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Métricas de Seguridad -->
+            <div class="axyra-system-card">
+              <div class="axyra-system-card-header">
+                <h4>🔒 Eventos de Seguridad</h4>
+                <p>Actividad y alertas del sistema</p>
+              </div>
+              <div class="axyra-system-chart">
+                <canvas id="seguridadChart"></canvas>
+              </div>
+            </div>
+
+            <!-- KPIs del Sistema -->
+            <div class="axyra-system-card">
+              <div class="axyra-system-card-header">
+                <h4>🎯 KPIs del Sistema</h4>
+                <p>Indicadores clave de rendimiento</p>
+              </div>
+              <div class="axyra-system-metrics">
+                <div class="axyra-kpi-item">
+                  <div class="axyra-kpi-value" id="uptimeSistema">99.9%</div>
+                  <div class="axyra-kpi-label">Uptime</div>
+                </div>
+                <div class="axyra-kpi-item">
+                  <div class="axyra-kpi-value" id="usuariosActivos">0</div>
+                  <div class="axyra-kpi-label">Usuarios Activos</div>
+                </div>
+                <div class="axyra-kpi-item">
+                  <div class="axyra-kpi-value" id="alertasSeguridad">0</div>
+                  <div class="axyra-kpi-label">Alertas</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Seguridad y Configuración -->
         <div class="axyra-security-section">
           <h2 class="axyra-section-title">Seguridad y Configuración</h2>
@@ -177,6 +249,106 @@
             <div class="axyra-security-item">
               <div class="axyra-security-icon">
                 <i class="fas fa-database"></i>
+              </div>
+              <div class="axyra-security-content">
+                <h4>Sistema de Backup</h4>
+                <p>Configuración automática de respaldos del sistema</p>
+                <div class="axyra-backup-info" id="backupInfo">
+                  <span class="axyra-backup-label">Último backup:</span>
+                  <span class="axyra-backup-time" id="lastBackupTime">Nunca</span>
+                </div>
+                <div class="axyra-security-actions">
+                  <button class="axyra-btn axyra-btn-primary" onclick="createBackup()">
+                    <i class="fas fa-download"></i> Crear Backup
+                  </button>
+                  <button class="axyra-btn axyra-btn-secondary" onclick="configureBackup()">
+                    <i class="fas fa-cog"></i> Configurar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gestión Avanzada de Usuarios -->
+        <div class="axyra-users-section">
+          <h2 class="axyra-section-title">👥 Gestión Avanzada de Usuarios</h2>
+          <p class="axyra-section-subtitle">Administra usuarios, roles y permisos del sistema</p>
+          
+          <div class="axyra-users-grid">
+            <!-- Lista de Usuarios -->
+            <div class="axyra-users-card">
+              <div class="axyra-users-card-header">
+                <h4>Usuarios del Sistema</h4>
+                <button class="axyra-btn axyra-btn-primary" onclick="agregarNuevoUsuario()">
+                  <i class="fas fa-plus"></i> Nuevo Usuario
+                </button>
+              </div>
+              <div class="axyra-users-list" id="usuariosList">
+                <!-- Los usuarios se cargarán dinámicamente -->
+              </div>
+            </div>
+
+            <!-- Gestión de Roles -->
+            <div class="axyra-users-card">
+              <div class="axyra-users-card-header">
+                <h4>Roles y Permisos</h4>
+                <button class="axyra-btn axyra-btn-secondary" onclick="editarRoles()">
+                  <i class="fas fa-edit"></i> Editar
+                </button>
+              </div>
+              <div class="axyra-roles-list" id="rolesList">
+                <!-- Los roles se cargarán dinámicamente -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personalización y Temas -->
+        <div class="axyra-theme-section">
+          <h2 class="axyra-section-title">🎨 Personalización y Temas</h2>
+          <p class="axyra-section-subtitle">Personaliza la apariencia y branding del sistema</p>
+          
+          <div class="axyra-theme-grid">
+            <!-- Selector de Temas -->
+            <div class="axyra-theme-card">
+              <h4>Seleccionar Tema</h4>
+              <div class="axyra-theme-selector">
+                <div class="axyra-theme-option" data-theme="default">
+                  <div class="axyra-theme-preview axyra-theme-default"></div>
+                  <span>Default</span>
+                </div>
+                <div class="axyra-theme-option" data-theme="dark">
+                  <div class="axyra-theme-preview axyra-theme-dark"></div>
+                  <span>Dark</span>
+                </div>
+                <div class="axyra-theme-option" data-theme="corporate">
+                  <div class="axyra-theme-preview axyra-theme-corporate"></div>
+                  <span>Corporate</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Personalización de Colores -->
+            <div class="axyra-theme-card">
+              <h4>Colores Personalizados</h4>
+              <div class="axyra-color-picker">
+                <div class="axyra-color-item">
+                  <label>Color Primario:</label>
+                  <input type="color" id="primaryColor" value="#667eea" onchange="cambiarColorPrimario(this.value)">
+                </div>
+                <div class="axyra-color-item">
+                  <label>Color Secundario:</label>
+                  <input type="color" id="secondaryColor" value="#764ba2" onchange="cambiarColorSecundario(this.value)">
+                </div>
+                <div class="axyra-color-item">
+                  <label>Color de Acento:</label>
+                  <input type="color" id="accentColor" value="#f59e0b" onchange="cambiarColorAcento(this.value)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
               </div>
               <div class="axyra-security-content">
                 <h4>Sistema de Respaldo</h4>
@@ -908,5 +1080,283 @@
       window.cerrarModalAreasTrabajo = cerrarModalAreasTrabajo;
       window.guardarAreasTrabajo = guardarAreasTrabajo;
     </script>
+
+    <style>
+      /* Estilos para Dashboard del Sistema */
+      .axyra-system-dashboard {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 20px;
+        padding: 30px;
+        margin: 30px 0;
+        border: 1px solid #cbd5e1;
+      }
+
+      .axyra-system-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .axyra-system-header h3 {
+        color: #1e3a8a;
+        font-size: 1.8rem;
+        margin: 0 0 10px 0;
+        font-weight: 700;
+      }
+
+      .axyra-system-header p {
+        color: #475569;
+        font-size: 1.1rem;
+        margin: 0;
+      }
+
+      .axyra-system-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 25px;
+      }
+
+      .axyra-system-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+      }
+
+      .axyra-system-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      }
+
+      .axyra-system-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f1f5f9;
+      }
+
+      .axyra-system-card-header h4 {
+        color: #1e3a8a;
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .axyra-system-card-header p {
+        color: #475569;
+        margin: 5px 0 0 0;
+        font-size: 0.9rem;
+      }
+
+      .axyra-system-controls select {
+        padding: 8px 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        background: #f8fafc;
+        color: #374151;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .axyra-system-controls select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .axyra-system-chart {
+        height: 250px;
+        position: relative;
+      }
+
+      .axyra-system-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+
+      .axyra-kpi-item {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        color: white;
+      }
+
+      .axyra-kpi-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .axyra-kpi-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Estilos para Gestión de Usuarios */
+      .axyra-users-section {
+        margin: 40px 0;
+      }
+
+      .axyra-section-title {
+        color: #1e3a8a;
+        font-size: 1.6rem;
+        margin: 0 0 10px 0;
+        font-weight: 600;
+      }
+
+      .axyra-section-subtitle {
+        color: #475569;
+        font-size: 1rem;
+        margin: 0 0 25px 0;
+      }
+
+      .axyra-users-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 25px;
+      }
+
+      .axyra-users-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e2e8f0;
+      }
+
+      .axyra-users-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f1f5f9;
+      }
+
+      .axyra-users-card-header h4 {
+        color: #1e3a8a;
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      /* Estilos para Personalización de Temas */
+      .axyra-theme-section {
+        margin: 40px 0;
+      }
+
+      .axyra-theme-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 25px;
+      }
+
+      .axyra-theme-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e2e8f0;
+      }
+
+      .axyra-theme-card h4 {
+        color: #1e3a8a;
+        margin: 0 0 20px 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .axyra-theme-selector {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .axyra-theme-option {
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .axyra-theme-option:hover {
+        transform: translateY(-2px);
+      }
+
+      .axyra-theme-preview {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        margin: 0 auto 10px;
+        border: 3px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .axyra-theme-option.active .axyra-theme-preview {
+        border-color: #667eea;
+      }
+
+      .axyra-theme-default {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .axyra-theme-dark {
+        background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+      }
+
+      .axyra-theme-corporate {
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      }
+
+      .axyra-color-picker {
+        display: grid;
+        gap: 15px;
+      }
+
+      .axyra-color-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .axyra-color-item label {
+        color: #374151;
+        font-weight: 500;
+        min-width: 120px;
+      }
+
+      .axyra-color-item input[type="color"] {
+        width: 50px;
+        height: 40px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .axyra-system-grid,
+        .axyra-users-grid,
+        .axyra-theme-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .axyra-system-metrics {
+          grid-template-columns: 1fr;
+        }
+        
+        .axyra-theme-selector {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
   </body>
 </html>
