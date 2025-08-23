@@ -427,11 +427,67 @@
   color: var(--axyra-gray-700);
 }
 
-.axyra-modal-body {
-  padding: 2rem;
-  max-height: 60vh;
-  overflow-y: auto;
-}
+      .axyra-modal-body {
+        padding: 2rem;
+        max-height: 60vh;
+        overflow-y: auto;
+      }
+
+      /* Estilos para Reportes Avanzados */
+      .axyra-reports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .axyra-report-item {
+        background: var(--axyra-white);
+        border: 2px solid var(--axyra-gray-200);
+        border-radius: 12px;
+        padding: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .axyra-report-item:hover {
+        transform: translateY(-5px);
+        border-color: var(--axyra-primary);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+      }
+
+      .axyra-report-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--axyra-primary) 0%, var(--axyra-secondary) 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--axyra-white);
+        font-size: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      .axyra-report-info {
+        flex: 1;
+      }
+
+      .axyra-report-info h4 {
+        margin: 0 0 0.5rem 0;
+        color: var(--axyra-gray-800);
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .axyra-report-info p {
+        margin: 0;
+        color: var(--axyra-gray-600);
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -464,10 +520,18 @@
     gap: 0.5rem;
   }
   
-  .axyra-modal-content {
-    max-width: 95%;
-    margin: 1rem;
-  }
+          .axyra-modal-content {
+          max-width: 95%;
+          margin: 1rem;
+        }
+
+        .axyra-reports-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .axyra-report-item {
+          padding: 1rem;
+        }
 }
 
 @media (max-width: 480px) {

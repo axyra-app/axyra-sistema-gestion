@@ -213,6 +213,82 @@
           </div>
         </div>
 
+        <!-- Reportes Avanzados -->
+        <div class="axyra-card">
+          <div class="axyra-card-header">
+            <div class="axyra-card-icon">
+              <i class="fas fa-chart-bar"></i>
+            </div>
+            <div>
+              <h3 class="axyra-card-title">Reportes Avanzados</h3>
+              <p class="axyra-card-subtitle">Genera reportes personalizados y análisis detallados</p>
+            </div>
+          </div>
+          <div class="axyra-card-content">
+            <div class="axyra-reports-grid">
+              <div class="axyra-report-item" onclick="generateQuickReport('empleados_departamento')">
+                <div class="axyra-report-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="axyra-report-info">
+                  <h4>Empleados por Departamento</h4>
+                  <p>Distribución de empleados por área</p>
+                </div>
+              </div>
+              
+              <div class="axyra-report-item" onclick="generateQuickReport('horas_mensuales')">
+                <div class="axyra-report-icon">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="axyra-report-info">
+                  <h4>Horas Mensuales</h4>
+                  <p>Tendencia de horas trabajadas</p>
+                </div>
+              </div>
+              
+              <div class="axyra-report-item" onclick="generateQuickReport('salarios_rangos')">
+                <div class="axyra-report-icon">
+                  <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="axyra-report-info">
+                  <h4>Salarios por Rangos</h4>
+                  <p>Distribución salarial de empleados</p>
+                </div>
+              </div>
+              
+              <div class="axyra-report-item" onclick="generateQuickReport('productividad_general')">
+                <div class="axyra-report-icon">
+                  <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <div class="axyra-report-info">
+                  <h4>Productividad General</h4>
+                  <p>Métricas generales de eficiencia</p>
+                </div>
+              </div>
+              
+              <div class="axyra-report-item" onclick="generateQuickReport('nominas_quincenales')">
+                <div class="axyra-report-icon">
+                  <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div class="axyra-report-info">
+                  <h4>Nóminas Quincenales</h4>
+                  <p>Análisis de nóminas generadas</p>
+                </div>
+              </div>
+              
+              <div class="axyra-report-item" onclick="generateQuickReport('cuadre_caja_mensual')">
+                <div class="axyra-report-icon">
+                  <i class="fas fa-calculator"></i>
+                </div>
+                <div class="axyra-report-info">
+                  <h4>Cuadre de Caja</h4>
+                  <p>Resumen mensual de ingresos</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Gráficos y Análisis -->
         <div class="axyra-grid axyra-grid-2">
           <div class="axyra-card">
@@ -4445,5 +4521,14 @@
 
     <!-- Dashboard JavaScript -->
     <script src="dashboard.js"></script>
+    
+    <!-- Sistema de Timeout de Sesiones -->
+    <script src="../../static/session-timeout.js"></script>
+    
+    <!-- Sistema de Reportes Avanzados -->
+    <script src="../../static/advanced-reports.js"></script>
+    
+    <!-- Estilos para Funcionalidades Avanzadas -->
+    <link rel="stylesheet" href="../../static/advanced-features.css" />
   </body>
 </html>
