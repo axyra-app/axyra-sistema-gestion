@@ -10,6 +10,7 @@
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="../../static/work-areas-config.js"></script>
     <script src="../../static/cash-reconciliation-export.js"></script>
     <script src="../../static/colombian-labor-law.js"></script>
@@ -57,6 +58,76 @@
         <div class="axyra-page-header">
           <h1 class="axyra-page-title">Cuadre de Caja</h1>
           <p class="axyra-page-subtitle">Registro de ingresos por factura individual y control de caja</p>
+        </div>
+
+        <!-- Dashboard de Analytics Financieros -->
+        <div class="axyra-financial-dashboard">
+          <div class="axyra-financial-header">
+            <h3>💰 Analytics Financieros Avanzados</h3>
+            <p>Análisis detallado de ingresos, tendencias y rentabilidad</p>
+          </div>
+          
+          <div class="axyra-financial-grid">
+            <!-- Gráfico de Ingresos por Mes -->
+            <div class="axyra-financial-card">
+              <div class="axyra-financial-card-header">
+                <h4>📈 Ingresos Mensuales</h4>
+                <div class="axyra-financial-controls">
+                  <select id="financialYear" onchange="actualizarGraficosFinancieros()">
+                    <option value="2024">2024</option>
+                    <option value="2025" selected>2025</option>
+                  </select>
+                </div>
+              </div>
+              <div class="axyra-financial-chart">
+                <canvas id="ingresosMensualesChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Gráfico de Distribución por Encargado -->
+            <div class="axyra-financial-card">
+              <div class="axyra-financial-card-header">
+                <h4>👥 Rendimiento por Encargado</h4>
+                <p>Análisis de productividad del equipo</p>
+              </div>
+              <div class="axyra-financial-chart">
+                <canvas id="rendimientoEncargadoChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Gráfico de Tendencias Diarias -->
+            <div class="axyra-financial-card">
+              <div class="axyra-financial-card-header">
+                <h4>📊 Tendencias por Día de la Semana</h4>
+                <p>Patrones de ingresos semanales</p>
+              </div>
+              <div class="axyra-financial-chart">
+                <canvas id="tendenciasDiariasChart"></canvas>
+              </div>
+            </div>
+
+            <!-- KPIs Financieros -->
+            <div class="axyra-financial-card">
+              <div class="axyra-financial-card-header">
+                <h4>🎯 KPIs de Rentabilidad</h4>
+                <p>Indicadores clave de rendimiento</p>
+              </div>
+              <div class="axyra-financial-metrics">
+                <div class="axyra-kpi-item">
+                  <div class="axyra-kpi-value" id="ingresoPromedio">$0</div>
+                  <div class="axyra-kpi-label">Ingreso Promedio</div>
+                </div>
+                <div class="axyra-kpi-item">
+                  <div class="axyra-kpi-value" id="facturasPorDia">0</div>
+                  <div class="axyra-kpi-label">Facturas/Día</div>
+                </div>
+                <div class="axyra-kpi-item">
+                  <div class="axyra-kpi-value" id="crecimientoMensual">0%</div>
+                  <div class="axyra-kpi-label">Crecimiento</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Registrar Nueva Factura -->
@@ -1642,6 +1713,135 @@
         background: #dc2626;
       }
 
+      /* Estilos para Dashboard Financiero */
+      .axyra-financial-dashboard {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border-radius: 20px;
+        padding: 30px;
+        margin: 30px 0;
+        border: 1px solid #bae6fd;
+      }
+
+      .axyra-financial-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .axyra-financial-header h3 {
+        color: #0c4a6e;
+        font-size: 1.8rem;
+        margin: 0 0 10px 0;
+        font-weight: 700;
+      }
+
+      .axyra-financial-header p {
+        color: #0369a1;
+        font-size: 1.1rem;
+        margin: 0;
+      }
+
+      .axyra-financial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 25px;
+      }
+
+      .axyra-financial-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e0f2fe;
+        transition: all 0.3s ease;
+      }
+
+      .axyra-financial-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      }
+
+      .axyra-financial-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f1f5f9;
+      }
+
+      .axyra-financial-card-header h4 {
+        color: #0c4a6e;
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .axyra-financial-card-header p {
+        color: #0369a1;
+        margin: 5px 0 0 0;
+        font-size: 0.9rem;
+      }
+
+      .axyra-financial-controls select {
+        padding: 8px 12px;
+        border: 2px solid #e0f2fe;
+        border-radius: 8px;
+        background: #f0f9ff;
+        color: #0c4a6e;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .axyra-financial-controls select:focus {
+        outline: none;
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+      }
+
+      .axyra-financial-chart {
+        height: 250px;
+        position: relative;
+      }
+
+      .axyra-financial-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+
+      .axyra-kpi-item {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #0284c7 0%, #0c4a6e 100%);
+        border-radius: 12px;
+        color: white;
+      }
+
+      .axyra-kpi-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .axyra-kpi-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Responsive para dashboard financiero */
+      @media (max-width: 768px) {
+        .axyra-financial-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .axyra-financial-metrics {
+          grid-template-columns: 1fr;
+        }
+      }
+
       /* Estilos para última factura */
       .axyra-ultima-factura-container {
         text-align: center;
@@ -2282,6 +2482,279 @@
         }
       }
 
+      // Variables globales para gráficos financieros
+      let ingresosMensualesChart, rendimientoEncargadoChart, tendenciasDiariasChart;
+
+      // Función para inicializar gráficos financieros
+      function inicializarGraficosFinancieros() {
+        try {
+          // Gráfico de Ingresos Mensuales
+          const ctxIngresos = document.getElementById('ingresosMensualesChart');
+          if (ctxIngresos) {
+            ingresosMensualesChart = new Chart(ctxIngresos, {
+              type: 'line',
+              data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                datasets: [{
+                  label: 'Ingresos Mensuales',
+                  data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                  borderColor: '#0284c7',
+                  backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                  tension: 0.4,
+                  fill: true
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Evolución de Ingresos Mensuales'
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    ticks: {
+                      callback: function(value) {
+                        return '$' + value.toLocaleString();
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          }
+
+          // Gráfico de Rendimiento por Encargado
+          const ctxRendimiento = document.getElementById('rendimientoEncargadoChart');
+          if (ctxRendimiento) {
+            rendimientoEncargadoChart = new Chart(ctxRendimiento, {
+              type: 'bar',
+              data: {
+                labels: [],
+                datasets: [{
+                  label: 'Ingresos por Encargado',
+                  data: [],
+                  backgroundColor: 'rgba(2, 132, 199, 0.8)',
+                  borderColor: '#0284c7',
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Rendimiento del Equipo'
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    ticks: {
+                      callback: function(value) {
+                        return '$' + value.toLocaleString();
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          }
+
+          // Gráfico de Tendencias Diarias
+          const ctxTendencias = document.getElementById('tendenciasDiariasChart');
+          if (ctxTendencias) {
+            tendenciasDiariasChart = new Chart(ctxTendencias, {
+              type: 'radar',
+              data: {
+                labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
+                datasets: [{
+                  label: 'Ingresos por Día',
+                  data: [0, 0, 0, 0, 0, 0, 0],
+                  borderColor: '#0c4a6e',
+                  backgroundColor: 'rgba(12, 74, 110, 0.2)',
+                  pointBackgroundColor: '#0284c7',
+                  pointBorderColor: '#0c4a6e'
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Patrones Semanales de Ingresos'
+                  }
+                },
+                scales: {
+                  r: {
+                    beginAtZero: true,
+                    ticks: {
+                      callback: function(value) {
+                        return '$' + value.toLocaleString();
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          }
+
+          // Actualizar datos iniciales
+          actualizarGraficosFinancieros();
+          actualizarKPIsFinancieros();
+        } catch (error) {
+          console.error('❌ Error inicializando gráficos financieros:', error);
+        }
+      }
+
+      // Función para actualizar todos los gráficos financieros
+      function actualizarGraficosFinancieros() {
+        try {
+          const año = document.getElementById('financialYear').value;
+          actualizarGraficoIngresosMensuales(año);
+          actualizarGraficoRendimientoEncargado();
+          actualizarGraficoTendenciasDiarias();
+          actualizarKPIsFinancieros();
+        } catch (error) {
+          console.error('❌ Error actualizando gráficos financieros:', error);
+        }
+      }
+
+      // Actualizar gráfico de ingresos mensuales
+      function actualizarGraficoIngresosMensuales(año) {
+        try {
+          const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+          const ingresosMensuales = new Array(12).fill(0);
+          
+          facturas.forEach(factura => {
+            const fecha = new Date(factura.fecha);
+            if (fecha.getFullYear() == año) {
+              const mes = fecha.getMonth();
+              ingresosMensuales[mes] += parseFloat(factura.valor || 0);
+            }
+          });
+
+          if (ingresosMensualesChart) {
+            ingresosMensualesChart.data.datasets[0].data = ingresosMensuales;
+            ingresosMensualesChart.update();
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando ingresos mensuales:', error);
+        }
+      }
+
+      // Actualizar gráfico de rendimiento por encargado
+      function actualizarGraficoRendimientoEncargado() {
+        try {
+          const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+          const rendimientoPorEncargado = {};
+          
+          facturas.forEach(factura => {
+            const encargado = factura.encargado || 'Sin asignar';
+            rendimientoPorEncargado[encargado] = (rendimientoPorEncargado[encargado] || 0) + parseFloat(factura.valor || 0);
+          });
+
+          const encargados = Object.keys(rendimientoPorEncargado).slice(0, 8); // Top 8
+          const valores = encargados.map(encargado => rendimientoPorEncargado[encargado]);
+
+          if (rendimientoEncargadoChart) {
+            rendimientoEncargadoChart.data.labels = encargados;
+            rendimientoEncargadoChart.data.datasets[0].data = valores;
+            rendimientoEncargadoChart.update();
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando rendimiento por encargado:', error);
+        }
+      }
+
+      // Actualizar gráfico de tendencias diarias
+      function actualizarGraficoTendenciasDiarias() {
+        try {
+          const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+          const ingresosPorDia = new Array(7).fill(0);
+          
+          facturas.forEach(factura => {
+            const fecha = new Date(factura.fecha);
+            const diaSemana = fecha.getDay(); // 0 = Domingo, 1 = Lunes, etc.
+            ingresosPorDia[diaSemana] += parseFloat(factura.valor || 0);
+          });
+
+          // Reorganizar para que Lunes sea el primer día
+          const ingresosReorganizados = [
+            ingresosPorDia[1], // Lunes
+            ingresosPorDia[2], // Martes
+            ingresosPorDia[3], // Miércoles
+            ingresosPorDia[4], // Jueves
+            ingresosPorDia[5], // Viernes
+            ingresosPorDia[6], // Sábado
+            ingresosPorDia[0]  // Domingo
+          ];
+
+          if (tendenciasDiariasChart) {
+            tendenciasDiariasChart.data.datasets[0].data = ingresosReorganizados;
+            tendenciasDiariasChart.update();
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando tendencias diarias:', error);
+        }
+      }
+
+      // Actualizar KPIs financieros
+      function actualizarKPIsFinancieros() {
+        try {
+          const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
+          
+          // Calcular ingreso promedio
+          const totalIngresos = facturas.reduce((sum, f) => sum + parseFloat(f.valor || 0), 0);
+          const ingresoPromedio = facturas.length > 0 ? totalIngresos / facturas.length : 0;
+          
+          // Calcular facturas por día (últimos 30 días)
+          const fechaLimite = new Date();
+          fechaLimite.setDate(fechaLimite.getDate() - 30);
+          const facturasRecientes = facturas.filter(f => new Date(f.fecha) >= fechaLimite);
+          const facturasPorDia = facturasRecientes.length / 30;
+          
+          // Calcular crecimiento mensual
+          const mesActual = new Date().getMonth();
+          const añoActual = new Date().getFullYear();
+          const facturasMesActual = facturas.filter(f => {
+            const fecha = new Date(f.fecha);
+            return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
+          });
+          const facturasMesAnterior = facturas.filter(f => {
+            const fecha = new Date(f.fecha);
+            const mesAnterior = mesActual === 0 ? 11 : mesActual - 1;
+            const añoAnterior = mesActual === 0 ? añoActual - 1 : añoActual;
+            return fecha.getMonth() === mesAnterior && fecha.getFullYear() === añoAnterior;
+          });
+          
+          const ingresosMesActual = facturasMesActual.reduce((sum, f) => sum + parseFloat(f.valor || 0), 0);
+          const ingresosMesAnterior = facturasMesAnterior.reduce((sum, f) => sum + parseFloat(f.valor || 0), 0);
+          const crecimientoMensual = ingresosMesAnterior > 0 ? ((ingresosMesActual - ingresosMesAnterior) / ingresosMesAnterior) * 100 : 0;
+          
+          // Actualizar UI
+          document.getElementById('ingresoPromedio').textContent = '$' + ingresoPromedio.toLocaleString(undefined, {maximumFractionDigits: 0});
+          document.getElementById('facturasPorDia').textContent = facturasPorDia.toFixed(1);
+          document.getElementById('crecimientoMensual').textContent = crecimientoMensual.toFixed(1) + '%';
+        } catch (error) {
+          console.error('❌ Error actualizando KPIs financieros:', error);
+        }
+      }
+
       // Agregar funciones al scope global
       window.generarReporteFinanciero = generarReporteFinanciero;
       window.generarConciliacionBancaria = generarConciliacionBancaria;
@@ -2291,6 +2764,7 @@
       window.cerrarModalTendencias = cerrarModalTendencias;
       window.exportarConciliacion = exportarConciliacion;
       window.exportarTendencias = exportarTendencias;
+      window.actualizarGraficosFinancieros = actualizarGraficosFinancieros;
     </script>
   </body>
 </html>

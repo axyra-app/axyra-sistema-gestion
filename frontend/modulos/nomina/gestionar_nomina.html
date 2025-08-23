@@ -10,6 +10,7 @@
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -534,6 +535,135 @@
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+
+      /* Estilos para Dashboard de Analytics Avanzado */
+      .axyra-analytics-dashboard {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 20px;
+        padding: 30px;
+        margin: 30px 0;
+        border: 1px solid #e2e8f0;
+      }
+
+      .axyra-analytics-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .axyra-analytics-header h3 {
+        color: #1e3a8a;
+        font-size: 1.8rem;
+        margin: 0 0 10px 0;
+        font-weight: 700;
+      }
+
+      .axyra-analytics-header p {
+        color: #64748b;
+        font-size: 1.1rem;
+        margin: 0;
+      }
+
+      .axyra-analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 25px;
+      }
+
+      .axyra-analytics-card {
+        background: white;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+      }
+
+      .axyra-analytics-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+      }
+
+      .axyra-analytics-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #f1f5f9;
+      }
+
+      .axyra-analytics-card-header h4 {
+        color: #1e3a8a;
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .axyra-analytics-card-header p {
+        color: #64748b;
+        margin: 5px 0 0 0;
+        font-size: 0.9rem;
+      }
+
+      .axyra-analytics-controls select {
+        padding: 8px 12px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        background: #f8fafc;
+        color: #374151;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .axyra-analytics-controls select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .axyra-analytics-chart {
+        height: 250px;
+        position: relative;
+      }
+
+      .axyra-analytics-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+
+      .axyra-kpi-item {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        color: white;
+      }
+
+      .axyra-kpi-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .axyra-kpi-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* Responsive para analytics */
+      @media (max-width: 768px) {
+        .axyra-analytics-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .axyra-analytics-metrics {
+          grid-template-columns: 1fr;
+        }
       }
 
       /* Estilos para métricas */
@@ -1395,6 +1525,76 @@
           </div>
         </div>
 
+        <!-- Dashboard de Analytics Avanzado -->
+        <div class="axyra-analytics-dashboard">
+          <div class="axyra-analytics-header">
+            <h3>📊 Analytics Avanzado de Nómina</h3>
+            <p>Análisis detallado de costos laborales y tendencias</p>
+          </div>
+          
+          <div class="axyra-analytics-grid">
+            <!-- Gráfico de Costos por Mes -->
+            <div class="axyra-analytics-card">
+              <div class="axyra-analytics-card-header">
+                <h4>💰 Costos Laborales por Mes</h4>
+                <div class="axyra-analytics-controls">
+                  <select id="chartYear" onchange="actualizarGraficos()">
+                    <option value="2024">2024</option>
+                    <option value="2025" selected>2025</option>
+                  </select>
+                </div>
+              </div>
+              <div class="axyra-analytics-chart">
+                <canvas id="costosMensualesChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Gráfico de Distribución de Salarios -->
+            <div class="axyra-analytics-card">
+              <div class="axyra-analytics-card-header">
+                <h4>📈 Distribución de Salarios</h4>
+                <p>Análisis de rangos salariales</p>
+              </div>
+              <div class="axyra-analytics-chart">
+                <canvas id="distribucionSalariosChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Gráfico de Horas por Empleado -->
+            <div class="axyra-analytics-card">
+              <div class="axyra-analytics-card-header">
+                <h4>⏰ Horas Trabajadas por Empleado</h4>
+                <p>Productividad y eficiencia</p>
+              </div>
+              <div class="axyra-analytics-chart">
+                <canvas id="horasEmpleadoChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Métricas de Eficiencia -->
+            <div class="axyra-analytics-card">
+              <div class="axyra-analytics-card-header">
+                <h4>🎯 KPIs de Eficiencia</h4>
+                <p>Indicadores clave de rendimiento</p>
+              </div>
+              <div class="axyra-analytics-metrics">
+                <div class="axyra-kpi-item">
+                  <div class="axyra-kpi-value" id="costoPorHora">$0</div>
+                  <div class="axyra-kpi-label">Costo por Hora</div>
+                </div>
+                <div class="axyra-kpi-item">
+                  <div class="axyra-kpi-value" id="productividadPromedio">0%</div>
+                  <div class="axyra-kpi-label">Productividad</div>
+                </div>
+                <div class="axyra-kpi-item">
+                  <div class="axyra-kpi-value" id="rotacionPersonal">0%</div>
+                  <div class="axyra-kpi-label">Rotación</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Filtros y Búsqueda -->
         <div class="axyra-filters">
           <div class="axyra-search-box">
@@ -1810,6 +2010,11 @@
       document.addEventListener('DOMContentLoaded', function () {
         inicializarNomina();
         configurarEventos();
+        
+        // Inicializar gráficos de analytics después de un breve delay
+        setTimeout(() => {
+          inicializarGraficosAnalytics();
+        }, 500);
       });
 
       // Función para obtener nombre del mes
@@ -4912,6 +5117,252 @@
         }
       }
 
+      // Variables globales para gráficos
+      let costosMensualesChart, distribucionSalariosChart, horasEmpleadoChart;
+
+      // Función para inicializar gráficos de analytics
+      function inicializarGraficosAnalytics() {
+        try {
+          // Gráfico de Costos Mensuales
+          const ctxCostos = document.getElementById('costosMensualesChart');
+          if (ctxCostos) {
+            costosMensualesChart = new Chart(ctxCostos, {
+              type: 'line',
+              data: {
+                labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                datasets: [{
+                  label: 'Costos Laborales',
+                  data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                  borderColor: '#667eea',
+                  backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                  tension: 0.4,
+                  fill: true
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Evolución de Costos Laborales'
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    ticks: {
+                      callback: function(value) {
+                        return '$' + value.toLocaleString();
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          }
+
+          // Gráfico de Distribución de Salarios
+          const ctxDistribucion = document.getElementById('distribucionSalariosChart');
+          if (ctxDistribucion) {
+            distribucionSalariosChart = new Chart(ctxDistribucion, {
+              type: 'doughnut',
+              data: {
+                labels: ['Bajo', 'Medio', 'Alto', 'Ejecutivo'],
+                datasets: [{
+                  data: [0, 0, 0, 0],
+                  backgroundColor: [
+                    '#10b981',
+                    '#f59e0b',
+                    '#ef4444',
+                    '#8b5cf6'
+                  ]
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'bottom',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Distribución Salarial'
+                  }
+                }
+              }
+            });
+          }
+
+          // Gráfico de Horas por Empleado
+          const ctxHoras = document.getElementById('horasEmpleadoChart');
+          if (ctxHoras) {
+            horasEmpleadoChart = new Chart(ctxHoras, {
+              type: 'bar',
+              data: {
+                labels: [],
+                datasets: [{
+                  label: 'Horas Trabajadas',
+                  data: [],
+                  backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                  borderColor: '#667eea',
+                  borderWidth: 1
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Horas por Empleado'
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    title: {
+                      display: true,
+                      text: 'Horas'
+                    }
+                  }
+                }
+              }
+            });
+          }
+
+          // Actualizar datos iniciales
+          actualizarGraficos();
+          actualizarKPIs();
+        } catch (error) {
+          console.error('❌ Error inicializando gráficos:', error);
+        }
+      }
+
+      // Función para actualizar todos los gráficos
+      function actualizarGraficos() {
+        try {
+          const año = document.getElementById('chartYear').value;
+          actualizarGraficoCostosMensuales(año);
+          actualizarGraficoDistribucionSalarios();
+          actualizarGraficoHorasEmpleado();
+          actualizarKPIs();
+        } catch (error) {
+          console.error('❌ Error actualizando gráficos:', error);
+        }
+      }
+
+      // Actualizar gráfico de costos mensuales
+      function actualizarGraficoCostosMensuales(año) {
+        try {
+          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+          const costosMensuales = new Array(12).fill(0);
+          
+          nominas.forEach(nomina => {
+            const fecha = new Date(nomina.fecha_generacion);
+            if (fecha.getFullYear() == año) {
+              const mes = fecha.getMonth();
+              costosMensuales[mes] += nomina.salario_final || 0;
+            }
+          });
+
+          if (costosMensualesChart) {
+            costosMensualesChart.data.datasets[0].data = costosMensuales;
+            costosMensualesChart.update();
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando costos mensuales:', error);
+        }
+      }
+
+      // Actualizar gráfico de distribución salarial
+      function actualizarGraficoDistribucionSalarios() {
+        try {
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const rangos = [0, 0, 0, 0]; // Bajo, Medio, Alto, Ejecutivo
+          
+          empleados.forEach(empleado => {
+            const salario = parseFloat(empleado.salario || 0);
+            if (salario <= 1000000) rangos[0]++;
+            else if (salario <= 2000000) rangos[1]++;
+            else if (salario <= 4000000) rangos[2]++;
+            else rangos[3]++;
+          });
+
+          if (distribucionSalariosChart) {
+            distribucionSalariosChart.data.datasets[0].data = rangos;
+            distribucionSalariosChart.update();
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando distribución salarial:', error);
+        }
+      }
+
+      // Actualizar gráfico de horas por empleado
+      function actualizarGraficoHorasEmpleado() {
+        try {
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          
+          // Agrupar horas por empleado
+          const horasPorEmpleado = {};
+          horas.forEach(h => {
+            const empleado = empleados.find(emp => emp.id == h.empleadoId);
+            if (empleado) {
+              const nombre = empleado.nombre;
+              horasPorEmpleado[nombre] = (horasPorEmpleado[nombre] || 0) + (h.total_horas || 0);
+            }
+          });
+
+          const nombres = Object.keys(horasPorEmpleado).slice(0, 10); // Top 10
+          const valores = nombres.map(nombre => horasPorEmpleado[nombre]);
+
+          if (horasEmpleadoChart) {
+            horasEmpleadoChart.data.labels = nombres;
+            horasEmpleadoChart.data.datasets[0].data = valores;
+            horasEmpleadoChart.update();
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando horas por empleado:', error);
+        }
+      }
+
+      // Actualizar KPIs de eficiencia
+      function actualizarKPIs() {
+        try {
+          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          
+          // Calcular costo por hora
+          const totalSalarios = nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0);
+          const totalHoras = horas.reduce((sum, h) => sum + (h.total_horas || 0), 0);
+          const costoPorHora = totalHoras > 0 ? totalSalarios / totalHoras : 0;
+          
+          // Calcular productividad (horas trabajadas vs horas estándar)
+          const horasEstandar = empleados.length * 240; // 240 horas mensuales estándar
+          const productividad = horasEstandar > 0 ? (totalHoras / horasEstandar) * 100 : 0;
+          
+          // Calcular rotación (empleados inactivos)
+          const empleadosActivos = empleados.filter(emp => emp.estado === 'Activo').length;
+          const rotacion = empleados.length > 0 ? ((empleados.length - empleadosActivos) / empleados.length) * 100 : 0;
+          
+          // Actualizar UI
+          document.getElementById('costoPorHora').textContent = '$' + costoPorHora.toLocaleString(undefined, {maximumFractionDigits: 2});
+          document.getElementById('productividadPromedio').textContent = productividad.toFixed(1) + '%';
+          document.getElementById('rotacionPersonal').textContent = rotacion.toFixed(1) + '%';
+        } catch (error) {
+          console.error('❌ Error actualizando KPIs:', error);
+        }
+      }
+
       // Hacer funciones globales para onclick
       window.mostrarModal = mostrarModal;
       window.cerrarModal = cerrarModal;
@@ -4923,6 +5374,7 @@
       window.aprobarNomina = aprobarNomina;
       window.rechazarNomina = rechazarNomina;
       window.generarNominaConValidacion = generarNominaConValidacion;
+      window.actualizarGraficos = actualizarGraficos;
 
       // Función para mostrar modal
       function mostrarModal(modalId) {
