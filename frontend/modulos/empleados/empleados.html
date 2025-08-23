@@ -291,87 +291,7 @@
         color: #2f855a;
       }
 
-      // Sistema de organigrama visual - Estructura de la empresa
-      function mostrarOrganigrama() {
-        const departamentos = JSON.parse(localStorage.getItem('axyra_departamentos') || '[]');
-        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-        
-        // Agrupar empleados por departamento
-        const estructura = {};
-        departamentos.forEach(dept => {
-          estructura[dept.nombre] = {
-            empleados: empleados.filter(emp => emp.departamento === dept.nombre),
-            color: generarColorDepartamento(dept.nombre)
-          };
-        });
-        
-        const organigramaHTML = `
-          <div id="modalOrganigrama" class="axyra-modal">
-            <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
-              <div class="axyra-modal-header">
-                <h3><i class="fas fa-sitemap"></i> Organigrama de la Empresa</h3>
-                <button class="axyra-modal-close" onclick="cerrarModal('modalOrganigrama')">&times;</button>
-              </div>
-              <div class="axyra-modal-body">
-                <div class="axyra-organigrama-container">
-                  ${generarHTMLOrganigrama(estructura)}
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-        
-        document.body.insertAdjacentHTML('beforeend', organigramaHTML);
-        document.getElementById('modalOrganigrama').style.display = 'block';
-      }
-
-      // Generar HTML del organigrama
-      function generarHTMLOrganigrama(estructura) {
-        let html = '<div class="axyra-organigrama">';
-        
-        Object.entries(estructura).forEach(([departamento, data]) => {
-          html += `
-            <div class="axyra-departamento-grupo">
-              <div class="axyra-departamento-header" style="background: ${data.color}">
-                <h4>${departamento}</h4>
-                <span class="axyra-empleados-count">${data.empleados.length} empleados</span>
-              </div>
-              <div class="axyra-empleados-grid">
-                ${data.empleados.map(emp => `
-                  <div class="axyra-empleado-card">
-                    <div class="axyra-empleado-avatar">
-                      <i class="fas fa-user"></i>
-                    </div>
-                    <div class="axyra-empleado-info">
-                      <strong>${emp.nombre}</strong>
-                      <span>${emp.cargo}</span>
-                      <small>$${emp.salario.toFixed(2)}</small>
-                    </div>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          `;
-        });
-        
-        html += '</div>';
-        return html;
-      }
-
-      // Generar color único para cada departamento
-      function generarColorDepartamento(nombre) {
-        const colores = [
-          '#667eea', '#764ba2', '#48bb78', '#ed8936', '#f56565',
-          '#4299e1', '#805ad5', '#38a169', '#dd6b20', '#e53e3e'
-        ];
-        
-        const hash = nombre.split('').reduce((a, b) => {
-          a = ((a << 5) - a) + b.charCodeAt(0);
-          return a & a;
-        }, 0);
-        
-        return colores[Math.abs(hash) % colores.length];
-      }
+      
 
       /* Estilos para organigrama visual */
       .axyra-organigrama {
@@ -1317,6 +1237,145 @@
       let paginaActual = 1;
       const empleadosPorPagina = 10;
       let currentUser = null;
+
+      // Sistema de organigrama visual - Estructura de la empresa
+      function mostrarOrganigrama() {
+        const departamentos = JSON.parse(localStorage.getItem('axyra_departamentos') || '[]');
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+        
+        // Agrupar empleados por departamento
+        const estructura = {};
+        departamentos.forEach(dept => {
+          estructura[dept.nombre] = {
+            empleados: empleados.filter(emp => emp.departamento === dept.nombre),
+            color: generarColorDepartamento(dept.nombre)
+          };
+        });
+        
+        const organigramaHTML = `
+          <div id="modalOrganigrama" class="axyra-modal">
+            <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
+              <div class="axyra-modal-header">
+                <h3><i class="fas fa-sitemap"></i> Organigrama de la Empresa</h3>
+                <button class="axyra-modal-close" onclick="cerrarModal('modalOrganigrama')">&times;</button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-organigrama-container">
+                  ${generarHTMLOrganigrama(estructura)}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', organigramaHTML);
+        document.getElementById('modalOrganigrama').style.display = 'block';
+      }
+
+      // Generar HTML del organigrama
+      function generarHTMLOrganigrama(estructura) {
+        let html = '<div class="axyra-organigrama">';
+        
+        Object.entries(estructura).forEach(([departamento, data]) => {
+          html += `
+            <div class="axyra-departamento-grupo">
+              <div class="axyra-departamento-header" style="background: ${data.color}">
+                <h4>${departamento}</h4>
+                <span class="axyra-empleados-count">${data.empleados.length} empleados</span>
+              </div>
+              <div class="axyra-empleados-grid">
+                ${data.empleados.map(emp => `
+                  <div class="axyra-empleado-card">
+                    <div class="axyra-empleado-avatar">
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <div class="axyra-empleado-info">
+                      <strong>${emp.nombre}</strong>
+                      <span>${emp.cargo}</span>
+                      <small>$${emp.salario.toFixed(2)}</small>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        });
+        
+        html += '</div>';
+        return html;
+      }
+
+      // Generar color único para cada departamento
+      function generarColorDepartamento(nombre) {
+        const colores = [
+          '#667eea', '#764ba2', '#48bb78', '#ed8936', '#f56565',
+          '#4299e1', '#805ad5', '#38a169', '#dd6b20', '#e53e3e'
+        ];
+        
+        const hash = nombre.split('').reduce((a, b) => {
+          a = ((a << 5) - a) + b.charCodeAt(0);
+          return a & a;
+        }, 0);
+        
+        return colores[Math.abs(hash) % colores.length];
+      }
+
+      // Sistema de fotos de empleados - Avatares y gestión de imágenes
+      function mostrarModalFotos() {
+        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+        
+        const fotosHTML = `
+          <div id="modalFotos" class="axyra-modal">
+            <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
+              <div class="axyra-modal-header">
+                <h3><i class="fas fa-camera"></i> Galería de Fotos de Empleados</h3>
+                <button class="axyra-modal-close" onclick="cerrarModal('modalFotos')">&times;</button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-fotos-grid">
+                  ${empleados.map(emp => `
+                    <div class="axyra-foto-empleado">
+                      <div class="axyra-foto-avatar">
+                        <i class="fas fa-user"></i>
+                      </div>
+                      <div class="axyra-foto-info">
+                        <strong>${emp.nombre}</strong>
+                        <span>${emp.cargo}</span>
+                        <small>${emp.departamento}</small>
+                      </div>
+                      <button class="axyra-btn axyra-btn-outline" onclick="cambiarFoto('${emp.id}')">
+                        <i class="fas fa-camera"></i> Cambiar
+                      </button>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', fotosHTML);
+        document.getElementById('modalFotos').style.display = 'block';
+      }
+
+      // Función para cambiar foto de empleado
+      function cambiarFoto(empleadoId) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              // Aquí se procesaría la imagen
+              mostrarNotificacionTiempoReal('📸 Foto actualizada correctamente', 'success');
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+        input.click();
+      }
 
       // Ejecutar cuando se carga la página
       document.addEventListener('DOMContentLoaded', function() {

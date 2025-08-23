@@ -44,9 +44,29 @@ class AxyraHeaderIncluder {
 
   async includeScript() {
     try {
+      console.log('📥 Cargando script del header desde:', this.scriptPath);
       const script = document.createElement('script');
       script.src = this.scriptPath;
-      script.async = true;
+      script.async = false; // Cambiar a false para asegurar que se ejecute
+      script.onload = () => {
+        console.log('✅ Script del header cargado y ejecutado');
+        // Inicializar el header después de cargar el script
+        if (window.axyraSharedHeader) {
+          setTimeout(() => {
+            try {
+              new window.axyraSharedHeader();
+              console.log('✅ Header inicializado correctamente');
+            } catch (error) {
+              console.error('❌ Error inicializando header:', error);
+            }
+          }, 100);
+        } else {
+          console.log('⚠️ Clase del header no disponible');
+        }
+      };
+      script.onerror = (error) => {
+        console.error('❌ Error cargando script del header:', error);
+      };
       document.head.appendChild(script);
     } catch (error) {
       console.warn('⚠️ No se pudo cargar script del header:', error);
