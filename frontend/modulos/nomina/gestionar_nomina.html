@@ -25,7 +25,18 @@
     <!-- Sistema de Notificaciones Push AXYRA -->
     <script src="../../static/notifications-system.js"></script>
 
-    <script src="../../static/isolated-auth.js"></script>
+    <!-- Sistema Unificado de Autenticación AXYRA -->
+    <script src="../../static/unified-auth-system.js"></script>
+    
+    <!-- Sistema Unificado de Reportes Avanzados AXYRA -->
+    <script src="../../static/advanced-reports-unified.js"></script>
+    
+    <!-- Sistema Unificado de Backup AXYRA -->
+    <script src="../../static/backup-system-unified.js"></script>
+    
+    <!-- Sistema Unificado de Auditoría AXYRA -->
+    <script src="../../static/audit-system-unified.js"></script>
+    
     <script src="../../static/debug-auth.js"></script>
     <script src="../../static/gmail-notifications.js"></script>
     
@@ -4098,6 +4109,296 @@
       }
 
       // Configurar listener para cambios en empleados
+      
+      // FUNCIONES AVANZADAS DE NÓMINA - IMPLEMENTACIÓN COMPLETA
+      
+      // Función para calcular nómina automáticamente
+      function calcularNominaAutomatica(empleadoId) {
+        try {
+          console.log('🔄 Calculando nómina automática para empleado:', empleadoId);
+          
+          const empleado = empleados.find(emp => emp.id == empleadoId || emp.id == parseInt(empleadoId));
+          if (!empleado) {
+            throw new Error('Empleado no encontrado');
+          }
+          
+          // Obtener horas del empleado del mes actual
+          const mesActual = new Date().getMonth();
+          const añoActual = new Date().getFullYear();
+          
+          const horasEmpleado = JSON.parse(localStorage.getItem('axyra_horas') || '[]')
+            .filter(h => {
+              const fechaHora = new Date(h.fecha);
+              return (h.empleadoId == empleadoId || h.cedula === empleado.cedula) &&
+                     fechaHora.getMonth() === mesActual &&
+                     fechaHora.getFullYear() === añoActual;
+            });
+          
+          if (horasEmpleado.length === 0) {
+            throw new Error('No hay horas registradas para este mes');
+          }
+          
+          // Calcular totales de horas
+          const totalHoras = horasEmpleado.reduce((total, h) => total + (h.total_horas || 0), 0);
+          const horasExtras = horasEmpleado.reduce((total, h) => total + (h.horas_extras || 0), 0);
+          const horasNocturnas = horasEmpleado.reduce((total, h) => total + (h.horas_nocturnas || 0), 0);
+          const horasDominicales = horasEmpleado.reduce((total, h) => total + (h.horas_dominicales || 0), 0);
+          
+          // Calcular salario base por hora
+          const salarioBase = parseFloat(empleado.salario || 0);
+          const salarioPorHora = salarioBase / 240; // 240 horas mensuales estándar
+          
+          // Calcular salario neto
+          let salarioNeto = salarioBase;
+          
+          // Agregar horas extras (1.5x)
+          if (horasExtras > 0) {
+            salarioNeto += (horasExtras * salarioPorHora * 1.5);
+          }
+          
+          // Agregar horas nocturnas (1.35x)
+          if (horasNocturnas > 0) {
+            salarioNeto += (horasNocturnas * salarioPorHora * 1.35);
+          }
+          
+          // Agregar horas dominicales (1.75x)
+          if (horasDominicales > 0) {
+            salarioNeto += (horasDominicales * salarioPorHora * 1.75);
+          }
+          
+          // Calcular prestaciones sociales
+          const cesantias = salarioBase * 0.0833; // 8.33%
+          const prima = salarioBase * 0.0833; // 8.33%
+          const interesesCesantias = cesantias * 0.12; // 12%
+          
+          // Calcular deducciones
+          const salud = salarioBase * 0.04; // 4%
+          const pension = salarioBase * 0.04; // 4%
+          
+          // Crear objeto de nómina
+          const nomina = {
+            id: Date.now(),
+            empleado_id: empleado.id,
+            empleado_nombre: empleado.nombre,
+            empleado_cedula: empleado.cedula,
+            empleado_cargo: empleado.cargo,
+            empleado_departamento: empleado.departamento,
+            fecha_generacion: new Date().toISOString(),
+            periodo: `${mesActual + 1}/${añoActual}`,
+            salario_base: salarioBase,
+            salario_por_hora: salarioPorHora,
+            horas_trabajadas: totalHoras,
+            horas_extras: horasExtras,
+            horas_nocturnas: horasNocturnas,
+            horas_dominicales: horasDominicales,
+            salario_neto: salarioNeto,
+            cesantias: cesantias,
+            prima: prima,
+            intereses_cesantias: interesesCesantias,
+            salud: salud,
+            pension: pension,
+            total_prestaciones: cesantias + prima + interesesCesantias,
+            total_deducciones: salud + pension,
+            salario_final: salarioNeto - (salud + pension),
+            estado: 'PENDIENTE_APROBACION'
+          };
+          
+          // Guardar nómina
+          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+          nominas.push(nomina);
+          localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
+          
+          // Actualizar tabla
+          cargarNominas();
+          
+          console.log('✅ Nómina calculada automáticamente:', nomina);
+          mostrarMensaje('✅ Nómina calculada automáticamente para ' + empleado.nombre, 'success');
+          
+          return nomina;
+        } catch (error) {
+          console.error('❌ Error calculando nómina automática:', error);
+          mostrarMensaje('❌ Error: ' + error.message, 'error');
+          return null;
+        }
+      }
+      
+      // Función para generar PDF de nómina
+      function generarPDFNomina(nominaId) {
+        try {
+          console.log('🔄 Generando PDF de nómina:', nominaId);
+          
+          const nomina = nominas.find(n => n.id == nominaId || n.id == parseInt(nominaId));
+          if (!nomina) {
+            throw new Error('Nómina no encontrada');
+          }
+          
+          const empleado = empleados.find(emp => emp.id == nomina.empleado_id);
+          if (!empleado) {
+            throw new Error('Empleado no encontrado');
+          }
+          
+          // Verificar si jsPDF está disponible
+          if (typeof jsPDF === 'undefined') {
+            console.warn('⚠️ jsPDF no disponible, descargando como JSON');
+            descargarNominaJSON(nomina);
+            return;
+          }
+          
+          const { jsPDF } = window.jsPDF;
+          const doc = new jsPDF();
+          
+          // Configurar documento
+          doc.setFontSize(20);
+          doc.setTextColor(30, 58, 138);
+          doc.text('COMPROBANTE DE NÓMINA', 105, 20, { align: 'center' });
+          
+          // Información de la empresa
+          doc.setFontSize(12);
+          doc.setTextColor(51, 65, 85);
+          doc.text('VILLA VENECIA', 20, 35);
+          doc.text('Sistema AXYRA', 20, 42);
+          doc.text('Fecha: ' + new Date(nomina.fecha_generacion).toLocaleDateString(), 20, 49);
+          
+          // Información del empleado
+          doc.setFontSize(14);
+          doc.setTextColor(30, 58, 138);
+          doc.text('DATOS DEL EMPLEADO', 20, 65);
+          
+          doc.setFontSize(10);
+          doc.setTextColor(51, 65, 85);
+          doc.text('Nombre: ' + empleado.nombre, 20, 75);
+          doc.text('Cédula: ' + empleado.cedula, 20, 82);
+          doc.text('Cargo: ' + empleado.cargo, 20, 89);
+          doc.text('Departamento: ' + (empleado.departamento || 'N/A'), 20, 96);
+          
+          // Detalles de la nómina
+          doc.setFontSize(14);
+          doc.setTextColor(30, 58, 138);
+          doc.text('DETALLES DE LA NÓMINA', 20, 110);
+          
+          doc.setFontSize(10);
+          doc.setTextColor(51, 65, 85);
+          doc.text('Período: ' + nomina.periodo, 20, 120);
+          doc.text('Salario Base: $' + nomina.salario_base?.toLocaleString(), 20, 127);
+          doc.text('Horas Trabajadas: ' + nomina.horas_trabajadas, 20, 134);
+          doc.text('Horas Extras: ' + nomina.horas_extras, 20, 141);
+          doc.text('Horas Nocturnas: ' + nomina.horas_nocturnas, 20, 148);
+          doc.text('Horas Dominicales: ' + nomina.horas_dominicales, 20, 155);
+          
+          // Totales
+          doc.setFontSize(12);
+          doc.setTextColor(30, 58, 138);
+          doc.text('TOTALES', 20, 170);
+          
+          doc.setFontSize(10);
+          doc.setTextColor(51, 65, 85);
+          doc.text('Salario Neto: $' + nomina.salario_neto?.toLocaleString(), 20, 180);
+          doc.text('Prestaciones: $' + nomina.total_prestaciones?.toLocaleString(), 20, 187);
+          doc.text('Deducciones: $' + nomina.total_deducciones?.toLocaleString(), 20, 194);
+          doc.text('Salario Final: $' + nomina.salario_final?.toLocaleString(), 20, 201);
+          
+          // Estado
+          doc.setFontSize(12);
+          doc.setTextColor(30, 58, 138);
+          doc.text('Estado: ' + nomina.estado, 20, 215);
+          
+          // Generar nombre de archivo
+          const nombreArchivo = `NOMINA_${empleado.nombre.replace(/\s+/g, '_')}_${nomina.periodo.replace('/', '_')}.pdf`;
+          
+          // Guardar PDF
+          doc.save(nombreArchivo);
+          
+          console.log('✅ PDF de nómina generado:', nombreArchivo);
+          mostrarMensaje('✅ PDF de nómina generado correctamente', 'success');
+          
+        } catch (error) {
+          console.error('❌ Error generando PDF de nómina:', error);
+          mostrarMensaje('❌ Error: ' + error.message, 'error');
+        }
+      }
+      
+      // Función para descargar nómina como JSON (fallback)
+      function descargarNominaJSON(nomina) {
+        try {
+          const dataStr = JSON.stringify(nomina, null, 2);
+          const dataBlob = new Blob([dataStr], { type: 'application/json' });
+          const url = URL.createObjectURL(dataBlob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `NOMINA_${nomina.empleado_nombre.replace(/\s+/g, '_')}_${nomina.periodo.replace('/', '_')}.json`;
+          link.click();
+          URL.revokeObjectURL(url);
+          
+          console.log('✅ Nómina descargada como JSON');
+          mostrarMensaje('✅ Nómina descargada como JSON', 'info');
+        } catch (error) {
+          console.error('❌ Error descargando JSON:', error);
+        }
+      }
+      
+      // Función para aprobar nómina
+      function aprobarNomina(nominaId) {
+        try {
+          console.log('🔄 Aprobando nómina:', nominaId);
+          
+          const nomina = nominas.find(n => n.id == nominaId || n.id == parseInt(nominaId));
+          if (!nomina) {
+            throw new Error('Nómina no encontrada');
+          }
+          
+          nomina.estado = 'APROBADA';
+          nomina.fecha_aprobacion = new Date().toISOString();
+          nomina.aprobado_por = currentUser?.username || 'Sistema';
+          
+          // Guardar cambios
+          localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
+          
+          // Actualizar tabla
+          cargarNominas();
+          
+          console.log('✅ Nómina aprobada:', nomina);
+          mostrarMensaje('✅ Nómina aprobada correctamente', 'success');
+          
+          // Generar notificación
+          if (window.axyraNotificationSystem) {
+            window.axyraNotificationSystem.generateSystemNotifications();
+          }
+          
+        } catch (error) {
+          console.error('❌ Error aprobando nómina:', error);
+          mostrarMensaje('❌ Error: ' + error.message, 'error');
+        }
+      }
+      
+      // Función para rechazar nómina
+      function rechazarNomina(nominaId, motivo) {
+        try {
+          console.log('🔄 Rechazando nómina:', nominaId, 'Motivo:', motivo);
+          
+          const nomina = nominas.find(n => n.id == nominaId || n.id == parseInt(nominaId));
+          if (!nomina) {
+            throw new Error('Nómina no encontrada');
+          }
+          
+          nomina.estado = 'RECHAZADA';
+          nomina.fecha_rechazo = new Date().toISOString();
+          nomina.rechazado_por = currentUser?.username || 'Sistema';
+          nomina.motivo_rechazo = motivo;
+          
+          // Guardar cambios
+          localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
+          
+          // Actualizar tabla
+          cargarNominas();
+          
+          console.log('✅ Nómina rechazada:', nomina);
+          mostrarMensaje('✅ Nómina rechazada correctamente', 'success');
+          
+        } catch (error) {
+          console.error('❌ Error rechazando nómina:', error);
+          mostrarMensaje('❌ Error: ' + error.message, 'error');
+        }
+      }
       function configurarListenerCambiosEmpleados() {
         try {
           console.log('👂 Configurando listener para cambios en empleados...');

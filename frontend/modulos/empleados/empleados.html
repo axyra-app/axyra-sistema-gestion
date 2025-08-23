@@ -29,6 +29,18 @@
     <script src="../../static/debug-auth.js"></script>
     <!-- HEADER COMPARTIDO AXYRA -->
     <script src="../../static/include-header.js"></script>
+    
+    <!-- Sistema Unificado de Autenticación AXYRA -->
+    <script src="../../static/unified-auth-system.js"></script>
+    
+    <!-- Sistema Unificado de Reportes Avanzados AXYRA -->
+    <script src="../../static/advanced-reports-unified.js"></script>
+    
+    <!-- Sistema Unificado de Backup AXYRA -->
+    <script src="../../static/backup-system-unified.js"></script>
+    
+    <!-- Sistema Unificado de Auditoría AXYRA -->
+    <script src="../../static/audit-system-unified.js"></script>
 
     <style>
       /* Responsive Design - Optimización para móviles */
@@ -387,110 +399,7 @@
         color: #718096;
         font-size: 11px;
       }
-
-      // Sistema de fotos de empleados - Sistema de avatares
-      function mostrarModalFotos() {
-        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-
-        const modalHTML = `
-          <div id="modalFotos" class="axyra-modal">
-            <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
-              <div class="axyra-modal-header">
-                <h3><i class="fas fa-camera"></i> Gestión de Fotos de Empleados</h3>
-                <button class="axyra-modal-close" onclick="cerrarModal('modalFotos')">&times;</button>
-              </div>
-              <div class="axyra-modal-body">
-                <div class="axyra-fotos-grid">
-                  ${empleados.map(emp => `
-                    <div class="axyra-foto-empleado" data-empleado-id="${emp.id}">
-                      <div class="axyra-foto-container">
-                        <img src="${emp.fotoURL || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjNjY3ZWVhIi8+CjxjaXJjbGUgY3g9IjUwIiBjeT0iMzUiIHI9IjE1IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTUgNzVMMzAgNjBMMzUgNjVMNDAgNjBMNDUgNjVMNTAgNjBMNTUgNjVMNjAgNjBMNjUgNjVMNzAgNjBMNzUgNjVMODAgNjBMODUgNjVMOTAgNjBMOTUgNjVMODUgNzVIMTVaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K'}"
-                             alt="Foto de ${emp.nombre}"
-                             class="axyra-foto-empleado-img" />
-                        <div class="axyra-foto-overlay">
-                          <button class="axyra-btn-foto" onclick="cambiarFotoEmpleado('${emp.id}')">
-                            <i class="fas fa-camera"></i>
-                          </button>
-                        </div>
-                      </div>
-                      <div class="axyra-foto-info">
-                        <strong>${emp.nombre}</strong>
-                        <span>${emp.cargo}</span>
-                      </div>
-                    </div>
-                  `).join('')}
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        document.getElementById('modalFotos').style.display = 'block';
-      }
-
-      // Cambiar foto de empleado
-      function cambiarFotoEmpleado(empleadoId) {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.onchange = function(e) {
-          const archivo = e.target.files[0];
-          if (archivo) {
-            procesarFotoEmpleado(empleadoId, archivo);
-          }
-        };
-        input.click();
-      }
-
-      // Procesar foto del empleado
-      function procesarFotoEmpleado(empleadoId, archivo) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const fotoURL = e.target.result;
-
-          // Actualizar empleado en localStorage
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          const index = empleados.findIndex(emp => emp.id === empleadoId);
-
-          if (index !== -1) {
-            empleados[index].fotoURL = fotoURL;
-            localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
-
-            // Actualizar Firebase si está disponible
-            if (typeof firebase !== 'undefined' && firebase.firestore) {
-              firebase.firestore().collection('empleados').doc(empleadoId).update({
-                fotoURL: fotoURL
-              }).catch(error => {
-                console.warn('⚠️ Error actualizando foto en Firebase:', error);
-              });
-            }
-
-            // Registrar cambio en historial
-            registrarCambio('update', empleadoId, 'Foto de empleado actualizada');
-
-            // Actualizar vista
-            actualizarFotoEmpleado(empleadoId, fotoURL);
-
-            mostrarMensaje('✅ Foto actualizada correctamente', 'success');
-          }
-        };
-        reader.readAsDataURL(archivo);
-      }
-
-      // Actualizar foto en la vista
-      function actualizarFotoEmpleado(empleadoId, fotoURL) {
-        const fotoImg = document.querySelector(`[data-empleado-id="${empleadoId}"] .axyra-foto-empleado-img`);
-        if (fotoImg) {
-          fotoImg.src = fotoURL;
-        }
-
-        // También actualizar en la tabla principal
-        const avatarTabla = document.querySelector(`#empleadosTableBody tr[data-empleado-id="${empleadoId}"] .axyra-avatar img`);
-        if (avatarTabla) {
-          avatarTabla.src = fotoURL;
-        }
-      }
+    </style>
 
       /* Estilos para sistema de fotos de empleados */
       .axyra-fotos-grid {

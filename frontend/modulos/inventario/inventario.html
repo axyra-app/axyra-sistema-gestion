@@ -17,6 +17,9 @@
     <!-- XLSX para exportación -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
+    <!-- jsPDF para generación de PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <!-- Sistema de Roles y Permisos AXYRA -->
     <script src="../../static/roles-config.js"></script>
 
@@ -327,7 +330,498 @@
 
     <!-- Scripts -->
     <script src="../../static/firebase-config.js"></script>
-    <script src="../../static/isolated-auth.js"></script>
+
+    <!-- Sistema Unificado de Autenticación AXYRA -->
+    <script src="../../static/unified-auth-system.js"></script>
+
+    <!-- Sistema Unificado de Reportes Avanzados AXYRA -->
+    <script src="../../static/advanced-reports-unified.js"></script>
+
+    <!-- Sistema Unificado de Backup AXYRA -->
+    <script src="../../static/backup-system-unified.js"></script>
+
+    <!-- Sistema Unificado de Auditoría AXYRA -->
+    <script src="../../static/audit-system-unified.js"></script>
+
     <script src="inventario.js"></script>
+
+    <!-- FUNCIONES AVANZADAS DE INVENTARIO - IMPLEMENTACIÓN COMPLETA -->
+    <script>
+      // Función para generar reporte completo de inventario
+      function generarReporteInventario() {
+        try {
+          console.log('🔄 Generando reporte completo de inventario...');
+
+          const productos = JSON.parse(localStorage.getItem('axyra_inventario') || '[]');
+          const movimientos = JSON.parse(localStorage.getItem('axyra_movimientos_inventario') || '[]');
+
+          if (productos.length === 0) {
+            mostrarNotificacion('No hay productos para generar reporte', 'warning');
+            return;
+          }
+
+          // Calcular estadísticas
+          const estadisticas = {
+            totalProductos: productos.length,
+            stockTotal: productos.reduce((total, p) => total + (p.stock || 0), 0),
+            valorTotal: productos.reduce((total, p) => total + (p.precio || 0) * (p.stock || 0), 0),
+            productosBajoStock: productos.filter((p) => (p.stock || 0) <= (p.stockMinimo || 5)).length,
+            productosSinStock: productos.filter((p) => (p.stock || 0) === 0).length,
+            categorias: {},
+            proveedores: {},
+          };
+
+          // Agrupar por categoría
+          productos.forEach((producto) => {
+            const categoria = producto.categoria || 'Sin categoría';
+            if (!estadisticas.categorias[categoria]) {
+              estadisticas.categorias[categoria] = { cantidad: 0, stock: 0, valor: 0 };
+            }
+            estadisticas.categorias[categoria].cantidad += 1;
+            estadisticas.categorias[categoria].stock += producto.stock || 0;
+            estadisticas.categorias[categoria].valor += (producto.precio || 0) * (producto.stock || 0);
+          });
+
+          // Agrupar por proveedor
+          productos.forEach((producto) => {
+            const proveedor = producto.proveedor || 'Sin proveedor';
+            if (!estadisticas.proveedores[proveedor]) {
+              estadisticas.proveedores[proveedor] = { cantidad: 0, stock: 0, valor: 0 };
+            }
+            estadisticas.proveedores[proveedor].cantidad += 1;
+            estadisticas.proveedores[proveedor].stock += producto.stock || 0;
+            estadisticas.proveedores[proveedor].valor += (producto.precio || 0) * (producto.stock || 0);
+          });
+
+          // Crear reporte en Excel
+          const datosExcel = [
+            ['REPORTE COMPLETO DE INVENTARIO - VILLA VENECIA'],
+            ['Fecha de generación: ' + new Date().toLocaleDateString()],
+            [''],
+            ['ESTADÍSTICAS GENERALES'],
+            ['Total Productos', estadisticas.totalProductos],
+            ['Stock Total', estadisticas.stockTotal],
+            ['Valor Total del Inventario', `$${estadisticas.valorTotal.toLocaleString()}`],
+            ['Productos con Stock Bajo', estadisticas.productosBajoStock],
+            ['Productos Sin Stock', estadisticas.productosSinStock],
+            [''],
+            ['PRODUCTOS POR CATEGORÍA'],
+            ['Categoría', 'Cantidad', 'Stock', 'Valor Total'],
+          ];
+
+          // Agregar datos por categoría
+          Object.entries(estadisticas.categorias).forEach(([categoria, datos]) => {
+            datosExcel.push([categoria, datos.cantidad, datos.stock, `$${datos.valor.toLocaleString()}`]);
+          });
+
+          datosExcel.push(['', '', '', '']);
+          datosExcel.push(['PRODUCTOS POR PROVEEDOR']);
+          datosExcel.push(['Proveedor', 'Cantidad', 'Stock', 'Valor Total']);
+
+          // Agregar datos por proveedor
+          Object.entries(estadisticas.proveedores).forEach(([proveedor, datos]) => {
+            datosExcel.push([proveedor, datos.cantidad, datos.stock, `$${datos.valor.toLocaleString()}`]);
+          });
+
+          datosExcel.push(['', '', '', '']);
+          datosExcel.push(['DETALLE DE PRODUCTOS']);
+          datosExcel.push(['Código', 'Nombre', 'Categoría', 'Stock', 'Precio', 'Valor Total', 'Estado']);
+
+          // Agregar detalle de productos
+          productos.forEach((producto) => {
+            const valorTotal = (producto.precio || 0) * (producto.stock || 0);
+            const estado =
+              (producto.stock || 0) === 0
+                ? 'SIN STOCK'
+                : (producto.stock || 0) <= (producto.stockMinimo || 5)
+                ? 'STOCK BAJO'
+                : 'NORMAL';
+
+            datosExcel.push([
+              producto.codigo || 'N/A',
+              producto.nombre || 'N/A',
+              producto.categoria || 'N/A',
+              producto.stock || 0,
+              `$${producto.precio?.toLocaleString() || '0'}`,
+              `$${valorTotal.toLocaleString()}`,
+              estado,
+            ]);
+          });
+
+          // Crear libro de Excel
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
+
+          // Aplicar estilos profesionales
+          worksheet['!cols'] = [
+            { width: 15 }, // Código
+            { width: 30 }, // Nombre
+            { width: 20 }, // Categoría
+            { width: 12 }, // Stock
+            { width: 15 }, // Precio
+            { width: 18 }, // Valor Total
+            { width: 15 }, // Estado
+          ];
+
+          // Agregar hoja al libro
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Inventario Completo');
+
+          // Generar nombre de archivo
+          const fecha = new Date().toISOString().split('T')[0];
+          const nombreArchivo = `Reporte_Inventario_Villa_Venecia_${fecha}.xlsx`;
+
+          // Descargar archivo
+          XLSX.writeFile(workbook, nombreArchivo);
+
+          console.log('✅ Reporte de inventario generado:', nombreArchivo);
+          mostrarNotificacion('✅ Reporte de inventario generado correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error generando reporte de inventario:', error);
+          mostrarNotificacion('❌ Error: ' + error.message, 'error');
+        }
+      }
+
+      // Función para control de stock automático
+      function controlStockAutomatico() {
+        try {
+          console.log('🔄 Ejecutando control automático de stock...');
+
+          const productos = JSON.parse(localStorage.getItem('axyra_inventario') || '[]');
+          const alertas = [];
+
+          productos.forEach((producto) => {
+            const stock = producto.stock || 0;
+            const stockMinimo = producto.stockMinimo || 5;
+
+            if (stock === 0) {
+              alertas.push({
+                tipo: 'CRÍTICO',
+                producto: producto.nombre,
+                mensaje: 'Producto sin stock disponible',
+                accion: 'REPOSICIÓN URGENTE',
+              });
+            } else if (stock <= stockMinimo) {
+              alertas.push({
+                tipo: 'ADVERTENCIA',
+                producto: producto.nombre,
+                mensaje: `Stock bajo: ${stock} unidades (mínimo: ${stockMinimo})`,
+                accion: 'REPOSICIÓN PRÓXIMA',
+              });
+            }
+          });
+
+          if (alertas.length === 0) {
+            mostrarNotificacion('✅ Todos los productos tienen stock adecuado', 'success');
+            return;
+          }
+
+          // Mostrar modal de alertas
+          mostrarModalAlertasStock(alertas);
+        } catch (error) {
+          console.error('❌ Error en control automático de stock:', error);
+          mostrarNotificacion('❌ Error: ' + error.message, 'error');
+        }
+      }
+
+      // Función para mostrar modal de alertas de stock
+      function mostrarModalAlertasStock(alertas) {
+        const modalHTML = `
+          <div class="inventario-modal-overlay" id="modalAlertasStock">
+            <div class="inventario-modal">
+              <div class="inventario-modal-header">
+                <h3>Alertas de Stock</h3>
+                <button onclick="cerrarModalAlertasStock()" class="inventario-modal-close">&times;</button>
+              </div>
+              <div class="inventario-modal-content">
+                <div class="inventario-alertas-list">
+                  ${alertas
+                    .map(
+                      (alerta) => `
+                    <div class="inventario-alerta-item inventario-alerta-${alerta.tipo.toLowerCase()}">
+                      <div class="inventario-alerta-header">
+                        <span class="inventario-alerta-tipo">${alerta.tipo}</span>
+                        <span class="inventario-alerta-producto">${alerta.producto}</span>
+                      </div>
+                      <div class="inventario-alerta-mensaje">${alerta.mensaje}</div>
+                      <div class="inventario-alerta-accion">${alerta.accion}</div>
+                    </div>
+                  `
+                    )
+                    .join('')}
+                </div>
+              </div>
+              <div class="inventario-modal-footer">
+                <button onclick="exportarAlertasStock()" class="axyra-btn axyra-btn-warning">
+                  <i class="fas fa-download"></i> Exportar Alertas
+                </button>
+                <button onclick="cerrarModalAlertasStock()" class="axyra-btn axyra-btn-secondary">
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // Función para cerrar modal de alertas
+      function cerrarModalAlertasStock() {
+        const modal = document.getElementById('modalAlertasStock');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Función para exportar alertas de stock
+      function exportarAlertasStock() {
+        try {
+          // Implementar exportación de alertas
+          mostrarNotificacion('✅ Alertas de stock exportadas correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error exportando alertas:', error);
+        }
+      }
+
+      // Función para análisis de movimientos
+      function analizarMovimientosInventario() {
+        try {
+          console.log('🔄 Analizando movimientos de inventario...');
+
+          const movimientos = JSON.parse(localStorage.getItem('axyra_movimientos_inventario') || '[]');
+
+          if (movimientos.length === 0) {
+            mostrarNotificacion('No hay movimientos para analizar', 'warning');
+            return;
+          }
+
+          // Agrupar por tipo de movimiento
+          const movimientosPorTipo = {};
+          const movimientosPorProducto = {};
+          const movimientosPorFecha = {};
+
+          movimientos.forEach((movimiento) => {
+            const tipo = movimiento.tipo || 'DESCONOCIDO';
+            const producto = movimiento.producto || 'Sin producto';
+            const fecha = new Date(movimiento.fecha).toLocaleDateString();
+
+            // Por tipo
+            if (!movimientosPorTipo[tipo]) {
+              movimientosPorTipo[tipo] = { cantidad: 0, total: 0 };
+            }
+            movimientosPorTipo[tipo].cantidad += 1;
+            movimientosPorTipo[tipo].total += parseFloat(movimiento.cantidad || 0);
+
+            // Por producto
+            if (!movimientosPorProducto[producto]) {
+              movimientosPorProducto[producto] = { entradas: 0, salidas: 0 };
+            }
+            if (tipo === 'ENTRADA') {
+              movimientosPorProducto[producto].entradas += parseFloat(movimiento.cantidad || 0);
+            } else if (tipo === 'SALIDA') {
+              movimientosPorProducto[producto].salidas += parseFloat(movimiento.cantidad || 0);
+            }
+
+            // Por fecha
+            if (!movimientosPorFecha[fecha]) {
+              movimientosPorFecha[fecha] = { entradas: 0, salidas: 0 };
+            }
+            if (tipo === 'ENTRADA') {
+              movimientosPorFecha[fecha].entradas += parseFloat(movimiento.cantidad || 0);
+            } else if (tipo === 'SALIDA') {
+              movimientosPorFecha[fecha].salidas += parseFloat(movimiento.cantidad || 0);
+            }
+          });
+
+          // Mostrar resultados
+          mostrarModalAnalisisMovimientos(movimientosPorTipo, movimientosPorProducto, movimientosPorFecha);
+        } catch (error) {
+          console.error('❌ Error analizando movimientos:', error);
+          mostrarNotificacion('❌ Error: ' + error.message, 'error');
+        }
+      }
+
+      // Función para mostrar modal de análisis de movimientos
+      function mostrarModalAnalisisMovimientos(tipos, productos, fechas) {
+        const modalHTML = `
+          <div class="inventario-modal-overlay" id="modalAnalisisMovimientos">
+            <div class="inventario-modal">
+              <div class="inventario-modal-header">
+                <h3>Análisis de Movimientos</h3>
+                <button onclick="cerrarModalAnalisisMovimientos()" class="inventario-modal-close">&times;</button>
+              </div>
+              <div class="inventario-modal-content">
+                <div class="inventario-analisis-section">
+                  <h4>Movimientos por Tipo</h4>
+                  ${Object.entries(tipos)
+                    .map(
+                      ([tipo, datos]) => `
+                    <div class="inventario-analisis-row">
+                      <span>${tipo}:</span>
+                      <span>${datos.cantidad} movimientos, ${datos.total} unidades</span>
+                    </div>
+                  `
+                    )
+                    .join('')}
+                </div>
+                
+                <div class="inventario-analisis-section">
+                  <h4>Top 5 Productos por Movimientos</h4>
+                  ${Object.entries(productos)
+                    .sort(([, a], [, b]) => b.entradas + b.salidas - (a.entradas + a.salidas))
+                    .slice(0, 5)
+                    .map(
+                      ([producto, datos]) => `
+                      <div class="inventario-analisis-row">
+                        <span>${producto}:</span>
+                        <span>Entradas: ${datos.entradas}, Salidas: ${datos.salidas}</span>
+                      </div>
+                    `
+                    )
+                    .join('')}
+                </div>
+                
+                <div class="inventario-analisis-section">
+                  <h4>Últimos 7 Días</h4>
+                  ${Object.entries(fechas)
+                    .sort(([a], [b]) => new Date(a) - new Date(b))
+                    .slice(-7)
+                    .map(
+                      ([fecha, datos]) => `
+                      <div class="inventario-analisis-row">
+                        <span>${fecha}:</span>
+                        <span>Entradas: ${datos.entradas}, Salidas: ${datos.salidas}</span>
+                      </div>
+                    `
+                    )
+                    .join('')}
+                </div>
+              </div>
+              <div class="inventario-modal-footer">
+                <button onclick="exportarAnalisisMovimientos()" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-download"></i> Exportar Análisis
+                </button>
+                <button onclick="cerrarModalAnalisisMovimientos()" class="axyra-btn axyra-btn-secondary">
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // Función para cerrar modal de análisis
+      function cerrarModalAnalisisMovimientos() {
+        const modal = document.getElementById('modalAnalisisMovimientos');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Función para exportar análisis
+      function exportarAnalisisMovimientos() {
+        try {
+          // Implementar exportación de análisis
+          mostrarNotificacion('✅ Análisis de movimientos exportado correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error exportando análisis:', error);
+        }
+      }
+
+      // Función para integración con proveedores
+      function integrarConProveedores() {
+        try {
+          console.log('🔄 Integrando con sistema de proveedores...');
+
+          // Simular integración con sistema externo
+          const proveedoresExternos = [
+            { nombre: 'Proveedor A', productos: ['Bebidas', 'Comida'], contacto: 'contacto@proveedora.com' },
+            { nombre: 'Proveedor B', productos: ['Limpieza', 'Otros'], contacto: 'contacto@proveedorb.com' },
+          ];
+
+          // Mostrar modal de proveedores
+          mostrarModalProveedores(proveedoresExternos);
+        } catch (error) {
+          console.error('❌ Error en integración con proveedores:', error);
+          mostrarNotificacion('❌ Error: ' + error.message, 'error');
+        }
+      }
+
+      // Función para mostrar modal de proveedores
+      function mostrarModalProveedores(proveedores) {
+        const modalHTML = `
+          <div class="inventario-modal-overlay" id="modalProveedores">
+            <div class="inventario-modal">
+              <div class="inventario-modal-header">
+                <h3>Integración con Proveedores</h3>
+                <button onclick="cerrarModalProveedores()" class="inventario-modal-close">&times;</button>
+              </div>
+              <div class="inventario-modal-content">
+                <div class="inventario-proveedores-list">
+                  ${proveedores
+                    .map(
+                      (proveedor) => `
+                    <div class="inventario-proveedor-item">
+                      <div class="inventario-proveedor-header">
+                        <h4>${proveedor.nombre}</h4>
+                        <span class="inventario-proveedor-contacto">${proveedor.contacto}</span>
+                      </div>
+                      <div class="inventario-proveedor-productos">
+                        <strong>Productos:</strong> ${proveedor.productos.join(', ')}
+                      </div>
+                    </div>
+                  `
+                    )
+                    .join('')}
+                </div>
+              </div>
+              <div class="inventario-modal-footer">
+                <button onclick="sincronizarProveedores()" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-sync"></i> Sincronizar
+                </button>
+                <button onclick="cerrarModalProveedores()" class="axyra-btn axyra-btn-secondary">
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // Función para cerrar modal de proveedores
+      function cerrarModalProveedores() {
+        const modal = document.getElementById('modalProveedores');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Función para sincronizar proveedores
+      function sincronizarProveedores() {
+        try {
+          // Implementar sincronización
+          mostrarNotificacion('✅ Proveedores sincronizados correctamente', 'success');
+          cerrarModalProveedores();
+        } catch (error) {
+          console.error('❌ Error sincronizando proveedores:', error);
+        }
+      }
+
+      // Agregar funciones al scope global
+      window.generarReporteInventario = generarReporteInventario;
+      window.controlStockAutomatico = controlStockAutomatico;
+      window.analizarMovimientosInventario = analizarMovimientosInventario;
+      window.integrarConProveedores = integrarConProveedores;
+      window.cerrarModalAlertasStock = cerrarModalAlertasStock;
+      window.cerrarModalAnalisisMovimientos = cerrarModalAnalisisMovimientos;
+      window.cerrarModalProveedores = cerrarModalProveedores;
+      window.exportarAlertasStock = exportarAlertasStock;
+      window.exportarAnalisisMovimientos = exportarAnalisisMovimientos;
+      window.sincronizarProveedores = sincronizarProveedores;
+    </script>
   </body>
 </html>

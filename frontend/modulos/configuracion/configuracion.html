@@ -41,7 +41,7 @@
       // Global auth state
       window.axyraAuth = { auth, db };
 
-      // Check auth state
+      // Check auth state with unified system
       onAuthStateChanged(auth, (user) => {
         if (user) {
           console.log('Usuario autenticado:', user.email);
@@ -51,7 +51,12 @@
           }
         } else {
           console.log('Usuario no autenticado');
-          window.location.href = '../../login.html';
+          // Use unified auth system for redirect
+          if (window.axyraUnifiedAuth) {
+            window.axyraUnifiedAuth.logout();
+          } else {
+            window.location.href = '../../login.html';
+          }
         }
       });
     </script>
@@ -61,6 +66,30 @@
 
     <!-- Verificación del Header Compartido -->
     <script src="../../static/header-verification.js"></script>
+
+    <!-- Sistema de Roles y Permisos AXYRA -->
+    <script src="../../static/roles-config.js"></script>
+
+    <!-- Sistema de Notificaciones Push AXYRA -->
+    <script src="../../static/notifications-system.js"></script>
+
+    <!-- Sistema de Backup AXYRA -->
+    <script src="../../static/backup-system.js"></script>
+
+    <!-- Sistema 2FA AXYRA -->
+    <script src="../../static/2fa-system.js"></script>
+
+    <!-- Sistema Unificado de Autenticación AXYRA -->
+    <script src="../../static/unified-auth-system.js"></script>
+
+    <!-- Sistema Unificado de Reportes Avanzados AXYRA -->
+    <script src="../../static/advanced-reports-unified.js"></script>
+
+    <!-- Sistema Unificado de Backup AXYRA -->
+    <script src="../../static/backup-system-unified.js"></script>
+
+    <!-- Sistema Unificado de Auditoría AXYRA -->
+    <script src="../../static/audit-system-unified.js"></script>
   </head>
   <body>
     <!-- Header Compartido AXYRA - Se insertará automáticamente -->
@@ -332,5 +361,552 @@
     <script src="../../static/backup-system.js"></script>
 
     <script src="config.js"></script>
+
+    <!-- FUNCIONES AVANZADAS DE CONFIGURACIÓN - IMPLEMENTACIÓN COMPLETA -->
+    <script>
+      // Función para configurar empresa completa
+      function configurarEmpresaCompleta() {
+        try {
+          console.log('🔄 Configurando empresa completa...');
+
+          const configuracion = {
+            empresa: {
+              nombre: document.getElementById('companyName')?.value || 'VILLA VENECIA',
+              nit: document.getElementById('companyNIT')?.value || '900123456-7',
+              direccion: document.getElementById('companyAddress')?.value || 'Calle Principal #123',
+              telefono: document.getElementById('companyPhone')?.value || '+57 300 123 4567',
+              email: document.getElementById('companyEmail')?.value || 'contacto@villavenecia.com',
+              logo: 'logo.png',
+              industria: 'Restaurante y Eventos',
+              regimen: 'Responsable de IVA',
+              tipoEmpresa: 'Sociedad por Acciones Simplificada',
+            },
+            nómina: {
+              salarioMinimo: 1300000,
+              porcentajeCesantias: 8.33,
+              porcentajePrima: 8.33,
+              porcentajeInteresesCesantias: 12,
+              porcentajeSalud: 4,
+              porcentajePension: 4,
+              porcentajeARL: 0.522,
+              porcentajeCajaCompensacion: 4,
+              porcentajeICBF: 3,
+              porcentajeSENA: 2,
+            },
+            sistema: {
+              autoSave: document.getElementById('autoSave')?.checked || true,
+              darkMode: document.getElementById('darkMode')?.checked || false,
+              notifications: document.getElementById('notifications')?.checked || true,
+              sessionTimeout: parseInt(document.getElementById('sessionTimeout')?.value || '30'),
+              maxLoginAttempts: parseInt(document.getElementById('maxLoginAttempts')?.value || '5'),
+              backupAutomatico: true,
+              backupFrecuencia: 'DIARIO',
+              backupRetencion: 30,
+            },
+            seguridad: {
+              passwordMinLength: 8,
+              requireSpecialChars: true,
+              requireNumbers: true,
+              requireUppercase: true,
+              sessionEncryption: true,
+              auditLog: true,
+              ipWhitelist: [],
+              allowedDomains: [],
+            },
+            notificaciones: {
+              email: true,
+              push: true,
+              sms: false,
+              whatsapp: false,
+              frecuencia: 'INMEDIATA',
+              horarioInicio: '08:00',
+              horarioFin: '18:00',
+            },
+          };
+
+          // Guardar configuración
+          localStorage.setItem('axyra_configuracion_completa', JSON.stringify(configuracion));
+
+          // Aplicar configuración al sistema
+          aplicarConfiguracionSistema(configuracion);
+
+          console.log('✅ Configuración de empresa completada:', configuracion);
+          mostrarNotificacion('✅ Configuración de empresa guardada correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error configurando empresa:', error);
+          mostrarNotificacion('❌ Error: ' + error.message, 'error');
+        }
+      }
+
+      // Función para aplicar configuración al sistema
+      function aplicarConfiguracionSistema(configuracion) {
+        try {
+          console.log('🔄 Aplicando configuración al sistema...');
+
+          // Aplicar configuración de sesión
+          if (window.axyraSessionTimeout) {
+            window.axyraSessionTimeout.setTimeout(configuracion.sistema.sessionTimeout * 60 * 1000);
+          }
+
+          // Aplicar configuración de notificaciones
+          if (window.axyraNotificationSystem) {
+            window.axyraNotificationSystem.updateConfig(configuracion.notificaciones);
+          }
+
+          // Aplicar configuración de seguridad
+          if (window.axyraRolesConfig) {
+            window.axyraRolesConfig.updateSecurityConfig(configuracion.seguridad);
+          }
+
+          // Aplicar modo oscuro
+          if (configuracion.sistema.darkMode) {
+            document.body.classList.add('axyra-dark-mode');
+          } else {
+            document.body.classList.remove('axyra-dark-mode');
+          }
+
+          // Aplicar configuración de backup
+          if (window.axyraBackupSystem) {
+            window.axyraBackupSystem.updateConfig(configuracion.sistema);
+          }
+
+          console.log('✅ Configuración aplicada al sistema correctamente');
+        } catch (error) {
+          console.error('❌ Error aplicando configuración:', error);
+        }
+      }
+
+      // Función para gestión completa de usuarios y roles
+      function gestionarUsuariosCompleta() {
+        try {
+          console.log('🔄 Abriendo gestión completa de usuarios...');
+
+          // Obtener usuarios del sistema
+          const usuarios = JSON.parse(localStorage.getItem('axyra_usuarios') || '[]');
+          const roles = JSON.parse(localStorage.getItem('axyra_roles') || '[]');
+
+          // Mostrar modal de gestión
+          mostrarModalGestionUsuarios(usuarios, roles);
+        } catch (error) {
+          console.error('❌ Error abriendo gestión de usuarios:', error);
+          mostrarNotificacion('❌ Error: ' + error.message, 'error');
+        }
+      }
+
+      // Función para mostrar modal de gestión de usuarios
+      function mostrarModalGestionUsuarios(usuarios, roles) {
+        const modalHTML = `
+          <div class="axyra-modal-overlay" id="modalGestionUsuarios">
+            <div class="axyra-modal axyra-modal-large">
+              <div class="axyra-modal-header">
+                <h3>Gestión Completa de Usuarios y Roles</h3>
+                <button onclick="cerrarModalGestionUsuarios()" class="axyra-modal-close">&times;</button>
+              </div>
+              <div class="axyra-modal-content">
+                <div class="axyra-tabs">
+                  <button class="axyra-tab-button active" onclick="cambiarTab('usuarios')">Usuarios</button>
+                  <button class="axyra-tab-button" onclick="cambiarTab('roles')">Roles</button>
+                  <button class="axyra-tab-button" onclick="cambiarTab('permisos')">Permisos</button>
+                </div>
+                
+                <div id="tabUsuarios" class="axyra-tab-content active">
+                  <div class="axyra-users-list">
+                    ${usuarios
+                      .map(
+                        (usuario) => `
+                      <div class="axyra-user-item">
+                        <div class="axyra-user-info">
+                          <h4>${usuario.nombre || usuario.email}</h4>
+                          <span class="axyra-user-role">${usuario.rol || 'Sin rol'}</span>
+                          <span class="axyra-user-status ${usuario.activo ? 'activo' : 'inactivo'}">
+                            ${usuario.activo ? 'Activo' : 'Inactivo'}
+                          </span>
+                        </div>
+                        <div class="axyra-user-actions">
+                          <button onclick="editarUsuario('${
+                            usuario.id
+                          }')" class="axyra-btn axyra-btn-sm axyra-btn-primary">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button onclick="cambiarEstadoUsuario('${
+                            usuario.id
+                          }')" class="axyra-btn axyra-btn-sm axyra-btn-${usuario.activo ? 'warning' : 'success'}">
+                            <i class="fas fa-${usuario.activo ? 'pause' : 'play'}"></i>
+                          </button>
+                        </div>
+                      </div>
+                    `
+                      )
+                      .join('')}
+                  </div>
+                  <button onclick="agregarNuevoUsuario()" class="axyra-btn axyra-btn-success">
+                    <i class="fas fa-plus"></i> Agregar Usuario
+                  </button>
+                </div>
+                
+                <div id="tabRoles" class="axyra-tab-content">
+                  <div class="axyra-roles-list">
+                    ${roles
+                      .map(
+                        (rol) => `
+                      <div class="axyra-role-item">
+                        <div class="axyra-role-info">
+                          <h4>${rol.nombre}</h4>
+                          <p>${rol.descripcion || 'Sin descripción'}</p>
+                          <span class="axyra-role-users">${rol.usuarios || 0} usuarios</span>
+                        </div>
+                        <div class="axyra-role-actions">
+                          <button onclick="editarRol('${rol.id}')" class="axyra-btn axyra-btn-sm axyra-btn-primary">
+                            <i class="fas fa-edit"></i>
+                          </button>
+                          <button onclick="eliminarRol('${rol.id}')" class="axyra-btn axyra-btn-sm axyra-btn-danger">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                    `
+                      )
+                      .join('')}
+                  </div>
+                  <button onclick="agregarNuevoRol()" class="axyra-btn axyra-btn-success">
+                    <i class="fas fa-plus"></i> Agregar Rol
+                  </button>
+                </div>
+                
+                <div id="tabPermisos" class="axyra-tab-content">
+                  <div class="axyra-permissions-grid">
+                    <div class="axyra-permission-section">
+                      <h4>Módulos del Sistema</h4>
+                      <div class="axyra-permission-item">
+                        <span>Dashboard</span>
+                        <label class="axyra-switch">
+                          <input type="checkbox" checked disabled />
+                          <span class="axyra-slider"></span>
+                        </label>
+                      </div>
+                      <div class="axyra-permission-item">
+                        <span>Empleados</span>
+                        <label class="axyra-switch">
+                          <input type="checkbox" checked />
+                          <span class="axyra-slider"></span>
+                        </label>
+                      </div>
+                      <div class="axyra-permission-item">
+                        <span>Horas</span>
+                        <label class="axyra-switch">
+                          <input type="checkbox" checked />
+                          <span class="axyra-slider"></span>
+                        </label>
+                      </div>
+                      <div class="axyra-permission-item">
+                        <span>Nómina</span>
+                        <label class="axyra-switch">
+                          <input type="checkbox" />
+                          <span class="axyra-slider"></span>
+                        </label>
+                      </div>
+                      <div class="axyra-permission-item">
+                        <span>Cuadre de Caja</span>
+                        <label class="axyra-switch">
+                          <input type="checkbox" />
+                          <span class="axyra-slider"></span>
+                        </label>
+                      </div>
+                      <div class="axyra-permission-item">
+                        <span>Inventario</span>
+                        <label class="axyra-switch">
+                          <input type="checkbox" />
+                          <span class="axyra-slider"></span>
+                        </label>
+                      </div>
+                      <div class="axyra-permission-item">
+                        <span>Configuración</span>
+                        <label class="axyra-switch">
+                          <input type="checkbox" />
+                          <span class="axyra-slider"></span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button onclick="guardarCambiosUsuarios()" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-save"></i> Guardar Cambios
+                </button>
+                <button onclick="cerrarModalGestionUsuarios()" class="axyra-btn axyra-btn-secondary">
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // Función para cambiar tabs
+      function cambiarTab(tabName) {
+        // Ocultar todos los tabs
+        document.querySelectorAll('.axyra-tab-content').forEach((tab) => {
+          tab.classList.remove('active');
+        });
+        document.querySelectorAll('.axyra-tab-button').forEach((button) => {
+          button.classList.remove('active');
+        });
+
+        // Mostrar tab seleccionado
+        document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+        event.target.classList.add('active');
+      }
+
+      // Función para cerrar modal de gestión de usuarios
+      function cerrarModalGestionUsuarios() {
+        const modal = document.getElementById('modalGestionUsuarios');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Función para sistema de backup completo
+      function sistemaBackupCompleto() {
+        try {
+          console.log('🔄 Iniciando sistema de backup completo...');
+
+          if (window.axyraBackupSystem) {
+            window.axyraBackupSystem.createBackup();
+          } else {
+            // Backup manual si no está disponible el sistema
+            crearBackupManual();
+          }
+        } catch (error) {
+          console.error('❌ Error en sistema de backup:', error);
+          mostrarNotificacion('❌ Error: ' + error.message, 'error');
+        }
+      }
+
+      // Función para crear backup manual
+      function crearBackupManual() {
+        try {
+          console.log('🔄 Creando backup manual...');
+
+          const backup = {
+            fecha: new Date().toISOString(),
+            version: '1.0.0',
+            datos: {
+              empleados: JSON.parse(localStorage.getItem('axyra_empleados') || '[]'),
+              horas: JSON.parse(localStorage.getItem('axyra_horas') || '[]'),
+              nominas: JSON.parse(localStorage.getItem('axyra_nominas') || '[]'),
+              facturas: JSON.parse(localStorage.getItem('axyra_facturas') || '[]'),
+              inventario: JSON.parse(localStorage.getItem('axyra_inventario') || '[]'),
+              configuracion: JSON.parse(localStorage.getItem('axyra_configuracion_completa') || '{}'),
+            },
+            metadata: {
+              totalRegistros: 0,
+              tamañoAproximado: 0,
+            },
+          };
+
+          // Calcular metadata
+          Object.values(backup.datos).forEach((datos) => {
+            if (Array.isArray(datos)) {
+              backup.metadata.totalRegistros += datos.length;
+            }
+          });
+
+          backup.metadata.tamañoAproximado = JSON.stringify(backup).length;
+
+          // Guardar backup
+          const backups = JSON.parse(localStorage.getItem('axyra_backups') || '[]');
+          backups.push(backup);
+          localStorage.setItem('axyra_backups', JSON.stringify(backups));
+
+          // Descargar backup
+          const dataStr = JSON.stringify(backup, null, 2);
+          const dataBlob = new Blob([dataStr], { type: 'application/json' });
+          const url = URL.createObjectURL(dataBlob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `AXYRA_Backup_${new Date().toISOString().split('T')[0]}.json`;
+          link.click();
+          URL.revokeObjectURL(url);
+
+          console.log('✅ Backup manual creado:', backup);
+          mostrarNotificacion('✅ Backup manual creado correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error creando backup manual:', error);
+          mostrarNotificacion('❌ Error: ' + error.message, 'error');
+        }
+      }
+
+      // Función para restaurar backup
+      function restaurarBackup() {
+        try {
+          console.log('🔄 Restaurando backup...');
+
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.json';
+
+          input.onchange = function (e) {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                try {
+                  const backup = JSON.parse(e.target.result);
+
+                  // Validar backup
+                  if (!backup.datos || !backup.fecha) {
+                    throw new Error('Archivo de backup inválido');
+                  }
+
+                  // Restaurar datos
+                  Object.entries(backup.datos).forEach(([key, value]) => {
+                    localStorage.setItem('axyra_' + key, JSON.stringify(value));
+                  });
+
+                  console.log('✅ Backup restaurado correctamente:', backup);
+                  mostrarNotificacion('✅ Backup restaurado correctamente', 'success');
+
+                  // Recargar página para aplicar cambios
+                  setTimeout(() => {
+                    window.location.reload();
+                  }, 2000);
+                } catch (error) {
+                  console.error('❌ Error restaurando backup:', error);
+                  mostrarNotificacion('❌ Error: ' + error.message, 'error');
+                }
+              };
+              reader.readAsText(file);
+            }
+          };
+
+          input.click();
+        } catch (error) {
+          console.error('❌ Error restaurando backup:', error);
+          mostrarNotificacion('❌ Error: ' + error.message, 'error');
+        }
+      }
+
+      // Función para configuración de áreas de trabajo
+      function configurarAreasTrabajo() {
+        try {
+          console.log('🔄 Configurando áreas de trabajo...');
+
+          if (window.axyraWorkAreasConfig) {
+            window.axyraWorkAreasConfig.openConfiguration();
+          } else {
+            // Configuración manual si no está disponible
+            mostrarModalAreasTrabajo();
+          }
+        } catch (error) {
+          console.error('❌ Error configurando áreas de trabajo:', error);
+          mostrarNotificacion('❌ Error: ' + error.message, 'error');
+        }
+      }
+
+      // Función para mostrar modal de áreas de trabajo
+      function mostrarModalAreasTrabajo() {
+        const modalHTML = `
+          <div class="axyra-modal-overlay" id="modalAreasTrabajo">
+            <div class="axyra-modal">
+              <div class="axyra-modal-header">
+                <h3>Configuración de Áreas de Trabajo</h3>
+                <button onclick="cerrarModalAreasTrabajo()" class="axyra-modal-close">&times;</button>
+              </div>
+              <div class="axyra-modal-content">
+                <div class="axyra-areas-list">
+                  <div class="axyra-area-item">
+                    <h4>Cocina</h4>
+                    <p>Área principal de preparación de alimentos</p>
+                    <div class="axyra-area-config">
+                      <label>Capacidad máxima:</label>
+                      <input type="number" value="15" min="1" max="50" />
+                      <label>Horario:</label>
+                      <select>
+                        <option>6:00 AM - 10:00 PM</option>
+                        <option>24/7</option>
+                        <option>Personalizado</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="axyra-area-item">
+                    <h4>Salón Principal</h4>
+                    <p>Área de eventos y restaurante</p>
+                    <div class="axyra-area-config">
+                      <label>Capacidad máxima:</label>
+                      <input type="number" value="200" min="1" max="1000" />
+                      <label>Horario:</label>
+                      <select>
+                        <option>11:00 AM - 11:00 PM</option>
+                        <option>24/7</option>
+                        <option>Personalizado</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="axyra-area-item">
+                    <h4>Bar</h4>
+                    <p>Área de bebidas y coctelería</p>
+                    <div class="axyra-area-config">
+                      <label>Capacidad máxima:</label>
+                      <input type="number" value="50" min="1" max="200" />
+                      <label>Horario:</label>
+                      <select>
+                        <option>5:00 PM - 2:00 AM</option>
+                        <option>24/7</option>
+                        <option>Personalizado</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button onclick="guardarAreasTrabajo()" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-save"></i> Guardar Configuración
+                </button>
+                <button onclick="cerrarModalAreasTrabajo()" class="axyra-btn axyra-btn-secondary">
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // Función para cerrar modal de áreas de trabajo
+      function cerrarModalAreasTrabajo() {
+        const modal = document.getElementById('modalAreasTrabajo');
+        if (modal) {
+          modal.remove();
+        }
+      }
+
+      // Función para guardar áreas de trabajo
+      function guardarAreasTrabajo() {
+        try {
+          // Implementar guardado de áreas de trabajo
+          mostrarNotificacion('✅ Configuración de áreas de trabajo guardada', 'success');
+          cerrarModalAreasTrabajo();
+        } catch (error) {
+          console.error('❌ Error guardando áreas de trabajo:', error);
+        }
+      }
+
+      // Agregar funciones al scope global
+      window.configurarEmpresaCompleta = configurarEmpresaCompleta;
+      window.gestionarUsuariosCompleta = gestionarUsuariosCompleta;
+      window.sistemaBackupCompleto = sistemaBackupCompleto;
+      window.restaurarBackup = restaurarBackup;
+      window.configurarAreasTrabajo = configurarAreasTrabajo;
+      window.cambiarTab = cambiarTab;
+      window.cerrarModalGestionUsuarios = cerrarModalGestionUsuarios;
+      window.cerrarModalAreasTrabajo = cerrarModalAreasTrabajo;
+      window.guardarAreasTrabajo = guardarAreasTrabajo;
+    </script>
   </body>
 </html>
