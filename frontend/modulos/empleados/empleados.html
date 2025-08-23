@@ -1007,9 +1007,7 @@
           <button class="axyra-btn axyra-btn-secondary" onclick="mostrarModalFotos()">
             <i class="fas fa-camera"></i> Fotos
           </button>
-          <button class="axyra-btn axyra-btn-warning" onclick="crearDatosEjemplo()">
-            <i class="fas fa-database"></i> Datos Ejemplo
-          </button>
+
         </div>
 
         <!-- Filtros y Búsqueda -->
@@ -1419,8 +1417,9 @@
           // Crear estructura del organigrama
           const estructura = {};
           
-          // Si no hay departamentos, crear uno por defecto
+          // Crear estructura del organigrama basada en departamentos
           if (departamentos.length === 0) {
+            // Si no hay departamentos, crear uno por defecto
             estructura['Sin Departamento'] = {
               empleados: empleados,
               color: generarColorDepartamento('Sin Departamento')
@@ -1428,15 +1427,19 @@
           } else {
             // Agrupar empleados por departamento
             departamentos.forEach((dept) => {
-              const deptEmpleados = empleados.filter((emp) => emp.departamento === dept.nombre);
+              const deptEmpleados = empleados.filter((emp) => 
+                emp.departamento && emp.departamento.toLowerCase() === dept.nombre.toLowerCase()
+              );
               estructura[dept.nombre] = {
                 empleados: deptEmpleados,
                 color: generarColorDepartamento(dept.nombre),
               };
             });
             
-            // Agregar empleados sin departamento
-            const empleadosSinDept = empleados.filter((emp) => !emp.departamento || emp.departamento === '');
+            // Agregar empleados sin departamento asignado
+            const empleadosSinDept = empleados.filter((emp) => 
+              !emp.departamento || emp.departamento === '' || emp.departamento === 'Sin Departamento'
+            );
             if (empleadosSinDept.length > 0) {
               estructura['Sin Departamento'] = {
                 empleados: empleadosSinDept,

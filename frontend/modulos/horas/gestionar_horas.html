@@ -1633,52 +1633,116 @@
 
       // Generar comprobante PDF
       function generarComprobantePDF() {
-        const empleadoId = document.getElementById('empleadoComprobante').value;
-        const tipoContrato = document.getElementById('tipoContrato').value;
-        const salarioBase = document.getElementById('salarioBase').value;
-        const deudaComentario = document.getElementById('deudaComentario').value;
-        const deudaValor = document.getElementById('deudaValor').value;
-
-        if (!empleadoId || !salarioBase) {
-          mostrarMensaje('❌ Por favor completa todos los campos obligatorios', 'warning');
-          return;
-        }
-
-        // Obtener información del empleado
-        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-        const empleado = empleados.find((emp) => emp.id == empleadoId);
-
-        if (!empleado) {
-          mostrarMensaje('❌ Empleado no encontrado', 'error');
-          return;
-        }
-
         try {
+          const empleadoId = document.getElementById('empleadoComprobante').value;
+          const tipoContrato = document.getElementById('tipoContrato').value;
+          const salarioBase = document.getElementById('salarioBase').value;
+          const deudaComentario = document.getElementById('deudaComentario').value;
+          const deudaValor = document.getElementById('deudaValor').value;
+
+          if (!empleadoId || !salarioBase) {
+            mostrarMensaje('❌ Por favor completa todos los campos obligatorios', 'warning');
+            return;
+          }
+
+          // Obtener información del empleado
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const empleado = empleados.find((emp) => emp.id == empleadoId);
+
+          if (!empleado) {
+            mostrarMensaje('❌ Empleado no encontrado', 'error');
+            return;
+          }
+
           // Crear datos del comprobante
           const comprobante = {
             empleado: empleado.nombre,
-            cargo: empleado.cargo,
-            departamento: empleado.departamento,
+            cargo: empleado.cargo || 'N/A',
+            departamento: empleado.departamento || 'N/A',
             tipoContrato: tipoContrato,
             salarioBase: parseFloat(salarioBase),
-            deudaComentario: deudaComentario,
+            deudaComentario: deudaComentario || '',
             deudaValor: parseFloat(deudaValor) || 0,
             fecha: new Date().toISOString().split('T')[0],
+            cedula: empleado.cedula || 'N/A',
+            email: empleado.email || 'N/A'
           };
 
-          // Generar PDF usando la librería jsPDF
-          if (window.PDFGenerator) {
-            const pdf = new window.PDFGenerator();
-            pdf.generarComprobante(comprobante);
+          // Generar PDF usando jsPDF
+          if (typeof jsPDF !== 'undefined') {
+            generarPDFComprobante(comprobante);
             mostrarMensaje('✅ Comprobante PDF generado correctamente', 'success');
           } else {
-            mostrarMensaje('❌ Error: Librería PDF no disponible', 'error');
+            // Fallback: descargar como JSON
+            const blob = new Blob([JSON.stringify(comprobante, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `COMPROBANTE_${empleado.nombre.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            mostrarMensaje('✅ Comprobante descargado como JSON (PDF no disponible)', 'info');
           }
 
           cerrarModalPrevisualizacion();
         } catch (error) {
           console.error('❌ Error generando comprobante:', error);
-          mostrarMensaje('❌ Error al generar el comprobante', 'error');
+          mostrarMensaje('❌ Error al generar el comprobante: ' + error.message, 'error');
+        }
+      }
+
+      // Función para generar PDF del comprobante
+      function generarPDFComprobante(comprobante) {
+        try {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+          
+          // Configurar fuente y estilos
+          doc.setFont('helvetica');
+          doc.setFontSize(20);
+          
+          // Título
+          doc.text('COMPROBANTE DE PAGO', 105, 20, { align: 'center' });
+          
+          // Información del empleado
+          doc.setFontSize(12);
+          doc.text('Empleado:', 20, 40);
+          doc.text(comprobante.empleado, 80, 40);
+          
+          doc.text('Cargo:', 20, 50);
+          doc.text(comprobante.cargo, 80, 50);
+          
+          doc.text('Departamento:', 20, 60);
+          doc.text(comprobante.departamento, 80, 60);
+          
+          doc.text('Cédula:', 20, 70);
+          doc.text(comprobante.cedula, 80, 70);
+          
+          // Información del pago
+          doc.text('Tipo de Contrato:', 20, 90);
+          doc.text(comprobante.tipoContrato, 80, 90);
+          
+          doc.text('Salario Base:', 20, 100);
+          doc.text(`$${comprobante.salarioBase.toLocaleString()}`, 80, 100);
+          
+          if (comprobante.deudaValor > 0) {
+            doc.text('Deuda:', 20, 110);
+            doc.text(`$${comprobante.deudaValor.toLocaleString()}`, 80, 110);
+            doc.text('Motivo:', 20, 120);
+            doc.text(comprobante.deudaComentario, 80, 120);
+          }
+          
+          // Fecha
+          doc.text('Fecha:', 20, 140);
+          doc.text(comprobante.fecha, 80, 140);
+          
+          // Guardar PDF
+          const nombreArchivo = `COMPROBANTE_${comprobante.empleado.replace(/\s+/g, '_')}_${comprobante.fecha}.pdf`;
+          doc.save(nombreArchivo);
+          
+        } catch (error) {
+          console.error('❌ Error generando PDF:', error);
+          throw new Error('No se pudo generar el PDF');
         }
       }
 
@@ -4083,6 +4147,48 @@
           console.log(`✅ Datos cargados desde localStorage: ${empleados.length} empleados, ${horas.length} horas`);
         } catch (error) {
           console.error('❌ Error cargando datos desde localStorage:', error);
+        }
+      }
+
+      // Función para resetear todo el formulario
+      function resetearTodo() {
+        try {
+          // Limpiar todos los campos de horas
+          const camposHoras = [
+            'horasExtraDiurnas', 'horasExtraNocturnas', 'horasDominicales',
+            'horasDominicalesNocturnas', 'horasExtraDominicales', 'horasExtraDominicalesNocturnas',
+            'horasFestivas', 'horasFestivasNocturnas', 'horasExtraFestivas', 'horasExtraFestivasNocturnas'
+          ];
+          
+          camposHoras.forEach(campo => {
+            const elemento = document.getElementById(campo);
+            if (elemento) {
+              elemento.value = '0';
+            }
+          });
+          
+          // Limpiar otros campos
+          const empleadoSelect = document.getElementById('empleadoHoras');
+          if (empleadoSelect) {
+            empleadoSelect.selectedIndex = 0;
+          }
+          
+          const fechaInput = document.getElementById('fechaHoras');
+          if (fechaInput) {
+            fechaInput.value = '';
+          }
+          
+          // Limpiar tabla de horas
+          const tbody = document.getElementById('cuerpoTablaHoras');
+          if (tbody) {
+            tbody.innerHTML = '';
+          }
+          
+          mostrarNotificacion('✅ Formulario reseteado correctamente', 'success');
+          console.log('✅ Formulario de horas reseteado');
+        } catch (error) {
+          console.error('❌ Error reseteando formulario:', error);
+          mostrarNotificacion('Error reseteando formulario', 'error');
         }
       }
 

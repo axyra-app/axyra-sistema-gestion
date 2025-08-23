@@ -319,8 +319,11 @@ class AxyraDashboard {
         totalEmpleadosElement.textContent = totalEmpleados;
       }
 
-      // Empleados activos
-      const empleadosActivos = this.empleados.filter((e) => e.estado === 'ACTIVO').length;
+      // Empleados activos (incluye todos los estados excepto 'INACTIVO' o 'BAJA')
+      const empleadosActivos = this.empleados.filter((e) => {
+        const estado = (e.estado || '').toUpperCase();
+        return estado !== 'INACTIVO' && estado !== 'BAJA' && estado !== 'DESPEDIDO';
+      }).length;
       const empleadosActivosElement = document.getElementById('empleadosActivos');
       if (empleadosActivosElement) {
         empleadosActivosElement.textContent = empleadosActivos;
