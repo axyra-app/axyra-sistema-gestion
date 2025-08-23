@@ -1158,10 +1158,13 @@
 
           // Cargar empleados desde localStorage (fallback)
           const empleadosData = localStorage.getItem('axyra_empleados');
+          console.log('🔍 Datos de empleados en localStorage:', empleadosData);
+          
           if (empleadosData) {
             try {
               const empleados = JSON.parse(empleadosData);
               console.log(`📦 Empleados cargados desde localStorage: ${empleados.length}`);
+              console.log('🔍 Todos los empleados:', empleados);
 
               // Filtrar por usuario actual - INCLUIR TODOS LOS EMPLEADOS PARA PRUEBAS
               const empleadosFiltrados = empleados.filter(
@@ -1175,6 +1178,7 @@
 
               console.log(`✅ Empleados filtrados para usuario actual: ${empleadosFiltrados.length}`);
               console.log('🔍 Empleados filtrados:', empleadosFiltrados);
+              console.log('🔍 Usuario actual:', currentUser);
 
               // Verificar que no haya empleados duplicados
               const empleadosUnicos = [];
@@ -1211,11 +1215,17 @@
 
       // Función auxiliar para cargar empleados en los selects
       function cargarEmpleadosEnSelects(empleados) {
+        console.log('🔍 cargarEmpleadosEnSelects llamada con:', empleados);
+        
         const selectEmpleado = document.getElementById('empleadoHoras');
         const selectComprobante = document.getElementById('empleadoComprobante');
 
         if (!selectEmpleado || !selectComprobante) {
           console.error('❌ No se encontraron los selects de empleados');
+          console.log('🔍 Elementos buscados:', {
+            empleadoHoras: selectEmpleado,
+            empleadoComprobante: selectComprobante
+          });
           return;
         }
 
@@ -1230,6 +1240,8 @@
 
         // Agregar opciones
         empleados.forEach((empleado) => {
+          console.log('👤 Agregando empleado:', empleado);
+          
           const optionEmpleado = document.createElement('option');
           optionEmpleado.value = empleado.id;
           optionEmpleado.textContent = `${empleado.nombre} (${empleado.cargo || 'Sin cargo'})`;
@@ -1242,6 +1254,10 @@
         });
 
         console.log(`✅ ${empleados.length} empleados cargados en los selects`);
+        console.log('🔍 Selects después de cargar:', {
+          empleadoHoras: selectEmpleado.innerHTML,
+          empleadoComprobante: selectComprobante.innerHTML
+        });
       }
 
       // Manejar formulario de registro masivo (comentado hasta que se implemente)
@@ -1625,6 +1641,10 @@
         `;
 
         document.body.insertAdjacentHTML('beforeend', modalHTML);
+        } catch (error) {
+          console.error('❌ Error previsualizando comprobante:', error);
+          mostrarMensaje('❌ Error al previsualizar el comprobante: ' + error.message, 'error');
+        }
       }
 
       // Cerrar modal de previsualización
@@ -3882,6 +3902,74 @@
           mostrarMensaje('Error al generar comprobante: ' + error.message, 'error');
         }
       }
+
+      // Función para verificar empleados sin horas
+      function verificarEmpleadosSinHoras() {
+        try {
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          
+          const empleadosSinHoras = empleados.filter((emp) => {
+            const tieneHorasPorId = horas.some((h) => h.empleadoId === emp.id);
+            const tieneHorasPorCedula = horas.some((h) => h.cedula === emp.cedula);
+            return !tieneHorasPorId && !tieneHorasPorCedula;
+          });
+
+          if (empleadosSinHoras.length > 0) {
+            mostrarMensaje(`${empleadosSinHoras.length} empleado(s) no tienen horas registradas en el sistema`, 'warning');
+          }
+        } catch (error) {
+          console.error('❌ Error verificando empleados sin horas:', error);
+        }
+      }
+
+      // Función de prueba para cargar empleados manualmente
+      function cargarEmpleadosManual() {
+        try {
+          console.log('🧪 Cargando empleados manualmente...');
+          
+          // Obtener empleados del localStorage
+          const empleadosData = localStorage.getItem('axyra_empleados');
+          console.log('🔍 Datos de empleados en localStorage:', empleadosData);
+          
+          if (empleadosData) {
+            const empleados = JSON.parse(empleadosData);
+            console.log(`📦 Empleados encontrados: ${empleados.length}`);
+            console.log('🔍 Empleados:', empleados);
+            
+            // Cargar en los selects
+            cargarEmpleadosEnSelects(empleados);
+          } else {
+            console.log('⚠️ No hay empleados en localStorage');
+            // Intentar cargar desde Firebase
+            if (typeof firebase !== 'undefined' && firebase.firestore) {
+              console.log('🔥 Intentando cargar desde Firebase...');
+              firebase.firestore().collection('empleados').get()
+                .then((snapshot) => {
+                  if (!snapshot.empty) {
+                    const empleadosFirebase = [];
+                    snapshot.forEach((doc) => {
+                      empleadosFirebase.push({
+                        id: doc.id,
+                        ...doc.data(),
+                      });
+                    });
+                    console.log(`✅ Empleados cargados desde Firebase: ${empleadosFirebase.length}`);
+                    localStorage.setItem('axyra_empleados', JSON.stringify(empleadosFirebase));
+                    cargarEmpleadosEnSelects(empleadosFirebase);
+                  } else {
+                    console.log('ℹ️ No hay empleados en Firebase');
+                  }
+                })
+                .catch((error) => {
+                  console.error('❌ Error cargando desde Firebase:', error);
+                });
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error en cargarEmpleadosManual:', error);
+        }
+      }
     </script>
 
     <style>
@@ -4133,6 +4221,8 @@
 
           // Obtener userId del usuario autenticado en Firebase
           let userId = null;
+          let empleados = [];
+          let horas = [];
 
           // Intentar obtener el usuario actual de Firebase Auth
           if (firebase.auth().currentUser) {
@@ -4209,6 +4299,20 @@
         try {
           console.log('🔄 Cargando datos desde localStorage...');
 
+          let empleados = [];
+          let horas = [];
+
+          // Obtener usuario actual
+          let currentUser = null;
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
+          } else {
+            const userData = localStorage.getItem('axyra_isolated_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
           // Cargar empleados
           const empleadosData = localStorage.getItem('axyra_empleados');
           if (empleadosData) {
@@ -4216,7 +4320,7 @@
             // Filtrar por usuario actual
             empleados = empleados.filter((e) => {
               if (!e.userId) return true; // Datos globales
-              return e.userId === currentUser?.username;
+              return e.userId === currentUser?.username || e.userId === currentUser?.email || e.userId === currentUser?.id;
             });
           }
 
@@ -4227,11 +4331,15 @@
             // Filtrar por usuario actual
             horas = horas.filter((h) => {
               if (!h.userId) return true; // Datos globales
-              return h.userId === currentUser?.username;
+              return h.userId === currentUser?.username || h.userId === currentUser?.email || h.userId === currentUser?.id;
             });
           }
 
           console.log(`✅ Datos cargados desde localStorage: ${empleados.length} empleados, ${horas.length} horas`);
+          
+          // Guardar en localStorage como backup
+          localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
+          localStorage.setItem('axyra_horas', JSON.stringify(horas));
         } catch (error) {
           console.error('❌ Error cargando datos desde localStorage:', error);
         }
@@ -4302,6 +4410,11 @@
           // Verificar si hay empleados sin horas y mostrar notificación
           verificarEmpleadosSinHoras();
 
+          // Cargar empleados manualmente como respaldo
+          setTimeout(() => {
+            cargarEmpleadosManual();
+          }, 1000);
+
           console.log('✅ Módulo de horas inicializado correctamente');
         } catch (error) {
           console.error('❌ Error inicializando horas:', error);
@@ -4345,6 +4458,7 @@
       window.mostrarMensaje = mostrarMensaje;
       window.cerrarModalCalculoHoras = cerrarModalCalculoHoras;
       window.inicializarHoras = inicializarHoras;
+      window.cargarEmpleadosManual = cargarEmpleadosManual;
     </script>
   </body>
 </html>

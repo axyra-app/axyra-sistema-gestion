@@ -1428,7 +1428,7 @@
             // Agrupar empleados por departamento
             departamentos.forEach((dept) => {
               const deptEmpleados = empleados.filter((emp) => 
-                emp.departamento && emp.departamento.toLowerCase() === dept.nombre.toLowerCase()
+                emp.departamento && emp.departamento.toString && emp.departamento.toString().toLowerCase() === dept.nombre.toLowerCase()
               );
               estructura[dept.nombre] = {
                 empleados: deptEmpleados,
@@ -1438,7 +1438,7 @@
             
             // Agregar empleados sin departamento asignado
             const empleadosSinDept = empleados.filter((emp) => 
-              !emp.departamento || emp.departamento === '' || emp.departamento === 'Sin Departamento'
+              !emp.departamento || emp.departamento === '' || emp.departamento === 'Sin Departamento' || emp.departamento === null || emp.departamento === undefined
             );
             if (empleadosSinDept.length > 0) {
               estructura['Sin Departamento'] = {
