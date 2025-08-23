@@ -289,6 +289,10 @@
         overflow-y: auto;
         position: relative;
         box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        margin: auto;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
       }
 
       .modal-close {
@@ -472,6 +476,47 @@
         background-color: #dbeafe;
         color: #1e40af;
         border: 1px solid #bfdbfe;
+      }
+
+      /* Estilos para formularios en modales */
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.9rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f9fafb;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      .form-group input:hover,
+      .form-group select:hover,
+      .form-group textarea:hover {
+        border-color: #d1d5db;
+        background: white;
       }
 
       /* Estilos para botones de acción */
@@ -1279,10 +1324,10 @@
           <button class="axyra-btn axyra-btn-success" onclick="generarComprobantePDF()">
             <i class="fas fa-file-pdf"></i> Generar PDF
           </button>
-          <button class="axyra-btn axyra-btn-warning" onclick="generarReportes()">
+          <button class="axyra-btn axyra-btn-warning" onclick="generarReportesNomina()">
             <i class="fas fa-chart-bar"></i> Reportes
           </button>
-          <button class="axyra-btn axyra-btn-info" onclick="configuracionNomina()">
+          <button class="axyra-btn axyra-btn-info" onclick="configuracionAvanzadaNomina()">
             <i class="fas fa-cog"></i> Configuración
           </button>
         </div>
@@ -4075,6 +4120,105 @@
         `);
         ventanaReporte.document.close();
       }
+
+      // Función para generar reportes de nómina
+      function generarReportesNomina() {
+        try {
+          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          
+          if (nominas.length === 0) {
+            mostrarNotificacion('No hay datos de nómina para generar reportes', 'warning');
+            return;
+          }
+
+          // Generar reporte resumido
+          const contenido = generarContenidoReporte(nominas, empleados);
+          mostrarReporte('Reporte de Nómina - Villa Venecia', contenido);
+          
+          mostrarNotificacion('✅ Reporte de nómina generado correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error generando reportes:', error);
+          mostrarNotificacion('Error generando reportes: ' + error.message, 'error');
+        }
+      }
+
+      // Función para configuración avanzada de nómina
+      function configuracionAvanzadaNomina() {
+        try {
+          // Mostrar modal de configuración
+          const modal = document.createElement('div');
+          modal.className = 'modal-overlay active';
+          modal.innerHTML = `
+            <div class="modal-content">
+              <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+              <div class="modal-header">
+                <h3>⚙️ Configuración Avanzada de Nómina</h3>
+                <p>Configura los parámetros del sistema de nómina</p>
+              </div>
+              <div class="modal-body">
+                <div class="form-group">
+                  <label for="salarioMinimo">Salario Mínimo Legal:</label>
+                  <input type="number" id="salarioMinimo" placeholder="Salario mínimo vigente">
+                </div>
+                <div class="form-group">
+                  <label for="porcentajeCesantias">% Cesantías:</label>
+                  <input type="number" id="porcentajeCesantias" value="8.33" step="0.01">
+                </div>
+                <div class="form-group">
+                  <label for="porcentajePrima">% Prima de Servicios:</label>
+                  <input type="number" id="porcentajePrima" value="8.33" step="0.01">
+                </div>
+                <div class="form-group">
+                  <label for="porcentajeInteresesCesantias">% Intereses Cesantías:</label>
+                  <input type="number" id="porcentajeInteresesCesantias" value="12" step="0.01">
+                </div>
+                <div class="form-group">
+                  <label for="porcentajeSalud">% Salud:</label>
+                  <input type="number" id="porcentajeSalud" value="4" step="0.01">
+                </div>
+                <div class="form-group">
+                  <label for="porcentajePension">% Pensión:</label>
+                  <input type="number" id="porcentajePension" value="4" step="0.01">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
+                <button class="btn btn-primary" onclick="guardarConfiguracionNomina()">Guardar</button>
+              </div>
+            </div>
+          `;
+          
+          document.body.appendChild(modal);
+          cargarConfiguracionGuardada();
+        } catch (error) {
+          console.error('❌ Error en configuración avanzada:', error);
+          mostrarNotificacion('Error en configuración: ' + error.message, 'error');
+        }
+      }
+
+      // Función para guardar configuración
+      function guardarConfiguracionNomina() {
+        try {
+          const config = {
+            salarioMinimo: parseFloat(document.getElementById('salarioMinimo').value) || 0,
+            porcentajeCesantias: parseFloat(document.getElementById('porcentajeCesantias').value) || 8.33,
+            porcentajePrima: parseFloat(document.getElementById('porcentajePrima').value) || 8.33,
+            porcentajeInteresesCesantias: parseFloat(document.getElementById('porcentajeInteresesCesantias').value) || 12,
+            porcentajeSalud: parseFloat(document.getElementById('porcentajeSalud').value) || 4,
+            porcentajePension: parseFloat(document.getElementById('porcentajePension').value) || 4
+          };
+
+          localStorage.setItem('axyra_configuracion_nomina', JSON.stringify(config));
+          mostrarNotificacion('✅ Configuración guardada correctamente', 'success');
+          
+          // Cerrar modal
+          document.querySelector('.modal-overlay').remove();
+        } catch (error) {
+          console.error('❌ Error guardando configuración:', error);
+          mostrarNotificacion('Error guardando configuración: ' + error.message, 'error');
+        }
+      }
     </script>
 
     <script>
@@ -4649,14 +4793,136 @@
         }
       }
 
+      // Función para aprobar nómina
+      function aprobarNomina(nominaId) {
+        try {
+          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+          const nomina = nominas.find(n => n.id == nominaId);
+          
+          if (!nomina) {
+            mostrarNotificacion('Nómina no encontrada', 'error');
+            return;
+          }
+          
+          nomina.estado = 'APROBADA';
+          nomina.fecha_aprobacion = new Date().toISOString();
+          nomina.aprobado_por = 'axyra.app@gmail.com';
+          
+          localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
+          
+          // Registrar en auditoría
+          if (window.axyraAuditSystemUnified) {
+            window.axyraAuditSystemUnified.logSystemEvent('nomina_aprobada', {
+              nomina_id: nominaId,
+              empleado: nomina.empleado_nombre,
+              monto: nomina.salario_final
+            });
+          }
+          
+          mostrarNotificacion('✅ Nómina aprobada correctamente', 'success');
+          cargarNominas(); // Recargar tabla
+        } catch (error) {
+          console.error('❌ Error aprobando nómina:', error);
+          mostrarNotificacion('Error aprobando nómina: ' + error.message, 'error');
+        }
+      }
+
+      // Función para rechazar nómina
+      function rechazarNomina(nominaId, motivo) {
+        try {
+          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+          const nomina = nominas.find(n => n.id == nominaId);
+          
+          if (!nomina) {
+            mostrarNotificacion('Nómina no encontrada', 'error');
+            return;
+          }
+          
+          nomina.estado = 'RECHAZADA';
+          nomina.fecha_rechazo = new Date().toISOString();
+          nomina.rechazado_por = 'axyra.app@gmail.com';
+          nomina.motivo_rechazo = motivo;
+          
+          localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
+          
+          // Registrar en auditoría
+          if (window.axyraAuditSystemUnified) {
+            window.axyraAuditSystemUnified.logSystemEvent('nomina_rechazada', {
+              nomina_id: nominaId,
+              empleado: nomina.empleado_nombre,
+              motivo: motivo
+            });
+          }
+          
+          mostrarNotificacion('⚠️ Nómina rechazada', 'warning');
+          cargarNominas(); // Recargar tabla
+        } catch (error) {
+          console.error('❌ Error rechazando nómina:', error);
+          mostrarNotificacion('Error rechazando nómina: ' + error.message, 'error');
+        }
+      }
+
+      // Función para validar nómina antes de generar
+      function validarNomina(empleadoId) {
+        try {
+          const empleado = empleados.find(emp => emp.id == empleadoId);
+          if (!empleado) {
+            return { valido: false, error: 'Empleado no encontrado' };
+          }
+          
+          // Verificar que tenga salario base
+          if (!empleado.salario || empleado.salario <= 0) {
+            return { valido: false, error: 'Empleado sin salario base configurado' };
+          }
+          
+          // Verificar que tenga horas registradas
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]')
+            .filter(h => h.empleadoId == empleadoId);
+          
+          if (horas.length === 0) {
+            return { valido: false, error: 'No hay horas registradas para este empleado' };
+          }
+          
+          return { valido: true };
+        } catch (error) {
+          return { valido: false, error: 'Error en validación: ' + error.message };
+        }
+      }
+
+      // Función para generar nómina con validaciones
+      function generarNominaConValidacion(empleadoId) {
+        try {
+          const validacion = validarNomina(empleadoId);
+          
+          if (!validacion.valido) {
+            mostrarNotificacion(validacion.error, 'error');
+            return;
+          }
+          
+          // Generar nómina automática
+          const nomina = calcularNominaAutomatica(empleadoId);
+          
+          if (nomina) {
+            mostrarNotificacion('✅ Nómina generada correctamente', 'success');
+            cargarNominas(); // Recargar tabla
+          }
+        } catch (error) {
+          console.error('❌ Error generando nómina:', error);
+          mostrarNotificacion('Error generando nómina: ' + error.message, 'error');
+        }
+      }
+
       // Hacer funciones globales para onclick
       window.mostrarModal = mostrarModal;
       window.cerrarModal = cerrarModal;
       window.exportarNomina = exportarNomina;
       window.generarComprobantePDF = generarComprobantePDF;
-      window.generarReportes = generarReportes;
-      window.configuracionNomina = configuracionNomina;
+      window.generarReportesNomina = generarReportesNomina;
+      window.configuracionAvanzadaNomina = configuracionAvanzadaNomina;
       window.mostrarNotificacion = mostrarNotificacion;
+      window.aprobarNomina = aprobarNomina;
+      window.rechazarNomina = rechazarNomina;
+      window.generarNominaConValidacion = generarNominaConValidacion;
 
       // Función para mostrar modal
       function mostrarModal(modalId) {
