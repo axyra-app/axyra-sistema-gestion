@@ -493,6 +493,95 @@
         line-height: 1.4;
       }
 
+/* ========================================
+   SECCIÓN DE SEGURIDAD Y CONFIGURACIÓN
+   ======================================== */
+.axyra-security-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.axyra-security-item {
+  background: var(--axyra-gray-50);
+  border: 1px solid var(--axyra-gray-200);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.axyra-security-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-color: var(--axyra-primary);
+}
+
+.axyra-security-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--axyra-primary), var(--axyra-secondary));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.axyra-security-icon i {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.axyra-security-content h4 {
+  color: var(--axyra-gray-800);
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.axyra-security-content p {
+  color: var(--axyra-gray-600);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.axyra-2fa-status {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: var(--axyra-gray-100);
+  border: 1px solid var(--axyra-gray-300);
+}
+
+.axyra-session-info,
+.axyra-responsive-info {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: var(--axyra-blue-50);
+  border: 1px solid var(--axyra-blue-200);
+}
+
+.axyra-session-time,
+.axyra-responsive-status {
+  color: var(--axyra-blue-700);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.axyra-security-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.axyra-security-actions .axyra-btn {
+  flex: 1;
+  min-width: 120px;
+  justify-content: center;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .axyra-stats-grid {
@@ -549,5 +638,34 @@
   
   .axyra-welcome-title {
     font-size: 1.5rem;
+  }
+}
+
+/* Responsive para sección de seguridad */
+@media (max-width: 768px) {
+  .axyra-security-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .axyra-security-item {
+    padding: 1rem;
+  }
+  
+  .axyra-security-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .axyra-security-icon i {
+    font-size: 1.2rem;
+  }
+  
+  .axyra-security-actions {
+    flex-direction: column;
+  }
+  
+  .axyra-security-actions .axyra-btn {
+    width: 100%;
   }
 }

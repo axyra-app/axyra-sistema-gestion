@@ -16,13 +16,19 @@ class AxyraDashboard {
     async init() {
         console.log('🚀 Inicializando Dashboard AXYRA...');
         
-        // Verificar autenticación
-        if (await this.checkAuth()) {
-            await this.loadDashboardData();
-            this.setupRealTimeUpdates();
-            this.startAutoRefresh();
-        } else {
-            this.showLoginMessage();
+        try {
+            // Verificar autenticación
+            if (await this.checkAuth()) {
+                await this.loadDashboardData();
+                this.setupRealTimeUpdates();
+                this.startAutoRefresh();
+                console.log('✅ Dashboard inicializado correctamente');
+            } else {
+                this.showLoginMessage();
+            }
+        } catch (error) {
+            console.error('❌ Error inicializando dashboard:', error);
+            this.showErrorMessage('Error inicializando el dashboard');
         }
     }
 
@@ -67,6 +73,8 @@ class AxyraDashboard {
             this.updateStats();
             this.updateCharts();
             this.updateWelcomeMessage();
+            this.updateActividadReciente();
+            this.updateSecurityStatus();
             
             console.log('✅ Dashboard cargado correctamente');
         } catch (error) {
@@ -104,6 +112,7 @@ class AxyraDashboard {
             console.log(`✅ ${this.empleados.length} empleados cargados`);
         } catch (error) {
             console.error('❌ Error cargando empleados:', error);
+            this.empleados = [];
         }
     }
 
@@ -133,6 +142,7 @@ class AxyraDashboard {
             console.log(`✅ ${this.horas.length} registros de horas cargados`);
         } catch (error) {
             console.error('❌ Error cargando horas:', error);
+            this.horas = [];
         }
     }
 
@@ -162,6 +172,7 @@ class AxyraDashboard {
             console.log(`✅ ${this.nominas.length} nóminas cargadas`);
         } catch (error) {
             console.error('❌ Error cargando nóminas:', error);
+            this.nominas = [];
         }
     }
 
@@ -191,6 +202,7 @@ class AxyraDashboard {
             console.log(`✅ ${this.cuadres.length} cuadres de caja cargados`);
         } catch (error) {
             console.error('❌ Error cargando cuadres:', error);
+            this.cuadres = [];
         }
     }
 
@@ -206,6 +218,7 @@ class AxyraDashboard {
             localStorage.setItem('axyra_actividad', JSON.stringify(this.actividadReciente));
         } catch (error) {
             console.error('❌ Error cargando actividad reciente:', error);
+            this.actividadReciente = [];
         }
     }
 
@@ -213,476 +226,709 @@ class AxyraDashboard {
         const actividades = [];
         const now = new Date();
 
-        // Actividad de empleados
-        if (this.empleados.length > 0) {
-            const ultimoEmpleado = this.empleados[this.empleados.length - 1];
-            actividades.push({
-                tipo: 'empleado',
-                accion: 'Empleado registrado',
-                detalle: ultimoEmpleado.nombre,
-                timestamp: ultimoEmpleado.fecha_registro || now.toISOString(),
-                icono: 'fas fa-user-plus'
-            });
-        }
-
-        // Actividad de horas
-        if (this.horas.length > 0) {
-            const ultimaHora = this.horas[this.horas.length - 1];
-            const empleado = this.empleados.find(e => e.id === ultimaHora.empleado_id);
-            if (empleado) {
+        try {
+            // Actividad de empleados
+            if (this.empleados.length > 0) {
+                const ultimoEmpleado = this.empleados[this.empleados.length - 1];
                 actividades.push({
-                    tipo: 'hora',
-                    accion: 'Horas registradas',
-                    detalle: `${empleado.nombre}: ${ultimaHora.total_horas || 0} horas`,
-                    timestamp: ultimaHora.fecha || now.toISOString(),
-                    icono: 'fas fa-clock'
+                    tipo: 'empleado',
+                    accion: 'Empleado registrado',
+                    detalle: ultimoEmpleado.nombre || 'N/A',
+                    timestamp: ultimoEmpleado.fecha_registro || now.toISOString(),
+                    icono: 'fas fa-user-plus'
                 });
             }
-        }
 
-        // Actividad de nóminas
-        if (this.nominas.length > 0) {
-            const ultimaNomina = this.nominas[this.nominas.length - 1];
-            actividades.push({
-                tipo: 'nomina',
-                accion: 'Nómina generada',
-                detalle: `Quincena: ${ultimaNomina.quincena || 'N/A'}`,
-                timestamp: ultimaNomina.fecha_generacion || now.toISOString(),
-                icono: 'fas fa-file-invoice-dollar'
-            });
-        }
+            // Actividad de horas
+            if (this.horas.length > 0) {
+                const ultimaHora = this.horas[this.horas.length - 1];
+                const empleado = this.empleados.find(e => e.id === ultimaHora.empleado_id);
+                if (empleado) {
+                    actividades.push({
+                        tipo: 'hora',
+                        accion: 'Horas registradas',
+                        detalle: `${empleado.nombre}: ${ultimaHora.total_horas || 0} horas`,
+                        timestamp: ultimaHora.fecha || now.toISOString(),
+                        icono: 'fas fa-clock'
+                    });
+                }
+            }
 
-        // Actividad de cuadres
-        if (this.cuadres.length > 0) {
-            const ultimoCuadre = this.cuadres[this.cuadres.length - 1];
-            actividades.push({
-                tipo: 'cuadre',
-                accion: 'Cuadre de caja',
-                detalle: `Total: $${ultimoCuadre.total || 0}`,
-                timestamp: ultimoCuadre.fecha || now.toISOString(),
-                icono: 'fas fa-calculator'
-            });
-        }
+            // Actividad de nóminas
+            if (this.nominas.length > 0) {
+                const ultimaNomina = this.nominas[this.nominas.length - 1];
+                actividades.push({
+                    tipo: 'nomina',
+                    accion: 'Nómina generada',
+                    detalle: `Quincena: ${ultimaNomina.quincena || 'N/A'}`,
+                    timestamp: ultimaNomina.fecha_generacion || now.toISOString(),
+                    icono: 'fas fa-file-invoice-dollar'
+                });
+            }
 
-        // Ordenar por timestamp más reciente
-        return actividades.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 10);
+            // Actividad de cuadres
+            if (this.cuadres.length > 0) {
+                const ultimoCuadre = this.cuadres[this.cuadres.length - 1];
+                actividades.push({
+                    tipo: 'cuadre',
+                    accion: 'Cuadre de caja',
+                    detalle: `Total: $${ultimoCuadre.total || 0}`,
+                    timestamp: ultimoCuadre.fecha || now.toISOString(),
+                    icono: 'fas fa-calculator'
+                });
+            }
+
+            // Ordenar por timestamp más reciente
+            return actividades.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 10);
+        } catch (error) {
+            console.error('❌ Error generando actividad reciente:', error);
+            return [];
+        }
     }
 
     updateStats() {
-        // Total empleados
-        const totalEmpleados = this.empleados.length;
-        document.getElementById('totalEmpleados').textContent = totalEmpleados;
+        try {
+            // Total empleados
+            const totalEmpleados = this.empleados.length;
+            const totalEmpleadosElement = document.getElementById('totalEmpleados');
+            if (totalEmpleadosElement) {
+                totalEmpleadosElement.textContent = totalEmpleados;
+            }
 
-        // Empleados activos
-        const empleadosActivos = this.empleados.filter(e => e.estado === 'ACTIVO').length;
-        document.getElementById('empleadosActivos').textContent = empleadosActivos;
+            // Empleados activos
+            const empleadosActivos = this.empleados.filter(e => e.estado === 'ACTIVO').length;
+            const empleadosActivosElement = document.getElementById('empleadosActivos');
+            if (empleadosActivosElement) {
+                empleadosActivosElement.textContent = empleadosActivos;
+            }
 
-        // Horas trabajadas
-        const totalHoras = this.horas.reduce((sum, h) => sum + (h.total_horas || 0), 0);
-        document.getElementById('horasTrabajadas').textContent = totalHoras.toFixed(1);
+            // Horas trabajadas
+            const totalHoras = this.horas.reduce((sum, h) => sum + (h.total_horas || 0), 0);
+            const horasTrabajadasElement = document.getElementById('horasTrabajadas');
+            if (horasTrabajadasElement) {
+                horasTrabajadasElement.textContent = totalHoras.toFixed(1);
+            }
 
-        // Horas del mes
-        const mesActual = new Date().getMonth();
-        const horasMes = this.horas
-            .filter(h => new Date(h.fecha).getMonth() === mesActual)
-            .reduce((sum, h) => sum + (h.total_horas || 0), 0);
-        document.getElementById('horasMes').textContent = horasMes.toFixed(1);
+            // Horas del mes
+            const mesActual = new Date().getMonth();
+            const horasMes = this.horas
+                .filter(h => {
+                    try {
+                        return new Date(h.fecha).getMonth() === mesActual;
+                    } catch (e) {
+                        return false;
+                    }
+                })
+                .reduce((sum, h) => sum + (h.total_horas || 0), 0);
+            const horasMesElement = document.getElementById('horasMes');
+            if (horasMesElement) {
+                horasMesElement.textContent = horasMes.toFixed(1);
+            }
 
-        // Nóminas generadas
-        const nominasGeneradas = this.nominas.filter(n => n.estado === 'Generada').length;
-        document.getElementById('nominasGeneradas').textContent = nominasGeneradas;
+            // Nóminas generadas
+            const nominasGeneradas = this.nominas.filter(n => n.estado === 'Generada').length;
+            const nominasGeneradasElement = document.getElementById('nominasGeneradas');
+            if (nominasGeneradasElement) {
+                nominasGeneradasElement.textContent = nominasGeneradas;
+            }
 
-        // Comprobantes generados
-        const comprobantesGenerados = this.nominas.length;
-        document.getElementById('comprobantesGenerados').textContent = comprobantesGenerados;
+            // Comprobantes generados
+            const comprobantesGenerados = this.nominas.length;
+            const comprobantesGeneradosElement = document.getElementById('comprobantesGenerados');
+            if (comprobantesGeneradosElement) {
+                comprobantesGeneradosElement.textContent = comprobantesGenerados;
+            }
 
-        // Cuadres de caja
-        document.getElementById('cuadresCaja').textContent = this.cuadres.length;
+            // Cuadres de caja
+            const cuadresCajaElement = document.getElementById('cuadresCaja');
+            if (cuadresCajaElement) {
+                cuadresCajaElement.textContent = this.cuadres.length;
+            }
 
-        // Total salarios
-        const totalSalarios = this.empleados.reduce((sum, e) => sum + (e.salario || 0), 0);
-        document.getElementById('totalSalarios').textContent = `$${totalSalarios.toLocaleString()}`;
+            // Total salarios netos (cambiado de salarios base a netos)
+            const totalSalariosNetos = this.empleados.reduce((sum, e) => sum + this.calcularSalarioNeto(e), 0);
+            const totalSalariosElement = document.getElementById('totalSalarios');
+            if (totalSalariosElement) {
+                totalSalariosElement.textContent = `$${totalSalariosNetos.toLocaleString()}`;
+            }
 
-        // Departamentos
-        const departamentos = [...new Set(this.empleados.map(e => e.departamento).filter(Boolean))];
-        document.getElementById('departamentos').textContent = departamentos.length;
+            // Departamentos
+            const departamentos = [...new Set(this.empleados.map(e => e.departamento).filter(Boolean))];
+            const departamentosElement = document.getElementById('departamentos');
+            if (departamentosElement) {
+                departamentosElement.textContent = departamentos.length;
+            }
 
-        // Tareas pendientes (simulado)
-        document.getElementById('tareasPendientes').textContent = Math.floor(Math.random() * 5) + 1;
+            // Tareas pendientes (simulado)
+            const tareasPendientesElement = document.getElementById('tareasPendientes');
+            if (tareasPendientesElement) {
+                tareasPendientesElement.textContent = Math.floor(Math.random() * 5) + 1;
+            }
+        } catch (error) {
+            console.error('❌ Error actualizando estadísticas:', error);
+        }
     }
 
     updateCharts() {
-        this.updateEmployeeDistributionChart();
-        this.updateHoursTrendChart();
-        this.updateSalaryDistributionChart();
-        this.updateProductivityChart();
+        try {
+            this.updateEmployeeDistributionChart();
+            this.updateHoursTrendChart();
+            this.updateSalaryDistributionChart();
+            this.updateProductivityChart();
+        } catch (error) {
+            console.error('❌ Error actualizando gráficos:', error);
+        }
     }
 
     updateEmployeeDistributionChart() {
-        const ctx = document.getElementById('employeeDistributionChart');
-        if (!ctx) return;
+        try {
+            const ctx = document.getElementById('employeeDistributionChart');
+            if (!ctx) return;
 
-        const departamentos = {};
-        this.empleados.forEach(emp => {
-            const dept = emp.departamento || 'Sin departamento';
-            departamentos[dept] = (departamentos[dept] || 0) + 1;
-        });
+            const departamentos = {};
+            this.empleados.forEach(emp => {
+                const dept = emp.departamento || 'Sin departamento';
+                departamentos[dept] = (departamentos[dept] || 0) + 1;
+            });
 
-        if (this.charts.employeeDistribution) {
-            this.charts.employeeDistribution.destroy();
-        }
+            if (this.charts.employeeDistribution) {
+                this.charts.employeeDistribution.destroy();
+            }
 
-        this.charts.employeeDistribution = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(departamentos),
-                datasets: [{
-                    data: Object.values(departamentos),
-                    backgroundColor: [
-                        '#667eea', '#764ba2', '#f093fb', '#f5576c',
-                        '#4facfe', '#00f2fe', '#43e97b', '#38f9d7'
-                    ]
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
+            this.charts.employeeDistribution = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(departamentos),
+                    datasets: [{
+                        data: Object.values(departamentos),
+                        backgroundColor: [
+                            '#667eea', '#764ba2', '#f093fb', '#f5576c',
+                            '#4facfe', '#00f2fe', '#43e97b', '#38f9d7'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (error) {
+            console.error('❌ Error actualizando gráfico de distribución de empleados:', error);
+        }
     }
 
     updateHoursTrendChart() {
-        const ctx = document.getElementById('hoursTrendChart');
-        if (!ctx) return;
+        try {
+            const ctx = document.getElementById('hoursTrendChart');
+            if (!ctx) return;
 
-        // Agrupar horas por mes
-        const horasPorMes = {};
-        this.horas.forEach(hora => {
-            const fecha = new Date(hora.fecha);
-            const mes = `${fecha.getFullYear()}-${fecha.getMonth() + 1}`;
-            horasPorMes[mes] = (horasPorMes[mes] || 0) + (hora.total_horas || 0);
-        });
+            // Agrupar horas por mes
+            const horasPorMes = {};
+            this.horas.forEach(hora => {
+                try {
+                    const fecha = new Date(hora.fecha);
+                    const mes = `${fecha.getFullYear()}-${fecha.getMonth() + 1}`;
+                    horasPorMes[mes] = (horasPorMes[mes] || 0) + (hora.total_horas || 0);
+                } catch (e) {
+                    console.warn('⚠️ Fecha inválida en horas:', hora.fecha);
+                }
+            });
 
-        const meses = Object.keys(horasPorMes).sort();
-        const datos = meses.map(mes => horasPorMes[mes]);
+            const meses = Object.keys(horasPorMes).sort();
+            const datos = meses.map(mes => horasPorMes[mes]);
 
-        if (this.charts.hoursTrend) {
-            this.charts.hoursTrend.destroy();
-        }
+            if (this.charts.hoursTrend) {
+                this.charts.hoursTrend.destroy();
+            }
 
-        this.charts.hoursTrend = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: meses.map(mes => {
-                    const [year, month] = mes.split('-');
-                    return `${month}/${year}`;
-                }),
-                datasets: [{
-                    label: 'Horas Trabajadas',
-                    data: datos,
-                    borderColor: '#667eea',
-                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
+            this.charts.hoursTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: meses.map(mes => {
+                        const [year, month] = mes.split('-');
+                        return `${month}/${year}`;
+                    }),
+                    datasets: [{
+                        label: 'Horas Trabajadas',
+                        data: datos,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (error) {
+            console.error('❌ Error actualizando gráfico de tendencia de horas:', error);
+        }
     }
 
     updateSalaryDistributionChart() {
-        const ctx = document.getElementById('salaryDistributionChart');
-        if (!ctx) return;
+        try {
+            const ctx = document.getElementById('salaryDistributionChart');
+            if (!ctx) return;
 
-        // Agrupar salarios por rangos
-        const rangosSalario = {
-            'Menos de $1M': 0,
-            '$1M - $2M': 0,
-            '$2M - $3M': 0,
-            'Más de $3M': 0
-        };
+            // Agrupar salarios por rangos
+            const rangosSalario = {
+                'Menos de $1M': 0,
+                '$1M - $2M': 0,
+                '$2M - $3M': 0,
+                'Más de $3M': 0
+            };
 
-        this.empleados.forEach(emp => {
-            const salario = emp.salario || 0;
-            if (salario < 1000000) rangosSalario['Menos de $1M']++;
-            else if (salario < 2000000) rangosSalario['$1M - $2M']++;
-            else if (salario < 3000000) rangosSalario['$2M - $3M']++;
-            else rangosSalario['Más de $3M']++;
-        });
+            this.empleados.forEach(emp => {
+                const salario = emp.salario || 0;
+                if (salario < 1000000) rangosSalario['Menos de $1M']++;
+                else if (salario < 2000000) rangosSalario['$1M - $2M']++;
+                else if (salario < 3000000) rangosSalario['$2M - $3M']++;
+                else rangosSalario['Más de $3M']++;
+            });
 
-        if (this.charts.salaryDistribution) {
-            this.charts.salaryDistribution.destroy();
-        }
+            if (this.charts.salaryDistribution) {
+                this.charts.salaryDistribution.destroy();
+            }
 
-        this.charts.salaryDistribution = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: Object.keys(rangosSalario),
-                datasets: [{
-                    label: 'Empleados',
-                    data: Object.values(rangosSalario),
-                    backgroundColor: '#667eea'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
+            this.charts.salaryDistribution = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(rangosSalario),
+                    datasets: [{
+                        label: 'Empleados',
+                        data: Object.values(rangosSalario),
+                        backgroundColor: '#667eea'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (error) {
+            console.error('❌ Error actualizando gráfico de distribución de salarios:', error);
+        }
     }
 
     updateProductivityChart() {
-        const ctx = document.getElementById('productivityChart');
-        if (!ctx) return;
+        try {
+            const ctx = document.getElementById('productivityChart');
+            if (!ctx) return;
 
-        // Calcular métricas de productividad
-        const totalEmpleados = this.empleados.length;
-        const empleadosActivos = this.empleados.filter(e => e.estado === 'ACTIVO').length;
-        const totalHoras = this.horas.reduce((sum, h) => sum + (h.total_horas || 0), 0);
-        const promedioHoras = totalEmpleados > 0 ? totalHoras / totalEmpleados : 0;
+            // Calcular métricas de productividad
+            const totalEmpleados = this.empleados.length;
+            const empleadosActivos = this.empleados.filter(e => e.estado === 'ACTIVO').length;
+            const totalHoras = this.horas.reduce((sum, h) => sum + (h.total_horas || 0), 0);
+            const promedioHoras = totalEmpleados > 0 ? totalHoras / totalEmpleados : 0;
 
-        if (this.charts.productivity) {
-            this.charts.productivity.destroy();
-        }
+            if (this.charts.productivity) {
+                this.charts.productivity.destroy();
+            }
 
-        this.charts.productivity = new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['Empleados Activos', 'Horas Promedio', 'Eficiencia', 'Ocupación'],
-                datasets: [{
-                    label: 'Métricas',
-                    data: [
-                        (empleadosActivos / totalEmpleados) * 100,
-                        Math.min((promedioHoras / 160) * 100, 100), // 160 horas mensuales estándar
-                        85, // Eficiencia simulada
-                        90  // Ocupación simulada
-                    ],
-                    borderColor: '#667eea',
-                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
-                    pointBackgroundColor: '#667eea'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        max: 100
+            this.charts.productivity = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Empleados Activos', 'Horas Promedio', 'Eficiencia', 'Ocupación'],
+                    datasets: [{
+                        label: 'Métricas',
+                        data: [
+                            totalEmpleados > 0 ? (empleadosActivos / totalEmpleados) * 100 : 0,
+                            Math.min((promedioHoras / 160) * 100, 100), // 160 horas mensuales estándar
+                            85, // Eficiencia simulada
+                            90  // Ocupación simulada
+                        ],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        pointBackgroundColor: '#667eea'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (error) {
+            console.error('❌ Error actualizando gráfico de productividad:', error);
+        }
     }
 
     updateWelcomeMessage() {
-        const welcomeTitle = document.getElementById('welcomeTitle');
-        const welcomeMessage = document.getElementById('welcomeMessage');
-        const welcomeTime = document.getElementById('welcomeTime');
-        const companyName = document.getElementById('companyName');
-        const companyNIT = document.getElementById('companyNIT');
+        try {
+            const welcomeTitle = document.getElementById('welcomeTitle');
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            const welcomeTime = document.getElementById('welcomeTime');
+            const companyName = document.getElementById('companyName');
+            const companyNIT = document.getElementById('companyNIT');
 
-        if (welcomeTitle) {
+            if (welcomeTitle) {
+                const userData = localStorage.getItem('axyra_isolated_user');
+                if (userData) {
+                    const user = JSON.parse(userData);
+                    welcomeTitle.textContent = `¡Bienvenido, ${user.nombre || user.username}!`;
+                }
+            }
+
+            if (welcomeTime) {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+                welcomeTime.textContent = now.toLocaleDateString('es-CO', options);
+            }
+
+            // Cargar nombre de empresa desde configuración
+            if (companyName) {
+                const configEmpresa = localStorage.getItem('axyra_config_empresa');
+                if (configEmpresa) {
+                    try {
+                        const config = JSON.parse(configEmpresa);
+                        companyName.textContent = config.nombre || 'Villa Venecia';
+                    } catch (e) {
+                        companyName.textContent = 'Villa Venecia';
+                    }
+                } else {
+                    companyName.textContent = 'Villa Venecia';
+                }
+            }
+
+            if (companyNIT) {
+                const configEmpresa = localStorage.getItem('axyra_config_empresa');
+                if (configEmpresa) {
+                    try {
+                        const config = JSON.parse(configEmpresa);
+                        companyNIT.textContent = `NIT: ${config.nit || '900.123.456-7'}`;
+                    } catch (e) {
+                        companyNIT.textContent = 'NIT: 900.123.456-7';
+                    }
+                } else {
+                    companyNIT.textContent = 'NIT: 900.123.456-7';
+                }
+            }
+        } catch (error) {
+            console.error('❌ Error actualizando mensaje de bienvenida:', error);
+        }
+    }
+
+    updateSecurityStatus() {
+        try {
+            // Actualizar estado del 2FA
+            this.update2FAStatus();
+            
+            // Actualizar estado del responsive design
+            this.updateResponsiveStatus();
+            
+            // Actualizar estado de la sesión
+            this.updateSessionStatus();
+        } catch (error) {
+            console.error('❌ Error actualizando estado de seguridad:', error);
+        }
+    }
+
+    update2FAStatus() {
+        try {
+            const statusElement = document.getElementById('2faStatus');
+            if (!statusElement) return;
+
             const userData = localStorage.getItem('axyra_isolated_user');
             if (userData) {
                 const user = JSON.parse(userData);
-                welcomeTitle.textContent = `¡Bienvenido, ${user.nombre || user.username}!`;
+                const isEnabled = user.twoFactorEnabled || false;
+                
+                if (isEnabled) {
+                    statusElement.innerHTML = `
+                        <span class="axyra-status-enabled">
+                            <i class="fas fa-shield-check"></i> 2FA Activado
+                        </span>
+                    `;
+                } else {
+                    statusElement.innerHTML = `
+                        <span class="axyra-status-disabled">
+                            <i class="fas fa-shield-alt"></i> 2FA Desactivado
+                        </span>
+                    `;
+                }
             }
+        } catch (error) {
+            console.error('❌ Error actualizando estado 2FA:', error);
         }
+    }
 
-        if (welcomeTime) {
-            const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            };
-            welcomeTime.textContent = now.toLocaleDateString('es-CO', options);
+    updateResponsiveStatus() {
+        try {
+            const statusElement = document.getElementById('responsiveStatus');
+            if (!statusElement) return;
+
+            if (window.axyraResponsive) {
+                const breakpoint = window.axyraResponsive.getCurrentBreakpoint();
+                const deviceType = this.getDeviceType(breakpoint);
+                statusElement.textContent = deviceType;
+            } else {
+                statusElement.textContent = 'No disponible';
+            }
+        } catch (error) {
+            console.error('❌ Error actualizando estado responsive:', error);
         }
+    }
 
-        if (companyName) {
-            companyName.textContent = 'Villa Venecia';
+    getDeviceType(breakpoint) {
+        switch (breakpoint) {
+            case 'mobile':
+                return '📱 Móvil';
+            case 'tablet':
+                return '📱 Tablet';
+            case 'desktop':
+                return '💻 Desktop';
+            default:
+                return '💻 Desktop';
         }
+    }
 
-        if (companyNIT) {
-            companyNIT.textContent = 'NIT: 900.123.456-7';
+    updateSessionStatus() {
+        try {
+            const timeElement = document.getElementById('sessionTimeRemaining');
+            if (!timeElement) return;
+
+            // Simular tiempo de sesión restante
+            const sessionTime = 30; // minutos
+            timeElement.textContent = `${sessionTime}:00`;
+        } catch (error) {
+            console.error('❌ Error actualizando estado de sesión:', error);
         }
     }
 
     updateActividadReciente() {
-        const container = document.getElementById('actividadReciente');
-        if (!container) return;
+        try {
+            const container = document.getElementById('actividadReciente');
+            if (!container) return;
 
-        container.innerHTML = this.actividadReciente.map(actividad => `
-            <div class="axyra-activity-item">
-                <div class="axyra-activity-icon">
-                    <i class="${actividad.icono}"></i>
+            container.innerHTML = this.actividadReciente.map(actividad => `
+                <div class="axyra-activity-item">
+                    <div class="axyra-activity-icon">
+                        <i class="${actividad.icono}"></i>
+                    </div>
+                    <div class="axyra-activity-content">
+                        <div class="axyra-activity-action">${actividad.accion}</div>
+                        <div class="axyra-activity-detail">${actividad.detalle}</div>
+                        <div class="axyra-activity-time">${this.formatTimestamp(actividad.timestamp)}</div>
+                    </div>
                 </div>
-                <div class="axyra-activity-content">
-                    <div class="axyra-activity-action">${actividad.accion}</div>
-                    <div class="axyra-activity-detail">${actividad.detalle}</div>
-                    <div class="axyra-activity-time">${this.formatTimestamp(actividad.timestamp)}</div>
-                </div>
-            </div>
-        `).join('');
+            `).join('');
+        } catch (error) {
+            console.error('❌ Error actualizando actividad reciente:', error);
+        }
     }
 
     formatTimestamp(timestamp) {
-        const fecha = new Date(timestamp);
-        const ahora = new Date();
-        const diffMs = ahora - fecha;
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMs / 3600000);
-        const diffDays = Math.floor(diffMs / 86400000);
+        try {
+            const fecha = new Date(timestamp);
+            const ahora = new Date();
+            const diffMs = ahora - fecha;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
 
-        if (diffMins < 1) return 'Hace un momento';
-        if (diffMins < 60) return `Hace ${diffMins} minutos`;
-        if (diffHours < 24) return `Hace ${diffHours} horas`;
-        if (diffDays < 7) return `Hace ${diffDays} días`;
-        return fecha.toLocaleDateString('es-CO');
+            if (diffMins < 1) return 'Hace un momento';
+            if (diffMins < 60) return `Hace ${diffMins} minutos`;
+            if (diffHours < 24) return `Hace ${diffHours} horas`;
+            if (diffDays < 7) return `Hace ${diffDays} días`;
+            return fecha.toLocaleDateString('es-CO');
+        } catch (error) {
+            return 'Fecha no disponible';
+        }
     }
 
     setupRealTimeUpdates() {
-        // Actualizar actividad reciente cada 30 segundos
-        setInterval(() => {
-            this.loadActividadReciente();
-            this.updateActividadReciente();
-        }, 30000);
+        try {
+            // Actualizar actividad reciente cada 30 segundos
+            setInterval(() => {
+                this.loadActividadReciente();
+                this.updateActividadReciente();
+            }, 30000);
 
-        // Escuchar cambios en localStorage para actualizaciones en tiempo real
-        window.addEventListener('storage', (e) => {
-            if (e.key && e.key.startsWith('axyra_')) {
-                this.loadDashboardData();
-            }
-        });
+            // Escuchar cambios en localStorage para actualizaciones en tiempo real
+            window.addEventListener('storage', (e) => {
+                if (e.key && e.key.startsWith('axyra_')) {
+                    this.loadDashboardData();
+                }
+            });
+        } catch (error) {
+            console.error('❌ Error configurando actualizaciones en tiempo real:', error);
+        }
     }
 
     startAutoRefresh() {
-        // Actualizar datos cada 5 minutos
-        this.updateInterval = setInterval(() => {
-            this.loadDashboardData();
-        }, 300000);
+        try {
+            // Actualizar datos cada 5 minutos
+            this.updateInterval = setInterval(() => {
+                this.loadDashboardData();
+            }, 300000);
+        } catch (error) {
+            console.error('❌ Error iniciando auto-refresh:', error);
+        }
     }
 
     // Funciones para mostrar detalles
     mostrarDetalleEmpleados() {
-        this.showModal('Detalle de Empleados', this.createEmpleadosDetailHTML());
+        try {
+            this.showModal('Detalle de Empleados', this.createEmpleadosDetailHTML());
+        } catch (error) {
+            console.error('❌ Error mostrando detalle de empleados:', error);
+        }
     }
 
     mostrarDetalleHoras() {
-        this.showModal('Detalle de Horas', this.createHorasDetailHTML());
+        try {
+            this.showModal('Detalle de Horas', this.createHorasDetailHTML());
+        } catch (error) {
+            console.error('❌ Error mostrando detalle de horas:', error);
+        }
     }
 
     mostrarDetalleComprobantes() {
-        this.showModal('Detalle de Comprobantes', this.createComprobantesDetailHTML());
+        try {
+            this.showModal('Detalle de Comprobantes', this.createComprobantesDetailHTML());
+        } catch (error) {
+            console.error('❌ Error mostrando detalle de comprobantes:', error);
+        }
     }
 
     mostrarDetalleSalarios() {
-        this.showModal('Detalle de Salarios', this.createSalariosDetailHTML());
+        try {
+            this.showModal('Detalle de Salarios Netos', this.createSalariosDetailHTML());
+        } catch (error) {
+            console.error('❌ Error mostrando detalle de salarios:', error);
+        }
     }
 
     createEmpleadosDetailHTML() {
-        return `
-            <div class="axyra-empleados-lista">
-                ${this.empleados.map(emp => `
-                    <div class="axyra-empleado-item">
-                        <div class="axyra-empleado-info">
-                            <strong>${emp.nombre}</strong>
-                            <span>Cédula: ${emp.cedula}</span>
-                            <span>Departamento: ${emp.departamento || 'Sin asignar'}</span>
-                            <span>Estado: ${emp.estado || 'ACTIVO'}</span>
+        try {
+            return `
+                <div class="axyra-empleados-lista">
+                    ${this.empleados.map(emp => `
+                        <div class="axyra-empleado-item">
+                            <div class="axyra-empleado-info">
+                                <strong>${emp.nombre || 'N/A'}</strong>
+                                <span>Cédula: ${emp.cedula || 'N/A'}</span>
+                                <span>Departamento: ${emp.departamento || 'Sin asignar'}</span>
+                                <span>Estado: ${emp.estado || 'ACTIVO'}</span>
+                            </div>
                         </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
+                    `).join('')}
+                </div>
+            `;
+        } catch (error) {
+            console.error('❌ Error creando HTML de empleados:', error);
+            return '<p>Error cargando información de empleados</p>';
+        }
     }
 
     createHorasDetailHTML() {
-        const totalHoras = this.horas.reduce((sum, h) => sum + (h.total_horas || 0), 0);
-        return `
-            <div class="axyra-horas-lista">
-                <div class="axyra-horas-resumen">
-                    <strong>Total de horas registradas: ${totalHoras.toFixed(1)}</strong>
-                </div>
-                ${this.horas.slice(-10).map(hora => {
-                    const empleado = this.empleados.find(e => e.id === hora.empleado_id);
-                    return `
-                        <div class="axyra-hora-item">
-                            <div class="axyra-hora-info">
-                                <strong>${empleado ? empleado.nombre : 'Empleado no encontrado'}</strong>
-                                <span>Fecha: ${hora.fecha || 'N/A'}</span>
-                                <span>Horas: ${hora.total_horas || 0}</span>
+        try {
+            const totalHoras = this.horas.reduce((sum, h) => sum + (h.total_horas || 0), 0);
+            return `
+                <div class="axyra-horas-lista">
+                    <div class="axyra-horas-resumen">
+                        <strong>Total de horas registradas: ${totalHoras.toFixed(1)}</strong>
+                    </div>
+                    ${this.horas.slice(-10).map(hora => {
+                        const empleado = this.empleados.find(e => e.id === hora.empleado_id);
+                        return `
+                            <div class="axyra-hora-item">
+                                <div class="axyra-hora-info">
+                                    <strong>${empleado ? empleado.nombre : 'Empleado no encontrado'}</strong>
+                                    <span>Fecha: ${hora.fecha || 'N/A'}</span>
+                                    <span>Horas: ${hora.total_horas || 0}</span>
+                                </div>
                             </div>
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-        `;
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        } catch (error) {
+            console.error('❌ Error creando HTML de horas:', error);
+            return '<p>Error cargando información de horas</p>';
+        }
     }
 
     createComprobantesDetailHTML() {
-        return `
-            <div class="axyra-comprobantes-lista">
-                ${this.nominas.map(nomina => `
-                    <div class="axyra-comprobante-item">
-                        <div class="axyra-comprobante-info">
-                            <strong>Quincena: ${nomina.quincena || 'N/A'}</strong>
-                            <span>Estado: ${nomina.estado || 'Pendiente'}</span>
-                            <span>Fecha: ${nomina.fecha_generacion || 'N/A'}</span>
+        try {
+            return `
+                <div class="axyra-comprobantes-lista">
+                    ${this.nominas.map(nomina => `
+                        <div class="axyra-comprobante-item">
+                            <div class="axyra-comprobante-info">
+                                <strong>Quincena: ${nomina.quincena || 'N/A'}</strong>
+                                <span>Estado: ${nomina.estado || 'Pendiente'}</span>
+                                <span>Fecha: ${nomina.fecha_generacion || 'N/A'}</span>
+                            </div>
                         </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
+                    `).join('')}
+                </div>
+            `;
+        } catch (error) {
+            console.error('❌ Error creando HTML de comprobantes:', error);
+            return '<p>Error cargando información de comprobantes</p>';
+        }
     }
 
     createSalariosDetailHTML() {
-        // Calcular salarios netos para cada empleado
-        const empleadosConSalarioNeto = this.empleados.map(emp => {
-            const salarioNeto = this.calcularSalarioNeto(emp);
-            return { ...emp, salarioNeto };
-        });
-        
-        const totalSalariosNetos = empleadosConSalarioNeto.reduce((sum, e) => sum + (e.salarioNeto || 0), 0);
-        
-        return `
-            <div class="axyra-salarios-lista">
-                ${empleadosConSalarioNeto.map(emp => `
-                    <div class="axyra-salario-item">
-                        <div class="axyra-salario-info">
-                            <strong>${emp.nombre}</strong>
-                            <span>Salario Neto: $${(emp.salarioNeto || 0).toLocaleString()}</span>
-                            <span>Salario Base: $${(emp.salario || 0).toLocaleString()}</span>
-                            <span>Departamento: ${emp.departamento || 'Sin asignar'}</span>
+        try {
+            // Calcular salarios netos para cada empleado
+            const empleadosConSalarioNeto = this.empleados.map(emp => {
+                const salarioNeto = this.calcularSalarioNeto(emp);
+                return { ...emp, salarioNeto };
+            });
+            
+            const totalSalariosNetos = empleadosConSalarioNeto.reduce((sum, e) => sum + (e.salarioNeto || 0), 0);
+            
+            return `
+                <div class="axyra-salarios-lista">
+                    ${empleadosConSalarioNeto.map(emp => `
+                        <div class="axyra-salario-item">
+                            <div class="axyra-salario-info">
+                                <strong>${emp.nombre || 'N/A'}</strong>
+                                <span>Salario Neto: $${(emp.salarioNeto || 0).toLocaleString()}</span>
+                                <span>Salario Base: $${(emp.salario || 0).toLocaleString()}</span>
+                                <span>Departamento: ${emp.departamento || 'Sin asignar'}</span>
+                            </div>
                         </div>
+                    `).join('')}
+                    <div class="axyra-salario-total">
+                        <strong>Total Salarios Netos: $${totalSalariosNetos.toLocaleString()}</strong>
                     </div>
-                `).join('')}
-                <div class="axyra-salario-total">
-                    <strong>Total Salarios Netos: $${totalSalariosNetos.toLocaleString()}</strong>
                 </div>
-            </div>
-        `;
+            `;
+        } catch (error) {
+            console.error('❌ Error creando HTML de salarios:', error);
+            return '<p>Error cargando información de salarios</p>';
+        }
     }
 
     calcularSalarioNeto(empleado) {
@@ -778,55 +1024,68 @@ class AxyraDashboard {
             return Math.max(0, Math.round(salarioNeto));
             
         } catch (error) {
-            console.error('Error calculando salario neto para', empleado.nombre, error);
+            console.error('❌ Error calculando salario neto para', empleado.nombre, error);
             // En caso de error, retornar el salario base como fallback
             return empleado.salario || 0;
         }
     }
     
     obtenerQuincenaActual() {
-        const ahora = new Date();
-        const dia = ahora.getDate();
-        const mes = ahora.getMonth() + 1;
-        const año = ahora.getFullYear();
-        
-        // Determinar quincena basándose en el día del mes
-        if (dia <= 15) {
-            return `15_${mes.toString().padStart(2, '0')}_${año}`;
-        } else {
-            return `31_${mes.toString().padStart(2, '0')}_${año}`;
+        try {
+            const ahora = new Date();
+            const dia = ahora.getDate();
+            const mes = ahora.getMonth() + 1;
+            const año = ahora.getFullYear();
+            
+            // Determinar quincena basándose en el día del mes
+            if (dia <= 15) {
+                return `15_${mes.toString().padStart(2, '0')}_${año}`;
+            } else {
+                return `31_${mes.toString().padStart(2, '0')}_${año}`;
+            }
+        } catch (error) {
+            console.error('❌ Error obteniendo quincena actual:', error);
+            return '15_01_2025'; // Fallback
         }
     }
 
     showModal(title, content) {
-        const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.innerHTML = `
-            <div class="axyra-modal-content">
-                <div class="axyra-modal-header">
-                    <h3>${title}</h3>
-                    <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
+        try {
+            const modal = document.createElement('div');
+            modal.className = 'axyra-modal';
+            modal.innerHTML = `
+                <div class="axyra-modal-content">
+                    <div class="axyra-modal-header">
+                        <h3>${title}</h3>
+                        <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="axyra-modal-body">
+                        ${content}
+                    </div>
                 </div>
-                <div class="axyra-modal-body">
-                    ${content}
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
+            `;
+            document.body.appendChild(modal);
+        } catch (error) {
+            console.error('❌ Error mostrando modal:', error);
+        }
     }
 
     showLoginMessage() {
-        const container = document.querySelector('.axyra-section');
-        if (container) {
-            container.innerHTML = `
-                <div class="axyra-login-message">
-                    <h2>Inicia sesión para continuar</h2>
-                    <p>Necesitas autenticarte para acceder al dashboard</p>
-                    <a href="../../login.html" class="axyra-btn axyra-btn-primary">Ir al Login</a>
-                </div>
-            `;
+        try {
+            const container = document.querySelector('.axyra-section');
+            if (container) {
+                container.innerHTML = `
+                    <div class="axyra-login-message">
+                        <h2>Inicia sesión para continuar</h2>
+                        <p>Necesitas autenticarte para acceder al dashboard</p>
+                        <a href="../../login.html" class="axyra-btn axyra-btn-primary">Ir al Login</a>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            console.error('❌ Error mostrando mensaje de login:', error);
         }
     }
 
@@ -834,12 +1093,30 @@ class AxyraDashboard {
         console.error(message);
         // Aquí podrías mostrar una notificación visual
     }
+
+    // Limpiar recursos al destruir
+    destroy() {
+        if (this.updateInterval) {
+            clearInterval(this.updateInterval);
+        }
+        if (this.charts) {
+            Object.values(this.charts).forEach(chart => {
+                if (chart && typeof chart.destroy === 'function') {
+                    chart.destroy();
+                }
+            });
+        }
+    }
 }
 
 // Inicializar dashboard cuando se carga la página
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Dashboard cargado, inicializando...');
-    window.axyraDashboard = new AxyraDashboard();
+    try {
+        window.axyraDashboard = new AxyraDashboard();
+    } catch (error) {
+        console.error('❌ Error inicializando dashboard:', error);
+    }
 });
 
 // Funciones globales para los botones del HTML
@@ -866,3 +1143,22 @@ window.mostrarDetalleSalarios = function() {
         window.axyraDashboard.mostrarDetalleSalarios();
     }
 };
+
+// Funciones para el sistema de seguridad
+window.resetSessionTimeout = function() {
+    try {
+        if (window.axyraSessionTimeout) {
+            window.axyraSessionTimeout.reset();
+            console.log('✅ Sesión renovada');
+        }
+    } catch (error) {
+        console.error('❌ Error renovando sesión:', error);
+    }
+};
+
+// Limpiar recursos al cerrar la página
+window.addEventListener('beforeunload', function() {
+    if (window.axyraDashboard) {
+        window.axyraDashboard.destroy();
+    }
+});

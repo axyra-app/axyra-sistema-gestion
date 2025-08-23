@@ -1,36 +1,10 @@
 /* ========================================
-   CORRECCIONES DE MODALES Y Z-INDEX
+   CORRECCIONES DE MODALES Y Z-INDEX AXYRA
    ======================================== */
 
-/* Asegurar que los modales estén por encima del header */
-.modal-overlay {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  background-color: rgba(0, 0, 0, 0.5) !important;
-  display: none !important; /* Por defecto oculto */
-  justify-content: center !important;
-  align-items: center !important;
-  z-index: 9999 !important; /* Z-index muy alto para estar por encima de todo */
-}
-
-.modal-content {
-  background: white !important;
-  border-radius: 12px !important;
-  padding: 0 !important;
-  max-width: 90% !important;
-  max-height: 90vh !important;
-  overflow-y: auto !important;
-  position: relative !important;
-  z-index: 10000 !important; /* Z-index más alto que el overlay */
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
-}
-
-/* Asegurar que el header no interfiera con los modales */
+/* Header con z-index menor que los modales */
 .axyra-header {
-  z-index: 1000 !important; /* Z-index menor que los modales */
+  z-index: 999 !important; /* Z-index menor que los modales */
   position: relative !important;
 }
 
@@ -47,6 +21,76 @@
 .axyra-modal-close {
   z-index: 10002 !important; /* Z-index más alto para el botón de cerrar */
   position: relative;
+}
+
+/* Asegurar que todos los modales estén por encima del header */
+.modal,
+.modal-dialog,
+.modal-content,
+.modal-header,
+.modal-body,
+.modal-footer {
+  z-index: 10000 !important;
+}
+
+/* Botones de cerrar modales */
+.modal .close,
+.modal .btn-close,
+.modal-header .close {
+  z-index: 10001 !important;
+  position: relative;
+}
+
+/* Dropdowns y menús desplegables */
+.dropdown-menu,
+.dropdown-toggle {
+  z-index: 10003 !important;
+}
+
+/* Tooltips y popovers */
+.tooltip,
+.popover {
+  z-index: 10004 !important;
+}
+
+/* Notificaciones y alertas */
+.alert,
+.notification,
+.toast {
+  z-index: 10005 !important;
+}
+
+/* Overlays y backdrops */
+.modal-backdrop,
+.overlay,
+.backdrop {
+  z-index: 9999 !important;
+}
+
+/* Asegurar que el contenido principal esté por debajo del header */
+.axyra-section,
+.axyra-container,
+main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Correcciones específicas para elementos del dashboard */
+.axyra-stats-grid,
+.axyra-stats-grid-secondary,
+.axyra-card,
+.axyra-grid {
+  position: relative;
+  z-index: 1;
+}
+
+/* Asegurar que los gráficos estén por encima del header */
+#employeeDistributionChart,
+#hoursTrendChart,
+#salaryDistributionChart,
+#productivityChart {
+  position: relative;
+  z-index: 2;
 }
 
 /* Correcciones específicas para el modal de nómina */

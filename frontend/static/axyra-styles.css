@@ -85,7 +85,7 @@ body {
   color: var(--axyra-dark-blue);
   background: var(--axyra-light-gray);
   overflow-x: hidden;
-  padding-top: 50px; /* REDUCIDO DE 60px A 50px PARA HEADER MÁS PEQUEÑO */
+  padding-top: 60px; /* AJUSTADO PARA HEADER MÁS COMPACTO */
 }
 
 /* ========================================
@@ -135,14 +135,14 @@ p {
    ======================================== */
 .axyra-header {
   background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  padding: 8px 0; /* REDUCIDO DE 12px A 8px PARA HEADER MÁS PEQUEÑO */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  padding: 6px 0; /* REDUCIDO DE 8px A 6px PARA HEADER MÁS COMPACTO */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000; /* VALOR REDUCIDO PARA NO INTERFERIR CON MODALES */
-  border-bottom: 4px solid #2563eb;
+  z-index: 999; /* VALOR REDUCIDO PARA NO INTERFERIR CON MODALES */
+  border-bottom: 3px solid #2563eb;
   backdrop-filter: blur(10px);
 }
 
