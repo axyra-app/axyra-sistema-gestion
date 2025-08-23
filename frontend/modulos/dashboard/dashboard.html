@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AXYRA - Dashboard</title>
     <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="stylesheet" href="dashboard-styles.css" />
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -82,7 +83,7 @@
           <div class="axyra-welcome-content">
             <h2 class="axyra-welcome-title" id="welcomeTitle">¡Bienvenido a AXYRA!</h2>
             <p class="axyra-welcome-message" id="welcomeMessage">
-              Esperamos que tengas un excelente día gestionando tu empresa
+              Sistema de Gestión Empresarial - Villa Venecia
             </p>
             <div class="axyra-welcome-time" id="welcomeTime"></div>
             <div class="axyra-company-info" id="companyInfo">
@@ -253,7 +254,7 @@
               </div>
               <div>
                 <h3 class="axyra-card-title">Distribución de Salarios</h3>
-                <p class="axyra-card-subtitle">Por departamento</p>
+                <p class="axyra-card-subtitle">Por rango salarial</p>
               </div>
             </div>
             <div class="axyra-card-content">
@@ -280,94 +281,7 @@
         <!-- Configuración Regional -->
         <div class="axyra-grid axyra-grid-2"></div>
 
-        <!-- Panel de Configuración -->
-        <div class="axyra-card">
-          <div class="axyra-card-header">
-            <div class="axyra-card-icon">
-              <i class="fas fa-cog"></i>
-            </div>
-            <div>
-              <h3 class="axyra-card-title">Configuración de Cuenta</h3>
-              <p class="axyra-card-subtitle">Gestiona tu perfil y configuraciones de seguridad</p>
-            </div>
-          </div>
-          <div class="axyra-card-content">
-            <div class="axyra-config-grid">
-              <!-- Perfil de Usuario -->
-              <div class="axyra-config-section">
-                <h4 class="axyra-config-title"><i class="fas fa-user"></i> Perfil de Usuario</h4>
-                <div class="axyra-config-item">
-                  <label>Nombre de Usuario:</label>
-                  <input type="text" id="configUsername" class="axyra-config-input" />
-                  <button class="axyra-config-btn" onclick="actualizarUsername()">
-                    <i class="fas fa-save"></i> Actualizar
-                  </button>
-                </div>
-                <div class="axyra-config-item">
-                  <label>Email:</label>
-                  <input type="email" id="configEmail" class="axyra-config-input" readonly />
-                  <span class="axyra-config-status" id="emailStatus">No verificado</span>
-                </div>
-              </div>
 
-              <!-- Seguridad -->
-              <div class="axyra-config-section">
-                <h4 class="axyra-config-title"><i class="fas fa-shield-alt"></i> Seguridad</h4>
-                <div class="axyra-config-item">
-                  <label>Cambiar Contraseña:</label>
-                  <button class="axyra-config-btn" onclick="mostrarModalCambiarPassword()">
-                    <i class="fas fa-key"></i> Cambiar
-                  </button>
-                </div>
-                <div class="axyra-config-item">
-                  <label>Autenticación 2FA:</label>
-                  <div class="axyra-2fa-controls">
-                    <button class="axyra-config-btn" id="btn2FA" onclick="toggle2FA()">
-                      <i class="fas fa-toggle-off"></i> Deshabilitado
-                    </button>
-                    <button
-                      class="axyra-config-btn"
-                      onclick="configurarGoogleAuthenticator()"
-                      style="display: none"
-                      id="btnGoogleAuth"
-                    >
-                      <i class="fab fa-google"></i> Google Auth
-                    </button>
-                  </div>
-                  <small class="axyra-help-text">El 2FA solo se pedirá si lo tienes habilitado</small>
-                </div>
-                <div class="axyra-config-item">
-                  <label>Verificación de Email:</label>
-                  <button class="axyra-config-btn" onclick="enviarVerificacionEmail()" id="btnVerificarEmail">
-                    <i class="fas fa-envelope"></i> Verificar
-                  </button>
-                </div>
-              </div>
-
-              <!-- Preferencias -->
-              <div class="axyra-config-section">
-                <h4 class="axyra-config-title"><i class="fas fa-sliders-h"></i> Preferencias</h4>
-                <div class="axyra-config-item">
-                  <label>Recordar Sesión:</label>
-                  <select id="configRememberSession" class="axyra-config-select" onchange="actualizarPreferencias()">
-                    <option value="0">Siempre pedir login</option>
-                    <option value="1">1 día</option>
-                    <option value="7">1 semana</option>
-                    <option value="30">1 mes</option>
-                  </select>
-                </div>
-                <div class="axyra-config-item">
-                  <label>Notificaciones:</label>
-                  <label class="axyra-checkbox">
-                    <input type="checkbox" id="configNotificaciones" onchange="actualizarPreferencias()" />
-                    <span class="checkmark"></span>
-                    Recibir notificaciones por email
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <!-- Actividad Reciente -->
         <div class="axyra-card">
@@ -397,45 +311,22 @@
             </div>
           </div>
           <div class="axyra-actions-bar">
-            <button
-              onclick="mostrarModalAccion('Agregar Empleado', '¿Deseas ir a la página de empleados para agregar un nuevo empleado?', 'empleados')"
-              class="axyra-btn axyra-btn-primary"
-            >
-              <i class="fas fa-user-plus"></i> Agregar Empleado
-            </button>
-            <button
-              onclick="mostrarModalAccion('Registrar Horas', '¿Deseas ir a la página de horas para registrar el tiempo trabajado?', 'horas')"
-              class="axyra-btn axyra-btn-secondary"
-            >
-              <i class="fas fa-clock"></i> Registrar Horas
-            </button>
-            <button
-              onclick="mostrarModalAccion('Generar Nómina', '¿Deseas ir a la página de nómina para generar el reporte de salarios?', 'nomina')"
-              class="axyra-btn axyra-btn-success"
-            >
-              <i class="fas fa-file-invoice-dollar"></i> Generar Nómina
-            </button>
-            <button
-              onclick="mostrarModalAccion('Cuadre de Caja', '¿Deseas ir a la página de cuadre de caja para revisar los ingresos?', 'cuadre')"
-              class="axyra-btn axyra-btn-info"
-            >
-              <i class="fas fa-calculator"></i> Cuadre de Caja
-            </button>
-            <button
-              onclick="mostrarModalConfirmacion('Limpiar Datos', '¿Estás seguro de que deseas limpiar todos los datos corruptos del sistema? Esta acción no se puede deshacer.', 'limpiarDatosCorruptos')"
-              class="axyra-btn axyra-btn-warning"
-            >
-              <i class="fas fa-broom"></i> Limpiar Datos
-            </button>
-            <button
-              onclick="mostrarModalConfirmacion('Resetear Todo', '⚠️ ADVERTENCIA: ¿Estás completamente seguro de que deseas eliminar TODOS los datos del sistema? Esta acción es IRREVERSIBLE y eliminará toda la información.', 'resetearLocalStorage')"
-              class="axyra-btn axyra-btn-error"
-            >
-              <i class="fas fa-trash"></i> Resetear Todo
-            </button>
-            <button onclick="refrescarDashboard()" class="axyra-btn axyra-btn-ghost">
-              <i class="fas fa-sync-alt"></i> Actualizar
-            </button>
+            <a href="../empleados/empleados.html" class="axyra-action-btn">
+              <i class="fas fa-user-plus"></i>
+              <span>Registrar Empleado</span>
+            </a>
+            <a href="../horas/gestionar_horas.html" class="axyra-action-btn">
+              <i class="fas fa-clock"></i>
+              <span>Registrar Horas</span>
+            </a>
+            <a href="../nomina/gestionar_nomina.html" class="axyra-action-btn">
+              <i class="fas fa-file-invoice-dollar"></i>
+              <span>Generar Nómina</span>
+            </a>
+            <a href="../cuadre_caja/cuadre_caja.html" class="axyra-action-btn">
+              <i class="fas fa-calculator"></i>
+              <span>Cuadre de Caja</span>
+            </a>
           </div>
         </div>
       </div>
@@ -4378,6 +4269,159 @@
         font-style: italic;
       }
 
+      /* Estilos para acciones rápidas */
+      .axyra-actions-bar {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .axyra-action-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        text-align: center;
+        gap: 0.5rem;
+      }
+
+      .axyra-action-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        color: white;
+        text-decoration: none;
+      }
+
+      .axyra-action-btn i {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .axyra-action-btn span {
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      /* Estilos para actividad reciente */
+      .axyra-activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        border-bottom: 1px solid var(--axyra-gray-200);
+        transition: background-color 0.2s ease;
+      }
+
+      .axyra-activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .axyra-activity-item:hover {
+        background-color: var(--axyra-gray-50);
+      }
+
+      .axyra-activity-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+      }
+
+      .axyra-activity-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .axyra-activity-action {
+        font-weight: 600;
+        color: var(--axyra-gray-800);
+        margin-bottom: 0.25rem;
+      }
+
+      .axyra-activity-detail {
+        color: var(--axyra-gray-600);
+        margin-bottom: 0.25rem;
+        font-size: 0.9rem;
+      }
+
+      .axyra-activity-time {
+        color: var(--axyra-gray-500);
+        font-size: 0.8rem;
+        font-style: italic;
+      }
+
+      /* Estilos para modales */
+      .axyra-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .axyra-modal-content {
+        background: white;
+        border-radius: 20px;
+        max-width: 90%;
+        max-height: 90%;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      .axyra-modal-header {
+        padding: 1.5rem;
+        border-bottom: 2px solid var(--axyra-gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      }
+
+      .axyra-modal-header h3 {
+        margin: 0;
+        color: var(--axyra-gray-800);
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .axyra-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: var(--axyra-gray-500);
+        padding: 0.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+      }
+
+      .axyra-modal-close:hover {
+        background: var(--axyra-gray-100);
+        color: var(--axyra-gray-700);
+      }
+
+      .axyra-modal-body {
+        padding: 2rem;
+        max-height: 60vh;
+        overflow-y: auto;
+      }
+
       @media (max-width: 768px) {
         .axyra-productivity-grid {
           grid-template-columns: 1fr;
@@ -4387,20 +4431,19 @@
           flex-direction: column;
           text-align: center;
         }
+
+        .axyra-actions-bar {
+          grid-template-columns: 1fr;
+        }
+
+        .axyra-modal-content {
+          max-width: 95%;
+          margin: 1rem;
+        }
       }
     </style>
 
-    <!-- Inicialización automática del dashboard -->
-    <script>
-      // Inicializar dashboard cuando se carga la página
-      document.addEventListener('DOMContentLoaded', function () {
-        console.log('🚀 Dashboard cargado, verificando autenticación...');
-
-        // Esperar un poco para que se carguen todos los scripts
-        setTimeout(async () => {
-          await initializeDashboard();
-        }, 500);
-      });
-    </script>
+    <!-- Dashboard JavaScript -->
+    <script src="dashboard.js"></script>
   </body>
 </html>
