@@ -69,6 +69,44 @@ function initializeFirebase() {
         merge: true
       });
       
+      // Configurar persistencia de autenticación
+      firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(() => {
+          console.log('✅ Persistencia de autenticación configurada');
+        })
+        .catch((error) => {
+          console.warn('⚠️ Error configurando persistencia:', error);
+        });
+      
+      // Configurar listener de estado de autenticación
+      firebaseAuth.onAuthStateChanged((user) => {
+        if (user) {
+          console.log('🔐 Usuario autenticado en Firebase:', user.email);
+          
+          // Crear y guardar usuario en formato dashboard
+          const userInfo = {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName || user.email.split('@')[0],
+            username: user.email.split('@')[0],
+            photoURL: user.photoURL || null,
+            provider: 'firebase',
+            hasPassword: true,
+            emailVerified: user.emailVerified,
+            id: user.uid,
+            isAuthenticated: true
+          };
+          
+          // Guardar en localStorage para el dashboard
+          localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
+          localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+          
+          console.log('✅ Usuario Firebase guardado en localStorage');
+        } else {
+          console.log('🔐 Usuario no autenticado en Firebase');
+        }
+      });
+      
       // Exportar para uso global
       window.axyraFirebase = {
         auth: firebaseAuth,
