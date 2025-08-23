@@ -30,16 +30,36 @@
     display: inline;
   }
 
+  /* Estilos para el logo */
+  .axyra-logo {
+    width: 40px !important;
+    height: 40px !important;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+
+  .axyra-logo:hover {
+    transform: scale(1.05);
+  }
+
   @media (max-width: 768px) {
     .axyra-logout-text {
       display: none;
+    }
+    
+    .axyra-logo {
+      width: 32px !important;
+      height: 32px !important;
     }
   }
 </style>
 <header class="axyra-header">
   <div class="axyra-header-content">
     <div class="axyra-logo-title">
-             <img src="../../static/logo.png" alt="AXYRA Logo" class="axyra-logo" style="width: 40px; height: 40px; object-fit: contain;">
+             <img src="../../logo.png" alt="AXYRA Logo" class="axyra-logo" style="width: 40px; height: 40px; object-fit: contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+             <i class="fas fa-building" style="display: none; font-size: 32px; color: #4299e1; margin-right: 12px;" class="axyra-logo-fallback"></i>
       <div class="axyra-title-section">
         <h1 class="axyra-title">AXYRA</h1>
         <span class="axyra-subtitle" id="pageSubtitle">Dashboard</span>
