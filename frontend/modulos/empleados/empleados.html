@@ -334,7 +334,7 @@
         </div>
         <nav class="axyra-nav">
           <a href="../../index.html" class="axyra-nav-link"> <i class="fas fa-home"></i> Inicio </a>
-          <a href="../dashboard/dashboard.html" class="axyra-nav-link">
+          <a href="../dashboard/dashboard.html" class="axyra-nav-link" id="dashboardLink">
             <i class="fas fa-tachometer-alt"></i> Dashboard
           </a>
           <a href="empleados.html" class="axyra-nav-link active"> <i class="fas fa-users"></i> Empleados </a>
@@ -712,6 +712,20 @@
       let paginaActual = 1;
       const empleadosPorPagina = 10;
       let currentUser = null;
+
+      // Función para ocultar botón Dashboard cuando estés en empleados
+      function ocultarBotonDashboard() {
+        const dashboardLink = document.getElementById('dashboardLink');
+        if (dashboardLink) {
+          dashboardLink.style.display = 'none';
+          console.log('✅ Botón Dashboard ocultado en página de empleados');
+        }
+      }
+
+      // Ejecutar cuando se carga la página
+      document.addEventListener('DOMContentLoaded', function() {
+        ocultarBotonDashboard();
+      });
 
       // Verificar autenticación
       async function checkAuth() {
