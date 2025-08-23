@@ -1,117 +1,184 @@
-// SISTEMA UNIFICADO DE AUDITORÍA AXYRA - VERSIÓN COMPLETA
-// Consolida todas las funcionalidades de auditoría y logging en un solo sistema
+// Sistema Unificado de Auditoría AXYRA - VERSIÓN SIMPLIFICADA
+// Evita conflictos y mejora el rendimiento
 
 class AxyraAuditSystemUnified {
   constructor() {
     this.isInitialized = false;
-    this.auditConfig = {
-      enabled: true,
-      logLevel: 'INFO', // DEBUG, INFO, WARN, ERROR
-      retention: 90, // días
-      maxLogs: 10000,
-      realTime: true,
-      sensitiveFields: ['password', 'token', 'secret', 'key'],
-    };
     this.auditLogs = [];
-    this.currentSession = null;
-    this.userActions = new Map();
-
-    console.log('📝 Inicializando Sistema Unificado de Auditoría AXYRA...');
+    this.config = {
+      autoLog: true,
+      maxLogs: 1000,
+      debug: false
+    };
   }
 
-  // Inicializar sistema
+  // Inicialización simple sin conflictos
   async initialize() {
+    if (this.isInitialized) return;
+    
     try {
-      if (this.isInitialized) {
-        console.log('⚠️ Sistema ya inicializado');
-        return;
-      }
-
-      console.log('🔄 Configurando sistema de auditoría...');
-
-      // Cargar configuración guardada
-      await this.loadAuditConfig();
-
-      // Cargar logs existentes
-      await this.loadAuditLogs();
-
-      // Configurar sesión actual
-      this.setupCurrentSession();
-
-      // Configurar listeners
+      console.log('📋 Inicializando Sistema Unificado de Auditoría AXYRA...');
+      
+      // Cargar configuración y logs
+      this.loadAuditConfig();
+      this.loadAuditLogs();
+      
+      // Configurar listeners básicos
       this.setupEventListeners();
-
-      // Configurar limpieza automática
-      this.setupAutoCleanup();
-
+      
       this.isInitialized = true;
-      console.log('✅ Sistema Unificado de Auditoría AXYRA inicializado correctamente');
+      console.log('✅ Sistema Unificado de Auditoría AXYRA inicializado');
     } catch (error) {
-      console.error('❌ Error inicializando sistema de auditoría:', error);
+      console.warn('⚠️ Error inicializando sistema unificado de auditoría:', error);
     }
   }
 
   // Cargar configuración de auditoría
-  async loadAuditConfig() {
+  loadAuditConfig() {
     try {
       const savedConfig = localStorage.getItem('axyra_audit_config');
       if (savedConfig) {
-        this.auditConfig = { ...this.auditConfig, ...JSON.parse(savedConfig) };
-        console.log('✅ Configuración de auditoría cargada:', this.auditConfig);
+        this.config = { ...this.config, ...JSON.parse(savedConfig) };
       }
     } catch (error) {
-      console.error('❌ Error cargando configuración de auditoría:', error);
+      console.warn('⚠️ Error cargando configuración de auditoría:', error);
     }
   }
 
   // Cargar logs de auditoría
-  async loadAuditLogs() {
+  loadAuditLogs() {
     try {
-      const logsData = localStorage.getItem('axyra_audit_logs');
-      if (logsData) {
-        this.auditLogs = JSON.parse(logsData);
-        console.log(`📋 ${this.auditLogs.length} logs de auditoría cargados`);
+      const savedLogs = localStorage.getItem('axyra_audit_logs');
+      if (savedLogs) {
+        this.auditLogs = JSON.parse(savedLogs);
+        console.log(`📋 ${this.auditLogs.length} logs de auditoría cargados del almacenamiento`);
       }
     } catch (error) {
-      console.error('❌ Error cargando logs de auditoría:', error);
+      console.warn('⚠️ Error cargando logs de auditoría:', error);
     }
   }
 
-  // Configurar sesión actual
-  setupCurrentSession() {
-    try {
-      this.currentSession = {
-        id: Date.now() + Math.random(),
-        startTime: new Date().toISOString(),
-        user: this.getCurrentUser(),
-        ip: this.getClientIP(),
-        userAgent: navigator.userAgent,
-        screenResolution: `${screen.width}x${screen.height}`,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      };
+  // Configurar listeners básicos
+  setupEventListeners() {
+    // Solo configurar si no hay conflictos
+    if (!window.axyraAuditSystem) {
+      // Listener para cambios en localStorage
+      window.addEventListener('storage', (e) => {
+        if (this.config.autoLog) {
+          this.logSystemEvent('storage_change', {
+            key: e.key,
+            oldValue: e.oldValue,
+            newValue: e.newValue
+          });
+        }
+      });
 
-      console.log('✅ Sesión de auditoría configurada:', this.currentSession);
-    } catch (error) {
-      console.error('❌ Error configurando sesión de auditoría:', error);
+      // Listener para errores de JavaScript
+      window.addEventListener('error', (e) => {
+        if (this.config.autoLog) {
+          this.logSystemEvent('javascript_error', {
+            message: e.message,
+            filename: e.filename,
+            lineno: e.lineno
+          });
+        }
+      });
     }
+  }
+
+  // Crear log de auditoría
+  createAuditLog(type, details, user = null) {
+    try {
+      const log = {
+        id: Date.now() + Math.random(),
+        timestamp: new Date().toISOString(),
+        type: type,
+        details: this.sanitizeValue(details),
+        user: user || this.getCurrentUser() || 'system',
+        ip: this.getClientIP() || 'unknown',
+        userAgent: navigator.userAgent,
+        url: window.location.href
+      };
+      
+      // Agregar a logs
+      this.addToLogs(log);
+      
+      return log;
+    } catch (error) {
+      console.warn('⚠️ Error creando log de auditoría:', error);
+      return null;
+    }
+  }
+
+  // Agregar log a la lista
+  addToLogs(log) {
+    try {
+      this.auditLogs.unshift(log);
+      
+      // Limitar número de logs
+      if (this.auditLogs.length > this.config.maxLogs) {
+        this.auditLogs = this.auditLogs.slice(0, this.config.maxLogs);
+      }
+      
+      // Guardar en localStorage
+      localStorage.setItem('axyra_audit_logs', JSON.stringify(this.auditLogs));
+      
+      console.log(`📋 Log de auditoría agregado: ${log.type}`);
+    } catch (error) {
+      console.warn('⚠️ Error agregando log de auditoría:', error);
+    }
+  }
+
+  // Log de evento del sistema
+  logSystemEvent(eventType, details) {
+    if (!this.config.autoLog) return;
+    
+    this.createAuditLog('system_event', {
+      event: eventType,
+      details: details
+    });
+  }
+
+  // Log de acción del usuario
+  logUserAction(action, details) {
+    this.createAuditLog('user_action', {
+      action: action,
+      details: details
+    });
+  }
+
+  // Log de evento de seguridad
+  logSecurityEvent(eventType, details) {
+    this.createAuditLog('security_event', {
+      event: eventType,
+      details: details
+    });
+  }
+
+  // Log de evento de negocio
+  logBusinessEvent(eventType, details) {
+    this.createAuditLog('business_event', {
+      event: eventType,
+      details: details
+    });
   }
 
   // Obtener usuario actual
   getCurrentUser() {
     try {
-      if (window.axyraUnifiedAuth && window.axyraUnifiedAuth.getCurrentUser()) {
-        return window.axyraUnifiedAuth.getCurrentUser();
+      if (window.axyraAuthManager) {
+        return window.axyraAuthManager.getCurrentUser();
       }
-
-      const userData = localStorage.getItem('axyra.app');
+      
+      const userData = localStorage.getItem('axyra_isolated_user');
       if (userData) {
-        return JSON.parse(userData);
+        const user = JSON.parse(userData);
+        return user.username || user.email || 'unknown';
       }
-
-      return { username: 'anonymous', id: 'anonymous' };
+      
+      return 'unknown';
     } catch (error) {
-      console.error('❌ Error obteniendo usuario actual:', error);
-      return { username: 'unknown', id: 'unknown' };
+      return 'unknown';
     }
   }
 
@@ -121,439 +188,106 @@ class AxyraAuditSystemUnified {
     return '127.0.0.1';
   }
 
-  // Configurar listeners de eventos
-  setupEventListeners() {
-    try {
-      // Listener para eventos de auditoría
-      window.addEventListener('axyra:audit:log', (event) => {
-        this.handleAuditEvent(event.detail);
-      });
-
-      // Listener para cambios en el sistema
-      this.setupSystemEventListeners();
-
-      // Listener para acciones del usuario
-      this.setupUserActionListeners();
-
-      console.log('✅ Listeners de auditoría configurados');
-    } catch (error) {
-      console.error('❌ Error configurando listeners:', error);
-    }
-  }
-
-  // Configurar listeners de eventos del sistema
-  setupSystemEventListeners() {
-    try {
-      // Listener para cambios en localStorage
-      const originalSetItem = localStorage.setItem;
-      const originalRemoveItem = localStorage.removeItem;
-
-      localStorage.setItem = (key, value) => {
-        this.logSystemEvent('localStorage_set', { key, value: this.sanitizeValue(value) });
-        originalSetItem.call(localStorage, key, value);
-      };
-
-      localStorage.removeItem = (key) => {
-        this.logSystemEvent('localStorage_remove', { key });
-        originalRemoveItem.call(localStorage, key);
-      };
-
-      // Listener para navegación
-      window.addEventListener('beforeunload', () => {
-        this.logSystemEvent('session_end', { session: this.currentSession });
-      });
-
-      // Listener para errores
-      window.addEventListener('error', (event) => {
-        this.logSystemEvent('javascript_error', {
-          message: event.message,
-          filename: event.filename,
-          lineno: event.lineno,
-          colno: event.colno,
-          error: event.error?.stack,
-        });
-      });
-
-      // Listener para promesas rechazadas
-      window.addEventListener('unhandledrejection', (event) => {
-        this.logSystemEvent('unhandled_promise_rejection', {
-          reason: event.reason?.toString(),
-          promise: event.promise,
-        });
-      });
-    } catch (error) {
-      console.error('❌ Error configurando listeners del sistema:', error);
-    }
-  }
-
-  // Configurar listeners de acciones del usuario
-  setupUserActionListeners() {
-    try {
-      // Listener para clicks en botones importantes
-      document.addEventListener('click', (event) => {
-        const target = event.target;
-        if (target.tagName === 'BUTTON' || target.closest('button')) {
-          const button = target.tagName === 'BUTTON' ? target : target.closest('button');
-          this.logUserAction('button_click', {
-            text: button.textContent?.trim(),
-            id: button.id,
-            className: button.className,
-            dataset: button.dataset,
-          });
-        }
-      });
-
-      // Listener para envíos de formularios
-      document.addEventListener('submit', (event) => {
-        this.logUserAction('form_submit', {
-          action: event.target.action,
-          method: event.target.method,
-          formId: event.target.id,
-          formClass: event.target.className,
-        });
-      });
-
-      // Listener para cambios en inputs importantes
-      document.addEventListener('change', (event) => {
-        const target = event.target;
-        if (target.tagName === 'INPUT' || target.tagName === 'SELECT' || target.tagName === 'TEXTAREA') {
-          if (target.dataset.audit === 'true' || target.id?.includes('password') || target.id?.includes('email')) {
-            this.logUserAction('input_change', {
-              type: target.type,
-              id: target.id,
-              name: target.name,
-              value: this.sanitizeValue(target.value),
-            });
-          }
-        }
-      });
-    } catch (error) {
-      console.error('❌ Error configurando listeners de acciones del usuario:', error);
-    }
-  }
-
-  // Configurar limpieza automática
-  setupAutoCleanup() {
-    try {
-      // Limpiar logs antiguos diariamente
-      setInterval(() => {
-        this.cleanupOldLogs();
-      }, 24 * 60 * 60 * 1000); // 24 horas
-
-      console.log('✅ Limpieza automática configurada');
-    } catch (error) {
-      console.error('❌ Error configurando limpieza automática:', error);
-    }
-  }
-
-  // Manejar evento de auditoría
-  handleAuditEvent(eventData) {
-    try {
-      const { type, action, details, level = 'INFO' } = eventData;
-
-      // Verificar nivel de log
-      if (!this.shouldLog(level)) {
-        return;
-      }
-
-      // Crear log de auditoría
-      const auditLog = this.createAuditLog(type, action, details, level);
-
-      // Agregar al historial
-      this.addToLogs(auditLog);
-
-      // Emitir evento si está habilitado en tiempo real
-      if (this.auditConfig.realTime) {
-        this.emitAuditEvent('logCreated', { log: auditLog });
-      }
-    } catch (error) {
-      console.error('❌ Error manejando evento de auditoría:', error);
-    }
-  }
-
-  // Verificar si se debe registrar el log
-  shouldLog(level) {
-    const levels = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
-    const currentLevel = levels[this.auditConfig.logLevel] || 1;
-    const eventLevel = levels[level] || 1;
-
-    return eventLevel >= currentLevel;
-  }
-
-  // Crear log de auditoría
-  createAuditLog(type, action, details, level) {
-    try {
-      const log = {
-        id: Date.now() + Math.random(),
-        timestamp: new Date().toISOString(),
-        level: level,
-        type: type,
-        action: action,
-        details: details,
-        session: this.currentSession,
-        user: this.getCurrentUser(),
-        context: {
-          url: window.location.href,
-          referrer: document.referrer,
-          timestamp: Date.now(),
-        },
-      };
-
-      return log;
-    } catch (error) {
-      console.error('❌ Error creando log de auditoría:', error);
-      return null;
-    }
-  }
-
-  // Agregar log al historial
-  addToLogs(auditLog) {
-    try {
-      if (!auditLog) return;
-
-      this.auditLogs.unshift(auditLog);
-
-      // Mantener límite de logs
-      if (this.auditLogs.length > this.auditConfig.maxLogs) {
-        this.auditLogs = this.auditLogs.slice(0, this.auditConfig.maxLogs);
-      }
-
-      // Guardar en localStorage
-      localStorage.setItem('axyra_audit_logs', JSON.stringify(this.auditLogs));
-    } catch (error) {
-      console.error('❌ Error agregando log:', error);
-    }
-  }
-
-  // Registrar evento del sistema
-  logSystemEvent(action, details) {
-    try {
-      this.handleAuditEvent({
-        type: 'SYSTEM',
-        action: action,
-        details: details,
-        level: 'INFO',
-      });
-    } catch (error) {
-      console.error('❌ Error registrando evento del sistema:', error);
-    }
-  }
-
-  // Registrar acción del usuario
-  logUserAction(action, details) {
-    try {
-      this.handleAuditEvent({
-        type: 'USER_ACTION',
-        action: action,
-        details: details,
-        level: 'INFO',
-      });
-    } catch (error) {
-      console.error('❌ Error registrando acción del usuario:', error);
-    }
-  }
-
-  // Registrar evento de seguridad
-  logSecurityEvent(action, details, level = 'WARN') {
-    try {
-      this.handleAuditEvent({
-        type: 'SECURITY',
-        action: action,
-        details: details,
-        level: level,
-      });
-    } catch (error) {
-      console.error('❌ Error registrando evento de seguridad:', error);
-    }
-  }
-
-  // Registrar evento de negocio
-  logBusinessEvent(action, details, level = 'INFO') {
-    try {
-      this.handleAuditEvent({
-        type: 'BUSINESS',
-        action: action,
-        details: details,
-        level: level,
-      });
-    } catch (error) {
-      console.error('❌ Error registrando evento de negocio:', error);
-    }
-  }
-
-  // Sanitizar valor sensible
+  // Sanitizar valores para evitar problemas de seguridad
   sanitizeValue(value) {
     try {
       if (typeof value === 'string') {
-        // Ocultar campos sensibles
-        for (const field of this.auditConfig.sensitiveFields) {
-          if (value.toLowerCase().includes(field.toLowerCase())) {
-            return '[SENSITIVE_DATA]';
-          }
-        }
+        // Limitar longitud y remover caracteres peligrosos
+        return value.substring(0, 1000).replace(/[<>]/g, '');
       }
-      return value;
-    } catch (error) {
-      return '[ERROR_SANITIZING]';
-    }
-  }
-
-  // Limpiar logs antiguos
-  cleanupOldLogs() {
-    try {
-      const cutoffDate = new Date();
-      cutoffDate.setDate(cutoffDate.getDate() - this.auditConfig.retention);
-
-      const originalCount = this.auditLogs.length;
-      this.auditLogs = this.auditLogs.filter((log) => {
-        const logDate = new Date(log.timestamp);
-        return logDate > cutoffDate;
-      });
-
-      const removedCount = originalCount - this.auditLogs.length;
-      if (removedCount > 0) {
-        console.log(`🧹 ${removedCount} logs antiguos eliminados`);
-
-        // Guardar logs actualizados
-        localStorage.setItem('axyra_audit_logs', JSON.stringify(this.auditLogs));
+      if (typeof value === 'object') {
+        // Convertir a string y sanitizar
+        return JSON.stringify(value).substring(0, 1000).replace(/[<>]/g, '');
       }
+      return String(value).substring(0, 1000);
     } catch (error) {
-      console.error('❌ Error limpiando logs antiguos:', error);
+      return 'error_processing_value';
     }
   }
 
   // Buscar logs
-  searchLogs(filters = {}) {
+  searchLogs(query, filters = {}) {
     try {
-      let filteredLogs = [...this.auditLogs];
-
+      let filteredLogs = this.auditLogs;
+      
       // Filtrar por tipo
       if (filters.type) {
-        filteredLogs = filteredLogs.filter((log) => log.type === filters.type);
+        filteredLogs = filteredLogs.filter(log => log.type === filters.type);
       }
-
-      // Filtrar por nivel
-      if (filters.level) {
-        filteredLogs = filteredLogs.filter((log) => log.level === filters.level);
-      }
-
+      
       // Filtrar por usuario
       if (filters.user) {
-        filteredLogs = filteredLogs.filter(
-          (log) => log.user?.username?.includes(filters.user) || log.user?.id?.includes(filters.user)
-        );
+        filteredLogs = filteredLogs.filter(log => log.user === filters.user);
       }
-
-      // Filtrar por acción
-      if (filters.action) {
-        filteredLogs = filteredLogs.filter((log) => log.action?.includes(filters.action));
-      }
-
+      
       // Filtrar por fecha
       if (filters.dateFrom) {
-        const dateFrom = new Date(filters.dateFrom);
-        filteredLogs = filteredLogs.filter((log) => new Date(log.timestamp) >= dateFrom);
+        filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) >= new Date(filters.dateFrom));
       }
-
       if (filters.dateTo) {
-        const dateTo = new Date(filters.dateTo);
-        filteredLogs = filteredLogs.filter((log) => new Date(log.timestamp) <= dateTo);
+        filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) <= new Date(filters.dateTo));
       }
-
-      // Ordenar por timestamp (más reciente primero)
-      filteredLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
+      
+      // Buscar en texto
+      if (query) {
+        const searchTerm = query.toLowerCase();
+        filteredLogs = filteredLogs.filter(log => 
+          JSON.stringify(log).toLowerCase().includes(searchTerm)
+        );
+      }
+      
       return filteredLogs;
     } catch (error) {
-      console.error('❌ Error buscando logs:', error);
+      console.warn('⚠️ Error buscando logs:', error);
       return [];
     }
   }
 
   // Generar reporte de auditoría
-  generateAuditReport(filters = {}, options = {}) {
+  generateAuditReport(filters = {}) {
     try {
-      console.log('🔄 Generando reporte de auditoría...');
-
-      const logs = this.searchLogs(filters);
-
-      // Calcular estadísticas
-      const stats = {
-        totalLogs: logs.length,
-        logsByType: {},
-        logsByLevel: {},
-        logsByUser: {},
-        logsByAction: {},
-        logsByHour: {},
-        logsByDay: {},
-      };
-
-      logs.forEach((log) => {
-        // Por tipo
-        stats.logsByType[log.type] = (stats.logsByType[log.type] || 0) + 1;
-
-        // Por nivel
-        stats.logsByLevel[log.level] = (stats.logsByLevel[log.level] || 0) + 1;
-
-        // Por usuario
-        const username = log.user?.username || 'unknown';
-        stats.logsByUser[username] = (stats.logsByUser[username] || 0) + 1;
-
-        // Por acción
-        stats.logsByAction[log.action] = (stats.logsByAction[log.action] || 0) + 1;
-
-        // Por hora
-        const hour = new Date(log.timestamp).getHours();
-        stats.logsByHour[hour] = (stats.logsByHour[hour] || 0) + 1;
-
-        // Por día
-        const day = new Date(log.timestamp).toDateString();
-        stats.logsByDay[day] = (stats.logsByDay[day] || 0) + 1;
-      });
-
+      const logs = this.searchLogs('', filters);
+      
       const report = {
         generatedAt: new Date().toISOString(),
-        filters: filters,
-        options: options,
-        statistics: stats,
-        logs: options.includeLogs ? logs : [],
-        summary: {
-          period: filters.dateFrom && filters.dateTo ? `${filters.dateFrom} a ${filters.dateTo}` : 'Todo el período',
-          totalEvents: logs.length,
-          topUser: Object.entries(stats.logsByUser).sort(([, a], [, b]) => b - a)[0]?.[0] || 'N/A',
-          topAction: Object.entries(stats.logsByAction).sort(([, a], [, b]) => b - a)[0]?.[0] || 'N/A',
-          criticalEvents: stats.logsByLevel['ERROR'] || 0,
-        },
+        totalLogs: logs.length,
+        logsByType: {},
+        logsByUser: {},
+        logsByDate: {}
       };
-
-      console.log('✅ Reporte de auditoría generado');
+      
+      // Agrupar por tipo
+      logs.forEach(log => {
+        report.logsByType[log.type] = (report.logsByType[log.type] || 0) + 1;
+        report.logsByUser[log.user] = (report.logsByUser[log.user] || 0) + 1;
+        
+        const date = log.timestamp.split('T')[0];
+        report.logsByDate[date] = (report.logsByDate[date] || 0) + 1;
+      });
+      
       return report;
     } catch (error) {
-      console.error('❌ Error generando reporte de auditoría:', error);
-      throw error;
+      console.warn('⚠️ Error generando reporte de auditoría:', error);
+      return { error: 'Error generando reporte' };
     }
   }
 
   // Exportar logs
-  exportLogs(filters = {}, format = 'json') {
+  exportLogs(format = 'json', filters = {}) {
     try {
-      console.log(`🔄 Exportando logs en formato ${format}...`);
-
-      const logs = this.searchLogs(filters);
-
-      switch (format.toLowerCase()) {
+      const logs = this.searchLogs('', filters);
+      
+      switch (format) {
         case 'json':
           return this.exportToJSON(logs);
         case 'csv':
           return this.exportToCSV(logs);
-        case 'excel':
-          return this.exportToExcel(logs);
         default:
-          throw new Error(`Formato no soportado: ${format}`);
+          return this.exportToJSON(logs);
       }
     } catch (error) {
-      console.error('❌ Error exportando logs:', error);
-      throw error;
+      console.warn('⚠️ Error exportando logs:', error);
+      return null;
     }
   }
 
@@ -568,34 +302,36 @@ class AxyraAuditSystemUnified {
       link.download = `audit_logs_${new Date().toISOString().split('T')[0]}.json`;
       link.click();
       URL.revokeObjectURL(url);
-
+      
       console.log('✅ Logs exportados a JSON');
       return true;
     } catch (error) {
-      console.error('❌ Error exportando a JSON:', error);
-      throw error;
+      console.warn('⚠️ Error exportando a JSON:', error);
+      return false;
     }
   }
 
   // Exportar a CSV
   exportToCSV(logs) {
     try {
-      const headers = ['Timestamp', 'Level', 'Type', 'Action', 'User', 'Details'];
-      const csvData = [headers];
-
-      logs.forEach((log) => {
-        csvData.push([
+      if (logs.length === 0) {
+        console.warn('⚠️ No hay logs para exportar');
+        return false;
+      }
+      
+      const headers = ['ID', 'Timestamp', 'Type', 'User', 'IP', 'Details'];
+      const csvContent = [
+        headers.join(','),
+        ...logs.map(log => [
+          log.id,
           log.timestamp,
-          log.level,
           log.type,
-          log.action,
-          log.user?.username || 'N/A',
-          JSON.stringify(log.details).replace(/"/g, '""'),
-        ]);
-      });
-
-      const csvContent = csvData.map((row) => row.map((field) => `"${field}"`).join(',')).join('\n');
-
+          log.user,
+          log.ip,
+          JSON.stringify(log.details).replace(/"/g, '""')
+        ].join(','))
+      ].join('\n');
+      
       const dataBlob = new Blob([csvContent], { type: 'text/csv' });
       const url = URL.createObjectURL(dataBlob);
       const link = document.createElement('a');
@@ -603,91 +339,38 @@ class AxyraAuditSystemUnified {
       link.download = `audit_logs_${new Date().toISOString().split('T')[0]}.csv`;
       link.click();
       URL.revokeObjectURL(url);
-
+      
       console.log('✅ Logs exportados a CSV');
       return true;
     } catch (error) {
-      console.error('❌ Error exportando a CSV:', error);
-      throw error;
+      console.warn('⚠️ Error exportando a CSV:', error);
+      return false;
     }
   }
 
-  // Exportar a Excel
-  exportToExcel(logs) {
+  // Limpiar logs antiguos
+  cleanupOldLogs(daysToKeep = 30) {
     try {
-      if (typeof XLSX === 'undefined') {
-        throw new Error('XLSX no disponible');
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
+      
+      const originalCount = this.auditLogs.length;
+      this.auditLogs = this.auditLogs.filter(log => 
+        new Date(log.timestamp) >= cutoffDate
+      );
+      
+      const removedCount = originalCount - this.auditLogs.length;
+      
+      if (removedCount > 0) {
+        localStorage.setItem('axyra_audit_logs', JSON.stringify(this.auditLogs));
+        console.log(`🗑️ ${removedCount} logs antiguos eliminados`);
       }
-
-      const excelData = [['Timestamp', 'Level', 'Type', 'Action', 'User', 'Details', 'Session ID', 'URL']];
-
-      logs.forEach((log) => {
-        excelData.push([
-          log.timestamp,
-          log.level,
-          log.type,
-          log.action,
-          log.user?.username || 'N/A',
-          JSON.stringify(log.details).substring(0, 100) + '...',
-          log.session?.id || 'N/A',
-          log.context?.url || 'N/A',
-        ]);
-      });
-
-      const workbook = XLSX.utils.book_new();
-      const worksheet = XLSX.utils.aoa_to_sheet(excelData);
-
-      // Aplicar estilos
-      worksheet['!cols'] = [
-        { width: 20 }, // Timestamp
-        { width: 10 }, // Level
-        { width: 15 }, // Type
-        { width: 20 }, // Action
-        { width: 15 }, // User
-        { width: 40 }, // Details
-        { width: 15 }, // Session ID
-        { width: 30 }, // URL
-      ];
-
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Audit Logs');
-
-      const fileName = `audit_logs_${new Date().toISOString().split('T')[0]}.xlsx`;
-      XLSX.writeFile(workbook, fileName);
-
-      console.log('✅ Logs exportados a Excel');
-      return true;
+      
+      return removedCount;
     } catch (error) {
-      console.error('❌ Error exportando a Excel:', error);
-      throw error;
+      console.warn('⚠️ Error limpiando logs antiguos:', error);
+      return 0;
     }
-  }
-
-  // Emitir evento de auditoría
-  emitAuditEvent(eventName, data) {
-    try {
-      const event = new CustomEvent(`axyra:audit:${eventName}`, {
-        detail: {
-          timestamp: new Date().toISOString(),
-          ...data,
-        },
-      });
-
-      window.dispatchEvent(event);
-      console.log(`📡 Evento emitido: axyra:audit:${eventName}`, data);
-    } catch (error) {
-      console.error('❌ Error emitiendo evento de auditoría:', error);
-    }
-  }
-
-  // Obtener información del sistema
-  getSystemInfo() {
-    return {
-      isInitialized: this.isInitialized,
-      config: this.auditConfig,
-      totalLogs: this.auditLogs.length,
-      currentSession: this.currentSession,
-      userActions: this.userActions.size,
-    };
   }
 
   // Obtener logs de auditoría
@@ -695,50 +378,31 @@ class AxyraAuditSystemUnified {
     return this.auditLogs;
   }
 
-  // Obtener log específico
-  getAuditLog(logId) {
-    return this.auditLogs.find((log) => log.id === logId);
-  }
-
-  // Limpiar logs
+  // Limpiar todos los logs
   clearLogs() {
-    try {
-      this.auditLogs = [];
-      localStorage.removeItem('axyra_audit_logs');
-      console.log('✅ Logs de auditoría limpiados');
-    } catch (error) {
-      console.error('❌ Error limpiando logs:', error);
-    }
+    this.auditLogs = [];
+    localStorage.removeItem('axyra_audit_logs');
+    console.log('🗑️ Todos los logs de auditoría eliminados');
   }
 
-  // Actualizar configuración
-  updateConfig(newConfig) {
-    try {
-      console.log('🔄 Actualizando configuración de auditoría...');
-
-      this.auditConfig = { ...this.auditConfig, ...newConfig };
-
-      // Guardar configuración
-      localStorage.setItem('axyra_audit_config', JSON.stringify(this.auditConfig));
-
-      console.log('✅ Configuración de auditoría actualizada:', this.auditConfig);
-    } catch (error) {
-      console.error('❌ Error actualizando configuración de auditoría:', error);
-    }
+  // Información del sistema
+  getSystemInfo() {
+    return {
+      version: '1.0.0-simplified',
+      isInitialized: this.isInitialized,
+      totalLogs: this.auditLogs.length,
+      config: this.config
+    };
   }
 }
-
-// Crear instancia global
-window.axyraAuditSystem = new AxyraAuditSystemUnified();
 
 // Inicializar automáticamente cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-  window.axyraAuditSystem.initialize();
+  if (!window.axyraAuditSystemUnified) {
+    window.axyraAuditSystemUnified = new AxyraAuditSystemUnified();
+    window.axyraAuditSystemUnified.initialize();
+  }
 });
 
-// Exportar para uso en módulos
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = AxyraAuditSystemUnified;
-}
-
-console.log('📝 Sistema Unificado de Auditoría AXYRA cargado');
+// Exportar para uso global
+window.AxyraAuditSystemUnified = AxyraAuditSystemUnified;
