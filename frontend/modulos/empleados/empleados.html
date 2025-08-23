@@ -1239,37 +1239,62 @@
       let currentUser = null;
 
       // Sistema de organigrama visual - Estructura de la empresa
-      function mostrarOrganigrama() {
-        const departamentos = JSON.parse(localStorage.getItem('axyra_departamentos') || '[]');
-        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-
-        // Agrupar empleados por departamento
-        const estructura = {};
-        departamentos.forEach((dept) => {
-          estructura[dept.nombre] = {
-            empleados: empleados.filter((emp) => emp.departamento === dept.nombre),
-            color: generarColorDepartamento(dept.nombre),
-          };
-        });
-
-        const organigramaHTML = `
-          <div id="modalOrganigrama" class="axyra-modal">
-            <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
-              <div class="axyra-modal-header">
-                <h3><i class="fas fa-sitemap"></i> Organigrama de la Empresa</h3>
-                <button class="axyra-modal-close" onclick="cerrarModal('modalOrganigrama')">&times;</button>
-              </div>
-              <div class="axyra-modal-body">
-                <div class="axyra-organigrama-container">
-                  ${generarHTMLOrganigrama(estructura)}
+      async function mostrarOrganigrama() {
+        try {
+          // Obtener datos de Firestore
+          const db = firebase.firestore();
+          const currentUser = firebase.auth().currentUser;
+          
+          if (!currentUser) {
+            mostrarNotificacionTiempoReal('❌ Usuario no autenticado', 'error');
+            return;
+          }
+          
+          // Obtener departamentos y empleados de Firestore
+          const departamentosSnapshot = await db.collection('departamentos')
+            .where('userId', '==', currentUser.uid)
+            .get();
+          
+          const empleadosSnapshot = await db.collection('empleados')
+            .where('userId', '==', currentUser.uid)
+            .get();
+          
+          const departamentos = departamentosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const empleados = empleadosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          
+          // Agrupar empleados por departamento
+          const estructura = {};
+          departamentos.forEach((dept) => {
+            estructura[dept.nombre] = {
+              empleados: empleados.filter((emp) => emp.departamento === dept.nombre),
+              color: generarColorDepartamento(dept.nombre),
+            };
+          });
+          
+          const organigramaHTML = `
+            <div id="modalOrganigrama" class="axyra-modal">
+              <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
+                <div class="axyra-modal-header">
+                  <h3><i class="fas fa-sitemap"></i> Organigrama de la Empresa</h3>
+                  <button class="axyra-modal-close" onclick="cerrarModal('modalOrganigrama')">&times;</button>
+                </div>
+                <div class="axyra-modal-body">
+                  <div class="axyra-organigrama-container">
+                    ${generarHTMLOrganigrama(estructura)}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', organigramaHTML);
-        document.getElementById('modalOrganigrama').style.display = 'block';
+          `;
+          
+          document.body.insertAdjacentHTML('beforeend', organigramaHTML);
+          document.getElementById('modalOrganigrama').style.display = 'block';
+          
+          console.log('✅ Organigrama cargado desde Firestore');
+        } catch (error) {
+          console.error('❌ Error cargando organigrama:', error);
+          mostrarNotificacionTiempoReal('❌ Error cargando organigrama', 'error');
+        }
       }
 
       // Generar HTML del organigrama
@@ -1333,8 +1358,23 @@
       }
 
       // Sistema de fotos de empleados - Avatares y gestión de imágenes
-      function mostrarModalFotos() {
-        const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+      async function mostrarModalFotos() {
+        try {
+          // Obtener datos de Firestore
+          const db = firebase.firestore();
+          const currentUser = firebase.auth().currentUser;
+          
+          if (!currentUser) {
+            mostrarNotificacionTiempoReal('❌ Usuario no autenticado', 'error');
+            return;
+          }
+          
+          // Obtener empleados de Firestore
+          const empleadosSnapshot = await db.collection('empleados')
+            .where('userId', '==', currentUser.uid)
+            .get();
+          
+          const empleados = empleadosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
         const fotosHTML = `
           <div id="modalFotos" class="axyra-modal">

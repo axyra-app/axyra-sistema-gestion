@@ -60,32 +60,52 @@ class AxyraSharedHeader {
     nav.innerHTML = navHTML;
   }
 
-  actualizarInformacionUsuario() {
+  async actualizarInformacionUsuario() {
     const userEmail = document.getElementById('userEmail');
     const roleBadge = document.getElementById('roleBadge');
     
     if (userEmail) {
-      // Intentar obtener usuario de Firebase primero, luego de isolated
-      let user = localStorage.getItem('axyra_firebase_user');
-      if (!user) {
-        user = localStorage.getItem('axyra_isolated_user');
-      }
-      
-      if (user) {
-        try {
-          const userData = JSON.parse(user);
-          userEmail.textContent = userData.email || userData.username || 'Usuario';
+      try {
+        // Obtener usuario actual de Firebase Auth
+        const currentUser = firebase.auth().currentUser;
+        
+        if (currentUser) {
+          userEmail.textContent = currentUser.email || 'Usuario';
           
           // Actualizar rol si está disponible
           if (roleBadge) {
             const roleText = roleBadge.querySelector('.axyra-role-badge-text');
             if (roleText) {
-              roleText.textContent = userData.role || 'Empleado';
+              roleText.textContent = 'Empleado'; // Por defecto, se puede personalizar
             }
           }
-        } catch (error) {
-          console.warn('Error parseando información del usuario:', error);
+          
+          console.log('✅ Usuario Firebase actualizado:', currentUser.email);
+        } else {
+          // Fallback a localStorage si no hay usuario de Firebase
+          let user = localStorage.getItem('axyra_firebase_user');
+          if (!user) {
+            user = localStorage.getItem('axyra_isolated_user');
+          }
+          
+          if (user) {
+            try {
+              const userData = JSON.parse(user);
+              userEmail.textContent = userData.email || userData.username || 'Usuario';
+              
+              if (roleBadge) {
+                const roleText = roleBadge.querySelector('.axyra-role-badge-text');
+                if (roleText) {
+                  roleText.textContent = userData.role || 'Empleado';
+                }
+              }
+            } catch (error) {
+              console.warn('Error parseando información del usuario:', error);
+            }
+          }
         }
+      } catch (error) {
+        console.error('Error obteniendo información del usuario:', error);
       }
     }
   }
@@ -106,12 +126,25 @@ class AxyraSharedHeader {
     });
   }
 
-  handleLogout() {
+  async handleLogout() {
     console.log('🔄 Cerrando sesión desde header compartido...');
     
-    if (window.axyraIsolatedAuth) {
-      window.axyraIsolatedAuth.logout();
-    } else {
+    try {
+      // Cerrar sesión de Firebase
+      if (firebase && firebase.auth) {
+        await firebase.auth().signOut();
+        console.log('✅ Sesión de Firebase cerrada');
+      }
+      
+      // Limpiar localStorage
+      localStorage.removeItem('axyra_isolated_user');
+      localStorage.removeItem('axyra_firebase_user');
+      sessionStorage.clear();
+      
+      // Redirigir al login
+      window.location.href = '../../login.html';
+    } catch (error) {
+      console.error('Error cerrando sesión:', error);
       // Fallback: limpiar localStorage y redirigir
       localStorage.removeItem('axyra_isolated_user');
       localStorage.removeItem('axyra_firebase_user');
