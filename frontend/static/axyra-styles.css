@@ -141,7 +141,7 @@ p {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 99999; /* VALOR ALTO PARA ESTAR POR ENCIMA DE TODO */
+  z-index: 1000; /* VALOR REDUCIDO PARA NO INTERFERIR CON MODALES */
   border-bottom: 4px solid #2563eb;
   backdrop-filter: blur(10px);
 }

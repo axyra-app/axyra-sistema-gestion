@@ -30,8 +30,23 @@
 
 /* Asegurar que el header no interfiera con los modales */
 .axyra-header {
-  z-index: 100 !important; /* Z-index menor que los modales */
+  z-index: 1000 !important; /* Z-index menor que los modales */
   position: relative !important;
+}
+
+/* Modales específicos del dashboard AXYRA */
+.axyra-modal {
+  z-index: 10000 !important; /* Z-index alto para estar por encima del header */
+}
+
+.axyra-modal-content {
+  z-index: 10001 !important; /* Z-index más alto que el modal */
+  position: relative;
+}
+
+.axyra-modal-close {
+  z-index: 10002 !important; /* Z-index más alto para el botón de cerrar */
+  position: relative;
 }
 
 /* Correcciones específicas para el modal de nómina */
