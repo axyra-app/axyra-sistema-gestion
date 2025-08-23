@@ -1251,16 +1251,15 @@
           }
 
           // Obtener departamentos y empleados de Firestore
-          const departamentosSnapshot = await db.collection('departamentos')
+          const departamentosSnapshot = await db
+            .collection('departamentos')
             .where('userId', '==', currentUser.uid)
             .get();
 
-          const empleadosSnapshot = await db.collection('empleados')
-            .where('userId', '==', currentUser.uid)
-            .get();
+          const empleadosSnapshot = await db.collection('empleados').where('userId', '==', currentUser.uid).get();
 
-          const departamentos = departamentosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          const empleados = empleadosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const departamentos = departamentosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          const empleados = empleadosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
           // Agrupar empleados por departamento
           const estructura = {};
@@ -1370,13 +1369,11 @@
           }
 
           // Obtener empleados de Firestore
-          const empleadosSnapshot = await db.collection('empleados')
-            .where('userId', '==', currentUser.uid)
-            .get();
+          const empleadosSnapshot = await db.collection('empleados').where('userId', '==', currentUser.uid).get();
 
-          const empleados = empleadosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const empleados = empleadosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-        const fotosHTML = `
+          const fotosHTML = `
           <div id="modalFotos" class="axyra-modal">
             <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
               <div class="axyra-modal-header">
@@ -1410,14 +1407,14 @@
           </div>
         `;
 
-        document.body.insertAdjacentHTML('beforeend', fotosHTML);
-        document.getElementById('modalFotos').style.display = 'block';
-        
-        console.log('✅ Modal de fotos cargado desde Firestore');
-      } catch (error) {
-        console.error('❌ Error cargando modal de fotos:', error);
-        mostrarNotificacionTiempoReal('❌ Error cargando fotos de empleados', 'error');
-      }
+          document.body.insertAdjacentHTML('beforeend', fotosHTML);
+          document.getElementById('modalFotos').style.display = 'block';
+
+          console.log('✅ Modal de fotos cargado desde Firestore');
+        } catch (error) {
+          console.error('❌ Error cargando modal de fotos:', error);
+          mostrarNotificacionTiempoReal('❌ Error cargando fotos de empleados', 'error');
+        }
       }
 
       // Función para cambiar foto de empleado
@@ -1482,10 +1479,10 @@
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', importacionHTML);
         document.getElementById('modalImportacion').style.display = 'block';
-        
+
         // Configurar evento para archivo
         document.getElementById('archivoImportacion').addEventListener('change', procesarArchivoImportacion);
       }
@@ -1517,7 +1514,7 @@
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', historialHTML);
         document.getElementById('modalHistorial').style.display = 'block';
         cargarHistorialCambios();
@@ -1556,7 +1553,7 @@
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', departamentosHTML);
         document.getElementById('modalDepartamentos').style.display = 'block';
         cargarDepartamentos();
@@ -1565,7 +1562,7 @@
       // Función para mostrar modal genérico
       function mostrarModal(tipo, empleadoId = null) {
         let modalHTML = '';
-        
+
         switch (tipo) {
           case 'agregar':
             modalHTML = `
@@ -1640,11 +1637,11 @@
             `;
             break;
         }
-        
+
         if (modalHTML) {
           document.body.insertAdjacentHTML('beforeend', modalHTML);
           document.getElementById('modalEmpleado').style.display = 'block';
-          
+
           if (tipo === 'editar' && empleadoId) {
             cargarDatosEmpleado(empleadoId);
           }
@@ -1654,6 +1651,18 @@
       // Ejecutar cuando se carga la página
       document.addEventListener('DOMContentLoaded', function () {
         inicializarNotificacionesTiempoReal();
+        
+        // Inicializar header compartido si no se ha hecho
+        setTimeout(() => {
+          if (typeof AxyraSharedHeader !== 'undefined' && !window.axyraSharedHeaderInstance) {
+            try {
+              window.axyraSharedHeaderInstance = new AxyraSharedHeader();
+              console.log('✅ Header compartido inicializado desde empleados.html');
+            } catch (error) {
+              console.error('❌ Error inicializando header desde empleados.html:', error);
+            }
+          }
+        }, 500);
       });
 
       // Sistema de notificaciones en tiempo real

@@ -51,18 +51,25 @@ class AxyraHeaderIncluder {
       script.onload = () => {
         console.log('✅ Script del header cargado y ejecutado');
         // Inicializar el header después de cargar el script
-        if (window.axyraSharedHeader) {
-          setTimeout(() => {
-            try {
+        setTimeout(() => {
+          try {
+            if (window.axyraSharedHeader) {
               new window.axyraSharedHeader();
               console.log('✅ Header inicializado correctamente');
-            } catch (error) {
-              console.error('❌ Error inicializando header:', error);
+            } else {
+              console.log('⚠️ Clase del header no disponible, intentando inicializar directamente...');
+              // Intentar inicializar directamente
+              if (typeof AxyraSharedHeader !== 'undefined') {
+                new AxyraSharedHeader();
+                console.log('✅ Header inicializado directamente');
+              } else {
+                console.error('❌ Clase AxyraSharedHeader no encontrada');
+              }
             }
-          }, 100);
-        } else {
-          console.log('⚠️ Clase del header no disponible');
-        }
+          } catch (error) {
+            console.error('❌ Error inicializando header:', error);
+          }
+        }, 200); // Aumentar el timeout para asegurar que todo esté cargado
       };
       script.onerror = (error) => {
         console.error('❌ Error cargando script del header:', error);

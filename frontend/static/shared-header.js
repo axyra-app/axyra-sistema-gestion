@@ -1,7 +1,10 @@
 // HEADER COMPARTIDO AXYRA - Funcionalidad JavaScript
 class AxyraSharedHeader {
   constructor() {
-    this.currentPage = window.location.pathname;
+    // Mejorar la detección de página actual
+    this.currentPage = this.detectarPaginaActual();
+    console.log('📍 Página detectada:', this.currentPage);
+    
     this.navigationItems = [
       { href: '../../index.html', icon: 'fas fa-home', text: 'Inicio', show: true },
       { href: '../dashboard/dashboard.html', icon: 'fas fa-tachometer-alt', text: 'Dashboard', show: true },
@@ -35,8 +38,26 @@ class AxyraSharedHeader {
     
     // Determinar qué página está activa y ocultar botones innecesarios
     this.navigationItems.forEach(item => {
-      const itemPage = item.href.split('/').pop();
-      const isCurrentPage = this.currentPage.includes(itemPage);
+      let isCurrentPage = false;
+      
+      // Mapear nombres de página
+      if (this.currentPage === 'empleados' && item.text === 'Empleados') {
+        isCurrentPage = true;
+      } else if (this.currentPage === 'dashboard' && item.text === 'Dashboard') {
+        isCurrentPage = true;
+      } else if (this.currentPage === 'horas' && item.text === 'Horas') {
+        isCurrentPage = true;
+      } else if (this.currentPage === 'nomina' && item.text === 'Nómina') {
+        isCurrentPage = true;
+      } else if (this.currentPage === 'caja' && item.text === 'Caja') {
+        isCurrentPage = true;
+      } else if (this.currentPage === 'inventario' && item.text === 'Inventario') {
+        isCurrentPage = true;
+      } else if (this.currentPage === 'configuracion' && item.text === 'Config') {
+        isCurrentPage = true;
+      } else if (this.currentPage === 'inicio' && item.text === 'Inicio') {
+        isCurrentPage = true;
+      }
       
       if (isCurrentPage) {
         item.active = true;
@@ -198,6 +219,51 @@ class AxyraSharedHeader {
         roleText.textContent = role;
       }
     }
+  }
+
+  // Método para detectar la página actual de manera más robusta
+  detectarPaginaActual() {
+    // Intentar múltiples métodos de detección
+    let pagina = '';
+    
+    // Método 1: URL actual
+    const url = window.location.href;
+    console.log('🔍 URL completa:', url);
+    
+    // Método 2: Pathname
+    const pathname = window.location.pathname;
+    console.log('🔍 Pathname:', pathname);
+    
+    // Método 3: Buscar en el título de la página
+    const titulo = document.title;
+    console.log('🔍 Título de la página:', titulo);
+    
+    // Método 4: Buscar en el contenido del body
+    const bodyContent = document.body.innerHTML;
+    
+    // Determinar página basándose en múltiples indicadores
+    if (url.includes('empleados') || pathname.includes('empleados') || titulo.includes('Empleados') || bodyContent.includes('empleados')) {
+      pagina = 'empleados';
+    } else if (url.includes('dashboard') || pathname.includes('dashboard') || titulo.includes('Dashboard')) {
+      pagina = 'dashboard';
+    } else if (url.includes('horas') || pathname.includes('horas') || titulo.includes('Horas')) {
+      pagina = 'horas';
+    } else if (url.includes('nomina') || pathname.includes('nomina') || titulo.includes('Nómina')) {
+      pagina = 'nomina';
+    } else if (url.includes('caja') || pathname.includes('caja') || titulo.includes('Caja')) {
+      pagina = 'caja';
+    } else if (url.includes('inventario') || pathname.includes('inventario') || titulo.includes('Inventario')) {
+      pagina = 'inventario';
+    } else if (url.includes('configuracion') || pathname.includes('configuracion') || titulo.includes('Configuración')) {
+      pagina = 'configuracion';
+    } else if (url.includes('index') || pathname.includes('index') || titulo.includes('Inicio')) {
+      pagina = 'inicio';
+    } else {
+      pagina = 'desconocida';
+    }
+    
+    console.log('🎯 Página detectada como:', pagina);
+    return pagina;
   }
 }
 
