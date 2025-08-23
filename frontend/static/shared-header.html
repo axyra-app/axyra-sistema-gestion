@@ -1,4 +1,41 @@
 <!-- HEADER COMPARTIDO AXYRA - Incluir en todos los módulos -->
+<style>
+  .axyra-logout-btn {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+  }
+
+  .axyra-logout-btn:hover {
+    background: linear-gradient(135deg, #c53030, #a52a2a);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.4);
+  }
+
+  .axyra-logout-btn:active {
+    transform: translateY(0);
+  }
+
+  .axyra-logout-text {
+    display: inline;
+  }
+
+  @media (max-width: 768px) {
+    .axyra-logout-text {
+      display: none;
+    }
+  }
+</style>
 <header class="axyra-header">
   <div class="axyra-header-content">
     <div class="axyra-logo-title">
@@ -21,6 +58,7 @@
       <span class="axyra-user-email" id="userEmail">Usuario</span>
       <button class="axyra-logout-btn" data-action="logout">
         <i class="fas fa-sign-out-alt"></i>
+        <span class="axyra-logout-text">Cerrar</span>
       </button>
     </div>
   </div>

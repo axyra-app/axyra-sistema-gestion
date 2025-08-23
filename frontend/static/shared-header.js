@@ -65,17 +65,22 @@ class AxyraSharedHeader {
     const roleBadge = document.getElementById('roleBadge');
     
     if (userEmail) {
-      const user = localStorage.getItem('axyra_isolated_user');
+      // Intentar obtener usuario de Firebase primero, luego de isolated
+      let user = localStorage.getItem('axyra_firebase_user');
+      if (!user) {
+        user = localStorage.getItem('axyra_isolated_user');
+      }
+      
       if (user) {
         try {
           const userData = JSON.parse(user);
           userEmail.textContent = userData.email || userData.username || 'Usuario';
           
           // Actualizar rol si está disponible
-          if (roleBadge && userData.role) {
+          if (roleBadge) {
             const roleText = roleBadge.querySelector('.axyra-role-badge-text');
             if (roleText) {
-              roleText.textContent = userData.role;
+              roleText.textContent = userData.role || 'Empleado';
             }
           }
         } catch (error) {

@@ -37,31 +37,31 @@
           flex-direction: column;
           gap: 0.5rem;
         }
-        
+
         .axyra-nav-link {
           padding: 0.75rem;
           text-align: center;
           font-size: 0.9rem;
         }
-        
+
         .axyra-actions-bar {
           flex-direction: column;
           gap: 1rem;
         }
-        
+
         .axyra-filters {
           flex-direction: column;
           gap: 1rem;
         }
-        
+
         .axyra-table-container {
           overflow-x: auto;
         }
-        
+
         .axyra-table {
           min-width: 800px;
         }
-        
+
         .axyra-action-buttons {
           flex-direction: column;
           gap: 0.5rem;
@@ -72,11 +72,11 @@
         .axyra-page-header h1 {
           font-size: 1.5rem;
         }
-        
+
         .axyra-page-subtitle {
           font-size: 0.9rem;
         }
-        
+
         .axyra-btn {
           padding: 0.75rem 1rem;
           font-size: 0.9rem;
@@ -291,7 +291,7 @@
         color: #2f855a;
       }
 
-      
+
 
       /* Estilos para organigrama visual */
       .axyra-organigrama {
@@ -391,7 +391,7 @@
       // Sistema de fotos de empleados - Sistema de avatares
       function mostrarModalFotos() {
         const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-        
+
         const modalHTML = `
           <div id="modalFotos" class="axyra-modal">
             <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
@@ -404,8 +404,8 @@
                   ${empleados.map(emp => `
                     <div class="axyra-foto-empleado" data-empleado-id="${emp.id}">
                       <div class="axyra-foto-container">
-                        <img src="${emp.fotoURL || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjNjY3ZWVhIi8+CjxjaXJjbGUgY3g9IjUwIiBjeT0iMzUiIHI9IjE1IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTUgNzVMMzAgNjBMMzUgNjVMNDAgNjBMNDUgNjVMNTAgNjBMNTUgNjVMNjAgNjBMNjUgNjVMNzAgNjBMNzUgNjVMODAgNjBMODUgNjVMOTAgNjBMOTUgNjVMODUgNzVIMTVaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K'}" 
-                             alt="Foto de ${emp.nombre}" 
+                        <img src="${emp.fotoURL || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjNjY3ZWVhIi8+CjxjaXJjbGUgY3g9IjUwIiBjeT0iMzUiIHI9IjE1IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTUgNzVMMzAgNjBMMzUgNjVMNDAgNjBMNDUgNjVMNTAgNjBMNTUgNjVMNjAgNjBMNjUgNjVMNzAgNjBMNzUgNjVMODAgNjBMODUgNjVMOTAgNjBMOTUgNjVMODUgNzVIMTVaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K'}"
+                             alt="Foto de ${emp.nombre}"
                              class="axyra-foto-empleado-img" />
                         <div class="axyra-foto-overlay">
                           <button class="axyra-btn-foto" onclick="cambiarFotoEmpleado('${emp.id}')">
@@ -424,7 +424,7 @@
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         document.getElementById('modalFotos').style.display = 'block';
       }
@@ -448,15 +448,15 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           const fotoURL = e.target.result;
-          
+
           // Actualizar empleado en localStorage
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           const index = empleados.findIndex(emp => emp.id === empleadoId);
-          
+
           if (index !== -1) {
             empleados[index].fotoURL = fotoURL;
             localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
-            
+
             // Actualizar Firebase si está disponible
             if (typeof firebase !== 'undefined' && firebase.firestore) {
               firebase.firestore().collection('empleados').doc(empleadoId).update({
@@ -465,13 +465,13 @@
                 console.warn('⚠️ Error actualizando foto en Firebase:', error);
               });
             }
-            
+
             // Registrar cambio en historial
             registrarCambio('update', empleadoId, 'Foto de empleado actualizada');
-            
+
             // Actualizar vista
             actualizarFotoEmpleado(empleadoId, fotoURL);
-            
+
             mostrarMensaje('✅ Foto actualizada correctamente', 'success');
           }
         };
@@ -484,7 +484,7 @@
         if (fotoImg) {
           fotoImg.src = fotoURL;
         }
-        
+
         // También actualizar en la tabla principal
         const avatarTabla = document.querySelector(`#empleadosTableBody tr[data-empleado-id="${empleadoId}"] .axyra-avatar img`);
         if (avatarTabla) {
@@ -1242,16 +1242,16 @@
       function mostrarOrganigrama() {
         const departamentos = JSON.parse(localStorage.getItem('axyra_departamentos') || '[]');
         const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-        
+
         // Agrupar empleados por departamento
         const estructura = {};
-        departamentos.forEach(dept => {
+        departamentos.forEach((dept) => {
           estructura[dept.nombre] = {
-            empleados: empleados.filter(emp => emp.departamento === dept.nombre),
-            color: generarColorDepartamento(dept.nombre)
+            empleados: empleados.filter((emp) => emp.departamento === dept.nombre),
+            color: generarColorDepartamento(dept.nombre),
           };
         });
-        
+
         const organigramaHTML = `
           <div id="modalOrganigrama" class="axyra-modal">
             <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
@@ -1267,7 +1267,7 @@
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', organigramaHTML);
         document.getElementById('modalOrganigrama').style.display = 'block';
       }
@@ -1275,7 +1275,7 @@
       // Generar HTML del organigrama
       function generarHTMLOrganigrama(estructura) {
         let html = '<div class="axyra-organigrama">';
-        
+
         Object.entries(estructura).forEach(([departamento, data]) => {
           html += `
             <div class="axyra-departamento-grupo">
@@ -1284,7 +1284,9 @@
                 <span class="axyra-empleados-count">${data.empleados.length} empleados</span>
               </div>
               <div class="axyra-empleados-grid">
-                ${data.empleados.map(emp => `
+                ${data.empleados
+                  .map(
+                    (emp) => `
                   <div class="axyra-empleado-card">
                     <div class="axyra-empleado-avatar">
                       <i class="fas fa-user"></i>
@@ -1295,12 +1297,14 @@
                       <small>$${emp.salario.toFixed(2)}</small>
                     </div>
                   </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
               </div>
             </div>
           `;
         });
-        
+
         html += '</div>';
         return html;
       }
@@ -1308,22 +1312,30 @@
       // Generar color único para cada departamento
       function generarColorDepartamento(nombre) {
         const colores = [
-          '#667eea', '#764ba2', '#48bb78', '#ed8936', '#f56565',
-          '#4299e1', '#805ad5', '#38a169', '#dd6b20', '#e53e3e'
+          '#667eea',
+          '#764ba2',
+          '#48bb78',
+          '#ed8936',
+          '#f56565',
+          '#4299e1',
+          '#805ad5',
+          '#38a169',
+          '#dd6b20',
+          '#e53e3e',
         ];
-        
+
         const hash = nombre.split('').reduce((a, b) => {
-          a = ((a << 5) - a) + b.charCodeAt(0);
+          a = (a << 5) - a + b.charCodeAt(0);
           return a & a;
         }, 0);
-        
+
         return colores[Math.abs(hash) % colores.length];
       }
 
       // Sistema de fotos de empleados - Avatares y gestión de imágenes
       function mostrarModalFotos() {
         const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-        
+
         const fotosHTML = `
           <div id="modalFotos" class="axyra-modal">
             <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
@@ -1333,7 +1345,9 @@
               </div>
               <div class="axyra-modal-body">
                 <div class="axyra-fotos-grid">
-                  ${empleados.map(emp => `
+                  ${empleados
+                    .map(
+                      (emp) => `
                     <div class="axyra-foto-empleado">
                       <div class="axyra-foto-avatar">
                         <i class="fas fa-user"></i>
@@ -1347,13 +1361,15 @@
                         <i class="fas fa-camera"></i> Cambiar
                       </button>
                     </div>
-                  `).join('')}
+                  `
+                    )
+                    .join('')}
                 </div>
               </div>
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', fotosHTML);
         document.getElementById('modalFotos').style.display = 'block';
       }
@@ -1363,11 +1379,11 @@
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'image/*';
-        input.onchange = function(e) {
+        input.onchange = function (e) {
           const file = e.target.files[0];
           if (file) {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
               // Aquí se procesaría la imagen
               mostrarNotificacionTiempoReal('📸 Foto actualizada correctamente', 'success');
             };
@@ -1377,26 +1393,31 @@
         input.click();
       }
 
+      // Función para cambiar foto de empleado (alias para compatibilidad)
+      function cambiarFotoEmpleado(empleadoId) {
+        cambiarFoto(empleadoId);
+      }
+
       // Ejecutar cuando se carga la página
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         inicializarNotificacionesTiempoReal();
       });
 
       // Sistema de notificaciones en tiempo real
       function inicializarNotificacionesTiempoReal() {
         // Escuchar cambios en localStorage para notificaciones
-        window.addEventListener('storage', function(e) {
+        window.addEventListener('storage', function (e) {
           if (e.key === 'axyra_empleados') {
             mostrarNotificacionTiempoReal('🔄 Lista de empleados actualizada', 'info');
           }
         });
 
         // Escuchar eventos personalizados
-        window.addEventListener('axyraEmpleadosCambiados', function(e) {
+        window.addEventListener('axyraEmpleadosCambiados', function (e) {
           const { action, empleadoId } = e.detail;
           let mensaje = '';
-          
-          switch(action) {
+
+          switch (action) {
             case 'create':
               mensaje = '✅ Nuevo empleado agregado';
               break;
@@ -1409,7 +1430,7 @@
             default:
               mensaje = '📝 Cambio en empleados';
           }
-          
+
           mostrarNotificacionTiempoReal(mensaje, 'success');
         });
 
@@ -1427,9 +1448,9 @@
             <i class="fas fa-times"></i>
           </button>
         `;
-        
+
         document.body.appendChild(notificacion);
-        
+
         // Auto-remover después de 5 segundos
         setTimeout(() => {
           if (notificacion.parentElement) {
@@ -1449,16 +1470,16 @@
           detalles: detalles,
           usuario: usuario || (currentUser ? currentUser.username || currentUser.email : 'Sistema'),
           ip: 'localhost', // En producción se obtendría del servidor
-          userAgent: navigator.userAgent
+          userAgent: navigator.userAgent,
         };
-        
+
         historial.unshift(cambio);
-        
+
         // Mantener solo los últimos 1000 cambios
         if (historial.length > 1000) {
           historial.splice(1000);
         }
-        
+
         localStorage.setItem('axyra_historial_empleados', JSON.stringify(historial));
         console.log('📝 Cambio registrado en historial:', cambio);
       }
@@ -1466,7 +1487,7 @@
       // Función para mostrar historial de cambios
       function mostrarHistorialCambios() {
         const historial = JSON.parse(localStorage.getItem('axyra_historial_empleados') || '[]');
-        
+
         let historialHTML = `
           <div class="axyra-modal-header">
             <h3><i class="fas fa-history"></i> Historial de Cambios</h3>
@@ -1484,11 +1505,11 @@
             </div>
             <div class="axyra-historial-lista">
         `;
-        
+
         if (historial.length === 0) {
           historialHTML += '<p class="axyra-text-center">No hay cambios registrados</p>';
         } else {
-          historial.forEach(cambio => {
+          historial.forEach((cambio) => {
             const fecha = new Date(cambio.timestamp).toLocaleString('es-ES');
             historialHTML += `
               <div class="axyra-historial-item">
@@ -1507,12 +1528,12 @@
             `;
           });
         }
-        
+
         historialHTML += `
             </div>
           </div>
         `;
-        
+
         // Crear modal de historial
         const modalHistorial = document.createElement('div');
         modalHistorial.id = 'modalHistorial';
@@ -1522,7 +1543,7 @@
             ${historialHTML}
           </div>
         `;
-        
+
         document.body.appendChild(modalHistorial);
         modalHistorial.style.display = 'block';
       }
@@ -1532,27 +1553,28 @@
         const filtroAccion = document.getElementById('filtroAccion').value;
         const filtroFecha = document.getElementById('filtroFecha').value;
         const historial = JSON.parse(localStorage.getItem('axyra_historial_empleados') || '[]');
-        
+
         let historialFiltrado = historial;
-        
+
         if (filtroAccion) {
-          historialFiltrado = historialFiltrado.filter(c => c.accion === filtroAccion);
+          historialFiltrado = historialFiltrado.filter((c) => c.accion === filtroAccion);
         }
-        
+
         if (filtroFecha) {
           const fechaFiltro = new Date(filtroFecha);
-          historialFiltrado = historialFiltrado.filter(c => {
+          historialFiltrado = historialFiltrado.filter((c) => {
             const fechaCambio = new Date(c.timestamp);
             return fechaCambio.toDateString() === fechaFiltro.toDateString();
           });
         }
-        
+
         // Actualizar vista del historial
         const historialLista = document.querySelector('.axyra-historial-lista');
         if (historialLista) {
-          historialLista.innerHTML = historialFiltrado.map(cambio => {
-            const fecha = new Date(cambio.timestamp).toLocaleString('es-ES');
-            return `
+          historialLista.innerHTML = historialFiltrado
+            .map((cambio) => {
+              const fecha = new Date(cambio.timestamp).toLocaleString('es-ES');
+              return `
               <div class="axyra-historial-item">
                 <div class="axyra-historial-header">
                   <span class="axyra-historial-accion axyra-historial-${cambio.accion}">
@@ -1567,7 +1589,8 @@
                 </div>
               </div>
             `;
-          }).join('');
+            })
+            .join('');
         }
       }
 
@@ -1603,7 +1626,7 @@
             </div>
           </div>
         `;
-        
+
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         document.getElementById('modalImportacion').style.display = 'block';
       }
@@ -1619,14 +1642,14 @@
         try {
           const data = await leerArchivoExcel(archivo);
           const empleadosImportados = procesarDatosExcel(data);
-          
+
           if (empleadosImportados.length > 0) {
             // Agregar empleados al sistema
             for (const empleado of empleadosImportados) {
               await agregarEmpleado(empleado);
               registrarCambio('create', empleado.id || 'N/A', `Empleado importado: ${empleado.nombre}`);
             }
-            
+
             mostrarResultadoImportacion(empleadosImportados.length, empleadosImportados);
             cargarEmpleados(); // Recargar la tabla
           } else {
@@ -1642,7 +1665,7 @@
       async function leerArchivoExcel(archivo) {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
-          reader.onload = function(e) {
+          reader.onload = function (e) {
             try {
               const data = new Uint8Array(e.target.result);
               const workbook = XLSX.read(data, { type: 'array' });
@@ -1662,10 +1685,10 @@
       // Procesar datos del Excel
       function procesarDatosExcel(data) {
         if (data.length < 2) return [];
-        
+
         const headers = data[0];
         const empleados = [];
-        
+
         for (let i = 1; i < data.length; i++) {
           const row = data[i];
           if (row.length >= 7) {
@@ -1678,15 +1701,15 @@
               salario: parseFloat(row[5]) || 0,
               estado: row[6] || 'Activo',
               fechaIngreso: new Date().toISOString(),
-              createdAt: new Date().toISOString()
+              createdAt: new Date().toISOString(),
             };
-            
+
             if (empleado.nombre && empleado.email) {
               empleados.push(empleado);
             }
           }
         }
-        
+
         return empleados;
       }
 
@@ -1701,7 +1724,7 @@
             <div class="axyra-importacion-lista">
               <h5>Empleados importados:</h5>
               <ul>
-                ${empleados.map(emp => `<li>${emp.nombre} - ${emp.cargo}</li>`).join('')}
+                ${empleados.map((emp) => `<li>${emp.nombre} - ${emp.cargo}</li>`).join('')}
               </ul>
             </div>
           </div>
@@ -2086,10 +2109,10 @@
         empleados.push(empleado);
 
         console.log('✅ Empleado agregado:', empleado);
-        
+
         // Registrar cambio en historial
         registrarCambio('create', empleado.id, `Empleado agregado: ${empleado.nombre}`);
-        
+
         guardarEmpleados();
         mostrarEmpleados();
         mostrarMensaje('✅ Empleado agregado correctamente', 'success');
@@ -2227,7 +2250,7 @@
           cargarEmpleados();
 
           // Registrar cambio en historial
-          const empleadoEliminado = empleados.find(emp => emp.id === id);
+          const empleadoEliminado = empleados.find((emp) => emp.id === id);
           if (empleadoEliminado) {
             registrarCambio('delete', id, `Empleado eliminado: ${empleadoEliminado.nombre}`);
           }
@@ -3011,11 +3034,15 @@
         }
       });
 
-      // Limpiar datos cuando la página se vuelve visible
+      // Limpiar datos cuando la página se vuelve visible (solo una vez)
+      let limpiezaEjecutada = false;
       document.addEventListener('visibilitychange', function () {
-        if (!document.hidden) {
+        if (!document.hidden && !limpiezaEjecutada) {
           console.log('👁️ Página visible, verificando datos...');
-          setTimeout(limpiarDatosInconsistentes, 500);
+          setTimeout(() => {
+            limpiarDatosInconsistentes();
+            limpiezaEjecutada = true;
+          }, 500);
         }
       });
 

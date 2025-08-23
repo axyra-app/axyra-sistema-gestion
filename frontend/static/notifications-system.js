@@ -206,15 +206,8 @@ class AxyraNotificationSystem {
           icon: '/static/logo.png',
           badge: '/static/logo.png',
           tag: notification.id,
-          requireInteraction: notification.type === 'error',
-          actions: notification.action
-            ? [
-                {
-                  action: 'view',
-                  title: notification.action,
-                },
-              ]
-            : [],
+          requireInteraction: notification.type === 'error'
+          // Removidas las actions que causan error en navegadores sin ServiceWorker
         });
 
         // Manejar clics en la notificación
