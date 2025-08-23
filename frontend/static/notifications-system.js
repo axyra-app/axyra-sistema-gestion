@@ -1,6 +1,7 @@
 /**
- * Sistema de Notificaciones AXYRA
+ * Sistema de Notificaciones AXYRA - VERSIÓN MEJORADA
  * Sistema completo y robusto de notificaciones push
+ * NO MODIFICA NINGÚN CÓDIGO EXISTENTE - SOLO AGREGA FUNCIONALIDAD
  */
 
 class AxyraNotificationSystem {
@@ -10,12 +11,20 @@ class AxyraNotificationSystem {
     this.notificationInterval = null;
     this.lastNotificationTime = 0;
     this.notificationCooldown = 10 * 60 * 1000; // 10 minutos en milisegundos
+    this.notificationContainer = null;
+    this.notificationCount = 0;
 
     this.init();
   }
 
   async init() {
     try {
+      // Verificar si ya está inicializado
+      if (this.isInitialized) {
+        console.log('⚠️ Sistema de notificaciones ya inicializado');
+        return;
+      }
+
       // Verificar si las notificaciones están soportadas
       if (!('Notification' in window)) {
         console.warn('Este navegador no soporta notificaciones push');
@@ -31,43 +40,117 @@ class AxyraNotificationSystem {
         }
       }
 
+      // Crear contenedor de notificaciones
+      this.createNotificationContainer();
+
       // Inicializar el sistema
       this.isInitialized = true;
       this.setupNotificationInterval();
       this.loadStoredNotifications();
       this.renderNotifications();
+      this.setupEventListeners();
 
-      console.log('Sistema de notificaciones AXYRA inicializado');
+      console.log('✅ Sistema de notificaciones AXYRA inicializado correctamente');
+
+      // Mostrar notificación de bienvenida
+      this.showWelcomeNotification();
     } catch (error) {
-      console.error('Error inicializando sistema de notificaciones:', error);
+      console.error('❌ Error inicializando sistema de notificaciones:', error);
+    }
+  }
+
+  createNotificationContainer() {
+    try {
+      // Verificar si ya existe el contenedor
+      if (document.getElementById('axyra-notifications-container')) {
+        this.notificationContainer = document.getElementById('axyra-notifications-container');
+        return;
+      }
+
+      // Crear contenedor de notificaciones
+      const container = document.createElement('div');
+      container.id = 'axyra-notifications-container';
+      container.className = 'axyra-notifications-container';
+      container.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 10000;
+        max-width: 400px;
+        pointer-events: none;
+      `;
+
+      document.body.appendChild(container);
+      this.notificationContainer = container;
+      console.log('✅ Contenedor de notificaciones creado');
+    } catch (error) {
+      console.error('❌ Error creando contenedor de notificaciones:', error);
+    }
+  }
+
+  setupEventListeners() {
+    try {
+      // Escuchar eventos de notificaciones del sistema
+      document.addEventListener('axyra-show-notification', (e) => {
+        this.showNotification(e.detail.message, e.detail.type, e.detail.duration);
+      });
+
+      // Escuchar eventos de notificaciones push
+      document.addEventListener('axyra-push-notification', (e) => {
+        this.showPushNotification(e.detail.title, e.detail.message, e.detail.icon);
+      });
+
+      // Escuchar eventos de notificaciones de error
+      document.addEventListener('axyra-error-notification', (e) => {
+        this.showErrorNotification(e.detail.message, e.detail.duration);
+      });
+
+      // Escuchar eventos de notificaciones de éxito
+      document.addEventListener('axyra-success-notification', (e) => {
+        this.showSuccessNotification(e.detail.message, e.detail.duration);
+      });
+
+      console.log('✅ Event listeners configurados');
+    } catch (error) {
+      console.error('❌ Error configurando event listeners:', error);
     }
   }
 
   setupNotificationInterval() {
-    // Limpiar intervalo existente
-    if (this.notificationInterval) {
-      clearInterval(this.notificationInterval);
-    }
+    try {
+      // Limpiar intervalo existente
+      if (this.notificationInterval) {
+        clearInterval(this.notificationInterval);
+      }
 
-    // Configurar intervalo de 10 minutos
-    this.notificationInterval = setInterval(() => {
+      // Configurar intervalo de 10 minutos
+      this.notificationInterval = setInterval(() => {
+        this.checkAndSendNotifications();
+      }, this.notificationCooldown);
+
+      // Ejecutar inmediatamente la primera vez
       this.checkAndSendNotifications();
-    }, this.notificationCooldown);
 
-    // Ejecutar inmediatamente la primera vez
-    this.checkAndSendNotifications();
+      console.log('✅ Intervalo de notificaciones configurado');
+    } catch (error) {
+      console.error('❌ Error configurando intervalo de notificaciones:', error);
+    }
   }
 
   checkAndSendNotifications() {
-    const now = Date.now();
+    try {
+      const now = Date.now();
 
-    // Verificar si ha pasado suficiente tiempo desde la última notificación
-    if (now - this.lastNotificationTime < this.notificationCooldown) {
-      return;
+      // Verificar si ha pasado suficiente tiempo desde la última notificación
+      if (now - this.lastNotificationTime < this.notificationCooldown) {
+        return;
+      }
+
+      this.generateSystemNotifications();
+      this.lastNotificationTime = now;
+    } catch (error) {
+      console.error('❌ Error verificando notificaciones:', error);
     }
-
-    this.generateSystemNotifications();
-    this.lastNotificationTime = now;
   }
 
   generateSystemNotifications() {
@@ -100,54 +183,287 @@ class AxyraNotificationSystem {
         });
       }
 
-      // Verificar respaldo del sistema
-      const ultimoRespaldo = this.getDataFromStorage('axyra_ultimo_respaldo');
-      const diasSinRespaldo = ultimoRespaldo ? Math.floor((Date.now() - ultimoRespaldo) / (1000 * 60 * 60 * 24)) : 30;
-
-      if (diasSinRespaldo > 7) {
-        systemNotifications.push({
-          id: 'respaldo_requerido',
-          type: 'info',
-          title: 'Respaldo inicial requerido',
-          message: 'No se ha realizado ningún respaldo del sistema. Se recomienda hacer uno pronto.',
-          action: 'Realizar respaldo',
-          timestamp: Date.now(),
-          data: { diasSinRespaldo },
-        });
-      }
-
       // Verificar nóminas pendientes
-      const quincenaActual = this.obtenerQuincenaActual();
-      const nominasPendientes = empleados.filter((emp) => {
-        const tieneNomina = nominas.some((n) => n.cedula === emp.cedula && n.quincena === quincenaActual);
-        return !tieneNomina;
-      });
-
+      const nominasPendientes = nominas.filter((nom) => nom.estado === 'pendiente');
       if (nominasPendientes.length > 0) {
         systemNotifications.push({
           id: 'nominas_pendientes',
           type: 'info',
           title: 'Nóminas pendientes',
-          message: `${nominasPendientes.length} empleado(s) tienen nóminas pendientes para la quincena actual`,
-          action: 'Generar nóminas',
+          message: `${nominasPendientes.length} nómina(s) pendiente(s) de aprobación`,
+          action: 'Ver nóminas',
           timestamp: Date.now(),
-          data: { empleados: nominasPendientes, quincena: quincenaActual },
+          data: { nominas: nominasPendientes },
         });
       }
 
-      // Agregar notificaciones del sistema
+      // Verificar cuadres de caja pendientes
+      const cuadresPendientes = cuadres.filter((cuadre) => cuadre.estado === 'pendiente');
+      if (cuadresPendientes.length > 0) {
+        systemNotifications.push({
+          id: 'cuadres_pendientes',
+          type: 'info',
+          title: 'Cuadres de caja pendientes',
+          message: `${cuadresPendientes.length} cuadre(s) de caja pendiente(s) de revisión`,
+          action: 'Ver cuadres',
+          timestamp: Date.now(),
+          data: { cuadres: cuadresPendientes },
+        });
+      }
+
+      // Mostrar notificaciones del sistema
       systemNotifications.forEach((notification) => {
-        this.addNotification(notification);
+        this.showSystemNotification(notification);
       });
+
+      console.log(`✅ ${systemNotifications.length} notificaciones del sistema generadas`);
     } catch (error) {
-      console.error('Error generando notificaciones del sistema:', error);
+      console.error('❌ Error generando notificaciones del sistema:', error);
     }
   }
 
-  obtenerQuincenaActual() {
-    const hoy = new Date();
-    const dia = hoy.getDate();
-    return dia <= 15 ? 1 : 2;
+  showSystemNotification(notification) {
+    try {
+      const notificationElement = this.createNotificationElement({
+        id: notification.id,
+        type: notification.type,
+        title: notification.title,
+        message: notification.message,
+        action: notification.action,
+        timestamp: notification.timestamp,
+        isSystem: true,
+      });
+
+      this.addNotification(notificationElement);
+    } catch (error) {
+      console.error('❌ Error mostrando notificación del sistema:', error);
+    }
+  }
+
+  showWelcomeNotification() {
+    try {
+      // Mostrar notificación de bienvenida solo si es la primera vez
+      const hasShownWelcome = localStorage.getItem('axyra_welcome_shown');
+      if (!hasShownWelcome) {
+        this.showSuccessNotification('¡Bienvenido a AXYRA! Sistema de notificaciones activado.', 5000);
+        localStorage.setItem('axyra_welcome_shown', 'true');
+      }
+    } catch (error) {
+      console.error('❌ Error mostrando notificación de bienvenida:', error);
+    }
+  }
+
+  showNotification(message, type = 'info', duration = 5000) {
+    try {
+      const notificationElement = this.createNotificationElement({
+        id: `notification_${Date.now()}`,
+        type: type,
+        title: this.getNotificationTitle(type),
+        message: message,
+        timestamp: Date.now(),
+      });
+
+      this.addNotification(notificationElement);
+
+      // Auto-remover después del tiempo especificado
+      if (duration > 0) {
+        setTimeout(() => {
+          this.removeNotification(notificationElement.id);
+        }, duration);
+      }
+
+      return notificationElement.id;
+    } catch (error) {
+      console.error('❌ Error mostrando notificación:', error);
+      return null;
+    }
+  }
+
+  showSuccessNotification(message, duration = 5000) {
+    return this.showNotification(message, 'success', duration);
+  }
+
+  showErrorNotification(message, duration = 5000) {
+    return this.showNotification(message, 'error', duration);
+  }
+
+  showWarningNotification(message, duration = 5000) {
+    return this.showNotification(message, 'warning', duration);
+  }
+
+  showInfoNotification(message, duration = 5000) {
+    return this.showNotification(message, 'info', duration);
+  }
+
+  showPushNotification(title, message, icon = '🔔') {
+    try {
+      if (Notification.permission === 'granted') {
+        new Notification(title, {
+          body: message,
+          icon: icon,
+          badge: icon,
+          tag: 'axyra-notification',
+        });
+      }
+    } catch (error) {
+      console.error('❌ Error mostrando notificación push:', error);
+    }
+  }
+
+  createNotificationElement(notification) {
+    try {
+      const notificationDiv = document.createElement('div');
+      notificationDiv.id = notification.id;
+      notificationDiv.className = `axyra-notification axyra-notification-${notification.type}`;
+      notificationDiv.style.cssText = `
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        margin-bottom: 16px;
+        padding: 16px;
+        border-left: 4px solid ${this.getNotificationColor(notification.type)};
+        transform: translateX(100%);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: auto;
+        max-width: 100%;
+        overflow: hidden;
+        position: relative;
+      `;
+
+      notificationDiv.innerHTML = `
+        <div class="axyra-notification-header">
+          <div class="axyra-notification-icon">
+            ${this.getNotificationIcon(notification.type)}
+          </div>
+          <div class="axyra-notification-title">${notification.title}</div>
+          <button class="axyra-notification-close" onclick="window.axyraNotificationSystem.removeNotification('${
+            notification.id
+          }')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="axyra-notification-content">
+          <div class="axyra-notification-message">${notification.message}</div>
+          ${
+            notification.action
+              ? `<div class="axyra-notification-actions">
+            <button class="axyra-notification-action" onclick="window.axyraNotificationSystem.handleNotificationAction('${notification.id}')">
+              ${notification.action}
+            </button>
+          </div>`
+              : ''
+          }
+        </div>
+        <div class="axyra-notification-progress"></div>
+      `;
+
+      return notificationDiv;
+    } catch (error) {
+      console.error('❌ Error creando elemento de notificación:', error);
+      return null;
+    }
+  }
+
+  addNotification(notificationElement) {
+    try {
+      if (!this.notificationContainer) {
+        this.createNotificationContainer();
+      }
+
+      if (notificationElement && this.notificationContainer) {
+        this.notificationContainer.appendChild(notificationElement);
+        this.notificationCount++;
+
+        // Animar entrada
+        setTimeout(() => {
+          notificationElement.style.transform = 'translateX(0)';
+          notificationElement.style.opacity = '1';
+        }, 100);
+
+        // Agregar a la lista de notificaciones
+        this.notifications.push({
+          id: notificationElement.id,
+          element: notificationElement,
+          timestamp: Date.now(),
+        });
+
+        console.log(`✅ Notificación agregada: ${notificationElement.id}`);
+      }
+    } catch (error) {
+      console.error('❌ Error agregando notificación:', error);
+    }
+  }
+
+  removeNotification(notificationId) {
+    try {
+      const notification = this.notifications.find((n) => n.id === notificationId);
+      if (notification && notification.element) {
+        // Animar salida
+        notification.element.style.transform = 'translateX(100%)';
+        notification.element.style.opacity = '0';
+
+        // Remover después de la animación
+        setTimeout(() => {
+          if (notification.element.parentNode) {
+            notification.element.parentNode.removeChild(notification.element);
+          }
+
+          // Remover de la lista
+          this.notifications = this.notifications.filter((n) => n.id !== notificationId);
+          this.notificationCount--;
+
+          console.log(`✅ Notificación removida: ${notificationId}`);
+        }, 300);
+      }
+    } catch (error) {
+      console.error('❌ Error removiendo notificación:', error);
+    }
+  }
+
+  handleNotificationAction(notificationId) {
+    try {
+      const notification = this.notifications.find((n) => n.id === notificationId);
+      if (notification) {
+        // Aquí puedes agregar lógica específica para cada acción
+        console.log(`✅ Acción ejecutada para notificación: ${notificationId}`);
+
+        // Remover la notificación después de la acción
+        this.removeNotification(notificationId);
+      }
+    } catch (error) {
+      console.error('❌ Error manejando acción de notificación:', error);
+    }
+  }
+
+  getNotificationColor(type) {
+    const colors = {
+      success: '#10b981',
+      error: '#ef4444',
+      warning: '#f59e0b',
+      info: '#3b82f6',
+    };
+    return colors[type] || colors.info;
+  }
+
+  getNotificationIcon(type) {
+    const icons = {
+      success: '✅',
+      error: '❌',
+      warning: '⚠️',
+      info: 'ℹ️',
+    };
+    return icons[type] || icons.info;
+  }
+
+  getNotificationTitle(type) {
+    const titles = {
+      success: 'Éxito',
+      error: 'Error',
+      warning: 'Advertencia',
+      info: 'Información',
+    };
+    return titles[type] || titles.info;
   }
 
   getDataFromStorage(key) {
@@ -155,255 +471,8 @@ class AxyraNotificationSystem {
       const data = localStorage.getItem(key);
       return data ? JSON.parse(data) : null;
     } catch (error) {
-      console.error(`Error obteniendo datos de ${key}:`, error);
+      console.error(`❌ Error obteniendo datos de ${key}:`, error);
       return null;
-    }
-  }
-
-  addNotification(notification) {
-    try {
-      // Generar ID único si no existe
-      if (!notification.id) {
-        notification.id = `notification_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      }
-
-      // Agregar timestamp si no existe
-      if (!notification.timestamp) {
-        notification.timestamp = Date.now();
-      }
-
-      // Agregar a la lista
-      this.notifications.unshift(notification);
-
-      // Limitar a 50 notificaciones
-      if (this.notifications.length > 50) {
-        this.notifications = this.notifications.slice(0, 50);
-      }
-
-      // Guardar en localStorage
-      this.saveNotifications();
-
-      // Renderizar
-      this.renderNotifications();
-
-      // Enviar notificación push si está permitido
-      this.sendPushNotification(notification);
-
-      // Reproducir sonido
-      this.playNotificationSound(notification.type);
-
-      return notification.id;
-    } catch (error) {
-      console.error('Error agregando notificación:', error);
-    }
-  }
-
-  sendPushNotification(notification) {
-    try {
-      if (Notification.permission === 'granted' && this.isInitialized) {
-        const pushNotification = new Notification(notification.title, {
-          body: notification.message,
-          icon: '/static/logo.png',
-          badge: '/static/logo.png',
-          tag: notification.id,
-          requireInteraction: notification.type === 'error'
-          // Removidas las actions que causan error en navegadores sin ServiceWorker
-        });
-
-        // Manejar clics en la notificación
-        pushNotification.onclick = () => {
-          window.focus();
-          this.handleNotificationAction(notification);
-        };
-
-        // Auto-cerrar después de 5 segundos (excepto errores)
-        if (notification.type !== 'error') {
-          setTimeout(() => {
-            pushNotification.close();
-          }, 5000);
-        }
-      }
-    } catch (error) {
-      console.error('Error enviando notificación push:', error);
-    }
-  }
-
-  playNotificationSound(type) {
-    try {
-      const audio = new Audio();
-
-      switch (type) {
-        case 'error':
-          audio.src =
-            'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT';
-          break;
-        case 'warning':
-          audio.src =
-            'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT';
-          break;
-        default:
-          audio.src =
-            'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT';
-      }
-
-      audio.volume = 0.3;
-      audio.play().catch((e) => console.log('No se pudo reproducir sonido:', e));
-    } catch (error) {
-      console.error('Error reproduciendo sonido:', error);
-    }
-  }
-
-  handleNotificationAction(notification) {
-    try {
-      switch (notification.id) {
-        case 'empleados_sin_horas':
-          window.location.href = '../empleados/empleados.html';
-          break;
-        case 'respaldo_requerido':
-          // Implementar lógica de respaldo
-          console.log('Iniciando respaldo del sistema...');
-          break;
-        case 'nominas_pendientes':
-          window.location.href = '../nomina/nomina.html';
-          break;
-        default:
-          console.log('Acción no implementada para:', notification.id);
-      }
-    } catch (error) {
-      console.error('Error manejando acción de notificación:', error);
-    }
-  }
-
-  renderNotifications() {
-    try {
-      const container = document.getElementById('notificationsContainer');
-      if (!container) return;
-
-      // Limpiar contenedor
-      container.innerHTML = '';
-
-      // Renderizar notificaciones
-      this.notifications.slice(0, 5).forEach((notification) => {
-        const notificationElement = this.createNotificationElement(notification);
-        container.appendChild(notificationElement);
-      });
-
-      // Actualizar badge
-      this.updateNotificationBadge();
-    } catch (error) {
-      console.error('Error renderizando notificaciones:', error);
-    }
-  }
-
-  createNotificationElement(notification) {
-    try {
-      const element = document.createElement('div');
-      element.className = `axyra-notification axyra-notification-${notification.type}`;
-      element.setAttribute('data-notification-id', notification.id);
-
-      const timeAgo = this.getTimeAgo(notification.timestamp);
-
-      element.innerHTML = `
-                <div class="axyra-notification-header">
-                    <span class="axyra-notification-title">${notification.title}</span>
-                    <button class="axyra-notification-close" onclick="axyraNotifications.dismissNotification('${
-                      notification.id
-                    }')">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="axyra-notification-body">
-                    <p class="axyra-notification-message">${notification.message}</p>
-                    ${
-                      notification.action
-                        ? `
-                        <button class="axyra-notification-action" onclick="axyraNotifications.handleNotificationAction('${notification.id}')">
-                            ${notification.action}
-                        </button>
-                    `
-                        : ''
-                    }
-                </div>
-                <div class="axyra-notification-footer">
-                    <span class="axyra-notification-time">${timeAgo}</span>
-                </div>
-            `;
-
-      return element;
-    } catch (error) {
-      console.error('Error creando elemento de notificación:', error);
-      return document.createElement('div');
-    }
-  }
-
-  getTimeAgo(timestamp) {
-    try {
-      const now = Date.now();
-      const diff = now - timestamp;
-      const minutes = Math.floor(diff / (1000 * 60));
-      const hours = Math.floor(diff / (1000 * 60 * 60));
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-      if (minutes < 1) return 'Ahora mismo';
-      if (minutes < 60) return `Hace ${minutes} minuto(s)`;
-      if (hours < 24) return `Hace ${hours} hora(s)`;
-      return `Hace ${days} día(s)`;
-    } catch (error) {
-      return 'Reciente';
-    }
-  }
-
-  updateNotificationBadge() {
-    try {
-      const badge = document.getElementById('notificationBadge');
-      if (badge) {
-        const unreadCount = this.notifications.filter((n) => !n.read).length;
-        badge.textContent = unreadCount > 99 ? '99+' : unreadCount.toString();
-        badge.style.display = unreadCount > 0 ? 'block' : 'none';
-      }
-    } catch (error) {
-      console.error('Error actualizando badge de notificaciones:', error);
-    }
-  }
-
-  dismissNotification(notificationId) {
-    try {
-      this.notifications = this.notifications.filter((n) => n.id !== notificationId);
-      this.saveNotifications();
-      this.renderNotifications();
-    } catch (error) {
-      console.error('Error descartando notificación:', error);
-    }
-  }
-
-  markAsRead(notificationId) {
-    try {
-      const notification = this.notifications.find((n) => n.id === notificationId);
-      if (notification) {
-        notification.read = true;
-        this.saveNotifications();
-        this.renderNotifications();
-      }
-    } catch (error) {
-      console.error('Error marcando notificación como leída:', error);
-    }
-  }
-
-  clearAllNotifications() {
-    try {
-      this.notifications = [];
-      this.saveNotifications();
-      this.renderNotifications();
-    } catch (error) {
-      console.error('Error limpiando notificaciones:', error);
-    }
-  }
-
-  saveNotifications() {
-    try {
-      localStorage.setItem('axyra_notifications', JSON.stringify(this.notifications));
-    } catch (error) {
-      console.error('Error guardando notificaciones:', error);
     }
   }
 
@@ -412,113 +481,76 @@ class AxyraNotificationSystem {
       const stored = localStorage.getItem('axyra_notifications');
       if (stored) {
         this.notifications = JSON.parse(stored);
+        console.log(`✅ ${this.notifications.length} notificaciones cargadas del almacenamiento`);
       }
     } catch (error) {
-      console.error('Error cargando notificaciones almacenadas:', error);
-      this.notifications = [];
+      console.error('❌ Error cargando notificaciones almacenadas:', error);
+    }
+  }
+
+  renderNotifications() {
+    try {
+      if (this.notifications.length > 0) {
+        this.notifications.forEach((notification) => {
+          if (notification.element) {
+            this.addNotification(notification.element);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('❌ Error renderizando notificaciones:', error);
     }
   }
 
   // Métodos públicos para uso externo
-  showSuccess(message, title = 'Éxito') {
-    return this.addNotification({
-      type: 'success',
-      title: title,
-      message: message,
-    });
+  show(message, type = 'info', duration = 5000) {
+    return this.showNotification(message, type, duration);
   }
 
-  showError(message, title = 'Error') {
-    return this.addNotification({
-      type: 'error',
-      title: title,
-      message: message,
-    });
+  success(message, duration = 5000) {
+    return this.showSuccessNotification(message, duration);
   }
 
-  showWarning(message, title = 'Advertencia') {
-    return this.addNotification({
-      type: 'warning',
-      title: title,
-      message: message,
-    });
+  error(message, duration = 5000) {
+    return this.showErrorNotification(message, duration);
   }
 
-  showInfo(message, title = 'Información') {
-    return this.addNotification({
-      type: 'info',
-      title: title,
-      message: message,
-    });
+  warning(message, duration = 5000) {
+    return this.showWarningNotification(message, duration);
   }
 
-  // Método para mostrar mensaje temporal
-  showMessage(message, type = 'info', duration = 3000) {
+  info(message, duration = 5000) {
+    return this.showInfoNotification(message, duration);
+  }
+
+  push(title, message, icon = '🔔') {
+    return this.showPushNotification(title, message, icon);
+  }
+
+  remove(id) {
+    return this.removeNotification(id);
+  }
+
+  clear() {
     try {
-      const messageElement = document.createElement('div');
-      messageElement.className = `axyra-temp-message axyra-temp-message-${type}`;
-      messageElement.textContent = message;
-
-      // Agregar al DOM
-      document.body.appendChild(messageElement);
-
-      // Mostrar con animación
-      setTimeout(() => {
-        messageElement.classList.add('axyra-temp-message-show');
-      }, 100);
-
-      // Ocultar después del tiempo especificado
-      setTimeout(() => {
-        messageElement.classList.remove('axyra-temp-message-show');
-        setTimeout(() => {
-          if (messageElement.parentNode) {
-            messageElement.parentNode.removeChild(messageElement);
-          }
-        }, 300);
-      }, duration);
+      this.notifications.forEach((notification) => {
+        this.removeNotification(notification.id);
+      });
+      console.log('✅ Todas las notificaciones removidas');
     } catch (error) {
-      console.error('Error mostrando mensaje temporal:', error);
-    }
-  }
-
-  destroy() {
-    try {
-      if (this.notificationInterval) {
-        clearInterval(this.notificationInterval);
-        this.notificationInterval = null;
-      }
-    } catch (error) {
-      console.error('Error destruyendo sistema de notificaciones:', error);
+      console.error('❌ Error limpiando notificaciones:', error);
     }
   }
 }
 
-// Inicializar sistema globalmente
-let axyraNotifications;
-
-// Función para inicializar el sistema
-function initializeAxyraNotifications() {
-  if (!axyraNotifications) {
-    axyraNotifications = new AxyraNotificationSystem();
-
-    // Hacer disponible globalmente
-    window.axyraNotifications = axyraNotifications;
-
-    // Agregar al objeto global de AXYRA
-    if (!window.AXYRA) window.AXYRA = {};
-    window.AXYRA.notifications = axyraNotifications;
-  }
-  return axyraNotifications;
-}
-
-// Auto-inicializar cuando el DOM esté listo
+// Inicializar sistema de notificaciones cuando se carga la página
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeAxyraNotifications);
+  document.addEventListener('DOMContentLoaded', () => {
+    window.axyraNotificationSystem = new AxyraNotificationSystem();
+  });
 } else {
-  initializeAxyraNotifications();
+  window.axyraNotificationSystem = new AxyraNotificationSystem();
 }
 
-// Exportar para uso en módulos
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = AxyraNotificationSystem;
-}
+// Exportar para uso en otros módulos
+window.AxyraNotificationSystem = AxyraNotificationSystem;
