@@ -4388,7 +4388,7 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
+                <button class="btn btn-secondary" onclick="cerrarModalConfiguracion()">Cancelar</button>
                 <button class="btn btn-primary" onclick="guardarConfiguracionNomina()">Guardar</button>
               </div>
             </div>
@@ -4418,10 +4418,18 @@
           mostrarNotificacion('✅ Configuración guardada correctamente', 'success');
           
           // Cerrar modal
-          document.querySelector('.modal-overlay').remove();
+          cerrarModalConfiguracion();
         } catch (error) {
           console.error('❌ Error guardando configuración:', error);
           mostrarNotificacion('Error guardando configuración: ' + error.message, 'error');
+        }
+      }
+
+      // Función para cerrar modal de configuración
+      function cerrarModalConfiguracion() {
+        const modal = document.querySelector('.modal-overlay');
+        if (modal) {
+          modal.remove();
         }
       }
     </script>
