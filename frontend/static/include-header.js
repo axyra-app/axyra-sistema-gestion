@@ -20,16 +20,21 @@ class AxyraHeaderIncluder {
 
   async includeHeader() {
     try {
+      console.log('📥 Intentando cargar header desde:', this.headerPath);
       const response = await fetch(this.headerPath);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const headerHTML = await response.text();
+      console.log('✅ Header HTML cargado correctamente, longitud:', headerHTML.length);
       
       // Insertar el header al inicio del body
       const body = document.body;
       if (body) {
         body.insertAdjacentHTML('afterbegin', headerHTML);
+        console.log('✅ Header insertado en el body');
+      } else {
+        console.error('❌ Body no encontrado');
       }
     } catch (error) {
       console.warn('⚠️ No se pudo cargar header compartido, usando fallback:', error);
@@ -106,8 +111,14 @@ function incluirHeaderAXYRA() {
 }
 
 // Incluir automáticamente cuando se carga la página
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => incluirHeaderAXYRA());
-} else {
+function initHeader() {
+  console.log('🚀 Inicializando header compartido AXYRA...');
   incluirHeaderAXYRA();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initHeader);
+} else {
+  // Si el DOM ya está listo, esperar un poco para asegurar que todos los scripts estén cargados
+  setTimeout(initHeader, 100);
 }
