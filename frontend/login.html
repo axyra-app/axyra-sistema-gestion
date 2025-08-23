@@ -1302,7 +1302,6 @@
                       emailVerified: googleUser.emailVerified,
                       provider: 'google',
                       isAuthenticated: true
-                      emailVerified: googleUser.emailVerified
                   };
 
                   await firebase.firestore().collection('users').doc(googleUser.uid).set(userData, { merge: true });
