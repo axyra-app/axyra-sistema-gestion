@@ -167,8 +167,10 @@ class AxyraNotificationSystem {
 
       // Verificar empleados sin horas registradas
       const empleadosSinHoras = empleados.filter((emp) => {
-        const tieneHoras = horas.some((h) => h.cedula === emp.cedula);
-        return !tieneHoras;
+        // Verificar por ID del empleado y por cédula
+        const tieneHorasPorId = horas.some((h) => h.empleadoId === emp.id);
+        const tieneHorasPorCedula = horas.some((h) => h.cedula === emp.cedula);
+        return !tieneHorasPorId && !tieneHorasPorCedula;
       });
 
       if (empleadosSinHoras.length > 0) {
@@ -320,42 +322,49 @@ class AxyraNotificationSystem {
         border-radius: 12px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
         margin-bottom: 16px;
-        padding: 16px;
+        padding: 20px;
         border-left: 4px solid ${this.getNotificationColor(notification.type)};
         transform: translateX(100%);
         opacity: 0;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         pointer-events: auto;
-        max-width: 100%;
-        overflow: hidden;
+        max-width: 400px;
+        min-width: 350px;
+        overflow: visible;
         position: relative;
+        z-index: 10000;
       `;
 
       notificationDiv.innerHTML = `
-        <div class="axyra-notification-header">
-          <div class="axyra-notification-icon">
-            ${this.getNotificationIcon(notification.type)}
+        <div class="axyra-notification-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="axyra-notification-icon" style="font-size: 20px;">
+              ${this.getNotificationIcon(notification.type)}
+            </div>
+            <div class="axyra-notification-title" style="font-weight: 600; font-size: 16px; color: #1f2937;">
+              ${notification.title}
+            </div>
           </div>
-          <div class="axyra-notification-title">${notification.title}</div>
           <button class="axyra-notification-close" onclick="window.axyraNotificationSystem.removeNotification('${
             notification.id
-          }')">
+          }')" style="background: none; border: none; color: #9ca3af; font-size: 18px; cursor: pointer; padding: 4px; border-radius: 50%; transition: all 0.2s ease;">
             <i class="fas fa-times"></i>
           </button>
         </div>
         <div class="axyra-notification-content">
-          <div class="axyra-notification-message">${notification.message}</div>
+          <div class="axyra-notification-message" style="color: #4b5563; font-size: 14px; line-height: 1.5; margin-bottom: 16px;">
+            ${notification.message}
+          </div>
           ${
             notification.action
               ? `<div class="axyra-notification-actions">
-            <button class="axyra-notification-action" onclick="window.axyraNotificationSystem.handleNotificationAction('${notification.id}')">
+            <button class="axyra-notification-action" onclick="window.axyraNotificationSystem.handleNotificationAction('${notification.id}')" style="background: ${this.getNotificationColor(notification.type)}; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s ease;">
               ${notification.action}
             </button>
           </div>`
               : ''
           }
         </div>
-        <div class="axyra-notification-progress"></div>
       `;
 
       return notificationDiv;
