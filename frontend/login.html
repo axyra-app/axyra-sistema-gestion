@@ -1298,8 +1298,10 @@
                       photoURL: googleUser.photoURL,
                       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                       lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                      provider: 'google',
                       hasPassword: true,
+                      emailVerified: googleUser.emailVerified,
+                      provider: 'google',
+                      isAuthenticated: true
                       emailVerified: googleUser.emailVerified
                   };
 
@@ -1308,11 +1310,8 @@
                   // Cerrar modal
                   closeGoogleSetupModal();
 
-                  // Mostrar mensaje de éxito con mejor styling
-                  showSuccess('<span class="success-checkmark">✓</span> ¡Perfil completado exitosamente! 🎉 Redirigiendo al dashboard...');
-
-                  // Guardar sesión
-                  saveSession(googleUser, false);
+                  // Mostrar mensaje de éxito
+                  showSuccess('¡Perfil completado exitosamente! Redirigiendo al dashboard...');
 
                   // Establecer información adicional necesaria para el dashboard
                   const userInfo = {
