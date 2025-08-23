@@ -1244,24 +1244,24 @@
           // Obtener datos de Firestore
           const db = firebase.firestore();
           const currentUser = firebase.auth().currentUser;
-          
+
           if (!currentUser) {
             mostrarNotificacionTiempoReal('❌ Usuario no autenticado', 'error');
             return;
           }
-          
+
           // Obtener departamentos y empleados de Firestore
           const departamentosSnapshot = await db.collection('departamentos')
             .where('userId', '==', currentUser.uid)
             .get();
-          
+
           const empleadosSnapshot = await db.collection('empleados')
             .where('userId', '==', currentUser.uid)
             .get();
-          
+
           const departamentos = departamentosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           const empleados = empleadosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          
+
           // Agrupar empleados por departamento
           const estructura = {};
           departamentos.forEach((dept) => {
@@ -1270,7 +1270,7 @@
               color: generarColorDepartamento(dept.nombre),
             };
           });
-          
+
           const organigramaHTML = `
             <div id="modalOrganigrama" class="axyra-modal">
               <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
@@ -1286,10 +1286,10 @@
               </div>
             </div>
           `;
-          
+
           document.body.insertAdjacentHTML('beforeend', organigramaHTML);
           document.getElementById('modalOrganigrama').style.display = 'block';
-          
+
           console.log('✅ Organigrama cargado desde Firestore');
         } catch (error) {
           console.error('❌ Error cargando organigrama:', error);
@@ -1363,17 +1363,17 @@
           // Obtener datos de Firestore
           const db = firebase.firestore();
           const currentUser = firebase.auth().currentUser;
-          
+
           if (!currentUser) {
             mostrarNotificacionTiempoReal('❌ Usuario no autenticado', 'error');
             return;
           }
-          
+
           // Obtener empleados de Firestore
           const empleadosSnapshot = await db.collection('empleados')
             .where('userId', '==', currentUser.uid)
             .get();
-          
+
           const empleados = empleadosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
         const fotosHTML = `
@@ -1412,6 +1412,12 @@
 
         document.body.insertAdjacentHTML('beforeend', fotosHTML);
         document.getElementById('modalFotos').style.display = 'block';
+        
+        console.log('✅ Modal de fotos cargado desde Firestore');
+      } catch (error) {
+        console.error('❌ Error cargando modal de fotos:', error);
+        mostrarNotificacionTiempoReal('❌ Error cargando fotos de empleados', 'error');
+      }
       }
 
       // Función para cambiar foto de empleado
@@ -1436,6 +1442,213 @@
       // Función para cambiar foto de empleado (alias para compatibilidad)
       function cambiarFotoEmpleado(empleadoId) {
         cambiarFoto(empleadoId);
+      }
+
+      // Función para mostrar modal de importación masiva
+      function mostrarModalImportacion() {
+        const importacionHTML = `
+          <div id="modalImportacion" class="axyra-modal">
+            <div class="axyra-modal-content">
+              <div class="axyra-modal-header">
+                <h3><i class="fas fa-file-import"></i> Importación Masiva de Empleados</h3>
+                <button class="axyra-modal-close" onclick="cerrarModal('modalImportacion')">&times;</button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-import-section">
+                  <h4>📁 Seleccionar archivo Excel/CSV</h4>
+                  <input type="file" id="archivoImportacion" accept=".xlsx,.xls,.csv" class="axyra-file-input">
+                  <p class="axyra-help-text">Formatos soportados: Excel (.xlsx, .xls) y CSV</p>
+                </div>
+                <div class="axyra-import-section">
+                  <h4>📋 Vista previa de datos</h4>
+                  <div id="vistaPreviaImportacion" class="axyra-vista-previa"></div>
+                </div>
+                <div class="axyra-import-section">
+                  <h4>⚙️ Opciones de importación</h4>
+                  <label class="axyra-checkbox">
+                    <input type="checkbox" id="sobrescribirExistentes" checked>
+                    <span>Sobrescribir empleados existentes</span>
+                  </label>
+                  <label class="axyra-checkbox">
+                    <input type="checkbox" id="validarDatos" checked>
+                    <span>Validar datos antes de importar</span>
+                  </label>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModal('modalImportacion')">Cancelar</button>
+                <button class="axyra-btn axyra-btn-primary" onclick="procesarImportacion()">Importar Empleados</button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', importacionHTML);
+        document.getElementById('modalImportacion').style.display = 'block';
+        
+        // Configurar evento para archivo
+        document.getElementById('archivoImportacion').addEventListener('change', procesarArchivoImportacion);
+      }
+
+      // Función para mostrar historial de cambios
+      function mostrarHistorialCambios() {
+        const historialHTML = `
+          <div id="modalHistorial" class="axyra-modal">
+            <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
+              <div class="axyra-modal-header">
+                <h3><i class="fas fa-history"></i> Historial de Cambios</h3>
+                <button class="axyra-modal-close" onclick="cerrarModal('modalHistorial')">&times;</button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-historial-container">
+                  <div class="axyra-historial-filtros">
+                    <select id="filtroAccion" class="axyra-select">
+                      <option value="">Todas las acciones</option>
+                      <option value="create">Crear</option>
+                      <option value="update">Actualizar</option>
+                      <option value="delete">Eliminar</option>
+                    </select>
+                    <input type="date" id="filtroFecha" class="axyra-input">
+                    <button class="axyra-btn axyra-btn-outline" onclick="filtrarHistorial()">Filtrar</button>
+                  </div>
+                  <div id="listaHistorial" class="axyra-lista-historial"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', historialHTML);
+        document.getElementById('modalHistorial').style.display = 'block';
+        cargarHistorialCambios();
+      }
+
+      // Función para gestionar departamentos
+      function gestionarDepartamentos() {
+        const departamentosHTML = `
+          <div id="modalDepartamentos" class="axyra-modal">
+            <div class="axyra-modal-content">
+              <div class="axyra-modal-header">
+                <h3><i class="fas fa-building"></i> Gestión de Departamentos</h3>
+                <button class="axyra-modal-close" onclick="cerrarModal('modalDepartamentos')">&times;</button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-departamentos-form">
+                  <div class="axyra-form-group">
+                    <label>Nombre del departamento:</label>
+                    <input type="text" id="nombreDepartamento" class="axyra-input" placeholder="Ej: Recursos Humanos">
+                  </div>
+                  <div class="axyra-form-group">
+                    <label>Descripción:</label>
+                    <textarea id="descripcionDepartamento" class="axyra-textarea" placeholder="Descripción del departamento"></textarea>
+                  </div>
+                  <div class="axyra-form-group">
+                    <label>Color:</label>
+                    <input type="color" id="colorDepartamento" class="axyra-color-input" value="#667eea">
+                  </div>
+                  <button class="axyra-btn axyra-btn-primary" onclick="agregarDepartamento()">Agregar Departamento</button>
+                </div>
+                <div class="axyra-departamentos-lista">
+                  <h4>Departamentos existentes:</h4>
+                  <div id="listaDepartamentos" class="axyra-lista-departamentos"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', departamentosHTML);
+        document.getElementById('modalDepartamentos').style.display = 'block';
+        cargarDepartamentos();
+      }
+
+      // Función para mostrar modal genérico
+      function mostrarModal(tipo, empleadoId = null) {
+        let modalHTML = '';
+        
+        switch (tipo) {
+          case 'agregar':
+            modalHTML = `
+              <div id="modalEmpleado" class="axyra-modal">
+                <div class="axyra-modal-content">
+                  <div class="axyra-modal-header">
+                    <h3><i class="fas fa-user-plus"></i> Agregar Nuevo Empleado</h3>
+                    <button class="axyra-modal-close" onclick="cerrarModal('modalEmpleado')">&times;</button>
+                  </div>
+                  <div class="axyra-modal-body">
+                    <form id="formEmpleado" class="axyra-form">
+                      <div class="axyra-form-row">
+                        <div class="axyra-form-group">
+                          <label>Nombre completo:</label>
+                          <input type="text" id="nombre" name="nombre" class="axyra-input" required>
+                        </div>
+                        <div class="axyra-form-group">
+                          <label>Cédula:</label>
+                          <input type="text" id="cedula" name="cedula" class="axyra-input" required>
+                        </div>
+                      </div>
+                      <div class="axyra-form-row">
+                        <div class="axyra-form-group">
+                          <label>Cargo:</label>
+                          <input type="text" id="cargo" name="cargo" class="axyra-input" required>
+                        </div>
+                        <div class="axyra-form-group">
+                          <label>Departamento:</label>
+                          <select id="departamento" name="departamento" class="axyra-select" required>
+                            <option value="">Seleccionar departamento</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="axyra-form-row">
+                        <div class="axyra-form-group">
+                          <label>Salario base:</label>
+                          <input type="number" id="salario" name="salario" class="axyra-input" required>
+                        </div>
+                        <div class="axyra-form-group">
+                          <label>Tipo de contrato:</label>
+                          <select id="tipoContrato" name="tipoContrato" class="axyra-select" required>
+                            <option value="">Seleccionar tipo</option>
+                            <option value="FIJO">Fijo</option>
+                            <option value="POR_HORAS">Por Horas</option>
+                          </select>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="axyra-modal-footer">
+                    <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModal('modalEmpleado')">Cancelar</button>
+                    <button class="axyra-btn axyra-btn-primary" onclick="guardarEmpleado()">Guardar Empleado</button>
+                  </div>
+                </div>
+              </div>
+            `;
+            break;
+          case 'editar':
+            // Modal para editar empleado existente
+            modalHTML = `
+              <div id="modalEmpleado" class="axyra-modal">
+                <div class="axyra-modal-content">
+                  <div class="axyra-modal-header">
+                    <h3><i class="fas fa-user-edit"></i> Editar Empleado</h3>
+                    <button class="axyra-modal-close" onclick="cerrarModal('modalEmpleado')">&times;</button>
+                  </div>
+                  <div class="axyra-modal-body">
+                    <p>Cargando datos del empleado...</p>
+                  </div>
+                </div>
+              </div>
+            `;
+            break;
+        }
+        
+        if (modalHTML) {
+          document.body.insertAdjacentHTML('beforeend', modalHTML);
+          document.getElementById('modalEmpleado').style.display = 'block';
+          
+          if (tipo === 'editar' && empleadoId) {
+            cargarDatosEmpleado(empleadoId);
+          }
+        }
       }
 
       // Ejecutar cuando se carga la página

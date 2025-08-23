@@ -17,9 +17,11 @@ class AxyraSharedHeader {
   }
 
   init() {
+    console.log('🚀 Inicializando header compartido AXYRA...');
     this.generarNavegacion();
     this.actualizarInformacionUsuario();
     this.setupEventListeners();
+    console.log('✅ Header compartido AXYRA listo para usar');
   }
 
   generarNavegacion() {
@@ -28,19 +30,28 @@ class AxyraSharedHeader {
     
     if (!nav) return;
     
+    console.log('🔍 Generando navegación inteligente...');
+    console.log('📍 Página actual:', this.currentPage);
+    
     // Determinar qué página está activa y ocultar botones innecesarios
     this.navigationItems.forEach(item => {
-      if (this.currentPage.includes(item.href.split('/').pop())) {
+      const itemPage = item.href.split('/').pop();
+      const isCurrentPage = this.currentPage.includes(itemPage);
+      
+      if (isCurrentPage) {
         item.active = true;
         item.show = false; // Ocultar botón de la página actual
+        console.log(`🚫 Ocultando botón: ${item.text} (página actual)`);
         
         // Establecer subtítulo de la página
         if (pageSubtitle) {
           pageSubtitle.textContent = item.text;
+          console.log(`📝 Subtítulo establecido: ${item.text}`);
         }
       } else {
         item.active = false;
         item.show = true;
+        console.log(`✅ Mostrando botón: ${item.text}`);
       }
     });
     
@@ -58,6 +69,8 @@ class AxyraSharedHeader {
     });
     
     nav.innerHTML = navHTML;
+    console.log('📋 Navegación generada:', navHTML);
+    console.log(`✅ ${this.navigationItems.filter(item => item.show).length} enlaces de navegación insertados`);
   }
 
   async actualizarInformacionUsuario() {
@@ -66,6 +79,8 @@ class AxyraSharedHeader {
     
     if (userEmail) {
       try {
+        console.log('👤 Actualizando información del usuario...');
+        
         // Obtener usuario actual de Firebase Auth
         const currentUser = firebase.auth().currentUser;
         
@@ -80,8 +95,9 @@ class AxyraSharedHeader {
             }
           }
           
-          console.log('✅ Usuario Firebase actualizado:', currentUser.email);
+          console.log('✅ Email del usuario actualizado:', currentUser.email);
         } else {
+          console.log('⚠️ No hay usuario de Firebase, usando localStorage...');
           // Fallback a localStorage si no hay usuario de Firebase
           let user = localStorage.getItem('axyra_firebase_user');
           if (!user) {
@@ -104,6 +120,14 @@ class AxyraSharedHeader {
             }
           }
         }
+        
+        if (roleBadge) {
+          const roleText = roleBadge.querySelector('.axyra-role-badge-text');
+          if (roleText) {
+            roleText.textContent = 'Empleado';
+            console.log('✅ Rol del usuario actualizado: Empleado');
+          }
+        }
       } catch (error) {
         console.error('Error obteniendo información del usuario:', error);
       }
@@ -111,6 +135,8 @@ class AxyraSharedHeader {
   }
 
   setupEventListeners() {
+    console.log('🎯 Configurando eventos del header...');
+    
     // Manejar logout
     document.addEventListener('click', (e) => {
       if (e.target.closest('[data-action="logout"]')) {
@@ -124,6 +150,8 @@ class AxyraSharedHeader {
         this.actualizarInformacionUsuario();
       }
     });
+    
+    console.log('✅ Eventos configurados correctamente');
   }
 
   async handleLogout() {
@@ -175,5 +203,6 @@ class AxyraSharedHeader {
 
 // Inicializar header compartido cuando se carga la página
 document.addEventListener('DOMContentLoaded', function() {
+  console.log('🚀 Script del header compartido cargado');
   window.axyraSharedHeader = new AxyraSharedHeader();
 });
