@@ -76,7 +76,6 @@ class AxyraDashboard {
             this.updateCharts();
             this.updateWelcomeMessage();
             this.updateActividadReciente();
-            this.updateSecurityStatus();
             
             console.log('✅ Dashboard cargado correctamente');
         } catch (error) {
@@ -607,6 +606,9 @@ class AxyraDashboard {
             // Actualizar hora de bienvenida
             this.updateWelcomeTime();
             
+            // Actualizar información del usuario
+            this.updateUserInfo();
+            
         } catch (error) {
             console.error('❌ Error actualizando mensaje de bienvenida:', error);
         }
@@ -750,92 +752,31 @@ class AxyraDashboard {
         }
     }
 
-    updateSecurityStatus() {
+    updateUserInfo() {
         try {
-            // Actualizar estado del 2FA
-            this.update2FAStatus();
+            const userEmailElement = document.getElementById('userEmail');
+            if (!userEmailElement) return;
             
-            // Actualizar estado del responsive design
-            this.updateResponsiveStatus();
-            
-            // Actualizar estado de la sesión
-            this.updateSessionStatus();
-        } catch (error) {
-            console.error('❌ Error actualizando estado de seguridad:', error);
-        }
-    }
-
-    update2FAStatus() {
-        try {
-            const statusElement = document.getElementById('2faStatus');
-            if (!statusElement) return;
-
-            const userData = localStorage.getItem('axyra_isolated_user');
-            if (userData) {
-                const user = JSON.parse(userData);
-                const isEnabled = user.twoFactorEnabled || false;
-                
-                if (isEnabled) {
-                    statusElement.innerHTML = `
-                        <span class="axyra-status-enabled">
-                            <i class="fas fa-shield-check"></i> 2FA Activado
-                        </span>
-                    `;
-                } else {
-                    statusElement.innerHTML = `
-                        <span class="axyra-status-disabled">
-                            <i class="fas fa-shield-alt"></i> 2FA Desactivado
-                        </span>
-                    `;
-                }
-            }
-        } catch (error) {
-            console.error('❌ Error actualizando estado 2FA:', error);
-        }
-    }
-
-    updateResponsiveStatus() {
-        try {
-            const statusElement = document.getElementById('responsiveStatus');
-            if (!statusElement) return;
-
-            if (window.axyraResponsive) {
-                const breakpoint = window.axyraResponsive.getCurrentBreakpoint();
-                const deviceType = this.getDeviceType(breakpoint);
-                statusElement.textContent = deviceType;
+            const currentUser = this.getCurrentUser();
+            if (currentUser) {
+                userEmailElement.textContent = currentUser.email || currentUser.username || 'Usuario';
             } else {
-                statusElement.textContent = 'No disponible';
+                userEmailElement.textContent = 'Usuario';
             }
         } catch (error) {
-            console.error('❌ Error actualizando estado responsive:', error);
+            console.error('❌ Error actualizando información del usuario:', error);
         }
     }
 
-    getDeviceType(breakpoint) {
-        switch (breakpoint) {
-            case 'mobile':
-                return '📱 Móvil';
-            case 'tablet':
-                return '📱 Tablet';
-            case 'desktop':
-                return '💻 Desktop';
-            default:
-                return '💻 Desktop';
-        }
-    }
 
-    updateSessionStatus() {
-        try {
-            const timeElement = document.getElementById('sessionTimeRemaining');
-            if (!timeElement) return;
 
-            // Simular tiempo de sesión restante
-            const sessionTime = 30; // minutos
-            timeElement.textContent = `${sessionTime}:00`;
-        } catch (error) {
-            console.error('❌ Error actualizando estado de sesión:', error);
-        }
-    }
+
+
+
+
+
+
+
 
     updateActividadReciente() {
         try {

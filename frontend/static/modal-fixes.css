@@ -5,7 +5,7 @@
 /* Header con z-index menor que los modales */
 .axyra-header {
   z-index: 999 !important; /* Z-index menor que los modales */
-  position: relative !important;
+  position: fixed !important;
 }
 
 /* Modales específicos del dashboard AXYRA */

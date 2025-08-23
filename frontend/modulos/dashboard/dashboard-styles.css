@@ -25,6 +25,39 @@
 .axyra-welcome-section {
     text-align: center;
     margin-bottom: 40px;
+    padding: 30px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 20px;
+    border: 1px solid var(--axyra-border);
+}
+
+.axyra-company-info {
+    margin: 20px 0;
+    padding: 20px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: var(--axyra-shadow);
+    display: inline-block;
+}
+
+.axyra-company-info h2 {
+    color: var(--axyra-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.axyra-company-info p {
+    color: var(--axyra-secondary);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.axyra-welcome-time {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    color: var(--axyra-secondary);
+    font-weight: 500;
 }
 
 .axyra-dashboard-title {

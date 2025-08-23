@@ -927,8 +927,23 @@
 
       // Función para guardar sesión
       function saveSession(user, rememberMe) {
+          // Crear objeto de usuario para el dashboard
+          const userInfo = {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.displayName || user.email.split('@')[0],
+              username: user.email.split('@')[0],
+              photoURL: user.photoURL || null,
+              provider: 'email',
+              hasPassword: true,
+              emailVerified: user.emailVerified,
+              id: user.uid,
+              isAuthenticated: true
+          };
+
           if (rememberMe) {
               localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+              localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
               localStorage.setItem('axyra_isolated_user_id', user.uid);
               localStorage.setItem('axyra_remember_me', 'true');
               localStorage.setItem('axyra_session_timestamp', Date.now().toString());
@@ -936,8 +951,11 @@
           } else {
               // Solo guardar temporalmente para la sesión actual
               sessionStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+              localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
               localStorage.setItem('axyra_isolated_user_id', user.uid);
           }
+          
+          console.log('✅ Usuario guardado en formato dashboard:', userInfo);
       }
 
       // Función para mostrar error
