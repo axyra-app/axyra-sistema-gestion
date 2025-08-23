@@ -4158,3 +4158,371 @@ body {
     padding: 1.5rem;
   }
 }
+
+/* ========================================
+   SISTEMA DE ROLES Y PERMISOS
+   ======================================== */
+
+/* Badge de rol en el header */
+.axyra-role-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--axyra-blue-600) 0%, var(--axyra-blue-700) 100%);
+  color: var(--axyra-white);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.axyra-role-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.axyra-role-badge-text {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.axyra-role-badge i {
+  font-size: 14px;
+  color: var(--axyra-blue-200);
+}
+
+/* Indicadores de permisos en elementos */
+.axyra-permission-required {
+  position: relative;
+}
+
+.axyra-permission-required::after {
+  content: '🔒';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  font-size: 12px;
+  background: var(--axyra-white);
+  border-radius: 50%;
+  padding: 2px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Estilos para elementos ocultos por permisos */
+.axyra-hidden-by-permission {
+  display: none !important;
+}
+
+/* Tooltip de permisos */
+.axyra-permission-tooltip {
+  position: relative;
+  cursor: help;
+}
+
+.axyra-permission-tooltip::before {
+  content: attr(data-permission);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--axyra-dark-blue);
+  color: var(--axyra-white);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+  z-index: 1000;
+}
+
+.axyra-permission-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--axyra-dark-blue);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+}
+
+.axyra-permission-tooltip:hover::before,
+.axyra-permission-tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ========================================
+   SISTEMA DE NOTIFICACIONES PUSH
+   ======================================== */
+
+/* Contenedor principal de notificaciones */
+.axyra-notifications-container {
+  position: fixed;
+  z-index: 10000;
+  pointer-events: none;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Notificaciones individuales */
+.axyra-notification {
+  background: var(--axyra-white);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 12px;
+  padding: 16px;
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+  border-left: 4px solid var(--axyra-info);
+  transition: all var(--transition-normal);
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.axyra-notification:hover {
+  transform: translateX(0) translateY(-2px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Tipos de notificaciones */
+.axyra-notification-success {
+  border-left-color: var(--axyra-success);
+}
+
+.axyra-notification-error {
+  border-left-color: var(--axyra-error);
+}
+
+.axyra-notification-warning {
+  border-left-color: var(--axyra-warning);
+}
+
+.axyra-notification-info {
+  border-left-color: var(--axyra-info);
+}
+
+.axyra-notification-urgent {
+  border-left-color: #dc2626;
+  animation: urgentPulse 2s infinite;
+}
+
+@keyframes urgentPulse {
+  0%,
+  100% {
+    box-shadow: var(--shadow-lg);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(220, 38, 38, 0.5);
+  }
+}
+
+/* Estructura interna de la notificación */
+.axyra-notification-icon {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--axyra-light-gray);
+}
+
+.axyra-notification-success .axyra-notification-icon {
+  background: var(--axyra-success);
+  color: var(--axyra-white);
+}
+
+.axyra-notification-error .axyra-notification-icon {
+  background: var(--axyra-error);
+  color: var(--axyra-white);
+}
+
+.axyra-notification-warning .axyra-notification-icon {
+  background: var(--axyra-warning);
+  color: var(--axyra-white);
+}
+
+.axyra-notification-info .axyra-notification-icon {
+  background: var(--axyra-info);
+  color: var(--axyra-white);
+}
+
+.axyra-notification-urgent .axyra-notification-icon {
+  background: #dc2626;
+  color: var(--axyra-white);
+}
+
+.axyra-notification-icon i {
+  font-size: 14px;
+}
+
+/* Contenido de la notificación */
+.axyra-notification-content {
+  margin-left: 40px;
+  margin-right: 60px;
+}
+
+.axyra-notification-title {
+  font-weight: 600;
+  color: var(--axyra-dark-blue);
+  font-size: 14px;
+  margin-bottom: 4px;
+  font-family: var(--font-logo);
+}
+
+.axyra-notification-message {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.axyra-notification-details {
+  background: var(--axyra-light-gray);
+  padding: 8px 12px;
+  border-radius: var(--border-radius-sm);
+  font-size: 12px;
+  color: #64748b;
+  border-left: 3px solid var(--axyra-blue-300);
+}
+
+/* Acciones de la notificación */
+.axyra-notification-actions {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.axyra-notification-action {
+  background: none;
+  border: none;
+  color: var(--axyra-blue-600);
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-weight: 500;
+}
+
+.axyra-notification-action:hover {
+  background: var(--axyra-blue-50);
+  color: var(--axyra-blue-700);
+}
+
+.axyra-notification-action i {
+  margin-right: 4px;
+}
+
+.axyra-notification-close {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  font-size: 16px;
+  padding: 4px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.axyra-notification-close:hover {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* Barra de progreso */
+.axyra-notification-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--axyra-blue-300);
+  width: 100%;
+  transform-origin: left;
+  animation: notificationProgress 5s linear forwards;
+}
+
+@keyframes notificationProgress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* Notificaciones con duración personalizada */
+.axyra-notification[data-duration='0'] .axyra-notification-progress {
+  display: none;
+}
+
+/* Responsive para notificaciones */
+@media (max-width: 768px) {
+  .axyra-notifications-container {
+    max-width: calc(100vw - 40px);
+    left: 20px !important;
+    right: 20px !important;
+    transform: none !important;
+  }
+
+  .axyra-notification {
+    margin-bottom: 8px;
+    padding: 12px;
+  }
+
+  .axyra-notification-content {
+    margin-left: 32px;
+    margin-right: 50px;
+  }
+
+  .axyra-notification-icon {
+    top: 12px;
+    left: 12px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .axyra-notification-icon i {
+    font-size: 12px;
+  }
+
+  .axyra-notification-title {
+    font-size: 13px;
+  }
+
+  .axyra-notification-message {
+    font-size: 12px;
+  }
+
+  .axyra-notification-actions {
+    top: 12px;
+    right: 12px;
+  }
+
+  .axyra-notification-close {
+    width: 20px;
+    height: 20px;
+    font-size: 14px;
+  }
+}

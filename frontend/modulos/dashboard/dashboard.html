@@ -18,6 +18,12 @@
     <!-- Configuración de Firebase AXYRA -->
     <script src="../../static/firebase-config.js"></script>
 
+    <!-- Sistema de Roles y Permisos AXYRA -->
+    <script src="../../static/roles-config.js"></script>
+
+    <!-- Sistema de Notificaciones Push AXYRA -->
+    <script src="../../static/notifications-system.js"></script>
+
     <!-- SISTEMA AISLADO -->
     <!-- <script src="../../static/isolated-auth.js"></script> -->
     <!-- <script src="../../static/debug-auth.js"></script> -->
@@ -3146,11 +3152,9 @@
 
               if (user) {
                 console.log('🔥 Cargando empleados desde Firebase para usuario:', user.uid);
-                
+
                 // Buscar empleados del usuario actual
-                const empleadosSnapshot = await db.collection('empleados')
-                  .where('userId', '==', user.uid)
-                  .get();
+                const empleadosSnapshot = await db.collection('empleados').where('userId', '==', user.uid).get();
 
                 if (!empleadosSnapshot.empty) {
                   const empleados = [];
@@ -3188,7 +3192,6 @@
           // Mostrar TODOS los empleados del usuario, sin depender de horas
           console.log(`📊 Empleados encontrados en localStorage: ${empleadosFiltrados.length}`);
           document.getElementById('totalEmpleados').textContent = empleadosFiltrados.length;
-          
         } catch (error) {
           console.error('❌ Error cargando estadísticas de empleados:', error);
           document.getElementById('totalEmpleados').textContent = '0';

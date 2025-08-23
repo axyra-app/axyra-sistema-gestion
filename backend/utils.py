@@ -258,11 +258,12 @@ def calcular_valores(tipo: str, salario_base: float, horas_dict: dict, config: d
             subtotal_ordinarias = salario_minimo / 2
             # Empleado fijo: salario_devengado = salario_minimo/2
         else:
+            # Para empleados por horas: multiplicar horas por valor de la hora
             subtotal_ordinarias = round(horas_ordinarias * valor_hora_base, 2)
             # Empleado temporal: salario_devengado = horas * valor_hora_base
         
         total += subtotal_ordinarias
-        detalle.append(("Salario Devengado", 0.00, round(valor_hora_base, 2), horas_ordinarias, 0, subtotal_ordinarias))
+        detalle.append(("Horas Ordinarias", 0.00, round(valor_hora_base, 2), horas_ordinarias, 0, subtotal_ordinarias))
     else:
         # Agregar salario devengado con 0 horas
         if tipo == "FIJO":
@@ -273,7 +274,7 @@ def calcular_valores(tipo: str, salario_base: float, horas_dict: dict, config: d
             subtotal_ordinarias = 0
             # Empleado temporal sin horas: salario_devengado = 0
         
-        detalle.append(("Salario Devengado", 0.00, round(valor_hora_base, 2), 0, 0, subtotal_ordinarias))
+        detalle.append(("Horas Ordinarias", 0.00, round(valor_hora_base, 2), 0, 0, subtotal_ordinarias))
 
     # Recargos - AGREGAR TODOS LOS CONCEPTOS, incluso con 0 horas
     recargos_config = {
@@ -292,19 +293,16 @@ def calcular_valores(tipo: str, salario_base: float, horas_dict: dict, config: d
     for concepto_key, (concepto_nombre, porcentaje) in recargos_config.items():
         horas = horas_dict.get(concepto_key, 0)
         
-        # Ocultar "Hora extra diurna" solo si es un fijo y no hay horas
-        if tipo == "FIJO" and concepto_key == "hora_extra_diurna" and horas == 0:
-            continue
-        
-        # Validar límites de horas extras si hay horas
+        # IMPORTANTE: NO ocultar ningún concepto, todos son importantes
+        # Solo validar límites de horas extras si hay horas
         if horas and horas > 0:
             if "extra" in concepto_key and tipo == "FIJO":
                 if horas > 20:  # Máximo 20 horas extras por quincena
                     horas = 20
             
             valor_recargo = valor_hora_base * porcentaje
-            valor_total_hora = valor_hora_base + valor_recargo
-            subtotal = round(horas * valor_total_hora, 2)
+            valor_total = valor_hora_base + valor_recargo
+            subtotal = round(horas * valor_total, 2)
             
             # Validar que el subtotal no sea excesivo
             if subtotal > salario_base * 0.5:  # Máximo 50% del salario base
@@ -314,7 +312,7 @@ def calcular_valores(tipo: str, salario_base: float, horas_dict: dict, config: d
         else:
             # Concepto con 0 horas - mostrar valores pero subtotal 0
             valor_recargo = valor_hora_base * porcentaje
-            valor_total_hora = valor_hora_base + valor_recargo
+            valor_total = valor_hora_base + valor_recargo
             subtotal = 0
             horas = 0
         
@@ -546,25 +544,48 @@ def generar_pdf(nombre, cedula, tipo, salario_base, horas_dict, config, deuda_co
         if not detalle:
             raise ValueError("No hay datos de horas para generar el PDF")
         
+        # Para empleados fijos, corregir el total de horas ordinarias
+        if tipo == "FIJO":
+            # Convertir tuplas a listas para poder modificarlas
+            detalle_modificable = [list(row) for row in detalle]
+            # Buscar la fila de horas ordinarias en el detalle
+            for i, row in enumerate(detalle_modificable):
+                if "ordinarias" in row[0].lower():
+                    # Recalcular el subtotal de horas ordinarias como la mitad del salario
+                    detalle_modificable[i][5] = salario_base / 2
+                    # Actualizar el subtotal
+                    break
+            # Usar el detalle modificable para el resto del proceso
+            detalle = detalle_modificable
+            # Recalcular el total sumando todos los subtotales del detalle corregido
+            total = sum(row[5] for row in detalle)
+        else:
+            total = resumen["total"]
+        
+        auxilio = resumen["auxilio"]
+        salud = resumen["salud"]
+        pension = resumen["pension"]
+        deuda = deuda_valor if deuda_valor else 0
+        neto = resumen["neto"]
+        total_con_auxilio = total + auxilio
+        
         # Agregar filas de conceptos
         for row in detalle:
             concept = row[0]
             
-            # Ocultar "Horas extras diurnas" solo si es un fijo
-            if tipo == "FIJO" and concept.strip().lower() == "horas extras diurnas":
-                continue
-            
-            porcentaje = row[1]
-            valor_hora_base = row[2]
+            # IMPORTANTE: NO ocultar ningún concepto, todos son importantes
+            # Solo verificar que haya horas para mostrar
+            valor_hora = row[2]
             horas = row[3]
             valor_recargo = row[4]
+            valor_total = valor_hora + valor_recargo  # El valor total es la suma del valor de la hora + recargo
             subtotal = row[5]
             
             table_data.append([
                 concept.upper(),
-                f"${valor_hora_base:,.0f}",
+                f"${valor_hora:,.0f}",
                 f"${valor_recargo:,.0f}",
-                f"${valor_hora_base + valor_recargo:,.0f}",
+                f"${valor_total:,.0f}",
                 f"{horas:.1f}",
                 f"${subtotal:,.0f}"
             ])
@@ -591,29 +612,33 @@ def generar_pdf(nombre, cedula, tipo, salario_base, horas_dict, config, deuda_co
         elements.append(table)
         elements.append(Spacer(1, 12))
         
-        # Resumen de valores
-        total = resumen["total"]
-        auxilio = resumen["auxilio"]
-        salud = resumen["salud"]
-        pension = resumen["pension"]
-        deuda = deuda_valor if deuda_valor else 0
-        neto = resumen["neto"]
-        total_con_auxilio = total + auxilio
-        
-        if auxilio > 0:
-            elements.append(Paragraph(f"AUXILIO DE TRANSPORTE: ${auxilio:,.0f}", custom_style))
-        
+        # Resumen de valores - DIFERENCIADO POR TIPO DE EMPLEADO
         if tipo == "FIJO":
+            # Para empleados fijos: mostrar auxilio, salud, pensión y TOTAL CON AUXILIO
+            if auxilio > 0:
+                elements.append(Paragraph(f"AUXILIO DE TRANSPORTE: ${auxilio:,.0f}", custom_style))
+            
             elements.append(Paragraph(f"APORTE SALUD: (${salud:,.0f})", custom_style))
             elements.append(Paragraph(f"APORTE PENSIÓN: (${pension:,.0f})", custom_style))
+            
+            if deuda_valor > 0:
+                elements.append(Paragraph(f"MOTIVO DE DEUDA: {deuda_comentario.upper()}", custom_style))
+                elements.append(Paragraph(f"DEUDA: (${deuda_valor:,.0f})", custom_style))
+            
+            elements.append(Paragraph(f"TOTAL (CON AUXILIO): ${total_con_auxilio:,.0f}", custom_style))
+            neto_ajustado = max(0, neto)
+            elements.append(Paragraph(f"TOTAL NETO A PAGAR: ${neto_ajustado:,.0f}", custom_style))
+        else:
+            # Para empleados por horas: NO mostrar auxilio, salud, pensión ni TOTAL CON AUXILIO
+            if deuda_valor > 0:
+                elements.append(Paragraph(f"MOTIVO DE DEUDA: {deuda_comentario.upper()}", custom_style))
+                elements.append(Paragraph(f"DEUDA: (${deuda_valor:,.0f})", custom_style))
+            
+            # Para empleados por horas, mostrar solo el total sin auxilio
+            elements.append(Paragraph(f"TOTAL: ${total:,.0f}", custom_style))
+            neto_ajustado = max(0, total - deuda_valor)
+            elements.append(Paragraph(f"TOTAL NETO A PAGAR: ${neto_ajustado:,.0f}", custom_style))
         
-        if deuda_valor > 0:
-            elements.append(Paragraph(f"MOTIVO DE DEUDA: {deuda_comentario.upper()}", custom_style))
-            elements.append(Paragraph(f"DEUDA: (${deuda_valor:,.0f})", custom_style))
-        
-        elements.append(Paragraph(f"TOTAL (CON AUXILIO): ${total_con_auxilio:,.0f}", custom_style))
-        neto_ajustado = max(0, neto - deuda)
-        elements.append(Paragraph(f"TOTAL NETO A PAGAR: ${neto_ajustado:,.0f}", custom_style))
         elements.append(Spacer(1, 24))
         
         # Firmas

@@ -11,12 +11,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <!-- AXYRA Firebase Scripts -->
     <script src="../../static/firebase-config.js"></script>
+
+    <!-- Sistema de Roles y Permisos AXYRA -->
+    <script src="../../static/roles-config.js"></script>
+
+    <!-- Sistema de Notificaciones Push AXYRA -->
+    <script src="../../static/notifications-system.js"></script>
     <!-- SISTEMA AISLADO - SIN FIREBASE -->
     <script src="../../static/isolated-auth.js"></script>
     <script src="../../static/debug-auth.js"></script>
@@ -543,9 +549,7 @@
     <div id="modalEliminarEmpleado" class="axyra-modal">
       <div class="axyra-modal-content">
         <div class="axyra-modal-header">
-          <h3 class="axyra-modal-title">
-            <i class="fas fa-user-times"></i> Eliminar Empleado
-          </h3>
+          <h3 class="axyra-modal-title"><i class="fas fa-user-times"></i> Eliminar Empleado</h3>
           <button class="axyra-modal-close" onclick="cerrarModalEliminar()">
             <i class="fas fa-times"></i>
           </button>
@@ -578,9 +582,7 @@
     <div id="modalEditarEmpleado" class="axyra-modal">
       <div class="axyra-modal-content">
         <div class="axyra-modal-header">
-          <h3 class="axyra-modal-title">
-            <i class="fas fa-user-edit"></i> Editar Empleado
-          </h3>
+          <h3 class="axyra-modal-title"><i class="fas fa-user-edit"></i> Editar Empleado</h3>
           <button class="axyra-modal-close" onclick="cerrarModalEditar()">
             <i class="fas fa-times"></i>
           </button>
@@ -627,7 +629,13 @@
               </div>
               <div class="axyra-form-group">
                 <label for="editFechaContratacion" class="axyra-form-label">Fecha de Contratación</label>
-                <input type="date" id="editFechaContratacion" name="fechaContratacion" class="axyra-form-input" required />
+                <input
+                  type="date"
+                  id="editFechaContratacion"
+                  name="fechaContratacion"
+                  class="axyra-form-input"
+                  required
+                />
               </div>
             </div>
           </form>
@@ -647,9 +655,7 @@
     <div id="modalVistaEmpleado" class="axyra-modal">
       <div class="axyra-modal-content">
         <div class="axyra-modal-header">
-          <h3 class="axyra-modal-title">
-            <i class="fas fa-user"></i> Información del Empleado
-          </h3>
+          <h3 class="axyra-modal-title"><i class="fas fa-user"></i> Información del Empleado</h3>
           <button class="axyra-modal-close" onclick="cerrarModalVista()">
             <i class="fas fa-times"></i>
           </button>
@@ -1092,7 +1098,7 @@
       // Editar empleado
       function editarEmpleado(id) {
         try {
-          const empleado = empleados.find(emp => emp.id === id);
+          const empleado = empleados.find((emp) => emp.id === id);
           if (!empleado) {
             mostrarMensaje('❌ Empleado no encontrado', 'error');
             return;
@@ -1113,7 +1119,6 @@
 
           // Mostrar el modal
           document.getElementById('modalEditarEmpleado').style.display = 'flex';
-          
         } catch (error) {
           console.error('❌ Error preparando edición:', error);
           mostrarMensaje('Error al preparar edición: ' + error.message, 'error');
@@ -1135,7 +1140,7 @@
       async function eliminarEmpleado(id) {
         try {
           // Buscar el empleado para mostrar su nombre en el modal
-          const empleado = empleados.find(emp => emp.id === id);
+          const empleado = empleados.find((emp) => emp.id === id);
           if (!empleado) {
             mostrarMensaje('❌ Empleado no encontrado', 'error');
             return;
@@ -1144,10 +1149,9 @@
           // Mostrar el modal de confirmación
           document.getElementById('nombreEmpleadoEliminar').textContent = empleado.nombre;
           document.getElementById('modalEliminarEmpleado').style.display = 'flex';
-          
+
           // Guardar el ID del empleado a eliminar
           window.empleadoAEliminar = id;
-          
         } catch (error) {
           console.error('❌ Error preparando eliminación:', error);
           mostrarMensaje('Error al preparar eliminación: ' + error.message, 'error');
@@ -1274,7 +1278,7 @@
       // Ver empleado
       function verEmpleado(id) {
         try {
-          const empleado = empleados.find(emp => emp.id === id);
+          const empleado = empleados.find((emp) => emp.id === id);
           if (!empleado) {
             mostrarMensaje('❌ Empleado no encontrado', 'error');
             return;
@@ -1286,13 +1290,16 @@
           document.getElementById('vistaTelefono').textContent = empleado.telefono || 'N/A';
           document.getElementById('vistaEmail').textContent = empleado.email || 'N/A';
           document.getElementById('vistaDireccion').textContent = empleado.direccion || 'N/A';
-          document.getElementById('vistaSalario').textContent = empleado.salario ? `$${Number(empleado.salario).toLocaleString()}` : 'N/A';
+          document.getElementById('vistaSalario').textContent = empleado.salario
+            ? `$${Number(empleado.salario).toLocaleString()}`
+            : 'N/A';
           document.getElementById('vistaTipoContrato').textContent = empleado.tipoContrato || 'N/A';
-          document.getElementById('vistaFechaContratacion').textContent = empleado.fechaContratacion ? new Date(empleado.fechaContratacion).toLocaleDateString('es-ES') : 'N/A';
+          document.getElementById('vistaFechaContratacion').textContent = empleado.fechaContratacion
+            ? new Date(empleado.fechaContratacion).toLocaleDateString('es-ES')
+            : 'N/A';
 
           // Mostrar el modal
           document.getElementById('modalVistaEmpleado').style.display = 'flex';
-          
         } catch (error) {
           console.error('❌ Error mostrando empleado:', error);
           mostrarMensaje('Error al mostrar empleado: ' + error.message, 'error');
@@ -2104,7 +2111,7 @@
             salario: Number(formData.get('salario')),
             tipoContrato: formData.get('tipoContrato'),
             fechaContratacion: formData.get('fechaContratacion'),
-            updatedAt: new Date().toISOString()
+            updatedAt: new Date().toISOString(),
           };
 
           // Validar datos requeridos
@@ -2123,7 +2130,7 @@
           try {
             if (typeof firebase !== 'undefined' && firebase.firestore) {
               const db = firebase.firestore();
-              
+
               // Buscar el empleado en Firebase
               const empleadosRef = db.collection('empleados');
               const query = empleadosRef.where('id', '==', id);
@@ -2144,7 +2151,7 @@
 
           // Actualizar en localStorage
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          const index = empleados.findIndex(emp => emp.id === id);
+          const index = empleados.findIndex((emp) => emp.id === id);
           if (index !== -1) {
             empleados[index] = { ...empleados[index], ...empleadoEditado };
             localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
@@ -2164,7 +2171,6 @@
           window.dispatchEvent(event);
 
           mostrarMensaje('✅ Empleado actualizado correctamente', 'success');
-          
         } catch (error) {
           console.error('❌ Error actualizando empleado:', error);
           mostrarMensaje('Error al actualizar empleado: ' + error.message, 'error');

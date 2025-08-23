@@ -8,6 +8,13 @@
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="../../static/work-areas-config.js"></script>
+
+    <!-- Sistema de Roles y Permisos AXYRA -->
+    <script src="../../static/roles-config.js"></script>
+
+    <!-- Sistema de Notificaciones Push AXYRA -->
+    <script src="../../static/notifications-system.js"></script>
+
     <!-- SISTEMA AISLADO - SIN FIREBASE -->
     <script src="../../static/isolated-auth.js"></script>
     <script src="../../static/debug-auth.js"></script>
@@ -280,7 +287,9 @@
                   />
                 </div>
                 <div class="axyra-form-group">
-                  <label for="recargoExtraDominicalNocturno" class="axyra-form-label">Recargo Extra Dominical Nocturno (%)</label>
+                  <label for="recargoExtraDominicalNocturno" class="axyra-form-label"
+                    >Recargo Extra Dominical Nocturno (%)</label
+                  >
                   <input
                     type="number"
                     id="recargoExtraDominicalNocturno"
@@ -304,7 +313,9 @@
                   />
                 </div>
                 <div class="axyra-form-group">
-                  <label for="recargoExtraFestivoNocturno" class="axyra-form-label">Recargo Extra Festivo Nocturno (%)</label>
+                  <label for="recargoExtraFestivoNocturno" class="axyra-form-label"
+                    >Recargo Extra Festivo Nocturno (%)</label
+                  >
                   <input
                     type="number"
                     id="recargoExtraFestivoNocturno"
@@ -472,29 +483,25 @@
           <div class="axyra-card-content">
             <div class="axyra-form-row">
               <div class="axyra-form-group">
-                <button 
-                  type="button" 
-                  class="axyra-btn axyra-btn-warning" 
+                <button
+                  type="button"
+                  class="axyra-btn axyra-btn-warning"
                   onclick="verificarEstadoFirebase()"
-                  style="margin-right: 10px;"
+                  style="margin-right: 10px"
                 >
                   <i class="fas fa-check-circle"></i> Verificar Firebase
                 </button>
-                
-                <button 
-                  type="button" 
-                  class="axyra-btn axyra-btn-warning" 
+
+                <button
+                  type="button"
+                  class="axyra-btn axyra-btn-warning"
                   onclick="eliminarEmpleadosEspecificos()"
-                  style="margin-right: 10px;"
+                  style="margin-right: 10px"
                 >
                   <i class="fas fa-user-times"></i> Eliminar Solo Empleados
                 </button>
-                
-                <button 
-                  type="button" 
-                  class="axyra-btn axyra-btn-error" 
-                  onclick="limpiarTodosLosDatos()"
-                >
+
+                <button type="button" class="axyra-btn axyra-btn-error" onclick="limpiarTodosLosDatos()">
                   <i class="fas fa-trash-alt"></i> Limpiar TODO el Sistema
                 </button>
               </div>
@@ -502,8 +509,8 @@
             <div class="axyra-form-row">
               <div class="axyra-form-group">
                 <p class="axyra-help-text">
-                  <strong>Verificar Firebase:</strong> Comprueba el estado de conexión y datos<br>
-                  <strong>Eliminar Solo Empleados:</strong> Elimina únicamente los empleados del sistema<br>
+                  <strong>Verificar Firebase:</strong> Comprueba el estado de conexión y datos<br />
+                  <strong>Eliminar Solo Empleados:</strong> Elimina únicamente los empleados del sistema<br />
                   <strong>Limpiar TODO:</strong> Elimina TODOS los datos del sistema (irreversible)
                 </p>
               </div>
@@ -517,9 +524,7 @@
     <div id="modalRestaurar" class="axyra-modal">
       <div class="axyra-modal-content">
         <div class="axyra-modal-header">
-          <h3 class="axyra-modal-title">
-            <i class="fas fa-undo"></i> Restaurar Valores por Defecto
-          </h3>
+          <h3 class="axyra-modal-title"><i class="fas fa-undo"></i> Restaurar Valores por Defecto</h3>
           <button class="axyra-modal-close" onclick="cerrarModalRestaurar()">
             <i class="fas fa-times"></i>
           </button>
@@ -537,9 +542,7 @@
           </div>
         </div>
         <div class="axyra-modal-footer">
-          <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalRestaurar()">
-            Cancelar
-          </button>
+          <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalRestaurar()">Cancelar</button>
           <button class="axyra-btn axyra-btn-warning" onclick="restaurarValoresPorDefecto()">
             <i class="fas fa-undo"></i> Restaurar Valores
           </button>
@@ -551,9 +554,7 @@
     <div id="modalLimpiar" class="axyra-modal">
       <div class="axyra-modal-content">
         <div class="axyra-modal-header">
-          <h3 class="axyra-modal-title">
-            <i class="fas fa-trash"></i> Limpiar Todos los Datos
-          </h3>
+          <h3 class="axyra-modal-title"><i class="fas fa-trash"></i> Limpiar Todos los Datos</h3>
           <button class="axyra-modal-close" onclick="cerrarModalLimpiar()">
             <i class="fas fa-times"></i>
           </button>
@@ -574,9 +575,7 @@
           </div>
         </div>
         <div class="axyra-modal-footer">
-          <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalLimpiar()">
-            Cancelar
-          </button>
+          <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalLimpiar()">Cancelar</button>
           <button class="axyra-btn axyra-btn-error" onclick="limpiarTodosLosDatos()">
             <i class="fas fa-trash"></i> Limpiar Todo
           </button>
@@ -605,12 +604,12 @@
       // Cerrar sesión - SISTEMA AISLADO
       function logout() {
         console.log('🔄 Cerrando sesión desde configuración...');
-        
+
         // Usar el sistema aislado
         if (window.axyraIsolatedAuth) {
           window.axyraIsolatedAuth.logout();
         }
-        
+
         console.log('✅ Sesión cerrada desde configuración');
         window.location.href = '../../login.html';
       }
@@ -658,10 +657,10 @@
       function cambiarTema(tema) {
         const body = document.body;
         const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
-        
+
         // Remover clases de tema anteriores
         body.classList.remove('tema-claro', 'tema-oscuro');
-        
+
         if (tema === 'auto') {
           // Detectar tema automáticamente basado en la hora
           const hora = new Date().getHours();
@@ -676,12 +675,12 @@
           body.classList.add(`tema-${tema}`);
           config.temaReal = tema;
         }
-        
+
         config.tema = tema;
         localStorage.setItem('axyra_configuracion', JSON.stringify(config));
-        
+
         console.log(`✅ Tema cambiado a: ${tema}`);
-        
+
         // Aplicar tema inmediatamente
         aplicarTema(tema);
       }
@@ -689,10 +688,10 @@
       // Aplicar tema
       function aplicarTema(tema) {
         const body = document.body;
-        
+
         // Remover clases anteriores
         body.classList.remove('tema-claro', 'tema-oscuro');
-        
+
         if (tema === 'auto') {
           const hora = new Date().getHours();
           if (hora >= 6 && hora < 18) {
@@ -703,7 +702,7 @@
         } else {
           body.classList.add(`tema-${tema}`);
         }
-        
+
         // Guardar en localStorage
         const config = JSON.parse(localStorage.getItem('axyra_configuracion') || '{}');
         config.tema = tema;
@@ -742,7 +741,7 @@
             telefonoEmpresa: '',
             emailEmpresa: '',
             sitioWebEmpresa: '',
-            
+
             // Nómina
             salarioMinimo: '1423500',
             auxilioTransporte: '100000',
@@ -750,7 +749,7 @@
             porcentajePension: '4',
             horasEstandar: '176', // 44 horas semanales
             periodoNomina: 'quincenal',
-            
+
             // Recargos (legales colombianos 2025)
             recargoNocturno: '35',
             recargoDominical: '75',
@@ -762,19 +761,19 @@
             recargoExtraDominicalNocturno: '150',
             recargoExtraFestivo: '100',
             recargoExtraFestivoNocturno: '200',
-            
+
             // Sistema
             zonaHoraria: 'America/Bogota',
             formatoFecha: 'DD/MM/YYYY',
             idioma: 'es',
-            tema: 'light'
+            tema: 'light',
           };
-          
+
           localStorage.setItem('axyra_configuracion', JSON.stringify(configPorDefecto));
-          
+
           // Recargar configuración
           cargarConfiguracion();
-          
+
           cerrarModalRestaurar();
           mostrarMensaje('✅ Valores por defecto restaurados correctamente', 'success');
         } catch (error) {
@@ -786,11 +785,19 @@
       // Limpiar todos los datos
       async function limpiarTodosLosDatos() {
         try {
-          if (!confirm('⚠️ ADVERTENCIA: Esta acción eliminará TODOS los datos del sistema de manera PERMANENTE. ¿Estás completamente seguro de que deseas continuar?')) {
+          if (
+            !confirm(
+              '⚠️ ADVERTENCIA: Esta acción eliminará TODOS los datos del sistema de manera PERMANENTE. ¿Estás completamente seguro de que deseas continuar?'
+            )
+          ) {
             return;
           }
 
-          if (!confirm('🚨 ÚLTIMA ADVERTENCIA: Esta acción NO SE PUEDE DESHACER. Todos los empleados, horas, nóminas, facturas y configuraciones serán eliminados para siempre. ¿Confirmas que quieres proceder?')) {
+          if (
+            !confirm(
+              '🚨 ÚLTIMA ADVERTENCIA: Esta acción NO SE PUEDE DESHACER. Todos los empleados, horas, nóminas, facturas y configuraciones serán eliminados para siempre. ¿Confirmas que quieres proceder?'
+            )
+          ) {
             return;
           }
 
@@ -800,11 +807,11 @@
           try {
             if (typeof firebase !== 'undefined' && firebase.firestore) {
               const db = firebase.firestore();
-              
+
               // Obtener usuario autenticado de Firebase
               const auth = firebase.auth();
               const user = auth.currentUser;
-              
+
               if (!user) {
                 console.warn('⚠️ No hay usuario autenticado en Firebase');
                 throw new Error('Usuario no autenticado en Firebase');
@@ -814,14 +821,14 @@
 
               // Eliminar colecciones completas usando el usuario autenticado
               const colecciones = ['empleados', 'horas', 'nominas', 'facturas', 'comprobantes', 'configuracion'];
-              
+
               for (const coleccion of colecciones) {
                 try {
                   console.log(`🗑️ Eliminando colección: ${coleccion}`);
-                  
+
                   // Obtener todos los documentos de la colección
                   const snapshot = await db.collection(coleccion).get();
-                  
+
                   if (snapshot.empty) {
                     console.log(`ℹ️ Colección ${coleccion} ya está vacía`);
                     continue;
@@ -830,24 +837,23 @@
                   // Crear batch para eliminar todos los documentos
                   const batch = db.batch();
                   let deletedCount = 0;
-                  
+
                   snapshot.docs.forEach((doc) => {
                     batch.delete(doc.ref);
                     deletedCount++;
                   });
-                  
+
                   // Ejecutar el batch
                   await batch.commit();
                   console.log(`✅ ${deletedCount} documentos eliminados de ${coleccion}`);
-                  
                 } catch (error) {
                   console.error(`❌ Error eliminando colección ${coleccion}:`, error);
-                  
+
                   // Intentar eliminar documento por documento como fallback
                   try {
                     const snapshot = await db.collection(coleccion).get();
                     let deletedCount = 0;
-                    
+
                     for (const doc of snapshot.docs) {
                       try {
                         await doc.ref.delete();
@@ -856,7 +862,7 @@
                         console.warn(`⚠️ No se pudo eliminar documento ${doc.id}:`, docError);
                       }
                     }
-                    
+
                     console.log(`✅ ${deletedCount} documentos eliminados de ${coleccion} (fallback)`);
                   } catch (fallbackError) {
                     console.error(`❌ Error en fallback para ${coleccion}:`, fallbackError);
@@ -869,7 +875,7 @@
           } catch (firebaseError) {
             console.error('❌ Error crítico con Firebase:', firebaseError);
             mostrarMensaje('❌ Error con Firebase: ' + firebaseError.message, 'error');
-            
+
             // Continuar con limpieza local aunque Firebase falle
             mostrarMensaje('⚠️ Continuando con limpieza local...', 'warning');
           }
@@ -883,7 +889,7 @@
             }
           }
 
-          keysToRemove.forEach(key => {
+          keysToRemove.forEach((key) => {
             localStorage.removeItem(key);
             console.log(`🗑️ Eliminado: ${key}`);
           });
@@ -893,8 +899,8 @@
           console.log('🗑️ SessionStorage limpiado');
 
           // Limpiar cookies relacionadas
-          document.cookie.split(";").forEach(function(c) { 
-            document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+          document.cookie.split(';').forEach(function (c) {
+            document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
           });
           console.log('🍪 Cookies limpiadas');
 
@@ -907,32 +913,39 @@
             emailEmpresa: 'jfuran.va@gmail.com',
             sitioWebEmpresa: 'https://axyra.vercel.app',
             tema: 'light',
-            fechaCreacion: new Date().toISOString()
+            fechaCreacion: new Date().toISOString(),
           };
-          
+
           localStorage.setItem('axyra_configuracion', JSON.stringify(configBasica));
           console.log('✅ Configuración básica restablecida');
 
           // Mostrar mensaje de éxito
-          mostrarMensaje('🎉 ¡SISTEMA COMPLETAMENTE LIMPIO! Todos los datos han sido eliminados. Cerrando sesión...', 'success');
+          mostrarMensaje(
+            '🎉 ¡SISTEMA COMPLETAMENTE LIMPIO! Todos los datos han sido eliminados. Cerrando sesión...',
+            'success'
+          );
 
           // Cerrar sesión y redirigir
           setTimeout(() => {
             try {
               // Cerrar sesión de Firebase
               if (typeof firebase !== 'undefined' && firebase.auth) {
-                firebase.auth().signOut().then(() => {
-                  console.log('✅ Sesión de Firebase cerrada');
-                }).catch((signOutError) => {
-                  console.warn('⚠️ Error cerrando sesión de Firebase:', signOutError);
-                });
+                firebase
+                  .auth()
+                  .signOut()
+                  .then(() => {
+                    console.log('✅ Sesión de Firebase cerrada');
+                  })
+                  .catch((signOutError) => {
+                    console.warn('⚠️ Error cerrando sesión de Firebase:', signOutError);
+                  });
               }
-              
+
               // Limpiar sesión de usuario
               localStorage.removeItem('axyra_isolated_user');
               localStorage.removeItem('axyra_firebase_user');
               sessionStorage.clear();
-              
+
               // Redirigir al login
               window.location.href = '../../login.html';
             } catch (redirectError) {
@@ -941,17 +954,16 @@
               window.location.reload(true);
             }
           }, 2000);
-
         } catch (error) {
           console.error('❌ Error crítico limpiando datos:', error);
           mostrarMensaje('❌ Error crítico al limpiar datos: ' + error.message, 'error');
-          
+
           // Intentar limpieza básica como fallback
           try {
             localStorage.clear();
             sessionStorage.clear();
             mostrarMensaje('⚠️ Se realizó limpieza básica como fallback', 'warning');
-            
+
             // Redirigir al login después de limpieza fallback
             setTimeout(() => {
               window.location.href = '../../login.html';
@@ -1123,7 +1135,7 @@
 
               // Obtener todos los empleados
               const empleadosSnapshot = await db.collection('empleados').get();
-              
+
               if (empleadosSnapshot.empty) {
                 console.log('ℹ️ No hay empleados en Firebase');
                 mostrarMensaje('ℹ️ No hay empleados para eliminar', 'info');
@@ -1144,7 +1156,6 @@
 
               console.log(`✅ ${deletedCount} empleados eliminados de Firebase`);
               mostrarMensaje(`✅ ${deletedCount} empleados eliminados de Firebase`, 'success');
-
             } else {
               throw new Error('Firebase no disponible');
             }
@@ -1161,7 +1172,6 @@
 
           // Mostrar mensaje de éxito
           mostrarMensaje('🎉 ¡Empleados eliminados completamente!', 'success');
-
         } catch (error) {
           console.error('❌ Error eliminando empleados:', error);
           mostrarMensaje('Error al eliminar empleados: ' + error.message, 'error');
@@ -1190,7 +1200,7 @@
           // Verificar colecciones
           const db = firebase.firestore();
           const colecciones = ['empleados', 'horas', 'nominas', 'facturas'];
-          
+
           for (const coleccion of colecciones) {
             try {
               const snapshot = await db.collection(coleccion).get();
@@ -1199,7 +1209,6 @@
               console.warn(`⚠️ Error accediendo a ${coleccion}:`, error);
             }
           }
-
         } catch (error) {
           console.error('❌ Error verificando Firebase:', error);
           mostrarMensaje('Error verificando Firebase: ' + error.message, 'error');
