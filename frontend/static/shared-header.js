@@ -223,47 +223,42 @@ class AxyraSharedHeader {
 
   // Método para detectar la página actual de manera más robusta
   detectarPaginaActual() {
-    // Intentar múltiples métodos de detección
-    let pagina = '';
-    
-    // Método 1: URL actual
+    // Método más simple y directo
     const url = window.location.href;
-    console.log('🔍 URL completa:', url);
-    
-    // Método 2: Pathname
     const pathname = window.location.pathname;
+    
+    console.log('🔍 URL completa:', url);
     console.log('🔍 Pathname:', pathname);
     
-    // Método 3: Buscar en el título de la página
-    const titulo = document.title;
-    console.log('🔍 Título de la página:', titulo);
-    
-    // Método 4: Buscar en el contenido del body
-    const bodyContent = document.body.innerHTML;
-    
-    // Determinar página basándose en múltiples indicadores
-    if (url.includes('empleados') || pathname.includes('empleados') || titulo.includes('Empleados') || bodyContent.includes('empleados')) {
-      pagina = 'empleados';
-    } else if (url.includes('dashboard') || pathname.includes('dashboard') || titulo.includes('Dashboard')) {
-      pagina = 'dashboard';
-    } else if (url.includes('horas') || pathname.includes('horas') || titulo.includes('Horas')) {
-      pagina = 'horas';
-    } else if (url.includes('nomina') || pathname.includes('nomina') || titulo.includes('Nómina')) {
-      pagina = 'nomina';
-    } else if (url.includes('caja') || pathname.includes('caja') || titulo.includes('Caja')) {
-      pagina = 'caja';
-    } else if (url.includes('inventario') || pathname.includes('inventario') || titulo.includes('Inventario')) {
-      pagina = 'inventario';
-    } else if (url.includes('configuracion') || pathname.includes('configuracion') || titulo.includes('Configuración')) {
-      pagina = 'configuracion';
-    } else if (url.includes('index') || pathname.includes('index') || titulo.includes('Inicio')) {
-      pagina = 'inicio';
+    // Detección directa por URL
+    if (url.includes('/empleados/') || pathname.includes('/empleados/')) {
+      console.log('🎯 Página detectada como: empleados');
+      return 'empleados';
+    } else if (url.includes('/dashboard/') || pathname.includes('/dashboard/')) {
+      console.log('🎯 Página detectada como: dashboard');
+      return 'dashboard';
+    } else if (url.includes('/horas/') || pathname.includes('/horas/')) {
+      console.log('🎯 Página detectada como: horas');
+      return 'horas';
+    } else if (url.includes('/nomina/') || pathname.includes('/nomina/')) {
+      console.log('🎯 Página detectada como: nomina');
+      return 'nomina';
+    } else if (url.includes('/cuadre_caja/') || pathname.includes('/cuadre_caja/')) {
+      console.log('🎯 Página detectada como: caja');
+      return 'caja';
+    } else if (url.includes('/inventario/') || pathname.includes('/inventario/')) {
+      console.log('🎯 Página detectada como: inventario');
+      return 'inventario';
+    } else if (url.includes('/configuracion/') || pathname.includes('/configuracion/')) {
+      console.log('🎯 Página detectada como: configuracion');
+      return 'configuracion';
+    } else if (url.includes('/index.html') || pathname.includes('/index.html') || url.endsWith('/') || pathname.endsWith('/')) {
+      console.log('🎯 Página detectada como: inicio');
+      return 'inicio';
     } else {
-      pagina = 'desconocida';
+      console.log('🎯 Página detectada como: desconocida');
+      return 'desconocida';
     }
-    
-    console.log('🎯 Página detectada como:', pagina);
-    return pagina;
   }
 }
 
