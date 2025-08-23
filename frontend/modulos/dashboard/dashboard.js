@@ -658,23 +658,144 @@ class AxyraDashboard {
     }
 
     createSalariosDetailHTML() {
-        const totalSalarios = this.empleados.reduce((sum, e) => sum + (e.salario || 0), 0);
+        // Calcular salarios netos para cada empleado
+        const empleadosConSalarioNeto = this.empleados.map(emp => {
+            const salarioNeto = this.calcularSalarioNeto(emp);
+            return { ...emp, salarioNeto };
+        });
+        
+        const totalSalariosNetos = empleadosConSalarioNeto.reduce((sum, e) => sum + (e.salarioNeto || 0), 0);
+        
         return `
             <div class="axyra-salarios-lista">
-                ${this.empleados.map(emp => `
+                ${empleadosConSalarioNeto.map(emp => `
                     <div class="axyra-salario-item">
                         <div class="axyra-salario-info">
                             <strong>${emp.nombre}</strong>
-                            <span>Salario: $${(emp.salario || 0).toLocaleString()}</span>
+                            <span>Salario Neto: $${(emp.salarioNeto || 0).toLocaleString()}</span>
+                            <span>Salario Base: $${(emp.salario || 0).toLocaleString()}</span>
                             <span>Departamento: ${emp.departamento || 'Sin asignar'}</span>
                         </div>
                     </div>
                 `).join('')}
                 <div class="axyra-salario-total">
-                    <strong>Total Salarios: $${totalSalarios.toLocaleString()}</strong>
+                    <strong>Total Salarios Netos: $${totalSalariosNetos.toLocaleString()}</strong>
                 </div>
             </div>
         `;
+    }
+
+    calcularSalarioNeto(empleado) {
+        try {
+            // Buscar las horas trabajadas del empleado en la quincena actual
+            const quincenaActual = this.obtenerQuincenaActual();
+            const horasEmpleado = this.horas.find(h => 
+                h.empleado_id === empleado.id && h.quincena === quincenaActual
+            );
+            
+            if (!horasEmpleado) {
+                // Si no hay horas registradas, retornar 0 para empleados temporales
+                // o salario base / 2 para empleados fijos
+                if (empleado.tipo === 'FIJO') {
+                    return Math.round((empleado.salario || 0) / 2);
+                }
+                return 0;
+            }
+            
+            // Construir el diccionario de horas como lo espera el backend
+            const horasDict = {
+                ordinarias: horasEmpleado.horas_ordinarias || 0,
+                recargo_nocturno: horasEmpleado.recargo_nocturno || 0,
+                recargo_diurno_dominical: horasEmpleado.recargo_diurno_dominical || 0,
+                recargo_nocturno_dominical: horasEmpleado.recargo_nocturno_dominical || 0,
+                hora_extra_diurna: horasEmpleado.hora_extra_diurna || 0,
+                hora_extra_nocturna: horasEmpleado.hora_extra_nocturna || 0,
+                hora_diurna_dominical_o_festivo: horasEmpleado.hora_diurna_dominical_o_festivo || 0,
+                hora_extra_diurna_dominical_o_festivo: horasEmpleado.hora_extra_diurna_dominical_o_festivo || 0,
+                hora_nocturna_dominical_o_festivo: horasEmpleado.hora_nocturna_dominical_o_festivo || 0,
+                hora_extra_nocturna_dominical_o_festivo: horasEmpleado.hora_extra_nocturna_dominical_o_festivo || 0
+            };
+            
+            // Calcular valor de la hora base
+            const valorHoraBase = (empleado.salario || 0) / 220;
+            
+            let total = 0;
+            
+            // Calcular horas ordinarias
+            const horasOrdinarias = horasDict.ordinarias || 0;
+            if (empleado.tipo === 'FIJO') {
+                // Para empleados fijos: salario mínimo / 2
+                const salarioMinimo = 1423500; // Valor por defecto
+                total += salarioMinimo / 2;
+            } else {
+                // Para empleados temporales: horas * valor hora
+                total += horasOrdinarias * valorHoraBase;
+            }
+            
+            // Calcular recargos y horas extras
+            const recargosConfig = {
+                recargo_nocturno: 0.35,
+                recargo_diurno_dominical: 0.75,
+                recargo_nocturno_dominical: 1.10,
+                hora_extra_diurna: 0.25,
+                hora_extra_nocturna: 0.75,
+                hora_diurna_dominical_o_festivo: 0.80,
+                hora_extra_diurna_dominical_o_festivo: 1.10,
+                hora_nocturna_dominical_o_festivo: 1.05,
+                hora_extra_nocturna_dominical_o_festivo: 1.85
+            };
+            
+            for (const [concepto, porcentaje] of Object.entries(recargosConfig)) {
+                const horas = horasDict[concepto] || 0;
+                if (horas > 0) {
+                    const valorRecargo = valorHoraBase * porcentaje;
+                    const valorTotal = valorHoraBase + valorRecargo;
+                    const subtotal = horas * valorTotal;
+                    total += subtotal;
+                }
+            }
+            
+            // Calcular auxilio de transporte (solo para fijos)
+            let auxilio = 0;
+            if (empleado.tipo === 'FIJO' && (empleado.salario || 0) <= 3000000 && horasOrdinarias > 0) {
+                auxilio = 100000; // Valor por defecto
+            }
+            
+            // Calcular deducciones (solo para fijos)
+            let salud = 0;
+            let pension = 0;
+            if (empleado.tipo === 'FIJO') {
+                salud = total * 0.04; // 4% salud
+                pension = total * 0.04; // 4% pensión
+            }
+            
+            // Calcular deuda si existe
+            const deuda = horasEmpleado.valor_deuda || 0;
+            
+            // Calcular salario neto
+            const salarioNeto = total + auxilio - salud - pension - deuda;
+            
+            return Math.max(0, Math.round(salarioNeto));
+            
+        } catch (error) {
+            console.error('Error calculando salario neto para', empleado.nombre, error);
+            // En caso de error, retornar el salario base como fallback
+            return empleado.salario || 0;
+        }
+    }
+    
+    obtenerQuincenaActual() {
+        const ahora = new Date();
+        const dia = ahora.getDate();
+        const mes = ahora.getMonth() + 1;
+        const año = ahora.getFullYear();
+        
+        // Determinar quincena basándose en el día del mes
+        if (dia <= 15) {
+            return `15_${mes.toString().padStart(2, '0')}_${año}`;
+        } else {
+            return `31_${mes.toString().padStart(2, '0')}_${año}`;
+        }
     }
 
     showModal(title, content) {
