@@ -11,10 +11,18 @@
    ======================================== */
 :root {
   /* Colores principales */
-  --axyra-dark-blue: #0b1f3f; /* Azul oscuro - confianza y profesionalismo */
-  --axyra-light-blue: #4ca9ff; /* Azul celeste - tecnología y frescura */
-  --axyra-white: #ffffff; /* Blanco - limpieza visual */
-  --axyra-light-gray: #f5f7fa; /* Gris claro - fondo neutro */
+  --axyra-primary: #2563eb;
+  --axyra-primary-dark: #1d4ed8;
+  --axyra-secondary: #64748b;
+  --axyra-success: #10b981;
+  --axyra-warning: #f59e0b;
+  --axyra-error: #ef4444;
+  --axyra-info: #3b82f6;
+  --axyra-light: #f8fafc;
+  --axyra-dark: #1e293b;
+  --axyra-border: #e2e8f0;
+  --axyra-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --axyra-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 
   /* Colores secundarios */
   --axyra-blue-50: #e3f2fd;
@@ -79,13 +87,11 @@ html {
 }
 
 body {
-  font-family: var(--font-text);
-  font-weight: 400;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8fafc;
+  color: #1e293b;
   line-height: 1.6;
-  color: var(--axyra-dark-blue);
-  background: var(--axyra-light-gray);
-  overflow-x: hidden;
-  padding-top: 50px; /* REDUCIDO DE 60px A 50px PARA ELIMINAR ESPACIO BLANCO */
+  padding-top: 50px;
 }
 
 /* ========================================
@@ -134,27 +140,25 @@ p {
    HEADER Y NAVEGACIÓN AXYRA
    ======================================== */
 .axyra-header {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  padding: 4px 0; /* REDUCIDO DE 6px A 4px PARA HEADER MÁS COMPACTO */
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15); /* REDUCIDO PARA SOMBRA MÁS SUTIL */
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: white;
   z-index: 999;
-  border-bottom: 2px solid #2563eb; /* REDUCIDO DE 3px A 2px */
-  backdrop-filter: blur(10px);
+  padding: 4px 0;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15);
+  border-bottom: 2px solid #475569;
 }
 
 .axyra-header-content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .axyra-security-status {

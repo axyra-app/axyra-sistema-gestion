@@ -22,6 +22,8 @@ class AxyraDashboard {
                 await this.loadDashboardData();
                 this.setupRealTimeUpdates();
                 this.startAutoRefresh();
+                this.setupModals();
+                this.setupEventListeners();
                 console.log('✅ Dashboard inicializado correctamente');
             } else {
                 this.showLoginMessage();
@@ -1204,6 +1206,329 @@ class AxyraDashboard {
     showErrorMessage(message) {
         console.error(message);
         // Aquí podrías mostrar una notificación visual
+    }
+
+    setupModals() {
+        try {
+            // Configurar modales para estadísticas
+            this.modals = {
+                empleados: document.getElementById('empleadosModal'),
+                horas: document.getElementById('horasModal'),
+                nominas: document.getElementById('nominasModal'),
+                salarios: document.getElementById('salariosModal'),
+                cuadres: document.getElementById('cuadresModal'),
+                inventario: document.getElementById('inventarioModal')
+            };
+
+            // Configurar botones de cierre
+            Object.values(this.modals).forEach(modal => {
+                if (modal) {
+                    const closeBtn = modal.querySelector('.axyra-modal-close');
+                    if (closeBtn) {
+                        closeBtn.addEventListener('click', () => this.closeModal(modal));
+                    }
+                }
+            });
+
+            console.log('✅ Modales configurados correctamente');
+        } catch (error) {
+            console.error('❌ Error configurando modales:', error);
+        }
+    }
+
+    setupEventListeners() {
+        try {
+            // Event listeners para tarjetas de estadísticas
+            const statCards = document.querySelectorAll('.axyra-stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const modalId = card.getAttribute('data-modal');
+                    if (modalId && this.modals[modalId.replace('Modal', '')]) {
+                        this.openModal(modalId);
+                    }
+                });
+            });
+
+            // Event listeners para búsqueda global
+            const searchInput = document.getElementById('globalSearchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    if (window.axyraGlobalSearch) {
+                        window.axyraGlobalSearch.handleSearchInput(e.target.value);
+                    }
+                });
+
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        if (window.axyraGlobalSearch) {
+                            window.axyraGlobalSearch.performSearch();
+                        }
+                    }
+                });
+            }
+
+            if (searchBtn) {
+                searchBtn.addEventListener('click', () => {
+                    if (window.axyraGlobalSearch) {
+                        window.axyraGlobalSearch.performSearch();
+                    }
+                });
+            }
+
+            if (clearSearchBtn) {
+                clearSearchBtn.addEventListener('click', () => {
+                    if (window.axyraGlobalSearch) {
+                        window.axyraGlobalSearch.clearSearch();
+                    }
+                });
+            }
+
+            console.log('✅ Event listeners configurados correctamente');
+        } catch (error) {
+            console.error('❌ Error configurando event listeners:', error);
+        }
+    }
+
+    openModal(modalId) {
+        try {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
+                this.loadModalContent(modalId);
+                document.body.style.overflow = 'hidden';
+            }
+        } catch (error) {
+            console.error('❌ Error abriendo modal:', error);
+        }
+    }
+
+    closeModal(modal) {
+        try {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        } catch (error) {
+            console.error('❌ Error cerrando modal:', error);
+        }
+    }
+
+    loadModalContent(modalId) {
+        try {
+            switch (modalId) {
+                case 'empleadosModal':
+                    this.loadEmpleadosModalContent();
+                    break;
+                case 'horasModal':
+                    this.loadHorasModalContent();
+                    break;
+                case 'nominasModal':
+                    this.loadNominasModalContent();
+                    break;
+                case 'salariosModal':
+                    this.loadSalariosModalContent();
+                    break;
+                case 'cuadresModal':
+                    this.loadCuadresModalContent();
+                    break;
+                case 'inventarioModal':
+                    this.loadInventarioModalContent();
+                    break;
+            }
+        } catch (error) {
+            console.error('❌ Error cargando contenido del modal:', error);
+        }
+    }
+
+    loadEmpleadosModalContent() {
+        try {
+            const modalBody = document.getElementById('empleadosModalBody');
+            if (!modalBody) return;
+
+            let html = '<div class="axyra-modal-stats">';
+            html += `<h4>Total: ${this.empleados.length} empleados</h4>`;
+            
+            // Agrupar por departamento
+            const porDepartamento = {};
+            this.empleados.forEach(emp => {
+                const dept = emp.departamento || 'Sin departamento';
+                if (!porDepartamento[dept]) porDepartamento[dept] = [];
+                porDepartamento[dept].push(emp);
+            });
+
+            Object.entries(porDepartamento).forEach(([dept, emps]) => {
+                html += `<div class="axyra-dept-group">`;
+                html += `<h5>${dept} (${emps.length})</h5>`;
+                html += `<div class="axyra-emp-list">`;
+                emps.forEach(emp => {
+                    html += `<div class="axyra-emp-item">`;
+                    html += `<span class="axyra-emp-name">${emp.nombre}</span>`;
+                    html += `<span class="axyra-emp-cedula">${emp.cedula}</span>`;
+                    html += `<span class="axyra-emp-tipo">${emp.tipo}</span>`;
+                    html += `</div>`;
+                });
+                html += `</div>`;
+                html += `</div>`;
+            });
+
+            html += '</div>';
+            modalBody.innerHTML = html;
+        } catch (error) {
+            console.error('❌ Error cargando modal de empleados:', error);
+        }
+    }
+
+    loadHorasModalContent() {
+        try {
+            const modalBody = document.getElementById('horasModalBody');
+            if (!modalBody) return;
+
+            const mesActual = new Date().getMonth();
+            const añoActual = new Date().getFullYear();
+            
+            const horasMes = this.horas.filter(h => {
+                const fecha = new Date(h.fecha);
+                return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
+            });
+
+            let html = '<div class="axyra-modal-stats">';
+            html += `<h4>Horas del mes: ${mesActual + 1}/${añoActual}</h4>`;
+            html += `<p>Total horas registradas: ${horasMes.reduce((sum, h) => sum + (h.horas || 0), 0).toFixed(1)}</p>`;
+            
+            // Agrupar por empleado
+            const porEmpleado = {};
+            horasMes.forEach(h => {
+                const emp = this.empleados.find(e => e.cedula === h.cedula);
+                if (emp) {
+                    if (!porEmpleado[emp.nombre]) porEmpleado[emp.nombre] = 0;
+                    porEmpleado[emp.nombre] += h.horas || 0;
+                }
+            });
+
+            Object.entries(porEmpleado).forEach(([nombre, horas]) => {
+                html += `<div class="axyra-emp-hours">`;
+                html += `<span class="axyra-emp-name">${emp.nombre}</span>`;
+                html += `<span class="axyra-emp-hours-value">${horas.toFixed(1)}h</span>`;
+                html += `</div>`;
+            });
+
+            html += '</div>';
+            modalBody.innerHTML = html;
+        } catch (error) {
+            console.error('❌ Error cargando modal de horas:', error);
+        }
+    }
+
+    loadNominasModalContent() {
+        try {
+            const modalBody = document.getElementById('nominasModalBody');
+            if (!modalBody) return;
+
+            const quincenaActual = this.obtenerQuincenaActual();
+            const nominasQuincena = this.nominas.filter(n => n.quincena === quincenaActual);
+
+            let html = '<div class="axyra-modal-stats">';
+            html += `<h4>Nóminas de la quincena ${quincenaActual}</h4>`;
+            html += `<p>Total generadas: ${nominasQuincena.length}</p>`;
+            
+            nominasQuincena.forEach(nomina => {
+                const emp = this.empleados.find(e => e.cedula === nomina.cedula);
+                if (emp) {
+                    html += `<div class="axyra-emp-item">`;
+                    html += `<span class="axyra-emp-name">${emp.nombre}</span>`;
+                    html += `<span class="axyra-emp-fecha">${nomina.fecha}</span>`;
+                    html += `<span class="axyra-emp-total">$${nomina.total?.toLocaleString() || '0'}</span>`;
+                    html += `</div>`;
+                }
+            });
+
+            html += '</div>';
+            modalBody.innerHTML = html;
+        } catch (error) {
+            console.error('❌ Error cargando modal de nóminas:', error);
+        }
+    }
+
+    loadSalariosModalContent() {
+        try {
+            const modalBody = document.getElementById('salariosModalBody');
+            if (!modalBody) return;
+
+            let html = '<div class="axyra-top">';
+            html += '<h4>Detalle de Salarios Netos</h4>';
+            
+            let totalNeto = 0;
+            this.empleados.forEach(emp => {
+                const salarioNeto = this.calcularSalarioNeto(emp);
+                totalNeto += salarioNeto;
+                
+                html += `<div class="axyra-salary-item">`;
+                html += `<span class="axyra-salary-emp">${emp.nombre}</span>`;
+                html += `<span class="axyra-salary-base">$${emp.salario?.toLocaleString() || '0'}</span>`;
+                html += `<span class="axyra-salary-net">$${salarioNeto.toLocaleString()}</span>`;
+                html += `</div>`;
+            });
+
+            html += `<div class="axyra-salary-total">`;
+            html += `<strong>Total Neto: $${totalNeto.toLocaleString()}</strong>`;
+            html += `</div>`;
+            html += '</div>';
+            modalBody.innerHTML = html;
+        } catch (error) {
+            console.error('❌ Error cargando modal de salarios:', error);
+        }
+    }
+
+    loadCuadresModalContent() {
+        try {
+            const modalBody = document.getElementById('cuadresModalBody');
+            if (!modalBody) return;
+
+            let html = '<div class="axyra-modal-stats">';
+            html += '<h4>Cuadres de Caja</h4>';
+            html += `<p>Total realizados: ${this.cuadres.length}</p>`;
+            
+            this.cuadres.forEach(cuadre => {
+                html += `<div class="axyra-cuadre-item">`;
+                html += `<span class="axyra-cuadre-fecha">${cuadre.fecha}</span>`;
+                html += `<span class="axyra-cuadre-total">$${cuadre.total?.toLocaleString() || '0'}</span>`;
+                html += `<span class="axyra-cuadre-estado">${cuadre.estado || 'Pendiente'}</span>`;
+                html += `</div>`;
+            });
+
+            html += '</div>';
+            modalBody.innerHTML = html;
+        } catch (error) {
+            console.error('❌ Error cargando modal de cuadres:', error);
+        }
+    }
+
+    loadInventarioModalContent() {
+        try {
+            const modalBody = document.getElementById('inventarioModalBody');
+            if (!modalBody) return;
+
+            // Cargar datos de inventario desde localStorage
+            const inventario = JSON.parse(localStorage.getItem('axyra_inventario') || '[]');
+
+            let html = '<div class="axyra-modal-stats">';
+            html += '<h4>Inventario</h4>';
+            html += `<p>Total items: ${inventario.length}</p>`;
+            
+            inventario.forEach(item => {
+                html += `<div class="axyra-emp-item">`;
+                html += `<span class="axyra-emp-name">${item.nombre}</span>`;
+                html += `<span class="axyra-emp-cedula">${item.cantidad}</span>`;
+                html += `<span class="axyra-emp-tipo">$${item.precio?.toLocaleString() || '0'}</span>`;
+                html += `</div>`;
+            });
+
+            html += '</div>';
+            modalBody.innerHTML = html;
+        } catch (error) {
+            console.error('❌ Error cargando modal de inventario:', error);
+        }
     }
 
     // Limpiar recursos al destruir

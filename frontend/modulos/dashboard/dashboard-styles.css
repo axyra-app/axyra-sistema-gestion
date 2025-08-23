@@ -1,1304 +1,635 @@
-/* Dashboard AXYRA - Estilos Específicos */
-/* Tema: Azul y Blanco */
-
+/* AXYRA Dashboard Styles */
 :root {
-  --axyra-primary: #667eea;
-  --axyra-primary-dark: #5a67d8;
-  --axyra-secondary: #764ba2;
-  --axyra-accent: #4facfe;
-  --axyra-success: #43e97b;
-  --axyra-warning: #f093fb;
-  --axyra-error: #f5576c;
-  --axyra-info: #00f2fe;
-  
-  --axyra-white: #ffffff;
-  --axyra-gray-50: #f8fafc;
-  --axyra-gray-100: #f1f5f9;
-  --axyra-gray-200: #e2e8f0;
-  --axyra-gray-300: #cbd5e1;
-  --axyra-gray-400: #94a3b8;
-  --axyra-gray-500: #64748b;
-  --axyra-gray-600: #475569;
-  --axyra-gray-700: #334155;
-  --axyra-gray-800: #1e293b;
-  --axyra-gray-900: #0f172a;
-  
-  --axyra-blue-50: #eff6ff;
-  --axyra-blue-100: #dbeafe;
-  --axyra-blue-200: #bfdbfe;
-  --axyra-blue-300: #93c5fd;
-  --axyra-blue-400: #60a5fa;
-  --axyra-blue-500: #3b82f6;
-  --axyra-blue-600: #2563eb;
-  --axyra-blue-700: #1d4ed8;
-  --axyra-blue-800: #1e40af;
-  --axyra-blue-900: #1e3a8a;
+    --axyra-primary: #2563eb;
+    --axyra-primary-dark: #1d4ed8;
+    --axyra-secondary: #64748b;
+    --axyra-success: #10b981;
+    --axyra-warning: #f59e0b;
+    --axyra-error: #ef4444;
+    --axyra-info: #3b82f6;
+    --axyra-light: #f8fafc;
+    --axyra-dark: #1e293b;
+    --axyra-border: #e2e8f0;
+    --axyra-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --axyra-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 /* Dashboard Container */
-.axyra-dashboard {
-  background: linear-gradient(135deg, var(--axyra-gray-50) 0%, var(--axyra-white) 100%);
-  min-height: 100vh;
+.axyra-dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Welcome Section */
+.axyra-welcome-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.axyra-dashboard-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--axyra-dark);
+    margin-bottom: 8px;
+}
+
+.axyra-dashboard-subtitle {
+    font-size: 1.1rem;
+    color: var(--axyra-secondary);
+    font-weight: 400;
+}
+
+/* Stats Grid - Tarjetas Clickeables */
+.axyra-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+}
+
+.axyra-stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--axyra-shadow);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.axyra-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--axyra-primary), var(--axyra-info));
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.axyra-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--axyra-shadow-lg);
+    border-color: var(--axyra-primary);
+}
+
+.axyra-stat-card:hover::before {
+    transform: scaleX(1);
+}
+
+.axyra-stat-card:active {
+    transform: translateY(-2px);
+}
+
+.axyra-stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--axyra-primary), var(--axyra-info));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.axyra-stat-card:hover .axyra-stat-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.axyra-stat-icon i {
+    font-size: 28px;
+    color: white;
+}
+
+.axyra-stat-content {
+    flex: 1;
+}
+
+.axyra-stat-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--axyra-secondary);
+    margin-bottom: 8px;
+}
+
+.axyra-stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--axyra-dark);
+    margin-bottom: 8px;
+}
+
+.axyra-stat-description {
+    font-size: 0.9rem;
+    color: var(--axyra-secondary);
+    line-height: 1.4;
+}
+
+.axyra-stat-action {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: var(--axyra-primary);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.axyra-stat-card:hover .axyra-stat-action {
+    opacity: 1;
+    transform: translateX(4px);
+}
+
+.axyra-stat-action i {
+    font-size: 20px;
+}
+
+/* Actions Section */
+.axyra-actions-section {
+    margin-bottom: 40px;
+}
+
+.axyra-section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--axyra-dark);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.axyra-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.axyra-action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 16px;
+    background: white;
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--axyra-dark);
+    box-shadow: var(--axyra-shadow);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.axyra-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--axyra-shadow-lg);
+    border-color: var(--axyra-primary);
+    color: var(--axyra-primary);
+}
+
+.axyra-action-btn i {
+    font-size: 32px;
+    color: var(--axyra-primary);
+    transition: all 0.3s ease;
+}
+
+.axyra-action-btn:hover i {
+    transform: scale(1.1);
+}
+
+.axyra-action-btn span {
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Charts Section */
+.axyra-charts-section {
+    margin-bottom: 40px;
+}
+
+.axyra-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+}
+
+.axyra-chart-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--axyra-shadow);
+}
+
+.axyra-chart-card h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--axyra-dark);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Activity Section */
+.axyra-activity-section {
+    margin-bottom: 40px;
+}
+
+.axyra-activity-list {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--axyra-shadow);
 }
 
 /* Welcome Card */
 .axyra-welcome-card {
-  background: linear-gradient(135deg, var(--axyra-primary) 0%, var(--axyra-secondary) 100%);
-  color: var(--axyra-white);
-  border-radius: 20px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
-  position: relative;
-  overflow: hidden;
+    background: linear-gradient(135deg, var(--axyra-primary), var(--axyra-info));
+    border-radius: 20px;
+    padding: 32px;
+    color: white;
+    text-align: center;
+    box-shadow: var(--axyra-shadow-lg);
 }
 
-.axyra-welcome-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-20px) rotate(180deg); }
+.axyra-welcome-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
 }
 
 .axyra-welcome-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  opacity: 0.9;
+    font-size: 48px;
+    color: rgba(255, 255, 255, 0.8);
 }
 
-.axyra-welcome-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.axyra-welcome-text h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
 }
 
-.axyra-welcome-message {
-  font-size: 1.1rem;
-  opacity: 0.9;
-  margin-bottom: 1rem;
+.axyra-welcome-text p {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    opacity: 0.9;
 }
 
-.axyra-welcome-time {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  opacity: 0.8;
+.axyra-welcome-text span {
+    font-size: 0.9rem;
+    opacity: 0.7;
 }
 
-.axyra-company-info {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.axyra-company-name,
-.axyra-company-nit {
-  font-size: 1rem;
-  font-weight: 500;
-  opacity: 0.8;
-}
-
-/* Stats Grid */
-.axyra-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.axyra-stat-card {
-  background: var(--axyra-white);
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-  cursor: pointer;
-}
-
-.axyra-stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
-  border-color: var(--axyra-primary);
-}
-
-.axyra-stat-card.clickable {
-  cursor: pointer;
-}
-
-.axyra-stat-icon {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, var(--axyra-primary) 0%, var(--axyra-secondary) 100%);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--axyra-white);
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.axyra-stat-number {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--axyra-gray-800);
-  margin-bottom: 0.5rem;
-}
-
-.axyra-stat-label {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--axyra-gray-600);
-  margin-bottom: 0.5rem;
-}
-
-.axyra-stat-hint {
-  font-size: 0.85rem;
-  color: var(--axyra-gray-500);
-  font-style: italic;
-}
-
-/* Secondary Stats */
-.axyra-stats-grid-secondary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.axyra-stat-card-secondary {
-  background: var(--axyra-white);
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  border-left: 4px solid var(--axyra-primary);
-}
-
-.axyra-stat-card-secondary:hover {
-  transform: translateX(5px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
-}
-
-.axyra-stat-icon-secondary {
-  width: 40px;
-  height: 40px;
-  background: var(--axyra-primary);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--axyra-white);
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.axyra-stat-content {
-  text-align: center;
-}
-
-.axyra-stat-number-secondary {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--axyra-gray-800);
-  margin-bottom: 0.25rem;
-}
-
-.axyra-stat-label-secondary {
-  font-size: 0.85rem;
-  color: var(--axyra-gray-600);
-  font-weight: 500;
-}
-
-/* Cards */
-.axyra-card {
-  background: var(--axyra-white);
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  margin-bottom: 2rem;
-  overflow: hidden;
-  border: 1px solid var(--axyra-gray-200);
-}
-
-.axyra-card-header {
-  background: linear-gradient(135deg, var(--axyra-gray-50) 0%, var(--axyra-gray-100) 100%);
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--axyra-gray-200);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.axyra-card-icon {
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, var(--axyra-primary) 0%, var(--axyra-secondary) 100%);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--axyra-white);
-  font-size: 1.25rem;
-}
-
-.axyra-card-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--axyra-gray-800);
-  margin: 0;
-}
-
-.axyra-card-subtitle {
-  font-size: 0.9rem;
-  color: var(--axyra-gray-600);
-  margin: 0;
-}
-
-.axyra-card-content {
-  padding: 1.5rem;
-}
-
-/* Grid Layouts */
-.axyra-grid {
-  display: grid;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.axyra-grid-2 {
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-}
-
-/* Actions Bar */
-.axyra-actions-bar {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.axyra-action-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, var(--axyra-primary) 0%, var(--axyra-secondary) 100%);
-  color: var(--axyra-white);
-  text-decoration: none;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  text-align: center;
-  gap: 0.5rem;
-}
-
-.axyra-action-btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-  color: var(--axyra-white);
-  text-decoration: none;
-}
-
-.axyra-action-btn i {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.axyra-action-btn span {
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-/* Activity Items */
-.axyra-activity-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1rem;
-  border-bottom: 1px solid var(--axyra-gray-200);
-  transition: background-color 0.2s ease;
-}
-
-.axyra-activity-item:last-child {
-  border-bottom: none;
-}
-
-.axyra-activity-item:hover {
-  background-color: var(--axyra-gray-50);
-}
-
-.axyra-activity-icon {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--axyra-primary) 0%, var(--axyra-secondary) 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--axyra-white);
-  flex-shrink: 0;
-}
-
-.axyra-activity-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.axyra-activity-action {
-  font-weight: 600;
-  color: var(--axyra-gray-800);
-  margin-bottom: 0.25rem;
-}
-
-.axyra-activity-detail {
-  color: var(--axyra-gray-600);
-  margin-bottom: 0.25rem;
-  font-size: 0.9rem;
-}
-
-.axyra-activity-time {
-  color: var(--axyra-gray-500);
-  font-size: 0.8rem;
-  font-style: italic;
-}
-
-/* Modals */
+/* Modales */
 .axyra-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10000; /* Z-INDEX ALTO PARA ESTAR POR ENCIMA DEL HEADER */
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
 }
 
 .axyra-modal-content {
-  background: var(--axyra-white);
-  border-radius: 20px;
-  max-width: 90%;
-  max-height: 90%;
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  z-index: 10001; /* Z-INDEX MÁS ALTO QUE EL MODAL */
-  position: relative;
+    background-color: white;
+    margin: 5% auto;
+    padding: 0;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--axyra-shadow-lg);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .axyra-modal-header {
-  padding: 1.5rem;
-  border-bottom: 2px solid var(--axyra-gray-200);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(135deg, var(--axyra-gray-50) 0%, var(--axyra-gray-100) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid var(--axyra-border);
 }
 
 .axyra-modal-header h3 {
-  margin: 0;
-  color: var(--axyra-gray-800);
-  font-size: 1.5rem;
-  font-weight: 700;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--axyra-dark);
+    margin: 0;
 }
 
 .axyra-modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--axyra-gray-500);
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  z-index: 10002; /* Z-INDEX MÁS ALTO PARA EL BOTÓN DE CERRAR */
-  position: relative;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--axyra-secondary);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .axyra-modal-close:hover {
-  background: var(--axyra-gray-100);
-  color: var(--axyra-gray-700);
+    background: var(--axyra-light);
+    color: var(--axyra-dark);
 }
 
-      .axyra-modal-body {
-        padding: 2rem;
-        max-height: 60vh;
-        overflow-y: auto;
-      }
-
-      /* Estilos para Reportes Avanzados */
-      .axyra-reports-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-      }
-
-      .axyra-report-item {
-        background: var(--axyra-white);
-        border: 2px solid var(--axyra-gray-200);
-        border-radius: 12px;
-        padding: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-      }
-
-      .axyra-report-item:hover {
-        transform: translateY(-5px);
-        border-color: var(--axyra-primary);
-        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
-      }
-
-      .axyra-report-icon {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, var(--axyra-primary) 0%, var(--axyra-secondary) 100%);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--axyra-white);
-        font-size: 1.5rem;
-        flex-shrink: 0;
-      }
-
-      .axyra-report-info {
-        flex: 1;
-      }
-
-      .axyra-report-info h4 {
-        margin: 0 0 0.5rem 0;
-        color: var(--axyra-gray-800);
-        font-size: 1.1rem;
-        font-weight: 600;
-      }
-
-      .axyra-report-info p {
-        margin: 0;
-        color: var(--axyra-gray-600);
-        font-size: 0.9rem;
-        line-height: 1.4;
-      }
-
-/* ========================================
-   SECCIÓN DE SEGURIDAD Y CONFIGURACIÓN
-   ======================================== */
-.axyra-security-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+.axyra-modal-body {
+    padding: 24px;
 }
 
-.axyra-security-item {
-  background: var(--axyra-gray-50);
-  border: 1px solid var(--axyra-gray-200);
-  border-radius: 12px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
+/* Contenido de Modales */
+.axyra-modal-stats h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--axyra-dark);
+    margin-bottom: 16px;
+    text-align: center;
 }
 
-.axyra-security-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  border-color: var(--axyra-primary);
+.axyra-modal-stats p {
+    color: var(--axyra-secondary);
+    margin-bottom: 20px;
+    text-align: center;
 }
 
-.axyra-security-icon {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, var(--axyra-primary), var(--axyra-secondary));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
+/* Grupos de Departamento */
+.axyra-dept-group {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: var(--axyra-light);
+    border-radius: 12px;
+    border-left: 4px solid var(--axyra-primary);
 }
 
-.axyra-security-icon i {
-  font-size: 1.5rem;
-  color: white;
+.axyra-dept-group h5 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--axyra-dark);
+    margin-bottom: 12px;
 }
 
-.axyra-security-content h4 {
-  color: var(--axyra-gray-800);
-  margin-bottom: 0.5rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.axyra-security-content p {
-  color: var(--axyra-gray-600);
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-.axyra-2fa-status {
-  margin: 1rem 0;
-  padding: 0.75rem;
-  border-radius: 8px;
-  background: var(--axyra-gray-100);
-  border: 1px solid var(--axyra-gray-300);
-}
-
-.axyra-session-info,
-.axyra-responsive-info {
-  margin: 1rem 0;
-  padding: 0.75rem;
-  border-radius: 8px;
-  background: var(--axyra-blue-50);
-  border: 1px solid var(--axyra-blue-200);
-}
-
-.axyra-session-time,
-.axyra-responsive-status {
-  color: var(--axyra-blue-700);
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-.axyra-security-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.axyra-security-actions .axyra-btn {
-  flex: 1;
-  min-width: 120px;
-  justify-content: center;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .axyra-stats-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .axyra-stats-grid-secondary {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .axyra-grid-2 {
-    grid-template-columns: 1fr;
-  }
-  
-  .axyra-actions-bar {
-    grid-template-columns: 1fr;
-  }
-  
-  .axyra-welcome-card {
-    padding: 1.5rem;
-  }
-  
-  .axyra-welcome-title {
-    font-size: 2rem;
-  }
-  
-  .axyra-company-info {
+.axyra-emp-list {
+    display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-          .axyra-modal-content {
-          max-width: 95%;
-          margin: 1rem;
-        }
+    gap: 8px;
+}
 
-        .axyra-reports-grid {
-          grid-template-columns: 1fr;
-        }
+.axyra-emp-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--axyra-border);
+}
 
-        .axyra-report-item {
-          padding: 1rem;
-        }
+.axyra-emp-name {
+    font-weight: 500;
+    color: var(--axyra-dark);
+}
+
+.axyra-emp-cedula {
+    color: var(--axyra-secondary);
+    font-size: 0.9rem;
+}
+
+.axyra-emp-tipo {
+    background: var(--axyra-primary);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Horas por Empleado */
+.axyra-emp-hours {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--axyra-border);
+    margin-bottom: 8px;
+}
+
+.axyra-emp-hours-value {
+    background: var(--axyra-success);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Items de Nómina */
+.axyra-nomina-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--axyra-border);
+    margin-bottom: 8px;
+}
+
+.axyra-nomina-fecha {
+    color: var(--axyra-secondary);
+    font-size: 0.9rem;
+}
+
+.axyra-nomina-total {
+    background: var(--axyra-success);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Items de Salario */
+.axyra-salary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--axyra-border);
+    margin-bottom: 8px;
+}
+
+.axyra-salary-base {
+    color: var(--axyra-secondary);
+    font-size: 0.9rem;
+}
+
+.axyra-salary-net {
+    background: var(--axyra-primary);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.axyra-salary-total {
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--axyra-success);
+    color: white;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+/* Items de Cuadre */
+.axyra-cuadre-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--axyra-border);
+    margin-bottom: 8px;
+}
+
+.axyra-cuadre-fecha {
+    color: var(--axyra-secondary);
+    font-size: 0.9rem;
+}
+
+.axyra-cuadre-total {
+    background: var(--axyra-primary);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.axyra-cuadre-estado {
+    background: var(--axyra-warning);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Items de Inventario */
+.axyra-inv-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--axyra-border);
+    margin-bottom: 8px;
+}
+
+.axyra-inv-cantidad {
+    background: var(--axyra-info);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.axyra-inv-precio {
+    background: var(--axyra-success);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .axyra-dashboard-container {
+        padding: 16px;
+    }
+    
+    .axyra-dashboard-title {
+        font-size: 2rem;
+    }
+    
+    .axyra-stats-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .axyra-stat-card {
+        padding: 20px;
+    }
+    
+    .axyra-actions-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .axyra-charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .axyra-modal-content {
+        width: 95%;
+        margin: 10% auto;
+    }
+    
+    .axyra-welcome-content {
+        flex-direction: column;
+        gap: 16px;
+    }
 }
 
 @media (max-width: 480px) {
-  .axyra-stats-grid-secondary {
-    grid-template-columns: 1fr;
-  }
-  
-  .axyra-welcome-card {
-    padding: 1rem;
-  }
-  
-  .axyra-welcome-title {
-    font-size: 1.5rem;
-  }
-}
-
-/* Responsive para sección de seguridad */
-@media (max-width: 768px) {
-  .axyra-security-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .axyra-security-item {
-    padding: 1rem;
-  }
-  
-  .axyra-security-icon {
-    width: 50px;
-    height: 50px;
-  }
-  
-  .axyra-security-icon i {
-    font-size: 1.2rem;
-  }
-  
-  .axyra-security-actions {
-    flex-direction: column;
-  }
-  
-  .axyra-security-actions .axyra-btn {
-    width: 100%;
-  }
-}
-
-/* ========================================
-   SISTEMA DE BÚSQUEDA GLOBAL
-   ======================================== */
-
-.axyra-global-search-container {
-  background: var(--axyra-white);
-  border-bottom: 1px solid var(--axyra-gray-200);
-  padding: 12px 0;
-  position: sticky;
-  top: 50px;
-  z-index: 998;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.axyra-global-search {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.axyra-search-input-wrapper {
-  position: relative;
-  flex: 1;
-  min-width: 300px;
-}
-
-.axyra-search-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--axyra-gray-400);
-  font-size: 16px;
-  z-index: 2;
-}
-
-.axyra-search-input {
-  width: 100%;
-  padding: 12px 16px 12px 48px;
-  border: 2px solid var(--axyra-gray-200);
-  border-radius: 25px;
-  font-size: 14px;
-  transition: all var(--transition-normal);
-  background: var(--axyra-white);
-}
-
-.axyra-search-input:focus {
-  outline: none;
-  border-color: var(--axyra-primary);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.axyra-search-clear {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--axyra-gray-200);
-  border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.axyra-search-clear:hover {
-  background: var(--axyra-gray-300);
-}
-
-.axyra-search-filters {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.axyra-search-filter {
-  padding: 10px 16px;
-  border: 2px solid var(--axyra-gray-200);
-  border-radius: 20px;
-  background: var(--axyra-white);
-  font-size: 14px;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.axyra-search-filter:focus {
-  outline: none;
-  border-color: var(--axyra-primary);
-}
-
-.axyra-search-btn {
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-weight: 600;
-  transition: all var(--transition-normal);
-}
-
-.axyra-search-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
-/* Modal de Resultados de Búsqueda */
-.axyra-search-modal {
-  max-width: 90vw;
-  width: 1200px;
-  max-height: 80vh;
-}
-
-.axyra-search-results-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--axyra-gray-200);
-}
-
-.axyra-search-stats {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--axyra-gray-700);
-}
-
-.axyra-search-stats span {
-  color: var(--axyra-primary);
-  font-weight: 700;
-}
-
-.axyra-search-actions {
-  display: flex;
-  gap: 12px;
-}
-
-.axyra-search-results {
-  max-height: 400px;
-  overflow-y: auto;
-  margin-bottom: 20px;
-}
-
-.axyra-search-result-item {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border: 1px solid var(--axyra-gray-200);
-  border-radius: 12px;
-  margin-bottom: 12px;
-  transition: all var(--transition-normal);
-  cursor: pointer;
-}
-
-.axyra-search-result-item:hover {
-  border-color: var(--axyra-primary);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
-  transform: translateY(-1px);
-}
-
-.axyra-search-result-icon {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, var(--axyra-primary) 0%, var(--axyra-secondary) 100%);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--axyra-white);
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.axyra-search-result-content {
-  flex: 1;
-}
-
-.axyra-search-result-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--axyra-dark-blue);
-  margin-bottom: 4px;
-}
-
-.axyra-search-result-subtitle {
-  font-size: 14px;
-  color: var(--axyra-gray-600);
-  margin-bottom: 4px;
-}
-
-.axyra-search-result-meta {
-  font-size: 12px;
-  color: var(--axyra-gray-500);
-}
-
-.axyra-search-result-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.axyra-search-pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.axyra-pagination-btn {
-  padding: 8px 12px;
-  border: 1px solid var(--axyra-gray-200);
-  background: var(--axyra-white);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.axyra-pagination-btn:hover {
-  background: var(--axyra-gray-100);
-  border-color: var(--axyra-primary);
-}
-
-.axyra-pagination-btn.active {
-  background: var(--axyra-primary);
-  color: var(--axyra-white);
-  border-color: var(--axyra-primary);
-}
-
-/* Búsquedas Guardadas */
-.axyra-saved-searches-list {
-  max-height: 400px;
-  overflow-y: auto;
-}
-
-.axyra-saved-search-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border: 1px solid var(--axyra-gray-200);
-  border-radius: 12px;
-  margin-bottom: 12px;
-  transition: all var(--transition-normal);
-}
-
-.axyra-saved-search-item:hover {
-  border-color: var(--axyra-primary);
-  background: var(--axyra-gray-50);
-}
-
-.axyra-saved-search-info {
-  flex: 1;
-}
-
-.axyra-saved-search-query {
-  font-weight: 600;
-  color: var(--axyra-dark-blue);
-  margin-bottom: 4px;
-}
-
-.axyra-saved-search-date {
-  font-size: 12px;
-  color: var(--axyra-gray-500);
-}
-
-.axyra-saved-search-actions {
-  display: flex;
-  gap: 8px;
-}
-
-/* Responsive para búsqueda global */
-@media (max-width: 768px) {
-  .axyra-global-search {
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .axyra-search-input-wrapper {
-    min-width: 100%;
-  }
-  
-  .axyra-search-filters {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .axyra-search-modal {
-    max-width: 95vw;
-    width: 95vw;
-  }
-}
-
-/* ========================================
-   SISTEMA DE REPORTES PERSONALIZADOS
-   ======================================== */
-
-.axyra-report-modal {
-  max-width: 90vw;
-  width: 1000px;
-  max-height: 80vh;
-}
-
-.axyra-report-description {
-  background: var(--axyra-gray-50);
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.axyra-report-description p {
-  margin: 0;
-  color: var(--axyra-gray-700);
-  font-style: italic;
-}
-
-.axyra-report-filters {
-  margin-bottom: 20px;
-}
-
-.axyra-report-filters h4 {
-  margin-bottom: 16px;
-  color: var(--axyra-dark-blue);
-}
-
-.axyra-form-group {
-  margin-bottom: 16px;
-}
-
-.axyra-form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: var(--axyra-dark-blue);
-}
-
-.axyra-form-input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 2px solid var(--axyra-gray-200);
-  border-radius: 8px;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-.axyra-form-input:focus {
-  outline: none;
-  border-color: var(--axyra-primary);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.axyra-date-range {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.axyra-date-range input {
-  flex: 1;
-}
-
-.axyra-date-range span {
-  color: var(--axyra-gray-600);
-  font-weight: 500;
-}
-
-.axyra-report-preview {
-  background: var(--axyra-gray-50);
-  border-radius: 8px;
-  padding: 20px;
-  min-height: 200px;
-}
-
-.axyra-report-summary {
-  margin-bottom: 20px;
-}
-
-.axyra-report-summary h4 {
-  margin-bottom: 16px;
-  color: var(--axyra-dark-blue);
-  text-align: center;
-}
-
-.axyra-summary-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.axyra-summary-stat {
-  text-align: center;
-  padding: 16px;
-  background: var(--axyra-white);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.axyra-summary-number {
-  display: block;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--axyra-primary);
-  margin-bottom: 8px;
-}
-
-.axyra-summary-label {
-  font-size: 12px;
-  color: var(--axyra-gray-600);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.axyra-report-chart {
-  height: 300px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--axyra-white);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.axyra-loading {
-  text-align: center;
-  color: var(--axyra-gray-600);
-}
-
-.axyra-loading i {
-  font-size: 32px;
-  margin-bottom: 16px;
-  color: var(--axyra-primary);
-}
-
-.axyra-error {
-  text-align: center;
-  color: var(--axyra-error);
-}
-
-.axyra-error i {
-  font-size: 32px;
-  margin-bottom: 16px;
-}
-
-/* Responsive para reportes */
-@media (max-width: 768px) {
-  .axyra-report-modal {
-    max-width: 95vw;
-    width: 95vw;
-  }
-  
-  .axyra-date-range {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .axyra-summary-stats {
-    grid-template-columns: 1fr;
-  }
-  
-  .axyra-report-chart {
-    height: 250px;
-  }
-}
-
-/* ========================================
-   SISTEMA DE NOTIFICACIONES
-   ======================================== */
-
-.axyra-notifications-container {
-  position: fixed;
-  top: 70px;
-  right: 20px;
-  z-index: 10000;
-  max-width: 400px;
-  pointer-events: none;
-}
-
-.axyra-notification {
-  background: var(--axyra-white);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  margin-bottom: 16px;
-  padding: 16px;
-  border-left: 4px solid var(--axyra-primary);
-  transform: translateX(100%);
-  opacity: 0;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: auto;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-.axyra-notification.show {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.axyra-notification-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.axyra-notification-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.axyra-notification-title {
-  font-weight: 600;
-  color: var(--axyra-dark-blue);
-  font-size: 14px;
-  flex: 1;
-}
-
-.axyra-notification-close {
-  background: none;
-  border: none;
-  color: var(--axyra-gray-400);
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.axyra-notification-close:hover {
-  background: var(--axyra-gray-100);
-  color: var(--axyra-gray-600);
-}
-
-.axyra-notification-message {
-  color: var(--axyra-gray-700);
-  font-size: 13px;
-  line-height: 1.4;
-  margin-bottom: 12px;
-}
-
-.axyra-notification-actions {
-  margin-bottom: 12px;
-}
-
-.axyra-notification-action {
-  background: var(--axyra-primary);
-  color: var(--axyra-white);
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.axyra-notification-action:hover {
-  background: var(--axyra-primary-dark);
-  transform: translateY(-1px);
-}
-
-.axyra-notification-time {
-  font-size: 11px;
-  color: var(--axyra-gray-500);
-  text-align: right;
-}
-
-/* Tipos de notificaciones */
-.axyra-notification-success {
-  border-left-color: var(--axyra-success);
-}
-
-.axyra-notification-success .axyra-notification-icon {
-  color: var(--axyra-success);
-}
-
-.axyra-notification-error {
-  border-left-color: var(--axyra-error);
-}
-
-.axyra-notification-error .axyra-notification-icon {
-  color: var(--axyra-error);
-}
-
-.axyra-notification-warning {
-  border-left-color: var(--axyra-warning);
-}
-
-.axyra-notification-warning .axyra-notification-icon {
-  color: var(--axyra-warning);
-}
-
-.axyra-notification-info {
-  border-left-color: var(--axyra-info);
-}
-
-.axyra-notification-info .axyra-notification-icon {
-  color: var(--axyra-info);
-}
-
-.axyra-notification-system {
-  border-left-color: var(--axyra-secondary);
-}
-
-.axyra-notification-system .axyra-notification-icon {
-  color: var(--axyra-secondary);
-}
-
-/* Responsive para notificaciones */
-@media (max-width: 768px) {
-  .axyra-notifications-container {
-    top: 60px;
-    right: 10px;
-    left: 10px;
-    max-width: none;
-  }
-  
-  .axyra-notification {
-    margin-bottom: 12px;
-    padding: 12px;
-  }
-  
-  .axyra-notification-title {
-    font-size: 13px;
-  }
-  
-  .axyra-notification-message {
-    font-size: 12px;
-  }
+    .axyra-dashboard-title {
+        font-size: 1.8rem;
+    }
+    
+    .axyra-stat-card {
+        padding: 16px;
+    }
+    
+    .axyra-stat-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .axyra-stat-icon i {
+        font-size: 24px;
+    }
+    
+    .axyra-stat-value {
+        font-size: 1.5rem;
+    }
 }
