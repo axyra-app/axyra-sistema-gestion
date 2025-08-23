@@ -669,3 +669,636 @@
     width: 100%;
   }
 }
+
+/* ========================================
+   SISTEMA DE BÚSQUEDA GLOBAL
+   ======================================== */
+
+.axyra-global-search-container {
+  background: var(--axyra-white);
+  border-bottom: 1px solid var(--axyra-gray-200);
+  padding: 12px 0;
+  position: sticky;
+  top: 50px;
+  z-index: 998;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.axyra-global-search {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.axyra-search-input-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 300px;
+}
+
+.axyra-search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--axyra-gray-400);
+  font-size: 16px;
+  z-index: 2;
+}
+
+.axyra-search-input {
+  width: 100%;
+  padding: 12px 16px 12px 48px;
+  border: 2px solid var(--axyra-gray-200);
+  border-radius: 25px;
+  font-size: 14px;
+  transition: all var(--transition-normal);
+  background: var(--axyra-white);
+}
+
+.axyra-search-input:focus {
+  outline: none;
+  border-color: var(--axyra-primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.axyra-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--axyra-gray-200);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.axyra-search-clear:hover {
+  background: var(--axyra-gray-300);
+}
+
+.axyra-search-filters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.axyra-search-filter {
+  padding: 10px 16px;
+  border: 2px solid var(--axyra-gray-200);
+  border-radius: 20px;
+  background: var(--axyra-white);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.axyra-search-filter:focus {
+  outline: none;
+  border-color: var(--axyra-primary);
+}
+
+.axyra-search-btn {
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 600;
+  transition: all var(--transition-normal);
+}
+
+.axyra-search-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Modal de Resultados de Búsqueda */
+.axyra-search-modal {
+  max-width: 90vw;
+  width: 1200px;
+  max-height: 80vh;
+}
+
+.axyra-search-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--axyra-gray-200);
+}
+
+.axyra-search-stats {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--axyra-gray-700);
+}
+
+.axyra-search-stats span {
+  color: var(--axyra-primary);
+  font-weight: 700;
+}
+
+.axyra-search-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.axyra-search-results {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.axyra-search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--axyra-gray-200);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+}
+
+.axyra-search-result-item:hover {
+  border-color: var(--axyra-primary);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.axyra-search-result-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--axyra-primary) 0%, var(--axyra-secondary) 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--axyra-white);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.axyra-search-result-content {
+  flex: 1;
+}
+
+.axyra-search-result-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--axyra-dark-blue);
+  margin-bottom: 4px;
+}
+
+.axyra-search-result-subtitle {
+  font-size: 14px;
+  color: var(--axyra-gray-600);
+  margin-bottom: 4px;
+}
+
+.axyra-search-result-meta {
+  font-size: 12px;
+  color: var(--axyra-gray-500);
+}
+
+.axyra-search-result-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.axyra-search-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.axyra-pagination-btn {
+  padding: 8px 12px;
+  border: 1px solid var(--axyra-gray-200);
+  background: var(--axyra-white);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.axyra-pagination-btn:hover {
+  background: var(--axyra-gray-100);
+  border-color: var(--axyra-primary);
+}
+
+.axyra-pagination-btn.active {
+  background: var(--axyra-primary);
+  color: var(--axyra-white);
+  border-color: var(--axyra-primary);
+}
+
+/* Búsquedas Guardadas */
+.axyra-saved-searches-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.axyra-saved-search-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border: 1px solid var(--axyra-gray-200);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  transition: all var(--transition-normal);
+}
+
+.axyra-saved-search-item:hover {
+  border-color: var(--axyra-primary);
+  background: var(--axyra-gray-50);
+}
+
+.axyra-saved-search-info {
+  flex: 1;
+}
+
+.axyra-saved-search-query {
+  font-weight: 600;
+  color: var(--axyra-dark-blue);
+  margin-bottom: 4px;
+}
+
+.axyra-saved-search-date {
+  font-size: 12px;
+  color: var(--axyra-gray-500);
+}
+
+.axyra-saved-search-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Responsive para búsqueda global */
+@media (max-width: 768px) {
+  .axyra-global-search {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .axyra-search-input-wrapper {
+    min-width: 100%;
+  }
+  
+  .axyra-search-filters {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .axyra-search-modal {
+    max-width: 95vw;
+    width: 95vw;
+  }
+}
+
+/* ========================================
+   SISTEMA DE REPORTES PERSONALIZADOS
+   ======================================== */
+
+.axyra-report-modal {
+  max-width: 90vw;
+  width: 1000px;
+  max-height: 80vh;
+}
+
+.axyra-report-description {
+  background: var(--axyra-gray-50);
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.axyra-report-description p {
+  margin: 0;
+  color: var(--axyra-gray-700);
+  font-style: italic;
+}
+
+.axyra-report-filters {
+  margin-bottom: 20px;
+}
+
+.axyra-report-filters h4 {
+  margin-bottom: 16px;
+  color: var(--axyra-dark-blue);
+}
+
+.axyra-form-group {
+  margin-bottom: 16px;
+}
+
+.axyra-form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--axyra-dark-blue);
+}
+
+.axyra-form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--axyra-gray-200);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.axyra-form-input:focus {
+  outline: none;
+  border-color: var(--axyra-primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.axyra-date-range {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.axyra-date-range input {
+  flex: 1;
+}
+
+.axyra-date-range span {
+  color: var(--axyra-gray-600);
+  font-weight: 500;
+}
+
+.axyra-report-preview {
+  background: var(--axyra-gray-50);
+  border-radius: 8px;
+  padding: 20px;
+  min-height: 200px;
+}
+
+.axyra-report-summary {
+  margin-bottom: 20px;
+}
+
+.axyra-report-summary h4 {
+  margin-bottom: 16px;
+  color: var(--axyra-dark-blue);
+  text-align: center;
+}
+
+.axyra-summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.axyra-summary-stat {
+  text-align: center;
+  padding: 16px;
+  background: var(--axyra-white);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.axyra-summary-number {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--axyra-primary);
+  margin-bottom: 8px;
+}
+
+.axyra-summary-label {
+  font-size: 12px;
+  color: var(--axyra-gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.axyra-report-chart {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--axyra-white);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.axyra-loading {
+  text-align: center;
+  color: var(--axyra-gray-600);
+}
+
+.axyra-loading i {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: var(--axyra-primary);
+}
+
+.axyra-error {
+  text-align: center;
+  color: var(--axyra-error);
+}
+
+.axyra-error i {
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+
+/* Responsive para reportes */
+@media (max-width: 768px) {
+  .axyra-report-modal {
+    max-width: 95vw;
+    width: 95vw;
+  }
+  
+  .axyra-date-range {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .axyra-summary-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .axyra-report-chart {
+    height: 250px;
+  }
+}
+
+/* ========================================
+   SISTEMA DE NOTIFICACIONES
+   ======================================== */
+
+.axyra-notifications-container {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 10000;
+  max-width: 400px;
+  pointer-events: none;
+}
+
+.axyra-notification {
+  background: var(--axyra-white);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  margin-bottom: 16px;
+  padding: 16px;
+  border-left: 4px solid var(--axyra-primary);
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.axyra-notification.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.axyra-notification-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.axyra-notification-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.axyra-notification-title {
+  font-weight: 600;
+  color: var(--axyra-dark-blue);
+  font-size: 14px;
+  flex: 1;
+}
+
+.axyra-notification-close {
+  background: none;
+  border: none;
+  color: var(--axyra-gray-400);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.axyra-notification-close:hover {
+  background: var(--axyra-gray-100);
+  color: var(--axyra-gray-600);
+}
+
+.axyra-notification-message {
+  color: var(--axyra-gray-700);
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.axyra-notification-actions {
+  margin-bottom: 12px;
+}
+
+.axyra-notification-action {
+  background: var(--axyra-primary);
+  color: var(--axyra-white);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.axyra-notification-action:hover {
+  background: var(--axyra-primary-dark);
+  transform: translateY(-1px);
+}
+
+.axyra-notification-time {
+  font-size: 11px;
+  color: var(--axyra-gray-500);
+  text-align: right;
+}
+
+/* Tipos de notificaciones */
+.axyra-notification-success {
+  border-left-color: var(--axyra-success);
+}
+
+.axyra-notification-success .axyra-notification-icon {
+  color: var(--axyra-success);
+}
+
+.axyra-notification-error {
+  border-left-color: var(--axyra-error);
+}
+
+.axyra-notification-error .axyra-notification-icon {
+  color: var(--axyra-error);
+}
+
+.axyra-notification-warning {
+  border-left-color: var(--axyra-warning);
+}
+
+.axyra-notification-warning .axyra-notification-icon {
+  color: var(--axyra-warning);
+}
+
+.axyra-notification-info {
+  border-left-color: var(--axyra-info);
+}
+
+.axyra-notification-info .axyra-notification-icon {
+  color: var(--axyra-info);
+}
+
+.axyra-notification-system {
+  border-left-color: var(--axyra-secondary);
+}
+
+.axyra-notification-system .axyra-notification-icon {
+  color: var(--axyra-secondary);
+}
+
+/* Responsive para notificaciones */
+@media (max-width: 768px) {
+  .axyra-notifications-container {
+    top: 60px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+  
+  .axyra-notification {
+    margin-bottom: 12px;
+    padding: 12px;
+  }
+  
+  .axyra-notification-title {
+    font-size: 13px;
+  }
+  
+  .axyra-notification-message {
+    font-size: 12px;
+  }
+}

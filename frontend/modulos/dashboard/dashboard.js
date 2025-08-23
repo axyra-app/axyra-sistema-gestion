@@ -578,61 +578,173 @@ class AxyraDashboard {
         try {
             const welcomeTitle = document.getElementById('welcomeTitle');
             const welcomeMessage = document.getElementById('welcomeMessage');
-            const welcomeTime = document.getElementById('welcomeTime');
             const companyName = document.getElementById('companyName');
             const companyNIT = document.getElementById('companyNIT');
-
+            const pageSubtitle = document.getElementById('pageSubtitle');
+            const roleBadge = document.getElementById('roleBadge');
+            
             if (welcomeTitle) {
-                const userData = localStorage.getItem('axyra_isolated_user');
-                if (userData) {
-                    const user = JSON.parse(userData);
-                    welcomeTitle.textContent = `¡Bienvenido, ${user.nombre || user.username}!`;
+                welcomeTitle.textContent = `¡Bienvenido a AXYRA!`;
+            }
+            
+            if (welcomeMessage) {
+                welcomeMessage.textContent = 'Sistema de Gestión Empresarial';
+            }
+            
+            // Cargar información de la empresa desde localStorage
+            this.updateCompanyInfo(companyName, companyNIT);
+            
+            // Actualizar subtítulo de la página
+            if (pageSubtitle) {
+                pageSubtitle.textContent = 'Dashboard';
+            }
+            
+            // Actualizar badge de rol
+            this.updateRoleBadge(roleBadge);
+            
+            // Actualizar hora de bienvenida
+            this.updateWelcomeTime();
+            
+        } catch (error) {
+            console.error('❌ Error actualizando mensaje de bienvenida:', error);
+        }
+    }
+
+    updateCompanyInfo(companyNameElement, companyNITElement) {
+        try {
+            // Intentar cargar desde configuración de empresa
+            const companyConfig = localStorage.getItem('axyra_config_empresa');
+            if (companyConfig) {
+                const config = JSON.parse(companyConfig);
+                
+                if (companyNameElement && config.nombre) {
+                    companyNameElement.textContent = config.nombre;
+                    // También actualizar el título de la página
+                    document.title = `AXYRA - ${config.nombre}`;
                 }
-            }
-
-            if (welcomeTime) {
-                const now = new Date();
-                const options = { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                };
-                welcomeTime.textContent = now.toLocaleDateString('es-CO', options);
-            }
-
-            // Cargar nombre de empresa desde configuración
-            if (companyName) {
-                const configEmpresa = localStorage.getItem('axyra_config_empresa');
-                if (configEmpresa) {
-                    try {
-                        const config = JSON.parse(configEmpresa);
-                        companyName.textContent = config.nombre || 'Villa Venecia';
-                    } catch (e) {
-                        companyName.textContent = 'Villa Venecia';
-                    }
-                } else {
-                    companyName.textContent = 'Villa Venecia';
+                
+                if (companyNITElement && config.nit) {
+                    companyNITElement.textContent = `NIT: ${config.nit}`;
                 }
-            }
-
-            if (companyNIT) {
-                const configEmpresa = localStorage.getItem('axyra_config_empresa');
-                if (configEmpresa) {
-                    try {
-                        const config = JSON.parse(configEmpresa);
-                        companyNIT.textContent = `NIT: ${config.nit || '900.123.456-7'}`;
-                    } catch (e) {
-                        companyNIT.textContent = 'NIT: 900.123.456-7';
-                    }
-                } else {
-                    companyNIT.textContent = 'NIT: 900.123.456-7';
+            } else {
+                // Configuración por defecto
+                if (companyNameElement) {
+                    companyNameElement.textContent = 'Villa Venecia';
+                }
+                if (companyNITElement) {
+                    companyNITElement.textContent = 'NIT: Por configurar';
                 }
             }
         } catch (error) {
-            console.error('❌ Error actualizando mensaje de bienvenida:', error);
+            console.warn('⚠️ Error cargando información de empresa:', error);
+            // Fallback a valores por defecto
+            if (companyNameElement) {
+                companyNameElement.textContent = 'Villa Venecia';
+            }
+            if (companyNITElement) {
+                companyNITElement.textContent = 'NIT: Por configurar';
+            }
+        }
+    }
+
+    updateRoleBadge(roleBadgeElement) {
+        try {
+            if (!roleBadgeElement) return;
+            
+            // Determinar el rol del usuario actual
+            let userRole = 'Empleado';
+            let roleIcon = 'fas fa-user-shield';
+            let roleColor = 'var(--axyra-blue-500)';
+            
+            // Verificar si es administrador
+            const currentUser = this.getCurrentUser();
+            if (currentUser) {
+                if (currentUser.rol === 'admin' || currentUser.rol === 'administrador') {
+                    userRole = 'Administrador';
+                    roleIcon = 'fas fa-user-crown';
+                    roleColor = 'var(--axyra-warning)';
+                } else if (currentUser.rol === 'supervisor' || currentUser.rol === 'supervisor') {
+                    userRole = 'Supervisor';
+                    roleIcon = 'fas fa-user-tie';
+                    roleColor = 'var(--axyra-success)';
+                } else if (currentUser.rol === 'usuario' || currentUser.rol === 'user') {
+                    userRole = 'Usuario';
+                    roleIcon = 'fas fa-user';
+                    roleColor = 'var(--axyra-blue-500)';
+                }
+            }
+            
+            // Actualizar el badge
+            const roleIconElement = roleBadgeElement.querySelector('i');
+            const roleTextElement = roleBadgeElement.querySelector('.axyra-role-badge-text');
+            
+            if (roleIconElement) {
+                roleIconElement.className = roleIcon;
+            }
+            
+            if (roleTextElement) {
+                roleTextElement.textContent = userRole;
+            }
+            
+            // Aplicar color personalizado
+            roleBadgeElement.style.setProperty('--role-color', roleColor);
+            
+        } catch (error) {
+            console.error('❌ Error actualizando badge de rol:', error);
+        }
+    }
+
+    getCurrentUser() {
+        try {
+            // Intentar obtener usuario desde múltiples fuentes
+            if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+                return window.axyraIsolatedAuth.getCurrentUser();
+            }
+            
+            const userData = localStorage.getItem('axyra_isolated_user');
+            if (userData) {
+                return JSON.parse(userData);
+            }
+            
+            const firebaseUser = localStorage.getItem('axyra_firebase_user');
+            if (firebaseUser) {
+                return JSON.parse(firebaseUser);
+            }
+            
+            return null;
+        } catch (error) {
+            console.warn('⚠️ Error obteniendo usuario actual:', error);
+            return null;
+        }
+    }
+
+    updateWelcomeTime() {
+        try {
+            const welcomeTimeElement = document.getElementById('welcomeTime');
+            if (!welcomeTimeElement) return;
+            
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting = '';
+            
+            if (hour < 12) {
+                greeting = 'Buenos días';
+            } else if (hour < 18) {
+                greeting = 'Buenas tardes';
+            } else {
+                greeting = 'Buenas noches';
+            }
+            
+            const timeString = now.toLocaleTimeString('es-CO', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
+            
+            welcomeTimeElement.textContent = `${greeting} - ${timeString}`;
+            
+        } catch (error) {
+            console.error('❌ Error actualizando hora de bienvenida:', error);
         }
     }
 

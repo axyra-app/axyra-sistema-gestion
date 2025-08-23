@@ -25,6 +25,15 @@
     <!-- Sistema de Notificaciones Push AXYRA -->
     <script src="../../static/notifications-system.js"></script>
 
+    <!-- Sistema de Búsqueda Global AXYRA -->
+    <script src="../../static/global-search-system.js"></script>
+
+    <!-- Sistema de Reportes Personalizados AXYRA -->
+    <script src="../../static/custom-reports-system.js"></script>
+
+    <!-- Sistema de Notificaciones AXYRA -->
+    <script src="../../static/notifications-system.js"></script>
+
     <!-- SISTEMA AISLADO -->
     <!-- <script src="../../static/isolated-auth.js"></script> -->
     <!-- <script src="../../static/debug-auth.js"></script> -->
@@ -38,8 +47,14 @@
             <i class="fas fa-chart-line"></i>
           </div>
           <div class="axyra-logo-text">
-            <div class="axyra-logo-title">AXYRA</div>
-            <div class="axyra-logo-subtitle">Dashboard</div>
+            <div class="axyra-logo-title">
+              AXYRA
+              <span class="axyra-role-badge" id="roleBadge">
+                <i class="fas fa-user-shield"></i>
+                <span class="axyra-role-badge-text">Empleado</span>
+              </span>
+            </div>
+            <div class="axyra-logo-subtitle" id="pageSubtitle">Dashboard</div>
           </div>
         </div>
 
@@ -59,13 +74,46 @@
           <a href="../configuracion/configuracion.html" class="axyra-nav-link">
             <i class="fas fa-cog"></i> Configuración
           </a>
-          <!-- Botón de inicio removido para evitar duplicación -->
           <button class="axyra-btn axyra-btn-ghost" onclick="logout()">
             <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
           </button>
         </nav>
       </div>
     </header>
+
+    <!-- Barra de Búsqueda Global -->
+    <div class="axyra-global-search-container" id="globalSearchContainer">
+      <div class="axyra-container">
+        <div class="axyra-global-search">
+          <div class="axyra-search-input-wrapper">
+            <i class="fas fa-search axyra-search-icon"></i>
+            <input 
+              type="text" 
+              id="globalSearchInput" 
+              class="axyra-search-input" 
+              placeholder="🔍 Buscar empleados, nóminas, horas, configuraciones..."
+              autocomplete="off"
+            />
+            <button class="axyra-search-clear" id="searchClearBtn" style="display: none;">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="axyra-search-filters">
+            <select id="searchFilter" class="axyra-search-filter">
+              <option value="all">Todo</option>
+              <option value="empleados">Empleados</option>
+              <option value="nominas">Nóminas</option>
+              <option value="horas">Horas</option>
+              <option value="cuadres">Cuadres</option>
+              <option value="configuracion">Configuración</option>
+            </select>
+            <button class="axyra-btn axyra-btn-primary axyra-search-btn" onclick="performGlobalSearch()">
+              <i class="fas fa-search"></i> Buscar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Contenido Principal -->
     <main class="axyra-section">
@@ -572,6 +620,52 @@
         </div>
         <div class="axyra-modal-footer">
           <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalGoogleAuth()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Resultados de Búsqueda Global -->
+    <div id="globalSearchModal" class="axyra-modal" style="display: none;">
+      <div class="axyra-modal-content axyra-search-modal">
+        <div class="axyra-modal-header">
+          <h3><i class="fas fa-search"></i> Resultados de Búsqueda</h3>
+          <button class="axyra-modal-close" onclick="closeGlobalSearchModal()">&times;</button>
+        </div>
+        <div class="axyra-modal-body">
+          <div class="axyra-search-results-header">
+            <div class="axyra-search-stats">
+              <span id="searchResultsCount">0</span> resultados encontrados
+            </div>
+            <div class="axyra-search-actions">
+              <button class="axyra-btn axyra-btn-secondary" onclick="exportSearchResults()">
+                <i class="fas fa-download"></i> Exportar
+              </button>
+              <button class="axyra-btn axyra-btn-primary" onclick="saveSearchQuery()">
+                <i class="fas fa-bookmark"></i> Guardar Búsqueda
+              </button>
+            </div>
+          </div>
+          <div class="axyra-search-results" id="searchResults">
+            <!-- Los resultados se cargarán dinámicamente -->
+          </div>
+          <div class="axyra-search-pagination" id="searchPagination">
+            <!-- Paginación se cargará dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Búsquedas Guardadas -->
+    <div id="savedSearchesModal" class="axyra-modal" style="display: none;">
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3><i class="fas fa-bookmark"></i> Búsquedas Guardadas</h3>
+          <button class="axyra-modal-close" onclick="closeSavedSearchesModal()">&times;</button>
+        </div>
+        <div class="axyra-modal-body">
+          <div class="axyra-saved-searches-list" id="savedSearchesList">
+            <!-- Las búsquedas guardadas se cargarán dinámicamente -->
+          </div>
         </div>
       </div>
     </div>

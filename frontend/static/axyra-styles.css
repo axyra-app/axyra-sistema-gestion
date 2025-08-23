@@ -85,7 +85,7 @@ body {
   color: var(--axyra-dark-blue);
   background: var(--axyra-light-gray);
   overflow-x: hidden;
-  padding-top: 60px; /* AJUSTADO PARA HEADER MÁS COMPACTO */
+  padding-top: 50px; /* REDUCIDO DE 60px A 50px PARA ELIMINAR ESPACIO BLANCO */
 }
 
 /* ========================================
@@ -135,14 +135,14 @@ p {
    ======================================== */
 .axyra-header {
   background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-  padding: 6px 0; /* REDUCIDO DE 8px A 6px PARA HEADER MÁS COMPACTO */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  padding: 4px 0; /* REDUCIDO DE 6px A 4px PARA HEADER MÁS COMPACTO */
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15); /* REDUCIDO PARA SOMBRA MÁS SUTIL */
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 999; /* VALOR REDUCIDO PARA NO INTERFERIR CON MODALES */
-  border-bottom: 3px solid #2563eb;
+  z-index: 999;
+  border-bottom: 2px solid #2563eb; /* REDUCIDO DE 3px A 2px */
   backdrop-filter: blur(10px);
 }
 
@@ -209,6 +209,16 @@ p {
   color: #ffffff;
   line-height: 1;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.axyra-logo-title .axyra-role-badge {
+  margin-left: 0;
+  margin-top: 2px;
+  transform: scale(0.8);
+  transform-origin: left center;
 }
 
 .axyra-logo-subtitle {
@@ -4165,33 +4175,36 @@ body {
 
 /* Badge de rol en el header */
 .axyra-role-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, var(--axyra-blue-600) 0%, var(--axyra-blue-700) 100%);
+  gap: 4px; /* REDUCIDO DE 8px A 4px */
+  background: linear-gradient(135deg, var(--axyra-blue-500) 0%, var(--axyra-blue-600) 100%);
   color: var(--axyra-white);
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 3px 8px; /* REDUCIDO DE 6px 12px A 3px 8px */
+  border-radius: 12px; /* REDUCIDO DE 20px A 12px */
+  font-size: 10px; /* REDUCIDO DE 12px A 10px */
   font-weight: 500;
-  margin-left: 16px;
+  margin-left: 8px; /* REDUCIDO DE 16px A 8px */
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-normal);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .axyra-role-badge:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--axyra-blue-600) 0%, var(--axyra-blue-700) 100%);
 }
 
 .axyra-role-badge-text {
-  font-size: 11px;
+  font-size: 9px; /* REDUCIDO DE 11px A 9px */
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px; /* REDUCIDO DE 0.5px A 0.3px */
+  font-weight: 600;
 }
 
 .axyra-role-badge i {
-  font-size: 14px;
+  font-size: 10px; /* REDUCIDO DE 14px A 10px */
   color: var(--axyra-blue-200);
 }
 
@@ -4524,5 +4537,171 @@ body {
     width: 20px;
     height: 20px;
     font-size: 14px;
+  }
+}
+
+/* ========================================
+   SISTEMA DE NOTIFICACIONES
+   ======================================== */
+
+.axyra-notifications-container {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 10000;
+  max-width: 400px;
+  pointer-events: none;
+}
+
+.axyra-notification {
+  background: var(--axyra-white);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  margin-bottom: 16px;
+  padding: 16px;
+  border-left: 4px solid var(--axyra-primary);
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.axyra-notification.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.axyra-notification-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.axyra-notification-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.axyra-notification-title {
+  font-weight: 600;
+  color: var(--axyra-dark-blue);
+  font-size: 14px;
+  flex: 1;
+}
+
+.axyra-notification-close {
+  background: none;
+  border: none;
+  color: var(--axyra-gray-400);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.axyra-notification-close:hover {
+  background: var(--axyra-gray-100);
+  color: var(--axyra-gray-600);
+}
+
+.axyra-notification-message {
+  color: var(--axyra-gray-700);
+  font-size: 13px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.axyra-notification-actions {
+  margin-bottom: 12px;
+}
+
+.axyra-notification-action {
+  background: var(--axyra-primary);
+  color: var(--axyra-white);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.axyra-notification-action:hover {
+  background: var(--axyra-primary-dark);
+  transform: translateY(-1px);
+}
+
+.axyra-notification-time {
+  font-size: 11px;
+  color: var(--axyra-gray-500);
+  text-align: right;
+}
+
+/* Tipos de notificaciones */
+.axyra-notification-success {
+  border-left-color: var(--axyra-success);
+}
+
+.axyra-notification-success .axyra-notification-icon {
+  color: var(--axyra-success);
+}
+
+.axyra-notification-error {
+  border-left-color: var(--axyra-error);
+}
+
+.axyra-notification-error .axyra-notification-icon {
+  color: var(--axyra-error);
+}
+
+.axyra-notification-warning {
+  border-left-color: var(--axyra-warning);
+}
+
+.axyra-notification-warning .axyra-notification-icon {
+  color: var(--axyra-warning);
+}
+
+.axyra-notification-info {
+  border-left-color: var(--axyra-info);
+}
+
+.axyra-notification-info .axyra-notification-icon {
+  color: var(--axyra-info);
+}
+
+.axyra-notification-system {
+  border-left-color: var(--axyra-secondary);
+}
+
+.axyra-notification-system .axyra-notification-icon {
+  color: var(--axyra-secondary);
+}
+
+/* Responsive para notificaciones */
+@media (max-width: 768px) {
+  .axyra-notifications-container {
+    top: 60px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+  
+  .axyra-notification {
+    margin-bottom: 12px;
+    padding: 12px;
+  }
+  
+  .axyra-notification-title {
+    font-size: 13px;
+  }
+  
+  .axyra-notification-message {
+    font-size: 12px;
   }
 }
