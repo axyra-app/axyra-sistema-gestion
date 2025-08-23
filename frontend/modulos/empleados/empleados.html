@@ -862,6 +862,114 @@
         .axyra-info-value {
           text-align: left;
         }
+        
+        /* Estilos para el organigrama */
+        .axyra-organigrama {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+          padding: 20px;
+        }
+        
+        .axyra-departamento-grupo {
+          border: 1px solid #e5e7eb;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .axyra-departamento-header {
+          padding: 16px 20px;
+          color: white;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        
+        .axyra-departamento-header h4 {
+          margin: 0;
+          font-size: 18px;
+          font-weight: 600;
+        }
+        
+        .axyra-empleados-count {
+          background: rgba(255, 255, 255, 0.2);
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-size: 14px;
+          font-weight: 500;
+        }
+        
+        .axyra-empleados-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 16px;
+          padding: 20px;
+          background: #f9fafb;
+        }
+        
+        .axyra-empleado-card {
+          background: white;
+          border-radius: 8px;
+          padding: 16px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease;
+        }
+        
+        .axyra-empleado-avatar {
+          width: 48px;
+          height: 48px;
+          background: #e5e7eb;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #6b7280;
+          font-size: 20px;
+        }
+        
+        .axyra-empleado-info {
+          flex: 1;
+        }
+        
+        .axyra-empleado-info strong {
+          display: block;
+          font-size: 16px;
+          color: #111827;
+          margin-bottom: 4px;
+        }
+        
+        .axyra-empleado-info span {
+          display: block;
+          font-size: 14px;
+          color: #6b7280;
+          margin-bottom: 2px;
+        }
+        
+        .axyra-empleado-info small {
+          font-size: 12px;
+          color: #9ca3af;
+        }
+        
+        /* Estilos para mensaje de no datos */
+        .axyra-no-data {
+          text-align: center;
+          padding: 60px 20px;
+          color: #6b7280;
+        }
+        
+        .axyra-no-data h3 {
+          margin: 16px 0 8px;
+          color: #374151;
+        }
+        
+        .axyra-no-data p {
+          margin-bottom: 24px;
+          color: #9ca3af;
+        }
       }
     </style>
   </head>
@@ -898,6 +1006,9 @@
           </button>
           <button class="axyra-btn axyra-btn-secondary" onclick="mostrarModalFotos()">
             <i class="fas fa-camera"></i> Fotos
+          </button>
+          <button class="axyra-btn axyra-btn-warning" onclick="crearDatosEjemplo()">
+            <i class="fas fa-database"></i> Datos Ejemplo
           </button>
         </div>
 
@@ -1241,35 +1352,101 @@
       // Sistema de organigrama visual - Estructura de la empresa
       async function mostrarOrganigrama() {
         try {
-          // Obtener datos de Firestore
-          const db = firebase.firestore();
-          const currentUser = firebase.auth().currentUser;
-
-          if (!currentUser) {
-            mostrarNotificacionTiempoReal('❌ Usuario no autenticado', 'error');
+          console.log('🚀 Iniciando carga del organigrama...');
+          
+          let departamentos = [];
+          let empleados = [];
+          
+          // Intentar obtener datos de Firebase primero
+          if (firebase && firebase.firestore && firebase.auth().currentUser) {
+            try {
+              console.log('🔥 Intentando cargar desde Firebase...');
+              const db = firebase.firestore();
+              const currentUser = firebase.auth().currentUser;
+              
+              const departamentosSnapshot = await db
+                .collection('departamentos')
+                .where('userId', '==', currentUser.uid)
+                .get();
+              
+              const empleadosSnapshot = await db
+                .collection('empleados')
+                .where('userId', '==', currentUser.uid)
+                .get();
+              
+              departamentos = departamentosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+              empleados = empleadosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+              
+              console.log('✅ Datos cargados desde Firebase:', { departamentos: departamentos.length, empleados: empleados.length });
+            } catch (firebaseError) {
+              console.warn('⚠️ Error en Firebase, usando localStorage:', firebaseError);
+            }
+          }
+          
+          // Fallback a localStorage si no hay datos de Firebase
+          if (departamentos.length === 0 || empleados.length === 0) {
+            console.log('💾 Cargando datos desde localStorage...');
+            
+            // Cargar departamentos desde localStorage
+            const departamentosStorage = localStorage.getItem('axyra_departamentos');
+            if (departamentosStorage) {
+              try {
+                departamentos = JSON.parse(departamentosStorage);
+                console.log('📁 Departamentos cargados desde localStorage:', departamentos.length);
+              } catch (e) {
+                console.warn('⚠️ Error parseando departamentos del localStorage');
+              }
+            }
+            
+            // Cargar empleados desde localStorage
+            const empleadosStorage = localStorage.getItem('axyra_empleados');
+            if (empleadosStorage) {
+              try {
+                empleados = JSON.parse(empleadosStorage);
+                console.log('👥 Empleados cargados desde localStorage:', empleados.length);
+              } catch (e) {
+                console.warn('⚠️ Error parseando empleados del localStorage');
+              }
+            }
+          }
+          
+          // Si no hay datos, mostrar mensaje
+          if (departamentos.length === 0 && empleados.length === 0) {
+            mostrarNotificacionTiempoReal('ℹ️ No hay datos para mostrar el organigrama', 'info');
             return;
           }
-
-          // Obtener departamentos y empleados de Firestore
-          const departamentosSnapshot = await db
-            .collection('departamentos')
-            .where('userId', '==', currentUser.uid)
-            .get();
-
-          const empleadosSnapshot = await db.collection('empleados').where('userId', '==', currentUser.uid).get();
-
-          const departamentos = departamentosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-          const empleados = empleadosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-
-          // Agrupar empleados por departamento
+          
+          // Crear estructura del organigrama
           const estructura = {};
-          departamentos.forEach((dept) => {
-            estructura[dept.nombre] = {
-              empleados: empleados.filter((emp) => emp.departamento === dept.nombre),
-              color: generarColorDepartamento(dept.nombre),
+          
+          // Si no hay departamentos, crear uno por defecto
+          if (departamentos.length === 0) {
+            estructura['Sin Departamento'] = {
+              empleados: empleados,
+              color: generarColorDepartamento('Sin Departamento')
             };
-          });
-
+          } else {
+            // Agrupar empleados por departamento
+            departamentos.forEach((dept) => {
+              const deptEmpleados = empleados.filter((emp) => emp.departamento === dept.nombre);
+              estructura[dept.nombre] = {
+                empleados: deptEmpleados,
+                color: generarColorDepartamento(dept.nombre),
+              };
+            });
+            
+            // Agregar empleados sin departamento
+            const empleadosSinDept = empleados.filter((emp) => !emp.departamento || emp.departamento === '');
+            if (empleadosSinDept.length > 0) {
+              estructura['Sin Departamento'] = {
+                empleados: empleadosSinDept,
+                color: generarColorDepartamento('Sin Departamento')
+              };
+            }
+          }
+          
+          console.log('🏗️ Estructura del organigrama creada:', estructura);
+          
           const organigramaHTML = `
             <div id="modalOrganigrama" class="axyra-modal">
               <div class="axyra-modal-content" style="max-width: 90%; max-height: 90%;">
@@ -1289,10 +1466,10 @@
           document.body.insertAdjacentHTML('beforeend', organigramaHTML);
           document.getElementById('modalOrganigrama').style.display = 'block';
 
-          console.log('✅ Organigrama cargado desde Firestore');
+          console.log('✅ Organigrama cargado exitosamente');
         } catch (error) {
           console.error('❌ Error cargando organigrama:', error);
-          mostrarNotificacionTiempoReal('❌ Error cargando organigrama', 'error');
+          mostrarNotificacionTiempoReal('❌ Error cargando organigrama: ' + error.message, 'error');
         }
       }
 
@@ -1300,34 +1477,47 @@
       function generarHTMLOrganigrama(estructura) {
         let html = '<div class="axyra-organigrama">';
 
-        Object.entries(estructura).forEach(([departamento, data]) => {
+        if (Object.keys(estructura).length === 0) {
           html += `
-            <div class="axyra-departamento-grupo">
-              <div class="axyra-departamento-header" style="background: ${data.color}">
-                <h4>${departamento}</h4>
-                <span class="axyra-empleados-count">${data.empleados.length} empleados</span>
-              </div>
-              <div class="axyra-empleados-grid">
-                ${data.empleados
-                  .map(
-                    (emp) => `
-                  <div class="axyra-empleado-card">
-                    <div class="axyra-empleado-avatar">
-                      <i class="fas fa-user"></i>
-                    </div>
-                    <div class="axyra-empleado-info">
-                      <strong>${emp.nombre}</strong>
-                      <span>${emp.cargo}</span>
-                      <small>$${emp.salario.toFixed(2)}</small>
-                    </div>
-                  </div>
-                `
-                  )
-                  .join('')}
-              </div>
+            <div class="axyra-no-data">
+              <i class="fas fa-info-circle" style="font-size: 48px; color: #6b7280; margin-bottom: 16px;"></i>
+              <h3>No hay datos para mostrar</h3>
+              <p>No se encontraron departamentos o empleados para generar el organigrama.</p>
+              <button class="axyra-btn axyra-btn-primary" onclick="crearDatosEjemplo()">
+                <i class="fas fa-database"></i> Crear Datos de Ejemplo
+              </button>
             </div>
           `;
-        });
+        } else {
+          Object.entries(estructura).forEach(([departamento, data]) => {
+            html += `
+              <div class="axyra-departamento-grupo">
+                <div class="axyra-departamento-header" style="background: ${data.color}">
+                  <h4>${departamento}</h4>
+                  <span class="axyra-empleados-count">${data.empleados.length} empleado${data.empleados.length !== 1 ? 's' : ''}</span>
+                </div>
+                <div class="axyra-empleados-grid">
+                  ${data.empleados
+                    .map(
+                      (emp) => `
+                    <div class="axyra-empleado-card">
+                      <div class="axyra-empleado-avatar">
+                        <i class="fas fa-user"></i>
+                      </div>
+                      <div class="axyra-empleado-info">
+                        <strong>${emp.nombre || 'Sin nombre'}</strong>
+                        <span>${emp.cargo || 'Sin cargo'}</span>
+                        <small>$${(emp.salario || 0).toFixed(2)}</small>
+                      </div>
+                    </div>
+                  `
+                    )
+                    .join('')}
+                </div>
+              </div>
+            `;
+          });
+        }
 
         html += '</div>';
         return html;
@@ -1359,19 +1549,51 @@
       // Sistema de fotos de empleados - Avatares y gestión de imágenes
       async function mostrarModalFotos() {
         try {
-          // Obtener datos de Firestore
-          const db = firebase.firestore();
-          const currentUser = firebase.auth().currentUser;
-
-          if (!currentUser) {
-            mostrarNotificacionTiempoReal('❌ Usuario no autenticado', 'error');
+          console.log('📸 Iniciando carga de la galería de fotos...');
+          
+          let empleados = [];
+          
+          // Intentar obtener datos de Firebase primero
+          if (firebase && firebase.firestore && firebase.auth().currentUser) {
+            try {
+              console.log('🔥 Intentando cargar empleados desde Firebase...');
+              const db = firebase.firestore();
+              const currentUser = firebase.auth().currentUser;
+              
+              const empleadosSnapshot = await db
+                .collection('empleados')
+                .where('userId', '==', currentUser.uid)
+                .get();
+              
+              empleados = empleadosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+              console.log('✅ Empleados cargados desde Firebase:', empleados.length);
+            } catch (firebaseError) {
+              console.warn('⚠️ Error en Firebase, usando localStorage:', firebaseError);
+            }
+          }
+          
+          // Fallback a localStorage si no hay datos de Firebase
+          if (empleados.length === 0) {
+            console.log('💾 Cargando empleados desde localStorage...');
+            
+            const empleadosStorage = localStorage.getItem('axyra_empleados');
+            if (empleadosStorage) {
+              try {
+                empleados = JSON.parse(empleadosStorage);
+                console.log('👥 Empleados cargados desde localStorage:', empleados.length);
+              } catch (e) {
+                console.warn('⚠️ Error parseando empleados del localStorage');
+              }
+            }
+          }
+          
+          // Si no hay empleados, mostrar mensaje
+          if (empleados.length === 0) {
+            mostrarNotificacionTiempoReal('ℹ️ No hay empleados para mostrar en la galería', 'info');
             return;
           }
-
-          // Obtener empleados de Firestore
-          const empleadosSnapshot = await db.collection('empleados').where('userId', '==', currentUser.uid).get();
-
-          const empleados = empleadosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          
+          console.log('👥 Empleados cargados para la galería:', empleados.length);
 
           const fotosHTML = `
           <div id="modalFotos" class="axyra-modal">
@@ -1390,9 +1612,9 @@
                         <i class="fas fa-user"></i>
                       </div>
                       <div class="axyra-foto-info">
-                        <strong>${emp.nombre}</strong>
-                        <span>${emp.cargo}</span>
-                        <small>${emp.departamento}</small>
+                        <strong>${emp.nombre || 'Sin nombre'}</strong>
+                        <span>${emp.cargo || 'Sin cargo'}</span>
+                        <small>${emp.departamento || 'Sin departamento'}</small>
                       </div>
                       <button class="axyra-btn axyra-btn-outline" onclick="cambiarFoto('${emp.id}')">
                         <i class="fas fa-camera"></i> Cambiar
@@ -1410,10 +1632,10 @@
           document.body.insertAdjacentHTML('beforeend', fotosHTML);
           document.getElementById('modalFotos').style.display = 'block';
 
-          console.log('✅ Modal de fotos cargado desde Firestore');
+          console.log('✅ Modal de fotos cargado exitosamente');
         } catch (error) {
           console.error('❌ Error cargando modal de fotos:', error);
-          mostrarNotificacionTiempoReal('❌ Error cargando fotos de empleados', 'error');
+          mostrarNotificacionTiempoReal('❌ Error cargando fotos de empleados: ' + error.message, 'error');
         }
       }
 
@@ -1439,6 +1661,86 @@
       // Función para cambiar foto de empleado (alias para compatibilidad)
       function cambiarFotoEmpleado(empleadoId) {
         cambiarFoto(empleadoId);
+      }
+      
+      // Función para crear datos de ejemplo si no hay ninguno
+      function crearDatosEjemplo() {
+        console.log('🎯 Creando datos de ejemplo...');
+        
+        // Crear departamentos de ejemplo
+        const departamentosEjemplo = [
+          { id: 'dept1', nombre: 'Administración', descripcion: 'Departamento administrativo' },
+          { id: 'dept2', nombre: 'Ventas', descripcion: 'Departamento de ventas' },
+          { id: 'dept3', nombre: 'Producción', descripcion: 'Departamento de producción' },
+          { id: 'dept4', nombre: 'Recursos Humanos', descripcion: 'Departamento de RRHH' }
+        ];
+        
+        // Crear empleados de ejemplo
+        const empleadosEjemplo = [
+          {
+            id: 'emp1',
+            nombre: 'Juan Pérez',
+            cedula: '12345678',
+            cargo: 'Gerente General',
+            departamento: 'Administración',
+            salario: 5000000,
+            fechaIngreso: '2023-01-15',
+            estado: 'Activo'
+          },
+          {
+            id: 'emp2',
+            nombre: 'María González',
+            cedula: '87654321',
+            cargo: 'Vendedora Senior',
+            departamento: 'Ventas',
+            salario: 2500000,
+            fechaIngreso: '2023-03-20',
+            estado: 'Activo'
+          },
+          {
+            id: 'emp3',
+            nombre: 'Carlos Rodríguez',
+            cedula: '11223344',
+            cargo: 'Operario',
+            departamento: 'Producción',
+            salario: 1500000,
+            fechaIngreso: '2023-02-10',
+            estado: 'Activo'
+          },
+          {
+            id: 'emp4',
+            nombre: 'Ana Martínez',
+            cedula: '44332211',
+            cargo: 'Reclutadora',
+            departamento: 'Recursos Humanos',
+            salario: 2000000,
+            fechaIngreso: '2023-04-05',
+            estado: 'Activo'
+          },
+          {
+            id: 'emp5',
+            nombre: 'Luis Fernández',
+            cedula: '55667788',
+            cargo: 'Asistente Administrativo',
+            departamento: 'Administración',
+            salario: 1800000,
+            fechaIngreso: '2023-05-12',
+            estado: 'Activo'
+          }
+        ];
+        
+        // Guardar en localStorage
+        localStorage.setItem('axyra_departamentos', JSON.stringify(departamentosEjemplo));
+        localStorage.setItem('axyra_empleados', JSON.stringify(empleadosEjemplo));
+        
+        console.log('✅ Datos de ejemplo creados:', {
+          departamentos: departamentosEjemplo.length,
+          empleados: empleadosEjemplo.length
+        });
+        
+        mostrarNotificacionTiempoReal('✅ Datos de ejemplo creados exitosamente', 'success');
+        
+        return { departamentos: departamentosEjemplo, empleados: empleadosEjemplo };
       }
 
       // Función para mostrar modal de importación masiva
