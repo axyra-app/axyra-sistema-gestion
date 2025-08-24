@@ -228,6 +228,13 @@ class AxyraNotificationSystem {
 
   showSystemNotification(notification) {
     try {
+      // Verificar si ya existe una notificación con el mismo ID
+      const existingNotification = this.notifications.find(n => n.id === notification.id);
+      if (existingNotification) {
+        console.log(`⚠️ Notificación ${notification.id} ya existe, saltando...`);
+        return;
+      }
+
       const notificationElement = this.createNotificationElement({
         id: notification.id,
         type: notification.type,
