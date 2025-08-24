@@ -297,6 +297,18 @@
         color: #3730a3;
       }
 
+      /* Estilos para mostrar valores de hora */
+      .axyra-valor-hora {
+        font-size: 12px;
+        color: #667eea;
+        font-weight: 600;
+        margin-top: 4px;
+        padding: 2px 6px;
+        background: rgba(102, 126, 234, 0.1);
+        border-radius: 4px;
+        text-align: center;
+      }
+
       /* Estilos para modales profesionales */
       .axyra-modal-overlay {
         position: fixed;
@@ -509,7 +521,7 @@
             <div class="axyra-form-row">
               <div class="axyra-form-group">
                 <label for="empleadoHoras" class="axyra-form-label">Empleado</label>
-                <select id="empleadoHoras" name="empleado" class="axyra-form-select" required>
+                <select id="empleadoHoras" name="empleado" class="axyra-form-select" required onchange="actualizarValoresHora()">
                   <option value="">Seleccionar empleado</option>
                 </select>
               </div>
@@ -533,6 +545,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas trabajadas de 6:00 AM a 6:00 PM</small>
+                <div class="axyra-valor-hora" id="valorHoraOrdinaria">Valor: $0</div>
               </div>
               <div class="axyra-form-group">
                 <label for="horasNocturnas" class="axyra-form-label">Horas Nocturnas</label>
@@ -547,6 +560,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas trabajadas de 6:00 PM a 6:00 AM</small>
+                <div class="axyra-valor-hora" id="valorHoraNocturna">Valor: $0</div>
               </div>
             </div>
 
@@ -564,6 +578,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas extra trabajadas de día</small>
+                <div class="axyra-valor-hora" id="valorHoraExtraDiurna">Valor: $0</div>
               </div>
               <div class="axyra-form-group">
                 <label for="horasExtraNocturnas" class="axyra-form-label">Horas Extra Nocturnas</label>
@@ -578,6 +593,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas extra trabajadas de noche</small>
+                <div class="axyra-valor-hora" id="valorHoraExtraNocturna">Valor: $0</div>
               </div>
             </div>
 
@@ -595,6 +611,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas trabajadas en domingo</small>
+                <div class="axyra-valor-hora" id="valorHoraDominical">Valor: $0</div>
               </div>
               <div class="axyra-form-group">
                 <label for="horasFestivas" class="axyra-form-label">Horas Festivas</label>
@@ -609,6 +626,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas trabajadas en festivos</small>
+                <div class="axyra-valor-hora" id="valorHoraFestiva">Valor: $0</div>
               </div>
             </div>
 
@@ -1114,6 +1132,61 @@
         window.location.href = '../../login.html';
       }
 
+      // Función para actualizar valores de hora según empleado seleccionado
+      function actualizarValoresHora() {
+        try {
+          const empleadoSelect = document.getElementById('empleadoHoras');
+          const salarioBaseInput = document.getElementById('salarioBase');
+          
+          if (!empleadoSelect || !salarioBaseInput) return;
+          
+          const empleadoId = empleadoSelect.value;
+          if (!empleadoId) return;
+          
+          // Obtener empleado seleccionado
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const empleado = empleados.find(emp => emp.id == empleadoId);
+          
+          if (!empleado) return;
+          
+          const salarioBase = empleado.salario || 0;
+          const tipoContrato = empleado.tipoContrato || 'Por Horas';
+          
+          // Actualizar salario base en el formulario
+          salarioBaseInput.value = salarioBase;
+          
+          // Calcular valores de hora usando la calculadora
+          if (window.colombianLaborLawCalculator) {
+            try {
+              const valoresHoras = window.colombianLaborLawCalculator.calcularValoresHoras(salarioBase, tipoContrato);
+              
+              // Actualizar cada campo con su valor correspondiente
+              const camposValores = {
+                'valorHoraOrdinaria': valoresHoras.valores.ordinarias,
+                'valorHoraNocturna': valoresHoras.valores.recargo_nocturno,
+                'valorHoraExtraDiurna': valoresHoras.valores.hora_extra_diurna,
+                'valorHoraExtraNocturna': valoresHoras.valores.hora_extra_nocturna,
+                'valorHoraDominical': valoresHoras.valores.recargo_diurno_dominical,
+                'valorHoraFestiva': valoresHoras.valores.hora_diurna_dominical_o_festivo
+              };
+              
+              Object.entries(camposValores).forEach(([id, valor]) => {
+                const elemento = document.getElementById(id);
+                if (elemento) {
+                  elemento.textContent = `Valor: $${valor.toFixed(0)}`;
+                }
+              });
+              
+              console.log('✅ Valores de hora actualizados:', valoresHoras);
+            } catch (error) {
+              console.warn('⚠️ Error calculando valores de hora:', error);
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error actualizando valores de hora:', error);
+        }
+      }
+
       // Función para cargar empleados en los selects
       async function cargarEmpleados() {
         try {
@@ -1377,6 +1450,15 @@
             !horasExtrasFestivasNocturnas ||
             !salarioBase
           ) {
+            console.error('❌ Campos faltantes:', {
+              empleadoHoras: !!empleadoHoras,
+              fechaHoras: !!fechaHoras,
+              horasOrdinarias: !!horasOrdinarias,
+              horasExtras: !!horasExtras,
+              horasExtrasFestivas: !!horasExtrasFestivas,
+              horasExtrasFestivasNocturnas: !!horasExtrasFestivasNocturnas,
+              salarioBase: !!salarioBase
+            });
             mostrarMensaje('❌ Error: No se pudieron cargar los campos del formulario', 'error');
             return;
           }
@@ -1428,11 +1510,12 @@
           // Calcular salarios según la ley colombiana usando la calculadora
           let calculoHoras;
           try {
+            // Mapear campos del formulario a los tipos de horas correctos
             const horasData = {
               ordinarias: horasOrdinariasVal,
-              extraDiurnas: horasExtrasVal,
-              festivas: horasExtrasFestivasVal,
-              extraFestivasNocturnas: horasExtrasFestivasNocturnasVal
+              nocturnas: horasExtrasVal, // Cambiar a nocturnas
+              extraDiurnas: horasExtrasFestivasVal, // Cambiar a extra diurnas
+              extraNocturnas: horasExtrasFestivasNocturnasVal // Cambiar a extra nocturnas
             };
             
             // Obtener el tipo de contrato del empleado
@@ -1446,23 +1529,23 @@
             console.log('✅ Cálculo de horas realizado correctamente:', calculoHoras);
           } catch (error) {
             console.error('❌ Error en cálculo de horas:', error);
-            // Fallback al cálculo anterior
+            // Fallback al cálculo anterior usando los tipos correctos
             const salarioHora = salarioBaseVal / 240;
             const salarioOrdinario = horasOrdinariasVal * salarioHora;
-            const salarioExtras = horasExtrasVal * (salarioHora * 1.25);
-            const salarioExtrasFestivas = horasExtrasFestivasVal * (salarioHora * 1.75);
-            const salarioExtrasFestivasNocturnas = horasExtrasFestivasNocturnasVal * (salarioHora * 2.1);
+            const salarioNocturnas = horasExtrasVal * (salarioHora * 1.35); // 35% recargo
+            const salarioExtraDiurnas = horasExtrasFestivasVal * (salarioHora * 1.25); // 25% recargo
+            const salarioExtraNocturnas = horasExtrasFestivasNocturnasVal * (salarioHora * 1.75); // 75% recargo
             
             calculoHoras = {
               valorHora: salarioHora,
               salarios: {
                 ordinarias: salarioOrdinario,
-                extraDiurnas: salarioExtras,
-                festivas: salarioExtrasFestivas,
-                extraFestivasNocturnas: salarioExtrasFestivasNocturnas
+                nocturnas: salarioNocturnas,
+                extraDiurnas: salarioExtraDiurnas,
+                extraNocturnas: salarioExtraNocturnas
               },
               totalHoras: horasOrdinariasVal + horasExtrasVal + horasExtrasFestivasVal + horasExtrasFestivasNocturnasVal,
-              totalSalario: salarioOrdinario + salarioExtras + salarioExtrasFestivas + salarioExtrasFestivasNocturnas
+              totalSalario: salarioOrdinario + salarioNocturnas + salarioExtraDiurnas + salarioExtraNocturnas
             };
           }
 

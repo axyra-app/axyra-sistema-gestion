@@ -52,10 +52,19 @@
           }
         } else {
           console.log('Usuario no autenticado');
-          // Use unified auth system for redirect
-          if (window.axyraUnifiedAuth) {
-            window.axyraUnifiedAuth.logout();
+          // Verificar sistema unificado antes de redirigir
+          if (window.axyraUnifiedAuth && window.axyraUnifiedAuth.isAuthenticated()) {
+            console.log('Usuario autenticado en sistema unificado, continuando...');
+            if (window.axyraConfig) {
+              window.axyraConfig.init();
+            }
+          } else if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            console.log('Usuario autenticado en sistema aislado, continuando...');
+            if (window.axyraConfig) {
+              window.axyraConfig.init();
+            }
           } else {
+            console.log('No hay usuario autenticado, redirigiendo...');
             window.location.href = '../../login.html';
           }
         }

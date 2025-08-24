@@ -14,7 +14,21 @@ class ColombianLaborLawCalculator {
     this.HORAS_DIARIAS = 8;
     this.DIAS_LABORALES_MENSUALES = 30;
     
-    // Recargos según la ley
+    // Tipos de horas según la aplicación de escritorio del usuario
+    this.TIPOS_HORAS = [
+      ["ordinarias", 0.00],
+      ["recargo_nocturno", 0.35],
+      ["recargo_diurno_dominical", 0.75],
+      ["recargo_nocturno_dominical", 1.10],
+      ["hora_extra_diurna", 0.25],
+      ["hora_extra_nocturna", 0.75],
+      ["hora_diurna_dominical_o_festivo", 0.80],
+      ["hora_extra_diurna_dominical_o_festivo", 1.05],
+      ["hora_nocturna_dominical_o_festivo", 1.10],
+      ["hora_extra_nocturna_dominical_o_festivo", 1.85]
+    ];
+    
+    // Recargos según la ley (mantener compatibilidad)
     this.RECARGOS = {
       HORAS_EXTRA_DIURNAS: 1.25,        // 25% extra
       HORAS_EXTRA_NOCTURNAS: 1.75,      // 75% extra
@@ -234,42 +248,42 @@ class ColombianLaborLawCalculator {
     }
 
     const valorHora = this.calcularValorHoraOrdinaria(salarioMensual, tipoContrato);
+    const valoresHoras = this.calcularValoresHoras(salarioMensual, tipoContrato);
     
-    const {
-      ordinarias = 0,
-      nocturnas = 0,
-      extraDiurnas = 0,
-      extraNocturnas = 0,
-      dominicales = 0,
-      festivas = 0,
-      extraFestivasDiurnas = 0,
-      extraFestivasNocturnas = 0,
-      dominicalesFestivas = 0,
-      extraDominicales = 0,
-      extraDominicalesFestivas = 0
-    } = horasData;
-
-    // Calcular cada tipo de salario
-    const salarios = {
-      ordinarias: this.calcularHorasOrdinarias(ordinarias, valorHora),
-      nocturnas: this.calcularHorasNocturnas(nocturnas, valorHora),
-      extraDiurnas: this.calcularHorasExtraDiurnas(extraDiurnas, valorHora),
-      extraNocturnas: this.calcularHorasExtraNocturnas(extraNocturnas, valorHora),
-      dominicales: this.calcularHorasDominicales(dominicales, valorHora),
-      festivas: this.calcularHorasFestivas(festivas, valorHora),
-      extraFestivasDiurnas: this.calcularHorasExtraFestivasDiurnas(extraFestivasDiurnas, valorHora),
-      extraFestivasNocturnas: this.calcularHorasExtraFestivasNocturnas(extraFestivasNocturnas, valorHora),
-      dominicalesFestivas: this.calcularHorasDominicalesFestivas(dominicalesFestivas, valorHora),
-      extraDominicales: this.calcularHorasExtraDominicales(extraDominicales, valorHora),
-      extraDominicalesFestivas: this.calcularHorasExtraDominicalesFestivas(extraDominicalesFestivas, valorHora)
+    // Mapear nombres de campos a los tipos de horas correctos
+    const mapeoCampos = {
+      ordinarias: 'ordinarias',
+      nocturnas: 'recargo_nocturno',
+      extraDiurnas: 'hora_extra_diurna',
+      extraNocturnas: 'hora_extra_nocturna',
+      dominicales: 'recargo_diurno_dominical',
+      festivas: 'hora_diurna_dominical_o_festivo',
+      extraFestivasDiurnas: 'hora_extra_diurna_dominical_o_festivo',
+      extraFestivasNocturnas: 'hora_extra_nocturna_dominical_o_festivo',
+      dominicalesFestivas: 'hora_nocturna_dominical_o_festivo',
+      extraDominicales: 'recargo_nocturno_dominical',
+      extraDominicalesFestivas: 'hora_extra_nocturna_dominical_o_festivo'
     };
 
+    // Calcular cada tipo de salario usando los valores correctos
+    const salarios = {};
+    Object.entries(horasData).forEach(([campo, horas]) => {
+      if (horas > 0) {
+        const tipoHora = mapeoCampos[campo] || campo;
+        const valorHoraTipo = valoresHoras.valores[tipoHora] || valorHora;
+        salarios[campo] = horas * valorHoraTipo;
+      } else {
+        salarios[campo] = 0;
+      }
+    });
+
     // Calcular totales
-    const totalHoras = this.calcularTotalHoras(horasData);
-    const totalSalario = Object.values(salarios).reduce((sum, value) => sum + value, 0);
+    const totalHoras = Object.values(horasData).reduce((sum, horas) => sum + (horas || 0), 0);
+    const totalSalario = Object.values(salarios).reduce((sum, valor) => sum + valor, 0);
 
     return {
       valorHora,
+      valoresHoras,
       salarios,
       totalHoras,
       totalSalario,
@@ -277,19 +291,8 @@ class ColombianLaborLawCalculator {
         salarioBase: salarioMensual,
         horasTrabajadas: totalHoras,
         valorTotal: totalSalario,
-        recargos: {
-          ordinarias: { horas: ordinarias, valor: salarios.ordinarias, recargo: '0%' },
-          nocturnas: { horas: nocturnas, valor: salarios.nocturnas, recargo: '35%' },
-          extraDiurnas: { horas: extraDiurnas, valor: salarios.extraDiurnas, recargo: '25%' },
-          extraNocturnas: { horas: extraNocturnas, valor: salarios.extraNocturnas, recargo: '75%' },
-          dominicales: { horas: dominicales, valor: salarios.dominicales, recargo: '75%' },
-          festivas: { horas: festivas, valor: salarios.festivas, recargo: '75%' },
-          extraFestivasDiurnas: { horas: extraFestivasDiurnas, valor: salarios.extraFestivasDiurnas, recargo: '100%' },
-          extraFestivasNocturnas: { horas: extraFestivasNocturnas, valor: salarios.extraFestivasNocturnas, recargo: '150%' },
-          dominicalesFestivas: { horas: dominicalesFestivas, valor: salarios.dominicalesFestivas, recargo: '100%' },
-          extraDominicales: { horas: extraDominicales, valor: salarios.extraDominicales, recargo: '100%' },
-          extraDominicalesFestivas: { horas: extraDominicalesFestivas, valor: salarios.extraDominicalesFestivas, recargo: '150%' }
-        }
+        tipoContrato: tipoContrato,
+        valoresPorHora: valoresHoras.valores
       }
     };
   }
@@ -322,6 +325,33 @@ class ColombianLaborLawCalculator {
         recargos: this.RECARGOS,
         horarios: this.HORARIOS
       }
+    };
+  }
+
+  /**
+   * Calcular valor de cada tipo de hora según el empleado
+   * @param {number} salarioMensual - Salario mensual del empleado
+   * @param {string} tipoContrato - Tipo de contrato ('Fijo' o 'Por Horas')
+   * @returns {Object} Valores de cada tipo de hora
+   */
+  calcularValoresHoras(salarioMensual, tipoContrato = 'Por Horas') {
+    if (!salarioMensual || salarioMensual <= 0) {
+      throw new Error('El salario mensual debe ser mayor a 0');
+    }
+
+    const valorHoraBase = this.calcularValorHoraOrdinaria(salarioMensual, tipoContrato);
+    const valores = {};
+
+    // Calcular valor de cada tipo de hora según los TIPOS_HORAS
+    this.TIPOS_HORAS.forEach(([tipo, recargo]) => {
+      valores[tipo] = valorHoraBase * (1 + recargo);
+    });
+
+    return {
+      valorHoraBase,
+      valores,
+      tipoContrato,
+      salarioMensual
     };
   }
 
