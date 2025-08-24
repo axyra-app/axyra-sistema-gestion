@@ -13,39 +13,39 @@ class ColombianLaborLawCalculator {
     this.HORAS_MENSUALES = 220; // 8 horas diarias * 27.5 días (según el usuario)
     this.HORAS_DIARIAS = 8;
     this.DIAS_LABORALES_MENSUALES = 27.5;
-    
+
     // Tipos de horas según la aplicación de escritorio del usuario
     this.TIPOS_HORAS = [
-      ["ordinarias", 0.00],
-      ["recargo_nocturno", 0.35],
-      ["recargo_diurno_dominical", 0.75],
-      ["recargo_nocturno_dominical", 1.10],
-      ["hora_extra_diurna", 0.25],
-      ["hora_extra_nocturna", 0.75],
-      ["hora_diurna_dominical_o_festivo", 0.80],
-      ["hora_extra_diurna_dominical_o_festivo", 1.05],
-      ["hora_nocturna_dominical_o_festivo", 1.10],
-      ["hora_extra_nocturna_dominical_o_festivo", 1.85]
+      ['ordinarias', 0.0],
+      ['recargo_nocturno', 0.35],
+      ['recargo_diurno_dominical', 0.75],
+      ['recargo_nocturno_dominical', 1.1],
+      ['hora_extra_diurna', 0.25],
+      ['hora_extra_nocturna', 0.75],
+      ['hora_diurna_dominical_o_festivo', 0.8],
+      ['hora_extra_diurna_dominical_o_festivo', 1.05],
+      ['hora_nocturna_dominical_o_festivo', 1.1],
+      ['hora_extra_nocturna_dominical_o_festivo', 1.85],
     ];
-    
+
     // Recargos según la ley (mantener compatibilidad)
     this.RECARGOS = {
-      HORAS_EXTRA_DIURNAS: 1.25,        // 25% extra
-      HORAS_EXTRA_NOCTURNAS: 1.75,      // 75% extra
-      HORAS_DOMINICALES: 1.75,          // 75% extra
-      HORAS_FESTIVAS: 1.75,             // 75% extra
+      HORAS_EXTRA_DIURNAS: 1.25, // 25% extra
+      HORAS_EXTRA_NOCTURNAS: 1.75, // 75% extra
+      HORAS_DOMINICALES: 1.75, // 75% extra
+      HORAS_FESTIVAS: 1.75, // 75% extra
       HORAS_EXTRA_FESTIVAS_DIURNAS: 2.0, // 100% extra
       HORAS_EXTRA_FESTIVAS_NOCTURNAS: 2.5, // 150% extra
-      HORAS_NOCTURNAS: 1.35,            // 35% extra (6 PM a 6 AM)
-      HORAS_DOMINICALES_FESTIVAS: 2.0,  // 100% extra
-      HORAS_EXTRA_DOMINICALES: 2.0,     // 100% extra
-      HORAS_EXTRA_DOMINICALES_FESTIVAS: 2.5 // 150% extra
+      HORAS_NOCTURNAS: 1.35, // 35% extra (6 PM a 6 AM)
+      HORAS_DOMINICALES_FESTIVAS: 2.0, // 100% extra
+      HORAS_EXTRA_DOMINICALES: 2.0, // 100% extra
+      HORAS_EXTRA_DOMINICALES_FESTIVAS: 2.5, // 150% extra
     };
-    
+
     // Horarios según la ley
     this.HORARIOS = {
-      DIURNO: { inicio: 6, fin: 18 },      // 6:00 AM a 6:00 PM
-      NOCTURNO: { inicio: 18, fin: 6 }     // 6:00 PM a 6:00 AM
+      DIURNO: { inicio: 6, fin: 18 }, // 6:00 AM a 6:00 PM
+      NOCTURNO: { inicio: 18, fin: 6 }, // 6:00 PM a 6:00 AM
     };
   }
 
@@ -59,7 +59,7 @@ class ColombianLaborLawCalculator {
     if (!salarioMensual || salarioMensual <= 0) {
       throw new Error('El salario mensual debe ser mayor a 0');
     }
-    
+
     if (tipoContrato === 'Fijo') {
       // Empleados fijos: 44 horas semanales, salario/2
       return salarioMensual / 2;
@@ -217,7 +217,7 @@ class ColombianLaborLawCalculator {
       extraFestivasNocturnas = 0,
       dominicalesFestivas = 0,
       extraDominicales = 0,
-      extraDominicalesFestivas = 0
+      extraDominicalesFestivas = 0,
     } = horasData;
 
     return (
@@ -249,7 +249,7 @@ class ColombianLaborLawCalculator {
 
     const valorHora = this.calcularValorHoraOrdinaria(salarioMensual, tipoContrato);
     const valoresHoras = this.calcularValoresHoras(salarioMensual, tipoContrato);
-    
+
     // Mapear nombres de campos a los tipos de horas correctos
     const mapeoCampos = {
       ordinarias: 'ordinarias',
@@ -262,7 +262,7 @@ class ColombianLaborLawCalculator {
       extraFestivasNocturnas: 'hora_extra_nocturna_dominical_o_festivo',
       dominicalesFestivas: 'hora_nocturna_dominical_o_festivo',
       extraDominicales: 'recargo_nocturno_dominical',
-      extraDominicalesFestivas: 'hora_extra_nocturna_dominical_o_festivo'
+      extraDominicalesFestivas: 'hora_extra_nocturna_dominical_o_festivo',
     };
 
     // Calcular cada tipo de salario usando los valores correctos
@@ -292,8 +292,8 @@ class ColombianLaborLawCalculator {
         horasTrabajadas: totalHoras,
         valorTotal: totalSalario,
         tipoContrato: tipoContrato,
-        valoresPorHora: valoresHoras.valores
-      }
+        valoresPorHora: valoresHoras.valores,
+      },
     };
   }
 
@@ -310,7 +310,7 @@ class ColombianLaborLawCalculator {
         nombre: empleado.nombre || 'N/A',
         cedula: empleado.cedula || 'N/A',
         cargo: empleado.cargo || 'N/A',
-        departamento: empleado.departamento || 'N/A'
+        departamento: empleado.departamento || 'N/A',
       },
       fecha: fecha,
       resumen: calculo.resumen,
@@ -318,13 +318,13 @@ class ColombianLaborLawCalculator {
       totales: {
         horas: calculo.totalHoras,
         salario: calculo.totalSalario,
-        valorHora: calculo.valorHora
+        valorHora: calculo.valorHora,
       },
       ley: {
         horasMensuales: this.HORAS_MENSUALES,
         recargos: this.RECARGOS,
-        horarios: this.HORARIOS
-      }
+        horarios: this.HORARIOS,
+      },
     };
   }
 
@@ -354,7 +354,7 @@ class ColombianLaborLawCalculator {
       extraFestivasNocturnas: 'hora_extra_nocturna_dominical_o_festivo',
       dominicalesFestivas: 'hora_nocturna_dominical_o_festivo',
       extraDominicales: 'recargo_nocturno_dominical',
-      extraDominicalesFestivas: 'hora_extra_nocturna_dominical_o_festivo'
+      extraDominicalesFestivas: 'hora_extra_nocturna_dominical_o_festivo',
     };
 
     // Calcular valor de cada tipo de hora según los TIPOS_HORAS
@@ -374,7 +374,7 @@ class ColombianLaborLawCalculator {
       valores,
       tipoContrato,
       salarioMensual,
-      mapeoCampos
+      mapeoCampos,
     };
   }
 
@@ -412,7 +412,7 @@ class ColombianLaborLawCalculator {
     return {
       valido: errores.length === 0,
       errores,
-      totalHoras
+      totalHoras,
     };
   }
 }
@@ -421,10 +421,10 @@ class ColombianLaborLawCalculator {
 window.colombianLaborLawCalculator = new ColombianLaborLawCalculator();
 
 // Función de conveniencia para uso directo
-window.calcularHorasColombia = function(horasData, salarioMensual) {
+window.calcularHorasColombia = function (horasData, salarioMensual) {
   try {
     const validacion = window.colombianLaborLawCalculator.validarDatos(horasData, salarioMensual);
-    
+
     if (!validacion.valido) {
       throw new Error(validacion.errores.join(', '));
     }

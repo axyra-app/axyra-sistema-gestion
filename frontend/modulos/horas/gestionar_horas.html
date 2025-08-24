@@ -1460,9 +1460,17 @@
           const empleadoHoras = document.getElementById('empleadoHoras');
           const fechaHoras = document.getElementById('fechaHoras');
           const horasOrdinarias = document.getElementById('horasOrdinarias');
-          const horasExtras = document.getElementById('horasExtras');
-          const horasExtrasFestivas = document.getElementById('horasExtrasFestivas');
-          const horasExtrasFestivasNocturnas = document.getElementById('horasExtrasFestivasNocturnas');
+          const horasNocturnas = document.getElementById('horasNocturnas');
+          const horasExtraDiurnas = document.getElementById('horasExtraDiurnas');
+          const horasExtraNocturnas = document.getElementById('horasExtraNocturnas');
+          const horasDominicales = document.getElementById('horasDominicales');
+          const horasFestivas = document.getElementById('horasFestivas');
+          const horasDominicalesNocturnas = document.getElementById('horasDominicalesNocturnas');
+          const horasFestivasNocturnas = document.getElementById('horasFestivasNocturnas');
+          const horasExtraDominicales = document.getElementById('horasExtraDominicales');
+          const horasExtraDominicalesNocturnas = document.getElementById('horasExtraDominicalesNocturnas');
+          const horasExtraFestivas = document.getElementById('horasExtraFestivas');
+          const horasExtraFestivasNocturnas = document.getElementById('horasExtraFestivasNocturnas');
           const salarioBase = document.getElementById('salarioBase');
 
           // Validar que los elementos existan
@@ -1470,18 +1478,34 @@
             !empleadoHoras ||
             !fechaHoras ||
             !horasOrdinarias ||
-            !horasExtras ||
-            !horasExtrasFestivas ||
-            !horasExtrasFestivasNocturnas ||
+            !horasNocturnas ||
+            !horasExtraDiurnas ||
+            !horasExtraNocturnas ||
+            !horasDominicales ||
+            !horasFestivas ||
+            !horasDominicalesNocturnas ||
+            !horasFestivasNocturnas ||
+            !horasExtraDominicales ||
+            !horasExtraDominicalesNocturnas ||
+            !horasExtraFestivas ||
+            !horasExtraFestivasNocturnas ||
             !salarioBase
           ) {
             console.error('❌ Campos faltantes:', {
               empleadoHoras: !!empleadoHoras,
               fechaHoras: !!fechaHoras,
               horasOrdinarias: !!horasOrdinarias,
-              horasExtras: !!horasExtras,
-              horasExtrasFestivas: !!horasExtrasFestivas,
-              horasExtrasFestivasNocturnas: !!horasExtrasFestivasNocturnas,
+              horasNocturnas: !!horasNocturnas,
+              horasExtraDiurnas: !!horasExtraDiurnas,
+              horasExtraNocturnas: !!horasExtraNocturnas,
+              horasDominicales: !!horasDominicales,
+              horasFestivas: !!horasFestivas,
+              horasDominicalesNocturnas: !!horasDominicalesNocturnas,
+              horasFestivasNocturnas: !!horasFestivasNocturnas,
+              horasExtraDominicales: !!horasExtraDominicales,
+              horasExtraDominicalesNocturnas: !!horasExtraDominicalesNocturnas,
+              horasExtraFestivas: !!horasExtraFestivas,
+              horasExtraFestivasNocturnas: !!horasExtraFestivasNocturnas,
               salarioBase: !!salarioBase
             });
             mostrarMensaje('❌ Error: No se pudieron cargar los campos del formulario', 'error');
@@ -1492,9 +1516,17 @@
           const empleadoId = empleadoHoras.value;
           const fecha = fechaHoras.value;
           const horasOrdinariasVal = parseFloat(horasOrdinarias.value) || 0;
-          const horasExtrasVal = parseFloat(horasExtras.value) || 0;
-          const horasExtrasFestivasVal = parseFloat(horasExtrasFestivas.value) || 0;
-          const horasExtrasFestivasNocturnasVal = parseFloat(horasExtrasFestivasNocturnas.value) || 0;
+          const horasNocturnasVal = parseFloat(horasNocturnas.value) || 0;
+          const horasExtraDiurnasVal = parseFloat(horasExtraDiurnas.value) || 0;
+          const horasExtraNocturnasVal = parseFloat(horasExtraNocturnas.value) || 0;
+          const horasDominicalesVal = parseFloat(horasDominicales.value) || 0;
+          const horasFestivasVal = parseFloat(horasFestivas.value) || 0;
+          const horasDominicalesNocturnasVal = parseFloat(horasDominicalesNocturnas.value) || 0;
+          const horasFestivasNocturnasVal = parseFloat(horasFestivasNocturnas.value) || 0;
+          const horasExtraDominicalesVal = parseFloat(horasExtraDominicales.value) || 0;
+          const horasExtraDominicalesNocturnasVal = parseFloat(horasExtraDominicalesNocturnas.value) || 0;
+          const horasExtraFestivasVal = parseFloat(horasExtraFestivas.value) || 0;
+          const horasExtraFestivasNocturnasVal = parseFloat(horasExtraFestivasNocturnas.value) || 0;
           const salarioBaseVal = parseFloat(salarioBase.value) || 0;
 
           // Validar datos
@@ -1508,12 +1540,14 @@
             return;
           }
 
-          if (
-            horasOrdinariasVal === 0 &&
-            horasExtrasVal === 0 &&
-            horasExtrasFestivasVal === 0 &&
-            horasExtrasFestivasNocturnasVal === 0
-          ) {
+          // Validar que al menos un tipo de horas sea mayor a 0
+          const totalHoras = horasOrdinariasVal + horasNocturnasVal + horasExtraDiurnasVal + 
+                           horasExtraNocturnasVal + horasDominicalesVal + horasFestivasVal + 
+                           horasDominicalesNocturnasVal + horasFestivasNocturnasVal + 
+                           horasExtraDominicalesVal + horasExtraDominicalesNocturnasVal + 
+                           horasExtraFestivasVal + horasExtraFestivasNocturnasVal;
+
+          if (totalHoras === 0) {
             mostrarMensaje('❌ Ingresa al menos un tipo de horas', 'error');
             return;
           }
@@ -1528,9 +1562,7 @@
             return;
           }
 
-          // Calcular totales incluyendo todos los tipos de horas
-          const totalHoras =
-            horasOrdinariasVal + horasExtrasVal + horasExtrasFestivasVal + horasExtrasFestivasNocturnasVal;
+          // El totalHoras ya se calculó arriba
 
           // Calcular salarios según la ley colombiana usando la calculadora
           let calculoHoras;
@@ -1538,16 +1570,20 @@
             // Mapear campos del formulario a los tipos de horas correctos
             const horasData = {
               ordinarias: horasOrdinariasVal,
-              nocturnas: horasExtrasVal, // Cambiar a nocturnas
-              extraDiurnas: horasExtrasFestivasVal, // Cambiar a extra diurnas
-              extraNocturnas: horasExtrasFestivasNocturnasVal // Cambiar a extra nocturnas
+              nocturnas: horasNocturnasVal,
+              extraDiurnas: horasExtraDiurnasVal,
+              extraNocturnas: horasExtraNocturnasVal,
+              dominicales: horasDominicalesVal,
+              festivas: horasFestivasVal,
+              dominicalesNocturnas: horasDominicalesNocturnasVal,
+              festivasNocturnas: horasFestivasNocturnasVal,
+              extraDominicales: horasExtraDominicalesVal,
+              extraDominicalesNocturnas: horasExtraDominicalesNocturnasVal,
+              extraFestivas: horasExtraFestivasVal,
+              extraFestivasNocturnas: horasExtraFestivasNocturnasVal
             };
             
-            // Obtener el tipo de contrato del empleado
-            const empleado = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').find(
-              (emp) => emp.id === parseInt(empleadoId)
-            );
-            const tipoContrato = empleado ? (empleado.tipoContrato || 'Por Horas') : 'Por Horas';
+            const tipoContrato = empleado.tipoContrato || 'Por Horas';
             
             calculoHoras = window.colombianLaborLawCalculator.calcularSalariosCompletos(horasData, salarioBaseVal, tipoContrato);
             
@@ -2303,41 +2339,34 @@
         try {
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
 
+          // Crear estructura de horas organizada
+          const horasData = {
+            ordinarias: parseFloat(formData.get('horasOrdinarias')) || 0,
+            nocturnas: parseFloat(formData.get('horasNocturnas')) || 0,
+            extraDiurnas: parseFloat(formData.get('horasExtraDiurnas')) || 0,
+            extraNocturnas: parseFloat(formData.get('horasExtraNocturnas')) || 0,
+            dominicales: parseFloat(formData.get('horasDominicales')) || 0,
+            festivas: parseFloat(formData.get('horasFestivas')) || 0,
+            dominicalesNocturnas: parseFloat(formData.get('horasDominicalesNocturnas')) || 0,
+            festivasNocturnas: parseFloat(formData.get('horasFestivasNocturnas')) || 0,
+            extraDominicales: parseFloat(formData.get('horasExtraDominicales')) || 0,
+            extraDominicalesNocturnas: parseFloat(formData.get('horasExtraDominicalesNocturnas')) || 0,
+            extraFestivas: parseFloat(formData.get('horasExtraFestivas')) || 0,
+            extraFestivasNocturnas: parseFloat(formData.get('horasExtraFestivasNocturnas')) || 0
+          };
+
+          // Calcular total de horas
+          const totalHoras = Object.values(horasData).reduce((sum, horas) => sum + (horas || 0), 0);
+
           const nuevoRegistro = {
             id: Date.now() + Math.random(),
             empleadoId: parseInt(formData.get('empleado')),
             fecha: formData.get('fecha'),
-            horasOrdinarias: parseFloat(formData.get('horasOrdinarias')) || 0,
-            horasNocturnas: parseFloat(formData.get('horasNocturnas')) || 0,
-            horasExtraDiurnas: parseFloat(formData.get('horasExtraDiurnas')) || 0,
-            horasExtraNocturnas: parseFloat(formData.get('horasExtraNocturnas')) || 0,
-            horasDominicales: parseFloat(formData.get('horasDominicales')) || 0,
-            horasFestivas: parseFloat(formData.get('horasFestivas')) || 0,
-            horasDominicalesNocturnas: parseFloat(formData.get('horasDominicalesNocturnas')) || 0,
-            horasFestivasNocturnas: parseFloat(formData.get('horasFestivasNocturnas')) || 0,
-            horasExtraDominicales: parseFloat(formData.get('horasExtraDominicales')) || 0,
-            horasExtraDominicalesNocturnas: parseFloat(formData.get('horasExtraDominicalesNocturnas')) || 0,
-            horasExtraFestivas: parseFloat(formData.get('horasExtraFestivas')) || 0,
-            horasExtraFestivasNocturnas: parseFloat(formData.get('horasExtraFestivasNocturnas')) || 0,
+            horas: horasData, // Estructura organizada de horas
+            total_horas: totalHoras,
             observaciones: formData.get('observaciones'),
-            timestamp: new Date().toISOString(),
-            total_horas: 0, // Se calculará después
+            timestamp: new Date().toISOString()
           };
-
-          // Calcular total de horas
-          nuevoRegistro.total_horas =
-            nuevoRegistro.horasOrdinarias +
-            nuevoRegistro.horasNocturnas +
-            nuevoRegistro.horasExtraDiurnas +
-            nuevoRegistro.horasExtraNocturnas +
-            nuevoRegistro.horasDominicales +
-            nuevoRegistro.horasFestivas +
-            nuevoRegistro.horasDominicalesNocturnas +
-            nuevoRegistro.horasFestivasNocturnas +
-            nuevoRegistro.horasExtraDominicales +
-            nuevoRegistro.horasExtraDominicalesNocturnas +
-            nuevoRegistro.horasExtraFestivas +
-            nuevoRegistro.horasExtraFestivasNocturnas;
 
           horas.push(nuevoRegistro);
           localStorage.setItem('axyra_horas', JSON.stringify(horas));
@@ -2626,13 +2655,10 @@
               if (registro.total_horas !== undefined) {
                 totalHoras = registro.total_horas;
               } else if (registro.horas) {
-                totalHoras =
-                  (registro.horas.ordinarias || 0) +
-                  (registro.horas.extras || 0) +
-                  (registro.horas.extrasFestivas || 0) +
-                  (registro.horas.extrasFestivasNocturnas || 0);
+                // Usar la estructura organizada de horas
+                totalHoras = Object.values(registro.horas).reduce((sum, horas) => sum + (horas || 0), 0);
               } else {
-                // Calcular desde campos individuales
+                // Calcular desde campos individuales (compatibilidad con registros antiguos)
                 totalHoras =
                   (registro.horasOrdinarias || 0) +
                   (registro.horasNocturnas || 0) +
@@ -2697,18 +2723,33 @@
           const empleadoSelect = document.getElementById('empleadoHoras');
           const fechaInput = document.getElementById('fechaHoras');
           const horasOrdinariasInput = document.getElementById('horasOrdinarias');
-          const horasExtrasInput = document.getElementById('horasExtras');
-          const horasExtrasFestivasInput = document.getElementById('horasExtrasFestivas');
-          const horasExtrasFestivasNocturnasInput = document.getElementById('horasExtrasFestivasNocturnas');
+          const horasNocturnasInput = document.getElementById('horasNocturnas');
+          const horasExtraDiurnasInput = document.getElementById('horasExtraDiurnas');
+          const horasExtraNocturnasInput = document.getElementById('horasExtraNocturnas');
+          const horasDominicalesInput = document.getElementById('horasDominicales');
+          const horasFestivasInput = document.getElementById('horasFestivas');
+          const horasDominicalesNocturnasInput = document.getElementById('horasDominicalesNocturnas');
+          const horasFestivasNocturnasInput = document.getElementById('horasFestivasNocturnas');
+          const horasExtraDominicalesInput = document.getElementById('horasExtraDominicales');
+          const horasExtraDominicalesNocturnasInput = document.getElementById('horasExtraDominicalesNocturnas');
+          const horasExtraFestivasInput = document.getElementById('horasExtraFestivas');
+          const horasExtraFestivasNocturnasInput = document.getElementById('horasExtraFestivasNocturnas');
           const salarioBaseInput = document.getElementById('salarioBase');
 
           if (empleadoSelect) empleadoSelect.value = registro.empleadoId || '';
           if (fechaInput) fechaInput.value = registro.fecha || '';
           if (horasOrdinariasInput) horasOrdinariasInput.value = registro.horas?.ordinarias || 0;
-          if (horasExtrasInput) horasExtrasInput.value = registro.horas?.extras || 0;
-          if (horasExtrasFestivasInput) horasExtrasFestivasInput.value = registro.horas?.extrasFestivas || 0;
-          if (horasExtrasFestivasNocturnasInput)
-            horasExtrasFestivasNocturnasInput.value = registro.horas?.extrasFestivasNocturnas || 0;
+          if (horasNocturnasInput) horasNocturnasInput.value = registro.horas?.nocturnas || 0;
+          if (horasExtraDiurnasInput) horasExtraDiurnasInput.value = registro.horas?.extraDiurnas || 0;
+          if (horasExtraNocturnasInput) horasExtraNocturnasInput.value = registro.horas?.extraNocturnas || 0;
+          if (horasDominicalesInput) horasDominicalesInput.value = registro.horas?.dominicales || 0;
+          if (horasFestivasInput) horasFestivasInput.value = registro.horas?.festivas || 0;
+          if (horasDominicalesNocturnasInput) horasDominicalesNocturnasInput.value = registro.horas?.dominicalesNocturnas || 0;
+          if (horasFestivasNocturnasInput) horasFestivasNocturnasInput.value = registro.horas?.festivasNocturnas || 0;
+          if (horasExtraDominicalesInput) horasExtraDominicalesInput.value = registro.horas?.extraDominicales || 0;
+          if (horasExtraDominicalesNocturnasInput) horasExtraDominicalesNocturnasInput.value = registro.horas?.extraDominicalesNocturnas || 0;
+          if (horasExtraFestivasInput) horasExtraFestivasInput.value = registro.horas?.extraFestivas || 0;
+          if (horasExtraFestivasNocturnasInput) horasExtraFestivasNocturnasInput.value = registro.horas?.extraFestivasNocturnas || 0;
           if (salarioBaseInput) salarioBaseInput.value = registro.salarios?.base || 0;
 
           // Cambiar el botón del formulario
@@ -2741,11 +2782,17 @@
           const empleadoId = document.getElementById('empleadoHoras')?.value;
           const fecha = document.getElementById('fechaHoras')?.value;
           const horasOrdinarias = parseFloat(document.getElementById('horasOrdinarias')?.value || 0);
-          const horasExtras = parseFloat(document.getElementById('horasExtras')?.value || 0);
-          const horasExtrasFestivas = parseFloat(document.getElementById('horasExtrasFestivas')?.value || 0);
-          const horasExtrasFestivasNocturnas = parseFloat(
-            document.getElementById('horasExtrasFestivasNocturnas')?.value || 0
-          );
+          const horasNocturnas = parseFloat(document.getElementById('horasNocturnas')?.value || 0);
+          const horasExtraDiurnas = parseFloat(document.getElementById('horasExtraDiurnas')?.value || 0);
+          const horasExtraNocturnas = parseFloat(document.getElementById('horasExtraNocturnas')?.value || 0);
+          const horasDominicales = parseFloat(document.getElementById('horasDominicales')?.value || 0);
+          const horasFestivas = parseFloat(document.getElementById('horasFestivas')?.value || 0);
+          const horasDominicalesNocturnas = parseFloat(document.getElementById('horasDominicalesNocturnas')?.value || 0);
+          const horasFestivasNocturnas = parseFloat(document.getElementById('horasFestivasNocturnas')?.value || 0);
+          const horasExtraDominicales = parseFloat(document.getElementById('horasExtraDominicales')?.value || 0);
+          const horasExtraDominicalesNocturnas = parseFloat(document.getElementById('horasExtraDominicalesNocturnas')?.value || 0);
+          const horasExtraFestivas = parseFloat(document.getElementById('horasExtraFestivas')?.value || 0);
+          const horasExtraFestivasNocturnas = parseFloat(document.getElementById('horasExtraFestivasNocturnas')?.value || 0);
           const salarioBase = parseFloat(document.getElementById('salarioBase')?.value || 0);
 
           if (!empleadoId || !fecha) {
@@ -2753,23 +2800,52 @@
             return;
           }
 
-          // Calcular totales
-          const totalHoras = horasOrdinarias + horasExtras + horasExtrasFestivas + horasExtrasFestivasNocturnas;
+          // Calcular totales usando todos los tipos de horas
+          const totalHoras = horasOrdinarias + horasNocturnas + horasExtraDiurnas + 
+                           horasExtraNocturnas + horasDominicales + horasFestivas + 
+                           horasDominicalesNocturnas + horasFestivasNocturnas + 
+                           horasExtraDominicales + horasExtraDominicalesNocturnas + 
+                           horasExtraFestivas + horasExtraFestivasNocturnas;
 
           if (totalHoras === 0) {
             mostrarMensaje('❌ Debes ingresar al menos un tipo de horas', 'error');
             return;
           }
 
-          // Calcular salarios según la ley colombiana
-          const salarioHora = salarioBase / 240; // 240 horas mensuales
-          const salarioOrdinario = horasOrdinarias * salarioHora;
-          const salarioExtras = horasExtras * (salarioHora * 1.25); // 25% extra
-          const salarioExtrasFestivas = horasExtrasFestivas * (salarioHora * 1.75); // 75% extra
-          const salarioExtrasFestivasNocturnas = horasExtrasFestivasNocturnas * (salarioHora * 2.1); // 110% extra
+          // Calcular salarios usando la calculadora colombiana
+          let totalSalario = 0;
+          try {
+            const horasData = {
+              ordinarias: horasOrdinarias,
+              nocturnas: horasNocturnas,
+              extraDiurnas: horasExtraDiurnas,
+              extraNocturnas: horasExtraNocturnas,
+              dominicales: horasDominicales,
+              festivas: horasFestivas,
+              dominicalesNocturnas: horasDominicalesNocturnas,
+              festivasNocturnas: horasFestivasNocturnas,
+              extraDominicales: horasExtraDominicales,
+              extraDominicalesNocturnas: horasExtraDominicalesNocturnas,
+              extraFestivas: horasExtraFestivas,
+              extraFestivasNocturnas: horasExtraFestivasNocturnas
+            };
 
-          const totalSalario =
-            salarioOrdinario + salarioExtras + salarioExtrasFestivas + salarioExtrasFestivasNocturnas;
+            const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+            const empleado = empleados.find(emp => emp.id == empleadoId);
+            const tipoContrato = empleado?.tipoContrato || 'Por Horas';
+
+            const calculo = window.colombianLaborLawCalculator.calcularSalariosCompletos(
+              horasData, 
+              salarioBase, 
+              tipoContrato
+            );
+            totalSalario = calculo.totalSalario;
+          } catch (error) {
+            console.warn('⚠️ Error calculando salarios, usando fallback:', error);
+            // Fallback simple usando 220 horas como solicitaste
+            const salarioHora = salarioBase / 220;
+            totalSalario = totalHoras * salarioHora;
+          }
 
           // Actualizar el registro
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
@@ -2782,17 +2858,21 @@
               fecha,
               horas: {
                 ordinarias: horasOrdinarias,
-                extras: horasExtras,
-                extrasFestivas: horasExtrasFestivas,
-                extrasFestivasNocturnas,
-                total: totalHoras,
+                nocturnas: horasNocturnas,
+                extraDiurnas: horasExtraDiurnas,
+                extraNocturnas: horasExtraNocturnas,
+                dominicales: horasDominicales,
+                festivas: horasFestivas,
+                dominicalesNocturnas: horasDominicalesNocturnas,
+                festivasNocturnas: horasFestivasNocturnas,
+                extraDominicales: horasExtraDominicales,
+                extraDominicalesNocturnas: horasExtraDominicalesNocturnas,
+                extraFestivas: horasExtraFestivas,
+                extraFestivasNocturnas: horasExtraFestivasNocturnas
               },
+              total_horas: totalHoras,
               salarios: {
                 base: salarioBase,
-                ordinario: salarioOrdinario,
-                extras: salarioExtras,
-                extrasFestivas: salarioExtrasFestivas,
-                extrasFestivasNocturnas: salarioExtrasFestivasNocturnas,
                 total: totalSalario,
               },
               fechaActualizacion: new Date().toISOString(),
@@ -2974,21 +3054,42 @@
             return;
           }
 
-          // Calcular totales
-          const horasOrdinarias = registro.horas?.ordinarias || 0;
-          const horasExtras = registro.horas?.extras || 0;
-          const horasFestivas = registro.horas?.extrasFestivas || 0;
-          const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
-          const totalHoras = horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+          // Calcular totales usando todos los tipos de horas
+          const horasData = {
+            ordinarias: registro.horas?.ordinarias || 0,
+            nocturnas: registro.horas?.nocturnas || 0,
+            extraDiurnas: registro.horas?.extraDiurnas || 0,
+            extraNocturnas: registro.horas?.extraNocturnas || 0,
+            dominicales: registro.horas?.dominicales || 0,
+            festivas: registro.horas?.festivas || 0,
+            dominicalesNocturnas: registro.horas?.dominicalesNocturnas || 0,
+            festivasNocturnas: registro.horas?.festivasNocturnas || 0,
+            extraDominicales: registro.horas?.extraDominicales || 0,
+            extraDominicalesNocturnas: registro.horas?.extraDominicalesNocturnas || 0,
+            extraFestivas: registro.horas?.extraFestivas || 0,
+            extraFestivasNocturnas: registro.horas?.extraFestivasNocturnas || 0
+          };
+          
+          const totalHoras = Object.values(horasData).reduce((sum, horas) => sum + (horas || 0), 0);
 
           const salarioBase = registro.salarios?.base || 0;
-          const salarioHora = salarioBase / 240; // 240 horas mensuales
+          const salarioHora = salarioBase / 220; // 220 horas mensuales como solicitaste
 
-          const salarioOrdinario = horasOrdinarias * salarioHora;
-          const salarioExtras = horasExtras * (salarioHora * 1.25);
-          const salarioFestivas = horasFestivas * (salarioHora * 1.75);
-          const salarioNocturnas = horasNocturnas * (salarioHora * 2.1);
-          const totalPago = salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
+          // Calcular pago usando la calculadora colombiana
+          let totalPago = 0;
+          try {
+            const tipoContrato = empleado.tipoContrato || 'Por Horas';
+            const calculo = window.colombianLaborLawCalculator.calcularSalariosCompletos(
+              horasData, 
+              salarioBase, 
+              tipoContrato
+            );
+            totalPago = calculo.totalSalario;
+          } catch (error) {
+            console.warn('⚠️ Error calculando pago, usando fallback:', error);
+            // Fallback simple
+            totalPago = totalHoras * salarioHora;
+          }
 
           // Crear contenido del comprobante
           const contenido = `
@@ -4141,25 +4242,45 @@
             return;
           }
 
-          // Calcular totales acumulados
+          // Calcular totales acumulados usando la calculadora colombiana
           let totalHoras = 0;
           let totalPago = 0;
 
           horasEmpleado.forEach((registro) => {
-            const horasOrdinarias = registro.horas?.ordinarias || 0;
-            const horasExtras = registro.horas?.extras || 0;
-            const horasFestivas = registro.horas?.extrasFestivas || 0;
-            const horasNocturnas = registro.horas?.extrasFestivasNocturnas || 0;
+            // Usar todos los tipos de horas disponibles
+            const horasData = {
+              ordinarias: registro.horas?.ordinarias || 0,
+              nocturnas: registro.horas?.nocturnas || 0,
+              extraDiurnas: registro.horas?.extraDiurnas || 0,
+              extraNocturnas: registro.horas?.extraNocturnas || 0,
+              dominicales: registro.horas?.dominicales || 0,
+              festivas: registro.horas?.festivas || 0,
+              dominicalesNocturnas: registro.horas?.dominicalesNocturnas || 0,
+              festivasNocturnas: registro.horas?.festivasNocturnas || 0,
+              extraDominicales: registro.horas?.extraDominicales || 0,
+              extraDominicalesNocturnas: registro.horas?.extraDominicalesNocturnas || 0,
+              extraFestivas: registro.horas?.extraFestivas || 0,
+              extraFestivasNocturnas: registro.horas?.extraFestivasNocturnas || 0
+            };
 
-            totalHoras += horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+            // Sumar todas las horas
+            totalHoras += Object.values(horasData).reduce((sum, horas) => sum + (horas || 0), 0);
 
-            const valorHora = empleado.salario / 240;
-            const salarioOrdinario = horasOrdinarias * valorHora;
-            const salarioExtras = horasExtras * (valorHora * 1.25);
-            const salarioFestivas = horasFestivas * (valorHora * 1.75);
-            const salarioNocturnas = horasNocturnas * (valorHora * 2.1);
-
-            totalPago += salarioOrdinario + salarioExtras + salarioFestivas + salarioNocturnas;
+            // Calcular pago usando la calculadora colombiana
+            try {
+              const tipoContrato = empleado.tipoContrato || 'Por Horas';
+              const calculo = window.colombianLaborLawCalculator.calcularSalariosCompletos(
+                horasData, 
+                empleado.salario || 0, 
+                tipoContrato
+              );
+              totalPago += calculo.totalSalario;
+            } catch (error) {
+              console.warn('⚠️ Error calculando pago para registro:', error);
+              // Fallback simple si falla la calculadora
+              const valorHora = empleado.salario / 220; // Usar 220 como solicitaste
+              totalPago += totalHoras * valorHora;
+            }
           });
 
           // Generar comprobante acumulado
