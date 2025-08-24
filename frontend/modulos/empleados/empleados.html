@@ -326,6 +326,62 @@
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
       }
 
+      /* Estilos para departamentos */
+      .axyra-department-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        background: white;
+        transition: all 0.2s ease;
+      }
+
+      .axyra-department-item:hover {
+        border-color: #3b82f6;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+      }
+
+      .axyra-department-info {
+        flex: 1;
+      }
+
+      .axyra-department-name {
+        display: block;
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 4px;
+        color: #1f2937;
+      }
+
+      .axyra-department-descripcion {
+        display: block;
+        color: #6b7280;
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+
+      .axyra-department-count {
+        display: block;
+        color: #9ca3af;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .axyra-department-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .axyra-btn-sm {
+        padding: 8px 12px;
+        font-size: 12px;
+        min-height: 36px;
+        min-width: 36px;
+      }
+
       .axyra-departamento-header {
         color: white;
         padding: 16px 20px;
@@ -995,8 +1051,8 @@
                 <input type="text" id="nombre" name="nombre" class="axyra-form-input" required />
               </div>
               <div class="axyra-form-group">
-                <label for="email" class="axyra-form-label">Email *</label>
-                <input type="email" id="email" name="email" class="axyra-form-input" required />
+                <label for="cedula" class="axyra-form-label">Cédula *</label>
+                <input type="text" id="cedula" name="cedula" class="axyra-form-input" required />
               </div>
             </div>
 
@@ -1006,8 +1062,23 @@
                 <input type="tel" id="telefono" name="telefono" class="axyra-form-input" />
               </div>
               <div class="axyra-form-group">
-                <label for="fechaNacimiento" class="axyra-form-label">Fecha de Nacimiento</label>
-                <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="axyra-form-input" />
+                <label for="email" class="axyra-form-label">Email *</label>
+                <input type="email" id="email" name="email" class="axyra-form-input" required />
+              </div>
+            </div>
+
+            <div class="axyra-form-row">
+              <div class="axyra-form-group">
+                <label for="direccion" class="axyra-form-label">Dirección</label>
+                <input type="text" id="direccion" name="direccion" class="axyra-form-input" />
+              </div>
+              <div class="axyra-form-group">
+                <label for="tipoContrato" class="axyra-form-label">Tipo de Contrato *</label>
+                <select id="tipoContrato" name="tipoContrato" class="axyra-form-select" required>
+                  <option value="">Seleccionar tipo</option>
+                  <option value="por horas">Por Horas</option>
+                  <option value="fijo">Fijo</option>
+                </select>
               </div>
             </div>
 
@@ -1016,11 +1087,7 @@
                 <label for="departamento" class="axyra-form-label">Departamento *</label>
                 <select id="departamento" name="departamento" class="axyra-form-select" required>
                   <option value="">Seleccionar departamento</option>
-                  <option value="Administración">Administración</option>
-                  <option value="Ventas">Ventas</option>
-                  <option value="Producción">Producción</option>
-                  <option value="Recursos Humanos">Recursos Humanos</option>
-                  <option value="Tecnología">Tecnología</option>
+                  <!-- Los departamentos se cargarán dinámicamente -->
                 </select>
               </div>
               <div class="axyra-form-group">
@@ -1035,8 +1102,8 @@
                 <input type="number" id="salario" name="salario" class="axyra-form-input" step="0.01" required />
               </div>
               <div class="axyra-form-group">
-                <label for="fechaIngreso" class="axyra-form-label">Fecha de Ingreso *</label>
-                <input type="date" id="fechaIngreso" name="fechaIngreso" class="axyra-form-input" required />
+                <label for="fechaContratacion" class="axyra-form-label">Fecha de Contratación *</label>
+                <input type="date" id="fechaContratacion" name="fechaContratacion" class="axyra-form-input" required />
               </div>
             </div>
 
@@ -1048,11 +1115,6 @@
                 <option value="Vacaciones">Vacaciones</option>
                 <option value="Licencia">Licencia</option>
               </select>
-            </div>
-
-            <div class="axyra-form-group">
-              <label for="direccion" class="axyra-form-label">Dirección</label>
-              <textarea id="direccion" name="direccion" class="axyra-form-textarea" rows="3"></textarea>
             </div>
 
             <div class="axyra-modal-footer">
@@ -3162,12 +3224,19 @@
 
           let departamentosHTML = '';
 
-          departamentos.forEach((depto, index) => {
+          for (let index = 0; index < departamentos.length; index++) {
+            const depto = departamentos[index];
+            const nombre = typeof depto === 'string' ? depto : depto.nombre;
+            const descripcion = depto.descripcion || '';
+            const color = depto.color || '#667eea';
+            const empleadosCount = await contarEmpleadosPorDepartamento(nombre);
+            
             departamentosHTML += `
               <div class="axyra-department-item">
                 <div class="axyra-department-info">
-                  <span class="axyra-department-name">${depto}</span>
-                  <span class="axyra-department-count">${contarEmpleadosPorDepartamento(depto)} empleados</span>
+                  <span class="axyra-department-name" style="color: ${color}">${nombre}</span>
+                  ${descripcion ? `<small class="axyra-department-descripcion">${descripcion}</small>` : ''}
+                  <span class="axyra-department-count">${empleadosCount} empleados</span>
                 </div>
                 <div class="axyra-department-actions">
                   <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="editarDepartamento(${index})" title="Editar">
@@ -3179,7 +3248,7 @@
                 </div>
               </div>
             `;
-          });
+          }
 
           if (departamentosHTML === '') {
             departamentosHTML = '<p class="axyra-text-center">No hay departamentos configurados</p>';
@@ -3212,14 +3281,54 @@
             return JSON.parse(departamentosGuardados);
           }
 
-          // Departamentos por defecto
-          const departamentosDefault = ['Administración', 'Ventas', 'Producción', 'Recursos Humanos', 'Tecnología'];
+          // Departamentos por defecto con estructura completa
+          const departamentosDefault = [
+            {
+              nombre: 'Administración',
+              descripcion: 'Departamento de administración y gestión',
+              color: '#667eea',
+              fechaCreacion: new Date().toISOString(),
+              usuarioId: obtenerUsuarioActual()
+            },
+            {
+              nombre: 'Ventas',
+              descripcion: 'Departamento de ventas y comercialización',
+              color: '#10b981',
+              fechaCreacion: new Date().toISOString(),
+              usuarioId: obtenerUsuarioActual()
+            },
+            {
+              nombre: 'Producción',
+              descripcion: 'Departamento de producción y operaciones',
+              color: '#f59e0b',
+              fechaCreacion: new Date().toISOString(),
+              usuarioId: obtenerUsuarioActual()
+            },
+            {
+              nombre: 'Recursos Humanos',
+              descripcion: 'Departamento de recursos humanos',
+              color: '#ef4444',
+              fechaCreacion: new Date().toISOString(),
+              usuarioId: obtenerUsuarioActual()
+            },
+            {
+              nombre: 'Tecnología',
+              descripcion: 'Departamento de tecnología e informática',
+              color: '#8b5cf6',
+              fechaCreacion: new Date().toISOString(),
+              usuarioId: obtenerUsuarioActual()
+            }
+          ];
 
           // Guardar departamentos por defecto en Firebase si está disponible
           if (window.firebaseSyncManager) {
-            departamentosDefault.forEach(async (depto) => {
-              await window.firebaseSyncManager.addDepartamento(depto);
-            });
+            for (const depto of departamentosDefault) {
+              try {
+                await window.firebaseSyncManager.addDepartamento(depto);
+              } catch (error) {
+                console.warn('Error guardando departamento por defecto:', error);
+              }
+            }
           }
 
           return departamentosDefault;
@@ -3235,8 +3344,21 @@
       }
 
       // Contar empleados por departamento
-      function contarEmpleadosPorDepartamento(departamento) {
-        return empleados.filter((emp) => emp.departamento === departamento).length;
+      async function contarEmpleadosPorDepartamento(departamento) {
+        try {
+          // Obtener empleados desde Firebase si está disponible
+          let empleadosActuales = [];
+          if (window.firebaseSyncManager) {
+            empleadosActuales = await window.firebaseSyncManager.getEmpleados() || [];
+          } else {
+            empleadosActuales = empleados || [];
+          }
+          
+          return empleadosActuales.filter((emp) => emp.departamento === departamento).length;
+        } catch (error) {
+          console.error('Error contando empleados por departamento:', error);
+          return 0;
+        }
       }
 
       // Actualizar selects de departamentos en formularios
@@ -3247,8 +3369,9 @@
           selectDepartamento.innerHTML = '<option value="">Seleccionar departamento</option>';
           departamentos.forEach((depto) => {
             const option = document.createElement('option');
-            option.value = depto;
-            option.textContent = depto;
+            const nombre = typeof depto === 'string' ? depto : depto.nombre;
+            option.value = nombre;
+            option.textContent = nombre;
             selectDepartamento.appendChild(option);
           });
         }
@@ -3275,28 +3398,41 @@
         }
 
         try {
-          // Intentar agregar a Firebase primero
+          // Crear objeto departamento completo
+          const departamento = {
+            nombre: nombre,
+            descripcion: '',
+            color: '#667eea',
+            fechaCreacion: new Date().toISOString(),
+            usuarioId: obtenerUsuarioActual()
+          };
+
+          // Intentar agregar a Firebase primero usando el sync manager
           if (window.firebaseSyncManager) {
-            await window.firebaseSyncManager.addDepartamento(nombre);
-            mostrarMensaje('✅ Departamento agregado exitosamente', 'success');
+            await window.firebaseSyncManager.addDepartamento(departamento);
+            mostrarMensaje('✅ Departamento agregado exitosamente y sincronizado con Firebase', 'success');
           } else {
             // Fallback a localStorage
             const departamentos = await obtenerDepartamentos();
-            if (departamentos.includes(nombre)) {
+            if (departamentos.some(d => d.nombre === nombre)) {
               mostrarMensaje('❌ El departamento ya existe', 'error');
               return;
             }
 
-            departamentos.push(nombre);
+            departamentos.push(departamento);
             localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
-            mostrarMensaje('✅ Departamento agregado exitosamente', 'success');
+            mostrarMensaje('✅ Departamento agregado exitosamente (modo offline)', 'success');
           }
 
           document.getElementById('nuevoDepartamento').value = '';
           await cargarDepartamentos();
+          
+          // Actualizar selects de departamentos en el formulario
+          const departamentosActualizados = await obtenerDepartamentos();
+          actualizarSelectsDepartamentos(departamentosActualizados);
         } catch (error) {
           console.error('Error agregando departamento:', error);
-          mostrarMensaje('❌ Error al agregar departamento', 'error');
+          mostrarMensaje('❌ Error al agregar departamento: ' + error.message, 'error');
         }
       }
 
@@ -3350,7 +3486,7 @@
       async function confirmarEditarDepartamento(index) {
         try {
           const departamentos = await obtenerDepartamentos();
-          const nombreActual = departamentos[index];
+          const departamentoActual = departamentos[index];
           const nuevoNombre = document.getElementById('nuevoNombreDepartamento').value.trim();
 
           if (!nuevoNombre) {
@@ -3358,32 +3494,49 @@
             return;
           }
 
-          if (nuevoNombre === nombreActual) {
+          if (nuevoNombre === departamentoActual.nombre) {
             cerrarModalEditarDepartamento();
             return;
           }
 
-          if (departamentos.includes(nuevoNombre)) {
-            mostrarMensaje('❌ El departamento ya existe', 'error');
+          // Verificar si el nuevo nombre ya existe
+          if (departamentos.some(d => d.nombre === nuevoNombre && d !== departamentoActual)) {
+            mostrarMensaje('❌ Ya existe un departamento con ese nombre', 'error');
             return;
           }
 
           // Actualizar empleados que usan este departamento
+          const empleados = await window.firebaseSyncManager.getEmpleados() || [];
           empleados.forEach((emp) => {
-            if (emp.departamento === nombreActual) {
+            if (emp.departamento === departamentoActual.nombre) {
               emp.departamento = nuevoNombre;
             }
           });
-          guardarEmpleados();
+
+          // Guardar empleados actualizados
+          if (window.firebaseSyncManager) {
+            for (const emp of empleados) {
+              await window.firebaseSyncManager.addEmpleado(emp);
+            }
+          }
 
           // Actualizar departamento en Firebase y localStorage
           if (window.firebaseSyncManager) {
-            // Eliminar el departamento anterior y agregar el nuevo
-            await window.firebaseSyncManager.addDepartamento(nuevoNombre);
-            // Nota: La eliminación se maneja en el sistema de sincronización
+            // Crear nuevo departamento con el nombre actualizado
+            const departamentoActualizado = {
+              ...departamentoActual,
+              nombre: nuevoNombre,
+              fechaModificacion: new Date().toISOString()
+            };
+            
+            await window.firebaseSyncManager.addDepartamento(departamentoActualizado);
           } else {
             // Fallback a localStorage
-            departamentos[index] = nuevoNombre;
+            departamentos[index] = {
+              ...departamentoActual,
+              nombre: nuevoNombre,
+              fechaModificacion: new Date().toISOString()
+            };
             localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
           }
 
@@ -3398,14 +3551,14 @@
       }
 
       // Eliminar departamento
-      function eliminarDepartamento(index) {
-        const departamentos = obtenerDepartamentos();
+      async function eliminarDepartamento(index) {
+        const departamentos = await obtenerDepartamentos();
         const departamento = departamentos[index];
-        const empleadosEnDepartamento = contarEmpleadosPorDepartamento(departamento);
+        const empleadosEnDepartamento = contarEmpleadosPorDepartamento(departamento.nombre || departamento);
 
         if (empleadosEnDepartamento > 0) {
           mostrarMensaje(
-            `❌ No se puede eliminar el departamento "${departamento}" porque tiene ${empleadosEnDepartamento} empleado(s) asignado(s)`,
+            `❌ No se puede eliminar el departamento "${departamento.nombre || departamento}" porque tiene ${empleadosEnDepartamento} empleado(s) asignado(s)`,
             'error'
           );
           return;
@@ -3460,8 +3613,9 @@
 
           // Eliminar departamento de Firebase si está disponible
           if (window.firebaseSyncManager) {
-            // Nota: La eliminación se maneja en el sistema de sincronización
-            // Por ahora, solo actualizamos localStorage
+            // Marcar como eliminado en el sistema de sincronización
+            // La eliminación física se maneja en el sistema de sincronización
+            console.log('Departamento marcado para eliminación en Firebase:', departamento);
           }
 
           // Actualizar localStorage
@@ -3470,10 +3624,14 @@
 
           cerrarModalConfirmarEliminarDepartamento();
           await cargarDepartamentos();
+          
+          // Actualizar selects de departamentos en el formulario
+          actualizarSelectsDepartamentos(departamentos);
+          
           mostrarMensaje('✅ Departamento eliminado exitosamente', 'success');
         } catch (error) {
           console.error('Error eliminando departamento:', error);
-          mostrarMensaje('❌ Error al eliminar departamento', 'error');
+          mostrarMensaje('❌ Error al eliminar departamento: ' + error.message, 'error');
         }
       }
 

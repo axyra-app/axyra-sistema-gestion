@@ -124,6 +124,592 @@
         opacity: 0.9;
         font-weight: 500;
       }
+
+      /* Estilos para búsqueda y filtros */
+      .inventario-search-filters {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 24px;
+      }
+
+      .inventario-search-row {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .inventario-search-box {
+        flex: 1;
+        min-width: 300px;
+      }
+
+      .inventario-search-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .inventario-search-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .inventario-filters {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .inventario-filter-select {
+        padding: 10px 14px;
+        border: 2px solid #e5e7eb;
+        border-radius: 6px;
+        font-size: 14px;
+        background: white;
+        min-width: 150px;
+        transition: all 0.3s ease;
+      }
+
+      .inventario-filter-select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      /* Estilos para botones de acción */
+      .inventario-actions {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+      }
+
+      .inventario-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 44px;
+        justify-content: center;
+        min-width: 140px;
+      }
+
+      .inventario-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .inventario-btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+      }
+
+      .inventario-btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      }
+
+      .inventario-btn-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+      }
+
+      .inventario-btn-success:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      }
+
+      .inventario-btn-warning {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+      }
+
+      .inventario-btn-warning:hover {
+        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      }
+
+      .inventario-btn-info {
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        color: white;
+      }
+
+      .inventario-btn-info:hover {
+        background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+      }
+
+      .inventario-btn-secondary {
+        background: #6b7280;
+        color: white;
+      }
+
+      .inventario-btn-secondary:hover {
+        background: #4b5563;
+      }
+
+      .inventario-btn-ghost {
+        background: transparent;
+        color: #6b7280;
+        border: 2px solid #e5e7eb;
+      }
+
+      .inventario-btn-ghost:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+        color: #374151;
+      }
+
+      /* Estilos para contenedores de tabla */
+      .inventario-table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 24px;
+        overflow: hidden;
+      }
+
+      .inventario-table-container h3 {
+        margin: 0;
+        padding: 20px 20px 16px 20px;
+        border-bottom: 1px solid #e5e7eb;
+        color: #1f2937;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      /* Estilos para tablas */
+      .inventario-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+
+      .inventario-table th {
+        background: #f8fafc;
+        padding: 16px 20px;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .inventario-table td {
+        padding: 16px 20px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #4b5563;
+      }
+
+      .inventario-table tbody tr:hover {
+        background: #f8fafc;
+      }
+
+      /* Estilos para modales */
+      .inventario-modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+      }
+
+      .inventario-modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 0;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        animation: modalSlideIn 0.3s ease-out;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .inventario-modal-header {
+        padding: 24px 24px 16px 24px;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .inventario-modal-title {
+        margin: 0;
+        color: #1f2937;
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .inventario-modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #9ca3af;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .inventario-modal-close:hover {
+        background: #f3f4f6;
+        color: #6b7280;
+      }
+
+      /* Estilos para formularios */
+      .inventario-form {
+        padding: 24px;
+      }
+
+      .inventario-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .inventario-form-group {
+        margin-bottom: 20px;
+      }
+
+      .inventario-form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #374151;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .inventario-form-input,
+      .inventario-form-select,
+      .inventario-form-textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        background: white;
+      }
+
+      .inventario-form-input:focus,
+      .inventario-form-select:focus,
+      .inventario-form-textarea:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      .inventario-form-textarea {
+        resize: vertical;
+        min-height: 100px;
+      }
+
+      .inventario-form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 20px;
+      }
+
+      /* Estilos para botones de formulario */
+      .axyra-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-height: 44px;
+        justify-content: center;
+        min-width: 120px;
+      }
+
+      .axyra-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .axyra-btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+      }
+
+      .axyra-btn-primary:hover {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+      }
+
+      .axyra-btn-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+      }
+
+      .axyra-btn-success:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      }
+
+      .axyra-btn-warning {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+      }
+
+      .axyra-btn-warning:hover {
+        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+      }
+
+      .axyra-btn-info {
+        background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        color: white;
+      }
+
+      .axyra-btn-info:hover {
+        background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+      }
+
+      .axyra-btn-secondary {
+        background: #6b7280;
+        color: white;
+      }
+
+      .axyra-btn-secondary:hover {
+        background: #4b5563;
+      }
+
+      .axyra-btn-ghost {
+        background: transparent;
+        color: #6b7280;
+        border: 2px solid #e5e7eb;
+      }
+
+      .axyra-btn-ghost:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+        color: #374151;
+      }
+
+      .axyra-btn-error {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+      }
+
+      .axyra-btn-error:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      }
+
+      /* Estilos para modales adicionales */
+      .inventario-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .inventario-modal-footer {
+        padding: 20px 24px 24px 24px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+
+      /* Estilos para alertas y análisis */
+      .inventario-alertas-list {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .inventario-alerta-item {
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        border-left: 4px solid;
+      }
+
+      .inventario-alerta-crítico {
+        background: #fef2f2;
+        border-left-color: #ef4444;
+        color: #991b1b;
+      }
+
+      .inventario-alerta-advertencia {
+        background: #fffbeb;
+        border-left-color: #f59e0b;
+        color: #92400e;
+      }
+
+      .inventario-alerta-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .inventario-alerta-tipo {
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        padding: 4px 8px;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .inventario-alerta-producto {
+        font-weight: 600;
+      }
+
+      .inventario-alerta-mensaje {
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .inventario-alerta-accion {
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+
+      /* Estilos para análisis */
+      .inventario-analisis-section {
+        margin-bottom: 24px;
+      }
+
+      .inventario-analisis-section h4 {
+        color: #1f2937;
+        margin-bottom: 16px;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .inventario-analisis-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 14px;
+      }
+
+      .inventario-analisis-row:last-child {
+        border-bottom: none;
+      }
+
+      /* Estilos para proveedores */
+      .inventario-proveedores-list {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+
+      .inventario-proveedor-item {
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        background: #f9fafb;
+      }
+
+      .inventario-proveedor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .inventario-proveedor-header h4 {
+        margin: 0;
+        color: #1f2937;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      .inventario-proveedor-contacto {
+        color: #6b7280;
+        font-size: 14px;
+      }
+
+      .inventario-proveedor-productos {
+        color: #4b5563;
+        font-size: 14px;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .inventario-form-row {
+          grid-template-columns: 1fr;
+        }
+        
+        .inventario-actions {
+          flex-direction: column;
+        }
+        
+        .inventario-btn {
+          width: 100%;
+        }
+        
+        .inventario-search-row {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        
+        .inventario-search-box {
+          min-width: auto;
+        }
+        
+        .inventario-filters {
+          justify-content: stretch;
+        }
+        
+        .inventario-filter-select {
+          flex: 1;
+          min-width: auto;
+        }
+      }
     </style>
 
     <!-- Firebase -->
