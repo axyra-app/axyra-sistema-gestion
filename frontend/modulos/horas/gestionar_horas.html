@@ -1807,23 +1807,55 @@
                       </div>
                       <div class="axyra-calculo-item">
                         <span class="axyra-calculo-label">Salario Ordinario (0% recargo):</span>
-                        <span class="axyra-calculo-value">$${datos.salarios.ordinario.toFixed(2)}</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.ordinarias || 0).toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Nocturno (35% recargo):</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.nocturnas || 0).toFixed(2)}</span>
                       </div>
                       <div class="axyra-calculo-item">
                         <span class="axyra-calculo-label">Salario Extra Diurno (25% recargo):</span>
-                        <span class="axyra-calculo-value">$${datos.salarios.extras.toFixed(2)}</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.extraDiurnas || 0).toFixed(2)}</span>
                       </div>
                       <div class="axyra-calculo-item">
-                        <span class="axyra-calculo-label">Salario Festivo (75% recargo):</span>
-                        <span class="axyra-calculo-value">$${datos.salarios.extrasFestivas.toFixed(2)}</span>
+                        <span class="axyra-calculo-label">Salario Extra Nocturno (75% recargo):</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.extraNocturnas || 0).toFixed(2)}</span>
                       </div>
                       <div class="axyra-calculo-item">
-                        <span class="axyra-calculo-label">Salario Extra Festivo Nocturno (150% recargo):</span>
-                        <span class="axyra-calculo-value">$${datos.salarios.extrasFestivasNocturnas.toFixed(2)}</span>
+                        <span class="axyra-calculo-label">Salario Dominical (75% recargo):</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.dominicales || 0).toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Festivo (80% recargo):</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.festivas || 0).toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Dominical Nocturno (110% recargo):</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.dominicalesNocturnas || 0).toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Festivo Nocturno (110% recargo):</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.festivasNocturnas || 0).toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Extra Dominical (105% recargo):</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.extraDominicales || 0).toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Extra Dominical Nocturno (185% recargo):</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.extraDominicalesNocturnas || 0).toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Extra Festivo (105% recargo):</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.extraFestivas || 0).toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Salario Extra Festivo Nocturno (185% recargo):</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.extraFestivasNocturnas || 0).toFixed(2)}</span>
                       </div>
                       <div class="axyra-calculo-item axyra-calculo-total">
                         <span class="axyra-calculo-label">Total a Pagar:</span>
-                        <span class="axyra-calculo-value">$${datos.salarios.total.toFixed(2)}</span>
+                        <span class="axyra-calculo-value">$${(datos.salarios.total || 0).toFixed(2)}</span>
                       </div>
                     </div>
                   </div>
@@ -1858,20 +1890,37 @@
 
       // Función para cerrar modal de cálculo
       function cerrarModalCalculoHoras() {
-        const modal = document.getElementById('modalCalculoHoras');
-        if (modal) {
-          modal.remove();
+        try {
+          const modal = document.getElementById('modalCalculoHoras');
+          if (modal) {
+            modal.remove();
+          }
+        } catch (error) {
+          console.error('❌ Error cerrando modal:', error);
         }
       }
 
       // Función para confirmar registro de horas
       function confirmarRegistroHoras() {
-        cerrarModalCalculoHoras();
-
-        // Simular envío del formulario
-        document.getElementById('registroHorasForm').dispatchEvent(new Event('submit'));
-
-        mostrarMensaje('✅ Horas registradas correctamente', 'success');
+        try {
+          cerrarModalCalculoHoras();
+          
+          // Obtener los datos del modal y registrar las horas
+          const empleadoHoras = document.getElementById('empleadoHoras');
+          const fechaHoras = document.getElementById('fechaHoras');
+          const observaciones = document.getElementById('observaciones');
+          
+          if (empleadoHoras && fechaHoras) {
+            // Llamar a la función de registro
+            registrarHoras();
+            mostrarMensaje('✅ Horas registradas correctamente', 'success');
+          } else {
+            mostrarMensaje('❌ Error: No se pudo obtener la información del formulario', 'error');
+          }
+        } catch (error) {
+          console.error('❌ Error confirmando registro:', error);
+          mostrarMensaje('Error confirmando registro: ' + error.message, 'error');
+        }
       }
 
       // Previsualizar comprobante
@@ -3143,7 +3192,7 @@
           
           const totalHoras = Object.values(horasData).reduce((sum, horas) => sum + (horas || 0), 0);
 
-          const salarioBase = registro.salarios?.base || 0;
+          const salarioBase = empleado.salario || 0;
           const salarioHora = salarioBase / 220; // 220 horas mensuales como solicitaste
 
           // Calcular pago usando la calculadora colombiana
@@ -3202,11 +3251,99 @@
                   <tbody>
                     <tr>
                       <td style="padding: 12px; border: 1px solid #ddd;">Horas Ordinarias</td>
-                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasOrdinarias}h</td>
-                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${salarioHora.toFixed(
-                        2
-                      )}</td>
-                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${salarioOrdinario.toFixed(
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.ordinarias}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${salarioHora.toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.ordinarias * salarioHora).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Nocturnas (35% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.nocturnas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.35).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.nocturnas * salarioHora * 1.35).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Extra Diurnas (25% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.extraDiurnas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.25).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.extraDiurnas * salarioHora * 1.25).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Extra Nocturnas (75% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.extraNocturnas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.75).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.extraNocturnas * salarioHora * 1.75).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Dominicales (75% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.dominicales}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.75).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.dominicales * salarioHora * 1.75).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Festivas (80% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.festivas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 1.80).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.festivas * salarioHora * 1.80).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Dominicales Nocturnas (110% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.dominicalesNocturnas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 2.10).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.dominicalesNocturnas * salarioHora * 2.10).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Festivas Nocturnas (110% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.festivasNocturnas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 2.10).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.festivasNocturnas * salarioHora * 2.10).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Extra Dominicales (105% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.extraDominicales}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 2.05).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.extraDominicales * salarioHora * 2.05).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Extra Dominicales Nocturnas (185% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.extraDominicalesNocturnas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 2.85).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.extraDominicalesNocturnas * salarioHora * 2.85).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Extra Festivas (105% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.extraFestivas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 2.05).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.extraFestivas * salarioHora * 2.05).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 12px; border: 1px solid #ddd;">Horas Extra Festivas Nocturnas (185% recargo)</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">${horasData.extraFestivasNocturnas}h</td>
+                      <td style="padding: 12px; text-align: center; border: 1px solid #ddd;">$${(salarioHora * 2.85).toFixed(2)}</td>
+                      <td style="padding: 12px; text-align: right; border: 1px solid #ddd;">$${(horasData.extraFestivasNocturnas * salarioHora * 2.85).toFixed(2)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <div style="text-align: right; border-top: 3px solid #4F81BD; padding-top: 20px;">
+                <h3 style="color: #4F81BD; margin: 0;">TOTAL A PAGAR: $${totalPago.toFixed(2)}</h3>
+                <p style="color: #666; margin: 5px 0;">Total Horas: ${totalHoras.toFixed(2)}h</p>
+              </div>
+            </div>
+          `;
+
+          // Crear ventana de impresión
+          const ventanaImpresion = window.open('', '_blank', 'width=800,height=600');
+          ventanaImpresion.document.write(contenido);
+          ventanaImpresion.document.close();
+          ventanaImpresion.focus();
+          ventanaImpresion.print();
+
+        } catch (error) {
+          console.error('❌ Error generando comprobante:', error);
+          mostrarMensaje('Error generando comprobante: ' + error.message, 'error');
+        }
+      }
                         2
                       )}</td>
                     </tr>
