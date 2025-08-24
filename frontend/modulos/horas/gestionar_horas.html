@@ -1803,6 +1803,30 @@
             return;
           }
 
+          // Verificar si el empleado tiene horas registradas
+          let horas = [];
+          if (window.firebaseSyncManager) {
+            try {
+              horas = await window.firebaseSyncManager.getHoras() || [];
+            } catch (error) {
+              console.warn('⚠️ Error obteniendo horas desde Firebase Sync Manager:', error);
+              horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+            }
+          } else {
+            horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          }
+
+          // Buscar horas del empleado con compatibilidad de tipos de ID
+          const horasEmpleado = horas.filter((h) => {
+            if (!h || !h.empleadoId) return false;
+            return h.empleadoId.toString() === empleadoId.toString() || parseInt(h.empleadoId) === parseInt(empleadoId);
+          });
+
+          if (horasEmpleado.length === 0) {
+            mostrarMensaje('ℹ️ Este empleado no tiene horas registradas. Debes registrar horas trabajadas primero para generar un comprobante.', 'info');
+            return;
+          }
+
           // Mostrar indicador de carga
           mostrarMensaje('⏳ Generando comprobante PDF...', 'info');
 
@@ -3945,21 +3969,61 @@
       }
 
       // Función para generar comprobante de empleado
-      function generarComprobanteEmpleado(empleadoId) {
+      async function generarComprobanteEmpleado(empleadoId) {
         try {
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          console.log('🔍 Generando comprobante para empleado ID:', empleadoId);
+          
+          let empleados = [];
+          let horas = [];
 
-          const empleado = empleados.find((emp) => emp.id === empleadoId);
+          // Intentar obtener datos desde Firebase Sync Manager primero
+          if (window.firebaseSyncManager) {
+            try {
+              empleados = await window.firebaseSyncManager.getEmpleados() || [];
+              horas = await window.firebaseSyncManager.getHoras() || [];
+              console.log('✅ Datos obtenidos desde Firebase Sync Manager');
+            } catch (error) {
+              console.warn('⚠️ Error con Firebase Sync Manager, usando localStorage:', error);
+            }
+          }
+
+          // Fallback a localStorage si no hay datos del sync manager
+          if (empleados.length === 0 || horas.length === 0) {
+            empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+            horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+            console.log('💾 Usando datos de localStorage como fallback');
+          }
+
+          console.log('📋 Empleados disponibles:', empleados.length);
+          console.log('⏰ Horas disponibles:', horas.length);
+
+          // Buscar empleado con compatibilidad de tipos de ID
+          const empleado = empleados.find((emp) => {
+            if (!emp || !emp.id) return false;
+            // Comparar como string y número para mayor compatibilidad
+            return emp.id.toString() === empleadoId.toString() || parseInt(emp.id) === parseInt(empleadoId);
+          });
+
           if (!empleado) {
-            mostrarMensaje('❌ Empleado no encontrado', 'error');
+            console.error('❌ Empleado no encontrado. Empleados disponibles:', empleados);
+            mostrarMensaje('❌ Empleado no encontrado en el sistema', 'error');
             return;
           }
 
-          const horasEmpleado = horas.filter((h) => h.empleadoId === empleadoId);
+          console.log('✅ Empleado encontrado:', empleado.nombre);
+
+          // Buscar horas del empleado con compatibilidad de tipos de ID
+          const horasEmpleado = horas.filter((h) => {
+            if (!h || !h.empleadoId) return false;
+            // Comparar como string y número para mayor compatibilidad
+            return h.empleadoId.toString() === empleadoId.toString() || parseInt(h.empleadoId) === parseInt(empleadoId);
+          });
+
+          console.log('📊 Horas encontradas para el empleado:', horasEmpleado.length);
 
           if (horasEmpleado.length === 0) {
-            mostrarMensaje('❌ Este empleado no tiene horas registradas', 'warning');
+            console.log('ℹ️ No hay horas registradas para este empleado');
+            mostrarMensaje('ℹ️ Este empleado no tiene horas registradas. Debes registrar horas trabajadas primero para generar un comprobante.', 'info');
             return;
           }
 
