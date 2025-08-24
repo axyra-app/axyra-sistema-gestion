@@ -19,37 +19,37 @@
 
     <!-- AXYRA Firebase Scripts -->
     <script src="../../static/firebase-config.js"></script>
-    
+
     <!-- Sistema de Roles y Permisos AXYRA -->
     <script src="../../static/roles-config.js"></script>
-    
+
     <!-- Sistema de Notificaciones Push AXYRA -->
     <script src="../../static/notifications-system.js"></script>
 
     <!-- Sistema Unificado de Autenticación AXYRA -->
     <script src="../../static/unified-auth-system.js"></script>
-    
+
     <!-- Sistema Unificado de Reportes Avanzados AXYRA -->
     <script src="../../static/advanced-reports-unified.js"></script>
-    
+
     <!-- Sistema Unificado de Backup AXYRA -->
     <script src="../../static/backup-system-unified.js"></script>
-    
+
     <!-- Sistema Unificado de Auditoría AXYRA -->
     <script src="../../static/audit-system-unified.js"></script>
-    
+
     <script src="../../static/debug-auth.js"></script>
     <script src="../../static/gmail-notifications.js"></script>
-    
+
     <!-- Header Compartido AXYRA -->
     <script src="../../static/include-header.js"></script>
-    
+
     <!-- Verificación del Header Compartido -->
     <script src="../../static/header-verification.js"></script>
 
     <style>
       /* Estilos específicos para el módulo de nómina */
-      
+
       /* MODALES CENTRADOS Y MEJORADOS */
       .modal-overlay {
         position: fixed;
@@ -65,11 +65,11 @@
         opacity: 0;
         transition: opacity 0.3s ease;
       }
-      
+
       .modal-overlay.modal-active {
         opacity: 1;
       }
-      
+
       .modal-content {
         background: white;
         border-radius: 12px;
@@ -80,16 +80,16 @@
         transform: scale(0.9);
         transition: transform 0.3s ease;
       }
-      
+
       .modal-overlay.modal-active .modal-content {
         transform: scale(1);
       }
-      
+
       .modal-centered {
         width: 500px;
         max-width: 90vw;
       }
-      
+
       .modal-header {
         display: flex;
         justify-content: space-between;
@@ -100,13 +100,13 @@
         color: white;
         border-radius: 12px 12px 0 0;
       }
-      
+
       .modal-header h3 {
         margin: 0;
         font-size: 1.25rem;
         font-weight: 600;
       }
-      
+
       .modal-close {
         background: none;
         border: none;
@@ -122,15 +122,15 @@
         border-radius: 50%;
         transition: background-color 0.2s ease;
       }
-      
+
       .modal-close:hover {
         background: rgba(255, 255, 255, 0.2);
       }
-      
+
       .modal-body {
         padding: 24px;
       }
-      
+
       .modal-footer {
         display: flex;
         justify-content: flex-end;
@@ -140,11 +140,11 @@
         background: #f8fafc;
         border-radius: 0 0 12px 12px;
       }
-      
+
       .form-group {
         margin-bottom: 20px;
       }
-      
+
       .form-group label {
         display: block;
         margin-bottom: 8px;
@@ -152,7 +152,7 @@
         color: #374151;
         font-size: 0.875rem;
       }
-      
+
       .form-group input {
         width: 100%;
         padding: 12px 16px;
@@ -161,19 +161,19 @@
         font-size: 1rem;
         transition: border-color 0.2s ease, box-shadow 0.2s ease;
       }
-      
+
       .form-group input:focus {
         outline: none;
         border-color: #3b82f6;
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
       }
-      
+
       .modal-row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 16px;
       }
-      
+
       /* KPIs DE EFICIENCIA MEJORADOS */
       .axyra-kpis-efficiency {
         background: white;
@@ -183,7 +183,7 @@
         margin-bottom: 24px;
         border: 1px solid #e2e8f0;
       }
-      
+
       .axyra-kpis-efficiency h3 {
         color: #1e3a8a;
         margin: 0 0 20px 0;
@@ -193,14 +193,14 @@
         border-bottom: 3px solid #3b82f6;
         padding-bottom: 12px;
       }
-      
+
       .axyra-kpis-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
         margin-top: 20px;
       }
-      
+
       .axyra-kpi-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
@@ -215,19 +215,19 @@
         justify-content: center;
         align-items: center;
       }
-      
+
       .axyra-kpi-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
       }
-      
+
       .axyra-kpi-value {
         font-size: 2rem;
         font-weight: 800;
         margin-bottom: 8px;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       }
-      
+
       .axyra-kpi-label {
         font-size: 0.875rem;
         font-weight: 500;
@@ -235,7 +235,7 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
-      
+
       /* NOTIFICACIÓN MEJORADA */
       .axyra-notification-improved {
         position: fixed;
@@ -251,14 +251,14 @@
         border: 2px solid #ea580c;
         animation: slideInRight 0.5s ease;
       }
-      
+
       .axyra-notification-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 12px;
       }
-      
+
       .axyra-notification-title {
         font-weight: 600;
         font-size: 1rem;
@@ -266,7 +266,7 @@
         align-items: center;
         gap: 8px;
       }
-      
+
       .axyra-notification-close {
         background: none;
         border: none;
@@ -277,17 +277,17 @@
         border-radius: 50%;
         transition: background-color 0.2s ease;
       }
-      
+
       .axyra-notification-close:hover {
         background: rgba(255, 255, 255, 0.2);
       }
-      
+
       .axyra-notification-content {
         font-size: 0.875rem;
         line-height: 1.4;
         margin-bottom: 16px;
       }
-      
+
       .axyra-notification-action {
         background: #ea580c;
         color: white;
@@ -298,11 +298,11 @@
         cursor: pointer;
         transition: background-color 0.2s ease;
       }
-      
+
       .axyra-notification-action:hover {
         background: #dc2626;
       }
-      
+
       @keyframes slideInRight {
         from {
           transform: translateX(100%);
@@ -313,7 +313,7 @@
           opacity: 1;
         }
       }
-      
+
       .detalle-nomina-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -386,7 +386,7 @@
 
       .reporte-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
       }
 
       .reporte-icon {
@@ -443,7 +443,8 @@
         font-size: 0.9rem;
       }
 
-      .form-input, .form-select {
+      .form-input,
+      .form-select {
         padding: 10px 12px;
         border: 1px solid #d1d5db;
         border-radius: 6px;
@@ -451,7 +452,8 @@
         transition: border-color 0.3s ease;
       }
 
-      .form-input:focus, .form-select:focus {
+      .form-input:focus,
+      .form-select:focus {
         outline: none;
         border-color: #667eea;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -473,7 +475,7 @@
 
       .btn:hover {
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       }
 
       .btn-primary {
@@ -554,7 +556,7 @@
         max-height: 90%;
         overflow-y: auto;
         position: relative;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         margin: auto;
         left: 50%;
         top: 50%;
@@ -614,7 +616,7 @@
         background: white;
         border-radius: 8px;
         padding: 15px 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
         border-left: 4px solid;
         z-index: 10000;
         max-width: 400px;
@@ -683,21 +685,23 @@
         .detalle-nomina-grid {
           grid-template-columns: 1fr;
         }
-        
+
         .reportes-grid {
           grid-template-columns: 1fr;
         }
-        
+
         .form-row {
           grid-template-columns: 1fr;
         }
-        
+
         .modal-content {
           max-width: 95%;
           margin: 10px;
         }
-        
-        .modal-header, .modal-body, .modal-footer {
+
+        .modal-header,
+        .modal-body,
+        .modal-footer {
           padding: 15px;
         }
       }
@@ -839,14 +843,14 @@
         background: white;
         border-radius: 16px;
         padding: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         border: 1px solid #e2e8f0;
         transition: all 0.3s ease;
       }
 
       .axyra-analytics-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
       }
 
       .axyra-analytics-card-header {
@@ -912,20 +916,20 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
       }
 
       .axyra-kpi-item:hover {
         transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
       }
 
       .axyra-kpi-value {
         font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 12px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       }
 
       .axyra-kpi-label {
@@ -941,7 +945,7 @@
         .axyra-analytics-grid {
           grid-template-columns: 1fr;
         }
-        
+
         .axyra-analytics-metrics {
           grid-template-columns: 1fr;
         }
@@ -974,7 +978,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
         opacity: 0;
         transition: opacity 0.3s ease;
       }
@@ -1012,7 +1016,7 @@
         font-size: 2.5rem;
         color: rgba(255, 255, 255, 0.9);
         margin-bottom: 15px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .metric-value {
@@ -1020,7 +1024,7 @@
         font-weight: 800;
         color: white;
         margin-bottom: 8px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .metric-label {
@@ -1146,7 +1150,7 @@
         max-width: 400px;
         background: white;
         border-radius: 12px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
         border: 1px solid #e2e8f0;
         animation: slideInRight 0.3s ease-out;
         overflow: hidden;
@@ -1256,7 +1260,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
         opacity: 0;
         transition: opacity 0.3s ease;
       }
@@ -1280,7 +1284,7 @@
         font-size: 2rem;
         font-weight: 700;
         margin-bottom: 8px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .metric-label {
@@ -1320,7 +1324,7 @@
 
       .axyra-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
       }
 
       .axyra-btn-primary {
@@ -1348,7 +1352,7 @@
         background: white;
         border-radius: 16px;
         overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         border: 1px solid #e2e8f0;
       }
 
@@ -1381,7 +1385,7 @@
         background: white;
         border-radius: 16px;
         border: 1px solid #e2e8f0;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
       }
 
       .axyra-search-box {
@@ -1440,19 +1444,19 @@
         .axyra-actions-bar {
           flex-direction: column;
         }
-        
+
         .axyra-btn {
           width: 100%;
         }
-        
+
         .axyra-metrics-dashboard {
           grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         }
-        
+
         .axyra-filters {
           flex-direction: column;
         }
-        
+
         .axyra-search-box {
           min-width: 100%;
         }
@@ -1467,7 +1471,7 @@
         max-width: 400px;
         background: white;
         border-radius: 12px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
         border: 1px solid #e2e8f0;
         animation: slideInRight 0.3s ease-out;
         overflow: hidden;
@@ -1588,7 +1592,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
         pointer-events: none;
       }
 
@@ -1602,7 +1606,7 @@
         font-size: 36px;
         font-weight: 700;
         margin-bottom: 8px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .metric-label {
@@ -1665,7 +1669,7 @@
         background: white;
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
         border: 1px solid #e2e8f0;
       }
 
@@ -1812,7 +1816,7 @@
             <h3>📊 Analytics Avanzado de Nómina</h3>
             <p>Análisis detallado de costos laborales y tendencias</p>
           </div>
-          
+
           <div class="axyra-analytics-grid">
             <!-- Gráfico de Costos por Mes -->
             <div class="axyra-analytics-card">
@@ -2292,7 +2296,7 @@
       document.addEventListener('DOMContentLoaded', function () {
         inicializarNomina();
         configurarEventos();
-        
+
         // Inicializar gráficos de analytics después de un breve delay
         setTimeout(() => {
           inicializarGraficosAnalytics();
@@ -2325,7 +2329,7 @@
       async function cargarDatosFirebase() {
         try {
           console.log('🔄 Cargando datos desde Firebase...');
-          
+
           // Verificar si Firebase está disponible
           if (typeof firebase === 'undefined' || !firebase.firestore) {
             console.warn('⚠️ Firebase no disponible, usando localStorage como fallback');
@@ -2347,7 +2351,7 @@
             const empleadosSnapshot = await db.collection('empleados')
               .where('userId', '==', userId)
               .get();
-            
+
             empleados = empleadosSnapshot.docs.map(doc => ({
               id: doc.id,
               ...doc.data()
@@ -2363,7 +2367,7 @@
             const horasSnapshot = await db.collection('horas')
               .where('userId', '==', userId)
               .get();
-            
+
             horas = horasSnapshot.docs.map(doc => ({
               id: doc.id,
               ...doc.data()
@@ -2379,7 +2383,7 @@
             const nominasSnapshot = await db.collection('nominas')
               .where('userId', '==', userId)
               .get();
-            
+
             nominas = nominasSnapshot.docs.map(doc => ({
               id: doc.id,
               ...doc.data()
@@ -2406,7 +2410,7 @@
       async function cargarDatosLocalStorage() {
         try {
           console.log('🔄 Cargando datos desde localStorage...');
-          
+
           // Cargar empleados
           const empleadosData = localStorage.getItem('axyra_empleados');
           if (empleadosData) {
@@ -2443,7 +2447,7 @@
           console.log(
             `✅ Datos cargados desde localStorage: ${empleados.length} empleados, ${horas.length} horas, ${nominas.length} nóminas`
           );
-          
+
         } catch (error) {
           console.error('❌ Error cargando datos desde localStorage:', error);
         }
@@ -2453,7 +2457,7 @@
       async function inicializarNomina() {
         try {
           console.log('🚀 Inicializando módulo de nómina...');
-          
+
           // Verificar autenticación
           await verificarAutenticacion();
 
@@ -2540,7 +2544,7 @@
           console.log(
             `✅ Datos cargados: ${empleados.length} empleados, ${horas.length} horas, ${nominas.length} nóminas`
           );
-          
+
           // Verificar si hay datos y mostrar notificación si no
           if (empleados.length === 0) {
             console.warn('⚠️ No hay empleados registrados para el usuario actual');
@@ -2774,7 +2778,7 @@
       function actualizarPaginacion(totalNominas) {
         const totalPaginas = Math.ceil(totalNominas / nominasPorPagina);
         const paginaInfo = document.getElementById('paginaInfo');
-        
+
         if (paginaInfo) {
           paginaInfo.textContent = `Página ${paginaActual} de ${totalPaginas}`;
         }
@@ -2782,11 +2786,11 @@
         // Habilitar/deshabilitar botones de paginación
         const btnAnterior = document.querySelector('button[onclick="cambiarPagina(-1)"]');
         const btnSiguiente = document.querySelector('button[onclick="cambiarPagina(1)"]');
-        
+
         if (btnAnterior) {
           btnAnterior.disabled = paginaActual <= 1;
         }
-        
+
         if (btnSiguiente) {
           btnSiguiente.disabled = paginaActual >= totalPaginas;
         }
@@ -2796,7 +2800,7 @@
       window.cambiarPagina = function(direccion) {
         const totalPaginas = Math.ceil(nominas.length / nominasPorPagina);
         const nuevaPagina = paginaActual + direccion;
-        
+
         if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
           paginaActual = nuevaPagina;
         renderizarTablaNominas();
@@ -2835,7 +2839,7 @@
           // Promedio salario
           const promedioSalarioElement = document.getElementById('promedioSalario');
           if (promedioSalarioElement) {
-            const promedio = nominas.length > 0 ? 
+            const promedio = nominas.length > 0 ?
               nominas.reduce((sum, n) => sum + (n.salario_neto || 0), 0) / nominas.length : 0;
             promedioSalarioElement.textContent = formatearMoneda(promedio);
           }
@@ -3261,25 +3265,25 @@
           document.getElementById('detalleNominaEmpleado').textContent = empleado ? empleado.nombre : 'No encontrado';
           document.getElementById('detalleNominaPeriodo').textContent = `${obtenerNombreMes(nomina.mes)} ${nomina.anio}`;
           document.getElementById('detalleNominaTipo').textContent = nomina.tipo_nomina || 'Mensual';
-          
+
           // Llenar detalles de horas
           document.getElementById('detalleHorasNormales').textContent = `${nomina.horas_trabajadas || 0} hrs`;
           document.getElementById('detalleHorasExtras').textContent = `${nomina.horas_extras || 0} hrs`;
           document.getElementById('detalleHorasNocturnas').textContent = `${nomina.horas_nocturnas || 0} hrs`;
           document.getElementById('detalleHorasDominicales').textContent = `${nomina.horas_dominicales || 0} hrs`;
-          
+
           // Llenar valores monetarios
           document.getElementById('detalleSalarioBase').textContent = formatearMoneda(nomina.salario_base);
           document.getElementById('detalleSubtotalSalario').textContent = formatearMoneda(nomina.subtotal_salario || nomina.salario_base);
           document.getElementById('detalleBonificaciones').textContent = formatearMoneda(nomina.bonificaciones);
           document.getElementById('detalleDeducciones').textContent = formatearMoneda(nomina.deducciones);
           document.getElementById('detalleSalarioNeto').textContent = formatearMoneda(nomina.salario_neto);
-          
+
           // Llenar prestaciones sociales
           document.getElementById('detalleCesantias').textContent = formatearMoneda(nomina.cesantias);
           document.getElementById('detallePrimaServicios').textContent = formatearMoneda(nomina.prima_servicios);
           document.getElementById('detalleInteresesCesantias').textContent = formatearMoneda(nomina.intereses_cesantias);
-          
+
           // Llenar costos del empleador
           document.getElementById('detalleSaludEmpleador').textContent = formatearMoneda(nomina.salud_empleador);
           document.getElementById('detallePensionEmpleador').textContent = formatearMoneda(nomina.pension_empleador);
@@ -3334,10 +3338,10 @@
       window.mostrarModalConfirmacion = function(titulo, mensaje, accion) {
         document.getElementById('modalConfirmacionTitulo').textContent = titulo;
         document.getElementById('modalConfirmacionMensaje').textContent = mensaje;
-        
+
         const btnConfirmar = document.getElementById('btnConfirmarAccion');
         btnConfirmar.onclick = accion;
-        
+
         mostrarModal('modalConfirmacion');
       }
 
@@ -3446,7 +3450,7 @@
           nominas.forEach((n, index) => {
               const empleado = empleados.find((e) => e.id === n.empleado_id);
             console.log(`📝 Procesando nómina ${index + 1}:`, n.id, empleado?.nombre);
-            
+
               data.push([
                 n.id || 'N/A',
                 empleado ? empleado.nombre : 'Empleado no encontrado',
@@ -3469,7 +3473,7 @@
             // Agregar totales
             data.push([]);
           const totales = [
-            'TOTALES', '', '', '', 
+            'TOTALES', '', '', '',
               nominas.reduce((sum, n) => sum + (n.horas_trabajadas || 0), 0).toLocaleString('es-CO'),
               nominas.reduce((sum, n) => sum + (n.horas_extras || 0), 0).toLocaleString('es-CO'),
               nominas.reduce((sum, n) => sum + (n.horas_nocturnas || 0), 0).toLocaleString('es-CO'),
@@ -3502,15 +3506,15 @@
             const now = new Date();
             const colombiaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Bogota' }));
             const fileName = `REPORTE_NOMINAS_Villa_Venecia_${colombiaTime.toISOString().split('T')[0]}_${colombiaTime.getHours().toString().padStart(2, '0')}-${colombiaTime.getMinutes().toString().padStart(2, '0')}.xlsx`;
-            
+
           console.log('💾 Descargando archivo:', fileName);
 
           // Descargar archivo
             XLSX.writeFile(wb, fileName);
-          
+
           console.log('✅ Exportación completada exitosamente');
             mostrarNotificacion('Nóminas exportadas correctamente con formato profesional', 'success');
-          
+
         } catch (error) {
           console.error('❌ Error exportando nóminas:', error);
           mostrarNotificacion('Error exportando nóminas: ' + error.message, 'error');
@@ -3564,7 +3568,7 @@
                   'es-ES'
                 )}</p>
               </div>
-              
+
               <div style="margin-bottom: 30px;">
                 <h3 style="color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px;">INFORMACIÓN DEL EMPLEADO</h3>
                 <table style="width: 100%; border-collapse: collapse;">
@@ -3586,7 +3590,7 @@
                   </tr>
                 </table>
               </div>
-              
+
               <div style="margin-bottom: 30px;">
                 <h3 style="color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px;">HORAS TRABAJADAS</h3>
                 <table style="width: 100%; border-collapse: collapse;">
@@ -3633,7 +3637,7 @@
                   </tr>
                 </table>
               </div>
-              
+
               <div style="margin-bottom: 30px;">
                 <h3 style="color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px;">LIQUIDACIÓN DE NÓMINA</h3>
                 <table style="width: 100%; border-collapse: collapse;">
@@ -3685,7 +3689,7 @@
                   </tr>
                 </table>
               </div>
-              
+
               <div style="margin-bottom: 30px;">
                 <h3 style="color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px;">PRESTACIONES SOCIALES</h3>
                 <table style="width: 100%; border-collapse: collapse;">
@@ -3709,7 +3713,7 @@
                   </tr>
                 </table>
               </div>
-              
+
               <div style="text-align: center; margin-top: 50px; padding-top: 30px; border-top: 2px solid #333;">
                 <p style="margin: 5px 0; font-size: 14px;">Este documento es generado automáticamente por el sistema AXYRA</p>
                 <p style="margin: 5px 0; font-size: 12px; color: #666;">ID de Nómina: ${nomina.id} | Fecha: ${new Date(
@@ -3811,7 +3815,7 @@
           // Limpiar datos de sesión
             localStorage.removeItem('axyra_isolated_user');
             localStorage.removeItem('axyra_firebase_user');
-          
+
           // Redirigir al login
             window.location.href = '../../login.html';
         } catch (error) {
@@ -3873,7 +3877,7 @@
           <p style="text-align: center; color: #666; margin-bottom: 30px;">Período: ${new Date().toLocaleDateString(
             'es-ES'
           )}</p>
-          
+
           <table style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
             <thead>
               <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
@@ -3942,7 +3946,7 @@
             </tr>
           </tbody>
         </table>
-        
+
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-top: 30px;">
           <h3 style="color: #333; margin-top: 0;">Resumen Ejecutivo</h3>
           <p><strong>Total empleados:</strong> ${empleados.length}</p>
@@ -3964,7 +3968,7 @@
           <p style="text-align: center; color: #666; margin-bottom: 30px;">Período: ${new Date().toLocaleDateString(
             'es-ES'
           )}</p>
-          
+
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px;">
             <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50;">
               <h3 style="color: #2e7d32; margin-top: 0;">Cesantías</h3>
@@ -3973,7 +3977,7 @@
               </p>
               <p style="margin: 0; color: #666;">8.33% del salario mensual</p>
             </div>
-            
+
             <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800;">
               <h3 style="color: #e65100; margin-top: 0;">Prima de Servicios</h3>
               <p style="font-size: 24px; font-weight: bold; color: #e65100; margin: 10px 0;">
@@ -3981,7 +3985,7 @@
               </p>
               <p style="margin: 0; color: #666;">8.33% del salario mensual</p>
             </div>
-            
+
             <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 4px solid #2196f3;">
               <h3 style="color: #1565c0; margin-top: 0;">Intereses Cesantías</h3>
               <p style="font-size: 24px; font-weight: bold; color: #1565c0; margin: 10px 0;">
@@ -3990,7 +3994,7 @@
               <p style="margin: 0; color: #666;">12% anual sobre cesantías</p>
             </div>
           </div>
-          
+
           <table style="width: 100%; border-collapse: collapse;">
             <thead>
               <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
@@ -4044,7 +4048,7 @@
           <p style="text-align: center; color: #666; margin-bottom: 30px;">Período: ${new Date().toLocaleDateString(
             'es-ES'
           )}</p>
-          
+
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
             <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50;">
               <h3 style="color: #2e7d32; margin-top: 0;">Horas Normales</h3>
@@ -4052,21 +4056,21 @@
                 ${nominas.reduce((sum, n) => sum + (n.horas_trabajadas || 0), 0).toFixed(2)} hrs
               </p>
             </div>
-            
+
             <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800;">
               <h3 style="color: #e65100; margin-top: 0;">Horas Extras</h3>
               <p style="font-size: 24px; font-weight: bold; color: #e65100; margin: 10px 0;">
                 ${nominas.reduce((sum, n) => sum + (n.horas_extras || 0), 0).toFixed(2)} hrs
               </p>
             </div>
-            
+
             <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 4px solid #2196f3;">
               <h3 style="color: #1565c0; margin-top: 0;">Horas Nocturnas</h3>
               <p style="font-size: 24px; font-weight: bold; color: #1565c0; margin: 10px 0;">
                 ${nominas.reduce((sum, n) => sum + (n.horas_nocturnas || 0), 0).toFixed(2)} hrs
               </p>
             </div>
-            
+
             <div style="background: #fce4ec; padding: 20px; border-radius: 8px; border-left: 4px solid #e91e63;">
               <h3 style="color: #ad1457; margin-top: 0;">Horas Dominicales</h3>
               <p style="font-size: 24px; font-weight: bold; color: #ad1457; margin: 10px 0;">
@@ -4074,7 +4078,7 @@
               </p>
             </div>
           </div>
-          
+
           <table style="width: 100%; border-collapse: collapse;">
             <thead>
               <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
@@ -4132,7 +4136,7 @@
           <p style="text-align: center; color: #666; margin-bottom: 30px;">Período: ${new Date().toLocaleDateString(
             'es-ES'
           )}</p>
-          
+
           <table style="width: 100%; border-collapse: collapse;">
             <thead>
               <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
@@ -4205,7 +4209,7 @@
           <p style="text-align: center; color: #666; margin-bottom: 30px;">Período: ${new Date().toLocaleDateString(
             'es-ES'
           )}</p>
-          
+
           <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
             <h3 style="color: #333; margin-top: 0;">Estadísticas Generales</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
@@ -4231,7 +4235,7 @@
               </div>
             </div>
           </div>
-          
+
           <table style="width: 100%; border-collapse: collapse;">
             <thead>
               <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
@@ -4292,7 +4296,7 @@
           <p style="text-align: center; color: #666; margin-bottom: 30px;">Período: ${obtenerNombreMes(
             mesActual
           )} ${anioActual}</p>
-          
+
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
             <div style="background: #e8f5e8; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50;">
               <h3 style="color: #2e7d32; margin-top: 0;">Total Nóminas</h3>
@@ -4300,21 +4304,21 @@
                 ${nominasMes.length}
               </p>
             </div>
-            
+
             <div style="background: #fff3e0; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800;">
               <h3 style="color: #e65100; margin-top: 0;">Total Horas</h3>
               <p style="font-size: 24px; font-weight: bold; color: #e65100; margin: 10px 0;">
                 ${nominasMes.reduce((sum, n) => sum + (n.horas_trabajadas || 0), 0).toFixed(2)} hrs
               </p>
             </div>
-            
+
             <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; border-left: 4px solid #2196f3;">
               <h3 style="color: #1565c0; margin-top: 0;">Total Salarios</h3>
               <p style="font-size: 24px; font-weight: bold; color: #1565c0; margin: 10px 0;">
                 ${formatearMoneda(nominasMes.reduce((sum, n) => sum + (n.salario_neto || 0), 0))}
               </p>
             </div>
-            
+
             <div style="background: #fce4ec; padding: 20px; border-radius: 8px; border-left: 4px solid #e91e63;">
               <h3 style="color: #ad1457; margin-top: 0;">Costo Empresa</h3>
               <p style="font-size: 24px; font-weight: bold; color: #ad1457; margin: 10px 0;">
@@ -4322,7 +4326,7 @@
               </p>
             </div>
           </div>
-          
+
           <table style="width: 100%; border-collapse: collapse;">
             <thead>
               <tr style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
@@ -4378,19 +4382,19 @@
             <head>
               <title>${titulo} - AXYRA</title>
               <style>
-                body { 
-                  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-                  margin: 0; 
-                  padding: 20px; 
+                body {
+                  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                  margin: 0;
+                  padding: 20px;
                   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                   min-height: 100vh;
                 }
-                .reporte-container { 
-                  max-width: 1200px; 
-                  margin: 0 auto; 
-                  background: white; 
-                  padding: 30px; 
-                  border-radius: 16px; 
+                .reporte-container {
+                  max-width: 1200px;
+                  margin: 0 auto;
+                  background: white;
+                  padding: 30px;
+                  border-radius: 16px;
                   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
                   position: relative;
                   overflow: hidden;
@@ -4404,10 +4408,10 @@
                   height: 4px;
                   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 }
-                .no-print { 
-                  text-align: center; 
-                  margin-bottom: 30px; 
-                  padding: 25px; 
+                .no-print {
+                  text-align: center;
+                  margin-bottom: 30px;
+                  padding: 25px;
                   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
                   border-radius: 12px;
                   border: 1px solid #e2e8f0;
@@ -4423,13 +4427,13 @@
                   margin: 0 0 20px 0;
                   font-size: 1rem;
                 }
-                .btn { 
-                  padding: 12px 24px; 
-                  margin: 8px; 
-                  border: none; 
-                  border-radius: 8px; 
-                  cursor: pointer; 
-                  font-size: 14px; 
+                .btn {
+                  padding: 12px 24px;
+                  margin: 8px;
+                  border: none;
+                  border-radius: 8px;
+                  cursor: pointer;
+                  font-size: 14px;
                   font-weight: 600;
                   transition: all 0.3s ease;
                   text-transform: uppercase;
@@ -4439,13 +4443,13 @@
                   transform: translateY(-2px);
                   box-shadow: 0 8px 25px rgba(0,0,0,0.15);
                 }
-                .btn-primary { 
-                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                  color: white; 
+                .btn-primary {
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  color: white;
                 }
-                .btn-secondary { 
-                  background: linear-gradient(135deg, #6c757d 0%, #495057 100%); 
-                  color: white; 
+                .btn-secondary {
+                  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+                  color: white;
                 }
                 .btn-success {
                   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
@@ -4489,14 +4493,14 @@
                   background: #f1f5f9;
                 }
                 @media print {
-                  body { 
-                    background: white; 
+                  body {
+                    background: white;
                     padding: 0;
                   }
                   .no-print { display: none; }
-                  .reporte-container { 
-                    box-shadow: none; 
-                    padding: 0; 
+                  .reporte-container {
+                    box-shadow: none;
+                    padding: 0;
                     border-radius: 0;
                   }
                   .reporte-container::before {
@@ -4507,9 +4511,9 @@
                   body { padding: 10px; }
                   .reporte-container { padding: 20px; }
                   .no-print { padding: 20px; }
-                  .btn { 
-                    width: 100%; 
-                    margin: 5px 0; 
+                  .btn {
+                    width: 100%;
+                    margin: 5px 0;
                   }
                 }
               </style>
@@ -4551,7 +4555,7 @@
               <h2>📊 Reporte de Nómina - Villa Venecia</h2>
               <p>Fecha de generación: ${new Date().toLocaleDateString()}</p>
             </div>
-            
+
             <div class="reporte-resumen">
               <h3>📈 Resumen General</h3>
               <div class="resumen-grid">
@@ -4569,7 +4573,7 @@
                 </div>
               </div>
             </div>
-            
+
             <div class="reporte-detalle">
               <h3>👥 Detalle por Empleado</h3>
               <table class="reporte-tabla">
@@ -4584,7 +4588,7 @@
                 </thead>
                 <tbody>
           `;
-          
+
           nominas.forEach(nomina => {
             const empleado = empleados.find(emp => emp.id === nomina.empleado_id);
             if (empleado) {
@@ -4599,13 +4603,13 @@
               `;
             }
           });
-          
+
           contenido += `
                 </tbody>
               </table>
             </div>
           `;
-          
+
           return contenido;
         } catch (error) {
           console.error('❌ Error generando contenido del reporte:', error);
@@ -4618,7 +4622,7 @@
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           if (nominas.length === 0) {
             mostrarNotificacion('No hay datos de nómina para generar reportes', 'warning');
             return;
@@ -4627,7 +4631,7 @@
           // Generar reporte resumido
           const contenido = generarContenidoReporte(nominas, empleados);
           mostrarReporte('Reporte de Nómina - Villa Venecia', contenido);
-          
+
           mostrarNotificacion('✅ Reporte de nómina generado correctamente', 'success');
         } catch (error) {
           console.error('❌ Error generando reportes:', error);
@@ -4682,18 +4686,18 @@
               </div>
             </div>
           `;
-          
+
           // Agregar modal al body
           document.body.appendChild(modal);
-          
+
           // Cargar configuración guardada
           cargarConfiguracionGuardada();
-          
+
           // Mostrar modal con animación
           setTimeout(() => {
             modal.classList.add('modal-active');
           }, 10);
-          
+
         } catch (error) {
           console.error('❌ Error en configuración avanzada:', error);
           mostrarNotificacion('Error en configuración: ' + error.message, 'error');
@@ -4715,7 +4719,7 @@
       function cargarConfiguracionGuardada() {
         try {
           const config = JSON.parse(localStorage.getItem('axyra_configuracion_nomina') || '{}');
-          
+
           if (config.salarioMinimo) document.getElementById('salarioMinimo').value = config.salarioMinimo;
           if (config.porcentajeCesantias) document.getElementById('porcentajeCesantias').value = config.porcentajeCesantias;
           if (config.porcentajePrima) document.getElementById('porcentajePrima').value = config.porcentajePrima;
@@ -4741,68 +4745,32 @@
 
           localStorage.setItem('axyra_configuracion_nomina', JSON.stringify(config));
           mostrarNotificacion('✅ Configuración guardada correctamente', 'success');
-          
+
           // Cerrar modal después de guardar
           cerrarModalConfiguracion();
         } catch (error) {
           console.error('❌ Error guardando configuración:', error);
           mostrarNotificacion('Error guardando configuración: ' + error.message, 'error');
         }
-      }
-        try {
-          const config = JSON.parse(localStorage.getItem('axyra_configuracion_nomina') || '{}');
-          
-          if (config.salarioMinimo) document.getElementById('salarioMinimo').value = config.salarioMinimo;
-          if (config.porcentajeCesantias) document.getElementById('porcentajeCesantias').value = config.porcentajeCesantias;
-          if (config.porcentajePrima) document.getElementById('porcentajePrima').value = config.porcentajePrima;
-          if (config.porcentajeInteresesCesantias) document.getElementById('porcentajeInteresesCesantias').value = config.porcentajeInteresesCesantias;
-          if (config.porcentajeSalud) document.getElementById('porcentajeSalud').value = config.porcentajeSalud;
-          if (config.porcentajePension) document.getElementById('porcentajePension').value = config.porcentajePension;
-        } catch (error) {
-          console.error('❌ Error cargando configuración:', error);
-        }
-      }
 
-      // Función para guardar configuración
-      function guardarConfiguracionNomina() {
-        try {
-          const config = {
-            salarioMinimo: parseFloat(document.getElementById('salarioMinimo').value) || 0,
-            porcentajeCesantias: parseFloat(document.getElementById('porcentajeCesantias').value) || 8.33,
-            porcentajePrima: parseFloat(document.getElementById('porcentajePrima').value) || 8.33,
-            porcentajeInteresesCesantias: parseFloat(document.getElementById('porcentajeInteresesCesantias').value) || 12,
-            porcentajeSalud: parseFloat(document.getElementById('porcentajeSalud').value) || 4,
-            porcentajePension: parseFloat(document.getElementById('porcentajePension').value) || 4
-          };
-
-          localStorage.setItem('axyra_configuracion_nomina', JSON.stringify(config));
-          mostrarNotificacion('✅ Configuración guardada correctamente', 'success');
-          
-          // Cerrar modal después de guardar
-          cerrarModalConfiguracion();
-        } catch (error) {
-          console.error('❌ Error guardando configuración:', error);
-          mostrarNotificacion('Error guardando configuración: ' + error.message, 'error');
-        }
-      }
 
       // Función para aprobar nómina
       function aprobarNomina(nominaId) {
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const nomina = nominas.find(n => n.id == nominaId);
-          
+
           if (!nomina) {
             mostrarNotificacion('Nómina no encontrada', 'error');
             return;
           }
-          
+
           nomina.estado = 'APROBADA';
           nomina.fecha_aprobacion = new Date().toISOString();
           nomina.aprobado_por = 'axyra.app@gmail.com';
-          
+
           localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
-          
+
           // Registrar en auditoría
           if (window.axyraAuditSystemUnified) {
             window.axyraAuditSystemUnified.logSystemEvent('nomina_aprobada', {
@@ -4811,7 +4779,7 @@
               monto: nomina.salario_final
             });
           }
-          
+
           mostrarNotificacion('✅ Nómina aprobada correctamente', 'success');
           cargarNominas(); // Recargar tabla
         } catch (error) {
@@ -4825,19 +4793,19 @@
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const nomina = nominas.find(n => n.id == nominaId);
-          
+
           if (!nomina) {
             mostrarNotificacion('Nómina no encontrada', 'error');
             return;
           }
-          
+
           nomina.estado = 'RECHAZADA';
           nomina.fecha_rechazo = new Date().toISOString();
           nomina.rechazado_por = 'axyra.app@gmail.com';
           nomina.motivo_rechazo = motivo;
-          
+
           localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
-          
+
           // Registrar en auditoría
           if (window.axyraAuditSystemUnified) {
             window.axyraAuditSystemUnified.logSystemEvent('nomina_rechazada', {
@@ -4846,7 +4814,7 @@
               motivo: motivo
             });
           }
-          
+
           mostrarNotificacion('⚠️ Nómina rechazada', 'warning');
           cargarNominas(); // Recargar tabla
         } catch (error) {
@@ -4862,20 +4830,20 @@
           if (!empleado) {
             return { valido: false, error: 'Empleado no encontrado' };
           }
-          
+
           // Verificar que tenga salario base
           if (!empleado.salario || empleado.salario <= 0) {
             return { valido: false, error: 'Empleado sin salario base configurado' };
           }
-          
+
           // Verificar que tenga horas registradas
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]')
             .filter(h => h.empleadoId == empleadoId);
-          
+
           if (horas.length === 0) {
             return { valido: false, error: 'No hay horas registradas para este empleado' };
           }
-          
+
           return { valido: true };
         } catch (error) {
           return { valido: false, error: 'Error en validación: ' + error.message };
@@ -4886,15 +4854,15 @@
       function generarNominaConValidacion(empleadoId) {
         try {
           const validacion = validarNomina(empleadoId);
-          
+
           if (!validacion.valido) {
             mostrarNotificacion(validacion.error, 'error');
             return;
           }
-          
+
           // Generar nómina automática
           const nomina = calcularNominaAutomatica(empleadoId);
-          
+
           if (nomina) {
             mostrarNotificacion('✅ Nómina generada correctamente', 'success');
             cargarNominas(); // Recargar tabla
@@ -5052,7 +5020,7 @@
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const costosMensuales = new Array(12).fill(0);
-          
+
           nominas.forEach(nomina => {
             const fecha = new Date(nomina.fecha_generacion);
             if (fecha.getFullYear() == año) {
@@ -5075,7 +5043,7 @@
         try {
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           const rangos = [0, 0, 0, 0]; // Bajo, Medio, Alto, Ejecutivo
-          
+
           empleados.forEach(empleado => {
             const salario = parseFloat(empleado.salario || 0);
             if (salario <= 1000000) rangos[0]++;
@@ -5098,7 +5066,7 @@
         try {
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           // Agrupar horas por empleado
           const horasPorEmpleado = {};
           horas.forEach(h => {
@@ -5128,20 +5096,20 @@
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-          
+
           // Calcular costo por hora
           const totalSalarios = nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0);
           const totalHoras = horas.reduce((sum, h) => sum + (h.total_horas || 0), 0);
           const costoPorHora = totalHoras > 0 ? totalSalarios / totalHoras : 0;
-          
+
           // Calcular productividad (horas trabajadas vs horas estándar)
           const horasEstandar = empleados.length * 240; // 240 horas mensuales estándar
           const productividad = horasEstandar > 0 ? (totalHoras / horasEstandar) * 100 : 0;
-          
+
           // Calcular rotación (empleados inactivos)
           const empleadosActivos = empleados.filter(emp => emp.estado === 'Activo').length;
           const rotacion = empleados.length > 0 ? ((empleados.length - empleadosActivos) / empleados.length) * 100 : 0;
-          
+
           // Actualizar UI
           document.getElementById('costoPorHora').textContent = '$' + costoPorHora.toLocaleString(undefined, {maximumFractionDigits: 2});
           document.getElementById('productividadPromedio').textContent = productividad.toFixed(1) + '%';
@@ -5196,7 +5164,7 @@
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           if (nominas.length === 0) {
             mostrarNotificacion('No hay nóminas para exportar', 'warning');
             return;
@@ -5204,7 +5172,7 @@
 
           // Crear libro de Excel usando la plantilla
           const workbook = XLSX.utils.book_new();
-          
+
           // Crear hoja de trabajo con los datos siguiendo la estructura de nomina.xlsx
           const datosExcel = [
             ['VILLA VENECIA - NÓMINA DE EMPLEADOS'],
@@ -5227,10 +5195,10 @@
               const horasDominicales = nomina.horas_dominicales || 0;
               const horasFestivas = nomina.horas_festivas || 0;
               const totalHoras = horasOrdinarias + horasExtras + horasNocturnas + horasDominicales + horasFestivas;
-              
+
               const valorHora = salarioBase / 240; // 240 horas mensuales
               const subtotal = totalHoras * valorHora;
-              
+
               // Solo empleados fijos reciben salud y pensión
               const tipoContrato = empleado.tipoContrato || 'FIJO';
               const salud = tipoContrato === 'FIJO' ? subtotal * 0.04 : 0;
@@ -5297,7 +5265,7 @@
 
           // Aplicar estilos a las celdas
           const range = XLSX.utils.decode_range(worksheet['!ref']);
-          
+
           for (let R = range.s.r; R <= range.e.r; R++) {
             for (let C = range.s.c; C <= range.e.c; C++) {
               const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
@@ -5307,28 +5275,28 @@
               if (R === 0) {
                 worksheet[cellAddress].s = {
                   fill: { fgColor: { rgb: "4F81BD" } }, // Azul profesional
-                  font: { 
-                    color: { rgb: "FFFFFF" }, 
-                    bold: true, 
-                    sz: 16 
+                  font: {
+                    color: { rgb: "FFFFFF" },
+                    bold: true,
+                    sz: 16
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: "center",
+                    vertical: "center"
                   }
                 };
               }
               // Estilo para fecha (segunda fila)
               else if (R === 1) {
                 worksheet[cellAddress].s = {
-                  font: { 
-                    color: { rgb: "000000" }, 
-                    bold: true, 
-                    sz: 12 
+                  font: {
+                    color: { rgb: "000000" },
+                    bold: true,
+                    sz: 12
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: "center",
+                    vertical: "center"
                   }
                 };
               }
@@ -5336,14 +5304,14 @@
               else if (R === 3) {
                 worksheet[cellAddress].s = {
                   fill: { fgColor: { rgb: "D9E1F2" } }, // Azul claro
-                  font: { 
-                    color: { rgb: "000000" }, 
-                    bold: true, 
-                    sz: 11 
+                  font: {
+                    color: { rgb: "000000" },
+                    bold: true,
+                    sz: 11
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: "center",
+                    vertical: "center"
                   },
                   border: {
                     top: { style: "thin", color: { rgb: "000000" } },
@@ -5357,14 +5325,14 @@
               else if (R === range.e.r) {
                 worksheet[cellAddress].s = {
                   fill: { fgColor: { rgb: "C6EFCE" } }, // Verde claro
-                  font: { 
-                    color: { rgb: "000000" }, 
-                    bold: true, 
-                    sz: 12 
+                  font: {
+                    color: { rgb: "000000" },
+                    bold: true,
+                    sz: 12
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: "center",
+                    vertical: "center"
                   },
                   border: {
                     top: { style: "medium", color: { rgb: "000000" } },
@@ -5378,13 +5346,13 @@
               else if (R > 3 && R < range.e.r) {
                 worksheet[cellAddress].s = {
                   fill: { fgColor: { rgb: R % 2 === 0 ? "FFFFFF" : "F8F9FA" } }, // Filas alternadas
-                  font: { 
-                    color: { rgb: "000000" }, 
-                    sz: 10 
+                  font: {
+                    color: { rgb: "000000" },
+                    sz: 10
                   },
-                  alignment: { 
-                    horizontal: "center", 
-                    vertical: "center" 
+                  alignment: {
+                    horizontal: "center",
+                    vertical: "center"
                   },
                   border: {
                     top: { style: "thin", color: { rgb: "D0D0D0" } },
@@ -5415,7 +5383,7 @@
 
           // Descargar archivo
           XLSX.writeFile(workbook, nombreArchivo);
-          
+
           console.log('✅ Nómina exportada correctamente:', nombreArchivo);
           mostrarNotificacion('✅ Nómina exportada a Excel con formato profesional y fórmulas', 'success');
         } catch (error) {
@@ -5429,7 +5397,7 @@
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           if (nominas.length === 0) {
             mostrarNotificacion('No hay nóminas para exportar', 'warning');
             return;
@@ -5437,7 +5405,7 @@
 
           // Crear libro de Excel usando la plantilla
           const workbook = XLSX.utils.book_new();
-          
+
           // Crear hoja de trabajo con los datos siguiendo la estructura de nomina.xlsx
           const datosExcel = [
             ['VILLA VENECIA - NÓMINA DE EMPLEADOS'],
@@ -5460,10 +5428,10 @@
               const horasDominicales = nomina.horas_dominicales || 0;
               const horasFestivas = nomina.horas_festivas || 0;
               const totalHoras = horasOrdinarias + horasExtras + horasNocturnas + horasDominicales + horasFestivas;
-              
+
               const valorHora = salarioBase / 240; // 240 horas mensuales
               const subtotal = totalHoras * valorHora;
-              
+
               // Solo empleados fijos reciben salud y pensión
               const tipoContrato = empleado.tipoContrato || 'FIJO';
               const salud = tipoContrato === 'FIJO' ? subtotal * 0.04 : 0;
@@ -5537,7 +5505,7 @@
 
           // Descargar archivo
           XLSX.writeFile(workbook, nombreArchivo);
-          
+
           console.log('✅ Nómina exportada correctamente:', nombreArchivo);
           mostrarNotificacion('✅ Nómina exportada a Excel con formato profesional', 'success');
         } catch (error) {
@@ -5552,7 +5520,7 @@
           // Obtener datos de nómina
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           if (nominas.length === 0) {
             alert('No hay datos de nómina para exportar');
             return;
@@ -5606,7 +5574,7 @@
 
           // Descargar archivo
           XLSX.writeFile(workbook, nombreArchivo);
-          
+
           console.log('✅ Reporte de nómina exportado correctamente:', nombreArchivo);
         } catch (error) {
           console.error('❌ Error exportando reporte de nómina:', error);
@@ -5699,10 +5667,10 @@
               ×
             </button>
           `;
-          
+
           // Agregar al DOM
           document.body.appendChild(notificacion);
-          
+
           // Auto-remover después de 5 segundos
           setTimeout(() => {
             if (notificacion.parentElement) {
@@ -5716,107 +5684,14 @@
         }
       }
 
-      // Función para mostrar modal de generar nómina
-      function mostrarModalGenerarNomina() {
-        try {
-          const modal = document.createElement('div');
-          modal.className = 'modal-overlay';
-          modal.id = 'modalGenerarNomina';
-          modal.innerHTML = `
-            <div class="modal-content modal-centered">
-              <div class="modal-header">
-                <h3>📋 Generar Nueva Nómina</h3>
-                <button class="modal-close" onclick="cerrarModalGenerarNomina()">×</button>
-              </div>
-              <div class="modal-body">
-                <div class="form-group">
-                  <label for="empleadoSelect">Seleccionar Empleado:</label>
-                  <select id="empleadoSelect" class="form-control">
-                    <option value="">Seleccione un empleado...</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="mesNomina">Mes de Nómina:</label>
-                  <input type="month" id="mesNomina" class="form-control" value="${new Date().toISOString().slice(0, 7)}">
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalGenerarNomina()">Cancelar</button>
-                <button class="axyra-btn axyra-btn-primary" onclick="generarNominaEmpleado()">Generar Nómina</button>
-              </div>
-            </div>
-          `;
-          
-          document.body.appendChild(modal);
-          cargarEmpleadosEnSelect();
-          setTimeout(() => modal.classList.add('modal-active'), 10);
-        } catch (error) {
-          console.error('❌ Error mostrando modal:', error);
-          mostrarNotificacion('Error mostrando modal: ' + error.message, 'error');
-        }
-      }
 
-      // Función para cerrar modal de generar nómina
-      function cerrarModalGenerarNomina() {
-        const modal = document.getElementById('modalGenerarNomina');
-        if (modal) {
-          modal.classList.remove('modal-active');
-          setTimeout(() => modal.remove(), 300);
-        }
-      }
-
-      // Función para cargar empleados en el select
-      function cargarEmpleadosEnSelect() {
-        try {
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          const select = document.getElementById('empleadoSelect');
-          
-          if (select) {
-            select.innerHTML = '<option value="">Seleccione un empleado...</option>';
-            empleados.forEach(emp => {
-              const option = document.createElement('option');
-              option.value = emp.id;
-              option.textContent = `${emp.nombre} - ${emp.cargo}`;
-              select.appendChild(option);
-            });
-          }
-        } catch (error) {
-          console.error('❌ Error cargando empleados:', error);
-        }
-      }
-
-      // Función para generar nómina de un empleado
-      function generarNominaEmpleado() {
-        try {
-          const empleadoId = document.getElementById('empleadoSelect').value;
-          const mes = document.getElementById('mesNomina').value;
-          
-          if (!empleadoId) {
-            mostrarNotificacion('Por favor seleccione un empleado', 'warning');
-            return;
-          }
-          
-          if (!mes) {
-            mostrarNotificacion('Por favor seleccione un mes', 'warning');
-            return;
-          }
-          
-          // Aquí iría la lógica para generar la nómina
-          mostrarNotificacion('✅ Nómina generada correctamente', 'success');
-          cerrarModalGenerarNomina();
-          cargarNominas(); // Recargar la tabla
-        } catch (error) {
-          console.error('❌ Error generando nómina:', error);
-          mostrarNotificacion('Error generando nómina: ' + error.message, 'error');
-        }
-      }
 
       // Función para exportar nómina a Excel (renombrada)
       function exportarNominaExcel() {
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           if (nominas.length === 0) {
             mostrarNotificacion('No hay nóminas para exportar', 'warning');
             return;
@@ -5824,7 +5699,7 @@
 
           // Crear libro de Excel
           const workbook = XLSX.utils.book_new();
-          
+
           // Crear hoja de trabajo
           const datosExcel = [
             ['VILLA VENECIA - NÓMINA DE EMPLEADOS'],
@@ -5853,7 +5728,7 @@
 
           const fecha = new Date().toISOString().split('T')[0];
           const nombreArchivo = `Nómina_Villa_Venecia_${fecha}.xlsx`;
-          
+
           XLSX.writeFile(workbook, nombreArchivo);
           mostrarNotificacion('✅ Nómina exportada a Excel correctamente', 'success');
         } catch (error) {
@@ -5863,7 +5738,7 @@
       }
 
       // FUNCIONES COMPLETAS Y FUNCIONALES PARA TODOS LOS BOTONES
-      
+
       // Función para mostrar modal de generar nómina
       function mostrarModalGenerarNomina() {
         try {
@@ -5902,7 +5777,7 @@
               </div>
             </div>
           `;
-          
+
           document.body.appendChild(modal);
           cargarEmpleadosEnSelect();
           setTimeout(() => modal.classList.add('modal-active'), 10);
@@ -5926,7 +5801,7 @@
         try {
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           const select = document.getElementById('empleadoSelect');
-          
+
           if (select) {
             select.innerHTML = '<option value="">Seleccione un empleado...</option>';
             empleados.forEach(emp => {
@@ -5948,45 +5823,45 @@
           const mes = document.getElementById('mesNomina').value;
           const horasTrabajadas = parseFloat(document.getElementById('horasTrabajadas').value) || 0;
           const horasExtras = parseFloat(document.getElementById('horasExtras').value) || 0;
-          
+
           if (!empleadoId) {
             alert('Por favor seleccione un empleado');
             return;
           }
-          
+
           if (!mes) {
             alert('Por favor seleccione un mes');
             return;
           }
-          
+
           if (horasTrabajadas <= 0) {
             alert('Por favor ingrese las horas trabajadas');
             return;
           }
-          
+
           // Obtener empleado
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           const empleado = empleados.find(emp => emp.id === empleadoId);
-          
+
           if (!empleado) {
             alert('Empleado no encontrado');
             return;
           }
-          
+
           // Calcular nómina
           const salarioBase = parseFloat(empleado.salario) || 0;
           const valorHora = salarioBase / 240; // 240 horas mensuales
           const subtotal = horasTrabajadas * valorHora;
           const horasExtrasValor = horasExtras * (valorHora * 1.5); // 1.5x por horas extras
           const totalBruto = subtotal + horasExtrasValor;
-          
+
           // Descuentos (solo para empleados fijos)
           const tipoContrato = empleado.tipoContrato || 'FIJO';
           const salud = tipoContrato === 'FIJO' ? totalBruto * 0.04 : 0;
           const pension = tipoContrato === 'FIJO' ? totalBruto * 0.04 : 0;
           const totalDescuentos = salud + pension;
           const netoAPagar = totalBruto - totalDescuentos;
-          
+
           // Crear nómina
           const nomina = {
             id: Date.now().toString(),
@@ -6007,15 +5882,15 @@
             estado: 'GENERADA',
             fecha_generacion: new Date().toISOString()
           };
-          
+
           // Guardar nómina
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           nominas.push(nomina);
           localStorage.setItem('axyra_nominas', JSON.stringify(nominas));
-          
+
           alert(`✅ Nómina generada correctamente\n\nEmpleado: ${empleado.nombre}\nTotal a Pagar: $${netoAPagar.toLocaleString()}`);
           cerrarModalGenerarNomina();
-          
+
           // Recargar la página para mostrar la nueva nómina
           setTimeout(() => location.reload(), 1000);
         } catch (error) {
@@ -6029,7 +5904,7 @@
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           if (nominas.length === 0) {
             alert('No hay nóminas para generar PDF');
             return;
@@ -6055,7 +5930,7 @@
                   <h2>Reporte de Nómina</h2>
                   <p>Fecha: ${new Date().toLocaleDateString()}</p>
                 </div>
-                
+
                 <table class="table">
                   <thead>
                     <tr>
@@ -6081,7 +5956,7 @@
                     }).join('')}
                   </tbody>
                 </table>
-                
+
                 <div class="total">
                   <p>Total Nóminas: ${nominas.length}</p>
                   <p>Total a Pagar: $${nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0).toLocaleString()}</p>
@@ -6094,24 +5969,24 @@
           const ventana = window.open('', '_blank');
           ventana.document.write(contenido);
           ventana.document.close();
-          
+
           // Auto-imprimir después de cargar
           setTimeout(() => {
             ventana.print();
           }, 500);
-          
+
         } catch (error) {
           console.error('Error generando PDF:', error);
           alert('Error generando PDF: ' + error.message);
         }
       }
-      
+
       // Función simple para exportar nómina
       function exportarNominaSimple() {
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           if (nominas.length === 0) {
             alert('No hay nóminas para exportar');
             return;
@@ -6141,10 +6016,10 @@
           const workbook = XLSX.utils.book_new();
           const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
           XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
-          
+
           const fecha = new Date().toISOString().split('T')[0];
           XLSX.writeFile(workbook, `Nómina_${fecha}.xlsx`);
-          
+
           alert('✅ Nómina exportada correctamente');
         } catch (error) {
           console.error('Error exportando:', error);
@@ -6157,7 +6032,7 @@
         try {
           const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
+
           if (nominas.length === 0) {
             alert('No hay datos para generar reporte');
             return;
@@ -6166,12 +6041,12 @@
           // Crear reporte simple
           const reporte = `
             📊 REPORTE DE NÓMINA - VILLA VENECIA
-            
+
             📅 Fecha: ${new Date().toLocaleDateString()}
             👥 Total Empleados: ${empleados.length}
             📋 Total Nóminas: ${nominas.length}
             💰 Total Salarios: $${nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0).toLocaleString()}
-            
+
             📋 DETALLE:
             ${nominas.map(n => {
               const emp = empleados.find(e => e.id === n.empleado_id);
@@ -6206,7 +6081,7 @@
             background: rgba(0,0,0,0.7); z-index: 9999; display: flex;
             justify-content: center; align-items: center;
           `;
-          
+
           modal.innerHTML = `
             <div style="background: white; padding: 30px; border-radius: 10px; max-width: 500px;">
               <h3>⚙️ Configuración de Nómina</h3>
@@ -6222,7 +6097,7 @@
               </div>
             </div>
           `;
-          
+
           document.body.appendChild(modal);
         } catch (error) {
           console.error('Error mostrando configuración:', error);
@@ -6239,10 +6114,10 @@
             salud: document.getElementById('salud').value,
             pension: document.getElementById('pension').value
           };
-          
+
           localStorage.setItem('axyra_config_simple', JSON.stringify(config));
           alert('✅ Configuración guardada correctamente');
-          
+
           // Cerrar modal
           document.querySelector('div[style*="position: fixed"]').remove();
         } catch (error) {
@@ -6264,4 +6139,3 @@
     </script>
   </body>
 </html>
-
