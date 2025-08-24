@@ -1630,7 +1630,26 @@
             empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           }
 
-          const empleado = empleados.find((emp) => emp.id == empleadoId || emp.id == parseInt(empleadoId));
+          // Mejorar la búsqueda del empleado - considerar diferentes tipos de ID
+          console.log('🔍 [FALLBACK] Buscando empleado con ID:', empleadoId, 'Tipo:', typeof empleadoId);
+          console.log(
+            '📋 [FALLBACK] Empleados disponibles:',
+            empleados.map((emp) => ({ id: emp.id, nombre: emp.nombre, tipoId: typeof emp.id }))
+          );
+
+          const empleado = empleados.find((emp) => {
+            if (!emp || !emp.id) return false;
+
+            // Comparar como string
+            if (emp.id.toString() === empleadoId.toString()) return true;
+
+            // Comparar como número
+            if (parseInt(emp.id) === parseInt(empleadoId)) return true;
+
+            return false;
+          });
+
+          console.log('✅ [FALLBACK] Empleado encontrado:', empleado);
 
           if (!empleado) {
             mostrarMensaje(
@@ -1754,7 +1773,26 @@
             empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           }
 
-          const empleado = empleados.find((emp) => emp.id == empleadoId || emp.id == parseInt(empleadoId));
+          // Mejorar la búsqueda del empleado - considerar diferentes tipos de ID
+          console.log('🔍 Buscando empleado con ID:', empleadoId, 'Tipo:', typeof empleadoId);
+          console.log(
+            '📋 Empleados disponibles:',
+            empleados.map((emp) => ({ id: emp.id, nombre: emp.nombre, tipoId: typeof emp.id }))
+          );
+
+          const empleado = empleados.find((emp) => {
+            if (!emp || !emp.id) return false;
+
+            // Comparar como string
+            if (emp.id.toString() === empleadoId.toString()) return true;
+
+            // Comparar como número
+            if (parseInt(emp.id) === parseInt(empleadoId)) return true;
+
+            return false;
+          });
+
+          console.log('✅ Empleado encontrado:', empleado);
 
           if (!empleado) {
             throw new Error('Empleado no encontrado');

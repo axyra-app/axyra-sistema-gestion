@@ -1787,7 +1787,9 @@
 
         document.body.insertAdjacentHTML('beforeend', departamentosHTML);
         document.getElementById('modalDepartamentos').style.display = 'block';
-        cargarDepartamentos();
+        cargarDepartamentos().catch((error) => {
+          console.error('Error cargando departamentos:', error);
+        });
       }
 
       // Función para mostrar modal genérico
@@ -2414,6 +2416,13 @@
           }
 
           mostrarEmpleados();
+
+          // Cargar departamentos para poblar los selects
+          try {
+            await cargarDepartamentos();
+          } catch (deptError) {
+            console.warn('⚠️ Error cargando departamentos:', deptError);
+          }
         } catch (error) {
           console.error('❌ Error cargando empleados:', error);
           empleados = [];
@@ -2748,7 +2757,7 @@
             console.warn('⚠️ Error eliminando de Firebase:', firebaseError);
           }
 
-          // Eliminar del localStorage
+          // Eliminar del localStorage y limpiar datos relacionados
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           const empleadosFiltrados = empleados.filter((emp) => emp.id !== id);
           localStorage.setItem('axyra_empleados', JSON.stringify(empleadosFiltrados));
@@ -2763,8 +2772,22 @@
           const nominasFiltradas = nominas.filter((n) => n.empleado_id !== id);
           localStorage.setItem('axyra_nominas', JSON.stringify(nominasFiltradas));
 
+          // Limpiar datos del sistema de sincronización si está disponible
+          if (window.firebaseSyncManager) {
+            try {
+              // Limpiar datos pendientes de sincronización para este empleado
+              const pendingSync = JSON.parse(localStorage.getItem('axyra_pending_sync') || '[]');
+              const pendingSyncFiltrado = pendingSync.filter(
+                (item) => !(item.collection === 'empleados' && item.data.id === id)
+              );
+              localStorage.setItem('axyra_pending_sync', JSON.stringify(pendingSyncFiltrado));
+            } catch (error) {
+              console.warn('⚠️ Error limpiando datos de sincronización:', error);
+            }
+          }
+
           // Actualizar la tabla
-          cargarEmpleados();
+          await cargarEmpleados();
 
           // Registrar cambio en historial
           const empleadoEliminado = empleados.find((emp) => emp.id === id);
@@ -3118,7 +3141,9 @@
         `;
 
         document.body.insertAdjacentHTML('beforeend', modalHTML);
-        cargarDepartamentos();
+        cargarDepartamentos().catch((error) => {
+          console.error('Error cargando departamentos:', error);
+        });
       }
 
       // Cerrar modal de departamentos
@@ -3130,46 +3155,83 @@
       }
 
       // Cargar departamentos
-      function cargarDepartamentos() {
+      async function cargarDepartamentos() {
         const listaDepartamentos = document.getElementById('listaDepartamentos');
-        const departamentos = obtenerDepartamentos();
+        try {
+          const departamentos = await obtenerDepartamentos();
 
-        let departamentosHTML = '';
+          let departamentosHTML = '';
 
-        departamentos.forEach((depto, index) => {
-          departamentosHTML += `
-            <div class="axyra-department-item">
-              <div class="axyra-department-info">
-                <span class="axyra-department-name">${depto}</span>
-                <span class="axyra-department-count">${contarEmpleadosPorDepartamento(depto)} empleados</span>
+          departamentos.forEach((depto, index) => {
+            departamentosHTML += `
+              <div class="axyra-department-item">
+                <div class="axyra-department-info">
+                  <span class="axyra-department-name">${depto}</span>
+                  <span class="axyra-department-count">${contarEmpleadosPorDepartamento(depto)} empleados</span>
+                </div>
+                <div class="axyra-department-actions">
+                  <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="editarDepartamento(${index})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarDepartamento(${index})" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
               </div>
-              <div class="axyra-department-actions">
-                <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="editarDepartamento(${index})" title="Editar">
-                  <i class="fas fa-edit"></i>
-                </button>
-                <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarDepartamento(${index})" title="Eliminar">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
-            </div>
-          `;
-        });
+            `;
+          });
 
-        if (departamentosHTML === '') {
-          departamentosHTML = '<p class="axyra-text-center">No hay departamentos configurados</p>';
+          if (departamentosHTML === '') {
+            departamentosHTML = '<p class="axyra-text-center">No hay departamentos configurados</p>';
+          }
+
+          listaDepartamentos.innerHTML = departamentosHTML;
+
+          // Actualizar también los selects de departamentos en los formularios
+          actualizarSelectsDepartamentos(departamentos);
+        } catch (error) {
+          console.error('Error cargando departamentos:', error);
+          listaDepartamentos.innerHTML = '<p class="axyra-text-center">Error cargando departamentos</p>';
         }
-
-        listaDepartamentos.innerHTML = departamentosHTML;
       }
 
       // Obtener departamentos
-      function obtenerDepartamentos() {
-        const departamentosGuardados = localStorage.getItem('axyra_departamentos');
-        if (departamentosGuardados) {
-          return JSON.parse(departamentosGuardados);
+      async function obtenerDepartamentos() {
+        try {
+          // Intentar obtener desde Firebase primero
+          if (window.firebaseSyncManager) {
+            const departamentos = await window.firebaseSyncManager.getDepartamentos();
+            if (departamentos && departamentos.length > 0) {
+              return departamentos;
+            }
+          }
+
+          // Fallback a localStorage
+          const departamentosGuardados = localStorage.getItem('axyra_departamentos');
+          if (departamentosGuardados) {
+            return JSON.parse(departamentosGuardados);
+          }
+
+          // Departamentos por defecto
+          const departamentosDefault = ['Administración', 'Ventas', 'Producción', 'Recursos Humanos', 'Tecnología'];
+
+          // Guardar departamentos por defecto en Firebase si está disponible
+          if (window.firebaseSyncManager) {
+            departamentosDefault.forEach(async (depto) => {
+              await window.firebaseSyncManager.addDepartamento(depto);
+            });
+          }
+
+          return departamentosDefault;
+        } catch (error) {
+          console.error('Error obteniendo departamentos:', error);
+          // Fallback a localStorage
+          const departamentosGuardados = localStorage.getItem('axyra_departamentos');
+          if (departamentosGuardados) {
+            return JSON.parse(departamentosGuardados);
+          }
+          return ['Administración', 'Ventas', 'Producción', 'Recursos Humanos', 'Tecnología'];
         }
-        // Departamentos por defecto
-        return ['Administración', 'Ventas', 'Producción', 'Recursos Humanos', 'Tecnología'];
       }
 
       // Contar empleados por departamento
@@ -3177,26 +3239,65 @@
         return empleados.filter((emp) => emp.departamento === departamento).length;
       }
 
+      // Actualizar selects de departamentos en formularios
+      function actualizarSelectsDepartamentos(departamentos) {
+        // Actualizar select del formulario principal
+        const selectDepartamento = document.getElementById('departamento');
+        if (selectDepartamento) {
+          selectDepartamento.innerHTML = '<option value="">Seleccionar departamento</option>';
+          departamentos.forEach((depto) => {
+            const option = document.createElement('option');
+            option.value = depto;
+            option.textContent = depto;
+            selectDepartamento.appendChild(option);
+          });
+        }
+
+        // Actualizar select del filtro
+        const selectFiltroDepartamento = document.getElementById('filterDepartamento');
+        if (selectFiltroDepartamento) {
+          selectFiltroDepartamento.innerHTML = '<option value="">Todos los departamentos</option>';
+          departamentos.forEach((depto) => {
+            const option = document.createElement('option');
+            option.value = depto;
+            option.textContent = depto;
+            selectFiltroDepartamento.appendChild(option);
+          });
+        }
+      }
+
       // Agregar departamento
-      function agregarDepartamento() {
+      async function agregarDepartamento() {
         const nombre = document.getElementById('nuevoDepartamento').value.trim();
         if (!nombre) {
           mostrarMensaje('❌ El nombre del departamento no puede estar vacío', 'error');
           return;
         }
 
-        const departamentos = obtenerDepartamentos();
-        if (departamentos.includes(nombre)) {
-          mostrarMensaje('❌ El departamento ya existe', 'error');
-          return;
+        try {
+          // Intentar agregar a Firebase primero
+          if (window.firebaseSyncManager) {
+            await window.firebaseSyncManager.addDepartamento(nombre);
+            mostrarMensaje('✅ Departamento agregado exitosamente', 'success');
+          } else {
+            // Fallback a localStorage
+            const departamentos = await obtenerDepartamentos();
+            if (departamentos.includes(nombre)) {
+              mostrarMensaje('❌ El departamento ya existe', 'error');
+              return;
+            }
+
+            departamentos.push(nombre);
+            localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+            mostrarMensaje('✅ Departamento agregado exitosamente', 'success');
+          }
+
+          document.getElementById('nuevoDepartamento').value = '';
+          await cargarDepartamentos();
+        } catch (error) {
+          console.error('Error agregando departamento:', error);
+          mostrarMensaje('❌ Error al agregar departamento', 'error');
         }
-
-        departamentos.push(nombre);
-        localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
-
-        document.getElementById('nuevoDepartamento').value = '';
-        cargarDepartamentos();
-        mostrarMensaje('✅ Departamento agregado exitosamente', 'success');
       }
 
       // Editar departamento
@@ -3246,42 +3347,54 @@
       }
 
       // Confirmar editar departamento
-      function confirmarEditarDepartamento(index) {
-        const departamentos = obtenerDepartamentos();
-        const nombreActual = departamentos[index];
-        const nuevoNombre = document.getElementById('nuevoNombreDepartamento').value.trim();
+      async function confirmarEditarDepartamento(index) {
+        try {
+          const departamentos = await obtenerDepartamentos();
+          const nombreActual = departamentos[index];
+          const nuevoNombre = document.getElementById('nuevoNombreDepartamento').value.trim();
 
-        if (!nuevoNombre) {
-          mostrarMensaje('❌ El nombre del departamento no puede estar vacío', 'error');
-          return;
-        }
-
-        if (nuevoNombre === nombreActual) {
-          cerrarModalEditarDepartamento();
-          return;
-        }
-
-        if (departamentos.includes(nuevoNombre)) {
-          mostrarMensaje('❌ El departamento ya existe', 'error');
-          return;
-        }
-
-        // Actualizar empleados que usan este departamento
-        empleados.forEach((emp) => {
-          if (emp.departamento === nombreActual) {
-            emp.departamento = nuevoNombre;
+          if (!nuevoNombre) {
+            mostrarMensaje('❌ El nombre del departamento no puede estar vacío', 'error');
+            return;
           }
-        });
-        guardarEmpleados();
 
-        // Actualizar departamento
-        departamentos[index] = nuevoNombre;
-        localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+          if (nuevoNombre === nombreActual) {
+            cerrarModalEditarDepartamento();
+            return;
+          }
 
-        cerrarModalEditarDepartamento();
-        cargarDepartamentos();
-        mostrarEmpleados();
-        mostrarMensaje('✅ Departamento actualizado exitosamente', 'success');
+          if (departamentos.includes(nuevoNombre)) {
+            mostrarMensaje('❌ El departamento ya existe', 'error');
+            return;
+          }
+
+          // Actualizar empleados que usan este departamento
+          empleados.forEach((emp) => {
+            if (emp.departamento === nombreActual) {
+              emp.departamento = nuevoNombre;
+            }
+          });
+          guardarEmpleados();
+
+          // Actualizar departamento en Firebase y localStorage
+          if (window.firebaseSyncManager) {
+            // Eliminar el departamento anterior y agregar el nuevo
+            await window.firebaseSyncManager.addDepartamento(nuevoNombre);
+            // Nota: La eliminación se maneja en el sistema de sincronización
+          } else {
+            // Fallback a localStorage
+            departamentos[index] = nuevoNombre;
+            localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+          }
+
+          cerrarModalEditarDepartamento();
+          await cargarDepartamentos();
+          mostrarEmpleados();
+          mostrarMensaje('✅ Departamento actualizado exitosamente', 'success');
+        } catch (error) {
+          console.error('Error editando departamento:', error);
+          mostrarMensaje('❌ Error al editar departamento', 'error');
+        }
       }
 
       // Eliminar departamento
@@ -3340,16 +3453,28 @@
       }
 
       // Confirmar eliminar departamento
-      function confirmarEliminarDepartamento(index) {
-        const departamentos = obtenerDepartamentos();
-        const departamento = departamentos[index];
+      async function confirmarEliminarDepartamento(index) {
+        try {
+          const departamentos = await obtenerDepartamentos();
+          const departamento = departamentos[index];
 
-        departamentos.splice(index, 1);
-        localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+          // Eliminar departamento de Firebase si está disponible
+          if (window.firebaseSyncManager) {
+            // Nota: La eliminación se maneja en el sistema de sincronización
+            // Por ahora, solo actualizamos localStorage
+          }
 
-        cerrarModalConfirmarEliminarDepartamento();
-        cargarDepartamentos();
-        mostrarMensaje('✅ Departamento eliminado exitosamente', 'success');
+          // Actualizar localStorage
+          departamentos.splice(index, 1);
+          localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+
+          cerrarModalConfirmarEliminarDepartamento();
+          await cargarDepartamentos();
+          mostrarMensaje('✅ Departamento eliminado exitosamente', 'success');
+        } catch (error) {
+          console.error('Error eliminando departamento:', error);
+          mostrarMensaje('❌ Error al eliminar departamento', 'error');
+        }
       }
 
       // Eventos

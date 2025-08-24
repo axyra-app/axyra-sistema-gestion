@@ -77,7 +77,7 @@ class FirebaseSyncManager {
       this.saveEmpleadosToStorage(empleadosMerged);
 
       // Sincronizar cambios pendientes
-      await this.syncPendingEmpleados(empleadosMerged);
+      await this.syncPendingData();
 
       console.log(`✅ Empleados sincronizados: ${empleadosMerged.length} total`);
       return empleadosMerged;
@@ -177,7 +177,7 @@ class FirebaseSyncManager {
       this.saveHorasToStorage(horasMerged);
 
       // Sincronizar cambios pendientes
-      await this.syncPendingHoras(horasMerged);
+      await this.syncPendingData();
 
       console.log(`✅ Horas sincronizadas: ${horasMerged.length} total`);
       return horasMerged;
@@ -301,6 +301,8 @@ class FirebaseSyncManager {
           await this.saveEmpleadoToFirebase(item.data);
         } else if (item.collection === 'horas') {
           await this.saveHorasToFirebase(item.data);
+        } else if (item.collection === 'departamentos') {
+          await this.saveDepartamentoToFirebase(item.data);
         }
 
         // Remover de la cola si se sincronizó correctamente
@@ -460,6 +462,177 @@ class FirebaseSyncManager {
   }
 
   // ========================================
+  // SINCRONIZACIÓN DE DEPARTAMENTOS
+  // ========================================
+
+  async syncDepartamentos() {
+    try {
+      if (!this.isOnline || !firebase?.firestore) {
+        return this.loadDepartamentosFromStorage();
+      }
+
+      const db = firebase.firestore();
+      const currentUser = firebase.auth().currentUser;
+
+      if (!currentUser) {
+        return this.loadDepartamentosFromStorage();
+      }
+
+      // Cargar desde Firebase
+      const departamentosSnapshot = await db.collection('departamentos').where('userId', '==', currentUser.uid).get();
+
+      const departamentosFirebase = departamentosSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // Cargar desde localStorage
+      const departamentosStorage = this.loadDepartamentosFromStorage();
+
+      // Fusionar datos
+      const departamentosMerged = this.mergeDepartamentos(departamentosFirebase, departamentosStorage);
+
+      // Guardar en localStorage
+      this.saveDepartamentosToStorage(departamentosMerged);
+
+      // Sincronizar cambios pendientes
+      await this.syncPendingData();
+
+      console.log(`✅ Departamentos sincronizados: ${departamentosMerged.length} total`);
+      return departamentosMerged;
+    } catch (error) {
+      console.error('❌ Error sincronizando departamentos:', error);
+      return this.loadDepartamentosFromStorage();
+    }
+  }
+
+  async saveDepartamento(departamento) {
+    try {
+      // Guardar en localStorage inmediatamente
+      this.saveDepartamentoToStorage(departamento);
+
+      // Si hay conexión, guardar en Firebase
+      if (this.isOnline && firebase?.firestore) {
+        await this.saveDepartamentoToFirebase(departamento);
+        console.log('✅ Departamento guardado en Firebase y localStorage');
+      } else {
+        // Agregar a cola de sincronización
+        this.addToPendingSync('departamentos', 'create', departamento);
+        console.log('📡 Departamento guardado en localStorage, pendiente de sincronización');
+      }
+
+      return true;
+    } catch (error) {
+      console.error('❌ Error guardando departamento:', error);
+      return false;
+    }
+  }
+
+  async saveDepartamentoToFirebase(departamento) {
+    try {
+      const db = firebase.firestore();
+      const currentUser = firebase.auth().currentUser;
+
+      if (!currentUser) {
+        throw new Error('Usuario no autenticado');
+      }
+
+      const departamentoData = {
+        ...departamento,
+        userId: currentUser.uid,
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+      };
+
+      if (departamento.id && departamento.id !== 'temp') {
+        // Actualizar departamento existente
+        await db.collection('departamentos').doc(departamento.id).set(departamentoData, { merge: true });
+      } else {
+        // Crear nuevo departamento
+        const docRef = await db.collection('departamentos').add(departamentoData);
+        departamento.id = docRef.id;
+        // Actualizar localStorage con el ID real
+        this.updateDepartamentoInStorage(departamento);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('❌ Error guardando departamento en Firebase:', error);
+      throw error;
+    }
+  }
+
+  // ========================================
+  // FUNCIONES AUXILIARES
+  // ========================================
+
+  mergeDepartamentos(firebaseData, storageData) {
+    const merged = [...firebaseData];
+
+    // Agregar departamentos de localStorage que no estén en Firebase
+    storageData.forEach((storageDept) => {
+      const exists = merged.find((fbDept) => fbDept.id === storageDept.id);
+      if (!exists) {
+        merged.push(storageDept);
+      }
+    });
+
+    return merged;
+  }
+
+  // ========================================
+  // MANEJO DE LOCALSTORAGE PARA DEPARTAMENTOS
+  // ========================================
+
+  loadDepartamentosFromStorage() {
+    try {
+      const data = localStorage.getItem('axyra_departamentos');
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('❌ Error cargando departamentos del localStorage:', error);
+      return [];
+    }
+  }
+
+  saveDepartamentosToStorage(departamentos) {
+    try {
+      localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
+    } catch (error) {
+      console.error('❌ Error guardando departamentos en localStorage:', error);
+    }
+  }
+
+  saveDepartamentoToStorage(departamento) {
+    try {
+      const departamentos = this.loadDepartamentosFromStorage();
+      const existingIndex = departamentos.findIndex((dept) => dept.id === departamento.id);
+
+      if (existingIndex >= 0) {
+        departamentos[existingIndex] = departamento;
+      } else {
+        departamentos.push(departamento);
+      }
+
+      this.saveDepartamentosToStorage(departamentos);
+    } catch (error) {
+      console.error('❌ Error guardando departamento en localStorage:', error);
+    }
+  }
+
+  updateDepartamentoInStorage(departamento) {
+    try {
+      const departamentos = this.loadDepartamentosFromStorage();
+      const existingIndex = departamentos.findIndex((dept) => dept.id === departamento.id);
+
+      if (existingIndex >= 0) {
+        departamentos[existingIndex] = departamento;
+        this.saveDepartamentosToStorage(departamentos);
+      }
+    } catch (error) {
+      console.error('❌ Error actualizando departamento en localStorage:', error);
+    }
+  }
+
+  // ========================================
   // UTILIDADES PÚBLICAS
   // ========================================
 
@@ -471,12 +644,20 @@ class FirebaseSyncManager {
     return await this.syncHoras();
   }
 
+  async getDepartamentos() {
+    return await this.syncDepartamentos();
+  }
+
   async addEmpleado(empleado) {
     return await this.saveEmpleado(empleado);
   }
 
   async addHoras(horas) {
     return await this.saveHoras(horas);
+  }
+
+  async addDepartamento(departamento) {
+    return await this.saveDepartamento(departamento);
   }
 
   getSyncStatus() {

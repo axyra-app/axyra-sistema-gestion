@@ -48,40 +48,40 @@ class AxyraDashboard {
     }
   }
 
-      async checkAuth() {
-        try {
-            console.log('🔐 Verificando autenticación...');
-            
-            // Usar el Auth Manager si está disponible
-            if (window.axyraAuthManager) {
-                const isAuth = window.axyraAuthManager.isUserAuthenticated();
-                if (isAuth) {
-                    console.log('✅ Usuario autenticado desde Auth Manager');
-                    return true;
-                }
-            }
-            
-            // Fallback: verificar directamente
-            const userData = localStorage.getItem('axyra_isolated_user');
-            if (userData) {
-                try {
-                    const user = JSON.parse(userData);
-                    if (user && user.isAuthenticated) {
-                        console.log('✅ Usuario autenticado desde localStorage:', user.username || user.email);
-                        return true;
-                    }
-                } catch (parseError) {
-                    console.warn('⚠️ Error parseando usuario de localStorage:', parseError);
-                }
-            }
+  async checkAuth() {
+    try {
+      console.log('🔐 Verificando autenticación...');
 
-            console.log('❌ No se encontró usuario autenticado');
-            return false;
-        } catch (error) {
-            console.error('❌ Error verificando autenticación:', error);
-            return false;
+      // Usar el Auth Manager si está disponible
+      if (window.axyraAuthManager) {
+        const isAuth = window.axyraAuthManager.isUserAuthenticated();
+        if (isAuth) {
+          console.log('✅ Usuario autenticado desde Auth Manager');
+          return true;
         }
+      }
+
+      // Fallback: verificar directamente
+      const userData = localStorage.getItem('axyra_isolated_user');
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          if (user && user.isAuthenticated) {
+            console.log('✅ Usuario autenticado desde localStorage:', user.username || user.email);
+            return true;
+          }
+        } catch (parseError) {
+          console.warn('⚠️ Error parseando usuario de localStorage:', parseError);
+        }
+      }
+
+      console.log('❌ No se encontró usuario autenticado');
+      return false;
+    } catch (error) {
+      console.error('❌ Error verificando autenticación:', error);
+      return false;
     }
+  }
 
   async loadDashboardData() {
     console.log('📊 Cargando datos del dashboard...');
@@ -109,7 +109,39 @@ class AxyraDashboard {
 
   async loadEmpleados() {
     try {
-      // Cargar desde localStorage primero
+      // Usar el sistema de sincronización si está disponible
+      if (window.firebaseSyncManager) {
+        try {
+          console.log('🔄 Usando sistema de sincronización para empleados...');
+          this.empleados = await window.firebaseSyncManager.getEmpleados();
+
+          // Obtener usuario actual para filtrar
+          let currentUser = null;
+          if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+            currentUser = window.axyraIsolatedAuth.getCurrentUser();
+          } else {
+            const userData = localStorage.getItem('axyra_isolated_user');
+            if (userData) {
+              currentUser = JSON.parse(userData);
+            }
+          }
+
+          // Filtrar solo empleados del usuario actual
+          if (currentUser) {
+            this.empleados = this.empleados.filter(
+              (emp) =>
+                emp.userId === currentUser.username || emp.userId === currentUser.email || emp.userId === currentUser.id
+            );
+          }
+
+          console.log(`✅ ${this.empleados.length} empleados cargados desde sistema de sincronización`);
+          return;
+        } catch (syncError) {
+          console.warn('⚠️ Error con sistema de sincronización, usando método directo:', syncError);
+        }
+      }
+
+      // Método directo - cargar desde localStorage primero
       const empleadosData = localStorage.getItem('axyra_empleados');
       if (empleadosData) {
         this.empleados = JSON.parse(empleadosData);
@@ -254,52 +286,60 @@ class AxyraDashboard {
       // Actividad de empleados
       if (this.empleados.length > 0) {
         const ultimoEmpleado = this.empleados[this.empleados.length - 1];
-        actividades.push({
-          tipo: 'empleado',
-          accion: 'Empleado registrado',
-          detalle: ultimoEmpleado.nombre || 'N/A',
-          timestamp: ultimoEmpleado.fecha_registro || now.toISOString(),
-          icono: 'fas fa-user-plus',
-        });
+        if (ultimoEmpleado && ultimoEmpleado.nombre) {
+          actividades.push({
+            tipo: 'empleado',
+            accion: 'Empleado registrado',
+            detalle: ultimoEmpleado.nombre,
+            timestamp: ultimoEmpleado.fecha_registro || ultimoEmpleado.createdAt || now.toISOString(),
+            icono: 'fas fa-user-plus',
+          });
+        }
       }
 
       // Actividad de horas
       if (this.horas.length > 0) {
         const ultimaHora = this.horas[this.horas.length - 1];
-        const empleado = this.empleados.find((e) => e.id === ultimaHora.empleado_id);
-        if (empleado) {
-          actividades.push({
-            tipo: 'hora',
-            accion: 'Horas registradas',
-            detalle: `${empleado.nombre}: ${ultimaHora.total_horas || 0} horas`,
-            timestamp: ultimaHora.fecha || now.toISOString(),
-            icono: 'fas fa-clock',
-          });
+        if (ultimaHora && ultimaHora.empleado_id) {
+          const empleado = this.empleados.find((e) => e.id === ultimaHora.empleado_id);
+          if (empleado && empleado.nombre) {
+            actividades.push({
+              tipo: 'hora',
+              accion: 'Horas registradas',
+              detalle: `${empleado.nombre}: ${ultimaHora.total_horas || 0} horas`,
+              timestamp: ultimaHora.fecha || ultimaHora.createdAt || now.toISOString(),
+              icono: 'fas fa-clock',
+            });
+          }
         }
       }
 
       // Actividad de nóminas
       if (this.nominas.length > 0) {
         const ultimaNomina = this.nominas[this.nominas.length - 1];
-        actividades.push({
-          tipo: 'nomina',
-          accion: 'Nómina generada',
-          detalle: `Quincena: ${ultimaNomina.quincena || 'N/A'}`,
-          timestamp: ultimaNomina.fecha_generacion || now.toISOString(),
-          icono: 'fas fa-file-invoice-dollar',
-        });
+        if (ultimaNomina && ultimaNomina.quincena) {
+          actividades.push({
+            tipo: 'nomina',
+            accion: 'Nómina generada',
+            detalle: `Quincena: ${ultimaNomina.quincena}`,
+            timestamp: ultimaNomina.fecha_generacion || ultimaNomina.createdAt || now.toISOString(),
+            icono: 'fas fa-file-invoice-dollar',
+          });
+        }
       }
 
       // Actividad de cuadres
       if (this.cuadres.length > 0) {
         const ultimoCuadre = this.cuadres[this.cuadres.length - 1];
-        actividades.push({
-          tipo: 'cuadre',
-          accion: 'Cuadre de caja',
-          detalle: `Total: $${ultimoCuadre.total || 0}`,
-          timestamp: ultimoCuadre.fecha || now.toISOString(),
-          icono: 'fas fa-calculator',
-        });
+        if (ultimoCuadre && ultimoCuadre.total !== undefined) {
+          actividades.push({
+            tipo: 'cuadre',
+            accion: 'Cuadre de caja',
+            detalle: `Total: $${ultimoCuadre.total}`,
+            timestamp: ultimoCuadre.fecha || ultimoCuadre.createdAt || now.toISOString(),
+            icono: 'fas fa-calculator',
+          });
+        }
       }
 
       // Ordenar por timestamp más reciente
@@ -321,7 +361,8 @@ class AxyraDashboard {
 
       // Empleados activos (incluye todos los estados excepto 'INACTIVO' o 'BAJA')
       const empleadosActivos = this.empleados.filter((e) => {
-        const estado = (e.estado || '').toUpperCase();
+        if (!e || !e.estado) return true; // Si no hay estado, considerar activo
+        const estado = e.estado.toUpperCase();
         return estado !== 'INACTIVO' && estado !== 'BAJA' && estado !== 'DESPEDIDO';
       }).length;
       const empleadosActivosElement = document.getElementById('empleadosActivos');
@@ -380,7 +421,11 @@ class AxyraDashboard {
       }
 
       // Departamentos
-      const departamentos = [...new Set(this.empleados.map((e) => e.departamento).filter(Boolean))];
+      const departamentos = [
+        ...new Set(
+          this.empleados.map((e) => (e && e.departamento ? e.departamento : 'Sin Departamento')).filter(Boolean)
+        ),
+      ];
       const departamentosElement = document.getElementById('departamentos');
       if (departamentosElement) {
         departamentosElement.textContent = departamentos.length;
@@ -727,25 +772,25 @@ class AxyraDashboard {
     }
   }
 
-      getCurrentUser() {
-        try {
-            // Usar el Auth Manager si está disponible
-            if (window.axyraAuthManager) {
-                return window.axyraAuthManager.getCurrentUser();
-            }
-            
-            // Fallback: verificar directamente
-            const userData = localStorage.getItem('axyra_isolated_user');
-            if (userData) {
-                return JSON.parse(userData);
-            }
-            
-            return null;
-        } catch (error) {
-            console.warn('⚠️ Error obteniendo usuario actual:', error);
-            return null;
-        }
+  getCurrentUser() {
+    try {
+      // Usar el Auth Manager si está disponible
+      if (window.axyraAuthManager) {
+        return window.axyraAuthManager.getCurrentUser();
+      }
+
+      // Fallback: verificar directamente
+      const userData = localStorage.getItem('axyra_isolated_user');
+      if (userData) {
+        return JSON.parse(userData);
+      }
+
+      return null;
+    } catch (error) {
+      console.warn('⚠️ Error obteniendo usuario actual:', error);
+      return null;
     }
+  }
 
   updateWelcomeTime() {
     try {
