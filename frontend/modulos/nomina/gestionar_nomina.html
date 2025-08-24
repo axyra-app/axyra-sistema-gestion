@@ -3824,8 +3824,8 @@
         }
       }
 
-      // Sistema de notificaciones
-      function mostrarNotificacion(mensaje, tipo = 'info', duracion = 5000) {
+      // Sistema de notificaciones (función global)
+      window.mostrarNotificacion = function(mensaje, tipo = 'info', duracion = 5000) {
         const container = document.getElementById('notificationContainer');
         if (!container) return;
 
@@ -5650,39 +5650,7 @@
         }
       }
 
-      // Función para mostrar notificaciones
-      function mostrarNotificacion(mensaje, tipo = 'info') {
-        try {
-          // Crear elemento de notificación
-          const notificacion = document.createElement('div');
-          notificacion.className = `axyra-notificacion axyra-notificacion-${tipo}`;
-          notificacion.innerHTML = `
-            <div class="axyra-notificacion-icono">
-              ${tipo === 'success' ? '✅' : tipo === 'error' ? '❌' : tipo === 'warning' ? '⚠️' : 'ℹ️'}
-            </div>
-            <div class="axyra-notificacion-contenido">
-              <div class="axyra-notificacion-mensaje">${mensaje}</div>
-            </div>
-            <button class="axyra-notificacion-cerrar" onclick="cerrarNotificacion(this)">
-              ×
-            </button>
-          `;
 
-          // Agregar al DOM
-          document.body.appendChild(notificacion);
-
-          // Auto-remover después de 5 segundos
-          setTimeout(() => {
-            if (notificacion.parentElement) {
-              notificacion.remove();
-            }
-          }, 5000);
-        } catch (error) {
-          console.error('❌ Error mostrando notificación:', error);
-          // Fallback a alert
-          alert(mensaje);
-        }
-      }
 
 
 
@@ -6136,6 +6104,10 @@
       window.generarReporteSimple = generarReporteSimple;
       window.mostrarConfiguracionSimple = mostrarConfiguracionSimple;
       window.guardarConfigSimple = guardarConfigSimple;
+      window.cerrarNotificacion = cerrarNotificacion;
+
+    }); // Cerrar DOMContentLoaded
+
     </script>
   </body>
 </html>
