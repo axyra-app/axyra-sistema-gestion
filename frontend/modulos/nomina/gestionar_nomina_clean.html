@@ -374,7 +374,7 @@
             const modal = document.createElement('div');
             modal.className = 'axyra-modal-overlay';
             modal.id = 'modalGenerarNomina';
-            
+
             modal.innerHTML = `
               <div class="axyra-modal-content">
                 <div class="axyra-modal-header">
@@ -390,7 +390,9 @@
                   </div>
                   <div class="axyra-form-group">
                     <label for="mesNomina">📅 Mes de Nómina:</label>
-                    <input type="month" id="mesNomina" class="axyra-form-control" value="${new Date().toISOString().slice(0, 7)}">
+                    <input type="month" id="mesNomina" class="axyra-form-control" value="${new Date()
+                      .toISOString()
+                      .slice(0, 7)}">
                   </div>
                   <div class="axyra-form-group">
                     <label for="horasTrabajadas">⏰ Horas Trabajadas:</label>
@@ -410,7 +412,7 @@
 
             document.body.appendChild(modal);
             this.cargarEmpleadosEnSelect();
-            
+
             // Agregar estilos para el modal
             if (!document.getElementById('modalStyles')) {
               const styles = document.createElement('style');
@@ -568,7 +570,7 @@
             const select = document.getElementById('empleadoSelect');
             if (select) {
               select.innerHTML = '<option value="">Seleccione un empleado...</option>';
-              this.empleados.forEach(emp => {
+              this.empleados.forEach((emp) => {
                 const option = document.createElement('option');
                 option.value = emp.id;
                 option.textContent = `${emp.nombre} - ${emp.cargo}`;
@@ -603,7 +605,7 @@
             }
 
             // Obtener empleado
-            const empleado = this.empleados.find(emp => emp.id === empleadoId);
+            const empleado = this.empleados.find((emp) => emp.id === empleadoId);
 
             if (!empleado) {
               alert('Empleado no encontrado');
@@ -642,14 +644,18 @@
               total_descuentos: totalDescuentos,
               salario_final: netoAPagar,
               estado: 'GENERADA',
-              fecha_generacion: new Date().toISOString()
+              fecha_generacion: new Date().toISOString(),
             };
 
             // Guardar nómina
             this.nominas.push(nomina);
             localStorage.setItem('axyra_nominas', JSON.stringify(this.nominas));
 
-            alert(`✅ Nómina generada correctamente\n\nEmpleado: ${empleado.nombre}\nTotal a Pagar: $${netoAPagar.toLocaleString()}`);
+            alert(
+              `✅ Nómina generada correctamente\n\nEmpleado: ${
+                empleado.nombre
+              }\nTotal a Pagar: $${netoAPagar.toLocaleString()}`
+            );
             this.cerrarModalGenerarNomina();
 
             // Recargar la página para mostrar la nueva nómina
@@ -699,9 +705,10 @@
                       </tr>
                     </thead>
                     <tbody>
-                      ${this.nominas.map(n => {
-                        const emp = this.empleados.find(e => e.id === n.empleado_id);
-                        return `
+                      ${this.nominas
+                        .map((n) => {
+                          const emp = this.empleados.find((e) => e.id === n.empleado_id);
+                          return `
                           <tr>
                             <td>${emp ? emp.nombre : 'N/A'}</td>
                             <td>${emp ? emp.cargo : 'N/A'}</td>
@@ -710,13 +717,16 @@
                             <td>$${n.salario_final?.toLocaleString() || '0'}</td>
                           </tr>
                         `;
-                      }).join('')}
+                        })
+                        .join('')}
                     </tbody>
                   </table>
 
                   <div class="total">
                     <p>Total Nóminas: ${this.nominas.length}</p>
-                    <p>Total a Pagar: $${this.nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0).toLocaleString()}</p>
+                    <p>Total a Pagar: $${this.nominas
+                      .reduce((sum, n) => sum + (n.salario_final || 0), 0)
+                      .toLocaleString()}</p>
                   </div>
                 </body>
               </html>
@@ -731,7 +741,6 @@
             setTimeout(() => {
               ventana.print();
             }, 500);
-
           } catch (error) {
             console.error('Error generando PDF:', error);
             alert('Error generando PDF: ' + error.message);
@@ -750,17 +759,17 @@
               ['VILLA VENECIA - NÓMINA'],
               [`Fecha: ${new Date().toLocaleDateString()}`],
               [''],
-              ['Empleado', 'Cargo', 'Salario', 'Estado']
+              ['Empleado', 'Cargo', 'Salario', 'Estado'],
             ];
 
-            this.nominas.forEach(nomina => {
-              const empleado = this.empleados.find(emp => emp.id === nomina.empleado_id);
+            this.nominas.forEach((nomina) => {
+              const empleado = this.empleados.find((emp) => emp.id === nomina.empleado_id);
               if (empleado) {
                 datosExcel.push([
                   empleado.nombre || 'N/A',
                   empleado.cargo || 'N/A',
                   `$${(nomina.salario_final || 0).toLocaleString()}`,
-                  nomina.estado || 'N/A'
+                  nomina.estado || 'N/A',
                 ]);
               }
             });
@@ -797,10 +806,12 @@
               💰 Total Salarios: $${this.nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0).toLocaleString()}
 
               📋 DETALLE:
-              ${this.nominas.map(n => {
-                const emp = this.empleados.find(e => e.id === n.empleado_id);
-                return `• ${emp ? emp.nombre : 'N/A'}: $${(n.salario_final || 0).toLocaleString()}`;
-              }).join('\n')}
+              ${this.nominas
+                .map((n) => {
+                  const emp = this.empleados.find((e) => e.id === n.empleado_id);
+                  return `• ${emp ? emp.nombre : 'N/A'}: $${(n.salario_final || 0).toLocaleString()}`;
+                })
+                .join('\n')}
             `;
 
             // Mostrar en nueva ventana
@@ -859,7 +870,7 @@
               salarioMinimo: document.getElementById('salMin').value,
               cesantias: document.getElementById('cesantias').value,
               salud: document.getElementById('salud').value,
-              pension: document.getElementById('pension').value
+              pension: document.getElementById('pension').value,
             };
 
             localStorage.setItem('axyra_config_simple', JSON.stringify(config));
@@ -884,15 +895,15 @@
       // ========================================
       // INICIALIZACIÓN DEL SISTEMA
       // ========================================
-      
+
       // Crear instancia global del manager
       let nominaManager;
-      
+
       // Inicializar cuando el DOM esté listo
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         try {
           nominaManager = new NominaManager();
-          
+
           // Hacer funciones globales para compatibilidad
           window.mostrarModalGenerarNomina = () => nominaManager.mostrarModalGenerarNomina();
           window.cerrarModalGenerarNomina = () => nominaManager.cerrarModalGenerarNomina();
@@ -904,13 +915,12 @@
           window.mostrarConfiguracionSimple = () => nominaManager.mostrarConfiguracionSimple();
           window.guardarConfigSimple = () => nominaManager.guardarConfigSimple();
           window.cerrarNotificacion = (boton) => nominaManager.cerrarNotificacion(boton);
-          
+
           console.log('✅ Sistema de nómina AXYRA inicializado correctamente');
         } catch (error) {
           console.error('❌ Error inicializando sistema de nómina:', error);
         }
       });
-
     </script>
   </body>
 </html>
