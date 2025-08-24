@@ -16,16 +16,16 @@ class ColombianLaborLawCalculator {
 
     // Tipos de horas según la aplicación de escritorio del usuario
     this.TIPOS_HORAS = [
-      ['ordinarias', 0.0],
-      ['recargo_nocturno', 0.35],
-      ['recargo_diurno_dominical', 0.75],
-      ['recargo_nocturno_dominical', 1.1],
-      ['hora_extra_diurna', 0.25],
-      ['hora_extra_nocturna', 0.75],
-      ['hora_diurna_dominical_o_festivo', 0.8],
-      ['hora_extra_diurna_dominical_o_festivo', 1.05],
-      ['hora_nocturna_dominical_o_festivo', 1.1],
-      ['hora_extra_nocturna_dominical_o_festivo', 1.85],
+      ['ordinarias', 0.00],                    // $6,470
+      ['recargo_nocturno', 0.35],             // $8,735 (base + 35%)
+      ['recargo_diurno_dominical', 0.75],     // $11,323 (base + 75%)
+      ['recargo_nocturno_dominical', 1.10],   // $13,588 (base + 110%)
+      ['hora_extra_diurna', 0.25],            // $8,088 (base + 25%)
+      ['hora_extra_nocturna', 0.75],          // $11,323 (base + 75%)
+      ['hora_diurna_dominical_o_festivo', 0.80], // $11,647 (base + 80%)
+      ['hora_extra_diurna_dominical_o_festivo', 1.05], // $13,264 (base + 105%)
+      ['hora_nocturna_dominical_o_festivo', 1.10], // $13,588 (base + 110%)
+      ['hora_extra_nocturna_dominical_o_festivo', 1.85] // $18,441 (base + 185%)
     ];
 
     // Recargos según la ley (mantener compatibilidad)
@@ -342,25 +342,26 @@ class ColombianLaborLawCalculator {
     const valorHoraBase = this.calcularValorHoraOrdinaria(salarioMensual, tipoContrato);
     const valores = {};
 
-    // Mapear campos del formulario a tipos de horas
-    const mapeoCampos = {
-      ordinarias: 'ordinarias',
-      nocturnas: 'recargo_nocturno',
-      extraDiurnas: 'hora_extra_diurna',
-      extraNocturnas: 'hora_extra_nocturna',
-      dominicales: 'recargo_diurno_dominical',
-      festivas: 'hora_diurna_dominical_o_festivo',
-      extraFestivasDiurnas: 'hora_extra_diurna_dominical_o_festivo',
-      extraFestivasNocturnas: 'hora_extra_nocturna_dominical_o_festivo',
-      dominicalesFestivas: 'hora_nocturna_dominical_o_festivo',
-      extraDominicales: 'recargo_nocturno_dominical',
-      extraDominicalesFestivas: 'hora_extra_nocturna_dominical_o_festivo',
-    };
-
     // Calcular valor de cada tipo de hora según los TIPOS_HORAS
     this.TIPOS_HORAS.forEach(([tipo, recargo]) => {
       valores[tipo] = valorHoraBase * (1 + recargo);
     });
+
+    // Mapear campos del formulario a tipos de horas según la tabla de referencia
+    const mapeoCampos = {
+      ordinarias: 'ordinarias',                                    // $6,470
+      nocturnas: 'recargo_nocturno',                              // $8,735
+      extraDiurnas: 'hora_extra_diurna',                          // $8,088
+      extraNocturnas: 'hora_extra_nocturna',                      // $11,323
+      dominicales: 'recargo_diurno_dominical',                    // $11,323
+      festivas: 'hora_diurna_dominical_o_festivo',                // $11,647
+      dominicalesNocturnas: 'hora_nocturna_dominical_o_festivo',  // $13,588
+      festivasNocturnas: 'recargo_nocturno_dominical',            // $13,588
+      extraDominicales: 'hora_extra_diurna_dominical_o_festivo',  // $13,264
+      extraDominicalesNocturnas: 'hora_extra_nocturna_dominical_o_festivo', // $18,441
+      extraFestivas: 'hora_extra_diurna_dominical_o_festivo',     // $13,264
+      extraFestivasNocturnas: 'hora_extra_nocturna_dominical_o_festivo' // $18,441
+    };
 
     // Agregar valores mapeados para los campos del formulario
     Object.entries(mapeoCampos).forEach(([campoFormulario, tipoHora]) => {
@@ -374,7 +375,7 @@ class ColombianLaborLawCalculator {
       valores,
       tipoContrato,
       salarioMensual,
-      mapeoCampos,
+      mapeoCampos
     };
   }
 
