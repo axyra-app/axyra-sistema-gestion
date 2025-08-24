@@ -4804,7 +4804,16 @@
             porcentajePension: parseFloat(document.getElementById('porcentajePension').value) || 4
           };
 
-          localStorage.setItem('axyra_configuracion_nomina', JSON.stringify(config));
+                    localStorage.setItem('axyra_configuracion_nomina', JSON.stringify(config));
+          mostrarNotificacion('✅ Configuración guardada correctamente', 'success');
+          
+          // Cerrar modal después de guardar
+          cerrarModalConfiguracion();
+        } catch (error) {
+          console.error('❌ Error guardando configuración:', error);
+          mostrarNotificacion('Error guardando configuración: ' + error.message, 'error');
+        }
+      }
           mostrarNotificacion('✅ Configuración guardada correctamente', 'success');
           
           // Cerrar modal después de guardar
@@ -5470,6 +5479,32 @@
         } catch (error) {
           console.error('❌ Error generando reportes:', error);
           mostrarNotificacion('Error al generar reportes: ' + error.message, 'error');
+        }
+      }
+
+      // Función para mostrar modal
+      function mostrarModal(modalId) {
+        try {
+          const modal = document.getElementById(modalId);
+          if (modal) {
+            modal.style.display = 'block';
+            modal.classList.add('show');
+          }
+        } catch (error) {
+          console.error('❌ Error mostrando modal:', error);
+        }
+      }
+
+      // Función para cerrar modal
+      function cerrarModal(modalId) {
+        try {
+          const modal = document.getElementById(modalId);
+          if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+          }
+        } catch (error) {
+          console.error('❌ Error cerrando modal:', error);
         }
       }
 
