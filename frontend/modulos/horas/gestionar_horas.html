@@ -2455,10 +2455,10 @@
       }
 
       // Registrar horas
-      function registrarHoras(formData) {
+      async function registrarHoras(formData) {
         try {
-          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-
+          console.log('🚀 Iniciando registro de horas...');
+          
           // Crear estructura de horas organizada
           const horasData = {
             ordinarias: parseFloat(formData.get('horasOrdinarias')) || 0,
@@ -2485,20 +2485,56 @@
             horas: horasData, // Estructura organizada de horas
             total_horas: totalHoras,
             observaciones: formData.get('observaciones'),
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            userId: getCurrentUserId() // Agregar ID del usuario actual
           };
 
+          console.log('📝 Nuevo registro creado:', nuevoRegistro);
+
+          // Guardar en localStorage primero
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
           horas.push(nuevoRegistro);
           localStorage.setItem('axyra_horas', JSON.stringify(horas));
+          console.log('💾 Guardado en localStorage');
+
+          // Intentar guardar en Firebase usando el sync manager
+          if (window.firebaseSyncManager) {
+            try {
+              console.log('🔥 Intentando guardar en Firebase...');
+              await window.firebaseSyncManager.addHoras(nuevoRegistro);
+              console.log('✅ Guardado en Firebase exitosamente');
+            } catch (error) {
+              console.warn('⚠️ Error guardando en Firebase, pero se guardó en localStorage:', error);
+              // Agregar a la cola de sincronización pendiente
+              const pendingSync = JSON.parse(localStorage.getItem('axyra_pending_sync') || '[]');
+              pendingSync.push({
+                type: 'horas',
+                action: 'add',
+                data: nuevoRegistro,
+                timestamp: new Date().toISOString()
+              });
+              localStorage.setItem('axyra_pending_sync', JSON.stringify(pendingSync));
+              console.log('📋 Agregado a cola de sincronización pendiente');
+            }
+          } else {
+            console.log('⚠️ Firebase Sync Manager no disponible, solo localStorage');
+          }
 
           mostrarMensaje('✅ Horas registradas exitosamente', 'success');
-          cargarHistorialHoras();
+          
+          // Recargar historial y limpiar formulario
+          await cargarHistorialHoras();
           limpiarFormulario();
+
+          // Actualizar dashboard
+          actualizarEstadisticasDashboard();
 
           // Actualizar notificaciones del sistema
           if (window.axyraNotificationSystem) {
             window.axyraNotificationSystem.generateSystemNotifications();
           }
+
+          console.log('🎉 Registro de horas completado exitosamente');
         } catch (error) {
           console.error('❌ Error registrando horas:', error);
           mostrarMensaje('❌ Error al registrar las horas: ' + error.message, 'error');
@@ -3641,6 +3677,79 @@
         } catch (error) {
           console.error('❌ Error generando comprobante desde modal:', error);
           mostrarMensaje('Error generando comprobante: ' + error.message, 'error');
+        }
+      }
+
+      // Función para actualizar estadísticas del dashboard
+      function actualizarEstadisticasDashboard() {
+        try {
+          console.log('📊 Actualizando estadísticas del dashboard...');
+          
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          
+          // Calcular empleados activos
+          const empleadosActivos = empleados.filter(emp => emp.estado === 'Activo').length;
+          
+          // Calcular total de horas del mes actual
+          const mesActual = new Date().getMonth();
+          const añoActual = new Date().getFullYear();
+          
+          const horasMes = horas
+            .filter(h => {
+              const fechaHora = new Date(h.fecha);
+              return fechaHora.getMonth() === mesActual && fechaHora.getFullYear() === añoActual;
+            })
+            .reduce((total, h) => {
+              if (h.horas) {
+                return total + Object.values(h.horas).reduce((sum, horas) => sum + (horas || 0), 0);
+              }
+              return total;
+            }, 0);
+          
+          // Calcular total de pagos
+          let totalPagos = 0;
+          horas.forEach(h => {
+            if (h.horas) {
+              const empleado = empleados.find(emp => emp.id == h.empleadoId);
+              if (empleado && empleado.salario) {
+                const totalHoras = Object.values(h.horas).reduce((sum, horas) => sum + (horas || 0), 0);
+                const valorHora = empleado.salario / 220; // 220 horas mensuales
+                totalPagos += totalHoras * valorHora;
+              }
+            }
+          });
+          
+          // Calcular días trabajados (empleados fijos)
+          const diasTrabajados = horas
+            .filter(h => {
+              const empleado = empleados.find(emp => emp.id == h.empleadoId);
+              return empleado && empleado.tipoContrato === 'Fijo' && h.horas?.ordinarias > 0;
+            })
+            .length;
+          
+          // Actualizar elementos del DOM
+          const elementos = {
+            horasMes: document.querySelector('[data-stat="horas-mes"]'),
+            totalPagos: document.querySelector('[data-stat="total-pagos"]'),
+            empleadosActivos: document.querySelector('[data-stat="empleados-activos"]'),
+            diasTrabajados: document.querySelector('[data-stat="dias-trabajados"]')
+          };
+          
+          if (elementos.horasMes) elementos.horasMes.textContent = `${horasMes.toFixed(2)} HORAS DEL MES`;
+          if (elementos.totalPagos) elementos.totalPagos.textContent = `$${totalPagos.toFixed(0)} TOTAL PAGOS`;
+          if (elementos.empleadosActivos) elementos.empleadosActivos.textContent = `${empleadosActivos} EMPLEADOS ACTIVOS`;
+          if (elementos.diasTrabajados) elementos.diasTrabajados.textContent = `${diasTrabajados} DÍAS TRABAJADOS`;
+          
+          console.log('✅ Estadísticas del dashboard actualizadas:', {
+            horasMes,
+            totalPagos: totalPagos.toFixed(2),
+            empleadosActivos,
+            diasTrabajados
+          });
+          
+        } catch (error) {
+          console.error('❌ Error actualizando estadísticas:', error);
         }
       }
 
