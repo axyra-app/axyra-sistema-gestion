@@ -12,6 +12,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="../../static/colombian-labor-law.js"></script>
     <script src="../../static/pdf-generator.js"></script>
+    <script src="../../static/firebase-sync-manager.js"></script>
+    <script src="../../static/comprobante-pdf-generator.js"></script>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -1582,7 +1584,7 @@
       }
 
       // Previsualizar comprobante
-      function previsualizarComprobante() {
+      async function previsualizarComprobante() {
         try {
           const empleadoId = document.getElementById('empleadoComprobante').value;
           const tipoContrato = document.getElementById('tipoContrato').value;
@@ -1595,8 +1597,39 @@
             return;
           }
 
-          // Obtener información del empleado
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          // Mostrar indicador de carga
+          mostrarMensaje('⏳ Preparando previsualización...', 'info');
+
+          // Usar el nuevo generador de PDFs si está disponible
+          if (window.comprobantePDFGenerator) {
+            try {
+              const resultado = await window.comprobantePDFGenerator.previsualizarComprobante(
+                empleadoId,
+                tipoContrato,
+                salarioBase,
+                deudaComentario,
+                deudaValor
+              );
+
+              if (resultado.success) {
+                mostrarMensaje('✅ Previsualización generada correctamente', 'success');
+              } else {
+                throw new Error(resultado.message || 'Error desconocido');
+              }
+            } catch (error) {
+              console.warn('⚠️ Error con nuevo generador, usando fallback:', error);
+              // Continuar con el método fallback
+            }
+          }
+
+          // Método fallback - obtener información del empleado
+          let empleados = [];
+          if (window.firebaseSyncManager) {
+            empleados = await window.firebaseSyncManager.getEmpleados();
+          } else {
+            empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          }
+
           const empleado = empleados.find((emp) => emp.id == empleadoId || emp.id == parseInt(empleadoId));
 
           if (!empleado) {
@@ -1624,8 +1657,8 @@
                   <div class="axyra-preview-header">
                     <h4>Información del Empleado</h4>
                     <p><strong>Nombre:</strong> ${empleado.nombre}</p>
-                    <p><strong>Cargo:</strong> ${empleado.cargo}</p>
-                    <p><strong>Departamento:</strong> ${empleado.departamento}</p>
+                    <p><strong>Cargo:</strong> ${empleado.cargo || 'N/A'}</p>
+                    <p><strong>Departamento:</strong> ${empleado.departamento || 'N/A'}</p>
                     <p><strong>Tipo de Contrato:</strong> ${tipoContrato === 'FIJO' ? 'Empleado Fijo' : 'Por Horas'}</p>
                     <p><strong>Salario Base:</strong> $${parseFloat(salarioBase).toLocaleString()}</p>
                     ${deudaComentario ? `<p><strong>Motivo de Deuda:</strong> ${deudaComentario}</p>` : ''}
@@ -1668,7 +1701,7 @@
       }
 
       // Generar comprobante PDF
-      function generarComprobantePDF() {
+      async function generarComprobantePDF() {
         try {
           const empleadoId = document.getElementById('empleadoComprobante').value;
           const tipoContrato = document.getElementById('tipoContrato').value;
@@ -1681,13 +1714,50 @@
             return;
           }
 
-          // Obtener información del empleado
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          // Mostrar indicador de carga
+          mostrarMensaje('⏳ Generando comprobante PDF...', 'info');
+
+          // Usar el nuevo generador de PDFs
+          if (window.comprobantePDFGenerator) {
+            const resultado = await window.comprobantePDFGenerator.generarComprobante(
+              empleadoId,
+              tipoContrato,
+              salarioBase,
+              deudaComentario,
+              deudaValor
+            );
+
+            if (resultado.success) {
+              mostrarMensaje('✅ ' + resultado.message, 'success');
+              cerrarModalPrevisualizacion();
+            } else {
+              throw new Error(resultado.message || 'Error desconocido');
+            }
+          } else {
+            // Fallback al método anterior
+            await generarComprobantePDFFallback(empleadoId, tipoContrato, salarioBase, deudaComentario, deudaValor);
+          }
+        } catch (error) {
+          console.error('❌ Error generando comprobante:', error);
+          mostrarMensaje('❌ Error al generar el comprobante: ' + error.message, 'error');
+        }
+      }
+
+      // Función fallback para compatibilidad
+      async function generarComprobantePDFFallback(empleadoId, tipoContrato, salarioBase, deudaComentario, deudaValor) {
+        try {
+          // Obtener información del empleado usando el sistema de sincronización
+          let empleados = [];
+          if (window.firebaseSyncManager) {
+            empleados = await window.firebaseSyncManager.getEmpleados();
+          } else {
+            empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          }
+
           const empleado = empleados.find((emp) => emp.id == empleadoId || emp.id == parseInt(empleadoId));
 
           if (!empleado) {
-            mostrarMensaje('❌ Empleado no encontrado', 'error');
-            return;
+            throw new Error('Empleado no encontrado');
           }
 
           // Crear datos del comprobante
@@ -1724,8 +1794,8 @@
 
           cerrarModalPrevisualizacion();
         } catch (error) {
-          console.error('❌ Error generando comprobante:', error);
-          mostrarMensaje('❌ Error al generar el comprobante: ' + error.message, 'error');
+          console.error('❌ Error en fallback:', error);
+          throw error;
         }
       }
 
@@ -4009,14 +4079,14 @@
         border: 2px solid #ea580c;
         animation: slideInRight 0.5s ease;
       }
-      
+
       .axyra-notification-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 12px;
       }
-      
+
       .axyra-notification-title {
         font-weight: 600;
         font-size: 1rem;
@@ -4024,7 +4094,7 @@
         align-items: center;
         gap: 8px;
       }
-      
+
       .axyra-notification-close {
         background: none;
         border: none;
@@ -4035,17 +4105,17 @@
         border-radius: 50%;
         transition: background-color 0.2s ease;
       }
-      
+
       .axyra-notification-close:hover {
         background: rgba(255, 255, 255, 0.2);
       }
-      
+
       .axyra-notification-content {
         font-size: 0.875rem;
         line-height: 1.4;
         margin-bottom: 16px;
       }
-      
+
       .axyra-notification-action {
         background: #ea580c;
         color: white;
@@ -4056,11 +4126,11 @@
         cursor: pointer;
         transition: background-color 0.2s ease;
       }
-      
+
       .axyra-notification-action:hover {
         background: #dc2626;
       }
-      
+
       @keyframes slideInRight {
         from {
           transform: translateX(100%);
@@ -4071,7 +4141,7 @@
           opacity: 1;
         }
       }
-      
+
       .axyra-info-dia {
         margin-bottom: var(--spacing-lg);
         border: 2px solid var(--axyra-blue-200);
@@ -4574,7 +4644,10 @@
             ${empleadosSinHoras.length} empleado(s) no tienen horas registradas en el sistema.
             <br><br>
             <strong>Empleados afectados:</strong><br>
-            ${empleadosSinHoras.slice(0, 3).map(emp => `• ${emp.nombre} (${emp.cedula})`).join('<br>')}
+            ${empleadosSinHoras
+              .slice(0, 3)
+              .map((emp) => `• ${emp.nombre} (${emp.cedula})`)
+              .join('<br>')}
             ${empleadosSinHoras.length > 3 ? `<br><em>... y ${empleadosSinHoras.length - 3} más</em>` : ''}
           </div>
           <button class="axyra-notification-action" onclick="navegarAEmpleados()">

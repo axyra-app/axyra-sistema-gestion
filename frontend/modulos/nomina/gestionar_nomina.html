@@ -144,6 +144,10 @@
         background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
       }
 
+      .axyra-btn-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      }
+
       .axyra-analytics-dashboard {
         background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         border-radius: 20px;
@@ -374,7 +378,7 @@
             const modal = document.createElement('div');
             modal.className = 'axyra-modal-overlay';
             modal.id = 'modalGenerarNomina';
-            
+
             modal.innerHTML = `
               <div class="axyra-modal-content">
                 <div class="axyra-modal-header">
@@ -390,7 +394,9 @@
                   </div>
                   <div class="axyra-form-group">
                     <label for="mesNomina">📅 Mes de Nómina:</label>
-                    <input type="month" id="mesNomina" class="axyra-form-control" value="${new Date().toISOString().slice(0, 7)}">
+                    <input type="month" id="mesNomina" class="axyra-form-control" value="${new Date()
+                      .toISOString()
+                      .slice(0, 7)}">
                   </div>
                   <div class="axyra-form-group">
                     <label for="horasTrabajadas">⏰ Horas Trabajadas:</label>
@@ -410,7 +416,7 @@
 
             document.body.appendChild(modal);
             this.cargarEmpleadosEnSelect();
-            
+
             // Agregar estilos para el modal
             if (!document.getElementById('modalStyles')) {
               const styles = document.createElement('style');
@@ -568,7 +574,7 @@
             const select = document.getElementById('empleadoSelect');
             if (select) {
               select.innerHTML = '<option value="">Seleccione un empleado...</option>';
-              this.empleados.forEach(emp => {
+              this.empleados.forEach((emp) => {
                 const option = document.createElement('option');
                 option.value = emp.id;
                 option.textContent = `${emp.nombre} - ${emp.cargo}`;
@@ -603,7 +609,7 @@
             }
 
             // Obtener empleado
-            const empleado = this.empleados.find(emp => emp.id === empleadoId);
+            const empleado = this.empleados.find((emp) => emp.id === empleadoId);
 
             if (!empleado) {
               alert('Empleado no encontrado');
@@ -642,14 +648,18 @@
               total_descuentos: totalDescuentos,
               salario_final: netoAPagar,
               estado: 'GENERADA',
-              fecha_generacion: new Date().toISOString()
+              fecha_generacion: new Date().toISOString(),
             };
 
             // Guardar nómina
             this.nominas.push(nomina);
             localStorage.setItem('axyra_nominas', JSON.stringify(this.nominas));
 
-            alert(`✅ Nómina generada correctamente\n\nEmpleado: ${empleado.nombre}\nTotal a Pagar: $${netoAPagar.toLocaleString()}`);
+            alert(
+              `✅ Nómina generada correctamente\n\nEmpleado: ${
+                empleado.nombre
+              }\nTotal a Pagar: $${netoAPagar.toLocaleString()}`
+            );
             this.cerrarModalGenerarNomina();
 
             // Recargar la página para mostrar la nueva nómina
@@ -663,10 +673,101 @@
         generarPDFSimple() {
           try {
             if (this.nominas.length === 0) {
-              alert('No hay nóminas para generar PDF');
+              this.mostrarModalError(
+                'No hay nóminas para generar PDF',
+                'No se pueden generar PDFs sin datos de nómina disponibles.'
+              );
               return;
             }
 
+            // Crear modal de confirmación para PDF
+            const modal = document.createElement('div');
+            modal.className = 'axyra-modal-overlay';
+            modal.id = 'modalPDF';
+
+            modal.innerHTML = `
+              <div class="axyra-modal-content axyra-modal-large">
+                <div class="axyra-modal-header">
+                  <h3><i class="fas fa-file-pdf"></i> Generar PDF de Nómina</h3>
+                  <button class="axyra-modal-close" onclick="nominaManager.cerrarModal('modalPDF')">×</button>
+                </div>
+                <div class="axyra-modal-body">
+                  <div class="axyra-pdf-preview">
+                    <div class="axyra-pdf-header">
+                      <h4>📋 VILLA VENECIA - Reporte de Nómina</h4>
+                      <p>📅 Fecha: ${new Date().toLocaleDateString()}</p>
+                      <p>👥 Total Empleados: ${this.empleados.length}</p>
+                      <p>📊 Total Nóminas: ${this.nominas.length}</p>
+                    </div>
+                    
+                    <div class="axyra-pdf-table">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Empleado</th>
+                            <th>Cargo</th>
+                            <th>Horas</th>
+                            <th>Salario Base</th>
+                            <th>Total a Pagar</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          ${this.nominas
+                            .slice(0, 5)
+                            .map((n) => {
+                              const emp = this.empleados.find((e) => e.id === n.empleado_id);
+                              return `
+                              <tr>
+                                <td>${emp ? emp.nombre : 'N/A'}</td>
+                                <td>${emp ? emp.cargo : 'N/A'}</td>
+                                <td>${n.horas_trabajadas}</td>
+                                <td>$${n.salario_base?.toLocaleString() || '0'}</td>
+                                <td>$${n.salario_final?.toLocaleString() || '0'}</td>
+                              </tr>
+                            `;
+                            })
+                            .join('')}
+                          ${
+                            this.nominas.length > 5
+                              ? `<tr><td colspan="5" class="axyra-pdf-more">... y ${
+                                  this.nominas.length - 5
+                                } nóminas más</td></tr>`
+                              : ''
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <div class="axyra-pdf-summary">
+                      <div class="axyra-pdf-total">
+                        <strong>💰 Total a Pagar: $${this.nominas
+                          .reduce((sum, n) => sum + (n.salario_final || 0), 0)
+                          .toLocaleString()}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="axyra-modal-footer">
+                  <button class="axyra-btn axyra-btn-secondary" onclick="nominaManager.cerrarModal('modalPDF')">
+                    <i class="fas fa-times"></i> Cancelar
+                  </button>
+                  <button class="axyra-btn axyra-btn-success" onclick="nominaManager.confirmarGenerarPDF()">
+                    <i class="fas fa-file-pdf"></i> Generar PDF
+                  </button>
+                </div>
+              </div>
+            `;
+
+            document.body.appendChild(modal);
+            this.agregarEstilosModales();
+          } catch (error) {
+            console.error('Error generando PDF:', error);
+            this.mostrarModalError('Error generando PDF', error.message);
+          }
+        }
+
+        confirmarGenerarPDF() {
+          try {
             // Crear contenido del PDF
             const contenido = `
               <html>
@@ -699,9 +800,10 @@
                       </tr>
                     </thead>
                     <tbody>
-                      ${this.nominas.map(n => {
-                        const emp = this.empleados.find(e => e.id === n.empleado_id);
-                        return `
+                      ${this.nominas
+                        .map((n) => {
+                          const emp = this.empleados.find((e) => e.id === n.empleado_id);
+                          return `
                           <tr>
                             <td>${emp ? emp.nombre : 'N/A'}</td>
                             <td>${emp ? emp.cargo : 'N/A'}</td>
@@ -710,13 +812,16 @@
                             <td>$${n.salario_final?.toLocaleString() || '0'}</td>
                           </tr>
                         `;
-                      }).join('')}
+                        })
+                        .join('')}
                     </tbody>
                   </table>
 
                   <div class="total">
                     <p>Total Nóminas: ${this.nominas.length}</p>
-                    <p>Total a Pagar: $${this.nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0).toLocaleString()}</p>
+                    <p>Total a Pagar: $${this.nominas
+                      .reduce((sum, n) => sum + (n.salario_final || 0), 0)
+                      .toLocaleString()}</p>
                   </div>
                 </body>
               </html>
@@ -732,9 +837,15 @@
               ventana.print();
             }, 500);
 
+            // Cerrar modal y mostrar confirmación
+            this.cerrarModal('modalPDF');
+            this.mostrarModalExito(
+              'PDF Generado',
+              'El PDF se ha generado correctamente y se abrirá en una nueva ventana para imprimir.'
+            );
           } catch (error) {
             console.error('Error generando PDF:', error);
-            alert('Error generando PDF: ' + error.message);
+            this.mostrarModalError('Error generando PDF', error.message);
           }
         }
 
@@ -750,17 +861,17 @@
               ['VILLA VENECIA - NÓMINA'],
               [`Fecha: ${new Date().toLocaleDateString()}`],
               [''],
-              ['Empleado', 'Cargo', 'Salario', 'Estado']
+              ['Empleado', 'Cargo', 'Salario', 'Estado'],
             ];
 
-            this.nominas.forEach(nomina => {
-              const empleado = this.empleados.find(emp => emp.id === nomina.empleado_id);
+            this.nominas.forEach((nomina) => {
+              const empleado = this.empleados.find((emp) => emp.id === nomina.empleado_id);
               if (empleado) {
                 datosExcel.push([
                   empleado.nombre || 'N/A',
                   empleado.cargo || 'N/A',
                   `$${(nomina.salario_final || 0).toLocaleString()}`,
-                  nomina.estado || 'N/A'
+                  nomina.estado || 'N/A',
                 ]);
               }
             });
@@ -783,11 +894,135 @@
         generarReporteSimple() {
           try {
             if (this.nominas.length === 0) {
-              alert('No hay datos para generar reporte');
+              this.mostrarModalError(
+                'No hay datos para generar reporte',
+                'No se pueden generar reportes sin datos de nómina disponibles.'
+              );
               return;
             }
 
-            // Crear reporte simple
+            // Crear modal de reporte profesional
+            const modal = document.createElement('div');
+            modal.className = 'axyra-modal-overlay';
+            modal.id = 'modalReporte';
+
+            modal.innerHTML = `
+              <div class="axyra-modal-content axyra-modal-large">
+                <div class="axyra-modal-header">
+                  <h3><i class="fas fa-chart-bar"></i> Reporte de Nómina - Villa Venecia</h3>
+                  <button class="axyra-modal-close" onclick="nominaManager.cerrarModal('modalReporte')">×</button>
+                </div>
+                <div class="axyra-modal-body">
+                  <div class="axyra-reporte-container">
+                    <div class="axyra-reporte-header">
+                      <div class="axyra-reporte-logo">
+                        <i class="fas fa-building"></i>
+                        <h4>VILLA VENECIA</h4>
+                      </div>
+                      <div class="axyra-reporte-fecha">
+                        <p><strong>📅 Fecha del Reporte:</strong> ${new Date().toLocaleDateString()}</p>
+                        <p><strong>⏰ Hora:</strong> ${new Date().toLocaleTimeString()}</p>
+                      </div>
+                    </div>
+                    
+                    <div class="axyra-reporte-stats">
+                      <div class="axyra-stat-card">
+                        <div class="axyra-stat-icon">
+                          <i class="fas fa-users"></i>
+                        </div>
+                        <div class="axyra-stat-content">
+                          <div class="axyra-stat-value">${this.empleados.length}</div>
+                          <div class="axyra-stat-label">Total Empleados</div>
+                        </div>
+                      </div>
+                      
+                      <div class="axyra-stat-card">
+                        <div class="axyra-stat-icon">
+                          <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <div class="axyra-stat-content">
+                          <div class="axyra-stat-value">${this.nominas.length}</div>
+                          <div class="axyra-stat-label">Total Nóminas</div>
+                        </div>
+                      </div>
+                      
+                      <div class="axyra-stat-card">
+                        <div class="axyra-stat-icon">
+                          <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="axyra-stat-content">
+                          <div class="axyra-stat-value">$${this.nominas
+                            .reduce((sum, n) => sum + (n.salario_final || 0), 0)
+                            .toLocaleString()}</div>
+                          <div class="axyra-stat-label">Total Salarios</div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="axyra-reporte-detalle">
+                      <h5><i class="fas fa-list"></i> Detalle de Nóminas</h5>
+                      <div class="axyra-reporte-table">
+                        <table>
+                          <thead>
+                            <tr>
+                              <th>Empleado</th>
+                              <th>Cargo</th>
+                              <th>Horas</th>
+                              <th>Salario Final</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            ${this.nominas
+                              .slice(0, 10)
+                              .map((n) => {
+                                const emp = this.empleados.find((e) => e.id === n.empleado_id);
+                                return `
+                                <tr>
+                                  <td>${emp ? emp.nombre : 'N/A'}</td>
+                                  <td>${emp ? emp.cargo : 'N/A'}</td>
+                                  <td>${n.horas_trabajadas}</td>
+                                  <td>$${(n.salario_final || 0).toLocaleString()}</td>
+                                </tr>
+                              `;
+                              })
+                              .join('')}
+                            ${
+                              this.nominas.length > 10
+                                ? `<tr><td colspan="4" class="axyra-reporte-more">... y ${
+                                    this.nominas.length - 10
+                                  } nóminas más</td></tr>`
+                                : ''
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="axyra-modal-footer">
+                  <button class="axyra-btn axyra-btn-secondary" onclick="nominaManager.cerrarModal('modalReporte')">
+                    <i class="fas fa-times"></i> Cerrar
+                  </button>
+                  <button class="axyra-btn axyra-btn-warning" onclick="nominaManager.imprimirReporte()">
+                    <i class="fas fa-print"></i> Imprimir
+                  </button>
+                  <button class="axyra-btn axyra-btn-success" onclick="nominaManager.exportarReporte()">
+                    <i class="fas fa-download"></i> Exportar
+                  </button>
+                </div>
+              </div>
+            `;
+
+            document.body.appendChild(modal);
+            this.agregarEstilosModales();
+          } catch (error) {
+            console.error('Error generando reporte:', error);
+            this.mostrarModalError('Error generando reporte', error.message);
+          }
+        }
+
+        imprimirReporte() {
+          try {
             const reporte = `
               📊 REPORTE DE NÓMINA - VILLA VENECIA
 
@@ -797,13 +1032,14 @@
               💰 Total Salarios: $${this.nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0).toLocaleString()}
 
               📋 DETALLE:
-              ${this.nominas.map(n => {
-                const emp = this.empleados.find(e => e.id === n.empleado_id);
-                return `• ${emp ? emp.nombre : 'N/A'}: $${(n.salario_final || 0).toLocaleString()}`;
-              }).join('\n')}
+              ${this.nominas
+                .map((n) => {
+                  const emp = this.empleados.find((e) => e.id === n.empleado_id);
+                  return `• ${emp ? emp.nombre : 'N/A'}: $${(n.salario_final || 0).toLocaleString()}`;
+                })
+                .join('\n')}
             `;
 
-            // Mostrar en nueva ventana
             const ventana = window.open('', '_blank');
             ventana.document.write(`
               <html>
@@ -815,41 +1051,169 @@
                 </body>
               </html>
             `);
+            ventana.document.close();
+
+            setTimeout(() => ventana.print(), 500);
           } catch (error) {
-            console.error('Error generando reporte:', error);
-            alert('Error generando reporte: ' + error.message);
+            console.error('Error imprimiendo reporte:', error);
+            this.mostrarModalError('Error imprimiendo reporte', error.message);
+          }
+        }
+
+        exportarReporte() {
+          try {
+            const datosExcel = [
+              ['VILLA VENECIA - REPORTE DE NÓMINA'],
+              [`Fecha: ${new Date().toLocaleDateString()}`],
+              [''],
+              ['Empleado', 'Cargo', 'Horas Trabajadas', 'Salario Final', 'Estado'],
+            ];
+
+            this.nominas.forEach((nomina) => {
+              const empleado = this.empleados.find((emp) => emp.id === nomina.empleado_id);
+              if (empleado) {
+                datosExcel.push([
+                  empleado.nombre || 'N/A',
+                  empleado.cargo || 'N/A',
+                  nomina.horas_trabajadas || 0,
+                  `$${(nomina.salario_final || 0).toLocaleString()}`,
+                  nomina.estado || 'N/A',
+                ]);
+              }
+            });
+
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte Nómina');
+
+            const fecha = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(workbook, `Reporte_Nomina_${fecha}.xlsx`);
+
+            this.mostrarModalExito('Reporte Exportado', 'El reporte se ha exportado a Excel correctamente.');
+          } catch (error) {
+            console.error('Error exportando reporte:', error);
+            this.mostrarModalError('Error exportando reporte', error.message);
           }
         }
 
         mostrarConfiguracionSimple() {
           try {
             const modal = document.createElement('div');
-            modal.style.cssText = `
-              position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-              background: rgba(0,0,0,0.7); z-index: 9999; display: flex;
-              justify-content: center; align-items: center;
-            `;
+            modal.className = 'axyra-modal-overlay';
+            modal.id = 'modalConfiguracion';
 
             modal.innerHTML = `
-              <div style="background: white; padding: 30px; border-radius: 10px; max-width: 500px;">
-                <h3>⚙️ Configuración de Nómina</h3>
-                <div style="margin: 20px 0;">
-                  <label>Salario Mínimo: <input type="number" id="salMin" placeholder="Salario mínimo"></label><br><br>
-                  <label>% Cesantías: <input type="number" id="cesantias" value="8.33" step="0.01"></label><br><br>
-                  <label>% Salud: <input type="number" id="salud" value="4" step="0.01"></label><br><br>
-                  <label>% Pensión: <input type="number" id="pension" value="4" step="0.01"></label>
+              <div class="axyra-modal-content axyra-modal-medium">
+                <div class="axyra-modal-header">
+                  <h3><i class="fas fa-cog"></i> Configuración de Nómina</h3>
+                  <button class="axyra-modal-close" onclick="nominaManager.cerrarModal('modalConfiguracion')">×</button>
                 </div>
-                <div style="text-align: right;">
-                  <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="margin-right: 10px;">Cancelar</button>
-                  <button onclick="nominaManager.guardarConfigSimple()" style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px;">Guardar</button>
+                <div class="axyra-modal-body">
+                  <div class="axyra-config-container">
+                    <div class="axyra-config-section">
+                      <h5><i class="fas fa-dollar-sign"></i> Configuración Salarial</h5>
+                      <div class="axyra-form-group">
+                        <label for="salMin">
+                          <i class="fas fa-coins"></i> Salario Mínimo Legal
+                        </label>
+                        <input type="number" id="salMin" class="axyra-form-control" placeholder="Ingrese el salario mínimo" min="0" step="1000">
+                        <small class="axyra-form-help">Salario mínimo establecido por la ley colombiana</small>
+                      </div>
+                    </div>
+                    
+                    <div class="axyra-config-section">
+                      <h5><i class="fas fa-percentage"></i> Porcentajes de Descuentos</h5>
+                      <div class="axyra-form-row">
+                        <div class="axyra-form-group">
+                          <label for="cesantias">
+                            <i class="fas fa-piggy-bank"></i> % Cesantías
+                          </label>
+                          <input type="number" id="cesantias" class="axyra-form-control" value="8.33" step="0.01" min="0" max="100">
+                          <small class="axyra-form-help">Porcentaje para fondos de cesantías</small>
+                        </div>
+                        
+                        <div class="axyra-form-group">
+                          <label for="salud">
+                            <i class="fas fa-heartbeat"></i> % Salud
+                          </label>
+                          <input type="number" id="salud" class="axyra-form-control" value="4" step="0.01" min="0" max="100">
+                          <small class="axyra-form-help">Porcentaje para salud</small>
+                        </div>
+                      </div>
+                      
+                      <div class="axyra-form-row">
+                        <div class="axyra-form-group">
+                          <label for="pension">
+                            <i class="fas fa-user-graduate"></i> % Pensión
+                          </label>
+                          <input type="number" id="pension" class="axyra-form-control" value="4" step="0.01" min="0" max="100">
+                          <small class="axyra-form-help">Porcentaje para pensión</small>
+                        </div>
+                        
+                        <div class="axyra-form-group">
+                          <label for="riesgo">
+                            <i class="fas fa-shield-alt"></i> % Riesgo Laboral
+                          </label>
+                          <input type="number" id="riesgo" class="axyra-form-control" value="0.522" step="0.001" min="0" max="10">
+                          <small class="axyra-form-help">Porcentaje según nivel de riesgo</small>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="axyra-config-section">
+                      <h5><i class="fas fa-clock"></i> Configuración de Horas</h5>
+                      <div class="axyra-form-row">
+                        <div class="axyra-form-group">
+                          <label for="horasMes">
+                            <i class="fas fa-calendar-alt"></i> Horas por Mes
+                          </label>
+                          <input type="number" id="horasMes" class="axyra-form-control" value="240" min="160" max="300">
+                          <small class="axyra-form-help">Horas laborales estándar por mes</small>
+                        </div>
+                        
+                        <div class="axyra-form-group">
+                          <label for="horasExtras">
+                            <i class="fas fa-plus-circle"></i> Factor Horas Extras
+                          </label>
+                          <input type="number" id="horasExtras" class="axyra-form-control" value="1.5" step="0.1" min="1" max="3">
+                          <small class="axyra-form-help">Multiplicador para horas extras</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="axyra-modal-footer">
+                  <button class="axyra-btn axyra-btn-secondary" onclick="nominaManager.cerrarModal('modalConfiguracion')">
+                    <i class="fas fa-times"></i> Cancelar
+                  </button>
+                  <button class="axyra-btn axyra-btn-success" onclick="nominaManager.guardarConfigSimple()">
+                    <i class="fas fa-save"></i> Guardar Configuración
+                  </button>
                 </div>
               </div>
             `;
 
             document.body.appendChild(modal);
+            this.agregarEstilosModales();
+            this.cargarConfiguracionActual();
           } catch (error) {
             console.error('Error mostrando configuración:', error);
-            alert('Error mostrando configuración: ' + error.message);
+            this.mostrarModalError('Error mostrando configuración', error.message);
+          }
+        }
+
+        cargarConfiguracionActual() {
+          try {
+            const config = this.configuracion;
+            if (config.salarioMinimo) document.getElementById('salMin').value = config.salarioMinimo;
+            if (config.cesantias) document.getElementById('cesantias').value = config.cesantias;
+            if (config.salud) document.getElementById('salud').value = config.salud;
+            if (config.pension) document.getElementById('pension').value = config.pension;
+            if (config.riesgo) document.getElementById('riesgo').value = config.riesgo;
+            if (config.horasMes) document.getElementById('horasMes').value = config.horasMes;
+            if (config.horasExtras) document.getElementById('horasExtras').value = config.horasExtras;
+          } catch (error) {
+            console.error('Error cargando configuración:', error);
           }
         }
 
@@ -859,17 +1223,35 @@
               salarioMinimo: document.getElementById('salMin').value,
               cesantias: document.getElementById('cesantias').value,
               salud: document.getElementById('salud').value,
-              pension: document.getElementById('pension').value
+              pension: document.getElementById('pension').value,
+              riesgo: document.getElementById('riesgo').value,
+              horasMes: document.getElementById('horasMes').value,
+              horasExtras: document.getElementById('horasExtras').value,
             };
 
+            // Validar campos obligatorios
+            if (!config.salarioMinimo || !config.cesantias || !config.salud || !config.pension) {
+              this.mostrarModalError('Campos Requeridos', 'Por favor complete todos los campos obligatorios.');
+              return;
+            }
+
+            // Guardar en localStorage
             localStorage.setItem('axyra_config_simple', JSON.stringify(config));
-            alert('✅ Configuración guardada correctamente');
+
+            // Actualizar configuración local
+            this.configuracion = config;
+
+            // Mostrar confirmación
+            this.mostrarModalExito(
+              'Configuración Guardada',
+              'La configuración se ha guardado correctamente y se aplicará a todas las nóminas futuras.'
+            );
 
             // Cerrar modal
-            document.querySelector('div[style*="position: fixed"]').remove();
+            this.cerrarModal('modalConfiguracion');
           } catch (error) {
             console.error('Error guardando configuración:', error);
-            alert('Error guardando configuración: ' + error.message);
+            this.mostrarModalError('Error Guardando Configuración', error.message);
           }
         }
 
@@ -879,20 +1261,357 @@
             notificacion.remove();
           }
         }
+
+        // ========================================
+        // FUNCIONES AUXILIARES PARA MODALES
+        // ========================================
+
+        cerrarModal(modalId) {
+          const modal = document.getElementById(modalId);
+          if (modal) {
+            modal.remove();
+          }
+        }
+
+        mostrarModalError(titulo, mensaje) {
+          const modal = document.createElement('div');
+          modal.className = 'axyra-modal-overlay';
+          modal.id = 'modalError';
+
+          modal.innerHTML = `
+            <div class="axyra-modal-content axyra-modal-small">
+              <div class="axyra-modal-header axyra-modal-error">
+                <h3><i class="fas fa-exclamation-triangle"></i> ${titulo}</h3>
+                <button class="axyra-modal-close" onclick="nominaManager.cerrarModal('modalError')">×</button>
+              </div>
+              <div class="axyra-modal-body">
+                <p>${mensaje}</p>
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-danger" onclick="nominaManager.cerrarModal('modalError')">
+                  <i class="fas fa-times"></i> Cerrar
+                </button>
+              </div>
+            </div>
+          `;
+
+          document.body.appendChild(modal);
+          this.agregarEstilosModales();
+        }
+
+        mostrarModalExito(titulo, mensaje) {
+          const modal = document.createElement('div');
+          modal.className = 'axyra-modal-overlay';
+          modal.id = 'modalExito';
+
+          modal.innerHTML = `
+            <div class="axyra-modal-content axyra-modal-small">
+              <div class="axyra-modal-header axyra-modal-success">
+                <h3><i class="fas fa-check-circle"></i> ${titulo}</h3>
+                <button class="axyra-modal-close" onclick="nominaManager.cerrarModal('modalExito')">×</button>
+              </div>
+              <div class="axyra-modal-body">
+                <p>${mensaje}</p>
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-success" onclick="nominaManager.cerrarModal('modalExito')">
+                  <i class="fas fa-check"></i> Aceptar
+                </button>
+              </div>
+            </div>
+          `;
+
+          document.body.appendChild(modal);
+          this.agregarEstilosModales();
+        }
+
+        agregarEstilosModales() {
+          if (!document.getElementById('modalStylesAvanzados')) {
+            const styles = document.createElement('style');
+            styles.id = 'modalStylesAvanzados';
+            styles.textContent = `
+              /* Estilos para modales avanzados */
+              .axyra-modal-large {
+                max-width: 800px !important;
+                width: 90% !important;
+              }
+              
+              .axyra-modal-medium {
+                max-width: 600px !important;
+                width: 90% !important;
+              }
+              
+              .axyra-modal-small {
+                max-width: 400px !important;
+                width: 90% !important;
+              }
+              
+              /* Estilos para modal de configuración */
+              .axyra-config-container {
+                max-height: 70vh;
+                overflow-y: auto;
+              }
+              
+              .axyra-config-section {
+                margin-bottom: 25px;
+                padding: 20px;
+                background: #f8fafc;
+                border-radius: 12px;
+                border: 1px solid #e2e8f0;
+              }
+              
+              .axyra-config-section h5 {
+                color: #1e3a8a;
+                margin: 0 0 15px 0;
+                font-size: 1.1rem;
+                font-weight: 600;
+                border-bottom: 2px solid #cbd5e1;
+                padding-bottom: 8px;
+              }
+              
+              .axyra-form-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin-bottom: 15px;
+              }
+              
+              .axyra-form-help {
+                display: block;
+                margin-top: 5px;
+                font-size: 0.8rem;
+                color: #64748b;
+                font-style: italic;
+              }
+              
+              /* Estilos para modal de PDF */
+              .axyra-pdf-preview {
+                background: #f8fafc;
+                border-radius: 12px;
+                padding: 20px;
+                border: 1px solid #e2e8f0;
+              }
+              
+              .axyra-pdf-header {
+                text-align: center;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid #cbd5e1;
+              }
+              
+              .axyra-pdf-header h4 {
+                color: #1e3a8a;
+                margin: 0 0 10px 0;
+                font-size: 1.2rem;
+              }
+              
+              .axyra-pdf-table {
+                margin: 20px 0;
+                overflow-x: auto;
+              }
+              
+              .axyra-pdf-table table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+              }
+              
+              .axyra-pdf-table th {
+                background: #1e3a8a;
+                color: white;
+                padding: 12px;
+                text-align: left;
+                font-weight: 600;
+              }
+              
+              .axyra-pdf-table td {
+                padding: 10px 12px;
+                border-bottom: 1px solid #e2e8f0;
+              }
+              
+              .axyra-pdf-table tr:hover {
+                background: #f1f5f9;
+              }
+              
+              .axyra-pdf-more {
+                text-align: center;
+                color: #64748b;
+                font-style: italic;
+                background: #f8fafc;
+              }
+              
+              .axyra-pdf-summary {
+                text-align: center;
+                margin-top: 20px;
+                padding: 15px;
+                background: #1e3a8a;
+                color: white;
+                border-radius: 8px;
+              }
+              
+              /* Estilos para modal de reporte */
+              .axyra-reporte-container {
+                max-height: 70vh;
+                overflow-y: auto;
+              }
+              
+              .axyra-reporte-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 25px;
+                padding: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                border-radius: 12px;
+              }
+              
+              .axyra-reporte-logo h4 {
+                margin: 0;
+                font-size: 1.3rem;
+                font-weight: 700;
+              }
+              
+              .axyra-reporte-fecha p {
+                margin: 5px 0;
+                font-size: 0.9rem;
+              }
+              
+              .axyra-reporte-stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+                margin-bottom: 25px;
+              }
+              
+              .axyra-stat-card {
+                background: white;
+                padding: 20px;
+                border-radius: 12px;
+                text-align: center;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                border: 1px solid #e2e8f0;
+              }
+              
+              .axyra-stat-icon {
+                font-size: 2rem;
+                color: #667eea;
+                margin-bottom: 10px;
+              }
+              
+              .axyra-stat-value {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #1e3a8a;
+                margin-bottom: 5px;
+              }
+              
+              .axyra-stat-label {
+                font-size: 0.9rem;
+                color: #64748b;
+                font-weight: 500;
+              }
+              
+              .axyra-reporte-detalle {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                border: 1px solid #e2e8f0;
+              }
+              
+              .axyra-reporte-detalle h5 {
+                color: #1e3a8a;
+                margin: 0 0 15px 0;
+                font-size: 1.1rem;
+                font-weight: 600;
+                border-bottom: 2px solid #cbd5e1;
+                padding-bottom: 8px;
+              }
+              
+              .axyra-reporte-table {
+                overflow-x: auto;
+              }
+              
+              .axyra-reporte-table table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                border-radius: 8px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+              }
+              
+              .axyra-reporte-table th {
+                background: #f8fafc;
+                color: #1e3a8a;
+                padding: 12px;
+                text-align: left;
+                font-weight: 600;
+                border-bottom: 2px solid #e2e8f0;
+              }
+              
+              .axyra-reporte-table td {
+                padding: 10px 12px;
+                border-bottom: 1px solid #f1f5f9;
+              }
+              
+              .axyra-reporte-table tr:hover {
+                background: #f8fafc;
+              }
+              
+              .axyra-reporte-more {
+                text-align: center;
+                color: #64748b;
+                font-style: italic;
+                background: #f8fafc;
+              }
+              
+              /* Estilos para headers de modal con colores */
+              .axyra-modal-error .axyra-modal-header {
+                background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+              }
+              
+              .axyra-modal-success .axyra-modal-header {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+              }
+              
+              /* Responsive para modales */
+              @media (max-width: 768px) {
+                .axyra-form-row {
+                  grid-template-columns: 1fr;
+                }
+                
+                .axyra-reporte-stats {
+                  grid-template-columns: 1fr;
+                }
+                
+                .axyra-reporte-header {
+                  flex-direction: column;
+                  text-align: center;
+                  gap: 15px;
+                }
+              }
+            `;
+            document.head.appendChild(styles);
+          }
+        }
       }
 
       // ========================================
       // INICIALIZACIÓN DEL SISTEMA
       // ========================================
-      
+
       // Crear instancia global del manager
       let nominaManager;
-      
+
       // Inicializar cuando el DOM esté listo
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         try {
           nominaManager = new NominaManager();
-          
+
           // Hacer funciones globales para compatibilidad
           window.mostrarModalGenerarNomina = () => nominaManager.mostrarModalGenerarNomina();
           window.cerrarModalGenerarNomina = () => nominaManager.cerrarModalGenerarNomina();
@@ -904,13 +1623,18 @@
           window.mostrarConfiguracionSimple = () => nominaManager.mostrarConfiguracionSimple();
           window.guardarConfigSimple = () => nominaManager.guardarConfigSimple();
           window.cerrarNotificacion = (boton) => nominaManager.cerrarNotificacion(boton);
-          
+
+          // Nuevas funciones para modales
+          window.cerrarModal = (modalId) => nominaManager.cerrarModal(modalId);
+          window.confirmarGenerarPDF = () => nominaManager.confirmarGenerarPDF();
+          window.imprimirReporte = () => nominaManager.imprimirReporte();
+          window.exportarReporte = () => nominaManager.exportarReporte();
+
           console.log('✅ Sistema de nómina AXYRA inicializado correctamente');
         } catch (error) {
           console.error('❌ Error inicializando sistema de nómina:', error);
         }
       });
-
     </script>
   </body>
 </html>
