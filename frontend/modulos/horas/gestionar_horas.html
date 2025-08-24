@@ -3553,7 +3553,7 @@
                 ${previsualizacionHTML}
               </div>
               <div class="axyra-modal-footer">
-                <button class="axyra-btn axyra-btn-primary" onclick="generarComprobante()">
+                <button class="axyra-btn axyra-btn-primary" onclick="generarComprobanteDesdeModal()">
                   <i class="fas fa-file-pdf"></i> Generar Comprobante
                 </button>
                 <button class="axyra-btn axyra-btn-ghost" onclick="this.parentElement.parentElement.parentElement.remove()">
@@ -3567,6 +3567,80 @@
         } catch (error) {
           console.error('❌ Error en previsualización:', error);
           mostrarMensaje('❌ Error al previsualizar: ' + error.message, 'error');
+        }
+      }
+
+      // Función para generar comprobante desde el modal de previsualización
+      function generarComprobanteDesdeModal() {
+        try {
+          // Obtener datos del formulario actual
+          const empleadoHoras = document.getElementById('empleadoHoras');
+          const fechaHoras = document.getElementById('fechaHoras');
+          
+          if (!empleadoHoras || !empleadoHoras.value) {
+            mostrarMensaje('❌ Por favor selecciona un empleado', 'error');
+            return;
+          }
+          
+          if (!fechaHoras || !fechaHoras.value) {
+            mostrarMensaje('❌ Por favor ingresa una fecha', 'error');
+            return;
+          }
+          
+          // Llamar a la función principal con los datos del formulario
+          const empleadoId = empleadoHoras.value;
+          const fecha = fechaHoras.value;
+          
+          // Buscar si ya existe un registro para este empleado y fecha
+          const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
+          const registroExistente = horas.find(h => 
+            h.empleadoId == empleadoId && h.fecha === fecha
+          );
+          
+          if (registroExistente) {
+            // Si existe, generar comprobante del registro existente
+            generarComprobante(registroExistente.id);
+          } else {
+            // Si no existe, crear un registro temporal y generar comprobante
+            const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+            const empleado = empleados.find(emp => emp.id == empleadoId);
+            
+            if (empleado) {
+              // Crear registro temporal para generar comprobante
+              const registroTemporal = {
+                id: Date.now(), // ID temporal
+                empleadoId: empleadoId,
+                fecha: fecha,
+                horas: {
+                  ordinarias: parseFloat(document.getElementById('horasOrdinarias')?.value || 0),
+                  nocturnas: parseFloat(document.getElementById('horasNocturnas')?.value || 0),
+                  extraDiurnas: parseFloat(document.getElementById('horasExtraDiurnas')?.value || 0),
+                  extraNocturnas: parseFloat(document.getElementById('horasExtraNocturnas')?.value || 0),
+                  dominicales: parseFloat(document.getElementById('horasDominicales')?.value || 0),
+                  festivas: parseFloat(document.getElementById('horasFestivas')?.value || 0),
+                  dominicalesNocturnas: parseFloat(document.getElementById('horasDominicalesNocturnas')?.value || 0),
+                  festivasNocturnas: parseFloat(document.getElementById('horasFestivasNocturnas')?.value || 0),
+                  extraDominicales: parseFloat(document.getElementById('horasExtraDominicales')?.value || 0),
+                  extraDominicalesNocturnas: parseFloat(document.getElementById('horasExtraDominicalesNocturnas')?.value || 0),
+                  extraFestivas: parseFloat(document.getElementById('horasExtraFestivas')?.value || 0),
+                  extraFestivasNocturnas: parseFloat(document.getElementById('horasExtraFestivasNocturnas')?.value || 0)
+                }
+              };
+              
+              // Generar comprobante del registro temporal
+              generarComprobante(registroTemporal.id, registroTemporal);
+            } else {
+              mostrarMensaje('❌ Empleado no encontrado', 'error');
+            }
+          }
+          
+          // Cerrar el modal
+          const modal = document.querySelector('.axyra-modal-overlay');
+          if (modal) modal.remove();
+          
+        } catch (error) {
+          console.error('❌ Error generando comprobante desde modal:', error);
+          mostrarMensaje('Error generando comprobante: ' + error.message, 'error');
         }
       }
 
@@ -4395,6 +4469,10 @@
       async function generarComprobanteEmpleado(empleadoId) {
         try {
           console.log('🔍 Generando comprobante para empleado ID:', empleadoId);
+          
+          // Convertir empleadoId a número si es string
+          const empleadoIdNum = parseInt(empleadoId) || empleadoId;
+          console.log('🔍 Empleado ID convertido:', empleadoIdNum);
           
           let empleados = [];
           let horas = [];
