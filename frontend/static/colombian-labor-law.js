@@ -10,9 +10,9 @@
 class ColombianLaborLawCalculator {
   constructor() {
     // Constantes según la ley colombiana
-    this.HORAS_MENSUALES = 240; // 8 horas diarias * 30 días
+    this.HORAS_MENSUALES = 220; // 8 horas diarias * 27.5 días (según el usuario)
     this.HORAS_DIARIAS = 8;
-    this.DIAS_LABORALES_MENSUALES = 30;
+    this.DIAS_LABORALES_MENSUALES = 27.5;
     
     // Tipos de horas según la aplicación de escritorio del usuario
     this.TIPOS_HORAS = [
@@ -342,16 +342,39 @@ class ColombianLaborLawCalculator {
     const valorHoraBase = this.calcularValorHoraOrdinaria(salarioMensual, tipoContrato);
     const valores = {};
 
+    // Mapear campos del formulario a tipos de horas
+    const mapeoCampos = {
+      ordinarias: 'ordinarias',
+      nocturnas: 'recargo_nocturno',
+      extraDiurnas: 'hora_extra_diurna',
+      extraNocturnas: 'hora_extra_nocturna',
+      dominicales: 'recargo_diurno_dominical',
+      festivas: 'hora_diurna_dominical_o_festivo',
+      extraFestivasDiurnas: 'hora_extra_diurna_dominical_o_festivo',
+      extraFestivasNocturnas: 'hora_extra_nocturna_dominical_o_festivo',
+      dominicalesFestivas: 'hora_nocturna_dominical_o_festivo',
+      extraDominicales: 'recargo_nocturno_dominical',
+      extraDominicalesFestivas: 'hora_extra_nocturna_dominical_o_festivo'
+    };
+
     // Calcular valor de cada tipo de hora según los TIPOS_HORAS
     this.TIPOS_HORAS.forEach(([tipo, recargo]) => {
       valores[tipo] = valorHoraBase * (1 + recargo);
+    });
+
+    // Agregar valores mapeados para los campos del formulario
+    Object.entries(mapeoCampos).forEach(([campoFormulario, tipoHora]) => {
+      if (valores[tipoHora] !== undefined) {
+        valores[campoFormulario] = valores[tipoHora];
+      }
     });
 
     return {
       valorHoraBase,
       valores,
       tipoContrato,
-      salarioMensual
+      salarioMensual,
+      mapeoCampos
     };
   }
 

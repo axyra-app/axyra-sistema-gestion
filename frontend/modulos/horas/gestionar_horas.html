@@ -644,6 +644,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas dominicales trabajadas de noche</small>
+                <div class="axyra-valor-hora" id="valorHoraDominicalNocturna">Valor: $0</div>
               </div>
               <div class="axyra-form-group">
                 <label for="horasFestivasNocturnas" class="axyra-form-label">Horas Festivas Nocturnas</label>
@@ -658,6 +659,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas festivas trabajadas de noche</small>
+                <div class="axyra-valor-hora" id="valorHoraFestivaNocturna">Valor: $0</div>
               </div>
             </div>
 
@@ -675,6 +677,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas extra trabajadas en domingo</small>
+                <div class="axyra-valor-hora" id="valorHoraExtraDominical">Valor: $0</div>
               </div>
               <div class="axyra-form-group">
                 <label for="horasExtraDominicalesNocturnas" class="axyra-form-label"
@@ -691,6 +694,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas extra dominicales trabajadas de noche</small>
+                <div class="axyra-valor-hora" id="valorHoraExtraDominicalNocturna">Valor: $0</div>
               </div>
             </div>
 
@@ -708,6 +712,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas extra trabajadas en festivos</small>
+                <div class="axyra-valor-hora" id="valorHoraExtraFestiva">Valor: $0</div>
               </div>
               <div class="axyra-form-group">
                 <label for="horasExtraFestivasNocturnas" class="axyra-form-label">Horas Extra Festivas Nocturnas</label>
@@ -722,6 +727,7 @@
                   onchange="calcularHoras()"
                 />
                 <small class="axyra-form-help">Horas extra festivas trabajadas de noche</small>
+                <div class="axyra-valor-hora" id="valorHoraExtraFestivaNocturna">Valor: $0</div>
               </div>
             </div>
 
@@ -1133,7 +1139,7 @@
       }
 
       // Función para actualizar valores de hora según empleado seleccionado
-      function actualizarValoresHora() {
+      async function actualizarValoresHora() {
         try {
           const empleadoSelect = document.getElementById('empleadoHoras');
           const salarioBaseInput = document.getElementById('salarioBase');
@@ -1143,8 +1149,19 @@
           const empleadoId = empleadoSelect.value;
           if (!empleadoId) return;
           
-          // Obtener empleado seleccionado
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          // Obtener empleado seleccionado usando firebaseSyncManager
+          let empleados = [];
+          if (window.firebaseSyncManager) {
+            try {
+              empleados = await window.firebaseSyncManager.getEmpleados() || [];
+            } catch (error) {
+              console.warn('⚠️ Error con firebaseSyncManager, usando localStorage:', error);
+              empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+            }
+          } else {
+            empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          }
+          
           const empleado = empleados.find(emp => emp.id == empleadoId);
           
           if (!empleado) return;
@@ -1160,24 +1177,32 @@
             try {
               const valoresHoras = window.colombianLaborLawCalculator.calcularValoresHoras(salarioBase, tipoContrato);
               
-              // Actualizar cada campo con su valor correspondiente
+              // Actualizar cada campo con su valor correspondiente usando el mapeo correcto
               const camposValores = {
                 'valorHoraOrdinaria': valoresHoras.valores.ordinarias,
-                'valorHoraNocturna': valoresHoras.valores.recargo_nocturno,
-                'valorHoraExtraDiurna': valoresHoras.valores.hora_extra_diurna,
-                'valorHoraExtraNocturna': valoresHoras.valores.hora_extra_nocturna,
-                'valorHoraDominical': valoresHoras.valores.recargo_diurno_dominical,
-                'valorHoraFestiva': valoresHoras.valores.hora_diurna_dominical_o_festivo
+                'valorHoraNocturna': valoresHoras.valores.nocturnas,
+                'valorHoraExtraDiurna': valoresHoras.valores.extraDiurnas,
+                'valorHoraExtraNocturna': valoresHoras.valores.extraNocturnas,
+                'valorHoraDominical': valoresHoras.valores.dominicales,
+                'valorHoraFestiva': valoresHoras.valores.festivas,
+                'valorHoraDominicalNocturna': valoresHoras.valores.dominicalesNocturnas,
+                'valorHoraFestivaNocturna': valoresHoras.valores.festivasNocturnas,
+                'valorHoraExtraDominical': valoresHoras.valores.extraDominicales,
+                'valorHoraExtraDominicalNocturna': valoresHoras.valores.extraDominicalesNocturnas,
+                'valorHoraExtraFestiva': valoresHoras.valores.extraFestivas,
+                'valorHoraExtraFestivaNocturna': valoresHoras.valores.extraFestivasNocturnas
               };
               
               Object.entries(camposValores).forEach(([id, valor]) => {
                 const elemento = document.getElementById(id);
-                if (elemento) {
+                if (elemento && valor !== undefined) {
                   elemento.textContent = `Valor: $${valor.toFixed(0)}`;
                 }
               });
               
               console.log('✅ Valores de hora actualizados:', valoresHoras);
+              console.log('💰 Valor hora ordinaria:', valoresHoras.valorHoraBase);
+              console.log('📊 Valores por tipo:', valoresHoras.valores);
             } catch (error) {
               console.warn('⚠️ Error calculando valores de hora:', error);
             }
@@ -3154,7 +3179,7 @@
         try {
           const empleadoId = document.getElementById('empleadoComprobante').value;
           const tipoContrato = document.getElementById('tipoContrato').value;
-          const salarioBase = parseFloat(document.getElementById('salarioBase').value) || 0;
+          const salarioBase = document.getElementById('salarioBase').value;
           const deudaComentario = document.getElementById('deudaComentario').value;
           const deudaValor = parseFloat(document.getElementById('deudaValor').value) || 0;
 
