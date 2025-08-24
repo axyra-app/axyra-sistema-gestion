@@ -6094,19 +6094,843 @@
         }
       }
 
-      // Hacer funciones globales para onclick
-      window.mostrarModalGenerarNomina = mostrarModalGenerarNomina;
-      window.cerrarModalGenerarNomina = cerrarModalGenerarNomina;
-      window.generarNominaEmpleado = generarNominaEmpleado;
-      window.cargarEmpleadosEnSelect = cargarEmpleadosEnSelect;
-      window.generarPDFSimple = generarPDFSimple;
-      window.exportarNominaSimple = exportarNominaSimple;
-      window.generarReporteSimple = generarReporteSimple;
-      window.mostrarConfiguracionSimple = mostrarConfiguracionSimple;
-      window.guardarConfigSimple = guardarConfigSimple;
-      window.cerrarNotificacion = cerrarNotificacion;
+      // ========================================
+      // SISTEMA ROBUSTO DE FUNCIONES PARA BOTONES
+      // ========================================
 
-    }); // Cerrar DOMContentLoaded
+      // Clase principal para gestión de nómina
+      class NominaManager {
+        constructor() {
+          this.empleados = [];
+          this.nominas = [];
+          this.configuracion = {};
+          this.init();
+        }
+
+        async init() {
+          try {
+            await this.cargarDatos();
+            this.configurarEventos();
+            console.log('✅ NominaManager inicializado correctamente');
+          } catch (error) {
+            console.error('❌ Error inicializando NominaManager:', error);
+          }
+        }
+
+        async cargarDatos() {
+          try {
+            this.empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+            this.nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+            this.configuracion = JSON.parse(localStorage.getItem('axyra_config_simple') || '{}');
+            console.log(`📊 Datos cargados: ${this.empleados.length} empleados, ${this.nominas.length} nóminas`);
+          } catch (error) {
+            console.error('❌ Error cargando datos:', error);
+            this.empleados = [];
+            this.nominas = [];
+            this.configuracion = {};
+          }
+        }
+
+        configurarEventos() {
+          // Configurar eventos de los botones
+          this.configurarBotones();
+        }
+
+        configurarBotones() {
+          // Botón Generar Nómina
+          const btnGenerar = document.querySelector('button[onclick="mostrarModalGenerarNomina()"]');
+          if (btnGenerar) {
+            btnGenerar.onclick = () => this.mostrarModalGenerarNomina();
+          }
+
+          // Botón Exportar Excel
+          const btnExportar = document.querySelector('button[onclick="exportarNominaSimple()"]');
+          if (btnExportar) {
+            btnExportar.onclick = () => this.exportarNominaSimple();
+          }
+
+          // Botón Generar PDF
+          const btnPDF = document.querySelector('button[onclick="generarPDFSimple()"]');
+          if (btnPDF) {
+            btnPDF.onclick = () => this.generarPDFSimple();
+          }
+
+          // Botón Reportes
+          const btnReportes = document.querySelector('button[onclick="generarReporteSimple()"]');
+          if (btnReportes) {
+            btnReportes.onclick = () => this.generarReporteSimple();
+          }
+
+          // Botón Configuración
+          const btnConfig = document.querySelector('button[onclick="mostrarConfiguracionSimple()"]');
+          if (btnConfig) {
+            btnConfig.onclick = () => this.mostrarConfiguracionSimple();
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: MOSTRAR MODAL GENERAR NÓMINA
+        // ========================================
+        mostrarModalGenerarNomina() {
+          try {
+            // Crear modal con diseño moderno
+            const modal = document.createElement('div');
+            modal.className = 'axyra-modal-overlay';
+            modal.id = 'modalGenerarNomina';
+            
+            modal.innerHTML = `
+              <div class="axyra-modal-content">
+                <div class="axyra-modal-header">
+                  <h3>📋 Generar Nueva Nómina</h3>
+                  <button class="axyra-modal-close" onclick="nominaManager.cerrarModalGenerarNomina()">×</button>
+                </div>
+                <div class="axyra-modal-body">
+                  <div class="axyra-form-group">
+                    <label for="empleadoSelect">👤 Seleccionar Empleado:</label>
+                    <select id="empleadoSelect" class="axyra-form-control">
+                      <option value="">Seleccione un empleado...</option>
+                    </select>
+                  </div>
+                  <div class="axyra-form-group">
+                    <label for="mesNomina">📅 Mes de Nómina:</label>
+                    <input type="month" id="mesNomina" class="axyra-form-control" value="${new Date().toISOString().slice(0, 7)}">
+                  </div>
+                  <div class="axyra-form-group">
+                    <label for="horasTrabajadas">⏰ Horas Trabajadas:</label>
+                    <input type="number" id="horasTrabajadas" class="axyra-form-control" placeholder="Horas trabajadas este mes" min="0" step="0.5">
+                  </div>
+                  <div class="axyra-form-group">
+                    <label for="horasExtras">🚀 Horas Extras:</label>
+                    <input type="number" id="horasExtras" class="axyra-form-control" placeholder="Horas extras (opcional)" value="0" min="0" step="0.5">
+                  </div>
+                </div>
+                <div class="axyra-modal-footer">
+                  <button class="axyra-btn axyra-btn-secondary" onclick="nominaManager.cerrarModalGenerarNomina()">❌ Cancelar</button>
+                  <button class="axyra-btn axyra-btn-primary" onclick="nominaManager.generarNominaEmpleado()">✅ Generar Nómina</button>
+                </div>
+              </div>
+            `;
+
+            // Agregar estilos CSS
+            this.agregarEstilosModal();
+            
+            // Agregar al DOM
+            document.body.appendChild(modal);
+            
+            // Cargar empleados en el select
+            this.cargarEmpleadosEnSelect();
+            
+            // Mostrar modal con animación
+            setTimeout(() => modal.classList.add('axyra-modal-active'), 10);
+            
+            console.log('✅ Modal de generar nómina mostrado correctamente');
+          } catch (error) {
+            console.error('❌ Error mostrando modal:', error);
+            this.mostrarNotificacion('Error mostrando modal: ' + error.message, 'error');
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: CERRAR MODAL GENERAR NÓMINA
+        // ========================================
+        cerrarModalGenerarNomina() {
+          try {
+            const modal = document.getElementById('modalGenerarNomina');
+            if (modal) {
+              modal.classList.remove('axyra-modal-active');
+              setTimeout(() => modal.remove(), 300);
+              console.log('✅ Modal cerrado correctamente');
+            }
+          } catch (error) {
+            console.error('❌ Error cerrando modal:', error);
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: CARGAR EMPLEADOS EN SELECT
+        // ========================================
+        cargarEmpleadosEnSelect() {
+          try {
+            const select = document.getElementById('empleadoSelect');
+            if (select) {
+              select.innerHTML = '<option value="">Seleccione un empleado...</option>';
+              
+              this.empleados.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = `${emp.nombre} - ${emp.cargo || 'Sin cargo'} ($${(emp.salario || 0).toLocaleString()})`;
+                select.appendChild(option);
+              });
+              
+              console.log(`✅ ${this.empleados.length} empleados cargados en el select`);
+            }
+          } catch (error) {
+            console.error('❌ Error cargando empleados:', error);
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: GENERAR NÓMINA EMPLEADO
+        // ========================================
+        generarNominaEmpleado() {
+          try {
+            // Validar datos
+            const empleadoId = document.getElementById('empleadoSelect').value;
+            const mes = document.getElementById('mesNomina').value;
+            const horasTrabajadas = parseFloat(document.getElementById('horasTrabajadas').value) || 0;
+            const horasExtras = parseFloat(document.getElementById('horasExtras').value) || 0;
+
+            if (!empleadoId) {
+              this.mostrarNotificacion('Por favor seleccione un empleado', 'warning');
+              return;
+            }
+
+            if (!mes) {
+              this.mostrarNotificacion('Por favor seleccione un mes', 'warning');
+              return;
+            }
+
+            if (horasTrabajadas <= 0) {
+              this.mostrarNotificacion('Por favor ingrese las horas trabajadas', 'warning');
+              return;
+            }
+
+            // Buscar empleado
+            const empleado = this.empleados.find(emp => emp.id === empleadoId);
+            if (!empleado) {
+              this.mostrarNotificacion('Empleado no encontrado', 'error');
+              return;
+            }
+
+            // Calcular nómina
+            const nomina = this.calcularNomina(empleado, mes, horasTrabajadas, horasExtras);
+            
+            // Guardar nómina
+            this.nominas.push(nomina);
+            localStorage.setItem('axyra_nominas', JSON.stringify(this.nominas));
+
+            // Mostrar confirmación
+            this.mostrarNotificacion(`✅ Nómina generada para ${empleado.nombre}: $${nomina.salario_final.toLocaleString()}`, 'success');
+            
+            // Cerrar modal
+            this.cerrarModalGenerarNomina();
+            
+            // Recargar página después de un delay
+            setTimeout(() => location.reload(), 1500);
+            
+            console.log('✅ Nómina generada correctamente:', nomina);
+          } catch (error) {
+            console.error('❌ Error generando nómina:', error);
+            this.mostrarNotificacion('Error generando nómina: ' + error.message, 'error');
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: CALCULAR NÓMINA
+        // ========================================
+        calcularNomina(empleado, mes, horasTrabajadas, horasExtras) {
+          try {
+            const salarioBase = parseFloat(empleado.salario) || 0;
+            const valorHora = salarioBase / 240; // 240 horas mensuales estándar
+            const subtotal = horasTrabajadas * valorHora;
+            const horasExtrasValor = horasExtras * (valorHora * 1.5); // 1.5x por horas extras
+            const totalBruto = subtotal + horasExtrasValor;
+
+            // Descuentos (solo para empleados fijos)
+            const tipoContrato = empleado.tipoContrato || 'FIJO';
+            const salud = tipoContrato === 'FIJO' ? totalBruto * 0.04 : 0;
+            const pension = tipoContrato === 'FIJO' ? totalBruto * 0.04 : 0;
+            const totalDescuentos = salud + pension;
+            const netoAPagar = totalBruto - totalDescuentos;
+
+            return {
+              id: Date.now().toString(),
+              empleado_id: empleado.id,
+              empleado_nombre: empleado.nombre,
+              mes: mes,
+              horas_trabajadas: horasTrabajadas,
+              horas_extras: horasExtras,
+              salario_base: salarioBase,
+              valor_hora: valorHora,
+              subtotal: subtotal,
+              horas_extras_valor: horasExtrasValor,
+              total_bruto: totalBruto,
+              salud: salud,
+              pension: pension,
+              total_descuentos: totalDescuentos,
+              salario_final: netoAPagar,
+              estado: 'GENERADA',
+              fecha_generacion: new Date().toISOString()
+            };
+          } catch (error) {
+            console.error('❌ Error calculando nómina:', error);
+            throw error;
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: EXPORTAR NÓMINA A EXCEL
+        // ========================================
+        exportarNominaSimple() {
+          try {
+            if (this.nominas.length === 0) {
+              this.mostrarNotificacion('No hay nóminas para exportar', 'warning');
+              return;
+            }
+
+            // Crear datos para Excel
+            const datosExcel = [
+              ['VILLA VENECIA - REPORTE DE NÓMINA'],
+              [`Fecha de Exportación: ${new Date().toLocaleDateString()}`],
+              [''],
+              ['Empleado', 'Cargo', 'Mes', 'Horas Trabajadas', 'Horas Extras', 'Salario Base', 'Total a Pagar', 'Estado']
+            ];
+
+            this.nominas.forEach(nomina => {
+              const empleado = this.empleados.find(emp => emp.id === nomina.empleado_id);
+              if (empleado) {
+                datosExcel.push([
+                  empleado.nombre || 'N/A',
+                  empleado.cargo || 'N/A',
+                  nomina.mes || 'N/A',
+                  nomina.horas_trabajadas || 0,
+                  nomina.horas_extras || 0,
+                  `$${(nomina.salario_base || 0).toLocaleString()}`,
+                  `$${(nomina.salario_final || 0).toLocaleString()}`,
+                  nomina.estado || 'N/A'
+                ]);
+              }
+            });
+
+            // Crear y descargar Excel
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
+
+            const fecha = new Date().toISOString().split('T')[0];
+            const nombreArchivo = `Nómina_Villa_Venecia_${fecha}.xlsx`;
+            
+            XLSX.writeFile(workbook, nombreArchivo);
+            
+            this.mostrarNotificacion('✅ Nómina exportada a Excel correctamente', 'success');
+            console.log('✅ Excel exportado:', nombreArchivo);
+          } catch (error) {
+            console.error('❌ Error exportando nómina:', error);
+            this.mostrarNotificacion('Error al exportar: ' + error.message, 'error');
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: GENERAR PDF SIMPLE
+        // ========================================
+        generarPDFSimple() {
+          try {
+            if (this.nominas.length === 0) {
+              this.mostrarNotificacion('No hay nóminas para generar PDF', 'warning');
+              return;
+            }
+
+            // Crear contenido del PDF
+            const contenido = `
+              <html>
+                <head>
+                  <title>Nómina Villa Venecia</title>
+                  <style>
+                    body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+                    .header { text-align: center; border-bottom: 3px solid #007bff; padding-bottom: 20px; margin-bottom: 30px; }
+                    .header h1 { color: #007bff; margin: 0; }
+                    .table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                    .table th, .table td { border: 1px solid #dee2e6; padding: 12px; text-align: left; }
+                    .table th { background: linear-gradient(135deg, #007bff, #0056b3); color: white; font-weight: bold; }
+                    .table tr:nth-child(even) { background-color: #f8f9fa; }
+                    .total { font-weight: bold; margin-top: 30px; padding: 20px; background: #e9ecef; border-radius: 8px; }
+                    .footer { text-align: center; margin-top: 30px; color: #6c757d; font-size: 12px; }
+                  </style>
+                </head>
+                <body>
+                  <div class="header">
+                    <h1>🏢 VILLA VENECIA</h1>
+                    <h2>📋 Reporte de Nómina</h2>
+                    <p><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}</p>
+                  </div>
+
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>👤 Empleado</th>
+                        <th>💼 Cargo</th>
+                        <th>⏰ Horas</th>
+                        <th>💰 Salario Base</th>
+                        <th>💵 Total a Pagar</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${this.nominas.map(n => {
+                        const emp = this.empleados.find(e => e.id === n.empleado_id);
+                        return `
+                          <tr>
+                            <td>${emp ? emp.nombre : 'N/A'}</td>
+                            <td>${emp ? emp.cargo : 'N/A'}</td>
+                            <td>${n.horas_trabajadas} hrs</td>
+                            <td>$${n.salario_base?.toLocaleString() || '0'}</td>
+                            <td><strong>$${n.salario_final?.toLocaleString() || '0'}</strong></td>
+                          </tr>
+                        `;
+                      }).join('')}
+                    </tbody>
+                  </table>
+
+                  <div class="total">
+                    <h3>📊 RESUMEN</h3>
+                    <p><strong>Total Nóminas:</strong> ${this.nominas.length}</p>
+                    <p><strong>Total a Pagar:</strong> $${this.nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0).toLocaleString()}</p>
+                    <p><strong>Total Empleados:</strong> ${this.empleados.length}</p>
+                  </div>
+
+                  <div class="footer">
+                    <p>Generado por Sistema AXYRA - Villa Venecia</p>
+                    <p>${new Date().toLocaleString('es-ES')}</p>
+                  </div>
+                </body>
+              </html>
+            `;
+
+            // Abrir en nueva ventana para imprimir
+            const ventana = window.open('', '_blank');
+            ventana.document.write(contenido);
+            ventana.document.close();
+
+            // Auto-imprimir después de cargar
+            setTimeout(() => {
+              ventana.print();
+            }, 500);
+
+            this.mostrarNotificacion('✅ PDF generado correctamente', 'success');
+            console.log('✅ PDF generado correctamente');
+          } catch (error) {
+            console.error('❌ Error generando PDF:', error);
+            this.mostrarNotificacion('Error generando PDF: ' + error.message, 'error');
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: GENERAR REPORTE SIMPLE
+        // ========================================
+        generarReporteSimple() {
+          try {
+            if (this.nominas.length === 0) {
+              this.mostrarNotificacion('No hay datos para generar reporte', 'warning');
+              return;
+            }
+
+            // Crear reporte detallado
+            const reporte = `
+              📊 REPORTE COMPLETO DE NÓMINA - VILLA VENECIA
+              ================================================
+
+              📅 Fecha de Generación: ${new Date().toLocaleDateString('es-ES', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+
+              👥 INFORMACIÓN GENERAL:
+              • Total Empleados: ${this.empleados.length}
+              • Total Nóminas: ${this.nominas.length}
+              • Total Salarios: $${this.nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0).toLocaleString()}
+
+              📋 DETALLE POR EMPLEADO:
+              ${this.nominas.map(n => {
+                const emp = this.empleados.find(e => e.id === n.empleado_id);
+                return `• ${emp ? emp.nombre : 'N/A'}: $${(n.salario_final || 0).toLocaleString()} (${n.horas_trabajadas} hrs)`;
+              }).join('\n')}
+
+              💰 ANÁLISIS FINANCIERO:
+              • Promedio Salario: $${(this.nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0) / this.nominas.length).toLocaleString(undefined, {maximumFractionDigits: 0})}
+              • Salario Más Alto: $${Math.max(...this.nominas.map(n => n.salario_final || 0)).toLocaleString()}
+              • Salario Más Bajo: $${Math.min(...this.nominas.map(n => n.salario_final || 0)).toLocaleString()}
+
+              ⏰ ANÁLISIS DE HORAS:
+              • Total Horas Trabajadas: ${this.nominas.reduce((sum, n) => sum + (n.horas_trabajadas || 0), 0)} hrs
+              • Total Horas Extras: ${this.nominas.reduce((sum, n) => sum + (n.horas_extras || 0), 0)} hrs
+              • Promedio Horas por Empleado: ${(this.nominas.reduce((sum, n) => sum + (n.horas_trabajadas || 0), 0) / this.nominas.length).toFixed(1)} hrs
+
+              📈 ESTADÍSTICAS:
+              • Nóminas Este Mes: ${this.nominas.filter(n => n.mes === new Date().toISOString().slice(0, 7)).length}
+              • Empleados con Horas Extras: ${this.nominas.filter(n => (n.horas_extras || 0) > 0).length}
+              • Estado de Nóminas: ${this.nominas.filter(n => n.estado === 'GENERADA').length} generadas
+            `;
+
+            // Mostrar en nueva ventana
+            const ventana = window.open('', '_blank');
+            ventana.document.write(`
+              <html>
+                <head>
+                  <title>Reporte Nómina - Villa Venecia</title>
+                  <style>
+                    body { font-family: 'Courier New', monospace; padding: 30px; background: #f8f9fa; }
+                    pre { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+                    .actions { text-align: center; margin-top: 20px; }
+                    .btn { padding: 10px 20px; margin: 0 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+                    .btn-print { background: #007bff; color: white; }
+                    .btn-close { background: #6c757d; color: white; }
+                  </style>
+                </head>
+                <body>
+                  <pre style="white-space: pre-wrap; font-size: 12px;">${reporte}</pre>
+                  <div class="actions">
+                    <button class="btn btn-print" onclick="window.print()">🖨️ Imprimir</button>
+                    <button class="btn btn-close" onclick="window.close()">❌ Cerrar</button>
+                  </div>
+                </body>
+              </html>
+            `);
+
+            this.mostrarNotificacion('✅ Reporte generado correctamente', 'success');
+            console.log('✅ Reporte generado correctamente');
+          } catch (error) {
+            console.error('❌ Error generando reporte:', error);
+            this.mostrarNotificacion('Error generando reporte: ' + error.message, 'error');
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: MOSTRAR CONFIGURACIÓN SIMPLE
+        // ========================================
+        mostrarConfiguracionSimple() {
+          try {
+            const modal = document.createElement('div');
+            modal.className = 'axyra-modal-overlay';
+            modal.id = 'modalConfiguracion';
+            
+            modal.innerHTML = `
+              <div class="axyra-modal-content">
+                <div class="axyra-modal-header">
+                  <h3>⚙️ Configuración de Nómina</h3>
+                  <button class="axyra-modal-close" onclick="nominaManager.cerrarModalConfiguracion()">×</button>
+                </div>
+                <div class="axyra-modal-body">
+                  <div class="axyra-form-group">
+                    <label for="salMin">💰 Salario Mínimo:</label>
+                    <input type="number" id="salMin" class="axyra-form-control" placeholder="Salario mínimo" value="${this.configuracion.salarioMinimo || ''}">
+                  </div>
+                  <div class="axyra-form-group">
+                    <label for="cesantias">📊 % Cesantías:</label>
+                    <input type="number" id="cesantias" class="axyra-form-control" value="${this.configuracion.cesantias || '8.33'}" step="0.01" min="0" max="100">
+                  </div>
+                  <div class="axyra-form-group">
+                    <label for="salud">🏥 % Salud:</label>
+                    <input type="number" id="salud" class="axyra-form-control" value="${this.configuracion.salud || '4'}" step="0.01" min="0" max="100">
+                  </div>
+                  <div class="axyra-form-group">
+                    <label for="pension">👴 % Pensión:</label>
+                    <input type="number" id="pension" class="axyra-form-control" value="${this.configuracion.pension || '4'}" step="0.01" min="0" max="100">
+                  </div>
+                </div>
+                <div class="axyra-modal-footer">
+                  <button class="axyra-btn axyra-btn-secondary" onclick="nominaManager.cerrarModalConfiguracion()">❌ Cancelar</button>
+                  <button class="axyra-btn axyra-btn-primary" onclick="nominaManager.guardarConfigSimple()">💾 Guardar</button>
+                </div>
+              </div>
+            `;
+
+            // Agregar estilos CSS
+            this.agregarEstilosModal();
+            
+            // Agregar al DOM
+            document.body.appendChild(modal);
+            
+            // Mostrar modal con animación
+            setTimeout(() => modal.classList.add('axyra-modal-active'), 10);
+            
+            console.log('✅ Modal de configuración mostrado correctamente');
+          } catch (error) {
+            console.error('❌ Error mostrando configuración:', error);
+            this.mostrarNotificacion('Error mostrando configuración: ' + error.message, 'error');
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: CERRAR MODAL CONFIGURACIÓN
+        // ========================================
+        cerrarModalConfiguracion() {
+          try {
+            const modal = document.getElementById('modalConfiguracion');
+            if (modal) {
+              modal.classList.remove('axyra-modal-active');
+              setTimeout(() => modal.remove(), 300);
+              console.log('✅ Modal de configuración cerrado correctamente');
+            }
+          } catch (error) {
+            console.error('❌ Error cerrando modal de configuración:', error);
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: GUARDAR CONFIGURACIÓN SIMPLE
+        // ========================================
+        guardarConfigSimple() {
+          try {
+            const config = {
+              salarioMinimo: document.getElementById('salMin').value,
+              cesantias: document.getElementById('cesantias').value,
+              salud: document.getElementById('salud').value,
+              pension: document.getElementById('pension').value
+            };
+
+            // Validar datos
+            if (!config.salarioMinimo || config.salarioMinimo <= 0) {
+              this.mostrarNotificacion('El salario mínimo debe ser mayor a 0', 'warning');
+              return;
+            }
+
+            // Guardar en localStorage
+            this.configuracion = config;
+            localStorage.setItem('axyra_config_simple', JSON.stringify(config));
+            
+            this.mostrarNotificacion('✅ Configuración guardada correctamente', 'success');
+            
+            // Cerrar modal
+            this.cerrarModalConfiguracion();
+            
+            console.log('✅ Configuración guardada:', config);
+          } catch (error) {
+            console.error('❌ Error guardando configuración:', error);
+            this.mostrarNotificacion('Error guardando configuración: ' + error.message, 'error');
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: MOSTRAR NOTIFICACIONES
+        // ========================================
+        mostrarNotificacion(mensaje, tipo = 'info', duracion = 5000) {
+          try {
+            const container = document.getElementById('notificationContainer');
+            if (!container) return;
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${tipo}`;
+            notification.innerHTML = `
+              <div class="notification-content">
+                <span class="notification-message">${mensaje}</span>
+                <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            `;
+
+            container.appendChild(notification);
+
+            // Auto-remover después del tiempo especificado
+            setTimeout(() => {
+              if (notification.parentElement) {
+                notification.remove();
+              }
+            }, duracion);
+          } catch (error) {
+            console.error('❌ Error mostrando notificación:', error);
+            // Fallback a alert
+            alert(mensaje);
+          }
+        }
+
+        // ========================================
+        // FUNCIÓN: AGREGAR ESTILOS MODAL
+        // ========================================
+        agregarEstilosModal() {
+          if (document.getElementById('axyra-modal-styles')) return;
+
+          const styles = document.createElement('style');
+          styles.id = 'axyra-modal-styles';
+          styles.textContent = `
+            .axyra-modal-overlay {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: rgba(0, 0, 0, 0.7);
+              z-index: 9999;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              opacity: 0;
+              transition: opacity 0.3s ease;
+            }
+
+            .axyra-modal-overlay.axyra-modal-active {
+              opacity: 1;
+            }
+
+            .axyra-modal-content {
+              background: white;
+              border-radius: 12px;
+              box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+              max-width: 500px;
+              width: 90%;
+              max-height: 90vh;
+              overflow-y: auto;
+              transform: scale(0.8);
+              transition: transform 0.3s ease;
+            }
+
+            .axyra-modal-overlay.axyra-modal-active .axyra-modal-content {
+              transform: scale(1);
+            }
+
+            .axyra-modal-header {
+              padding: 20px 25px 15px;
+              border-bottom: 1px solid #e9ecef;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+
+            .axyra-modal-header h3 {
+              margin: 0;
+              color: #333;
+              font-size: 18px;
+            }
+
+            .axyra-modal-close {
+              background: none;
+              border: none;
+              font-size: 24px;
+              cursor: pointer;
+              color: #6c757d;
+              padding: 0;
+              width: 30px;
+              height: 30px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 50%;
+              transition: all 0.2s ease;
+            }
+
+            .axyra-modal-close:hover {
+              background: #f8f9fa;
+              color: #333;
+            }
+
+            .axyra-modal-body {
+              padding: 20px 25px;
+            }
+
+            .axyra-modal-footer {
+              padding: 15px 25px 20px;
+              border-top: 1px solid #e9ecef;
+              display: flex;
+              justify-content: flex-end;
+              gap: 10px;
+            }
+
+            .axyra-form-group {
+              margin-bottom: 20px;
+            }
+
+            .axyra-form-group label {
+              display: block;
+              margin-bottom: 8px;
+              font-weight: 500;
+              color: #333;
+            }
+
+            .axyra-form-control {
+              width: 100%;
+              padding: 12px 15px;
+              border: 2px solid #e9ecef;
+              border-radius: 8px;
+              font-size: 14px;
+              transition: border-color 0.2s ease;
+              box-sizing: border-box;
+            }
+
+            .axyra-form-control:focus {
+              outline: none;
+              border-color: #007bff;
+              box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            }
+
+            .axyra-btn {
+              padding: 10px 20px;
+              border: none;
+              border-radius: 6px;
+              font-size: 14px;
+              font-weight: 500;
+              cursor: pointer;
+              transition: all 0.2s ease;
+              text-decoration: none;
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+            }
+
+            .axyra-btn-primary {
+              background: linear-gradient(135deg, #007bff, #0056b3);
+              color: white;
+            }
+
+            .axyra-btn-primary:hover {
+              background: linear-gradient(135deg, #0056b3, #004085);
+              transform: translateY(-1px);
+              box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            }
+
+            .axyra-btn-secondary {
+              background: #6c757d;
+              color: white;
+            }
+
+            .axyra-btn-secondary:hover {
+              background: #5a6268;
+              transform: translateY(-1px);
+            }
+          `;
+
+          document.head.appendChild(styles);
+        }
+      }
+
+      // ========================================
+      // INICIALIZACIÓN DEL SISTEMA
+      // ========================================
+      
+      // Crear instancia global del manager
+      let nominaManager;
+      
+      // Inicializar cuando el DOM esté listo
+      document.addEventListener('DOMContentLoaded', function() {
+        try {
+          nominaManager = new NominaManager();
+          
+          // Hacer funciones globales para compatibilidad
+          window.mostrarModalGenerarNomina = () => nominaManager.mostrarModalGenerarNomina();
+          window.cerrarModalGenerarNomina = () => nominaManager.cerrarModalGenerarNomarNomina();
+          window.generarNominaEmpleado = () => nominaManager.generarNominaEmpleado();
+          window.cargarEmpleadosEnSelect = () => nominaManager.cargarEmpleadosEnSelect();
+          window.generarPDFSimple = () => nominaManager.generarPDFSimple();
+          window.exportarNominaSimple = () => nominaManager.exportarNominaSimple();
+          window.generarReporteSimple = () => nominaManager.generarReporteSimple();
+          window.mostrarConfiguracionSimple = () => nominaManager.mostrarConfiguracionSimple();
+          window.guardarConfigSimple = () => nominaManager.guardarConfigSimple();
+          window.cerrarNotificacion = (boton) => nominaManager.cerrarNotificacion(boton);
+          
+          console.log('✅ Sistema de nómina AXYRA inicializado correctamente');
+        } catch (error) {
+          console.error('❌ Error inicializando sistema de nómina:', error);
+        }
+      });
+
+    </script>
+  </body>
+</html>
 
     </script>
   </body>
