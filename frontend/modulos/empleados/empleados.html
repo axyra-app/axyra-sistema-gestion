@@ -1336,9 +1336,17 @@
           } else {
             // Agrupar empleados por departamento
             departamentos.forEach((dept) => {
-              const deptEmpleados = empleados.filter((emp) => 
-                emp.departamento && emp.departamento.toString && emp.departamento.toString().toLowerCase() === dept.nombre.toLowerCase()
-              );
+              const deptEmpleados = empleados.filter((emp) => {
+                // Verificar que el empleado tenga departamento y que sea válido
+                if (!emp.departamento || !dept.nombre) return false;
+                
+                // Convertir a string y hacer la comparación de forma segura
+                const empDept = String(emp.departamento).toLowerCase();
+                const deptNombre = String(dept.nombre).toLowerCase();
+                
+                return empDept === deptNombre;
+              });
+              
               estructura[dept.nombre] = {
                 empleados: deptEmpleados,
                 color: generarColorDepartamento(dept.nombre),

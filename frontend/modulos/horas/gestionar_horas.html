@@ -3994,6 +3994,84 @@
     </script>
 
     <style>
+      /* NOTIFICACIÓN MEJORADA */
+      .axyra-notification-improved {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #f59e0b, #f97316);
+        color: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-width: 350px;
+        border: 2px solid #ea580c;
+        animation: slideInRight 0.5s ease;
+      }
+      
+      .axyra-notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      
+      .axyra-notification-title {
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .axyra-notification-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 50%;
+        transition: background-color 0.2s ease;
+      }
+      
+      .axyra-notification-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      
+      .axyra-notification-content {
+        font-size: 0.875rem;
+        line-height: 1.4;
+        margin-bottom: 16px;
+      }
+      
+      .axyra-notification-action {
+        background: #ea580c;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      
+      .axyra-notification-action:hover {
+        background: #dc2626;
+      }
+      
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
       .axyra-info-dia {
         margin-bottom: var(--spacing-lg);
         border: 2px solid var(--axyra-blue-200);
@@ -4454,7 +4532,7 @@
         }
       }
 
-      // Función para verificar empleados sin horas
+      // Función para verificar empleados sin horas - MEJORADA
       function verificarEmpleadosSinHoras() {
         try {
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
@@ -4467,13 +4545,59 @@
           });
 
           if (empleadosSinHoras.length > 0) {
-            mostrarMensaje(
-              `${empleadosSinHoras.length} empleado(s) no tienen horas registradas en el sistema`,
-              'warning'
-            );
+            mostrarNotificacionMejorada(empleadosSinHoras);
           }
         } catch (error) {
           console.error('❌ Error verificando empleados sin horas:', error);
+        }
+      }
+
+      // Función para mostrar notificación mejorada y estructurada
+      function mostrarNotificacionMejorada(empleadosSinHoras) {
+        // Remover notificación existente si la hay
+        const notificacionExistente = document.querySelector('.axyra-notification-improved');
+        if (notificacionExistente) {
+          notificacionExistente.remove();
+        }
+
+        const notificacion = document.createElement('div');
+        notificacion.className = 'axyra-notification-improved';
+        notificacion.innerHTML = `
+          <div class="axyra-notification-header">
+            <div class="axyra-notification-title">
+              <span>⚠️</span>
+              <span>Empleados sin horas registradas</span>
+            </div>
+            <button class="axyra-notification-close" onclick="this.closest('.axyra-notification-improved').remove()">×</button>
+          </div>
+          <div class="axyra-notification-content">
+            ${empleadosSinHoras.length} empleado(s) no tienen horas registradas en el sistema.
+            <br><br>
+            <strong>Empleados afectados:</strong><br>
+            ${empleadosSinHoras.slice(0, 3).map(emp => `• ${emp.nombre} (${emp.cedula})`).join('<br>')}
+            ${empleadosSinHoras.length > 3 ? `<br><em>... y ${empleadosSinHoras.length - 3} más</em>` : ''}
+          </div>
+          <button class="axyra-notification-action" onclick="navegarAEmpleados()">
+            Ver empleados
+          </button>
+        `;
+
+        document.body.appendChild(notificacion);
+
+        // Auto-remover después de 10 segundos
+        setTimeout(() => {
+          if (notificacion.parentElement) {
+            notificacion.remove();
+          }
+        }, 10000);
+      }
+
+      // Función para navegar a empleados
+      function navegarAEmpleados() {
+        try {
+          window.location.href = '../empleados/empleados.html';
+        } catch (error) {
+          console.error('❌ Error navegando a empleados:', error);
         }
       }
 
