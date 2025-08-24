@@ -1326,55 +1326,74 @@
           let departamentos = [];
           let empleados = [];
 
-          // Intentar obtener datos de Firebase primero
-          if (firebase && firebase.firestore && firebase.auth().currentUser) {
+          // Usar el sistema de sincronización si está disponible
+          if (window.firebaseSyncManager) {
             try {
-              console.log('🔥 Intentando cargar desde Firebase...');
-              const db = firebase.firestore();
-              const currentUser = firebase.auth().currentUser;
-
-              const departamentosSnapshot = await db
-                .collection('departamentos')
-                .where('userId', '==', currentUser.uid)
-                .get();
-
-              const empleadosSnapshot = await db.collection('empleados').where('userId', '==', currentUser.uid).get();
-
-              departamentos = departamentosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-              empleados = empleadosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-
-              console.log('✅ Datos cargados desde Firebase:', {
+              console.log('🔄 Usando sistema de sincronización para organigrama...');
+              departamentos = await window.firebaseSyncManager.getDepartamentos() || [];
+              empleados = await window.firebaseSyncManager.getEmpleados() || [];
+              
+              console.log('✅ Datos cargados desde Firebase Sync Manager:', {
                 departamentos: departamentos.length,
                 empleados: empleados.length,
               });
-            } catch (firebaseError) {
-              console.warn('⚠️ Error en Firebase, usando localStorage:', firebaseError);
+            } catch (syncError) {
+              console.warn('⚠️ Error con sistema de sincronización, usando método directo:', syncError);
             }
           }
 
-          // Fallback a localStorage si no hay datos de Firebase
+          // Si no hay datos del sync manager, intentar método directo
           if (departamentos.length === 0 || empleados.length === 0) {
-            console.log('💾 Cargando datos desde localStorage...');
-
-            // Cargar departamentos desde localStorage
-            const departamentosStorage = localStorage.getItem('axyra_departamentos');
-            if (departamentosStorage) {
+            // Intentar obtener datos de Firebase directamente
+            if (firebase && firebase.firestore && firebase.auth().currentUser) {
               try {
-                departamentos = JSON.parse(departamentosStorage);
-                console.log('📁 Departamentos cargados desde localStorage:', departamentos.length);
-              } catch (e) {
-                console.warn('⚠️ Error parseando departamentos del localStorage');
+                console.log('🔥 Intentando cargar desde Firebase directamente...');
+                const db = firebase.firestore();
+                const currentUser = firebase.auth().currentUser;
+
+                const departamentosSnapshot = await db
+                  .collection('departamentos')
+                  .where('userId', '==', currentUser.uid)
+                  .get();
+
+                const empleadosSnapshot = await db.collection('empleados').where('userId', '==', currentUser.uid).get();
+
+                departamentos = departamentosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+                empleados = empleadosSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+                console.log('✅ Datos cargados desde Firebase directamente:', {
+                  departamentos: departamentos.length,
+                  empleados: empleados.length,
+                });
+              } catch (firebaseError) {
+                console.warn('⚠️ Error en Firebase, usando localStorage:', firebaseError);
               }
             }
 
-            // Cargar empleados desde localStorage
-            const empleadosStorage = localStorage.getItem('axyra_empleados');
-            if (empleadosStorage) {
-              try {
-                empleados = JSON.parse(empleadosStorage);
-                console.log('👥 Empleados cargados desde localStorage:', empleados.length);
-              } catch (e) {
-                console.warn('⚠️ Error parseando empleados del localStorage');
+            // Fallback a localStorage si no hay datos de Firebase
+            if (departamentos.length === 0 || empleados.length === 0) {
+              console.log('💾 Cargando datos desde localStorage...');
+
+              // Cargar departamentos desde localStorage
+              const departamentosStorage = localStorage.getItem('axyra_departamentos');
+              if (departamentosStorage) {
+                try {
+                  departamentos = JSON.parse(departamentosStorage);
+                  console.log('📁 Departamentos cargados desde localStorage:', departamentos.length);
+                } catch (e) {
+                  console.warn('⚠️ Error parseando departamentos del localStorage');
+                }
+              }
+
+              // Cargar empleados desde localStorage
+              const empleadosStorage = localStorage.getItem('axyra_empleados');
+              if (empleadosStorage) {
+                try {
+                  empleados = JSON.parse(empleadosStorage);
+                  console.log('👥 Empleados cargados desde localStorage:', empleados.length);
+                } catch (e) {
+                  console.warn('⚠️ Error parseando empleados del localStorage');
+                }
               }
             }
           }

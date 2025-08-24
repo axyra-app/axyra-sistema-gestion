@@ -1,336 +1,384 @@
-// Legislación Laboral Colombiana 2025 - Cálculo Automático de Horas
-// Implementa todos los recargos y tipos de horas según la ley vigente
+// ========================================
+// LEY LABORAL COLOMBIANA - CÁLCULOS DE HORAS
+// ========================================
 
-class ColombianLaborLaw {
+/**
+ * Sistema de cálculo de horas según la Ley Laboral Colombiana
+ * Basado en el Código Sustantivo del Trabajo y decretos reglamentarios
+ */
+
+class ColombianLaborLawCalculator {
   constructor() {
-    // Festivos colombianos 2025
-    this.festivos2025 = [
-      '2025-01-01', // Año Nuevo
-      '2025-01-06', // Reyes Magos
-      '2025-03-24', // Domingo de Ramos
-      '2025-03-27', // Jueves Santo
-      '2025-03-28', // Viernes Santo
-      '2025-03-30', // Domingo de Resurrección
-      '2025-05-01', // Día del Trabajo
-      '2025-05-12', // Día de la Ascensión
-      '2025-06-02', // Corpus Christi
-      '2025-06-09', // Sagrado Corazón
-      '2025-06-30', // San Pedro y San Pablo
-      '2025-07-20', // Día de la Independencia
-      '2025-08-07', // Batalla de Boyacá
-      '2025-08-18', // Asunción de la Virgen
-      '2025-10-13', // Día de la Raza
-      '2025-11-03', // Todos los Santos
-      '2025-11-10', // Independencia de Cartagena
-      '2025-12-08', // Día de la Inmaculada
-      '2025-12-25', // Navidad
-    ];
-
-    // Recargos según legislación colombiana 2025
-    this.recargos = {
-      nocturno: 0.35, // 35% recargo nocturno
-      dominical: 0.75, // 75% recargo dominical
-      nocturno_dominical: 1.1, // 110% recargo dominical nocturno
-      extra_diurna: 1.25, // 125% recargo extra diurna
-      extra_nocturna: 1.75, // 175% recargo extra nocturna
-      diurna_dominical: 0.8, // 80% recargo dominical diurno
-      nocturna_dominical: 1.1, // 110% recargo dominical nocturno
-      extra_diurna_dominical: 1.05, // 105% recargo extra dominical diurno
-      extra_nocturna_dominical: 1.85, // 185% recargo extra dominical nocturno
-      festivo: 0.75, // 75% recargo festivo
-      festivo_nocturno: 1.1, // 110% recargo festivo nocturno
-      extra_festivo: 1.05, // 105% recargo extra festivo
-      extra_festivo_nocturno: 1.85, // 185% recargo extra festivo nocturno
+    // Constantes según la ley colombiana
+    this.HORAS_MENSUALES = 240; // 8 horas diarias * 30 días
+    this.HORAS_DIARIAS = 8;
+    this.DIAS_LABORALES_MENSUALES = 30;
+    
+    // Recargos según la ley
+    this.RECARGOS = {
+      HORAS_EXTRA_DIURNAS: 1.25,        // 25% extra
+      HORAS_EXTRA_NOCTURNAS: 1.75,      // 75% extra
+      HORAS_DOMINICALES: 1.75,          // 75% extra
+      HORAS_FESTIVAS: 1.75,             // 75% extra
+      HORAS_EXTRA_FESTIVAS_DIURNAS: 2.0, // 100% extra
+      HORAS_EXTRA_FESTIVAS_NOCTURNAS: 2.5, // 150% extra
+      HORAS_NOCTURNAS: 1.35,            // 35% extra (6 PM a 6 AM)
+      HORAS_DOMINICALES_FESTIVAS: 2.0,  // 100% extra
+      HORAS_EXTRA_DOMINICALES: 2.0,     // 100% extra
+      HORAS_EXTRA_DOMINICALES_FESTIVAS: 2.5 // 150% extra
     };
-
-    // Horarios según legislación
-    this.horarios = {
-      inicio_dia: 6, // 6:00 AM - Inicio del día laboral
-      fin_dia: 18, // 6:00 PM - Fin del día laboral
-      max_horas_normales: 8, // Máximo 8 horas normales por día
-      max_horas_semana: 48, // Máximo 48 horas por semana
+    
+    // Horarios según la ley
+    this.HORARIOS = {
+      DIURNO: { inicio: 6, fin: 18 },      // 6:00 AM a 6:00 PM
+      NOCTURNO: { inicio: 18, fin: 6 }     // 6:00 PM a 6:00 AM
     };
   }
 
-  // Verificar si una fecha es festivo
-  esFestivo(fecha) {
-    const fechaStr = fecha.toISOString().split('T')[0];
-    return this.festivos2025.includes(fechaStr);
+  /**
+   * Calcular valor de la hora ordinaria
+   * @param {number} salarioMensual - Salario mensual del empleado
+   * @returns {number} Valor de la hora ordinaria
+   */
+  calcularValorHoraOrdinaria(salarioMensual) {
+    if (!salarioMensual || salarioMensual <= 0) {
+      throw new Error('El salario mensual debe ser mayor a 0');
+    }
+    
+    // Según la ley: Salario mensual / 240 horas mensuales
+    return salarioMensual / this.HORAS_MENSUALES;
   }
 
-  // Verificar si es domingo
-  esDomingo(fecha) {
-    return fecha.getDay() === 0;
+  /**
+   * Calcular horas ordinarias (6:00 AM a 6:00 PM)
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas ordinarias
+   */
+  calcularHorasOrdinarias(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    return horas * valorHora;
   }
 
-  // Verificar si es hora nocturna
-  esHoraNocturna(hora) {
-    return hora < this.horarios.inicio_dia || hora >= this.horarios.fin_dia;
+  /**
+   * Calcular horas nocturnas (6:00 PM a 6:00 AM)
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas nocturnas
+   */
+  calcularHorasNocturnas(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    // 35% de recargo según la ley
+    return horas * valorHora * this.RECARGOS.HORAS_NOCTURNAS;
   }
 
-  // Calcular distribución automática de horas según entrada y salida
-  calcularDistribucionHoras(fecha, horaEntrada, horaSalida, salarioBase) {
-    const entrada = new Date(`2000-01-01T${horaEntrada}`);
-    const salida = new Date(`2000-01-01T${horaSalida}`);
+  /**
+   * Calcular horas extra diurnas
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas extra diurnas
+   */
+  calcularHorasExtraDiurnas(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    // 25% de recargo según la ley
+    return horas * valorHora * this.RECARGOS.HORAS_EXTRA_DIURNAS;
+  }
 
-    // Si la salida es menor que la entrada, asumir día siguiente
-    if (salida <= entrada) {
-      salida.setDate(salida.getDate() + 1);
+  /**
+   * Calcular horas extra nocturnas
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas extra nocturnas
+   */
+  calcularHorasExtraNocturnas(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    // 75% de recargo según la ley
+    return horas * valorHora * this.RECARGOS.HORAS_EXTRA_NOCTURNAS;
+  }
+
+  /**
+   * Calcular horas dominicales
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas dominicales
+   */
+  calcularHorasDominicales(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    // 75% de recargo según la ley
+    return horas * valorHora * this.RECARGOS.HORAS_DOMINICALES;
+  }
+
+  /**
+   * Calcular horas festivas
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas festivas
+   */
+  calcularHorasFestivas(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    // 75% de recargo según la ley
+    return horas * valorHora * this.RECARGOS.HORAS_FESTIVAS;
+  }
+
+  /**
+   * Calcular horas extra festivas diurnas
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas extra festivas diurnas
+   */
+  calcularHorasExtraFestivasDiurnas(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    // 100% de recargo según la ley
+    return horas * valorHora * this.RECARGOS.HORAS_EXTRA_FESTIVAS_DIURNAS;
+  }
+
+  /**
+   * Calcular horas extra festivas nocturnas
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas extra festivas nocturnas
+   */
+  calcularHorasExtraFestivasNocturnas(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    // 150% de recargo según la ley
+    return horas * valorHora * this.RECARGOS.HORAS_EXTRA_FESTIVAS_NOCTURNAS;
+  }
+
+  /**
+   * Calcular horas dominicales festivas
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas dominicales festivas
+   */
+  calcularHorasDominicalesFestivas(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    // 100% de recargo según la ley
+    return horas * valorHora * this.RECARGOS.HORAS_DOMINICALES_FESTIVAS;
+  }
+
+  /**
+   * Calcular horas extra dominicales
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas extra dominicales
+   */
+  calcularHorasExtraDominicales(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    // 100% de recargo según la ley
+    return horas * valorHora * this.RECARGOS.HORAS_EXTRA_DOMINICALES;
+  }
+
+  /**
+   * Calcular horas extra dominicales festivas
+   * @param {number} horas - Cantidad de horas
+   * @param {number} valorHora - Valor de la hora ordinaria
+   * @returns {number} Valor total de horas extra dominicales festivas
+   */
+  calcularHorasExtraDominicalesFestivas(horas, valorHora) {
+    if (!horas || horas < 0) return 0;
+    // 150% de recargo según la ley
+    return horas * valorHora * this.RECARGOS.HORAS_EXTRA_DOMINICALES_FESTIVAS;
+  }
+
+  /**
+   * Calcular total de horas trabajadas
+   * @param {Object} horasData - Objeto con todos los tipos de horas
+   * @returns {number} Total de horas trabajadas
+   */
+  calcularTotalHoras(horasData) {
+    const {
+      ordinarias = 0,
+      nocturnas = 0,
+      extraDiurnas = 0,
+      extraNocturnas = 0,
+      dominicales = 0,
+      festivas = 0,
+      extraFestivasDiurnas = 0,
+      extraFestivasNocturnas = 0,
+      dominicalesFestivas = 0,
+      extraDominicales = 0,
+      extraDominicalesFestivas = 0
+    } = horasData;
+
+    return (
+      ordinarias +
+      nocturnas +
+      extraDiurnas +
+      extraNocturnas +
+      dominicales +
+      festivas +
+      extraFestivasDiurnas +
+      extraFestivasNocturnas +
+      dominicalesFestivas +
+      extraDominicales +
+      extraDominicalesFestivas
+    );
+  }
+
+  /**
+   * Calcular total de salarios según tipos de horas
+   * @param {Object} horasData - Objeto con todos los tipos de horas
+   * @param {number} salarioMensual - Salario mensual del empleado
+   * @returns {Object} Objeto con todos los cálculos
+   */
+  calcularSalariosCompletos(horasData, salarioMensual) {
+    if (!salarioMensual || salarioMensual <= 0) {
+      throw new Error('El salario mensual debe ser mayor a 0');
     }
 
-    const esDomingo = this.esDomingo(fecha);
-    const esFestivo = this.esFestivo(fecha);
+    const valorHora = this.calcularValorHoraOrdinaria(salarioMensual);
+    
+    const {
+      ordinarias = 0,
+      nocturnas = 0,
+      extraDiurnas = 0,
+      extraNocturnas = 0,
+      dominicales = 0,
+      festivas = 0,
+      extraFestivasDiurnas = 0,
+      extraFestivasNocturnas = 0,
+      dominicalesFestivas = 0,
+      extraDominicales = 0,
+      extraDominicalesFestivas = 0
+    } = horasData;
 
-    // Inicializar contadores
-    const distribucion = {
-      horas_ordinarias: 0,
-      horas_nocturnas: 0,
-      horas_dominicales: 0,
-      horas_dominicales_nocturnas: 0,
-      horas_festivas: 0,
-      horas_festivas_nocturnas: 0,
-      horas_extra_diurnas: 0,
-      horas_extra_nocturnas: 0,
-      horas_extra_dominicales: 0,
-      horas_extra_dominicales_nocturnas: 0,
-      horas_extra_festivas: 0,
-      horas_extra_festivas_nocturnas: 0,
-      total_horas: 0,
+    // Calcular cada tipo de salario
+    const salarios = {
+      ordinarias: this.calcularHorasOrdinarias(ordinarias, valorHora),
+      nocturnas: this.calcularHorasNocturnas(nocturnas, valorHora),
+      extraDiurnas: this.calcularHorasExtraDiurnas(extraDiurnas, valorHora),
+      extraNocturnas: this.calcularHorasExtraNocturnas(extraNocturnas, valorHora),
+      dominicales: this.calcularHorasDominicales(dominicales, valorHora),
+      festivas: this.calcularHorasFestivas(festivas, valorHora),
+      extraFestivasDiurnas: this.calcularHorasExtraFestivasDiurnas(extraFestivasDiurnas, valorHora),
+      extraFestivasNocturnas: this.calcularHorasExtraFestivasNocturnas(extraFestivasNocturnas, valorHora),
+      dominicalesFestivas: this.calcularHorasDominicalesFestivas(dominicalesFestivas, valorHora),
+      extraDominicales: this.calcularHorasExtraDominicales(extraDominicales, valorHora),
+      extraDominicalesFestivas: this.calcularHorasExtraDominicalesFestivas(extraDominicalesFestivas, valorHora)
     };
 
-    let horaActual = new Date(entrada);
-    let horasAcumuladas = 0;
-    const incrementoMinutos = 1; // Calcular por minuto para mayor precisión
+    // Calcular totales
+    const totalHoras = this.calcularTotalHoras(horasData);
+    const totalSalario = Object.values(salarios).reduce((sum, value) => sum + value, 0);
 
-    while (horaActual < salida) {
-      const hora = horaActual.getHours();
-      const minutos = horaActual.getMinutes();
-      const esNocturna = this.esHoraNocturna(hora);
-      const esExtra = horasAcumuladas >= this.horarios.max_horas_normales;
-      const incrementoHoras = incrementoMinutos / 60;
-
-      // Determinar tipo de hora según legislación colombiana
-      if (esFestivo) {
-        if (esExtra) {
-          if (esNocturna) {
-            distribucion.horas_extra_festivas_nocturnas += incrementoHoras;
-          } else {
-            distribucion.horas_extra_festivas += incrementoHoras;
-          }
-        } else {
-          if (esNocturna) {
-            distribucion.horas_festivas_nocturnas += incrementoHoras;
-          } else {
-            distribucion.horas_festivas += incrementoHoras;
-          }
-        }
-      } else if (esDomingo) {
-        if (esExtra) {
-          if (esNocturna) {
-            distribucion.horas_extra_dominicales_nocturnas += incrementoHoras;
-          } else {
-            distribucion.horas_extra_dominicales += incrementoHoras;
-          }
-        } else {
-          if (esNocturna) {
-            distribucion.horas_dominicales_nocturnas += incrementoHoras;
-          } else {
-            distribucion.horas_dominicales += incrementoHoras;
-          }
-        }
-      } else {
-        if (esExtra) {
-          if (esNocturna) {
-            distribucion.horas_extra_nocturnas += incrementoHoras;
-          } else {
-            distribucion.horas_extra_diurnas += incrementoHoras;
-          }
-        } else {
-          if (esNocturna) {
-            distribucion.horas_nocturnas += incrementoHoras;
-          } else {
-            distribucion.horas_ordinarias += incrementoHoras;
-          }
+    return {
+      valorHora,
+      salarios,
+      totalHoras,
+      totalSalario,
+      resumen: {
+        salarioBase: salarioMensual,
+        horasTrabajadas: totalHoras,
+        valorTotal: totalSalario,
+        recargos: {
+          ordinarias: { horas: ordinarias, valor: salarios.ordinarias, recargo: '0%' },
+          nocturnas: { horas: nocturnas, valor: salarios.nocturnas, recargo: '35%' },
+          extraDiurnas: { horas: extraDiurnas, valor: salarios.extraDiurnas, recargo: '25%' },
+          extraNocturnas: { horas: extraNocturnas, valor: salarios.extraNocturnas, recargo: '75%' },
+          dominicales: { horas: dominicales, valor: salarios.dominicales, recargo: '75%' },
+          festivas: { horas: festivas, valor: salarios.festivas, recargo: '75%' },
+          extraFestivasDiurnas: { horas: extraFestivasDiurnas, valor: salarios.extraFestivasDiurnas, recargo: '100%' },
+          extraFestivasNocturnas: { horas: extraFestivasNocturnas, valor: salarios.extraFestivasNocturnas, recargo: '150%' },
+          dominicalesFestivas: { horas: dominicalesFestivas, valor: salarios.dominicalesFestivas, recargo: '100%' },
+          extraDominicales: { horas: extraDominicales, valor: salarios.extraDominicales, recargo: '100%' },
+          extraDominicalesFestivas: { horas: extraDominicalesFestivas, valor: salarios.extraDominicalesFestivas, recargo: '150%' }
         }
       }
-
-      // Avanzar tiempo
-      horaActual.setMinutes(minutos + incrementoMinutos);
-      horasAcumuladas += incrementoHoras;
-    }
-
-    // Calcular total
-    distribucion.total_horas = Object.keys(distribucion)
-      .filter((key) => key !== 'total_horas')
-      .reduce((sum, key) => sum + distribucion[key], 0);
-
-    return distribucion;
-  }
-
-  // Calcular valor total de las horas trabajadas
-  calcularValorTotal(distribucion, salarioBase) {
-    const valorHoraBase = salarioBase / 220; // 220 horas mensuales estándar
-
-    let valorTotal = 0;
-
-    // Horas ordinarias
-    valorTotal += distribucion.horas_ordinarias * valorHoraBase;
-
-    // Horas nocturnas (35% recargo)
-    valorTotal += distribucion.horas_nocturnas * valorHoraBase * (1 + this.recargos.nocturno);
-
-    // Horas dominicales (75% recargo)
-    valorTotal += distribucion.horas_dominicales * valorHoraBase * (1 + this.recargos.dominical);
-
-    // Horas dominicales nocturnas (110% recargo)
-    valorTotal += distribucion.horas_dominicales_nocturnas * valorHoraBase * (1 + this.recargos.nocturno_dominical);
-
-    // Horas festivas (75% recargo)
-    valorTotal += distribucion.horas_festivas * valorHoraBase * (1 + this.recargos.festivo);
-
-    // Horas festivas nocturnas (110% recargo)
-    valorTotal += distribucion.horas_festivas_nocturnas * valorHoraBase * (1 + this.recargos.festivo_nocturno);
-
-    // Horas extra diurnas (125% recargo)
-    valorTotal += distribucion.horas_extra_diurnas * valorHoraBase * (1 + this.recargos.extra_diurna);
-
-    // Horas extra nocturnas (175% recargo)
-    valorTotal += distribucion.horas_extra_nocturnas * valorHoraBase * (1 + this.recargos.extra_nocturna);
-
-    // Horas extra dominicales (105% recargo)
-    valorTotal += distribucion.horas_extra_dominicales * valorHoraBase * (1 + this.recargos.extra_diurna_dominical);
-
-    // Horas extra dominicales nocturnas (185% recargo)
-    valorTotal +=
-      distribucion.horas_extra_dominicales_nocturnas * valorHoraBase * (1 + this.recargos.extra_nocturna_dominical);
-
-    // Horas extra festivas (105% recargo)
-    valorTotal += distribucion.horas_extra_festivas * valorHoraBase * (1 + this.recargos.extra_festivo);
-
-    // Horas extra festivas nocturnas (185% recargo)
-    valorTotal +=
-      distribucion.horas_extra_festivas_nocturnas * valorHoraBase * (1 + this.recargos.extra_festivo_nocturno);
-
-    return {
-      valorTotal: valorTotal,
-      valorHoraBase: valorHoraBase,
-      distribucion: distribucion,
     };
   }
 
-  // Obtener descripción del tipo de día
-  obtenerTipoDia(fecha) {
-    if (this.esFestivo(fecha)) {
-      return 'FESTIVO';
-    } else if (this.esDomingo(fecha)) {
-      return 'DOMINICAL';
-    } else {
-      return 'LABORAL';
-    }
-  }
-
-  // Obtener descripción detallada de las horas
-  obtenerDescripcionHoras(distribucion) {
-    const descripciones = [];
-
-    if (distribucion.horas_ordinarias > 0) {
-      descripciones.push(`${distribucion.horas_ordinarias.toFixed(1)}h Ordinarias`);
-    }
-    if (distribucion.horas_nocturnas > 0) {
-      descripciones.push(`${distribucion.horas_nocturnas.toFixed(1)}h Nocturnas`);
-    }
-    if (distribucion.horas_dominicales > 0) {
-      descripciones.push(`${distribucion.horas_dominicales.toFixed(1)}h Dominicales`);
-    }
-    if (distribucion.horas_dominicales_nocturnas > 0) {
-      descripciones.push(`${distribucion.horas_dominicales_nocturnas.toFixed(1)}h Dominicales Nocturnas`);
-    }
-    if (distribucion.horas_festivas > 0) {
-      descripciones.push(`${distribucion.horas_festivas.toFixed(1)}h Festivas`);
-    }
-    if (distribucion.horas_festivas_nocturnas > 0) {
-      descripciones.push(`${distribucion.horas_festivas_nocturnas.toFixed(1)}h Festivas Nocturnas`);
-    }
-    if (distribucion.horas_extra_diurnas > 0) {
-      descripciones.push(`${distribucion.horas_extra_diurnas.toFixed(1)}h Extra Diurnas`);
-    }
-    if (distribucion.horas_extra_nocturnas > 0) {
-      descripciones.push(`${distribucion.horas_extra_nocturnas.toFixed(1)}h Extra Nocturnas`);
-    }
-    if (distribucion.horas_extra_dominicales > 0) {
-      descripciones.push(`${distribucion.horas_extra_dominicales.toFixed(1)}h Extra Dominicales`);
-    }
-    if (distribucion.horas_extra_dominicales_nocturnas > 0) {
-      descripciones.push(`${distribucion.horas_extra_dominicales_nocturnas.toFixed(1)}h Extra Dominicales Nocturnas`);
-    }
-    if (distribucion.horas_extra_festivas > 0) {
-      descripciones.push(`${distribucion.horas_extra_festivas.toFixed(1)}h Extra Festivas`);
-    }
-    if (distribucion.horas_extra_festivas_nocturnas > 0) {
-      descripciones.push(`${distribucion.horas_extra_festivas_nocturnas.toFixed(1)}h Extra Festivas Nocturnas`);
-    }
-
-    return descripciones.join(', ');
-  }
-
-  // Validar horarios según legislación
-  validarHorarios(horaEntrada, horaSalida) {
-    const entrada = new Date(`2000-01-01T${horaEntrada}`);
-    const salida = new Date(`2000-01-01T${horaSalida}`);
-
-    if (salida <= entrada) {
-      salida.setDate(salida.getDate() + 1);
-    }
-
-    const diferencia = salida - entrada;
-    const totalHoras = diferencia / (1000 * 60 * 60);
-
-    const validaciones = {
-      esValido: true,
-      errores: [],
-      advertencias: [],
-    };
-
-    // Validar máximo de horas por día
-    if (totalHoras > 12) {
-      validaciones.esValido = false;
-      validaciones.errores.push('Excede el máximo de 12 horas por día según la ley colombiana');
-    } else if (totalHoras > 10) {
-      validaciones.advertencias.push('Horario extenso - verificar cumplimiento de descansos obligatorios');
-    }
-
-    // Validar horario nocturno
-    const horaEntradaNum = entrada.getHours();
-    const horaSalidaNum = salida.getHours();
-
-    if (horaEntradaNum < 6 && horaSalidaNum > 6) {
-      validaciones.advertencias.push('Trabajo nocturno detectado - aplicar recargos correspondientes');
-    }
-
-    return validaciones;
-  }
-
-  // Obtener información del día
-  obtenerInfoDia(fecha) {
-    const fechaObj = new Date(fecha);
-    const esDomingo = this.esDomingo(fechaObj);
-    const esFestivo = this.esFestivo(fechaObj);
-
+  /**
+   * Generar resumen detallado para comprobantes
+   * @param {Object} calculo - Resultado de calcularSalariosCompletos
+   * @param {Object} empleado - Datos del empleado
+   * @param {string} fecha - Fecha de trabajo
+   * @returns {Object} Resumen para comprobante
+   */
+  generarResumenComprobante(calculo, empleado, fecha) {
     return {
+      empleado: {
+        nombre: empleado.nombre || 'N/A',
+        cedula: empleado.cedula || 'N/A',
+        cargo: empleado.cargo || 'N/A',
+        departamento: empleado.departamento || 'N/A'
+      },
       fecha: fecha,
-      esDomingo: esDomingo,
-      esFestivo: esFestivo,
-      tipoDia: this.obtenerTipoDia(fechaObj),
-      nombreDia: fechaObj.toLocaleDateString('es-CO', { weekday: 'long' }),
-      fechaFormateada: fechaObj.toLocaleDateString('es-CO', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      }),
+      resumen: calculo.resumen,
+      desglose: calculo.salarios,
+      totales: {
+        horas: calculo.totalHoras,
+        salario: calculo.totalSalario,
+        valorHora: calculo.valorHora
+      },
+      ley: {
+        horasMensuales: this.HORAS_MENSUALES,
+        recargos: this.RECARGOS,
+        horarios: this.HORARIOS
+      }
+    };
+  }
+
+  /**
+   * Validar datos de entrada
+   * @param {Object} horasData - Datos de horas
+   * @param {number} salarioMensual - Salario mensual
+   * @returns {Object} Resultado de validación
+   */
+  validarDatos(horasData, salarioMensual) {
+    const errores = [];
+
+    if (!salarioMensual || salarioMensual <= 0) {
+      errores.push('El salario mensual debe ser mayor a 0');
+    }
+
+    if (!horasData || typeof horasData !== 'object') {
+      errores.push('Los datos de horas son requeridos');
+      return { valido: false, errores };
+    }
+
+    // Validar que al menos una hora sea mayor a 0
+    const totalHoras = this.calcularTotalHoras(horasData);
+    if (totalHoras <= 0) {
+      errores.push('Debe registrar al menos una hora trabajada');
+    }
+
+    // Validar que no haya horas negativas
+    Object.entries(horasData).forEach(([tipo, horas]) => {
+      if (horas < 0) {
+        errores.push(`Las horas ${tipo} no pueden ser negativas`);
+      }
+    });
+
+    return {
+      valido: errores.length === 0,
+      errores,
+      totalHoras
     };
   }
 }
 
-// Exportar para uso global
-window.ColombianLaborLaw = ColombianLaborLaw;
+// Crear instancia global
+window.colombianLaborLawCalculator = new ColombianLaborLawCalculator();
+
+// Función de conveniencia para uso directo
+window.calcularHorasColombia = function(horasData, salarioMensual) {
+  try {
+    const validacion = window.colombianLaborLawCalculator.validarDatos(horasData, salarioMensual);
+    
+    if (!validacion.valido) {
+      throw new Error(validacion.errores.join(', '));
+    }
+
+    return window.colombianLaborLawCalculator.calcularSalariosCompletos(horasData, salarioMensual);
+  } catch (error) {
+    console.error('❌ Error calculando horas:', error);
+    throw error;
+  }
+};
+
+// Exportar para uso en módulos
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ColombianLaborLawCalculator;
+}
+
+console.log('✅ Calculadora de Ley Laboral Colombiana cargada correctamente');

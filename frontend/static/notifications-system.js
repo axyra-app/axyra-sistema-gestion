@@ -440,8 +440,31 @@ class AxyraNotificationSystem {
     try {
       const notification = this.notifications.find((n) => n.id === notificationId);
       if (notification) {
-        // Aquí puedes agregar lógica específica para cada acción
         console.log(`✅ Acción ejecutada para notificación: ${notificationId}`);
+
+        // Manejar acciones específicas según el tipo de notificación
+        if (notification.id === 'empleados_sin_horas') {
+          // Redirigir a la página de empleados
+          if (window.location.pathname.includes('/empleados/')) {
+            // Si ya estamos en empleados, mostrar modal de gestión
+            if (typeof gestionarDepartamentos === 'function') {
+              gestionarDepartamentos();
+            }
+          } else {
+            // Redirigir a empleados
+            window.location.href = '/modulos/empleados/empleados.html';
+          }
+        } else if (notification.id === 'nominas_pendientes') {
+          // Redirigir a nóminas
+          if (!window.location.pathname.includes('/nomina/')) {
+            window.location.href = '/modulos/nomina/gestionar_nomina.html';
+          }
+        } else if (notification.id === 'cuadres_pendientes') {
+          // Redirigir a caja
+          if (!window.location.pathname.includes('/caja/')) {
+            window.location.href = '/modulos/caja/caja.html';
+          }
+        }
 
         // Remover la notificación después de la acción
         this.removeNotification(notificationId);
