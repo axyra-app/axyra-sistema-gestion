@@ -1726,10 +1726,10 @@
 
         <!-- Botones de Acción -->
         <div class="axyra-actions-bar">
-          <button class="axyra-btn axyra-btn-primary" onclick="mostrarModalGenerarNomina()">
+          <button class="axyra-btn axyra-btn-primary" onclick="mostrarModal('modalGenerarNomina')">
             <i class="fas fa-plus"></i> Generar Nómina
           </button>
-          <button class="axyra-btn axyra-btn-secondary" onclick="exportarNominaExcel()">
+          <button class="axyra-btn axyra-btn-secondary" onclick="exportarNomina()">
             <i class="fas fa-download"></i> Exportar a Excel
           </button>
           <button class="axyra-btn axyra-btn-success" onclick="generarComprobantePDF()">
@@ -5716,157 +5716,10 @@
         }
       }
 
-      // Función para mostrar modal de generar nómina
-      function mostrarModalGenerarNomina() {
-        try {
-          const modal = document.createElement('div');
-          modal.className = 'modal-overlay';
-          modal.id = 'modalGenerarNomina';
-          modal.innerHTML = `
-            <div class="modal-content modal-centered">
-              <div class="modal-header">
-                <h3>📋 Generar Nueva Nómina</h3>
-                <button class="modal-close" onclick="cerrarModalGenerarNomina()">×</button>
-              </div>
-              <div class="modal-body">
-                <div class="form-group">
-                  <label for="empleadoSelect">Seleccionar Empleado:</label>
-                  <select id="empleadoSelect" class="form-control">
-                    <option value="">Seleccione un empleado...</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for="mesNomina">Mes de Nómina:</label>
-                  <input type="month" id="mesNomina" class="form-control" value="${new Date().toISOString().slice(0, 7)}">
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalGenerarNomina()">Cancelar</button>
-                <button class="axyra-btn axyra-btn-primary" onclick="generarNominaEmpleado()">Generar Nómina</button>
-              </div>
-            </div>
-          `;
-          
-          document.body.appendChild(modal);
-          cargarEmpleadosEnSelect();
-          setTimeout(() => modal.classList.add('modal-active'), 10);
-        } catch (error) {
-          console.error('❌ Error mostrando modal:', error);
-          mostrarNotificacion('Error mostrando modal: ' + error.message, 'error');
-        }
-      }
-
-      // Función para cerrar modal de generar nómina
-      function cerrarModalGenerarNomina() {
-        const modal = document.getElementById('modalGenerarNomina');
-        if (modal) {
-          modal.classList.remove('modal-active');
-          setTimeout(() => modal.remove(), 300);
-        }
-      }
-
-      // Función para cargar empleados en el select
-      function cargarEmpleadosEnSelect() {
-        try {
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          const select = document.getElementById('empleadoSelect');
-          
-          if (select) {
-            select.innerHTML = '<option value="">Seleccione un empleado...</option>';
-            empleados.forEach(emp => {
-              const option = document.createElement('option');
-              option.value = emp.id;
-              option.textContent = `${emp.nombre} - ${emp.cargo}`;
-              select.appendChild(option);
-            });
-          }
-        } catch (error) {
-          console.error('❌ Error cargando empleados:', error);
-        }
-      }
-
-      // Función para generar nómina de un empleado
-      function generarNominaEmpleado() {
-        try {
-          const empleadoId = document.getElementById('empleadoSelect').value;
-          const mes = document.getElementById('mesNomina').value;
-          
-          if (!empleadoId) {
-            mostrarNotificacion('Por favor seleccione un empleado', 'warning');
-            return;
-          }
-          
-          if (!mes) {
-            mostrarNotificacion('Por favor seleccione un mes', 'warning');
-            return;
-          }
-          
-          // Aquí iría la lógica para generar la nómina
-          mostrarNotificacion('✅ Nómina generada correctamente', 'success');
-          cerrarModalGenerarNomina();
-          cargarNominas(); // Recargar la tabla
-        } catch (error) {
-          console.error('❌ Error generando nómina:', error);
-          mostrarNotificacion('Error generando nómina: ' + error.message, 'error');
-        }
-      }
-
-      // Función para exportar nómina a Excel (renombrada)
-      function exportarNominaExcel() {
-        try {
-          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
-          if (nominas.length === 0) {
-            mostrarNotificacion('No hay nóminas para exportar', 'warning');
-            return;
-          }
-
-          // Crear libro de Excel
-          const workbook = XLSX.utils.book_new();
-          
-          // Crear hoja de trabajo
-          const datosExcel = [
-            ['VILLA VENECIA - NÓMINA DE EMPLEADOS'],
-            [`Fecha de Generación: ${new Date().toLocaleDateString()}`],
-            [''],
-            ['ID', 'Empleado', 'Cargo', 'Salario Base', 'Horas Trabajadas', 'Total a Pagar', 'Estado']
-          ];
-
-          nominas.forEach(nomina => {
-            const empleado = empleados.find(emp => emp.id === nomina.empleado_id);
-            if (empleado) {
-              datosExcel.push([
-                nomina.id || 'N/A',
-                empleado.nombre || 'N/A',
-                empleado.cargo || 'N/A',
-                `$${(nomina.salario_base || 0).toLocaleString()}`,
-                nomina.horas_trabajadas || '0',
-                `$${(nomina.salario_final || 0).toLocaleString()}`,
-                nomina.estado || 'N/A'
-              ]);
-            }
-          });
-
-          const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
-          XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
-
-          const fecha = new Date().toISOString().split('T')[0];
-          const nombreArchivo = `Nómina_Villa_Venecia_${fecha}.xlsx`;
-          
-          XLSX.writeFile(workbook, nombreArchivo);
-          mostrarNotificacion('✅ Nómina exportada a Excel correctamente', 'success');
-        } catch (error) {
-          console.error('❌ Error exportando nómina:', error);
-          mostrarNotificacion('Error al exportar: ' + error.message, 'error');
-        }
-      }
-
       // Hacer funciones globales para onclick
-      window.mostrarModalGenerarNomina = mostrarModalGenerarNomina;
-      window.cerrarModalGenerarNomina = cerrarModalGenerarNomina;
-      window.generarNominaEmpleado = generarNominaEmpleado;
-      window.exportarNominaExcel = exportarNominaExcel;
+      window.mostrarModal = mostrarModal;
+      window.cerrarModal = cerrarModal;
+      window.exportarNomina = exportarNomina;
       window.generarComprobantePDF = generarComprobantePDF;
       window.generarReportes = generarReportes;
       window.configuracionNomina = configuracionNomina;
