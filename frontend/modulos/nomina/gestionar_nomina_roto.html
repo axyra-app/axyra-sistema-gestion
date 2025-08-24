@@ -1726,19 +1726,19 @@
 
         <!-- Botones de Acción -->
         <div class="axyra-actions-bar">
-          <button class="axyra-btn axyra-btn-primary" onclick="alert('Generar Nómina - Funcionalidad en desarrollo')">
+          <button class="axyra-btn axyra-btn-primary" onclick="mostrarModalGenerarNomina()">
             <i class="fas fa-plus"></i> Generar Nómina
           </button>
-          <button class="axyra-btn axyra-btn-secondary" onclick="exportarNominaSimple()">
+          <button class="axyra-btn axyra-btn-secondary" onclick="exportarNominaExcel()">
             <i class="fas fa-download"></i> Exportar a Excel
           </button>
-          <button class="axyra-btn axyra-btn-success" onclick="alert('Generar PDF - Funcionalidad en desarrollo')">
+          <button class="axyra-btn axyra-btn-success" onclick="generarComprobantePDF()">
             <i class="fas fa-file-pdf"></i> Generar PDF
           </button>
-          <button class="axyra-btn axyra-btn-warning" onclick="generarReporteSimple()">
+          <button class="axyra-btn axyra-btn-warning" onclick="generarReportesNomina()">
             <i class="fas fa-chart-bar"></i> Reportes
           </button>
-          <button class="axyra-btn axyra-btn-info" onclick="mostrarConfiguracionSimple()">
+          <button class="axyra-btn axyra-btn-info" onclick="configuracionAvanzadaNomina()">
             <i class="fas fa-cog"></i> Configuración
           </button>
         </div>
@@ -5862,158 +5862,21 @@
         }
       }
 
-      // FUNCIONES SIMPLES Y FUNCIONALES PARA LOS BOTONES
-      
-      // Función simple para exportar nómina
-      function exportarNominaSimple() {
-        try {
-          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
-          if (nominas.length === 0) {
-            alert('No hay nóminas para exportar');
-            return;
-          }
-
-          // Crear datos simples para Excel
-          const datosExcel = [
-            ['VILLA VENECIA - NÓMINA'],
-            [`Fecha: ${new Date().toLocaleDateString()}`],
-            [''],
-            ['Empleado', 'Cargo', 'Salario', 'Estado']
-          ];
-
-          nominas.forEach(nomina => {
-            const empleado = empleados.find(emp => emp.id === nomina.empleado_id);
-            if (empleado) {
-              datosExcel.push([
-                empleado.nombre || 'N/A',
-                empleado.cargo || 'N/A',
-                `$${(nomina.salario_final || 0).toLocaleString()}`,
-                nomina.estado || 'N/A'
-              ]);
-            }
-          });
-
-          // Crear y descargar Excel
-          const workbook = XLSX.utils.book_new();
-          const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
-          XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
-          
-          const fecha = new Date().toISOString().split('T')[0];
-          XLSX.writeFile(workbook, `Nómina_${fecha}.xlsx`);
-          
-          alert('✅ Nómina exportada correctamente');
-        } catch (error) {
-          console.error('Error exportando:', error);
-          alert('Error al exportar: ' + error.message);
-        }
-      }
-
-      // Función simple para generar reporte
-      function generarReporteSimple() {
-        try {
-          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
-          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-          
-          if (nominas.length === 0) {
-            alert('No hay datos para generar reporte');
-            return;
-          }
-
-          // Crear reporte simple
-          const reporte = `
-            📊 REPORTE DE NÓMINA - VILLA VENECIA
-            
-            📅 Fecha: ${new Date().toLocaleDateString()}
-            👥 Total Empleados: ${empleados.length}
-            📋 Total Nóminas: ${nominas.length}
-            💰 Total Salarios: $${nominas.reduce((sum, n) => sum + (n.salario_final || 0), 0).toLocaleString()}
-            
-            📋 DETALLE:
-            ${nominas.map(n => {
-              const emp = empleados.find(e => e.id === n.empleado_id);
-              return `• ${emp ? emp.nombre : 'N/A'}: $${(n.salario_final || 0).toLocaleString()}`;
-            }).join('\n')}
-          `;
-
-          // Mostrar en nueva ventana
-          const ventana = window.open('', '_blank');
-          ventana.document.write(`
-            <html>
-              <head><title>Reporte Nómina</title></head>
-              <body style="font-family: Arial; padding: 20px;">
-                <pre style="white-space: pre-wrap;">${reporte}</pre>
-                <br><button onclick="window.print()">🖨️ Imprimir</button>
-                <button onclick="window.close()">❌ Cerrar</button>
-              </body>
-            </html>
-          `);
-        } catch (error) {
-          console.error('Error generando reporte:', error);
-          alert('Error generando reporte: ' + error.message);
-        }
-      }
-
-      // Función simple para mostrar configuración
-      function mostrarConfiguracionSimple() {
-        try {
-          const modal = document.createElement('div');
-          modal.style.cssText = `
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7); z-index: 9999; display: flex;
-            justify-content: center; align-items: center;
-          `;
-          
-          modal.innerHTML = `
-            <div style="background: white; padding: 30px; border-radius: 10px; max-width: 500px;">
-              <h3>⚙️ Configuración de Nómina</h3>
-              <div style="margin: 20px 0;">
-                <label>Salario Mínimo: <input type="number" id="salMin" placeholder="Salario mínimo"></label><br><br>
-                <label>% Cesantías: <input type="number" id="cesantias" value="8.33" step="0.01"></label><br><br>
-                <label>% Salud: <input type="number" id="salud" value="4" step="0.01"></label><br><br>
-                <label>% Pensión: <input type="number" id="pension" value="4" step="0.01"></label>
-              </div>
-              <div style="text-align: right;">
-                <button onclick="this.closest('div[style*=\"position: fixed\"]').remove()" style="margin-right: 10px;">Cancelar</button>
-                <button onclick="guardarConfigSimple()" style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 5px;">Guardar</button>
-              </div>
-            </div>
-          `;
-          
-          document.body.appendChild(modal);
-        } catch (error) {
-          console.error('Error mostrando configuración:', error);
-          alert('Error mostrando configuración: ' + error.message);
-        }
-      }
-
-      // Función para guardar configuración simple
-      function guardarConfigSimple() {
-        try {
-          const config = {
-            salarioMinimo: document.getElementById('salMin').value,
-            cesantias: document.getElementById('cesantias').value,
-            salud: document.getElementById('salud').value,
-            pension: document.getElementById('pension').value
-          };
-          
-          localStorage.setItem('axyra_config_simple', JSON.stringify(config));
-          alert('✅ Configuración guardada correctamente');
-          
-          // Cerrar modal
-          document.querySelector('div[style*="position: fixed"]').remove();
-        } catch (error) {
-          console.error('Error guardando configuración:', error);
-          alert('Error guardando configuración: ' + error.message);
-        }
-      }
-
       // Hacer funciones globales para onclick
-      window.exportarNominaSimple = exportarNominaSimple;
-      window.generarReporteSimple = generarReporteSimple;
-      window.mostrarConfiguracionSimple = mostrarConfiguracionSimple;
-      window.guardarConfigSimple = guardarConfigSimple;
+      window.mostrarModalGenerarNomina = mostrarModalGenerarNomina;
+      window.cerrarModalGenerarNomina = cerrarModalGenerarNomina;
+      window.generarNominaEmpleado = generarNominaEmpleado;
+      window.exportarNominaExcel = exportarNominaExcel;
+      window.generarComprobantePDF = generarComprobantePDF;
+      window.generarReportes = generarReportes;
+      window.configuracionNomina = configuracionNomina;
+      window.mostrarNotificacion = mostrarNotificacion;
+      window.cerrarNotificacion = cerrarNotificacion;
+      window.generarReportesNomina = generarReportesNomina;
+      window.configuracionAvanzadaNomina = configuracionAvanzadaNomina;
+      window.cerrarModalConfiguracion = cerrarModalConfiguracion;
+      window.guardarConfiguracionNomina = guardarConfiguracionNomina;
+      window.generarContenidoReporte = generarContenidoReporte;
     </script>
   </body>
 </html>
