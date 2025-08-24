@@ -149,13 +149,18 @@ async function cargarMovimientos() {
           .limit(100)
           .get();
 
-      movimientos = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      console.log('✅ Movimientos cargados desde Firebase:', movimientos.length);
+        movimientos = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log('✅ Movimientos cargados desde Firebase:', movimientos.length);
+      } catch (firebaseError) {
+        console.warn('⚠️ Error cargando desde Firebase:', firebaseError);
+        cargarMovimientosLocalStorage();
+      }
     } else {
-      throw new Error('Usuario no autenticado en Firebase');
+      console.log('ℹ️ Firebase no disponible, usando localStorage...');
+      cargarMovimientosLocalStorage();
     }
   } catch (error) {
     console.log('⚠️ Error cargando desde Firebase, usando localStorage...');
@@ -247,6 +252,138 @@ function mostrarNotificacion(mensaje, tipo = 'info') {
       }
     }, 5000);
   } catch (error) {
+    console.error('❌ Error mostrando notificación:', error);
+  }
+}
+
+// ========================================
+// FUNCIONES DE MODALES
+// ========================================
+
+// Mostrar modal de producto
+function mostrarModalProducto() {
+  try {
+    const modal = document.getElementById('modalProducto');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.getElementById('tituloModalProducto').textContent = 'Nuevo Producto';
+      document.getElementById('formProducto').reset();
+    }
+  } catch (error) {
+    console.error('❌ Error mostrando modal producto:', error);
+    mostrarNotificacion('Error mostrando modal', 'error');
+  }
+}
+
+// Cerrar modal de producto
+function cerrarModalProducto() {
+  try {
+    const modal = document.getElementById('modalProducto');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('❌ Error cerrando modal producto:', error);
+  }
+}
+
+// Mostrar modal de entrada
+function mostrarModalEntrada() {
+  try {
+    const modal = document.getElementById('modalEntrada');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.getElementById('formEntrada').reset();
+    }
+  } catch (error) {
+    console.error('❌ Error mostrando modal entrada:', error);
+    mostrarNotificacion('Error mostrando modal', 'error');
+  }
+}
+
+// Cerrar modal de entrada
+function cerrarModalEntrada() {
+  try {
+    const modal = document.getElementById('modalEntrada');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('❌ Error cerrando modal entrada:', error);
+  }
+}
+
+// Mostrar modal de salida
+function mostrarModalSalida() {
+  try {
+    const modal = document.getElementById('modalSalida');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.getElementById('formSalida').reset();
+    }
+  } catch (error) {
+    console.error('❌ Error mostrando modal salida:', error);
+    mostrarNotificacion('Error mostrando modal', 'error');
+  }
+}
+
+// Cerrar modal de salida
+function cerrarModalSalida() {
+  try {
+    const modal = document.getElementById('modalSalida');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  } catch (error) {
+    console.error('❌ Error cerrando modal salida:', error);
+  }
+}
+
+// ========================================
+// FUNCIONES DE EXPORTACIÓN
+// ========================================
+
+// Exportar inventario a Excel
+function exportarInventarioExcel() {
+  try {
+    if (productos.length === 0) {
+      mostrarNotificacion('No hay productos para exportar', 'warning');
+      return;
+    }
+
+    // Verificar si XLSX está disponible
+    if (typeof XLSX === 'undefined') {
+      mostrarNotificacion('Error: Librería XLSX no disponible', 'error');
+      return;
+    }
+
+    // Preparar datos para exportar
+    const datosExportar = productos.map(producto => ({
+      Código: producto.codigo || '',
+      Nombre: producto.nombre || '',
+      Categoría: producto.categoria || '',
+      Stock: producto.stock || 0,
+      Precio: producto.precio || 0,
+      Estado: producto.estado || '',
+      Fecha_Creación: producto.fechaCreacion || ''
+    }));
+
+    // Crear libro de Excel
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(datosExportar);
+
+    // Agregar hoja al libro
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Inventario');
+
+    // Generar archivo y descargar
+    XLSX.writeFile(workbook, `Inventario_${new Date().toISOString().split('T')[0]}.xlsx`);
+
+    mostrarNotificacion('Inventario exportado exitosamente', 'success');
+  } catch (error) {
+    console.error('❌ Error exportando inventario:', error);
+    mostrarNotificacion('Error exportando inventario: ' + error.message, 'error');
+  }
+}
     console.error('❌ Error mostrando notificación:', error);
     // Fallback final: alert
     alert(`${tipo.toUpperCase()}: ${mensaje}`);
