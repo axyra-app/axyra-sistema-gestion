@@ -5413,6 +5413,18 @@
         }
       }
 
+      // Función para cerrar notificaciones de forma segura
+      function cerrarNotificacion(boton) {
+        try {
+          const notificacion = boton.closest('.axyra-notificacion');
+          if (notificacion && notificacion.parentElement) {
+            notificacion.remove();
+          }
+        } catch (error) {
+          console.error('❌ Error cerrando notificación:', error);
+        }
+      }
+
       // Función para mostrar notificaciones
       function mostrarNotificacion(mensaje, tipo = 'info') {
         try {
@@ -5426,7 +5438,7 @@
             <div class="axyra-notificacion-contenido">
               <div class="axyra-notificacion-mensaje">${mensaje}</div>
             </div>
-            <button class="axyra-notificacion-cerrar" onclick="this.closest('.axyra-notificacion').remove()">
+            <button class="axyra-notificacion-cerrar" onclick="cerrarNotificacion(this)">
               ×
             </button>
           `;
@@ -5455,6 +5467,7 @@
       window.generarReportes = generarReportes;
       window.configuracionNomina = configuracionNomina;
       window.mostrarNotificacion = mostrarNotificacion;
+      window.cerrarNotificacion = cerrarNotificacion;
     </script>
   </body>
 </html>
