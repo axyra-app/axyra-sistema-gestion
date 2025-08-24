@@ -4534,74 +4534,9 @@
                   ${contenido}
                 </div>
               </div>
-              <script>
-                function exportarReporteExcel() {
-                  try {
-                    // Obtener datos de nómina
-                    const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
-                    const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
-                    
-                    if (nominas.length === 0) {
-                      alert('No hay datos de nómina para exportar');
-                      return;
-                    }
-
-                    // Preparar datos para Excel
-                    const datosExcel = [
-                      ['ID', 'Empleado', 'Departamento', 'Salario Base', 'Horas Trabajadas', 'Total Horas', 'Valor por Hora', 'Total a Pagar', 'Fecha', 'Estado']
-                    ];
-
-                    nominas.forEach(nomina => {
-                      const empleado = empleados.find(emp => emp.id === nomina.empleado_id);
-                      datosExcel.push([
-                        nomina.id || 'N/A',
-                        empleado ? empleado.nombre : 'Empleado no encontrado',
-                        empleado ? empleado.cargo : 'N/A',
-                        `$${nomina.salario_base?.toLocaleString() || '0'}`,
-                        nomina.horas_trabajadas || '0',
-                        (nomina.horas_trabajadas + nomina.horas_extras + nomina.horas_nocturnas + nomina.horas_dominicales) || '0',
-                        `$${nomina.salario_por_hora?.toLocaleString() || '0'}`,
-                        `$${nomina.salario_neto?.toLocaleString() || '0'}`,
-                        nomina.fecha_generacion ? new Date(nomina.fecha_generacion).toLocaleDateString() : 'N/A',
-                        nomina.estado || 'N/A'
-                      ]);
-                    });
-
-                    // Crear libro de Excel
-                    const workbook = XLSX.utils.book_new();
-                    const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
-
-                    // Aplicar estilos profesionales
-                    worksheet['!cols'] = [
-                      { width: 8 },   // ID
-                      { width: 25 },  // Empleado
-                      { width: 20 },  // Departamento
-                      { width: 15 },  // Salario Base
-                      { width: 18 },  // Horas Trabajadas
-                      { width: 15 },  // Total Horas
-                      { width: 18 },  // Valor por Hora
-                      { width: 18 },  // Total a Pagar
-                      { width: 15 },  // Fecha
-                      { width: 12 }   // Estado
-                    ];
-
-                    // Agregar hoja al libro
-                    XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
-
-                    // Generar nombre de archivo con fecha
-                    const fecha = new Date().toISOString().split('T')[0];
-                    const nombreArchivo = `Reporte_Nomina_Villa_Venecia_${fecha}.xlsx`;
-
-                    // Descargar archivo
-                    XLSX.writeFile(workbook, nombreArchivo);
-                    
-                    console.log('✅ Reporte de nómina exportado correctamente:', nombreArchivo);
-                  } catch (error) {
-                    console.error('❌ Error exportando reporte de nómina:', error);
-                    alert('Error al exportar: ' + error.message);
-                  }
-                }
-              </script>
+              <button class="btn btn-success" onclick="exportarReporteExcel()">
+                📊 Exportar a Excel
+              </button>
             </body>
           </html>
         `);
@@ -5459,6 +5394,74 @@
         } catch (error) {
           console.error('❌ Error exportando nómina:', error);
           mostrarNotificacion('Error al exportar: ' + error.message, 'error');
+        }
+      }
+
+      // Función para exportar reporte a Excel
+      function exportarReporteExcel() {
+        try {
+          // Obtener datos de nómina
+          const nominas = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
+          const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+          
+          if (nominas.length === 0) {
+            alert('No hay datos de nómina para exportar');
+            return;
+          }
+
+          // Preparar datos para Excel
+          const datosExcel = [
+            ['ID', 'Empleado', 'Departamento', 'Salario Base', 'Horas Trabajadas', 'Total Horas', 'Valor por Hora', 'Total a Pagar', 'Fecha', 'Estado']
+          ];
+
+          nominas.forEach(nomina => {
+            const empleado = empleados.find(emp => emp.id === nomina.empleado_id);
+            datosExcel.push([
+              nomina.id || 'N/A',
+              empleado ? empleado.nombre : 'Empleado no encontrado',
+              empleado ? empleado.cargo : 'N/A',
+              `$${nomina.salario_base?.toLocaleString() || '0'}`,
+              nomina.horas_trabajadas || '0',
+              (nomina.horas_trabajadas + nomina.horas_extras + nomina.horas_nocturnas + nomina.horas_dominicales) || '0',
+              `$${nomina.salario_por_hora?.toLocaleString() || '0'}`,
+              `$${nomina.salario_neto?.toLocaleString() || '0'}`,
+              nomina.fecha_generacion ? new Date(nomina.fecha_generacion).toLocaleDateString() : 'N/A',
+              nomina.estado || 'N/A'
+            ]);
+          });
+
+          // Crear libro de Excel
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.aoa_to_sheet(datosExcel);
+
+          // Aplicar estilos profesionales
+          worksheet['!cols'] = [
+            { width: 8 },   // ID
+            { width: 25 },  // Empleado
+            { width: 20 },  // Departamento
+            { width: 15 },  // Salario Base
+            { width: 18 },  // Horas Trabajadas
+            { width: 15 },  // Total Horas
+            { width: 18 },  // Valor por Hora
+            { width: 18 },  // Total a Pagar
+            { width: 15 },  // Fecha
+            { width: 12 }   // Estado
+          ];
+
+          // Agregar hoja al libro
+          XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
+
+          // Generar nombre de archivo con fecha
+          const fecha = new Date().toISOString().split('T')[0];
+          const nombreArchivo = `Reporte_Nomina_Villa_Venecia_${fecha}.xlsx`;
+
+          // Descargar archivo
+          XLSX.writeFile(workbook, nombreArchivo);
+          
+          console.log('✅ Reporte de nómina exportado correctamente:', nombreArchivo);
+        } catch (error) {
+          console.error('❌ Error exportando reporte de nómina:', error);
+          alert('Error al exportar: ' + error.message);
         }
       }
 
