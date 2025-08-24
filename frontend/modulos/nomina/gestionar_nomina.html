@@ -4734,18 +4734,10 @@
             porcentajePension: parseFloat(document.getElementById('porcentajePension').value) || 4
           };
 
-          localStorage.setItem('axyra_configuracion_nomina', JSON.stringify(config));
+                    localStorage.setItem('axyra_configuracion_nomina', JSON.stringify(config));
           mostrarNotificacion('✅ Configuración guardada correctamente', 'success');
           
           // Cerrar modal después de guardar
-          cerrarModalConfiguracion();
-        } catch (error) {
-          console.error('❌ Error guardando configuración:', error);
-          mostrarNotificacion('Error guardando configuración: ' + error.message, 'error');
-        }
-      }
-          
-          // Cerrar modal
           cerrarModalConfiguracion();
         } catch (error) {
           console.error('❌ Error guardando configuración:', error);
