@@ -41,20 +41,31 @@ async function inicializarInventario() {
 // Verificar autenticación del usuario
 async function verificarAutenticacion() {
   try {
+    // Usar el sistema unificado de autenticación si está disponible
+    if (window.axyraIsolatedAuth && window.axyraIsolatedAuth.isUserAuthenticated()) {
+      usuarioActual = window.axyraIsolatedAuth.getCurrentUser();
+      console.log('✅ Usuario autenticado desde AXYRA Auth:', usuarioActual.email || usuarioActual.username);
+      return;
+    }
+
     // Intentar obtener usuario de Firebase
-    if (firebase.auth().currentUser) {
+    if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
       usuarioActual = firebase.auth().currentUser;
       console.log('✅ Usuario autenticado en Firebase:', usuarioActual.email);
-    } else {
-      // Fallback a localStorage
-      const usuarioLocal = localStorage.getItem('axyra_user');
-      if (usuarioLocal) {
-        usuarioActual = JSON.parse(usuarioLocal);
-        console.log('✅ Usuario autenticado en localStorage:', usuarioActual.email);
-      } else {
-        throw new Error('No hay usuario autenticado');
+      return;
+    }
+
+    // Fallback a localStorage
+    const usuarioLocal = localStorage.getItem('axyra_isolated_user');
+    if (usuarioLocal) {
+      usuarioActual = JSON.parse(usuarioLocal);
+      if (usuarioActual && usuarioActual.isAuthenticated) {
+        console.log('✅ Usuario autenticado en localStorage:', usuarioActual.email || usuarioActual.username);
+        return;
       }
     }
+
+    throw new Error('No hay usuario autenticado');
   } catch (error) {
     console.error('❌ Error de autenticación:', error);
     throw error;
@@ -64,40 +75,79 @@ async function verificarAutenticacion() {
 // Cargar inventario desde Firebase
 async function cargarInventario() {
   try {
-    if (firebase.auth().currentUser) {
-      console.log('🔥 Cargando inventario desde Firebase...');
-      const snapshot = await firebase
-        .firestore()
-        .collection('productos')
-        .where('userId', '==', firebase.auth().currentUser.uid)
-        .get();
-
-      productos = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      console.log('✅ Productos cargados desde Firebase:', productos.length);
-    } else {
-      throw new Error('Usuario no autenticado en Firebase');
+    // Usar el sistema de sincronización si está disponible
+    if (window.firebaseSyncManager) {
+      try {
+        console.log('🔄 Usando sistema de sincronización para inventario...');
+        // Por ahora, cargar desde localStorage hasta que implementemos inventario en FirebaseSyncManager
+        productos = cargarProductosLocalStorage();
+        console.log('✅ Productos cargados desde localStorage:', productos.length);
+        return;
+      } catch (syncError) {
+        console.warn('⚠️ Error con sistema de sincronización, usando método directo:', syncError);
+      }
     }
+
+    // Método directo - intentar cargar desde Firebase
+    if (typeof firebase !== 'undefined' && firebase.firestore && usuarioActual) {
+      try {
+        console.log('🔥 Cargando inventario desde Firebase...');
+        const snapshot = await firebase
+          .firestore()
+          .collection('productos')
+          .where('userId', '==', usuarioActual.uid || usuarioActual.id)
+          .get();
+
+        productos = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        console.log('✅ Productos cargados desde Firebase:', productos.length);
+        
+        // Guardar en localStorage como respaldo
+        localStorage.setItem('axyra_productos', JSON.stringify(productos));
+        return;
+      } catch (firebaseError) {
+        console.warn('⚠️ Error cargando desde Firebase, usando localStorage:', firebaseError);
+      }
+    }
+
+    // Fallback a localStorage
+    productos = cargarProductosLocalStorage();
+    console.log('✅ Productos cargados desde localStorage:', productos.length);
   } catch (error) {
-    console.log('⚠️ Error cargando desde Firebase, usando localStorage...');
-    cargarProductosLocalStorage();
+    console.error('❌ Error cargando inventario:', error);
+    productos = [];
   }
 }
 
 // Cargar movimientos desde Firebase
 async function cargarMovimientos() {
   try {
-    if (firebase.auth().currentUser) {
-      console.log('🔥 Cargando movimientos desde Firebase...');
-      const snapshot = await firebase
-        .firestore()
-        .collection('movimientos')
-        .where('userId', '==', firebase.auth().currentUser.uid)
-        .orderBy('fecha', 'desc')
-        .limit(100)
-        .get();
+    // Usar el sistema de sincronización si está disponible
+    if (window.firebaseSyncManager) {
+      try {
+        console.log('🔄 Usando sistema de sincronización para movimientos...');
+        // Por ahora, cargar desde localStorage hasta que implementemos movimientos en FirebaseSyncManager
+        movimientos = cargarMovimientosLocalStorage();
+        console.log('✅ Movimientos cargados desde localStorage:', movimientos.length);
+        return;
+      } catch (syncError) {
+        console.warn('⚠️ Error con sistema de sincronización, usando método directo:', syncError);
+      }
+    }
+
+    // Método directo - intentar cargar desde Firebase
+    if (typeof firebase !== 'undefined' && firebase.firestore && usuarioActual) {
+      try {
+        console.log('🔥 Cargando movimientos desde Firebase...');
+        const snapshot = await firebase
+          .firestore()
+          .collection('movimientos')
+          .where('userId', '==', usuarioActual.uid || usuarioActual.id)
+          .orderBy('fecha', 'desc')
+          .limit(100)
+          .get();
 
       movimientos = snapshot.docs.map((doc) => ({
         id: doc.id,
@@ -118,15 +168,16 @@ function cargarProductosLocalStorage() {
   try {
     const productosGuardados = localStorage.getItem('axyra_productos');
     if (productosGuardados) {
-      productos = JSON.parse(productosGuardados);
-      console.log('💾 Productos cargados desde localStorage:', productos.length);
+      const productosCargados = JSON.parse(productosGuardados);
+      console.log('💾 Productos cargados desde localStorage:', productosCargados.length);
+      return productosCargados;
     } else {
-      productos = [];
       console.log('ℹ️ No hay productos guardados en localStorage');
+      return [];
     }
   } catch (error) {
     console.error('❌ Error cargando productos desde localStorage:', error);
-    productos = [];
+    return [];
   }
 }
 
@@ -135,15 +186,16 @@ function cargarMovimientosLocalStorage() {
   try {
     const movimientosGuardados = localStorage.getItem('axyra_movimientos');
     if (movimientosGuardados) {
-      movimientos = JSON.parse(movimientosGuardados);
-      console.log('💾 Movimientos cargados desde localStorage:', movimientos.length);
+      const movimientosCargados = JSON.parse(movimientosGuardados);
+      console.log('💾 Movimientos cargados desde localStorage:', movimientosCargados.length);
+      return movimientosCargados;
     } else {
-      movimientos = [];
       console.log('ℹ️ No hay movimientos guardados en localStorage');
+      return [];
     }
   } catch (error) {
     console.error('❌ Error cargando movimientos desde localStorage:', error);
-    movimientos = [];
+    return [];
   }
 }
 
@@ -164,6 +216,40 @@ function guardarMovimientosLocalStorage() {
     console.log('💾 Movimientos guardados en localStorage');
   } catch (error) {
     console.error('❌ Error guardando movimientos en localStorage:', error);
+  }
+}
+
+// Función para mostrar notificaciones
+function mostrarNotificacion(mensaje, tipo = 'info') {
+  try {
+    // Usar el sistema de notificaciones AXYRA si está disponible
+    if (window.axyraNotifications) {
+      window.axyraNotifications.showNotification(mensaje, tipo);
+      return;
+    }
+
+    // Fallback: crear notificación simple
+    const notificacion = document.createElement('div');
+    notificacion.className = `axyra-notification axyra-notification-${tipo}`;
+    notificacion.innerHTML = `
+      <div class="axyra-notification-content">
+        <span class="axyra-notification-message">${mensaje}</span>
+        <button class="axyra-notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+      </div>
+    `;
+
+    document.body.appendChild(notificacion);
+
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+      if (notificacion.parentElement) {
+        notificacion.remove();
+      }
+    }, 5000);
+  } catch (error) {
+    console.error('❌ Error mostrando notificación:', error);
+    // Fallback final: alert
+    alert(`${tipo.toUpperCase()}: ${mensaje}`);
   }
 }
 

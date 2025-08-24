@@ -165,24 +165,26 @@ class AxyraNotificationSystem {
       // Generar notificaciones del sistema
       const systemNotifications = [];
 
-      // Verificar empleados sin horas registradas
-      const empleadosSinHoras = empleados.filter((emp) => {
-        // Verificar por ID del empleado y por cédula
-        const tieneHorasPorId = horas.some((h) => h.empleadoId === emp.id);
-        const tieneHorasPorCedula = horas.some((h) => h.cedula === emp.cedula);
-        return !tieneHorasPorId && !tieneHorasPorCedula;
-      });
-
-      if (empleadosSinHoras.length > 0) {
-        systemNotifications.push({
-          id: 'empleados_sin_horas',
-          type: 'warning',
-          title: 'Empleados sin horas registradas',
-          message: `${empleadosSinHoras.length} empleado(s) no tienen horas registradas en el sistema`,
-          action: 'Ver empleados',
-          timestamp: Date.now(),
-          data: { empleados: empleadosSinHoras },
+      // Verificar empleados sin horas registradas (solo si hay empleados)
+      if (empleados.length > 0) {
+        const empleadosSinHoras = empleados.filter((emp) => {
+          // Verificar por ID del empleado y por cédula
+          const tieneHorasPorId = horas.some((h) => h.empleadoId === emp.id);
+          const tieneHorasPorCedula = horas.some((h) => h.cedula === emp.cedula);
+          return !tieneHorasPorId && !tieneHorasPorCedula;
         });
+
+        if (empleadosSinHoras.length > 0) {
+          systemNotifications.push({
+            id: 'empleados_sin_horas',
+            type: 'warning',
+            title: 'Empleados sin horas registradas',
+            message: `${empleadosSinHoras.length} empleado(s) no tienen horas registradas en el sistema`,
+            action: 'Ver empleados',
+            timestamp: Date.now(),
+            data: { empleados: empleadosSinHoras },
+          });
+        }
       }
 
       // Verificar nóminas pendientes
@@ -358,7 +360,11 @@ class AxyraNotificationSystem {
           ${
             notification.action
               ? `<div class="axyra-notification-actions">
-            <button class="axyra-notification-action" onclick="window.axyraNotificationSystem.handleNotificationAction('${notification.id}')" style="background: ${this.getNotificationColor(notification.type)}; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s ease;">
+            <button class="axyra-notification-action" onclick="window.axyraNotificationSystem.handleNotificationAction('${
+              notification.id
+            }')" style="background: ${this.getNotificationColor(
+                  notification.type
+                )}; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; transition: all 0.2s ease;">
               ${notification.action}
             </button>
           </div>`

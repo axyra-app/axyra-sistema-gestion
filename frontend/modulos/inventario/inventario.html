@@ -9,10 +9,130 @@
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
+    <style>
+      /* Estilos para notificaciones del inventario */
+      .axyra-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+        max-width: 400px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-left: 4px solid #3b82f6;
+        animation: slideInRight 0.3s ease-out;
+      }
+
+      .axyra-notification-success {
+        border-left-color: #10b981;
+      }
+
+      .axyra-notification-error {
+        border-left-color: #ef4444;
+      }
+
+      .axyra-notification-warning {
+        border-left-color: #f59e0b;
+      }
+
+      .axyra-notification-info {
+        border-left-color: #3b82f6;
+      }
+
+      .axyra-notification-content {
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .axyra-notification-message {
+        color: #1f2937;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .axyra-notification-close {
+        background: none;
+        border: none;
+        color: #6b7280;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0;
+        margin-left: 12px;
+        line-height: 1;
+      }
+
+      .axyra-notification-close:hover {
+        color: #374151;
+      }
+
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* Mejoras para el sistema de inventario */
+      .inventario-overview {
+        margin-bottom: 30px;
+      }
+
+      .inventario-overview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .inventario-stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 16px;
+        text-align: center;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .inventario-stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+      }
+
+      .inventario-stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        opacity: 0.9;
+      }
+
+      .inventario-stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .inventario-stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        font-weight: 500;
+      }
+    </style>
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <!-- Firebase Sync Manager -->
+    <script src="../../static/firebase-sync-manager.js"></script>
 
     <!-- XLSX para exportación -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -25,6 +145,9 @@
 
     <!-- Sistema de Notificaciones Push AXYRA -->
     <script src="../../static/notifications-system.js"></script>
+
+    <!-- Sistema Unificado de Autenticación AXYRA -->
+    <script src="../../static/unified-auth-system.js"></script>
 
     <!-- Header Compartido AXYRA -->
     <script src="../../static/include-header.js"></script>

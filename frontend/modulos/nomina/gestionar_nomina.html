@@ -852,29 +852,89 @@
         exportarNominaSimple() {
           try {
             if (this.nominas.length === 0) {
-              alert('No hay nóminas para exportar');
+              this.mostrarModalError(
+                'No hay nóminas para exportar',
+                'No se pueden exportar datos sin nóminas disponibles en el sistema.'
+              );
               return;
             }
 
-            // Crear datos simples para Excel
-            const datosExcel = [
-              ['VILLA VENECIA - NÓMINA'],
-              [`Fecha: ${new Date().toLocaleDateString()}`],
-              [''],
-              ['Empleado', 'Cargo', 'Salario', 'Estado'],
-            ];
+            // Mostrar modal de confirmación de exportación
+            this.mostrarModalExportacion();
+          } catch (error) {
+            console.error('Error exportando:', error);
+            this.mostrarModalError(
+              'Error al exportar',
+              'Se produjo un error inesperado durante la exportación: ' + error.message
+            );
+          }
+        }
 
-            this.nominas.forEach((nomina) => {
-              const empleado = this.empleados.find((emp) => emp.id === nomina.empleado_id);
-              if (empleado) {
-                datosExcel.push([
-                  empleado.nombre || 'N/A',
-                  empleado.cargo || 'N/A',
-                  `$${(nomina.salario_final || 0).toLocaleString()}`,
-                  nomina.estado || 'N/A',
-                ]);
-              }
-            });
+        mostrarModalExportacion() {
+          const modal = document.createElement('div');
+          modal.className = 'axyra-modal-overlay';
+          modal.id = 'modalExportacion';
+
+          modal.innerHTML = `
+            <div class="axyra-modal-content axyra-modal-medium">
+              <div class="axyra-modal-header">
+                <h3><i class="fas fa-download"></i> Exportar Nómina a Excel</h3>
+                <button class="axyra-modal-close" onclick="nominaManager.cerrarModal('modalExportacion')">×</button>
+              </div>
+              <div class="axyra-modal-body">
+                <div class="axyra-exportacion-info">
+                  <div class="axyra-info-card">
+                    <i class="fas fa-info-circle"></i>
+                    <h4>Información de Exportación</h4>
+                    <p>Se exportarán <strong>${this.nominas.length} nómina(s)</strong> con todos los detalles de empleados, salarios y estados.</p>
+                  </div>
+                  
+                  <div class="axyra-exportacion-options">
+                    <h4>Opciones de Exportación</h4>
+                    <div class="axyra-form-group">
+                      <label>
+                        <input type="checkbox" id="incluirDetalles" checked>
+                        Incluir detalles completos de empleados
+                      </label>
+                    </div>
+                    <div class="axyra-form-group">
+                      <label>
+                        <input type="checkbox" id="incluirCalculos" checked>
+                        Incluir cálculos de salarios y deducciones
+                      </label>
+                    </div>
+                    <div class="axyra-form-group">
+                      <label>
+                        <input type="checkbox" id="incluirResumen" checked>
+                        Incluir resumen ejecutivo
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="axyra-modal-footer">
+                <button class="axyra-btn axyra-btn-secondary" onclick="nominaManager.cerrarModal('modalExportacion')">
+                  <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="axyra-btn axyra-btn-primary" onclick="nominaManager.ejecutarExportacion()">
+                  <i class="fas fa-download"></i> Exportar Ahora
+                </button>
+              </div>
+            </div>
+          `;
+
+          document.body.appendChild(modal);
+        }
+
+        ejecutarExportacion() {
+          try {
+            // Obtener opciones seleccionadas
+            const incluirDetalles = document.getElementById('incluirDetalles').checked;
+            const incluirCalculos = document.getElementById('incluirCalculos').checked;
+            const incluirResumen = document.getElementById('incluirResumen').checked;
+
+            // Crear datos para Excel según las opciones seleccionadas
+            const datosExcel = this.prepararDatosExcel(incluirDetalles, incluirCalculos, incluirResumen);
 
             // Crear y descargar Excel
             const workbook = XLSX.utils.book_new();
@@ -882,13 +942,107 @@
             XLSX.utils.book_append_sheet(workbook, worksheet, 'Nómina');
 
             const fecha = new Date().toISOString().split('T')[0];
-            XLSX.writeFile(workbook, `Nómina_${fecha}.xlsx`);
+            const nombreArchivo = `Nómina_Villa_Venecia_${fecha}.xlsx`;
+            XLSX.writeFile(workbook, nombreArchivo);
 
-            alert('✅ Nómina exportada correctamente');
+            // Cerrar modal y mostrar confirmación
+            this.cerrarModal('modalExportacion');
+            this.mostrarModalExito(
+              'Exportación Completada',
+              `✅ La nómina se exportó correctamente como "${nombreArchivo}"<br><br>El archivo se descargó automáticamente a tu carpeta de descargas.`
+            );
           } catch (error) {
-            console.error('Error exportando:', error);
-            alert('Error al exportar: ' + error.message);
+            console.error('Error ejecutando exportación:', error);
+            this.mostrarModalError(
+              'Error en Exportación',
+              'Se produjo un error durante la exportación: ' + error.message
+            );
           }
+        }
+
+        prepararDatosExcel(incluirDetalles, incluirCalculos, incluirResumen) {
+          const datosExcel = [];
+
+          // Encabezado principal
+          datosExcel.push(['VILLA VENECIA - SISTEMA DE NÓMINA']);
+          datosExcel.push([
+            `Fecha de Exportación: ${new Date().toLocaleDateString('es-ES', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}`,
+          ]);
+          datosExcel.push(['Hora de Exportación: ' + new Date().toLocaleTimeString('es-ES')]);
+          datosExcel.push(['']);
+
+          if (incluirResumen) {
+            datosExcel.push(['📊 RESUMEN EJECUTIVO']);
+            datosExcel.push(['Total Empleados', this.empleados.length]);
+            datosExcel.push(['Total Nóminas', this.nominas.length]);
+            datosExcel.push(['Total Salarios', `$${this.calcularTotalSalarios().toLocaleString()}`]);
+            datosExcel.push(['']);
+          }
+
+          // Datos principales de nóminas
+          datosExcel.push(['📋 DETALLE DE NÓMINAS']);
+          datosExcel.push([
+            'ID',
+            'Empleado',
+            'Cargo',
+            'Departamento',
+            'Salario Base',
+            'Salario Final',
+            'Estado',
+            'Fecha',
+          ]);
+
+          this.nominas.forEach((nomina) => {
+            const empleado = this.empleados.find((emp) => emp.id === nomina.empleado_id);
+            if (empleado) {
+              const fila = [
+                nomina.id || 'N/A',
+                empleado.nombre || 'N/A',
+                empleado.cargo || 'N/A',
+                empleado.departamento || 'N/A',
+                `$${(empleado.salario || 0).toLocaleString()}`,
+                `$${(nomina.salario_final || 0).toLocaleString()}`,
+                nomina.estado || 'N/A',
+                nomina.fecha || 'N/A',
+              ];
+
+              if (incluirCalculos) {
+                fila.push(`$${(nomina.deducciones || 0).toLocaleString()}`);
+                fila.push(`$${(nomina.bonificaciones || 0).toLocaleString()}`);
+              }
+
+              datosExcel.push(fila);
+            }
+          });
+
+          if (incluirDetalles) {
+            datosExcel.push(['']);
+            datosExcel.push(['👥 DETALLE DE EMPLEADOS']);
+            datosExcel.push(['ID', 'Nombre', 'Cargo', 'Departamento', 'Salario Base', 'Estado', 'Fecha Ingreso']);
+
+            this.empleados.forEach((empleado) => {
+              datosExcel.push([
+                empleado.id || 'N/A',
+                empleado.nombre || 'N/A',
+                empleado.cargo || 'N/A',
+                empleado.departamento || 'N/A',
+                `$${(empleado.salario || 0).toLocaleString()}`,
+                empleado.estado || 'N/A',
+                empleado.fechaIngreso || 'N/A',
+              ]);
+            });
+          }
+
+          return datosExcel;
+        }
+
+        calcularTotalSalarios() {
+          return this.nominas.reduce((total, nomina) => total + (nomina.salario_final || 0), 0);
         }
 
         generarReporteSimple() {
