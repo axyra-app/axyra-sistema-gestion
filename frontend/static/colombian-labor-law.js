@@ -38,15 +38,21 @@ class ColombianLaborLawCalculator {
   /**
    * Calcular valor de la hora ordinaria
    * @param {number} salarioMensual - Salario mensual del empleado
+   * @param {string} tipoContrato - Tipo de contrato ('Fijo' o 'Por Horas')
    * @returns {number} Valor de la hora ordinaria
    */
-  calcularValorHoraOrdinaria(salarioMensual) {
+  calcularValorHoraOrdinaria(salarioMensual, tipoContrato = 'Por Horas') {
     if (!salarioMensual || salarioMensual <= 0) {
       throw new Error('El salario mensual debe ser mayor a 0');
     }
     
-    // Según la ley: Salario mensual / 240 horas mensuales
-    return salarioMensual / this.HORAS_MENSUALES;
+    if (tipoContrato === 'Fijo') {
+      // Empleados fijos: 44 horas semanales, salario/2
+      return salarioMensual / 2;
+    } else {
+      // Empleados por horas: salario/240 horas mensuales
+      return salarioMensual / this.HORAS_MENSUALES;
+    }
   }
 
   /**
@@ -219,14 +225,15 @@ class ColombianLaborLawCalculator {
    * Calcular total de salarios según tipos de horas
    * @param {Object} horasData - Objeto con todos los tipos de horas
    * @param {number} salarioMensual - Salario mensual del empleado
+   * @param {string} tipoContrato - Tipo de contrato ('Fijo' o 'Por Horas')
    * @returns {Object} Objeto con todos los cálculos
    */
-  calcularSalariosCompletos(horasData, salarioMensual) {
+  calcularSalariosCompletos(horasData, salarioMensual, tipoContrato = 'Por Horas') {
     if (!salarioMensual || salarioMensual <= 0) {
       throw new Error('El salario mensual debe ser mayor a 0');
     }
 
-    const valorHora = this.calcularValorHoraOrdinaria(salarioMensual);
+    const valorHora = this.calcularValorHoraOrdinaria(salarioMensual, tipoContrato);
     
     const {
       ordinarias = 0,

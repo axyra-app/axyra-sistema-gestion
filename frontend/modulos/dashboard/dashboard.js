@@ -174,28 +174,42 @@ class AxyraDashboard {
 
   async loadHoras() {
     try {
-      const horasData = localStorage.getItem('axyra_horas');
-      if (horasData) {
-        this.horas = JSON.parse(horasData);
+      // Usar el sistema de sincronización si está disponible
+      if (window.firebaseSyncManager) {
+        try {
+          this.horas = await window.firebaseSyncManager.getHoras() || [];
+          console.log('✅ Horas cargadas desde Firebase Sync Manager:', this.horas.length);
+        } catch (error) {
+          console.warn('⚠️ Error con Firebase Sync Manager, usando método directo:', error);
+        }
       }
 
-      if (typeof firebase !== 'undefined' && firebase.firestore) {
-        try {
-          const db = firebase.firestore();
-          const snapshot = await db.collection('horas_trabajadas').get();
-          if (!snapshot.empty) {
-            this.horas = snapshot.docs.map((doc) => ({
-              id: doc.id,
-              ...doc.data(),
-            }));
-            localStorage.setItem('axyra_horas', JSON.stringify(this.horas));
+      // Si no hay datos del sync manager, intentar método directo
+      if (this.horas.length === 0) {
+        const horasData = localStorage.getItem('axyra_horas');
+        if (horasData) {
+          this.horas = JSON.parse(horasData);
+        }
+
+        if (typeof firebase !== 'undefined' && firebase.firestore) {
+          try {
+            const db = firebase.firestore();
+            const snapshot = await db.collection('horas_trabajadas').get();
+            if (!snapshot.empty) {
+              this.horas = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+              localStorage.setItem('axyra_horas', JSON.stringify(this.horas));
+            }
+          } catch (firebaseError) {
+            console.warn('⚠️ Error cargando horas desde Firebase:', firebaseError);
           }
-        } catch (firebaseError) {
-          console.warn('⚠️ Error cargando horas desde Firebase:', firebaseError);
         }
       }
 
       console.log(`✅ ${this.horas.length} registros de horas cargados`);
+      console.log('🔍 Detalle de horas:', this.horas);
     } catch (error) {
       console.error('❌ Error cargando horas:', error);
       this.horas = [];
@@ -365,19 +379,36 @@ class AxyraDashboard {
         const estado = e.estado.toUpperCase();
         return estado !== 'INACTIVO' && estado !== 'BAJA' && estado !== 'DESPEDIDO';
       }).length;
+      
       const empleadosActivosElement = document.getElementById('empleadosActivos');
       if (empleadosActivosElement) {
         empleadosActivosElement.textContent = empleadosActivos;
       }
+      
+      // Debug: mostrar información de empleados
+      console.log('👥 Empleados cargados:', this.empleados.length);
+      console.log('✅ Empleados activos:', empleadosActivos);
+      console.log('🔍 Detalle de empleados:', this.empleados.map(e => ({ id: e.id, nombre: e.nombre, estado: e.estado, tipoContrato: e.tipoContrato })));
 
-      // Horas trabajadas
-      const totalHoras = this.horas.reduce((sum, h) => sum + (h.total_horas || 0), 0);
+      // Horas trabajadas - calcular correctamente según estructura de datos
+      const totalHoras = this.horas.reduce((sum, h) => {
+        if (!h || !h.horas) return sum;
+        
+        // Sumar todos los tipos de horas
+        const horasOrdinarias = h.horas.ordinarias || 0;
+        const horasExtras = h.horas.extras || 0;
+        const horasFestivas = h.horas.extrasFestivas || 0;
+        const horasNocturnas = h.horas.extrasFestivasNocturnas || 0;
+        
+        return sum + horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+      }, 0);
+      
       const horasTrabajadasElement = document.getElementById('horasTrabajadas');
       if (horasTrabajadasElement) {
         horasTrabajadasElement.textContent = totalHoras.toFixed(1);
       }
 
-      // Horas del mes
+      // Horas del mes - calcular correctamente según estructura de datos
       const mesActual = new Date().getMonth();
       const horasMes = this.horas
         .filter((h) => {
@@ -387,7 +418,18 @@ class AxyraDashboard {
             return false;
           }
         })
-        .reduce((sum, h) => sum + (h.total_horas || 0), 0);
+        .reduce((sum, h) => {
+          if (!h || !h.horas) return sum;
+          
+          // Sumar todos los tipos de horas
+          const horasOrdinarias = h.horas.ordinarias || 0;
+          const horasExtras = h.horas.extras || 0;
+          const horasFestivas = h.horas.extrasFestivas || 0;
+          const horasNocturnas = h.horas.extrasFestivasNocturnas || 0;
+          
+          return sum + horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
+        }, 0);
+      
       const horasMesElement = document.getElementById('horasMes');
       if (horasMesElement) {
         horasMesElement.textContent = horasMes.toFixed(1);
@@ -418,6 +460,71 @@ class AxyraDashboard {
       const totalSalariosElement = document.getElementById('totalSalarios');
       if (totalSalariosElement) {
         totalSalariosElement.textContent = `$${totalSalariosNetos.toLocaleString()}`;
+      }
+
+      // Total pagos por horas trabajadas - calcular según ley colombiana
+      const totalPagosHoras = this.horas.reduce((sum, h) => {
+        if (!h || !h.horas || !h.salarios) return sum;
+        
+        // Obtener el empleado para saber su tipo de contrato
+        const empleado = this.empleados.find(e => e.id == h.empleadoId);
+        if (!empleado) return sum;
+        
+        // Calcular según tipo de contrato
+        if (empleado.tipoContrato === 'Fijo') {
+          // Empleados fijos: 44 horas semanales, salario/2
+          const salarioHora = empleado.salario / 2; // 44 horas semanales
+          const horasOrdinarias = h.horas.ordinarias || 0;
+          const horasExtras = h.horas.extras || 0;
+          const horasFestivas = h.horas.extrasFestivas || 0;
+          const horasNocturnas = h.horas.extrasFestivasNocturnas || 0;
+          
+          const pagoOrdinario = horasOrdinarias * salarioHora;
+          const pagoExtras = horasExtras * (salarioHora * 1.25); // 25% extra
+          const pagoFestivas = horasFestivas * (salarioHora * 1.75); // 75% extra
+          const pagoNocturnas = horasNocturnas * (salarioHora * 2.1); // 110% extra
+          
+          return sum + pagoOrdinario + pagoExtras + pagoFestivas + pagoNocturnas;
+        } else {
+          // Empleados por horas: salario/240
+          const salarioHora = empleado.salario / 240; // 240 horas mensuales
+          const horasOrdinarias = h.horas.ordinarias || 0;
+          const horasExtras = h.horas.extras || 0;
+          const horasFestivas = h.horas.extrasFestivas || 0;
+          const horasNocturnas = h.horas.extrasFestivasNocturnas || 0;
+          
+          const pagoOrdinario = horasOrdinarias * salarioHora;
+          const pagoExtras = horasExtras * (salarioHora * 1.25); // 25% extra
+          const pagoFestivas = horasFestivas * (salarioHora * 1.75); // 75% extra
+          const pagoNocturnas = horasNocturnas * (salarioHora * 2.1); // 110% extra
+          
+          return sum + pagoOrdinario + pagoExtras + pagoFestivas + pagoNocturnas;
+        }
+      }, 0);
+      
+      const totalPagosElement = document.getElementById('totalPagos');
+      if (totalPagosElement) {
+        totalPagosElement.textContent = `$${totalPagosHoras.toFixed(0)}`;
+      }
+
+      // Días trabajados - solo para empleados fijos (44 horas semanales)
+      const diasTrabajados = this.horas
+        .filter((h) => {
+          if (!h || !h.empleadoId) return false;
+          const empleado = this.empleados.find(e => e.id == h.empleadoId);
+          return empleado && empleado.tipoContrato === 'Fijo';
+        })
+        .reduce((sum, h) => {
+          if (!h || !h.horas) return sum;
+          
+          // Para empleados fijos, contar días con horas ordinarias
+          const horasOrdinarias = h.horas.ordinarias || 0;
+          return sum + (horasOrdinarias > 0 ? 1 : 0);
+        }, 0);
+      
+      const diasTrabajadosElement = document.getElementById('diasTrabajados');
+      if (diasTrabajadosElement) {
+        diasTrabajadosElement.textContent = diasTrabajados;
       }
 
       // Departamentos

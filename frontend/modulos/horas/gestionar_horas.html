@@ -1435,7 +1435,13 @@
               extraFestivasNocturnas: horasExtrasFestivasNocturnasVal
             };
             
-            calculoHoras = window.colombianLaborLawCalculator.calcularSalariosCompletos(horasData, salarioBaseVal);
+            // Obtener el tipo de contrato del empleado
+            const empleado = JSON.parse(localStorage.getItem('axyra_empleados') || '[]').find(
+              (emp) => emp.id === parseInt(empleadoId)
+            );
+            const tipoContrato = empleado ? (empleado.tipoContrato || 'Por Horas') : 'Por Horas';
+            
+            calculoHoras = window.colombianLaborLawCalculator.calcularSalariosCompletos(horasData, salarioBaseVal, tipoContrato);
             
             console.log('✅ Cálculo de horas realizado correctamente:', calculoHoras);
           } catch (error) {
