@@ -1591,11 +1591,19 @@
           } catch (error) {
             console.error('❌ Error en cálculo de horas:', error);
             // Fallback al cálculo anterior usando los tipos correctos
-            const salarioHora = salarioBaseVal / 240;
+            const salarioHora = salarioBaseVal / 220; // Corregido a 220 según la ley colombiana
             const salarioOrdinario = horasOrdinariasVal * salarioHora;
-            const salarioNocturnas = horasExtrasVal * (salarioHora * 1.35); // 35% recargo
-            const salarioExtraDiurnas = horasExtrasFestivasVal * (salarioHora * 1.25); // 25% recargo
-            const salarioExtraNocturnas = horasExtrasFestivasNocturnasVal * (salarioHora * 1.75); // 75% recargo
+            const salarioNocturnas = horasNocturnasVal * (salarioHora * 1.35); // 35% recargo
+            const salarioExtraDiurnas = horasExtraDiurnasVal * (salarioHora * 1.25); // 25% recargo
+            const salarioExtraNocturnas = horasExtraNocturnasVal * (salarioHora * 1.75); // 75% recargo
+            const salarioDominicales = horasDominicalesVal * (salarioHora * 1.75); // 75% recargo
+            const salarioFestivas = horasFestivasVal * (salarioHora * 1.80); // 80% recargo
+            const salarioDominicalesNocturnas = horasDominicalesNocturnasVal * (salarioHora * 2.10); // 110% recargo
+            const salarioFestivasNocturnas = horasFestivasNocturnasVal * (salarioHora * 2.10); // 110% recargo
+            const salarioExtraDominicales = horasExtraDominicalesVal * (salarioHora * 2.05); // 105% recargo
+            const salarioExtraDominicalesNocturnas = horasExtraDominicalesNocturnasVal * (salarioHora * 2.85); // 185% recargo
+            const salarioExtraFestivas = horasExtraFestivasVal * (salarioHora * 2.05); // 105% recargo
+            const salarioExtraFestivasNocturnas = horasExtraFestivasNocturnasVal * (salarioHora * 2.85); // 185% recargo
             
             calculoHoras = {
               valorHora: salarioHora,
@@ -1603,10 +1611,20 @@
                 ordinarias: salarioOrdinario,
                 nocturnas: salarioNocturnas,
                 extraDiurnas: salarioExtraDiurnas,
-                extraNocturnas: salarioExtraNocturnas
+                extraNocturnas: salarioExtraNocturnas,
+                dominicales: salarioDominicales,
+                festivas: salarioFestivas,
+                dominicalesNocturnas: salarioDominicalesNocturnas,
+                festivasNocturnas: salarioFestivasNocturnas,
+                extraDominicales: salarioExtraDominicales,
+                extraDominicalesNocturnas: salarioExtraDominicalesNocturnas,
+                extraFestivas: salarioExtraFestivas,
+                extraFestivasNocturnas: salarioExtraFestivasNocturnas
               },
-              totalHoras: horasOrdinariasVal + horasExtrasVal + horasExtrasFestivasVal + horasExtrasFestivasNocturnasVal,
-              totalSalario: salarioOrdinario + salarioNocturnas + salarioExtraDiurnas + salarioExtraNocturnas
+              totalHoras: totalHoras,
+              totalSalario: salarioOrdinario + salarioNocturnas + salarioExtraDiurnas + salarioExtraNocturnas + 
+                           salarioDominicales + salarioFestivas + salarioDominicalesNocturnas + salarioFestivasNocturnas + 
+                           salarioExtraDominicales + salarioExtraDominicalesNocturnas + salarioExtraFestivas + salarioExtraFestivasNocturnas
             };
           }
 
@@ -1616,17 +1634,33 @@
             fecha,
             horas: {
               ordinarias: horasOrdinariasVal,
-              extras: horasExtrasVal,
-              extrasFestivas: horasExtrasFestivasVal,
-              extrasFestivasNocturnas: horasExtrasFestivasNocturnasVal,
+              nocturnas: horasNocturnasVal,
+              extraDiurnas: horasExtraDiurnasVal,
+              extraNocturnas: horasExtraNocturnasVal,
+              dominicales: horasDominicalesVal,
+              festivas: horasFestivasVal,
+              dominicalesNocturnas: horasDominicalesNocturnasVal,
+              festivasNocturnas: horasFestivasNocturnasVal,
+              extraDominicales: horasExtraDominicalesVal,
+              extraDominicalesNocturnas: horasExtraDominicalesNocturnasVal,
+              extraFestivas: horasExtraFestivasVal,
+              extraFestivasNocturnas: horasExtraFestivasNocturnasVal,
               total: calculoHoras.totalHoras,
             },
             salarios: {
               base: salarioBaseVal,
-              ordinario: calculoHoras.salarios.ordinarias,
-              extras: calculoHoras.salarios.extraDiurnas,
-              extrasFestivas: calculoHoras.salarios.festivas,
-              extrasFestivasNocturnas: calculoHoras.salarios.extraFestivasNocturnas,
+              ordinarias: calculoHoras.salarios.ordinarias,
+              nocturnas: calculoHoras.salarios.nocturnas,
+              extraDiurnas: calculoHoras.salarios.extraDiurnas,
+              extraNocturnas: calculoHoras.salarios.extraNocturnas,
+              dominicales: calculoHoras.salarios.dominicales,
+              festivas: calculoHoras.salarios.festivas,
+              dominicalesNocturnas: calculoHoras.salarios.dominicalesNocturnas,
+              festivasNocturnas: calculoHoras.salarios.festivasNocturnas,
+              extraDominicales: calculoHoras.salarios.extraDominicales,
+              extraDominicalesNocturnas: calculoHoras.salarios.extraDominicalesNocturnas,
+              extraFestivas: calculoHoras.salarios.extraFestivas,
+              extraFestivasNocturnas: calculoHoras.salarios.extraFestivasNocturnas,
               total: calculoHoras.totalSalario,
             },
             salarioHora: calculoHoras.valorHora,
@@ -1690,11 +1724,11 @@
                       </div>
                       <div class="axyra-calculo-item">
                         <span class="axyra-calculo-label">Horas Mensuales:</span>
-                        <span class="axyra-calculo-value">240 horas</span>
+                        <span class="axyra-calculo-value">220 horas</span>
                       </div>
                       <div class="axyra-calculo-item">
                         <span class="axyra-calculo-label">Base de Cálculo:</span>
-                        <span class="axyra-calculo-value">Salario ÷ 240</span>
+                        <span class="axyra-calculo-value">Salario ÷ 220</span>
                       </div>
                     </div>
                   </div>
@@ -1705,15 +1739,52 @@
                     <div class="axyra-calculo-grid">
                       <div class="axyra-calculo-item">
                         <span class="axyra-calculo-label">Horas Ordinarias (6:00 AM - 6:00 PM):</span>
-                        <span class="axyra-calculo-value">${datos.horas.ordinarias} hrs</span>
+                        <span class="axyra-calculo-value">${datos.horas.ordinarias} hrs - $${datos.salarios.ordinarias.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Nocturnas (35% recargo):</span>
+                        <span class="axyra-calculo-value">${datos.horas.nocturnas} hrs - $${datos.salarios.nocturnas.toFixed(2)}</span>
                       </div>
                       <div class="axyra-calculo-item">
                         <span class="axyra-calculo-label">Horas Extra Diurnas (25% recargo):</span>
-                        <span class="axyra-calculo-value">${datos.horas.extras} hrs</span>
+                        <span class="axyra-calculo-value">${datos.horas.extraDiurnas} hrs - $${datos.salarios.extraDiurnas.toFixed(2)}</span>
                       </div>
                       <div class="axyra-calculo-item">
-                        <span class="axyra-calculo-label">Horas Festivas (75% recargo):</span>
-                        <span class="axyra-calculo-value">${datos.horas.extrasFestivas} hrs</span>
+                        <span class="axyra-calculo-label">Horas Extra Nocturnas (75% recargo):</span>
+                        <span class="axyra-calculo-value">${datos.horas.extraNocturnas} hrs - $${datos.salarios.extraNocturnas.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Dominicales (75% recargo):</span>
+                        <span class="axyra-calculo-value">${datos.horas.dominicales} hrs - $${datos.salarios.dominicales.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Festivas (80% recargo):</span>
+                        <span class="axyra-calculo-value">${datos.horas.festivas} hrs - $${datos.salarios.festivas.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Dominicales Nocturnas (110% recargo):</span>
+                        <span class="axyra-calculo-value">${datos.horas.dominicalesNocturnas} hrs - $${datos.salarios.dominicalesNocturnas.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Festivas Nocturnas (110% recargo):</span>
+                        <span class="axyra-calculo-value">${datos.horas.festivasNocturnas} hrs - $${datos.salarios.festivasNocturnas.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Extra Dominicales (105% recargo):</span>
+                        <span class="axyra-calculo-value">${datos.horas.extraDominicales} hrs - $${datos.salarios.extraDominicales.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Extra Dominicales Nocturnas (185% recargo):</span>
+                        <span class="axyra-calculo-value">${datos.horas.extraDominicalesNocturnas} hrs - $${datos.salarios.extraDominicalesNocturnas.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Extra Festivas (105% recargo):</span>
+                        <span class="axyra-calculo-value">${datos.horas.extraFestivas} hrs - $${datos.salarios.extraFestivas.toFixed(2)}</span>
+                      </div>
+                      <div class="axyra-calculo-item">
+                        <span class="axyra-calculo-label">Horas Extra Festivas Nocturnas (185% recargo):</span>
+                        <span class="axyra-calculo-value">${datos.horas.extraFestivasNocturnas} hrs - $${datos.salarios.extraFestivasNocturnas.toFixed(2)}</span>
+                      </div>
                       </div>
                       <div class="axyra-calculo-item">
                         <span class="axyra-calculo-label">Horas Extra Festivas Nocturnas (150% recargo):</span>
@@ -5078,6 +5149,73 @@
           window.location.href = '../empleados/empleados.html';
         } catch (error) {
           console.error('❌ Error navegando a empleados:', error);
+        }
+      }
+
+      // Función para limpiar datos del formulario
+      function limpiarDatos() {
+        try {
+          // Limpiar todos los campos de horas
+          const camposHoras = [
+            'horasOrdinarias', 'horasNocturnas', 'horasExtraDiurnas', 'horasExtraNocturnas',
+            'horasDominicales', 'horasFestivas', 'horasDominicalesNocturnas', 'horasFestivasNocturnas',
+            'horasExtraDominicales', 'horasExtraDominicalesNocturnas', 'horasExtraFestivas', 'horasExtraFestivasNocturnas'
+          ];
+          
+          camposHoras.forEach(campo => {
+            const elemento = document.getElementById(campo);
+            if (elemento) {
+              elemento.value = '0';
+            }
+          });
+          
+          // Limpiar fecha
+          const fechaHoras = document.getElementById('fechaHoras');
+          if (fechaHoras) {
+            fechaHoras.value = '';
+          }
+          
+          // Limpiar empleado
+          const empleadoHoras = document.getElementById('empleadoHoras');
+          if (empleadoHoras) {
+            empleadoHoras.value = '';
+          }
+          
+          // Limpiar salario base
+          const salarioBase = document.getElementById('salarioBase');
+          if (salarioBase) {
+            salarioBase.value = '';
+          }
+          
+          // Limpiar observaciones
+          const observaciones = document.getElementById('observaciones');
+          if (observaciones) {
+            observaciones.value = '';
+          }
+          
+          // Limpiar valores de hora
+          const valoresHora = document.querySelectorAll('.axyra-valor-hora');
+          valoresHora.forEach(valor => {
+            valor.textContent = 'Valor: $0';
+          });
+          
+          console.log('✅ Formulario limpiado correctamente');
+          mostrarMensaje('Formulario limpiado correctamente', 'success');
+        } catch (error) {
+          console.error('❌ Error limpiando formulario:', error);
+          mostrarMensaje('Error limpiando formulario', 'error');
+        }
+      }
+
+      // Función para cerrar modal de cálculo de horas
+      function cerrarModalCalculoHoras() {
+        try {
+          const modal = document.getElementById('modalCalculoHoras');
+          if (modal) {
+            modal.remove();
+          }
+        } catch (error) {
+          console.error('❌ Error cerrando modal:', error);
         }
       }
 
