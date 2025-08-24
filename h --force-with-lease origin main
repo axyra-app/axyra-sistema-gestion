@@ -1,0 +1,5 @@
+[33m909f747[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m  CRÍTICO: Eliminar modal duplicado y código JavaScript visible en nómina
+[33mcffabdf[m  NÓMINA: Corregir errores críticos y implementar analytics avanzado completo
+[33mfcdde72[m  CONFIGURACIÓN: Implementar dashboard avanzado con métricas del sistema y gestión de usuarios
+[33mf632d04[m  CRÍTICO: Corregir modal de configuración de nómina - botones no funcionaban
+[33m54ca94b[m  ANALYTICS: Implementar dashboards avanzados con Chart.js en Nómina y Cuadre de Caja
