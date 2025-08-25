@@ -8,9 +8,7 @@ class AxyraSharedHeader {
     this.navigationItems = [
       { href: '../../index.html', icon: 'fas fa-home', text: 'Inicio', show: true },
       { href: '../dashboard/dashboard.html', icon: 'fas fa-tachometer-alt', text: 'Dashboard', show: true },
-      { href: '../empleados/empleados.html', icon: 'fas fa-users', text: 'Empleados', show: true },
-      { href: '../horas/gestionar_horas.html', icon: 'fas fa-clock', text: 'Horas', show: true },
-      { href: '../nomina/gestionar_nomina.html', icon: 'fas fa-file-invoice-dollar', text: 'Nómina', show: true },
+      { href: '../gestion_personal/gestion_personal.html', icon: 'fas fa-users-cog', text: 'Gestión Personal', show: true },
       { href: '../cuadre_caja/cuadre_caja.html', icon: 'fas fa-calculator', text: 'Caja', show: true },
       { href: '../inventario/inventario.html', icon: 'fas fa-boxes', text: 'Inventario', show: true },
       { href: '../configuracion/configuracion.html', icon: 'fas fa-cog', text: 'Config', show: true }
@@ -48,6 +46,8 @@ class AxyraSharedHeader {
       } else if (this.currentPage === 'horas' && item.text === 'Horas') {
         isCurrentPage = true;
       } else if (this.currentPage === 'nomina' && item.text === 'Nómina') {
+        isCurrentPage = true;
+      } else if (this.currentPage === 'gestion_personal' && item.text === 'Gestión Personal') {
         isCurrentPage = true;
       } else if (this.currentPage === 'caja' && item.text === 'Caja') {
         isCurrentPage = true;
@@ -243,6 +243,9 @@ class AxyraSharedHeader {
     } else if (url.includes('/nomina/') || pathname.includes('/nomina/')) {
       console.log('🎯 Página detectada como: nomina');
       return 'nomina';
+    } else if (url.includes('/gestion_personal/') || pathname.includes('/gestion_personal/')) {
+      console.log('🎯 Página detectada como: gestion_personal');
+      return 'gestion_personal';
     } else if (url.includes('/cuadre_caja/') || pathname.includes('/cuadre_caja/')) {
       console.log('🎯 Página detectada como: caja');
       return 'caja';

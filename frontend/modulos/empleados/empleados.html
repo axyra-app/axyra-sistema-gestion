@@ -1330,9 +1330,9 @@
           if (window.firebaseSyncManager) {
             try {
               console.log('🔄 Usando sistema de sincronización para organigrama...');
-              departamentos = await window.firebaseSyncManager.getDepartamentos() || [];
-              empleados = await window.firebaseSyncManager.getEmpleados() || [];
-              
+              departamentos = (await window.firebaseSyncManager.getDepartamentos()) || [];
+              empleados = (await window.firebaseSyncManager.getEmpleados()) || [];
+
               console.log('✅ Datos cargados desde Firebase Sync Manager:', {
                 departamentos: departamentos.length,
                 empleados: empleados.length,
@@ -3249,24 +3249,24 @@
             const descripcion = depto.descripcion || '';
             const color = depto.color || '#667eea';
             const empleadosCount = await contarEmpleadosPorDepartamento(nombre);
-            
+
             departamentosHTML += `
-              <div class="axyra-department-item">
-                <div class="axyra-department-info">
+            <div class="axyra-department-item">
+              <div class="axyra-department-info">
                   <span class="axyra-department-name" style="color: ${color}">${nombre}</span>
                   ${descripcion ? `<small class="axyra-department-descripcion">${descripcion}</small>` : ''}
                   <span class="axyra-department-count">${empleadosCount} empleados</span>
-                </div>
-                <div class="axyra-department-actions">
-                  <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="editarDepartamento(${index})" title="Editar">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarDepartamento(${index})" title="Eliminar">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
               </div>
-            `;
+              <div class="axyra-department-actions">
+                <button class="axyra-btn axyra-btn-sm axyra-btn-warning" onclick="editarDepartamento(${index})" title="Editar">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="axyra-btn axyra-btn-sm axyra-btn-error" onclick="eliminarDepartamento(${index})" title="Eliminar">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          `;
           }
 
           if (departamentosHTML === '') {
@@ -3307,36 +3307,36 @@
               descripcion: 'Departamento de administración y gestión',
               color: '#667eea',
               fechaCreacion: new Date().toISOString(),
-              usuarioId: obtenerUsuarioActual()
+              usuarioId: obtenerUsuarioActual(),
             },
             {
               nombre: 'Ventas',
               descripcion: 'Departamento de ventas y comercialización',
               color: '#10b981',
               fechaCreacion: new Date().toISOString(),
-              usuarioId: obtenerUsuarioActual()
+              usuarioId: obtenerUsuarioActual(),
             },
             {
               nombre: 'Producción',
               descripcion: 'Departamento de producción y operaciones',
               color: '#f59e0b',
               fechaCreacion: new Date().toISOString(),
-              usuarioId: obtenerUsuarioActual()
+              usuarioId: obtenerUsuarioActual(),
             },
             {
               nombre: 'Recursos Humanos',
               descripcion: 'Departamento de recursos humanos',
               color: '#ef4444',
               fechaCreacion: new Date().toISOString(),
-              usuarioId: obtenerUsuarioActual()
+              usuarioId: obtenerUsuarioActual(),
             },
             {
               nombre: 'Tecnología',
               descripcion: 'Departamento de tecnología e informática',
               color: '#8b5cf6',
               fechaCreacion: new Date().toISOString(),
-              usuarioId: obtenerUsuarioActual()
-            }
+              usuarioId: obtenerUsuarioActual(),
+            },
           ];
 
           // Guardar departamentos por defecto en Firebase si está disponible
@@ -3368,11 +3368,11 @@
           // Obtener empleados desde Firebase si está disponible
           let empleadosActuales = [];
           if (window.firebaseSyncManager) {
-            empleadosActuales = await window.firebaseSyncManager.getEmpleados() || [];
+            empleadosActuales = (await window.firebaseSyncManager.getEmpleados()) || [];
           } else {
             empleadosActuales = empleados || [];
           }
-          
+
           return empleadosActuales.filter((emp) => emp.departamento === departamento).length;
         } catch (error) {
           console.error('Error contando empleados por departamento:', error);
@@ -3423,7 +3423,7 @@
             descripcion: '',
             color: '#667eea',
             fechaCreacion: new Date().toISOString(),
-            usuarioId: obtenerUsuarioActual()
+            usuarioId: obtenerUsuarioActual(),
           };
 
           // Intentar agregar a Firebase primero usando el sync manager
@@ -3433,7 +3433,7 @@
           } else {
             // Fallback a localStorage
             const departamentos = await obtenerDepartamentos();
-            if (departamentos.some(d => d.nombre === nombre)) {
+            if (departamentos.some((d) => d.nombre === nombre)) {
               mostrarMensaje('❌ El departamento ya existe', 'error');
               return;
             }
@@ -3445,7 +3445,7 @@
 
           document.getElementById('nuevoDepartamento').value = '';
           await cargarDepartamentos();
-          
+
           // Actualizar selects de departamentos en el formulario
           const departamentosActualizados = await obtenerDepartamentos();
           actualizarSelectsDepartamentos(departamentosActualizados);
@@ -3519,13 +3519,13 @@
           }
 
           // Verificar si el nuevo nombre ya existe
-          if (departamentos.some(d => d.nombre === nuevoNombre && d !== departamentoActual)) {
+          if (departamentos.some((d) => d.nombre === nuevoNombre && d !== departamentoActual)) {
             mostrarMensaje('❌ Ya existe un departamento con ese nombre', 'error');
             return;
           }
 
           // Actualizar empleados que usan este departamento
-          const empleados = await window.firebaseSyncManager.getEmpleados() || [];
+          const empleados = (await window.firebaseSyncManager.getEmpleados()) || [];
           empleados.forEach((emp) => {
             if (emp.departamento === departamentoActual.nombre) {
               emp.departamento = nuevoNombre;
@@ -3545,16 +3545,16 @@
             const departamentoActualizado = {
               ...departamentoActual,
               nombre: nuevoNombre,
-              fechaModificacion: new Date().toISOString()
+              fechaModificacion: new Date().toISOString(),
             };
-            
+
             await window.firebaseSyncManager.addDepartamento(departamentoActualizado);
           } else {
             // Fallback a localStorage
             departamentos[index] = {
               ...departamentoActual,
               nombre: nuevoNombre,
-              fechaModificacion: new Date().toISOString()
+              fechaModificacion: new Date().toISOString(),
             };
             localStorage.setItem('axyra_departamentos', JSON.stringify(departamentos));
           }
@@ -3577,7 +3577,9 @@
 
         if (empleadosEnDepartamento > 0) {
           mostrarMensaje(
-            `❌ No se puede eliminar el departamento "${departamento.nombre || departamento}" porque tiene ${empleadosEnDepartamento} empleado(s) asignado(s)`,
+            `❌ No se puede eliminar el departamento "${
+              departamento.nombre || departamento
+            }" porque tiene ${empleadosEnDepartamento} empleado(s) asignado(s)`,
             'error'
           );
           return;
@@ -3643,10 +3645,10 @@
 
           cerrarModalConfirmarEliminarDepartamento();
           await cargarDepartamentos();
-          
+
           // Actualizar selects de departamentos en el formulario
           actualizarSelectsDepartamentos(departamentos);
-          
+
           mostrarMensaje('✅ Departamento eliminado exitosamente', 'success');
         } catch (error) {
           console.error('Error eliminando departamento:', error);

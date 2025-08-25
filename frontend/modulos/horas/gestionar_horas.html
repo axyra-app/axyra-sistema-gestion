@@ -521,7 +521,13 @@
             <div class="axyra-form-row">
               <div class="axyra-form-group">
                 <label for="empleadoHoras" class="axyra-form-label">Empleado</label>
-                <select id="empleadoHoras" name="empleado" class="axyra-form-select" required onchange="actualizarValoresHora()">
+                <select
+                  id="empleadoHoras"
+                  name="empleado"
+                  class="axyra-form-select"
+                  required
+                  onchange="actualizarValoresHora()"
+                >
                   <option value="">Seleccionar empleado</option>
                 </select>
               </div>
@@ -1143,12 +1149,12 @@
         try {
           const empleadoSelect = document.getElementById('empleadoHoras');
           const salarioBaseInput = document.getElementById('salarioBase');
-          
+
           if (!empleadoSelect || !salarioBaseInput) return;
-          
+
           const empleadoId = empleadoSelect.value;
           if (!empleadoId) return;
-          
+
           // Obtener empleado seleccionado usando firebaseSyncManager
           let empleados = [];
           if (window.firebaseSyncManager) {
@@ -1161,22 +1167,22 @@
           } else {
             empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           }
-          
+
           const empleado = empleados.find(emp => emp.id == empleadoId);
-          
+
           if (!empleado) return;
-          
+
           const salarioBase = empleado.salario || 0;
           const tipoContrato = empleado.tipoContrato || 'Por Horas';
-          
+
           // Actualizar salario base en el formulario
           salarioBaseInput.value = salarioBase;
-          
+
           // Calcular valores de hora usando la calculadora
           if (window.colombianLaborLawCalculator) {
             try {
               const valoresHoras = window.colombianLaborLawCalculator.calcularValoresHoras(salarioBase, tipoContrato);
-              
+
               // Actualizar cada campo con su valor correspondiente usando el mapeo correcto
               const camposValores = {
                 'valorHoraOrdinaria': valoresHoras.valores.ordinarias,
@@ -1192,14 +1198,14 @@
                 'valorHoraExtraFestiva': valoresHoras.valores.extraFestivas,
                 'valorHoraExtraFestivaNocturna': valoresHoras.valores.extraFestivasNocturnas
               };
-              
+
               Object.entries(camposValores).forEach(([id, valor]) => {
                 const elemento = document.getElementById(id);
                 if (elemento && valor !== undefined) {
                   elemento.textContent = `Valor: $${valor.toFixed(0)}`;
                 }
               });
-              
+
               console.log('✅ Valores de hora actualizados:', valoresHoras);
               console.log('💰 Valor hora ordinaria:', valoresHoras.valorHoraBase);
               console.log('📊 Valores por tipo:', valoresHoras.valores);
@@ -1238,13 +1244,13 @@
             try {
               console.log('🔄 Usando sistema de sincronización para empleados...');
               const empleados = await window.firebaseSyncManager.getEmpleados() || [];
-              
+
               if (empleados.length > 0) {
                 console.log(`✅ Empleados cargados desde Firebase Sync Manager: ${empleados.length}`);
-                
+
                 // Guardar en localStorage para sincronización
                 localStorage.setItem('axyra_empleados', JSON.stringify(empleados));
-                
+
                 // Cargar en los selects
                 cargarEmpleadosEnSelects(empleados);
                 return;
@@ -1541,10 +1547,10 @@
           }
 
           // Validar que al menos un tipo de horas sea mayor a 0
-          const totalHoras = horasOrdinariasVal + horasNocturnasVal + horasExtraDiurnasVal + 
-                           horasExtraNocturnasVal + horasDominicalesVal + horasFestivasVal + 
-                           horasDominicalesNocturnasVal + horasFestivasNocturnasVal + 
-                           horasExtraDominicalesVal + horasExtraDominicalesNocturnasVal + 
+          const totalHoras = horasOrdinariasVal + horasNocturnasVal + horasExtraDiurnasVal +
+                           horasExtraNocturnasVal + horasDominicalesVal + horasFestivasVal +
+                           horasDominicalesNocturnasVal + horasFestivasNocturnasVal +
+                           horasExtraDominicalesVal + horasExtraDominicalesNocturnasVal +
                            horasExtraFestivasVal + horasExtraFestivasNocturnasVal;
 
           if (totalHoras === 0) {
@@ -1582,17 +1588,17 @@
               extraFestivas: horasExtraFestivasVal,
               extraFestivasNocturnas: horasExtraFestivasNocturnasVal
             };
-            
+
             const tipoContrato = empleado.tipoContrato || 'Por Horas';
-            
+
             calculoHoras = window.colombianLaborLawCalculator.calcularSalariosCompletos(horasData, salarioBaseVal, tipoContrato);
-            
+
             console.log('✅ Cálculo de horas realizado correctamente:', calculoHoras);
           } catch (error) {
             console.error('❌ Error en cálculo de horas:', error);
             // Fallback al cálculo anterior usando los tipos correctos
             const salarioHora = salarioBaseVal / 220; // Corregido a 220 según la ley colombiana
-            const salarioOrdinario = horasOrdinariasVal * salarioHora;
+          const salarioOrdinario = horasOrdinariasVal * salarioHora;
             const salarioNocturnas = horasNocturnasVal * (salarioHora * 1.35); // 35% recargo
             const salarioExtraDiurnas = horasExtraDiurnasVal * (salarioHora * 1.25); // 25% recargo
             const salarioExtraNocturnas = horasExtraNocturnasVal * (salarioHora * 1.75); // 75% recargo
@@ -1604,7 +1610,7 @@
             const salarioExtraDominicalesNocturnas = horasExtraDominicalesNocturnasVal * (salarioHora * 2.85); // 185% recargo
             const salarioExtraFestivas = horasExtraFestivasVal * (salarioHora * 2.05); // 105% recargo
             const salarioExtraFestivasNocturnas = horasExtraFestivasNocturnasVal * (salarioHora * 2.85); // 185% recargo
-            
+
             calculoHoras = {
               valorHora: salarioHora,
               salarios: {
@@ -1622,8 +1628,8 @@
                 extraFestivasNocturnas: salarioExtraFestivasNocturnas
               },
               totalHoras: totalHoras,
-              totalSalario: salarioOrdinario + salarioNocturnas + salarioExtraDiurnas + salarioExtraNocturnas + 
-                           salarioDominicales + salarioFestivas + salarioDominicalesNocturnas + salarioFestivasNocturnas + 
+              totalSalario: salarioOrdinario + salarioNocturnas + salarioExtraDiurnas + salarioExtraNocturnas +
+                           salarioDominicales + salarioFestivas + salarioDominicalesNocturnas + salarioFestivasNocturnas +
                            salarioExtraDominicales + salarioExtraDominicalesNocturnas + salarioExtraFestivas + salarioExtraFestivasNocturnas
             };
           }
@@ -1891,9 +1897,9 @@
       // Función para cerrar modal de cálculo
       function cerrarModalCalculoHoras() {
         try {
-          const modal = document.getElementById('modalCalculoHoras');
-          if (modal) {
-            modal.remove();
+        const modal = document.getElementById('modalCalculoHoras');
+        if (modal) {
+          modal.remove();
           }
         } catch (error) {
           console.error('❌ Error cerrando modal:', error);
@@ -1903,17 +1909,17 @@
       // Función para confirmar registro de horas
       function confirmarRegistroHoras() {
         try {
-          cerrarModalCalculoHoras();
-          
+        cerrarModalCalculoHoras();
+
           // Obtener los datos del modal y registrar las horas
           const empleadoHoras = document.getElementById('empleadoHoras');
           const fechaHoras = document.getElementById('fechaHoras');
           const observaciones = document.getElementById('observaciones');
-          
+
           if (empleadoHoras && fechaHoras) {
             // Llamar a la función de registro
             registrarHoras();
-            mostrarMensaje('✅ Horas registradas correctamente', 'success');
+        mostrarMensaje('✅ Horas registradas correctamente', 'success');
           } else {
             mostrarMensaje('❌ Error: No se pudo obtener la información del formulario', 'error');
           }
@@ -2458,7 +2464,7 @@
       async function registrarHoras(formData) {
         try {
           console.log('🚀 Iniciando registro de horas...');
-          
+
           // Crear estructura de horas organizada
           const horasData = {
             ordinarias: parseFloat(formData.get('horasOrdinarias')) || 0,
@@ -2521,7 +2527,7 @@
           }
 
           mostrarMensaje('✅ Horas registradas exitosamente', 'success');
-          
+
           // Recargar historial y limpiar formulario
           await cargarHistorialHoras();
           limpiarFormulario();
@@ -2957,10 +2963,10 @@
           }
 
           // Calcular totales usando todos los tipos de horas
-          const totalHoras = horasOrdinarias + horasNocturnas + horasExtraDiurnas + 
-                           horasExtraNocturnas + horasDominicales + horasFestivas + 
-                           horasDominicalesNocturnas + horasFestivasNocturnas + 
-                           horasExtraDominicales + horasExtraDominicalesNocturnas + 
+          const totalHoras = horasOrdinarias + horasNocturnas + horasExtraDiurnas +
+                           horasExtraNocturnas + horasDominicales + horasFestivas +
+                           horasDominicalesNocturnas + horasFestivasNocturnas +
+                           horasExtraDominicales + horasExtraDominicalesNocturnas +
                            horasExtraFestivas + horasExtraFestivasNocturnas;
 
           if (totalHoras === 0) {
@@ -2991,8 +2997,8 @@
             const tipoContrato = empleado?.tipoContrato || 'Por Horas';
 
             const calculo = window.colombianLaborLawCalculator.calcularSalariosCompletos(
-              horasData, 
-              salarioBase, 
+              horasData,
+              salarioBase,
               tipoContrato
             );
             totalSalario = calculo.totalSalario;
@@ -3225,7 +3231,7 @@
             extraFestivas: registro.horas?.extraFestivas || 0,
             extraFestivasNocturnas: registro.horas?.extraFestivasNocturnas || 0
           };
-          
+
           const totalHoras = Object.values(horasData).reduce((sum, horas) => sum + (horas || 0), 0);
 
           const salarioBase = empleado.salario || 0;
@@ -3236,8 +3242,8 @@
           try {
             const tipoContrato = empleado.tipoContrato || 'Por Horas';
             const calculo = window.colombianLaborLawCalculator.calcularSalariosCompletos(
-              horasData, 
-              salarioBase, 
+              horasData,
+              salarioBase,
               tipoContrato
             );
             totalPago = calculo.totalSalario;
@@ -3255,7 +3261,7 @@
                 <h2 style="color: #666; margin: 10px 0; font-size: 20px;">COMPROBANTE DE HORAS TRABAJADAS</h2>
                 <p style="color: #999; margin: 5px 0; font-size: 14px;">Fecha de Generación: ${new Date().toLocaleDateString()}</p>
               </div>
-              
+
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
                 <div>
                   <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">INFORMACIÓN DEL EMPLEADO</h3>
@@ -3264,7 +3270,7 @@
                   <p><strong>Departamento:</strong> ${empleado.departamento || 'N/A'}</p>
                   <p><strong>Fecha de Registro:</strong> ${registro.fecha}</p>
                 </div>
-                
+
                 <div>
                   <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">RESUMEN DE HORAS</h3>
                   <p><strong>Total Horas:</strong> ${totalHoras.toFixed(2)}h</p>
@@ -3272,7 +3278,7 @@
                   <p><strong>Valor por Hora:</strong> $${salarioHora.toFixed(2)}</p>
                 </div>
               </div>
-              
+
               <div style="margin-bottom: 30px;">
                 <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">DETALLE DE HORAS</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
@@ -3360,7 +3366,7 @@
                   </tbody>
                 </table>
               </div>
-              
+
               <div style="text-align: right; border-top: 3px solid #4F81BD; padding-top: 20px;">
                 <h3 style="color: #4F81BD; margin: 0;">TOTAL A PAGAR: $${totalPago.toFixed(2)}</h3>
                 <p style="color: #666; margin: 5px 0;">Total Horas: ${totalHoras.toFixed(2)}h</p>
@@ -3416,11 +3422,11 @@
                   </tbody>
                 </table>
               </div>
-              
+
               <div style="text-align: right; border-top: 3px solid #4F81BD; padding-top: 20px;">
                 <h2 style="color: #4F81BD; margin: 0; font-size: 24px;">TOTAL A PAGAR: $${totalPago.toFixed(2)}</h2>
               </div>
-              
+
               <div style="margin-top: 40px; text-align: center; color: #666; font-size: 12px;">
                 <p>Este documento es generado automáticamente por el sistema AXYRA</p>
                 <p>Villa Venecia - Sistema de Gestión de Horas</p>
@@ -3569,7 +3575,7 @@
               </div>
               <div style="margin-top: 20px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
                 <p style="margin: 0; color: #1e40af; font-weight: 600;">
-                  <i class="fas fa-info-circle"></i> 
+                  <i class="fas fa-info-circle"></i>
                   Este es solo un resumen. Para generar el comprobante completo, haz clic en "Generar Comprobante PDF"
                 </p>
               </div>
@@ -3612,27 +3618,27 @@
           // Obtener datos del formulario actual
           const empleadoHoras = document.getElementById('empleadoHoras');
           const fechaHoras = document.getElementById('fechaHoras');
-          
+
           if (!empleadoHoras || !empleadoHoras.value) {
             mostrarMensaje('❌ Por favor selecciona un empleado', 'error');
             return;
           }
-          
+
           if (!fechaHoras || !fechaHoras.value) {
             mostrarMensaje('❌ Por favor ingresa una fecha', 'error');
             return;
           }
-          
+
           // Llamar a la función principal con los datos del formulario
           const empleadoId = empleadoHoras.value;
           const fecha = fechaHoras.value;
-          
+
           // Buscar si ya existe un registro para este empleado y fecha
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-          const registroExistente = horas.find(h => 
+          const registroExistente = horas.find(h =>
             h.empleadoId == empleadoId && h.fecha === fecha
           );
-          
+
           if (registroExistente) {
             // Si existe, generar comprobante del registro existente
             generarComprobante(registroExistente.id);
@@ -3640,7 +3646,7 @@
             // Si no existe, crear un registro temporal y generar comprobante
             const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
             const empleado = empleados.find(emp => emp.id == empleadoId);
-            
+
             if (empleado) {
               // Crear registro temporal para generar comprobante
               const registroTemporal = {
@@ -3662,18 +3668,18 @@
                   extraFestivasNocturnas: parseFloat(document.getElementById('horasExtraFestivasNocturnas')?.value || 0)
                 }
               };
-              
+
               // Generar comprobante del registro temporal
               generarComprobante(registroTemporal.id, registroTemporal);
             } else {
               mostrarMensaje('❌ Empleado no encontrado', 'error');
             }
           }
-          
+
           // Cerrar el modal
           const modal = document.querySelector('.axyra-modal-overlay');
           if (modal) modal.remove();
-          
+
         } catch (error) {
           console.error('❌ Error generando comprobante desde modal:', error);
           mostrarMensaje('Error generando comprobante: ' + error.message, 'error');
@@ -3684,17 +3690,17 @@
       function actualizarEstadisticasDashboard() {
         try {
           console.log('📊 Actualizando estadísticas del dashboard...');
-          
+
           const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
           const horas = JSON.parse(localStorage.getItem('axyra_horas') || '[]');
-          
+
           // Calcular empleados activos
           const empleadosActivos = empleados.filter(emp => emp.estado === 'Activo').length;
-          
+
           // Calcular total de horas del mes actual
           const mesActual = new Date().getMonth();
           const añoActual = new Date().getFullYear();
-          
+
           const horasMes = horas
             .filter(h => {
               const fechaHora = new Date(h.fecha);
@@ -3706,7 +3712,7 @@
               }
               return total;
             }, 0);
-          
+
           // Calcular total de pagos
           let totalPagos = 0;
           horas.forEach(h => {
@@ -3719,7 +3725,7 @@
               }
             }
           });
-          
+
           // Calcular días trabajados (empleados fijos)
           const diasTrabajados = horas
             .filter(h => {
@@ -3727,7 +3733,7 @@
               return empleado && empleado.tipoContrato === 'Fijo' && h.horas?.ordinarias > 0;
             })
             .length;
-          
+
           // Actualizar elementos del DOM
           const elementos = {
             horasMes: document.querySelector('[data-stat="horas-mes"]'),
@@ -3735,19 +3741,19 @@
             empleadosActivos: document.querySelector('[data-stat="empleados-activos"]'),
             diasTrabajados: document.querySelector('[data-stat="dias-trabajados"]')
           };
-          
+
           if (elementos.horasMes) elementos.horasMes.textContent = `${horasMes.toFixed(2)} HORAS DEL MES`;
           if (elementos.totalPagos) elementos.totalPagos.textContent = `$${totalPagos.toFixed(0)} TOTAL PAGOS`;
           if (elementos.empleadosActivos) elementos.empleadosActivos.textContent = `${empleadosActivos} EMPLEADOS ACTIVOS`;
           if (elementos.diasTrabajados) elementos.diasTrabajados.textContent = `${diasTrabajados} DÍAS TRABAJADOS`;
-          
+
           console.log('✅ Estadísticas del dashboard actualizadas:', {
             horasMes,
             totalPagos: totalPagos.toFixed(2),
             empleadosActivos,
             diasTrabajados
           });
-          
+
         } catch (error) {
           console.error('❌ Error actualizando estadísticas:', error);
         }
@@ -4254,7 +4260,7 @@
                 <h2 style="color: #666; margin: 10px 0; font-size: 20px;">COMPROBANTE DE HORAS TRABAJADAS</h2>
                 <p style="color: #999; margin: 5px 0; font-size: 14px;">Fecha de Generación: ${new Date().toLocaleDateString()}</p>
               </div>
-              
+
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
                 <div>
                   <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">INFORMACIÓN DEL EMPLEADO</h3>
@@ -4263,7 +4269,7 @@
                   <p><strong>Departamento:</strong> ${empleado.departamento || 'N/A'}</p>
                   <p><strong>Fecha de Registro:</strong> ${registro.fecha}</p>
                 </div>
-                
+
                 <div>
                   <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">RESUMEN DE HORAS</h3>
                   <p><strong>Total Horas:</strong> ${totalHoras.toFixed(2)}h</p>
@@ -4271,7 +4277,7 @@
                   <p><strong>Valor por Hora:</strong> $${salarioHora.toFixed(2)}</p>
                 </div>
               </div>
-              
+
               <div style="margin-bottom: 30px;">
                 <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">DETALLE DE HORAS</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
@@ -4327,11 +4333,11 @@
                   </tbody>
                 </table>
               </div>
-              
+
               <div style="text-align: right; border-top: 3px solid #4F81BD; padding-top: 20px;">
                 <h2 style="color: #4F81BD; margin: 0; font-size: 24px;">TOTAL A PAGAR: $${totalPago.toFixed(2)}</h2>
               </div>
-              
+
               <div style="margin-top: 40px; text-align: center; color: #666; font-size: 12px;">
                 <p>Este documento es generado automáticamente por el sistema AXYRA</p>
                 <p>Villa Venecia - Sistema de Gestión de Horas</p>
@@ -4578,11 +4584,11 @@
       async function generarComprobanteEmpleado(empleadoId) {
         try {
           console.log('🔍 Generando comprobante para empleado ID:', empleadoId);
-          
+
           // Convertir empleadoId a número si es string
           const empleadoIdNum = parseInt(empleadoId) || empleadoId;
           console.log('🔍 Empleado ID convertido:', empleadoIdNum);
-          
+
           let empleados = [];
           let horas = [];
 
@@ -4665,8 +4671,8 @@
             try {
               const tipoContrato = empleado.tipoContrato || 'Por Horas';
               const calculo = window.colombianLaborLawCalculator.calcularSalariosCompletos(
-                horasData, 
-                empleado.salario || 0, 
+                horasData,
+                empleado.salario || 0,
                 tipoContrato
               );
               totalPago += calculo.totalSalario;
@@ -4686,7 +4692,7 @@
                 <h2 style="color: #666; margin: 10px 0; font-size: 20px;">COMPROBANTE ACUMULADO DE HORAS</h2>
                 <p style="color: #999; margin: 5px 0; font-size: 14px;">Fecha de Generación: ${new Date().toLocaleDateString()}</p>
               </div>
-              
+
               <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
                 <div>
                   <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">INFORMACIÓN DEL EMPLEADO</h3>
@@ -4695,7 +4701,7 @@
                   <p><strong>Departamento:</strong> ${empleado.departamento || 'N/A'}</p>
                   <p><strong>Salario Base:</strong> $${empleado.salario?.toLocaleString() || '0'}</p>
                 </div>
-                
+
                 <div>
                   <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">RESUMEN ACUMULADO</h3>
                   <p><strong>Total Horas:</strong> ${totalHoras.toFixed(2)}h</p>
@@ -4703,7 +4709,7 @@
                   <p><strong>Período:</strong> ${horasEmpleado.length} registros</p>
                 </div>
               </div>
-              
+
               <div style="margin-bottom: 30px;">
                 <h3 style="color: #4F81BD; border-bottom: 2px solid #4F81BD; padding-bottom: 10px;">DETALLE DE REGISTROS</h3>
                 <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
@@ -4741,11 +4747,11 @@
                   </tbody>
                 </table>
               </div>
-              
+
               <div style="text-align: right; border-top: 3px solid #4F81BD; padding-top: 20px;">
                 <h2 style="color: #4F81BD; margin: 0; font-size: 24px;">TOTAL ACUMULADO: $${totalPago.toFixed(2)}</h2>
               </div>
-              
+
               <div style="margin-top: 40px; text-align: center; color: #666; font-size: 12px;">
                 <p>Este documento es generado automáticamente por el sistema AXYRA</p>
                 <p>Villa Venecia - Sistema de Gestión de Horas</p>
@@ -5481,48 +5487,57 @@
         try {
           // Limpiar todos los campos de horas
           const camposHoras = [
-            'horasOrdinarias', 'horasNocturnas', 'horasExtraDiurnas', 'horasExtraNocturnas',
-            'horasDominicales', 'horasFestivas', 'horasDominicalesNocturnas', 'horasFestivasNocturnas',
-            'horasExtraDominicales', 'horasExtraDominicalesNocturnas', 'horasExtraFestivas', 'horasExtraFestivasNocturnas'
+            'horasOrdinarias',
+            'horasNocturnas',
+            'horasExtraDiurnas',
+            'horasExtraNocturnas',
+            'horasDominicales',
+            'horasFestivas',
+            'horasDominicalesNocturnas',
+            'horasFestivasNocturnas',
+            'horasExtraDominicales',
+            'horasExtraDominicalesNocturnas',
+            'horasExtraFestivas',
+            'horasExtraFestivasNocturnas',
           ];
-          
-          camposHoras.forEach(campo => {
+
+          camposHoras.forEach((campo) => {
             const elemento = document.getElementById(campo);
             if (elemento) {
               elemento.value = '0';
             }
           });
-          
+
           // Limpiar fecha
           const fechaHoras = document.getElementById('fechaHoras');
           if (fechaHoras) {
             fechaHoras.value = '';
           }
-          
+
           // Limpiar empleado
           const empleadoHoras = document.getElementById('empleadoHoras');
           if (empleadoHoras) {
             empleadoHoras.value = '';
           }
-          
+
           // Limpiar salario base
           const salarioBase = document.getElementById('salarioBase');
           if (salarioBase) {
             salarioBase.value = '';
           }
-          
+
           // Limpiar observaciones
           const observaciones = document.getElementById('observaciones');
           if (observaciones) {
             observaciones.value = '';
           }
-          
+
           // Limpiar valores de hora
           const valoresHora = document.querySelectorAll('.axyra-valor-hora');
-          valoresHora.forEach(valor => {
+          valoresHora.forEach((valor) => {
             valor.textContent = 'Valor: $0';
           });
-          
+
           console.log('✅ Formulario limpiado correctamente');
           mostrarMensaje('Formulario limpiado correctamente', 'success');
         } catch (error) {
