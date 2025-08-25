@@ -1,650 +1,747 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AXYRA - Gestión de Personal</title>
-    
+
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     <!-- Estilos AXYRA -->
-    <link rel="stylesheet" href="../../static/axyra-styles.css">
-    
+    <link rel="stylesheet" href="../../static/axyra-styles.css" />
+    <link rel="stylesheet" href="gestion_personal-styles.css" />
+
     <style>
-        /* Estilos específicos para Gestión de Personal */
-        .gestion-personal-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .gestion-personal-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .gestion-personal-title {
-            font-size: 2.5rem;
-            color: #4F81BD;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        
-        .gestion-personal-subtitle {
-            font-size: 1.1rem;
-            color: #666;
-            margin-bottom: 20px;
-        }
-        
+      /* Estilos específicos para Gestión de Personal */
+      .gestion-personal-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .gestion-personal-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .gestion-personal-title {
+        font-size: 2.5rem;
+        color: #4f81bd;
+        margin-bottom: 10px;
+        font-weight: 700;
+      }
+
+      .gestion-personal-subtitle {
+        font-size: 1.1rem;
+        color: #666;
+        margin-bottom: 20px;
+      }
+
+      .gestion-personal-tabs {
+        display: flex;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        overflow: hidden;
+      }
+
+      .gestion-personal-tab {
+        flex: 1;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+        background: #f8f9fa;
+        color: #666;
+        font-size: 1rem;
+        font-weight: 500;
+      }
+
+      .gestion-personal-tab.active {
+        background: #4f81bd;
+        color: white;
+      }
+
+      .gestion-personal-tab:hover:not(.active) {
+        background: #e9ecef;
+      }
+
+      .gestion-personal-content {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        min-height: 600px;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .gestion-personal-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: linear-gradient(135deg, #4f81bd 0%, #2e5c8a 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 16px;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 8px 24px rgba(79, 129, 189, 0.3);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(79, 129, 189, 0.5);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        opacity: 1;
+        color: #ffffff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        color: #ffffff;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        opacity: 1;
+        font-weight: 600;
+        color: #ffffff;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      }
+
+      .gestion-personal-actions {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      .gestion-personal-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: white;
+      }
+
+      .gestion-personal-btn-primary {
+        background: linear-gradient(135deg, #4f81bd 0%, #2e5c8a 100%);
+        box-shadow: 0 4px 12px rgba(79, 129, 189, 0.3);
+      }
+
+      .gestion-personal-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(79, 129, 189, 0.4);
+      }
+
+      .gestion-personal-btn-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      }
+
+      .gestion-personal-btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+      }
+
+      .gestion-personal-btn-warning {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      }
+
+      .gestion-personal-btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+      }
+
+      .gestion-personal-btn-info {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      }
+
+      .gestion-personal-btn-info:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+      }
+
+      .gestion-personal-form {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 30px;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+        color: #4f81bd;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #374151;
+      }
+
+      .form-input,
+      .form-select {
+        padding: 12px 16px;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .form-input:focus,
+      .form-select:focus {
+        outline: none;
+        border-color: #4f81bd;
+        box-shadow: 0 0 0 3px rgba(79, 129, 189, 0.1);
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
+
+      .gestion-personal-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .gestion-personal-table th {
+        background: #4f81bd;
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+      }
+
+      .gestion-personal-table td {
+        padding: 15px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .gestion-personal-table tr:hover {
+        background: #f8f9fa;
+      }
+
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 0 2px;
+      }
+
+      .btn-primary-sm {
+        background: #4f81bd;
+        color: white;
+      }
+
+      .btn-success-sm {
+        background: #10b981;
+        color: white;
+      }
+
+      .btn-warning-sm {
+        background: #f59e0b;
+        color: white;
+      }
+
+      .btn-danger-sm {
+        background: #ef4444;
+        color: white;
+      }
+
+      @media (max-width: 768px) {
         .gestion-personal-tabs {
-            display: flex;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-            overflow: hidden;
+          flex-direction: column;
         }
-        
-        .gestion-personal-tab {
-            flex: 1;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            background: #f8f9fa;
-            color: #666;
-            font-size: 1rem;
-            font-weight: 500;
-        }
-        
-        .gestion-personal-tab.active {
-            background: #4F81BD;
-            color: white;
-        }
-        
-        .gestion-personal-tab:hover:not(.active) {
-            background: #e9ecef;
-        }
-        
-        .gestion-personal-content {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            min-height: 600px;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .gestion-personal-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #4F81BD 0%, #2E5C8A 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 16px;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 8px 24px rgba(79, 129, 189, 0.3);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(79, 129, 189, 0.5);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-        
-        .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            opacity: 1;
-            color: #FFFFFF;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            color: #FFFFFF;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 1;
-            font-weight: 600;
-            color: #FFFFFF;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-        
+
         .gestion-personal-actions {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
+          flex-direction: column;
         }
-        
-        .gestion-personal-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            color: white;
-        }
-        
-        .gestion-personal-btn-primary {
-            background: linear-gradient(135deg, #4F81BD 0%, #2E5C8A 100%);
-            box-shadow: 0 4px 12px rgba(79, 129, 189, 0.3);
-        }
-        
-        .gestion-personal-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(79, 129, 189, 0.4);
-        }
-        
-        .gestion-personal-btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-        
-        .gestion-personal-btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-        }
-        
-        .gestion-personal-btn-warning {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-        }
-        
-        .gestion-personal-btn-warning:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
-        }
-        
-        .gestion-personal-btn-info {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-        
-        .gestion-personal-btn-info:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
-        }
-        
-        .gestion-personal-form {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-        
-        .form-title {
-            font-size: 1.5rem;
-            color: #4F81BD;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        
+
         .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
+          grid-template-columns: 1fr;
         }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #374151;
-        }
-        
-        .form-input, .form-select {
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #4F81BD;
-            box-shadow: 0 0 0 3px rgba(79, 129, 189, 0.1);
-        }
-        
-        .form-actions {
-            display: flex;
-            gap: 16px;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-        
-        .gestion-personal-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .gestion-personal-table th {
-            background: #4F81BD;
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-        }
-        
-        .gestion-personal-table td {
-            padding: 15px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .gestion-personal-table tr:hover {
-            background: #f8f9fa;
-        }
-        
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0 2px;
-        }
-        
-        .btn-primary-sm {
-            background: #4F81BD;
-            color: white;
-        }
-        
-        .btn-success-sm {
-            background: #10b981;
-            color: white;
-        }
-        
-        .btn-warning-sm {
-            background: #f59e0b;
-            color: white;
-        }
-        
-        .btn-danger-sm {
-            background: #ef4444;
-            color: white;
-        }
-        
-        @media (max-width: 768px) {
-            .gestion-personal-tabs {
-                flex-direction: column;
-            }
-            
-            .gestion-personal-actions {
-                flex-direction: column;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Header Compartido AXYRA - Se insertará automáticamente -->
     <div id="axyra-header-container"></div>
-    
+
     <!-- Scripts del Header -->
     <script src="../../static/include-header.js"></script>
-    
+
     <!-- Contenido Principal -->
     <main class="axyra-section">
-        <div class="gestion-personal-container">
-            <div class="gestion-personal-header">
-                <h1 class="gestion-personal-title">Gestión de Personal</h1>
-                <p class="gestion-personal-subtitle">Sistema unificado para gestión de horas, nóminas y empleados</p>
-            </div>
-            
-            <!-- Estadísticas Generales -->
-            <div class="gestion-personal-stats">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-number" id="totalEmpleados">0</div>
-                    <div class="stat-label">Total Empleados</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-number" id="horasMes">0</div>
-                    <div class="stat-label">Horas del Mes</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <div class="stat-number" id="totalPagos">$0</div>
-                    <div class="stat-label">Total Pagos</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-file-invoice-dollar"></i>
-                    </div>
-                    <div class="stat-number" id="nominasGeneradas">0</div>
-                    <div class="stat-label">Nóminas Generadas</div>
-                </div>
-            </div>
-            
-            <!-- Tabs de Navegación -->
-            <div class="gestion-personal-tabs">
-                <button class="gestion-personal-tab active" onclick="cambiarTab('horas')">
-                    <i class="fas fa-clock"></i> Gestión de Horas
-                </button>
-                <button class="gestion-personal-tab" onclick="cambiarTab('nomina')">
-                    <i class="fas fa-file-invoice-dollar"></i> Generación de Nóminas
-                </button>
-                <button class="gestion-personal-tab" onclick="cambiarTab('empleados')">
-                    <i class="fas fa-users"></i> Gestión de Empleados
-                </button>
-                <button class="gestion-personal-tab" onclick="cambiarTab('reportes')">
-                    <i class="fas fa-chart-bar"></i> Reportes y Estadísticas
-                </button>
-            </div>
-            
-            <!-- Contenido de las Tabs -->
-            <div class="gestion-personal-content">
-                <!-- Tab: Gestión de Horas -->
-                <div id="tab-horas" class="tab-content active">
-                    <div class="gestion-personal-actions">
-                        <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalRegistroHoras()">
-                            <i class="fas fa-plus"></i> Registrar Horas
-                        </button>
-                        <button class="gestion-personal-btn gestion-personal-btn-success" onclick="mostrarModalCalculoHoras()">
-                            <i class="fas fa-calculator"></i> Calcular Horas
-                        </button>
-                        <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="exportarHorasExcel()">
-                            <i class="fas fa-file-excel"></i> Exportar Excel
-                        </button>
-                        <button class="gestion-personal-btn gestion-personal-btn-info" onclick="generarReporteHoras()">
-                            <i class="fas fa-chart-line"></i> Reporte de Horas
-                        </button>
-                    </div>
-                    
-                    <div class="gestion-personal-form">
-                        <h3 class="form-title">Registro de Horas Trabajadas</h3>
-                        <form id="formRegistroHoras">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Empleado *</label>
-                                    <select class="form-select" id="empleadoHoras" required>
-                                        <option value="">Seleccionar empleado</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Fecha *</label>
-                                    <input type="date" class="form-input" id="fechaHoras" required>
-                                </div>
-                            </div>
-                            
-                            <!-- 1. Horas Ordinarias -->
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Horas Ordinarias</label>
-                                    <input type="number" class="form-input" id="horas_ordinarias" name="horas_ordinarias" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" data-tipo-hora="ordinarias">Valor: $0</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Recargo Nocturno</label>
-                                    <input type="number" class="form-input" id="horas_recargo_nocturno" name="horas_recargo_nocturno" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" data-tipo-hora="recargo_nocturno">Valor: $0</div>
-                                </div>
-                            </div>
-                            
-                            <!-- 2. Recargos Dominicales -->
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Recargo Diurno Dominical</label>
-                                    <input type="number" class="form-input" id="horas_recargo_diurno_dominical" name="horas_recargo_diurno_dominical" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" data-tipo-hora="recargo_diurno_dominical">Valor: $0</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Recargo Nocturno Dominical</label>
-                                    <input type="number" class="form-input" id="horas_recargo_nocturno_dominical" name="horas_recargo_nocturno_dominical" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" data-tipo-hora="recargo_nocturno_dominical">Valor: $0</div>
-                                </div>
-                            </div>
-                            
-                            <!-- 3. Horas Extra -->
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Hora Extra Diurna</label>
-                                    <input type="number" class="form-input" id="horas_hora_extra_diurna" name="horas_hora_extra_diurna" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" data-tipo-hora="hora_extra_diurna">Valor: $0</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Hora Extra Nocturna</label>
-                                    <input type="number" class="form-input" id="horas_hora_extra_nocturna" name="horas_hora_extra_nocturna" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" data-tipo-hora="hora_extra_nocturna">Valor: $0</div>
-                                </div>
-                            </div>
-                            
-                            <!-- 4. Horas Dominicales/Festivos -->
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Hora Diurna Dominical/Festivo</label>
-                                    <input type="number" class="form-input" id="horas_hora_diurna_dominical_o_festivo" name="horas_hora_diurna_dominical_o_festivo" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" data-tipo-hora="hora_diurna_dominical_o_festivo">Valor: $0</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Hora Extra Diurna Dominical/Festivo</label>
-                                    <input type="number" class="form-input" id="horas_hora_extra_diurna_dominical_o_festivo" name="horas_hora_extra_diurna_dominical_o_festivo" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" data-tipo-hora="hora_extra_diurna_dominical_o_festivo">Valor: $0</div>
-                                </div>
-                            </div>
-                            
-                            <!-- 5. Horas Nocturnas Dominicales/Festivos -->
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label">Hora Nocturna Dominical/Festivo</label>
-                                    <input type="number" class="form-input" id="horas_hora_nocturna_dominical_o_festivo" name="horas_hora_nocturna_dominical_o_festivo" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" data-tipo-hora="hora_nocturna_dominical_o_festivo">Valor: $0</div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Hora Extra Nocturna Dominical/Festivo</label>
-                                    <input type="number" class="form-input" id="horas_hora_extra_nocturna_dominical_o_festivo" name="horas_hora_extra_nocturna_dominical_o_festivo" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" data-tipo-hora="hora_extra_nocturna_dominical_o_festivo">Valor: $0</div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-actions">
-                                <button type="button" class="gestion-personal-btn gestion-personal-btn-warning" onclick="limpiarFormularioHoras()">
-                                    <i class="fas fa-eraser"></i> Limpiar
-                                </button>
-                                <button type="submit" class="gestion-personal-btn gestion-personal-btn-success">
-                                    <i class="fas fa-save"></i> Registrar Horas
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    
-                    <h3>Historial de Horas Registradas</h3>
-                    <table class="gestion-personal-table" id="tablaHistorialHoras">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Empleado</th>
-                                <th>Ordinarias</th>
-                                <th>Rec. Nocturno</th>
-                                <th>Rec. Diurno Dom.</th>
-                                <th>Rec. Noct. Dom.</th>
-                                <th>Extra Diurna</th>
-                                <th>Extra Nocturna</th>
-                                <th>Dominical</th>
-                                <th>Extra Dominical</th>
-                                <th>Noct. Dominical</th>
-                                <th>Extra Noct. Dom.</th>
-                                <th>Total Horas</th>
-                                <th>Total Pago</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cuerpoHistorialHoras">
-                            <!-- Se llena dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Tab: Generación de Nóminas -->
-                <div id="tab-nomina" class="tab-content">
-                    <div class="gestion-personal-actions">
-                        <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalGenerarNomina()">
-                            <i class="fas fa-plus"></i> Generar Nueva Nómina
-                        </button>
-                        <button class="gestion-personal-btn gestion-personal-btn-success" onclick="exportarNominasExcel()">
-                            <i class="fas fa-file-excel"></i> Exportar a Excel
-                        </button>
-                        <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="generarReporteNominas()">
-                            <i class="fas fa-chart-pie"></i> Reporte de Nóminas
-                        </button>
-                    </div>
-                    
-                    <h3>Nóminas Generadas</h3>
-                    <table class="gestion-personal-table" id="tablaNominas">
-                        <thead>
-                            <tr>
-                                <th>Período</th>
-                                <th>Empleado</th>
-                                <th>Total Horas</th>
-                                <th>Salario Base</th>
-                                <th>Total a Pagar</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cuerpoNominas">
-                            <!-- Se llena dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Tab: Gestión de Empleados -->
-                <div id="tab-empleados" class="tab-content">
-                    <div class="gestion-personal-actions">
-                        <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalEmpleado()">
-                            <i class="fas fa-user-plus"></i> Nuevo Empleado
-                        </button>
-                        <button class="gestion-personal-btn gestion-personal-btn-success" onclick="gestionarDepartamentos()">
-                            <i class="fas fa-sitemap"></i> Gestionar Departamentos
-                        </button>
-                        <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="exportarEmpleadosExcel()">
-                            <i class="fas fa-file-excel"></i> Exportar Empleados
-                        </button>
-                    </div>
-                    
-                    <h3>Empleados Registrados</h3>
-                    <table class="gestion-personal-table" id="tablaEmpleados">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Cédula</th>
-                                <th>Cargo</th>
-                                <th>Departamento</th>
-                                <th>Salario Base</th>
-                                <th>Tipo Contrato</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="cuerpoEmpleados">
-                            <!-- Se llena dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
-                
-                <!-- Tab: Reportes y Estadísticas -->
-                <div id="tab-reportes" class="tab-content">
-                    <div class="gestion-personal-actions">
-                        <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="generarReporteGeneral()">
-                            <i class="fas fa-chart-bar"></i> Reporte General
-                        </button>
-                        <button class="gestion-personal-btn gestion-personal-btn-success" onclick="generarReporteEmpleado()">
-                            <i class="fas fa-user-chart"></i> Reporte por Empleado
-                        </button>
-                        <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="generarReporteDepartamento()">
-                            <i class="fas fa-sitemap"></i> Reporte por Departamento
-                        </button>
-                    </div>
-                    
-                    <div class="gestion-personal-stats">
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div class="stat-number" id="promedioHoras">0</div>
-                            <div class="stat-label">Promedio Horas/Mes</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <div class="stat-number" id="promedioSalario">$0</div>
-                            <div class="stat-label">Promedio Salario</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-number" id="empleadosActivos">0</div>
-                            <div class="stat-label">Empleados Activos</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">
-                                <i class="fas fa-calendar"></i>
-                            </div>
-                            <div class="stat-number" id="diasTrabajados">0</div>
-                            <div class="stat-label">Días Trabajados</div>
-                        </div>
-                    </div>
-                    
-                    <h3>Gráficos y Análisis</h3>
-                    <div id="graficosContainer">
-                        <!-- Aquí se insertarán los gráficos -->
-                        <p>Los gráficos se cargarán dinámicamente...</p>
-                    </div>
-                </div>
-            </div>
+      <div class="gestion-personal-container">
+        <div class="gestion-personal-header">
+          <h1 class="gestion-personal-title">Gestión de Personal</h1>
+          <p class="gestion-personal-subtitle">Sistema unificado para gestión de horas, nóminas y empleados</p>
         </div>
+
+        <!-- Estadísticas Principales -->
+        <div class="gestion-personal-stats">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-number" id="totalEmpleados">0</div>
+            <div class="stat-label">Total Empleados</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-number" id="horasMes">0</div>
+            <div class="stat-label">Horas del Mes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-number" id="totalPagos">$0</div>
+            <div class="stat-label">Total Pagos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fas fa-file-invoice-dollar"></i>
+            </div>
+            <div class="stat-number" id="nominasGeneradas">0</div>
+            <div class="stat-label">Nóminas Generadas</div>
+          </div>
+        </div>
+
+        <!-- Botón para cargar datos de ejemplo -->
+        <div style="text-align: center; margin-bottom: 20px">
+          <button
+            class="gestion-personal-btn gestion-personal-btn-info"
+            onclick="cargarDatosEjemplo(); location.reload();"
+          >
+            <i class="fas fa-database"></i> Cargar Datos de Ejemplo
+          </button>
+        </div>
+
+        <!-- Tabs de Navegación -->
+        <div class="gestion-personal-tabs">
+          <button class="gestion-personal-tab active" onclick="cambiarTab('horas')">
+            <i class="fas fa-clock"></i> Gestión de Horas
+          </button>
+          <button class="gestion-personal-tab" onclick="cambiarTab('nomina')">
+            <i class="fas fa-file-invoice-dollar"></i> Generación de Nóminas
+          </button>
+          <button class="gestion-personal-tab" onclick="cambiarTab('empleados')">
+            <i class="fas fa-users"></i> Gestión de Empleados
+          </button>
+          <button class="gestion-personal-tab" onclick="cambiarTab('reportes')">
+            <i class="fas fa-chart-bar"></i> Reportes y Estadísticas
+          </button>
+        </div>
+
+        <!-- Contenido de las Tabs -->
+        <div class="gestion-personal-content">
+          <!-- Tab: Gestión de Horas -->
+          <div id="tab-horas" class="tab-content active">
+            <div class="gestion-personal-actions">
+              <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalRegistroHoras()">
+                <i class="fas fa-plus"></i> Registrar Horas
+              </button>
+              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="mostrarModalCalculoHoras()">
+                <i class="fas fa-calculator"></i> Calcular Horas
+              </button>
+              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="exportarHorasExcel()">
+                <i class="fas fa-file-excel"></i> Exportar Excel
+              </button>
+              <button class="gestion-personal-btn gestion-personal-btn-info" onclick="generarReporteHoras()">
+                <i class="fas fa-chart-line"></i> Reporte de Horas
+              </button>
+            </div>
+
+            <div class="gestion-personal-form">
+              <h3 class="form-title">Registro de Horas Trabajadas</h3>
+              <form id="formRegistroHoras">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Empleado *</label>
+                    <select class="form-select" id="empleadoHoras" required>
+                      <option value="">Seleccionar empleado</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Fecha *</label>
+                    <input type="date" class="form-input" id="fechaHoras" required />
+                  </div>
+                </div>
+
+                <!-- 1. Horas Ordinarias -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Horas Ordinarias</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="horas_ordinarias"
+                      name="horas_ordinarias"
+                      min="0"
+                      step="0.5"
+                      value="0"
+                    />
+                    <div class="valor-hora" data-tipo-hora="ordinarias">Valor: $0</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Recargo Nocturno</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="horas_recargo_nocturno"
+                      name="horas_recargo_nocturno"
+                      min="0"
+                      step="0.5"
+                      value="0"
+                    />
+                    <div class="valor-hora" data-tipo-hora="recargo_nocturno">Valor: $0</div>
+                  </div>
+                </div>
+
+                <!-- 2. Recargos Dominicales -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Recargo Diurno Dominical</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="horas_recargo_diurno_dominical"
+                      name="horas_recargo_diurno_dominical"
+                      min="0"
+                      step="0.5"
+                      value="0"
+                    />
+                    <div class="valor-hora" data-tipo-hora="recargo_diurno_dominical">Valor: $0</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Recargo Nocturno Dominical</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="horas_recargo_nocturno_dominical"
+                      name="horas_recargo_nocturno_dominical"
+                      min="0"
+                      step="0.5"
+                      value="0"
+                    />
+                    <div class="valor-hora" data-tipo-hora="recargo_nocturno_dominical">Valor: $0</div>
+                  </div>
+                </div>
+
+                <!-- 3. Horas Extra -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Hora Extra Diurna</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="horas_hora_extra_diurna"
+                      name="horas_hora_extra_diurna"
+                      min="0"
+                      step="0.5"
+                      value="0"
+                    />
+                    <div class="valor-hora" data-tipo-hora="hora_extra_diurna">Valor: $0</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Hora Extra Nocturna</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="horas_hora_extra_nocturna"
+                      name="horas_hora_extra_nocturna"
+                      min="0"
+                      step="0.5"
+                      value="0"
+                    />
+                    <div class="valor-hora" data-tipo-hora="hora_extra_nocturna">Valor: $0</div>
+                  </div>
+                </div>
+
+                <!-- 4. Horas Dominicales/Festivos -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Hora Diurna Dominical/Festivo</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="horas_hora_diurna_dominical_o_festivo"
+                      name="horas_hora_diurna_dominical_o_festivo"
+                      min="0"
+                      step="0.5"
+                      value="0"
+                    />
+                    <div class="valor-hora" data-tipo-hora="hora_diurna_dominical_o_festivo">Valor: $0</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Hora Extra Diurna Dominical/Festivo</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="horas_hora_extra_diurna_dominical_o_festivo"
+                      name="horas_hora_extra_diurna_dominical_o_festivo"
+                      min="0"
+                      step="0.5"
+                      value="0"
+                    />
+                    <div class="valor-hora" data-tipo-hora="hora_extra_diurna_dominical_o_festivo">Valor: $0</div>
+                  </div>
+                </div>
+
+                <!-- 5. Horas Nocturnas Dominicales/Festivos -->
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Hora Nocturna Dominical/Festivo</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="horas_hora_nocturna_dominical_o_festivo"
+                      name="horas_hora_nocturna_dominical_o_festivo"
+                      min="0"
+                      step="0.5"
+                      value="0"
+                    />
+                    <div class="valor-hora" data-tipo-hora="hora_nocturna_dominical_o_festivo">Valor: $0</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Hora Extra Nocturna Dominical/Festivo</label>
+                    <input
+                      type="number"
+                      class="form-input"
+                      id="horas_hora_extra_nocturna_dominical_o_festivo"
+                      name="horas_hora_extra_nocturna_dominical_o_festivo"
+                      min="0"
+                      step="0.5"
+                      value="0"
+                    />
+                    <div class="valor-hora" data-tipo-hora="hora_extra_nocturna_dominical_o_festivo">Valor: $0</div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    class="gestion-personal-btn gestion-personal-btn-warning"
+                    onclick="limpiarFormularioHoras()"
+                  >
+                    <i class="fas fa-eraser"></i> Limpiar
+                  </button>
+                  <button type="submit" class="gestion-personal-btn gestion-personal-btn-success">
+                    <i class="fas fa-save"></i> Registrar Horas
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <h3>Historial de Horas Registradas</h3>
+            <table class="gestion-personal-table" id="tablaHistorialHoras">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Empleado</th>
+                  <th>Ordinarias</th>
+                  <th>Rec. Nocturno</th>
+                  <th>Rec. Diurno Dom.</th>
+                  <th>Rec. Noct. Dom.</th>
+                  <th>Extra Diurna</th>
+                  <th>Extra Nocturna</th>
+                  <th>Dominical</th>
+                  <th>Extra Dominical</th>
+                  <th>Noct. Dominical</th>
+                  <th>Extra Noct. Dom.</th>
+                  <th>Total Horas</th>
+                  <th>Total Pago</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoHistorialHoras">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab: Generación de Nóminas -->
+          <div id="tab-nomina" class="tab-content">
+            <div class="gestion-personal-actions">
+              <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalGenerarNomina()">
+                <i class="fas fa-plus"></i> Generar Nueva Nómina
+              </button>
+              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="exportarNominasExcel()">
+                <i class="fas fa-file-excel"></i> Exportar a Excel
+              </button>
+              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="generarReporteNominas()">
+                <i class="fas fa-chart-pie"></i> Reporte de Nóminas
+              </button>
+            </div>
+
+            <h3>Nóminas Generadas</h3>
+            <table class="gestion-personal-table" id="tablaNominas">
+              <thead>
+                <tr>
+                  <th>Período</th>
+                  <th>Empleado</th>
+                  <th>Total Horas</th>
+                  <th>Salario Base</th>
+                  <th>Total a Pagar</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoNominas">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab: Gestión de Empleados -->
+          <div id="tab-empleados" class="tab-content">
+            <div class="gestion-personal-actions">
+              <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalEmpleado()">
+                <i class="fas fa-user-plus"></i> Nuevo Empleado
+              </button>
+              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="gestionarDepartamentos()">
+                <i class="fas fa-sitemap"></i> Gestionar Departamentos
+              </button>
+              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="exportarEmpleadosExcel()">
+                <i class="fas fa-file-excel"></i> Exportar Empleados
+              </button>
+            </div>
+
+            <h3>Empleados Registrados</h3>
+            <table class="gestion-personal-table" id="tablaEmpleados">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Cédula</th>
+                  <th>Cargo</th>
+                  <th>Departamento</th>
+                  <th>Salario Base</th>
+                  <th>Tipo Contrato</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="cuerpoEmpleados">
+                <!-- Se llena dinámicamente -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab: Reportes y Estadísticas -->
+          <div id="tab-reportes" class="tab-content">
+            <div class="gestion-personal-actions">
+              <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="generarReporteGeneral()">
+                <i class="fas fa-chart-bar"></i> Reporte General
+              </button>
+              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="generarReporteEmpleado()">
+                <i class="fas fa-user-chart"></i> Reporte por Empleado
+              </button>
+              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="generarReporteDepartamento()">
+                <i class="fas fa-sitemap"></i> Reporte por Departamento
+              </button>
+            </div>
+
+            <div class="gestion-personal-stats">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-number" id="promedioHoras">0</div>
+                <div class="stat-label">Promedio Horas/Mes</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-number" id="promedioSalario">$0</div>
+                <div class="stat-label">Promedio Salario</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-number" id="empleadosActivos">0</div>
+                <div class="stat-label">Empleados Activos</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-calendar"></i>
+                </div>
+                <div class="stat-number" id="diasTrabajados">0</div>
+                <div class="stat-label">Días Trabajados</div>
+              </div>
+            </div>
+
+            <h3>Gráficos y Análisis</h3>
+            <div id="graficosContainer">
+              <!-- Aquí se insertarán los gráficos -->
+              <p>Los gráficos se cargarán dinámicamente...</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- Scripts -->
@@ -653,16 +750,17 @@
     <script src="../../static/colombian-labor-law.js"></script>
     <script src="../../static/comprobante-pdf-generator.js"></script>
     <script src="../../static/notifications-system.js"></script>
+    <script src="datos-ejemplo.js"></script>
     <script src="gestion_personal.js"></script>
-    
+
     <!-- Scripts adicionales -->
     <script>
-        // Esperar a que Firebase esté disponible
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof window.axyraFirebase === 'undefined') {
-                console.warn('⚠️ Firebase no está disponible, usando modo offline');
-            }
-        });
+      // Esperar a que Firebase esté disponible
+      document.addEventListener('DOMContentLoaded', () => {
+        if (typeof window.axyraFirebase === 'undefined') {
+          console.warn('⚠️ Firebase no está disponible, usando modo offline');
+        }
+      });
     </script>
-</body>
+  </body>
 </html>

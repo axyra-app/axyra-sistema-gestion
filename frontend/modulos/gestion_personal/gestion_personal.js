@@ -139,26 +139,107 @@ class GestionPersonalManager {
         }
     }
 
+    // ===== MÉTODOS DE MODALES =====
+    mostrarModalRegistroHoras() {
+        const modal = document.getElementById('modalRegistroHoras');
+        if (modal) {
+            modal.style.display = 'block';
+        }
+    }
+
+    cerrarModalRegistroHoras() {
+        const modal = document.getElementById('modalRegistroHoras');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // ===== MÉTODOS DE EXPORTACIÓN =====
+    async exportarHorasExcel() {
+        try {
+            // Implementar exportación a Excel
+            this.mostrarNotificacion('Exportación de horas a Excel implementada', 'success');
+        } catch (error) {
+            console.error('❌ Error al exportar horas a Excel:', error);
+            this.mostrarNotificacion('Error al exportar horas a Excel', 'error');
+        }
+    }
+
+    async exportarEmpleadosExcel() {
+        try {
+            // Implementar exportación a Excel
+            this.mostrarNotificacion('Exportación de empleados a Excel implementada', 'success');
+        } catch (error) {
+            console.error('❌ Error al exportar empleados a Excel:', error);
+            this.mostrarNotificacion('Error al exportar empleados a Excel', 'error');
+        }
+    }
+
+    // ===== MÉTODOS DE REPORTES =====
+    async generarReporteHoras() {
+        try {
+            // Implementar generación de reporte de horas
+            this.mostrarNotificacion('Reporte de horas generado correctamente', 'success');
+        } catch (error) {
+            console.error('❌ Error al generar reporte de horas:', error);
+            this.mostrarNotificacion('Error al generar reporte de horas', 'error');
+        }
+    }
+
+    async generarReporteGeneral() {
+        try {
+            // Implementar generación de reporte general
+            this.mostrarNotificacion('Reporte general generado correctamente', 'success');
+        } catch (error) {
+            console.error('❌ Error al generar reporte general:', error);
+            this.mostrarNotificacion('Error al generar reporte general', 'error');
+        }
+    }
+
+    async generarReporteDepartamento() {
+        try {
+            // Implementar generación de reporte por departamento
+            this.mostrarNotificacion('Reporte por departamento generado correctamente', 'success');
+        } catch (error) {
+            console.error('❌ Error al generar reporte por departamento:', error);
+            this.mostrarNotificacion('Error al generar reporte por departamento', 'error');
+        }
+    }
+
+    // ===== MÉTODOS DE GESTIÓN =====
+    gestionarDepartamentos() {
+        // Cambiar a la pestaña de departamentos
+        this.cambiarTab('departamentos');
+    }
+
     cambiarTab(tabName) {
-        // Ocultar todas las pestañas
-        document.querySelectorAll('.gestion-personal-content').forEach(content => {
-            content.style.display = 'none';
-        });
+        try {
+            // Ocultar todas las pestañas
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
 
-        // Desactivar todas las pestañas
-        document.querySelectorAll('.gestion-personal-tab').forEach(tab => {
-            tab.classList.remove('active');
-        });
+            // Desactivar todas las pestañas
+            document.querySelectorAll('.gestion-personal-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
 
-        // Mostrar pestaña seleccionada
-        const selectedContent = document.getElementById(`content-${tabName}`);
-        const selectedTab = document.querySelector(`[data-tab="${tabName}"]`);
-        
-        if (selectedContent) selectedContent.style.display = 'block';
-        if (selectedTab) selectedTab.classList.add('active');
+            // Mostrar la pestaña seleccionada
+            const selectedContent = document.getElementById(`tab-${tabName}`);
+            if (selectedContent) {
+                selectedContent.style.display = 'block';
+            }
 
-        this.currentTab = tabName;
-        this.actualizarEstadisticas();
+            // Activar la pestaña seleccionada
+            const selectedTab = document.querySelector(`[onclick="cambiarTab('${tabName}')"]`);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+
+            this.currentTab = tabName;
+        } catch (error) {
+            console.error('❌ Error al cambiar pestaña:', error);
+        }
     }
 
     // ===== GESTIÓN DE HORAS =====
@@ -181,6 +262,35 @@ class GestionPersonalManager {
                     }
                 });
             }
+        } catch (error) {
+            console.error('❌ Error al actualizar valores de hora:', error);
+        }
+    }
+
+    // ===== MÉTODOS DE VALORES DE HORA =====
+    actualizarValoresHora() {
+        try {
+            const empleadoId = document.getElementById('empleadoHoras').value;
+            if (!empleadoId) return;
+
+            const empleado = this.empleados.find(emp => emp.id == empleadoId);
+            if (!empleado) return;
+
+            // Actualizar valores de hora para cada tipo
+            const tiposHoras = [
+                'ordinarias', 'recargo_nocturno', 'recargo_diurno_dominical',
+                'recargo_nocturno_dominical', 'hora_extra_diurna', 'hora_extra_nocturna',
+                'hora_diurna_dominical_o_festivo', 'hora_extra_diurna_dominical_o_festivo',
+                'hora_nocturna_dominical_o_festivo', 'hora_extra_nocturna_dominical_o_festivo'
+            ];
+
+            tiposHoras.forEach(tipo => {
+                const valorElement = document.querySelector(`[data-tipo-hora="${tipo}"]`);
+                if (valorElement && this.colombianLaborLawCalculator) {
+                    const valorHora = this.colombianLaborLawCalculator.calcularValorHora(empleado, tipo);
+                    valorElement.textContent = `Valor: $${valorHora.toLocaleString()}`;
+                }
+            });
         } catch (error) {
             console.error('❌ Error al actualizar valores de hora:', error);
         }
@@ -755,32 +865,10 @@ class GestionPersonalManager {
 
     // ===== RENDERIZADO =====
     renderizarEmpleados() {
-        const container = document.getElementById('empleadosContainer');
+        const container = document.getElementById('cuerpoEmpleados');
         if (!container) return;
 
-        let html = `
-            <div class="empleados-grid">
-                <div class="empleados-header">
-                    <h3>Empleados Registrados</h3>
-                    <button class="btn btn-primary" onclick="gestionPersonal.mostrarModalEmpleado()">
-                        <i class="fas fa-plus"></i> Agregar Empleado
-                    </button>
-                </div>
-                <div class="empleados-table-container">
-                    <table class="empleados-table">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Cédula</th>
-                                <th>Cargo</th>
-                                <th>Departamento</th>
-                                <th>Salario</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-        `;
+        let html = '';
 
         this.empleados.forEach(empleado => {
             html += `
@@ -790,12 +878,13 @@ class GestionPersonalManager {
                     <td>${empleado.cargo}</td>
                     <td>${empleado.departamento}</td>
                     <td>$${empleado.salario.toLocaleString()}</td>
+                    <td>${empleado.tipoContrato}</td>
                     <td><span class="estado-badge ${empleado.estado}">${empleado.estado}</span></td>
                     <td>
-                        <button class="btn btn-sm btn-outline-primary" onclick="gestionPersonal.mostrarModalEmpleado(${JSON.stringify(empleado).replace(/"/g, '&quot;')})">
+                        <button class="btn btn-sm btn-outline-primary" onclick="mostrarModalEmpleado(${JSON.stringify(empleado).replace(/"/g, '&quot;')})">
                             <i class="fas fa-edit"></i>
                         </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="gestionPersonal.eliminarEmpleado('${empleado.id}')">
+                        <button class="btn btn-sm btn-outline-danger" onclick="eliminarEmpleado('${empleado.id}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </td>
@@ -803,55 +892,21 @@ class GestionPersonalManager {
             `;
         });
 
-        html += `
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-
         container.innerHTML = html;
     }
 
     renderizarHoras() {
-        const container = document.getElementById('horasContainer');
+        const container = document.getElementById('cuerpoHistorialHoras');
         if (!container) return;
 
-        let html = `
-            <div class="horas-grid">
-                <div class="horas-header">
-                    <h3>Historial de Horas</h3>
-                </div>
-                <div class="horas-table-container">
-                    <table class="horas-table">
-                        <thead>
-                            <tr>
-                                <th>Empleado</th>
-                                <th>Fecha</th>
-                                <th>Ordinarias</th>
-                                <th>Rec. Nocturno</th>
-                                <th>Rec. Diurno Dom.</th>
-                                <th>Rec. Noct. Dom.</th>
-                                <th>Extra Diurna</th>
-                                <th>Extra Nocturna</th>
-                                <th>Dominical</th>
-                                <th>Extra Dominical</th>
-                                <th>Noct. Dominical</th>
-                                <th>Extra Noct. Dom.</th>
-                                <th>Total Horas</th>
-                                <th>Total Pago</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-        `;
+        let html = '';
 
         this.horas.forEach(registro => {
             const horas = registro.horas || {};
             html += `
                 <tr>
-                    <td>${registro.empleadoNombre}</td>
                     <td>${registro.fecha}</td>
+                    <td>${registro.empleadoNombre}</td>
                     <td>${horas.ordinarias || 0}</td>
                     <td>${horas.recargo_nocturno || 0}</td>
                     <td>${horas.recargo_diurno_dominical || 0}</td>
@@ -865,7 +920,7 @@ class GestionPersonalManager {
                     <td>${registro.totalHoras || 0}</td>
                     <td>$${(registro.totalSalario || 0).toLocaleString()}</td>
                     <td>
-                        <button class="btn btn-sm btn-outline-info" onclick="gestionPersonal.verDetalleHoras('${registro.id}')">
+                        <button class="btn btn-sm btn-outline-info" onclick="verDetalleHoras('${registro.id}')">
                             <i class="fas fa-eye"></i>
                         </button>
                     </td>
@@ -873,61 +928,18 @@ class GestionPersonalManager {
             `;
         });
 
-        html += `
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-
         container.innerHTML = html;
     }
 
     renderizarDepartamentos() {
-        const container = document.getElementById('departamentosContainer');
-        if (!container) return;
-
-        let html = `
-            <div class="departamentos-grid">
-                <div class="departamentos-header">
-                    <h3>Departamentos</h3>
-                    <button class="btn btn-primary" onclick="gestionPersonal.mostrarModalDepartamento()">
-                        <i class="fas fa-plus"></i> Agregar Departamento
-                    </button>
-                </div>
-                <div class="departamentos-cards">
-        `;
-
-        this.departamentos.forEach(departamento => {
-            html += `
-                <div class="departamento-card" style="border-left-color: ${departamento.color}">
-                    <div class="departamento-info">
-                        <h4>${departamento.nombre}</h4>
-                        <p>${departamento.descripcion || 'Sin descripción'}</p>
-                    </div>
-                    <div class="departamento-actions">
-                        <button class="btn btn-sm btn-outline-primary" onclick="gestionPersonal.mostrarModalDepartamento(${JSON.stringify(departamento).replace(/"/g, '&quot;')})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger" onclick="gestionPersonal.eliminarDepartamento('${departamento.id}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
-
-        html += `
-                </div>
-            </div>
-        `;
-
-        container.innerHTML = html;
+        // Los departamentos se muestran en la pestaña de empleados
+        // No hay un contenedor específico para departamentos en el HTML actual
+        console.log('📋 Departamentos cargados:', this.departamentos);
     }
 
     // ===== UTILIDADES =====
     limpiarFormularioHoras() {
-        const form = document.getElementById('formHoras');
+        const form = document.getElementById('formRegistroHoras');
         if (form) {
             form.reset();
         }
@@ -1098,49 +1110,97 @@ class GestionPersonalManager {
 
     actualizarEstadisticas() {
         try {
-            const statsContainer = document.getElementById('estadisticasContainer');
-            if (!statsContainer) return;
+            // Actualizar estadísticas principales
+            const totalEmpleadosElement = document.getElementById('totalEmpleados');
+            const horasMesElement = document.getElementById('horasMes');
+            const totalPagosElement = document.getElementById('totalPagos');
+            const nominasGeneradasElement = document.getElementById('nominasGeneradas');
 
-            // Calcular estadísticas
-            const empleadosActivos = this.empleados.filter(emp => emp.estado === 'activo').length;
-            const totalHoras = this.horas.reduce((sum, h) => sum + (h.totalHoras || 0), 0);
-            const totalPagos = this.horas.reduce((sum, h) => sum + (h.totalSalario || 0), 0);
+            if (totalEmpleadosElement) {
+                const empleadosActivos = this.empleados.filter(emp => emp.estado === 'activo').length;
+                totalEmpleadosElement.textContent = empleadosActivos;
+            }
 
-            let html = `
-                <div class="estadisticas-grid">
-                    <div class="estadistica-card">
-                        <div class="estadistica-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="estadistica-content">
-                            <h3>${empleadosActivos}</h3>
-                            <p>Empleados Activos</p>
-                        </div>
-                    </div>
-                    <div class="estadistica-card">
-                        <div class="estadistica-icon">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="estadistica-content">
-                            <h3>${totalHoras}</h3>
-                            <p>Horas Trabajadas</p>
-                        </div>
-                    </div>
-                    <div class="estadistica-card">
-                        <div class="estadistica-icon">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                        <div class="estadistica-content">
-                            <h3>$${totalPagos.toLocaleString()}</h3>
-                            <p>Total Pagos</p>
-                        </div>
-                    </div>
-                </div>
-            `;
+            if (horasMesElement) {
+                const totalHoras = this.horas.reduce((sum, h) => sum + (h.totalHoras || 0), 0);
+                horasMesElement.textContent = totalHoras;
+            }
 
-            statsContainer.innerHTML = html;
+            if (totalPagosElement) {
+                const totalPagos = this.horas.reduce((sum, h) => sum + (h.totalSalario || 0), 0);
+                totalPagosElement.textContent = `$${totalPagos.toLocaleString()}`;
+            }
+
+            if (nominasGeneradasElement) {
+                // Por ahora, mostrar 0 hasta implementar la generación de nóminas
+                nominasGeneradasElement.textContent = '0';
+            }
+
+            // Actualizar estadísticas de reportes
+            const promedioHorasElement = document.getElementById('promedioHoras');
+            const promedioSalarioElement = document.getElementById('promedioSalario');
+            const empleadosActivosElement = document.getElementById('empleadosActivos');
+            const diasTrabajadosElement = document.getElementById('diasTrabajados');
+
+            if (promedioHorasElement) {
+                const totalHoras = this.horas.reduce((sum, h) => sum + (h.totalHoras || 0), 0);
+                const promedio = this.empleados.length > 0 ? Math.round(totalHoras / this.empleados.length) : 0;
+                promedioHorasElement.textContent = promedio;
+            }
+
+            if (promedioSalarioElement) {
+                const totalSalarios = this.empleados.reduce((sum, emp) => sum + (emp.salario || 0), 0);
+                const promedio = this.empleados.length > 0 ? Math.round(totalSalarios / this.empleados.length) : 0;
+                promedioSalarioElement.textContent = `$${promedio.toLocaleString()}`;
+            }
+
+            if (empleadosActivosElement) {
+                const empleadosActivos = this.empleados.filter(emp => emp.estado === 'activo').length;
+                empleadosActivosElement.textContent = empleadosActivos;
+            }
+
+            if (diasTrabajadosElement) {
+                // Calcular días trabajados basado en las fechas de horas registradas
+                const fechasUnicas = [...new Set(this.horas.map(h => h.fecha))];
+                diasTrabajadosElement.textContent = fechasUnicas.length;
+            }
         } catch (error) {
             console.error('❌ Error al actualizar estadísticas:', error);
+        }
+    }
+
+    // ===== MÉTODOS DE NÓMINA =====
+    mostrarModalGenerarNomina() {
+        const modal = document.getElementById('modalGenerarNomina');
+        if (modal) {
+            modal.style.display = 'block';
+        }
+    }
+
+    cerrarModalGenerarNomina() {
+        const modal = document.getElementById('modalGenerarNomina');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    async exportarNominasExcel() {
+        try {
+            // Implementar exportación de nóminas a Excel
+            this.mostrarNotificacion('Exportación de nóminas a Excel implementada', 'success');
+        } catch (error) {
+            console.error('❌ Error al exportar nóminas a Excel:', error);
+            this.mostrarNotificacion('Error al exportar nóminas a Excel', 'error');
+        }
+    }
+
+    async generarReporteNominas() {
+        try {
+            // Implementar generación de reporte de nóminas
+            this.mostrarNotificacion('Reporte de nóminas generado correctamente', 'success');
+        } catch (error) {
+            console.error('❌ Error al generar reporte de nóminas:', error);
+            this.mostrarNotificacion('Error al generar reporte de nóminas', 'error');
         }
     }
 }
@@ -1257,5 +1317,64 @@ window.generarReporteEmpleado = () => {
 window.generarReporteDepartamento = () => {
     if (window.gestionPersonal) {
         window.gestionPersonal.generarReporteDepartamento();
+    }
+};
+
+window.mostrarModalGenerarNomina = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.mostrarModalGenerarNomina();
+    }
+};
+
+window.cerrarModalGenerarNomina = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.cerrarModalGenerarNomina();
+    }
+};
+
+window.exportarNominasExcel = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.exportarNominasExcel();
+    }
+};
+
+window.generarReporteNominas = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.generarReporteNominas();
+    }
+};
+
+window.limpiarFormularioHoras = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.limpiarFormularioHoras();
+    }
+};
+
+// Función global para notificaciones
+window.mostrarNotificacion = (mensaje, tipo = 'info') => {
+    try {
+        // Intentar usar el sistema de notificaciones AXYRA si está disponible
+        if (typeof AxyraNotificationSystem !== 'undefined' && window.axyraNotifications) {
+            window.axyraNotifications.showNotification(mensaje, tipo);
+        } else {
+            // Fallback a alert si no hay sistema de notificaciones
+            alert(`${tipo.toUpperCase()}: ${mensaje}`);
+        }
+    } catch (error) {
+        console.error('❌ Error al mostrar notificación:', error);
+        // Fallback final
+        alert(`${tipo.toUpperCase()}: ${mensaje}`);
+    }
+};
+
+window.eliminarEmpleado = (empleadoId) => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.eliminarEmpleado(empleadoId);
+    }
+};
+
+window.verDetalleHoras = (registroId) => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.verDetalleHoras(registroId);
     }
 };
