@@ -46,13 +46,13 @@ class FirebaseSyncManager {
 
   async syncEmpleados() {
     try {
-      if (!this.isOnline || !firebase?.firestore) {
+      if (!this.isOnline || !window.axyraFirebase?.firestore) {
         console.log('📡 Sin conexión o Firebase no disponible, usando localStorage');
         return this.loadEmpleadosFromStorage();
       }
 
-      const db = firebase.firestore();
-      const currentUser = firebase.auth().currentUser;
+      const db = window.axyraFirebase.firestore;
+      const currentUser = window.axyraFirebase.auth.currentUser;
 
       if (!currentUser) {
         console.log('🔐 Usuario no autenticado, usando localStorage');
@@ -93,7 +93,7 @@ class FirebaseSyncManager {
       this.saveEmpleadoToStorage(empleado);
 
       // Si hay conexión, guardar en Firebase
-      if (this.isOnline && firebase?.firestore) {
+      if (this.isOnline && window.axyraFirebase?.firestore) {
         await this.saveEmpleadoToFirebase(empleado);
         console.log('✅ Empleado guardado en Firebase y localStorage');
       } else {
@@ -111,8 +111,8 @@ class FirebaseSyncManager {
 
   async saveEmpleadoToFirebase(empleado) {
     try {
-      const db = firebase.firestore();
-      const currentUser = firebase.auth().currentUser;
+      const db = window.axyraFirebase.firestore;
+      const currentUser = window.axyraFirebase.auth.currentUser;
 
       if (!currentUser) {
         throw new Error('Usuario no autenticado');
@@ -121,7 +121,7 @@ class FirebaseSyncManager {
       const empleadoData = {
         ...empleado,
         userId: currentUser.uid,
-        lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+        lastUpdated: window.axyraFirebase.firestore.FieldValue.serverTimestamp(),
       };
 
       if (empleado.id && empleado.id !== 'temp') {
@@ -148,12 +148,12 @@ class FirebaseSyncManager {
 
   async syncHoras() {
     try {
-      if (!this.isOnline || !firebase?.firestore) {
+      if (!this.isOnline || !window.axyraFirebase?.firestore) {
         return this.loadHorasFromStorage();
       }
 
-      const db = firebase.firestore();
-      const currentUser = firebase.auth().currentUser;
+      const db = window.axyraFirebase.firestore;
+      const currentUser = window.axyraFirebase.auth.currentUser;
 
       if (!currentUser) {
         return this.loadHorasFromStorage();
@@ -193,7 +193,7 @@ class FirebaseSyncManager {
       this.saveHorasToStorage([horas]);
 
       // Si hay conexión, guardar en Firebase
-      if (this.isOnline && firebase?.firestore) {
+      if (this.isOnline && window.axyraFirebase?.firestore) {
         await this.saveHorasToFirebase(horas);
         console.log('✅ Horas guardadas en Firebase y localStorage');
       } else {
@@ -211,8 +211,8 @@ class FirebaseSyncManager {
 
   async saveHorasToFirebase(horas) {
     try {
-      const db = firebase.firestore();
-      const currentUser = firebase.auth().currentUser;
+      const db = window.axyraFirebase.firestore;
+      const currentUser = window.axyraFirebase.auth.currentUser;
 
       if (!currentUser) {
         throw new Error('Usuario no autenticado');
@@ -221,7 +221,7 @@ class FirebaseSyncManager {
       const horasData = {
         ...horas,
         userId: currentUser.uid,
-        lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+        lastUpdated: window.axyraFirebase.firestore.FieldValue.serverTimestamp(),
       };
 
       if (horas.id && horas.id !== 'temp') {
@@ -467,12 +467,12 @@ class FirebaseSyncManager {
 
   async syncDepartamentos() {
     try {
-      if (!this.isOnline || !firebase?.firestore) {
+      if (!this.isOnline || !window.axyraFirebase?.firestore) {
         return this.loadDepartamentosFromStorage();
       }
 
-      const db = firebase.firestore();
-      const currentUser = firebase.auth().currentUser;
+      const db = window.axyraFirebase.firestore;
+      const currentUser = window.axyraFirebase.auth.currentUser;
 
       if (!currentUser) {
         return this.loadDepartamentosFromStorage();
@@ -512,7 +512,7 @@ class FirebaseSyncManager {
       this.saveDepartamentoToStorage(departamento);
 
       // Si hay conexión, guardar en Firebase
-      if (this.isOnline && firebase?.firestore) {
+      if (this.isOnline && window.axyraFirebase?.firestore) {
         await this.saveDepartamentoToFirebase(departamento);
         console.log('✅ Departamento guardado en Firebase y localStorage');
       } else {
@@ -530,8 +530,8 @@ class FirebaseSyncManager {
 
   async saveDepartamentoToFirebase(departamento) {
     try {
-      const db = firebase.firestore();
-      const currentUser = firebase.auth().currentUser;
+      const db = window.axyraFirebase.firestore;
+      const currentUser = window.axyraFirebase.auth.currentUser;
 
       if (!currentUser) {
         throw new Error('Usuario no autenticado');
@@ -540,7 +540,7 @@ class FirebaseSyncManager {
       const departamentoData = {
         ...departamento,
         userId: currentUser.uid,
-        lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+        lastUpdated: window.axyraFirebase.firestore.FieldValue.serverTimestamp(),
       };
 
       if (departamento.id && departamento.id !== 'temp') {

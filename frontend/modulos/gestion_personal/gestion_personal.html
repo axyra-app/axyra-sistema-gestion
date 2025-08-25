@@ -321,6 +321,10 @@
 </head>
 <body>
     <!-- Header Compartido AXYRA - Se insertará automáticamente -->
+    <div id="axyra-header-container"></div>
+    
+    <!-- Scripts del Header -->
+    <script src="../../static/include-header.js"></script>
     
     <!-- Contenido Principal -->
     <main class="axyra-section">
@@ -644,9 +648,21 @@
     </main>
 
     <!-- Scripts -->
+    <script src="../../static/firebase-config.js"></script>
     <script src="../../static/firebase-sync-manager.js"></script>
     <script src="../../static/colombian-labor-law.js"></script>
+    <script src="../../static/comprobante-pdf-generator.js"></script>
     <script src="../../static/notifications-system.js"></script>
     <script src="gestion_personal.js"></script>
+    
+    <!-- Scripts adicionales -->
+    <script>
+        // Esperar a que Firebase esté disponible
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof window.axyraFirebase === 'undefined') {
+                console.warn('⚠️ Firebase no está disponible, usando modo offline');
+            }
+        });
+    </script>
 </body>
 </html>

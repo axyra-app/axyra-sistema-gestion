@@ -384,11 +384,6 @@ function exportarInventarioExcel() {
     mostrarNotificacion('Error exportando inventario: ' + error.message, 'error');
   }
 }
-    console.error('❌ Error mostrando notificación:', error);
-    // Fallback final: alert
-    alert(`${tipo.toUpperCase()}: ${mensaje}`);
-  }
-}
 
 // Renderizar tabla de productos
 function renderizarTablaProductos() {
@@ -1209,3 +1204,40 @@ window.eliminarProducto = eliminarProducto;
 window.verMovimiento = verMovimiento;
 window.exportarInventarioExcel = exportarInventarioExcel;
 window.logout = logout;
+
+// Funciones faltantes para compatibilidad
+function mostrarModalProducto(producto = null) {
+  // Implementación básica del modal de producto
+  console.log('Modal de producto:', producto);
+  // Aquí se implementaría la lógica del modal
+}
+
+function cerrarModalProducto() {
+  // Implementación básica para cerrar modal de producto
+  console.log('Cerrando modal de producto');
+  // Aquí se implementaría la lógica para cerrar el modal
+}
+
+function mostrarModalEntrada() {
+  // Implementación básica del modal de entrada
+  console.log('Abriendo modal de entrada');
+  // Aquí se implementaría la lógica del modal
+}
+
+function cerrarModalEntrada() {
+  // Implementación básica para cerrar modal de entrada
+  console.log('Cerrando modal de entrada');
+  // Aquí se implementaría la lógica para cerrar el modal
+}
+
+function mostrarModalSalida() {
+  // Implementación básica del modal de salida
+  console.log('Abriendo modal de salida');
+  // Aquí se implementaría la lógica del modal
+}
+
+function cerrarModalSalida() {
+  // Implementación básica para cerrar modal de salida
+  console.log('Cerrando modal de salida');
+  // Aquí se implementaría la lógica para cerrar el modal
+}

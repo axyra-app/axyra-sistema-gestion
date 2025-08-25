@@ -1198,3 +1198,64 @@ window.cerrarModalDetalleHoras = () => {
         window.gestionPersonal.cerrarModalDetalleHoras();
     }
 };
+
+// Funciones adicionales para compatibilidad con HTML
+window.cambiarTab = (tabName) => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.cambiarTab(tabName);
+    }
+};
+
+window.mostrarModalRegistroHoras = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.mostrarModalRegistroHoras();
+    }
+};
+
+window.mostrarModalCalculoHoras = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.mostrarModalCalculoHoras();
+    }
+};
+
+window.exportarHorasExcel = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.exportarHorasExcel();
+    }
+};
+
+window.generarReporteHoras = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.generarReporteHoras();
+    }
+};
+
+window.exportarEmpleadosExcel = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.exportarEmpleadosExcel();
+    }
+};
+
+window.gestionarDepartamentos = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.gestionarDepartamentos();
+    }
+};
+
+window.generarReporteGeneral = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.generarReporteGeneral();
+    }
+};
+
+window.generarReporteEmpleado = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.generarReporteHoras();
+    }
+};
+
+window.generarReporteDepartamento = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.generarReporteDepartamento();
+    }
+};
