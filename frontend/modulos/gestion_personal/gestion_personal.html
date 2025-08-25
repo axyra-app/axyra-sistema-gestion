@@ -692,13 +692,13 @@
           <!-- Tab: Reportes y Estadísticas -->
           <div id="tab-reportes" class="tab-content">
             <div class="gestion-personal-actions">
-              <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="generarReporteGeneral()">
+              <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalReporteGeneral()">
                 <i class="fas fa-chart-bar"></i> Reporte General
               </button>
-              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="generarReporteEmpleado()">
+              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="mostrarModalReporteEmpleado()">
                 <i class="fas fa-user-chart"></i> Reporte por Empleado
               </button>
-              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="generarReporteDepartamento()">
+              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="mostrarModalReporteDepartamento()">
                 <i class="fas fa-sitemap"></i> Reporte por Departamento
               </button>
             </div>
@@ -781,8 +781,12 @@
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Salario Base *</label>
-                <input type="number" id="salarioEmpleado" required min="0" step="1000" placeholder="Ingrese el salario">
+                <label>Tipo de Salario *</label>
+                <select id="tipoSalarioEmpleado" required onchange="cambiarTipoSalario()">
+                  <option value="">Seleccionar tipo</option>
+                  <option value="fijo">Salario Fijo Mensual</option>
+                  <option value="por_horas">Salario por Horas Trabajadas</option>
+                </select>
               </div>
               <div class="form-group">
                 <label>Tipo de Contrato *</label>
@@ -795,6 +799,31 @@
                 </select>
               </div>
             </div>
+            
+            <!-- Campos para Salario Fijo -->
+            <div id="camposSalarioFijo" class="form-row" style="display: none;">
+              <div class="form-group">
+                <label>Salario Base Mensual *</label>
+                <input type="number" id="salarioFijoEmpleado" min="0" step="1000" placeholder="Ingrese el salario mensual">
+              </div>
+              <div class="form-group">
+                <label>Bonificaciones Mensuales</label>
+                <input type="number" id="bonificacionesEmpleado" min="0" step="1000" placeholder="Bonificaciones adicionales">
+              </div>
+            </div>
+            
+            <!-- Campos para Salario por Horas -->
+            <div id="camposSalarioHoras" class="form-row" style="display: none;">
+              <div class="form-group">
+                <label>Valor Hora Ordinaria *</label>
+                <input type="number" id="valorHoraOrdinaria" min="0" step="100" placeholder="Valor por hora normal">
+              </div>
+              <div class="form-group">
+                <label>Valor Hora Extra Diurna</label>
+                <input type="number" id="valorHoraExtraDiurna" min="0" step="100" placeholder="Valor por hora extra diurna">
+              </div>
+            </div>
+            
             <div class="form-row">
               <div class="form-group">
                 <label>Fecha de Contratación *</label>
@@ -909,6 +938,155 @@
             <i class="fas fa-download"></i> Exportar Empleados
           </button>
           <button class="btn btn-secondary" onclick="cerrarModalExportarEmpleados()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Reporte General -->
+    <div id="modalReporteGeneral" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-chart-bar"></i> Reporte General</h3>
+          <button class="modal-close" onclick="cerrarModalReporteGeneral()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="report-filters">
+            <div class="filter-group">
+              <label>Período de Análisis:</label>
+              <select id="reporteGeneralPeriodo">
+                <option value="mes" selected>Este Mes</option>
+                <option value="trimestre">Este Trimestre</option>
+                <option value="anio">Este Año</option>
+                <option value="personalizado">Personalizado</option>
+              </select>
+            </div>
+            <div class="filter-group" id="fechasReporteGeneral" style="display: none;">
+              <label>Fecha Inicio:</label>
+              <input type="date" id="reporteGeneralFechaInicio">
+              <label>Fecha Fin:</label>
+              <input type="date" id="reporteGeneralFechaFin">
+            </div>
+            <div class="filter-group">
+              <label>Incluir Gráficos:</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" id="reporteGraficos" checked> Gráficos de Tendencia</label>
+                <label><input type="checkbox" id="reporteComparativas" checked> Comparativas</label>
+                <label><input type="checkbox" id="reporteProyecciones" checked> Proyecciones</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="generarReporteGeneral()">
+            <i class="fas fa-chart-line"></i> Generar Reporte
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModalReporteGeneral()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Reporte por Empleado -->
+    <div id="modalReporteEmpleado" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-user-chart"></i> Reporte por Empleado</h3>
+          <button class="modal-close" onclick="cerrarModalReporteEmpleado()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="report-filters">
+            <div class="filter-group">
+              <label>Seleccionar Empleado:</label>
+              <select id="reporteEmpleadoSelect" required>
+                <option value="">Seleccionar empleado</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Período de Análisis:</label>
+              <select id="reporteEmpleadoPeriodo">
+                <option value="mes" selected>Este Mes</option>
+                <option value="trimestre">Este Trimestre</option>
+                <option value="anio">Este Año</option>
+                <option value="personalizado">Personalizado</option>
+              </select>
+            </div>
+            <div class="filter-group" id="fechasReporteEmpleado" style="display: none;">
+              <label>Fecha Inicio:</label>
+              <input type="date" id="reporteEmpleadoFechaInicio">
+              <label>Fecha Fin:</label>
+              <input type="date" id="reporteEmpleadoFechaFin">
+            </div>
+            <div class="filter-group">
+              <label>Detalles a Incluir:</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" id="reporteHorasTrabajadas" checked> Horas Trabajadas</label>
+                <label><input type="checkbox" id="reporteSalarios" checked> Cálculo de Salarios</label>
+                <label><input type="checkbox" id="reporteRendimiento" checked> Rendimiento</label>
+                <label><input type="checkbox" id="reporteComparativas" checked> Comparativas</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="generarReporteEmpleado()">
+            <i class="fas fa-user-chart"></i> Generar Reporte
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModalReporteEmpleado()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Reporte por Departamento -->
+    <div id="modalReporteDepartamento" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-sitemap"></i> Reporte por Departamento</h3>
+          <button class="modal-close" onclick="cerrarModalReporteDepartamento()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="report-filters">
+            <div class="filter-group">
+              <label>Seleccionar Departamento:</label>
+              <select id="reporteDepartamentoSelect">
+                <option value="">Todos los Departamentos</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Período de Análisis:</label>
+              <select id="reporteDepartamentoPeriodo">
+                <option value="mes" selected>Este Mes</option>
+                <option value="trimestre">Este Trimestre</option>
+                <option value="anio">Este Año</option>
+                <option value="personalizado">Personalizado</option>
+              </select>
+            </div>
+            <div class="filter-group" id="fechasReporteDepartamento" style="display: none;">
+              <label>Fecha Inicio:</label>
+              <input type="date" id="reporteDepartamentoFechaInicio">
+              <label>Fecha Fin:</label>
+              <input type="date" id="reporteDepartamentoFechaFin">
+            </div>
+            <div class="filter-group">
+              <label>Métricas a Incluir:</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" id="reporteProductividad" checked> Productividad</label>
+                <label><input type="checkbox" id="reporteCostos" checked> Costos Laborales</label>
+                <label><input type="checkbox" id="reporteEficiencia" checked> Eficiencia</label>
+                <label><input type="checkbox" id="reporteComparativas" checked> Comparativas</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="generarReporteDepartamento()">
+            <i class="fas fa-sitemap"></i> Generar Reporte
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModalReporteDepartamento()">Cancelar</button>
         </div>
       </div>
     </div>
