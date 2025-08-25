@@ -406,10 +406,10 @@
               <button class="gestion-personal-btn gestion-personal-btn-success" onclick="mostrarModalCalculoHoras()">
                 <i class="fas fa-calculator"></i> Calcular Horas
               </button>
-              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="exportarHorasExcel()">
+              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="mostrarModalExportarExcel()">
                 <i class="fas fa-file-excel"></i> Exportar Excel
               </button>
-              <button class="gestion-personal-btn gestion-personal-btn-info" onclick="generarReporteHoras()">
+              <button class="gestion-personal-btn gestion-personal-btn-info" onclick="mostrarModalReporteHoras()">
                 <i class="fas fa-chart-line"></i> Reporte de Horas
               </button>
             </div>
@@ -743,6 +743,196 @@
         </div>
       </div>
     </main>
+
+    <!-- ===== MODALES PROFESIONALES ===== -->
+    
+    <!-- Modal de Registro de Horas -->
+    <div id="modalRegistroHoras" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-clock"></i> Registro de Horas</h3>
+          <button class="modal-close" onclick="cerrarModalRegistroHoras()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Por favor complete el formulario de horas con los datos requeridos:</p>
+          <ul>
+            <li>Seleccione un empleado</li>
+            <li>Ingrese la fecha</li>
+            <li>Complete al menos un tipo de hora</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="cerrarModalRegistroHoras()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Cálculo de Horas -->
+    <div id="modalCalculoHoras" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-calculator"></i> Cálculo de Horas</h3>
+          <button class="modal-close" onclick="cerrarModalCalculoHoras()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Por favor complete el formulario de horas para poder calcular los salarios correspondientes.</p>
+          <div class="calculo-preview">
+            <div class="calculo-item">
+              <span class="label">Empleado:</span>
+              <span class="value" id="calculoEmpleado">No seleccionado</span>
+            </div>
+            <div class="calculo-item">
+              <span class="label">Fecha:</span>
+              <span class="value" id="calculoFecha">No ingresada</span>
+            </div>
+            <div class="calculo-item">
+              <span class="label">Total Horas:</span>
+              <span class="value" id="calculoTotalHoras">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="document.getElementById('tab-horas').scrollIntoView()">Ir al Formulario</button>
+          <button class="btn btn-secondary" onclick="cerrarModalCalculoHoras()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Exportación Excel -->
+    <div id="modalExportarExcel" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-file-excel"></i> Exportar a Excel</h3>
+          <button class="modal-close" onclick="cerrarModalExportarExcel()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="export-options">
+            <h4>Seleccione el tipo de exportación:</h4>
+            <div class="export-option">
+              <input type="radio" id="exportHoras" name="exportType" value="horas" checked>
+              <label for="exportHoras">Horas Trabajadas</label>
+            </div>
+            <div class="export-option">
+              <input type="radio" id="exportEmpleados" name="exportType" value="empleados">
+              <label for="exportEmpleados">Lista de Empleados</label>
+            </div>
+            <div class="export-option">
+              <input type="radio" id="exportNominas" name="exportType" value="nominas">
+              <label for="exportNominas">Nóminas Generadas</label>
+            </div>
+          </div>
+          <div class="export-filters">
+            <div class="filter-group">
+              <label>Fecha Inicio:</label>
+              <input type="date" id="exportFechaInicio">
+            </div>
+            <div class="filter-group">
+              <label>Fecha Fin:</label>
+              <input type="date" id="exportFechaFin">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" onclick="procesarExportacion()">
+            <i class="fas fa-download"></i> Exportar
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModalExportarExcel()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Reporte de Horas -->
+    <div id="modalReporteHoras" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-chart-line"></i> Reporte de Horas</h3>
+          <button class="modal-close" onclick="cerrarModalReporteHoras()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="report-filters">
+            <div class="filter-group">
+              <label>Período:</label>
+              <select id="reportePeriodo">
+                <option value="semana">Esta Semana</option>
+                <option value="mes" selected>Este Mes</option>
+                <option value="trimestre">Este Trimestre</option>
+                <option value="anio">Este Año</option>
+                <option value="personalizado">Personalizado</option>
+              </select>
+            </div>
+            <div class="filter-group" id="fechasPersonalizadas" style="display: none;">
+              <label>Fecha Inicio:</label>
+              <input type="date" id="reporteFechaInicio">
+              <label>Fecha Fin:</label>
+              <input type="date" id="reporteFechaFin">
+            </div>
+            <div class="filter-group">
+              <label>Departamento:</label>
+              <select id="reporteDepartamento">
+                <option value="">Todos los Departamentos</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="generarReporteHoras()">
+            <i class="fas fa-chart-bar"></i> Generar Reporte
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModalReporteHoras()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Generar Nómina -->
+    <div id="modalGenerarNomina" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-file-invoice-dollar"></i> Generar Nueva Nómina</h3>
+          <button class="modal-close" onclick="cerrarModalGenerarNomina()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="nomina-filters">
+            <div class="filter-group">
+              <label>Período de Pago:</label>
+              <select id="nominaPeriodo">
+                <option value="quincenal">Quincenal</option>
+                <option value="mensual" selected>Mensual</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Fecha Inicio:</label>
+              <input type="date" id="nominaFechaInicio" required>
+            </div>
+            <div class="filter-group">
+              <label>Fecha Fin:</label>
+              <input type="date" id="nominaFechaFin" required>
+            </div>
+            <div class="filter-group">
+              <label>Departamento:</label>
+              <select id="nominaDepartamento">
+                <option value="">Todos los Departamentos</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" onclick="procesarGeneracionNomina()">
+            <i class="fas fa-calculator"></i> Generar Nómina
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModalGenerarNomina()">Cancelar</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Scripts -->
     <script src="../../static/firebase-config.js"></script>
