@@ -62,11 +62,11 @@ class GestionPersonalManager {
       this.renderizarHoras();
       this.renderizarDepartamentos();
       this.actualizarEstadisticas();
-      
+
       console.log('✅ Datos cargados correctamente:', {
-          empleados: this.empleados.length,
-          horas: this.horas.length,
-          departamentos: this.departamentos.length
+        empleados: this.empleados.length,
+        horas: this.horas.length,
+        departamentos: this.departamentos.length,
       });
     } catch (error) {
       console.error('❌ Error al cargar datos:', error);
@@ -81,21 +81,20 @@ class GestionPersonalManager {
     selector.innerHTML = '<option value="">Seleccionar empleado</option>';
 
     // Agregar empleados activos
-    this.empleados.filter(emp => emp.estado === 'activo').forEach(empleado => {
-      const option = document.createElement('option');
-      option.value = empleado.id;
-      option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
-      selector.appendChild(option);
-    });
+    this.empleados
+      .filter((emp) => emp.estado === 'activo')
+      .forEach((empleado) => {
+        const option = document.createElement('option');
+        option.value = empleado.id;
+        option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
+        selector.appendChild(option);
+      });
   }
 
   llenarSelectorDepartamentos() {
-    const selectores = [
-      'reporteDepartamento',
-      'nominaDepartamento'
-    ];
+    const selectores = ['reporteDepartamento', 'nominaDepartamento'];
 
-    selectores.forEach(id => {
+    selectores.forEach((id) => {
       const selector = document.getElementById(id);
       if (!selector) return;
 
@@ -103,7 +102,7 @@ class GestionPersonalManager {
       selector.innerHTML = '<option value="">Todos los Departamentos</option>';
 
       // Agregar departamentos
-      this.departamentos.forEach(departamento => {
+      this.departamentos.forEach((departamento) => {
         const option = document.createElement('option');
         option.value = departamento.nombre;
         option.textContent = departamento.nombre;
@@ -115,7 +114,7 @@ class GestionPersonalManager {
   configurarEventos() {
     try {
       // Eventos de navegación por pestañas
-      document.querySelectorAll('.gestion-personal-tab').forEach(tab => {
+      document.querySelectorAll('.gestion-personal-tab').forEach((tab) => {
         tab.addEventListener('click', (e) => {
           e.preventDefault();
           const tabName = e.currentTarget.getAttribute('onclick').match(/'([^']+)'/)[1];
@@ -149,7 +148,7 @@ class GestionPersonalManager {
 
       // Botones de acción
       this.configurarBotonesAccion();
-      
+
       console.log('✅ Eventos configurados correctamente');
     } catch (error) {
       console.error('❌ Error al configurar eventos:', error);
@@ -159,37 +158,36 @@ class GestionPersonalManager {
   // ===== MÉTODOS DE FORMULARIOS =====
   async manejarSubmitHoras(e) {
     e.preventDefault();
-    
+
     try {
       const empleadoId = document.getElementById('empleadoHoras').value;
       const fecha = document.getElementById('fechaHoras').value;
-      
+
       if (!empleadoId) {
         this.mostrarNotificacion('Por favor seleccione un empleado', 'warning');
         return;
       }
-      
+
       if (!fecha) {
         this.mostrarNotificacion('Por favor ingrese la fecha', 'warning');
         return;
       }
-      
+
       // Validar que al menos una hora esté ingresada
       const horasInputs = document.querySelectorAll('input[id^="horas_"]');
       let totalHoras = 0;
-      
-      horasInputs.forEach(input => {
+
+      horasInputs.forEach((input) => {
         totalHoras += parseFloat(input.value) || 0;
       });
-      
+
       if (totalHoras === 0) {
         this.mostrarNotificacion('Por favor ingrese al menos una hora', 'warning');
         return;
       }
-      
+
       // Si pasa todas las validaciones, registrar las horas
       await this.registrarHoras();
-      
     } catch (error) {
       console.error('❌ Error al manejar submit de horas:', error);
       this.mostrarNotificacion('Error al procesar el formulario', 'error');
@@ -318,40 +316,39 @@ class GestionPersonalManager {
   cambiarTab(tabName) {
     try {
       console.log(`🔄 Cambiando a pestaña: ${tabName}`);
-      
+
       // Ocultar todas las pestañas
-      document.querySelectorAll('.tab-content').forEach(content => {
-          content.style.display = 'none';
+      document.querySelectorAll('.tab-content').forEach((content) => {
+        content.style.display = 'none';
       });
 
       // Desactivar todas las pestañas
-      document.querySelectorAll('.gestion-personal-tab').forEach(tab => {
-          tab.classList.remove('active');
+      document.querySelectorAll('.gestion-personal-tab').forEach((tab) => {
+        tab.classList.remove('active');
       });
 
       // Mostrar la pestaña seleccionada
       const selectedContent = document.getElementById(`tab-${tabName}`);
       if (selectedContent) {
-          selectedContent.style.display = 'block';
-          console.log(`✅ Contenido de pestaña ${tabName} mostrado`);
+        selectedContent.style.display = 'block';
+        console.log(`✅ Contenido de pestaña ${tabName} mostrado`);
       } else {
-          console.warn(`⚠️ Contenido de pestaña ${tabName} no encontrado`);
+        console.warn(`⚠️ Contenido de pestaña ${tabName} no encontrado`);
       }
 
       // Activar la pestaña seleccionada
       const selectedTab = document.querySelector(`[onclick*="cambiarTab('${tabName}')"]`);
       if (selectedTab) {
-          selectedTab.classList.add('active');
-          console.log(`✅ Pestaña ${tabName} activada`);
+        selectedTab.classList.add('active');
+        console.log(`✅ Pestaña ${tabName} activada`);
       } else {
-          console.warn(`⚠️ Pestaña ${tabName} no encontrada`);
+        console.warn(`⚠️ Pestaña ${tabName} no encontrada`);
       }
 
       this.currentTab = tabName;
-      
+
       // Actualizar datos específicos de la pestaña
       this.actualizarDatosPestana(tabName);
-      
     } catch (error) {
       console.error('❌ Error al cambiar pestaña:', error);
     }
@@ -998,20 +995,26 @@ class GestionPersonalManager {
 
   async eliminarDepartamento(departamentoId) {
     try {
-      if (confirm('¿Está seguro de que desea eliminar este departamento?')) {
-        if (this.firebaseSyncManager) {
-          // Implementar eliminación en Firebase
-          this.mostrarNotificacion('Departamento eliminado correctamente', 'success');
-        } else {
-          this.departamentos = this.departamentos.filter((dept) => dept.id !== departamentoId);
-          localStorage.setItem('departamentos', JSON.stringify(this.departamentos));
-          this.mostrarNotificacion('Departamento eliminado correctamente', 'success');
-        }
-        this.cargarDatos();
+      // Verificar si hay empleados en este departamento
+      const empleadosEnDepartamento = this.empleados.filter(emp => emp.departamento === this.departamentos.find(dep => dep.id === departamentoId)?.nombre);
+      
+      if (empleadosEnDepartamento.length > 0) {
+        throw new Error(`No se puede eliminar el departamento porque tiene ${empleadosEnDepartamento.length} empleado(s) asignado(s)`);
       }
+
+      // Eliminar departamento
+      this.departamentos = this.departamentos.filter(dep => dep.id !== departamentoId);
+      
+      if (this.firebaseSyncManager) {
+        await this.firebaseSyncManager.syncDepartamentos(this.departamentos);
+      } else {
+        localStorage.setItem('departamentos', JSON.stringify(this.departamentos));
+      }
+      
+      console.log('✅ Departamento eliminado:', departamentoId);
     } catch (error) {
       console.error('❌ Error al eliminar departamento:', error);
-      this.mostrarNotificacion('Error al eliminar departamento', 'error');
+      throw error;
     }
   }
 
@@ -1371,6 +1374,73 @@ class GestionPersonalManager {
       this.mostrarNotificacion('Error al generar reporte de nóminas', 'error');
     }
   }
+
+  // ===== GESTIÓN DE EMPLEADOS =====
+  async agregarEmpleado(empleado) {
+    try {
+      this.empleados.push(empleado);
+      
+      if (this.firebaseSyncManager) {
+        await this.firebaseSyncManager.syncEmpleados(this.empleados);
+      } else {
+        localStorage.setItem('empleados', JSON.stringify(this.empleados));
+      }
+      
+      console.log('✅ Empleado agregado:', empleado);
+      return empleado;
+    } catch (error) {
+      console.error('❌ Error al agregar empleado:', error);
+      throw error;
+    }
+  }
+
+  async agregarDepartamento(departamento) {
+    try {
+      this.departamentos.push(departamento);
+      
+      if (this.firebaseSyncManager) {
+        await this.firebaseSyncManager.syncDepartamentos(this.departamentos);
+      } else {
+        localStorage.setItem('departamentos', JSON.stringify(this.departamentos));
+      }
+      
+      console.log('✅ Departamento agregado:', departamento);
+      return departamento;
+    } catch (error) {
+      console.error('❌ Error al agregar departamento:', error);
+      throw error;
+    }
+  }
+
+  renderizarListaDepartamentos() {
+    const container = document.getElementById('listaDepartamentos');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (this.departamentos.length === 0) {
+      container.innerHTML = '<p class="no-data">No hay departamentos registrados</p>';
+      return;
+    }
+
+    this.departamentos.forEach(departamento => {
+      const departamentoElement = document.createElement('div');
+      departamentoElement.className = 'departamento-item';
+      departamentoElement.innerHTML = `
+          <div class="departamento-header">
+              <div class="departamento-color" style="background-color: ${departamento.color}"></div>
+              <div class="departamento-nombre">${departamento.nombre}</div>
+          </div>
+          <div class="departamento-descripcion">${departamento.descripcion || 'Sin descripción'}</div>
+          <div class="departamento-actions">
+              <button class="btn btn-small btn-danger" onclick="eliminarDepartamento('${departamento.id}')">
+                  <i class="fas fa-trash"></i> Eliminar
+              </button>
+          </div>
+      `;
+      container.appendChild(departamentoElement);
+    });
+  }
 }
 
 // Inicialización cuando el DOM esté listo
@@ -1549,181 +1619,387 @@ window.verDetalleHoras = (registroId) => {
 
 // Funciones globales para modales y funcionalidad
 window.mostrarModalRegistroHoras = () => {
-    const modal = document.getElementById('modalRegistroHoras');
-    if (modal) {
-        modal.style.display = 'block';
-    }
+  const modal = document.getElementById('modalRegistroHoras');
+  if (modal) {
+    modal.style.display = 'block';
+  }
 };
 
 window.cerrarModalRegistroHoras = () => {
-    const modal = document.getElementById('modalRegistroHoras');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+  const modal = document.getElementById('modalRegistroHoras');
+  if (modal) {
+    modal.style.display = 'none';
+  }
 };
 
 window.mostrarModalCalculoHoras = () => {
-    const modal = document.getElementById('modalCalculoHoras');
-    if (modal) {
-        // Actualizar información del modal
-        const empleadoSelect = document.getElementById('empleadoHoras');
-        const fechaInput = document.getElementById('fechaHoras');
-        
-        if (empleadoSelect && fechaInput) {
-            const empleado = empleadoSelect.options[empleadoSelect.selectedIndex];
-            const fecha = fechaInput.value;
-            
-            document.getElementById('calculoEmpleado').textContent = empleado.text || 'No seleccionado';
-            document.getElementById('calculoFecha').textContent = fecha || 'No ingresada';
-            
-            // Calcular total de horas
-            const horasInputs = document.querySelectorAll('input[id^="horas_"]');
-            let totalHoras = 0;
-            horasInputs.forEach(input => {
-                totalHoras += parseFloat(input.value) || 0;
-            });
-            document.getElementById('calculoTotalHoras').textContent = totalHoras;
-        }
-        
-        modal.style.display = 'block';
+  const modal = document.getElementById('modalCalculoHoras');
+  if (modal) {
+    // Actualizar información del modal
+    const empleadoSelect = document.getElementById('empleadoHoras');
+    const fechaInput = document.getElementById('fechaHoras');
+
+    if (empleadoSelect && fechaInput) {
+      const empleado = empleadoSelect.options[empleadoSelect.selectedIndex];
+      const fecha = fechaInput.value;
+
+      document.getElementById('calculoEmpleado').textContent = empleado.text || 'No seleccionado';
+      document.getElementById('calculoFecha').textContent = fecha || 'No ingresada';
+
+      // Calcular total de horas
+      const horasInputs = document.querySelectorAll('input[id^="horas_"]');
+      let totalHoras = 0;
+      horasInputs.forEach((input) => {
+        totalHoras += parseFloat(input.value) || 0;
+      });
+      document.getElementById('calculoTotalHoras').textContent = totalHoras;
     }
+
+    modal.style.display = 'block';
+  }
 };
 
 window.cerrarModalCalculoHoras = () => {
-    const modal = document.getElementById('modalCalculoHoras');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+  const modal = document.getElementById('modalCalculoHoras');
+  if (modal) {
+    modal.style.display = 'none';
+  }
 };
 
 window.mostrarModalExportarExcel = () => {
-    const modal = document.getElementById('modalExportarExcel');
-    if (modal) {
-        // Establecer fechas por defecto
-        const hoy = new Date();
-        const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-        
-        document.getElementById('exportFechaInicio').value = inicioMes.toISOString().split('T')[0];
-        document.getElementById('exportFechaFin').value = hoy.toISOString().split('T')[0];
-        
-        modal.style.display = 'block';
-    }
+  const modal = document.getElementById('modalExportarExcel');
+  if (modal) {
+    // Establecer fechas por defecto
+    const hoy = new Date();
+    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+
+    document.getElementById('exportFechaInicio').value = inicioMes.toISOString().split('T')[0];
+    document.getElementById('exportFechaFin').value = hoy.toISOString().split('T')[0];
+
+    modal.style.display = 'block';
+  }
 };
 
 window.cerrarModalExportarExcel = () => {
-    const modal = document.getElementById('modalExportarExcel');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+  const modal = document.getElementById('modalExportarExcel');
+  if (modal) {
+    modal.style.display = 'none';
+  }
 };
 
 window.mostrarModalReporteHoras = () => {
-    const modal = document.getElementById('modalReporteHoras');
-    if (modal) {
-        // Configurar evento para fechas personalizadas
-        const periodoSelect = document.getElementById('reportePeriodo');
-        const fechasPersonalizadas = document.getElementById('fechasPersonalizadas');
-        
-        if (periodoSelect && fechasPersonalizadas) {
-            periodoSelect.addEventListener('change', () => {
-                if (periodoSelect.value === 'personalizado') {
-                    fechasPersonalizadas.style.display = 'block';
-                } else {
-                    fechasPersonalizadas.style.display = 'none';
-                }
-            });
+  const modal = document.getElementById('modalReporteHoras');
+  if (modal) {
+    // Configurar evento para fechas personalizadas
+    const periodoSelect = document.getElementById('reportePeriodo');
+    const fechasPersonalizadas = document.getElementById('fechasPersonalizadas');
+
+    if (periodoSelect && fechasPersonalizadas) {
+      periodoSelect.addEventListener('change', () => {
+        if (periodoSelect.value === 'personalizado') {
+          fechasPersonalizadas.style.display = 'block';
+        } else {
+          fechasPersonalizadas.style.display = 'none';
         }
-        
-        modal.style.display = 'block';
+      });
     }
+
+    modal.style.display = 'block';
+  }
 };
 
 window.cerrarModalReporteHoras = () => {
-    const modal = document.getElementById('modalReporteHoras');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+  const modal = document.getElementById('modalReporteHoras');
+  if (modal) {
+    modal.style.display = 'none';
+  }
 };
 
 window.mostrarModalGenerarNomina = () => {
-    const modal = document.getElementById('modalGenerarNomina');
-    if (modal) {
-        // Establecer fechas por defecto
-        const hoy = new Date();
-        const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-        const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
-        
-        document.getElementById('nominaFechaInicio').value = inicioMes.toISOString().split('T')[0];
-        document.getElementById('nominaFechaFin').value = finMes.toISOString().split('T')[0];
-        
-        modal.style.display = 'block';
-    }
+  const modal = document.getElementById('modalGenerarNomina');
+  if (modal) {
+    // Establecer fechas por defecto
+    const hoy = new Date();
+    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+
+    document.getElementById('nominaFechaInicio').value = inicioMes.toISOString().split('T')[0];
+    document.getElementById('nominaFechaFin').value = finMes.toISOString().split('T')[0];
+
+    modal.style.display = 'block';
+  }
 };
 
 window.cerrarModalGenerarNomina = () => {
-    const modal = document.getElementById('modalGenerarNomina');
-    if (modal) {
-        modal.style.display = 'none';
-    }
+  const modal = document.getElementById('modalGenerarNomina');
+  if (modal) {
+    modal.style.display = 'none';
+  }
 };
 
 // Funciones de procesamiento
 window.procesarExportacion = () => {
-    const tipoExportacion = document.querySelector('input[name="exportType"]:checked').value;
-    const fechaInicio = document.getElementById('exportFechaInicio').value;
-    const fechaFin = document.getElementById('exportFechaFin').value;
-    
-    if (!fechaInicio || !fechaFin) {
-        window.mostrarNotificacion('Por favor complete las fechas de exportación', 'warning');
-        return;
-    }
-    
-    // Aquí iría la lógica de exportación real
-    window.mostrarNotificacion(`Exportando ${tipoExportacion} del ${fechaInicio} al ${fechaFin}`, 'success');
-    window.cerrarModalExportarExcel();
+  const tipoExportacion = document.querySelector('input[name="exportType"]:checked').value;
+  const fechaInicio = document.getElementById('exportFechaInicio').value;
+  const fechaFin = document.getElementById('exportFechaFin').value;
+
+  if (!fechaInicio || !fechaFin) {
+    window.mostrarNotificacion('Por favor complete las fechas de exportación', 'warning');
+    return;
+  }
+
+  // Aquí iría la lógica de exportación real
+  window.mostrarNotificacion(`Exportando ${tipoExportacion} del ${fechaInicio} al ${fechaFin}`, 'success');
+  window.cerrarModalExportarExcel();
 };
 
 window.generarReporteHoras = () => {
-    const periodo = document.getElementById('reportePeriodo').value;
-    const departamento = document.getElementById('reporteDepartamento').value;
-    
-    let mensaje = `Generando reporte de horas para ${periodo}`;
-    if (departamento) {
-        mensaje += ` del departamento ${departamento}`;
-    }
-    
-    window.mostrarNotificacion(mensaje, 'success');
-    window.cerrarModalReporteHoras();
+  const periodo = document.getElementById('reportePeriodo').value;
+  const departamento = document.getElementById('reporteDepartamento').value;
+
+  let mensaje = `Generando reporte de horas para ${periodo}`;
+  if (departamento) {
+    mensaje += ` del departamento ${departamento}`;
+  }
+
+  window.mostrarNotificacion(mensaje, 'success');
+  window.cerrarModalReporteHoras();
 };
 
 window.procesarGeneracionNomina = () => {
-    const periodo = document.getElementById('nominaPeriodo').value;
-    const fechaInicio = document.getElementById('nominaFechaInicio').value;
-    const fechaFin = document.getElementById('nominaFechaFin').value;
-    const departamento = document.getElementById('nominaDepartamento').value;
-    
-    if (!fechaInicio || !fechaFin) {
-        window.mostrarNotificacion('Por favor complete las fechas de la nómina', 'warning');
-        return;
+  const periodo = document.getElementById('nominaPeriodo').value;
+  const fechaInicio = document.getElementById('nominaFechaInicio').value;
+  const fechaFin = document.getElementById('nominaFechaFin').value;
+  const departamento = document.getElementById('nominaDepartamento').value;
+
+  if (!fechaInicio || !fechaFin) {
+    window.mostrarNotificacion('Por favor complete las fechas de la nómina', 'warning');
+    return;
+  }
+
+  let mensaje = `Generando nómina ${periodo} del ${fechaInicio} al ${fechaFin}`;
+  if (departamento) {
+    mensaje += ` para el departamento ${departamento}`;
+  }
+
+  window.mostrarNotificacion(mensaje, 'success');
+  window.cerrarModalGenerarNomina();
+};
+
+// Funciones para modales de empleados y departamentos
+window.mostrarModalEmpleado = () => {
+  const modal = document.getElementById('modalEmpleado');
+  if (modal) {
+    // Llenar selector de departamentos
+    const selectorDepartamento = document.getElementById('departamentoEmpleado');
+    if (selectorDepartamento) {
+      selectorDepartamento.innerHTML = '<option value="">Seleccionar departamento</option>';
+      window.gestionPersonal.departamentos.forEach(departamento => {
+        const option = document.createElement('option');
+        option.value = departamento.nombre;
+        option.textContent = departamento.nombre;
+        selectorDepartamento.appendChild(option);
+      });
     }
     
-    let mensaje = `Generando nómina ${periodo} del ${fechaInicio} al ${fechaFin}`;
-    if (departamento) {
-        mensaje += ` para el departamento ${departamento}`;
+    // Establecer fecha actual
+    const fechaInput = document.getElementById('fechaContratacionEmpleado');
+    if (fechaInput) {
+      fechaInput.value = new Date().toISOString().split('T')[0];
     }
     
+    modal.style.display = 'block';
+  }
+};
+
+window.cerrarModalEmpleado = () => {
+  const modal = document.getElementById('modalEmpleado');
+  if (modal) {
+    modal.style.display = 'none';
+    // Limpiar formulario
+    document.getElementById('formEmpleado').reset();
+  }
+};
+
+window.mostrarModalDepartamento = () => {
+  const modal = document.getElementById('modalDepartamento');
+  if (modal) {
+    // Renderizar lista de departamentos existentes
+    window.gestionPersonal.renderizarListaDepartamentos();
+    modal.style.display = 'block';
+  }
+};
+
+window.cerrarModalDepartamento = () => {
+  const modal = document.getElementById('modalDepartamento');
+  if (modal) {
+    modal.style.display = 'none';
+    // Limpiar formulario
+    document.getElementById('formDepartamento').reset();
+  }
+};
+
+window.mostrarModalExportarEmpleados = () => {
+  const modal = document.getElementById('modalExportarEmpleados');
+  if (modal) {
+    // Llenar selector de departamentos
+    const selectorDepartamento = document.getElementById('exportDepartamentoEmpleados');
+    if (selectorDepartamento) {
+      selectorDepartamento.innerHTML = '<option value="">Todos los Departamentos</option>';
+      window.gestionPersonal.departamentos.forEach(departamento => {
+        const option = document.createElement('option');
+        option.value = departamento.nombre;
+        option.textContent = departamento.nombre;
+        selectorDepartamento.appendChild(option);
+      });
+    }
+    
+    modal.style.display = 'block';
+  }
+};
+
+window.cerrarModalExportarEmpleados = () => {
+  const modal = document.getElementById('modalExportarEmpleados');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+};
+
+// Funciones de procesamiento para empleados y departamentos
+window.guardarEmpleado = async () => {
+  try {
+    const form = document.getElementById('formEmpleado');
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const empleado = {
+      id: Date.now().toString(),
+      nombre: document.getElementById('nombreEmpleado').value,
+      cedula: document.getElementById('cedulaEmpleado').value,
+      cargo: document.getElementById('cargoEmpleado').value,
+      departamento: document.getElementById('departamentoEmpleado').value,
+      salario: parseFloat(document.getElementById('salarioEmpleado').value),
+      tipoContrato: document.getElementById('tipoContratoEmpleado').value,
+      fechaContratacion: document.getElementById('fechaContratacionEmpleado').value,
+      estado: document.getElementById('estadoEmpleado').value
+    };
+
+    // Validar cédula única
+    const cedulaExistente = window.gestionPersonal.empleados.find(emp => emp.cedula === empleado.cedula);
+    if (cedulaExistente) {
+      window.mostrarNotificacion('Ya existe un empleado con esta cédula', 'error');
+      return;
+    }
+
+    // Agregar empleado
+    await window.gestionPersonal.agregarEmpleado(empleado);
+    
+    window.mostrarNotificacion('Empleado agregado correctamente', 'success');
+    window.cerrarModalEmpleado();
+    
+    // Actualizar interfaz
+    window.gestionPersonal.renderizarEmpleados();
+    window.gestionPersonal.actualizarEstadisticas();
+    
+  } catch (error) {
+    console.error('❌ Error al guardar empleado:', error);
+    window.mostrarNotificacion('Error al guardar empleado', 'error');
+  }
+};
+
+window.guardarDepartamento = async () => {
+  try {
+    const form = document.getElementById('formDepartamento');
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const departamento = {
+      id: Date.now().toString(),
+      nombre: document.getElementById('nombreDepartamento').value,
+      descripcion: document.getElementById('descripcionDepartamento').value || '',
+      color: document.getElementById('colorDepartamento').value
+    };
+
+    // Validar nombre único
+    const nombreExistente = window.gestionPersonal.departamentos.find(dep => dep.nombre === departamento.nombre);
+    if (nombreExistente) {
+      window.mostrarNotificacion('Ya existe un departamento con este nombre', 'error');
+      return;
+    }
+
+    // Agregar departamento
+    await window.gestionPersonal.agregarDepartamento(departamento);
+    
+    window.mostrarNotificacion('Departamento agregado correctamente', 'success');
+    
+    // Limpiar formulario y actualizar lista
+    form.reset();
+    window.gestionPersonal.renderizarListaDepartamentos();
+    
+    // Actualizar selectores en otros modales
+    window.gestionPersonal.llenarSelectorDepartamentos();
+    
+  } catch (error) {
+    console.error('❌ Error al guardar departamento:', error);
+    window.mostrarNotificacion('Error al guardar departamento', 'error');
+  }
+};
+
+window.procesarExportacionEmpleados = () => {
+  try {
+    const estado = document.getElementById('exportEstadoEmpleados').value;
+    const departamento = document.getElementById('exportDepartamentoEmpleados').value;
+    const infoPersonal = document.getElementById('exportInfoPersonal').checked;
+    const infoLaboral = document.getElementById('exportInfoLaboral').checked;
+    const salarios = document.getElementById('exportSalarios').checked;
+    const historial = document.getElementById('exportHistorial').checked;
+
+    let mensaje = 'Exportando empleados con filtros:';
+    if (estado) mensaje += ` Estado: ${estado}`;
+    if (departamento) mensaje += `, Departamento: ${departamento}`;
+    mensaje += `, Información: ${infoPersonal ? 'Personal' : ''}${infoLaboral ? ' Laboral' : ''}${salarios ? ' Salarios' : ''}${historial ? ' Historial' : ''}`;
+
     window.mostrarNotificacion(mensaje, 'success');
-    window.cerrarModalGenerarNomina();
+    window.cerrarModalExportarEmpleados();
+    
+    // Aquí iría la lógica real de exportación
+    console.log('📊 Exportando empleados con configuración:', { estado, departamento, infoPersonal, infoLaboral, salarios, historial });
+    
+  } catch (error) {
+    console.error('❌ Error al procesar exportación:', error);
+    window.mostrarNotificacion('Error al procesar exportación', 'error');
+  }
 };
 
 // Cerrar modales al hacer clic fuera de ellos
 document.addEventListener('DOMContentLoaded', () => {
-    const modales = document.querySelectorAll('.modal-overlay');
-    modales.forEach(modal => {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
+  const modales = document.querySelectorAll('.modal-overlay');
+  modales.forEach((modal) => {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+      }
     });
+  });
 });
+
+// Función para eliminar departamentos
+window.eliminarDepartamento = async (departamentoId) => {
+  try {
+    if (confirm('¿Está seguro de que desea eliminar este departamento? Esta acción no se puede deshacer.')) {
+      await window.gestionPersonal.eliminarDepartamento(departamentoId);
+      window.mostrarNotificacion('Departamento eliminado correctamente', 'success');
+      
+      // Actualizar lista y selectores
+      window.gestionPersonal.renderizarListaDepartamentos();
+      window.gestionPersonal.llenarSelectorDepartamentos();
+    }
+  } catch (error) {
+    console.error('❌ Error al eliminar departamento:', error);
+    window.mostrarNotificacion('Error al eliminar departamento', 'error');
+  }
+};

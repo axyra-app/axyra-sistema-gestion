@@ -661,10 +661,10 @@
               <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalEmpleado()">
                 <i class="fas fa-user-plus"></i> Nuevo Empleado
               </button>
-              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="gestionarDepartamentos()">
+              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="mostrarModalDepartamento()">
                 <i class="fas fa-sitemap"></i> Gestionar Departamentos
               </button>
-              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="exportarEmpleadosExcel()">
+              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="mostrarModalExportarEmpleados()">
                 <i class="fas fa-file-excel"></i> Exportar Empleados
               </button>
             </div>
@@ -746,6 +746,173 @@
 
     <!-- ===== MODALES PROFESIONALES ===== -->
     
+    <!-- Modal de Nuevo Empleado -->
+    <div id="modalEmpleado" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-user-plus"></i> Nuevo Empleado</h3>
+          <button class="modal-close" onclick="cerrarModalEmpleado()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="formEmpleado" class="empleado-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nombre Completo *</label>
+                <input type="text" id="nombreEmpleado" required placeholder="Ingrese el nombre completo">
+              </div>
+              <div class="form-group">
+                <label>Cédula *</label>
+                <input type="text" id="cedulaEmpleado" required placeholder="Ingrese la cédula">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Cargo *</label>
+                <input type="text" id="cargoEmpleado" required placeholder="Ingrese el cargo">
+              </div>
+              <div class="form-group">
+                <label>Departamento *</label>
+                <select id="departamentoEmpleado" required>
+                  <option value="">Seleccionar departamento</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Salario Base *</label>
+                <input type="number" id="salarioEmpleado" required min="0" step="1000" placeholder="Ingrese el salario">
+              </div>
+              <div class="form-group">
+                <label>Tipo de Contrato *</label>
+                <select id="tipoContratoEmpleado" required>
+                  <option value="">Seleccionar tipo</option>
+                  <option value="Indefinido">Indefinido</option>
+                  <option value="Término Fijo">Término Fijo</option>
+                  <option value="Obra o Labor">Obra o Labor</option>
+                  <option value="Aprendizaje">Aprendizaje</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Fecha de Contratación *</label>
+                <input type="date" id="fechaContratacionEmpleado" required>
+              </div>
+              <div class="form-group">
+                <label>Estado *</label>
+                <select id="estadoEmpleado" required>
+                  <option value="activo">Activo</option>
+                  <option value="inactivo">Inactivo</option>
+                  <option value="vacaciones">Vacaciones</option>
+                  <option value="licencia">Licencia</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" onclick="guardarEmpleado()">
+            <i class="fas fa-save"></i> Guardar Empleado
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModalEmpleado()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Gestionar Departamentos -->
+    <div id="modalDepartamento" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-sitemap"></i> Gestionar Departamentos</h3>
+          <button class="modal-close" onclick="cerrarModalDepartamento()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="departamentos-lista">
+            <h4>Departamentos Existentes</h4>
+            <div id="listaDepartamentos" class="departamentos-grid">
+              <!-- Se llena dinámicamente -->
+            </div>
+          </div>
+          <div class="departamento-nuevo">
+            <h4>Agregar Nuevo Departamento</h4>
+            <form id="formDepartamento" class="departamento-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Nombre del Departamento *</label>
+                  <input type="text" id="nombreDepartamento" required placeholder="Ingrese el nombre">
+                </div>
+                <div class="form-group">
+                  <label>Color de Identificación</label>
+                  <input type="color" id="colorDepartamento" value="#4f81bd">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Descripción</label>
+                <textarea id="descripcionDepartamento" rows="3" placeholder="Descripción del departamento"></textarea>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" onclick="guardarDepartamento()">
+            <i class="fas fa-plus"></i> Agregar Departamento
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModalDepartamento()">Cerrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Exportar Empleados -->
+    <div id="modalExportarEmpleados" class="modal-overlay">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h3><i class="fas fa-file-excel"></i> Exportar Empleados</h3>
+          <button class="modal-close" onclick="cerrarModalExportarEmpleados()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="export-filters">
+            <div class="filter-group">
+              <label>Filtrar por Estado:</label>
+              <select id="exportEstadoEmpleados">
+                <option value="">Todos los Estados</option>
+                <option value="activo">Solo Activos</option>
+                <option value="inactivo">Solo Inactivos</option>
+                <option value="vacaciones">Solo en Vacaciones</option>
+                <option value="licencia">Solo en Licencia</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Filtrar por Departamento:</label>
+              <select id="exportDepartamentoEmpleados">
+                <option value="">Todos los Departamentos</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Incluir Información:</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" id="exportInfoPersonal" checked> Información Personal</label>
+                <label><input type="checkbox" id="exportInfoLaboral" checked> Información Laboral</label>
+                <label><input type="checkbox" id="exportSalarios" checked> Salarios</label>
+                <label><input type="checkbox" id="exportHistorial" checked> Historial de Horas</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-success" onclick="procesarExportacionEmpleados()">
+            <i class="fas fa-download"></i> Exportar Empleados
+          </button>
+          <button class="btn btn-secondary" onclick="cerrarModalExportarEmpleados()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal de Registro de Horas -->
     <div id="modalRegistroHoras" class="modal-overlay">
       <div class="modal-container">
