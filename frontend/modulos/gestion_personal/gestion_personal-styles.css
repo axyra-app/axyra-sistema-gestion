@@ -1061,3 +1061,95 @@
   box-shadow: 0 8px 25px rgba(79, 129, 189, 0.15);
   transform: translateY(-2px);
 }
+   
+   /* ===== ESTILOS PARA CAMPOS NUMÉRICOS ===== */
+   
+   /* Campos de texto con patrón numérico */
+   input[pattern="[0-9]*"] {
+     font-family: 'Courier New', monospace;
+     font-weight: 500;
+     letter-spacing: 0.5px;
+   }
+   
+   input[pattern="[0-9]*"]:focus {
+     border-color: #4f81bd;
+     box-shadow: 0 0 0 3px rgba(79, 129, 189, 0.1);
+   }
+   
+   input[pattern="[0-9]*"]:valid {
+     border-color: #10b981;
+     background-color: #f0fdf4;
+   }
+   
+   input[pattern="[0-9]*"]:invalid:not(:placeholder-shown) {
+     border-color: #ef4444;
+     background-color: #fef2f2;
+   }
+   
+   /* Mejoras para campos de salario */
+   .empleado-form input[pattern="[0-9]*"] {
+     text-align: right;
+     padding-right: 15px;
+   }
+   
+   .empleado-form input[pattern="[0-9]*"]::placeholder {
+     text-align: left;
+     color: #9ca3af;
+   }
+   
+   /* Indicador de moneda */
+   .empleado-form .form-group:has(input[pattern="[0-9]*"]) label::after {
+     content: " (COP)";
+     font-size: 0.8rem;
+     color: #6b7280;
+     font-weight: normal;
+   }
+   
+   /* Validación visual mejorada */
+   .form-group:has(input:invalid:not(:placeholder-shown)) label {
+     color: #ef4444;
+   }
+   
+   .form-group:has(input:valid) label {
+     color: #10b981;
+   }
+   
+   /* Mensajes de ayuda mejorados */
+   .form-help {
+     display: block;
+     font-size: 0.8rem;
+     color: #6c757d;
+     margin-top: 6px;
+     font-style: italic;
+     line-height: 1.4;
+   }
+   
+   .form-group:has(input:invalid:not(:placeholder-shown)) .form-help {
+     color: #ef4444;
+   }
+   
+   .form-group:has(input:valid) .form-help {
+     color: #10b981;
+   }
+   
+   /* Animación para campos válidos */
+   @keyframes validField {
+     0% { transform: scale(1); }
+     50% { transform: scale(1.02); }
+     100% { transform: scale(1); }
+   }
+   
+   input[pattern="[0-9]*"]:valid {
+     animation: validField 0.3s ease-in-out;
+   }
+   
+   /* Responsive para campos numéricos */
+   @media (max-width: 768px) {
+     input[pattern="[0-9]*"] {
+       font-size: 16px; /* Evita zoom en iOS */
+     }
+     
+     .empleado-form input[pattern="[0-9]*"] {
+       text-align: center;
+     }
+   }

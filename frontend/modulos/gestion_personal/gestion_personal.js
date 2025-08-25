@@ -996,31 +996,33 @@ class GestionPersonalManager {
   async eliminarDepartamento(departamentoId) {
     try {
       // Verificar si hay empleados en este departamento
-      const departamento = this.departamentos.find(dep => dep.id === departamentoId);
+      const departamento = this.departamentos.find((dep) => dep.id === departamentoId);
       if (!departamento) {
         throw new Error('Departamento no encontrado');
       }
 
-      const empleadosEnDepartamento = this.empleados.filter(emp => emp.departamento === departamento.nombre);
-      
+      const empleadosEnDepartamento = this.empleados.filter((emp) => emp.departamento === departamento.nombre);
+
       if (empleadosEnDepartamento.length > 0) {
-        throw new Error(`No se puede eliminar el departamento "${departamento.nombre}" porque tiene ${empleadosEnDepartamento.length} empleado(s) asignado(s)`);
+        throw new Error(
+          `No se puede eliminar el departamento "${departamento.nombre}" porque tiene ${empleadosEnDepartamento.length} empleado(s) asignado(s)`
+        );
       }
 
       // Eliminar departamento
-      this.departamentos = this.departamentos.filter(dep => dep.id !== departamentoId);
-      
+      this.departamentos = this.departamentos.filter((dep) => dep.id !== departamentoId);
+
       if (this.firebaseSyncManager) {
         await this.firebaseSyncManager.syncDepartamentos(this.departamentos);
       } else {
         localStorage.setItem('departamentos', JSON.stringify(this.departamentos));
       }
-      
+
       console.log('✅ Departamento eliminado correctamente:', departamento.nombre);
-      
+
       // Actualizar la interfaz inmediatamente
       this.renderizarListaDepartamentos();
-      
+
       return true;
     } catch (error) {
       console.error('❌ Error al eliminar departamento:', error);
@@ -1518,7 +1520,7 @@ class GestionPersonalManager {
   renderizarListaDepartamentos() {
     const container = document.getElementById('listaDepartamentos');
     const mensajeNoData = document.getElementById('mensajeNoDepartamentos');
-    
+
     if (!container) return;
 
     container.innerHTML = '';
@@ -1530,7 +1532,7 @@ class GestionPersonalManager {
 
     if (mensajeNoData) mensajeNoData.style.display = 'none';
 
-    this.departamentos.forEach(departamento => {
+    this.departamentos.forEach((departamento) => {
       const departamentoElement = document.createElement('div');
       departamentoElement.className = 'departamento-item';
       departamentoElement.innerHTML = `
@@ -1933,26 +1935,26 @@ window.mostrarModalDepartamento = () => {
   if (modal) {
     // Renderizar lista de departamentos existentes
     window.gestionPersonal.renderizarListaDepartamentos();
-    
+
     // Configurar color picker
     const colorInput = document.getElementById('colorDepartamento');
     const colorPreview = document.getElementById('colorPreview');
-    
+
     if (colorInput && colorPreview) {
       // Establecer color inicial
       colorPreview.style.backgroundColor = colorInput.value;
-      
+
       // Actualizar preview cuando cambie el color
       colorInput.addEventListener('input', (e) => {
         colorPreview.style.backgroundColor = e.target.value;
       });
-      
+
       // Hacer clic en preview para abrir color picker
       colorPreview.addEventListener('click', () => {
         colorInput.click();
       });
     }
-    
+
     modal.style.display = 'block';
   }
 };
@@ -2005,13 +2007,13 @@ window.guardarEmpleado = async () => {
     
     // Validar campos específicos según el tipo de salario
     if (tipoSalario === 'fijo') {
-      const salarioFijo = document.getElementById('salarioFijoEmpleado').value;
+      const salarioFijo = limpiarFormatoSalario(document.getElementById('salarioFijoEmpleado'));
       if (!salarioFijo || parseFloat(salarioFijo) <= 0) {
         window.mostrarNotificacion('Por favor ingrese un salario fijo válido', 'warning');
         return;
       }
     } else if (tipoSalario === 'por_horas') {
-      const salarioReferencia = document.getElementById('salarioReferenciaEmpleado').value;
+      const salarioReferencia = limpiarFormatoSalario(document.getElementById('salarioReferenciaEmpleado'));
       if (!salarioReferencia || parseFloat(salarioReferencia) <= 0) {
         window.mostrarNotificacion('Por favor ingrese un salario de referencia válido', 'warning');
         return;
@@ -2027,17 +2029,17 @@ window.guardarEmpleado = async () => {
       tipoContrato: document.getElementById('tipoContratoEmpleado').value,
       fechaContratacion: document.getElementById('fechaContratacionEmpleado').value,
       estado: document.getElementById('estadoEmpleado').value,
-      tipoSalario: tipoSalario
+      tipoSalario: tipoSalario,
     };
 
     // Agregar campos específicos según el tipo de salario
     if (tipoSalario === 'fijo') {
-      empleado.salarioFijo = parseFloat(document.getElementById('salarioFijoEmpleado').value);
-      empleado.bonificaciones = parseFloat(document.getElementById('bonificacionesEmpleado').value) || 0;
+      empleado.salarioFijo = parseFloat(limpiarFormatoSalario(document.getElementById('salarioFijoEmpleado')));
+      empleado.bonificaciones = parseFloat(limpiarFormatoSalario(document.getElementById('bonificacionesEmpleado'))) || 0;
       empleado.salarioTotal = empleado.salarioFijo + empleado.bonificaciones;
       empleado.salarioBase = empleado.salarioTotal;
     } else if (tipoSalario === 'por_horas') {
-      empleado.salarioReferencia = parseFloat(document.getElementById('salarioReferenciaEmpleado').value);
+      empleado.salarioReferencia = parseFloat(limpiarFormatoSalario(document.getElementById('salarioReferenciaEmpleado')));
       empleado.salarioBase = empleado.salarioReferencia;
       // Los valores por hora se configuran en el gestor de horas, no aquí
     }
@@ -2155,7 +2157,7 @@ window.eliminarDepartamento = async (departamentoId) => {
     if (confirm('¿Está seguro de que desea eliminar este departamento? Esta acción no se puede deshacer.')) {
       await window.gestionPersonal.eliminarDepartamento(departamentoId);
       window.mostrarNotificacion('Departamento eliminado correctamente', 'success');
-      
+
       // La interfaz se actualiza automáticamente en el método eliminarDepartamento
       // No es necesario llamar manualmente a renderizarListaDepartamentos
     }
@@ -2281,11 +2283,11 @@ window.cambiarTipoSalario = () => {
   const tipoSalario = document.getElementById('tipoSalarioEmpleado').value;
   const camposFijo = document.getElementById('camposSalarioFijo');
   const camposHoras = document.getElementById('camposSalarioHoras');
-
+  
   // Ocultar todos los campos primero
   if (camposFijo) camposFijo.style.display = 'none';
   if (camposHoras) camposHoras.style.display = 'none';
-
+  
   // Mostrar campos según el tipo seleccionado
   if (tipoSalario === 'fijo') {
     if (camposFijo) camposFijo.style.display = 'grid';
@@ -2294,98 +2296,49 @@ window.cambiarTipoSalario = () => {
   }
 };
 
-// Funciones para generar reportes
-window.generarReporteGeneral = () => {
-  try {
-    const periodo = document.getElementById('reporteGeneralPeriodo').value;
-    const graficos = document.getElementById('reporteGraficos').checked;
-    const comparativas = document.getElementById('reporteComparativas').checked;
-    const proyecciones = document.getElementById('reporteProyecciones').checked;
-
-    let mensaje = `Generando reporte general para ${periodo}`;
-    if (graficos) mensaje += ' con gráficos de tendencia';
-    if (comparativas) mensaje += ', comparativas';
-    if (proyecciones) mensaje += ', proyecciones';
-
-    window.mostrarNotificacion(mensaje, 'success');
-    window.cerrarModalReporteGeneral();
-
-    // Aquí iría la lógica real de generación del reporte
-    console.log('📊 Generando reporte general con configuración:', { periodo, graficos, comparativas, proyecciones });
-  } catch (error) {
-    console.error('❌ Error al generar reporte general:', error);
-    window.mostrarNotificacion('Error al generar reporte', 'error');
+// Función para formatear números mientras se escribe
+window.formatearSalario = (input) => {
+  // Obtener solo los números
+  let valor = input.value.replace(/[^\d]/g, '');
+  
+  // Formatear con separadores de miles
+  if (valor.length > 0) {
+    valor = parseInt(valor).toLocaleString('es-CO');
   }
+  
+  input.value = valor;
 };
 
-window.generarReporteEmpleado = () => {
-  try {
-    const empleadoId = document.getElementById('reporteEmpleadoSelect').value;
-    const periodo = document.getElementById('reporteEmpleadoPeriodo').value;
-    const horasTrabajadas = document.getElementById('reporteHorasTrabajadas').checked;
-    const salarios = document.getElementById('reporteSalarios').checked;
-    const rendimiento = document.getElementById('reporteRendimiento').checked;
-    const comparativas = document.getElementById('reporteComparativas').checked;
+// Función para limpiar formato al enviar
+window.limpiarFormatoSalario = (input) => {
+  return input.value.replace(/[^\d]/g, '');
+};
 
-    if (!empleadoId) {
-      window.mostrarNotificacion('Por favor seleccione un empleado', 'warning');
-      return;
+// Configurar formateo automático para campos de salario
+document.addEventListener('DOMContentLoaded', () => {
+  const camposSalario = [
+    'salarioFijoEmpleado',
+    'bonificacionesEmpleado',
+    'salarioReferenciaEmpleado'
+  ];
+  
+  camposSalario.forEach(id => {
+    const campo = document.getElementById(id);
+    if (campo) {
+      // Formatear mientras se escribe
+      campo.addEventListener('input', (e) => {
+        formatearSalario(e.target);
+      });
+      
+      // Formatear al perder el foco
+      campo.addEventListener('blur', (e) => {
+        formatearSalario(e.target);
+      });
+      
+      // Limpiar formato al obtener el foco
+      campo.addEventListener('focus', (e) => {
+        e.target.value = e.target.value.replace(/[^\d]/g, '');
+      });
     }
-
-    const empleado = window.gestionPersonal.empleados.find((emp) => emp.id === empleadoId);
-    let mensaje = `Generando reporte para ${empleado.nombre} (${periodo})`;
-    if (horasTrabajadas) mensaje += ' con horas trabajadas';
-    if (salarios) mensaje += ', cálculo de salarios';
-    if (rendimiento) mensaje += ', rendimiento';
-    if (comparativas) mensaje += ', comparativas';
-
-    window.mostrarNotificacion(mensaje, 'success');
-    window.cerrarModalReporteEmpleado();
-
-    // Aquí iría la lógica real de generación del reporte
-    console.log('📊 Generando reporte de empleado:', {
-      empleadoId,
-      periodo,
-      horasTrabajadas,
-      salarios,
-      rendimiento,
-      comparativas,
-    });
-  } catch (error) {
-    console.error('❌ Error al generar reporte de empleado:', error);
-    window.mostrarNotificacion('Error al generar reporte', 'error');
-  }
-};
-
-window.generarReporteDepartamento = () => {
-  try {
-    const departamento = document.getElementById('reporteDepartamentoSelect').value;
-    const periodo = document.getElementById('reporteDepartamentoPeriodo').value;
-    const productividad = document.getElementById('reporteProductividad').checked;
-    const costos = document.getElementById('reporteCostos').checked;
-    const eficiencia = document.getElementById('reporteEficiencia').checked;
-    const comparativas = document.getElementById('reporteComparativas').checked;
-
-    let mensaje = `Generando reporte de departamento ${departamento || 'todos'} (${periodo})`;
-    if (productividad) mensaje += ' con métricas de productividad';
-    if (costos) mensaje += ', costos laborales';
-    if (eficiencia) mensaje += ', eficiencia';
-    if (comparativas) mensaje += ', comparativas';
-
-    window.mostrarNotificacion(mensaje, 'success');
-    window.cerrarModalReporteDepartamento();
-
-    // Aquí iría la lógica real de generación del reporte
-    console.log('📊 Generando reporte de departamento:', {
-      departamento,
-      periodo,
-      productividad,
-      costos,
-      eficiencia,
-      comparativas,
-    });
-  } catch (error) {
-    console.error('❌ Error al generar reporte de departamento:', error);
-    window.mostrarNotificacion('Error al generar reporte', 'error');
-  }
-};
+  });
+});
