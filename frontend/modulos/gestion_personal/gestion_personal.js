@@ -810,8 +810,8 @@ class GestionPersonalManager {
       // Implementar exportación a Excel
       this.mostrarNotificacion('Exportación a Excel implementada', 'success');
     } catch (error) {
-      console.error('❌ Error al exportar nómina:', error);
-      this.mostrarNotificacion('Error al exportar nómina', 'error');
+      console.error('❌ Error al exportar nóminas a Excel:', error);
+      this.mostrarNotificacion('Error al exportar nóminas a Excel', 'error');
     }
   }
 
@@ -996,26 +996,32 @@ class GestionPersonalManager {
   async eliminarDepartamento(departamentoId) {
     try {
       // Verificar si hay empleados en este departamento
-      const empleadosEnDepartamento = this.empleados.filter(
-        (emp) => emp.departamento === this.departamentos.find((dep) => dep.id === departamentoId)?.nombre
-      );
+      const departamento = this.departamentos.find(dep => dep.id === departamentoId);
+      if (!departamento) {
+        throw new Error('Departamento no encontrado');
+      }
 
+      const empleadosEnDepartamento = this.empleados.filter(emp => emp.departamento === departamento.nombre);
+      
       if (empleadosEnDepartamento.length > 0) {
-        throw new Error(
-          `No se puede eliminar el departamento porque tiene ${empleadosEnDepartamento.length} empleado(s) asignado(s)`
-        );
+        throw new Error(`No se puede eliminar el departamento "${departamento.nombre}" porque tiene ${empleadosEnDepartamento.length} empleado(s) asignado(s)`);
       }
 
       // Eliminar departamento
-      this.departamentos = this.departamentos.filter((dep) => dep.id !== departamentoId);
-
+      this.departamentos = this.departamentos.filter(dep => dep.id !== departamentoId);
+      
       if (this.firebaseSyncManager) {
         await this.firebaseSyncManager.syncDepartamentos(this.departamentos);
       } else {
         localStorage.setItem('departamentos', JSON.stringify(this.departamentos));
       }
-
-      console.log('✅ Departamento eliminado:', departamentoId);
+      
+      console.log('✅ Departamento eliminado correctamente:', departamento.nombre);
+      
+      // Actualizar la interfaz inmediatamente
+      this.renderizarListaDepartamentos();
+      
+      return true;
     } catch (error) {
       console.error('❌ Error al eliminar departamento:', error);
       throw error;
@@ -1286,53 +1292,57 @@ class GestionPersonalManager {
   actualizarEstadisticas() {
     try {
       const totalEmpleados = this.empleados.length;
-      const empleadosActivos = this.empleados.filter(emp => emp.estado === 'activo').length;
-      
+      const empleadosActivos = this.empleados.filter((emp) => emp.estado === 'activo').length;
+
       // Calcular total de horas del mes actual
       const mesActual = new Date().getMonth();
       const anioActual = new Date().getFullYear();
-      const horasMes = this.horas.filter(hora => {
-        const fechaHora = new Date(hora.fecha);
-        return fechaHora.getMonth() === mesActual && fechaHora.getFullYear() === anioActual;
-      }).reduce((total, hora) => {
-        return total + this.calcularTotalHoras(hora);
-      }, 0);
-      
+      const horasMes = this.horas
+        .filter((hora) => {
+          const fechaHora = new Date(hora.fecha);
+          return fechaHora.getMonth() === mesActual && fechaHora.getFullYear() === anioActual;
+        })
+        .reduce((total, hora) => {
+          return total + this.calcularTotalHoras(hora);
+        }, 0);
+
       // Calcular total de pagos según tipo de salario
       let totalPagos = 0;
       let promedioSalario = 0;
-      
-      this.empleados.forEach(empleado => {
+
+      this.empleados.forEach((empleado) => {
         if (empleado.estado === 'activo') {
           if (empleado.tipoSalario === 'fijo') {
             // Salario fijo mensual
             totalPagos += empleado.salarioTotal || empleado.salarioFijo || 0;
           } else if (empleado.tipoSalario === 'por_horas') {
             // Calcular salario por horas trabajadas en el mes
-            const horasEmpleado = this.horas.filter(hora => {
+            const horasEmpleado = this.horas.filter((hora) => {
               const fechaHora = new Date(hora.fecha);
-              return fechaHora.getMonth() === mesActual && 
-                     fechaHora.getFullYear() === anioActual && 
-                     hora.empleadoId === empleado.id;
+              return (
+                fechaHora.getMonth() === mesActual &&
+                fechaHora.getFullYear() === anioActual &&
+                hora.empleadoId === empleado.id
+              );
             });
-            
+
             const salarioEmpleado = this.calcularSalarioPorHoras(empleado, horasEmpleado);
             totalPagos += salarioEmpleado;
           }
         }
       });
-      
+
       // Calcular promedio de salario
       if (empleadosActivos > 0) {
         promedioSalario = totalPagos / empleadosActivos;
       }
-      
+
       // Calcular promedio de horas
       const promedioHoras = empleadosActivos > 0 ? horasMes / empleadosActivos : 0;
-      
+
       // Calcular días trabajados (aproximado)
       const diasTrabajados = Math.ceil(horasMes / 8); // Asumiendo 8 horas por día
-      
+
       // Actualizar elementos en el DOM
       const elementos = {
         totalEmpleados: totalEmpleados,
@@ -1342,16 +1352,16 @@ class GestionPersonalManager {
         promedioHoras: promedioHoras.toFixed(1),
         promedioSalario: this.formatearMoneda(promedioSalario),
         empleadosActivos: empleadosActivos,
-        diasTrabajados: diasTrabajados
+        diasTrabajados: diasTrabajados,
       };
-      
+
       Object.entries(elementos).forEach(([id, valor]) => {
         const elemento = document.getElementById(id);
         if (elemento) {
           elemento.textContent = valor;
         }
       });
-      
+
       console.log('✅ Estadísticas actualizadas:', elementos);
     } catch (error) {
       console.error('❌ Error al actualizar estadísticas:', error);
@@ -1360,7 +1370,7 @@ class GestionPersonalManager {
 
   calcularTotalHoras(registroHoras) {
     let total = 0;
-    Object.keys(registroHoras).forEach(key => {
+    Object.keys(registroHoras).forEach((key) => {
       if (key.startsWith('horas_') && typeof registroHoras[key] === 'number') {
         total += registroHoras[key];
       }
@@ -1370,28 +1380,28 @@ class GestionPersonalManager {
 
   calcularSalarioPorHoras(empleado, horasRegistradas) {
     let salarioTotal = 0;
-    
-    horasRegistradas.forEach(registro => {
+
+    horasRegistradas.forEach((registro) => {
       // Horas ordinarias
       if (registro.horas_ordinarias) {
         salarioTotal += registro.horas_ordinarias * empleado.valorHoraOrdinaria;
       }
-      
+
       // Horas extra diurnas
       if (registro.horas_hora_extra_diurna) {
         salarioTotal += registro.horas_hora_extra_diurna * empleado.valorHoraExtraDiurna;
       }
-      
+
       // Recargos nocturnos
       if (registro.horas_recargo_nocturno) {
         salarioTotal += registro.horas_recargo_nocturno * (empleado.valorHoraOrdinaria * 1.35);
       }
-      
+
       // Recargos dominicales
       if (registro.horas_recargo_diurno_dominical) {
         salarioTotal += registro.horas_recargo_diurno_dominical * (empleado.valorHoraOrdinaria * 1.75);
       }
-      
+
       // Otras horas especiales (se pueden agregar más según necesidad)
       const otrasHoras = [
         'horas_recargo_nocturno_dominical',
@@ -1399,22 +1409,22 @@ class GestionPersonalManager {
         'horas_hora_diurna_dominical_o_festivo',
         'horas_hora_extra_diurna_dominical_o_festivo',
         'horas_hora_nocturna_dominical_o_festivo',
-        'horas_hora_extra_nocturna_dominical_o_festivo'
+        'horas_hora_extra_nocturna_dominical_o_festivo',
       ];
-      
-      otrasHoras.forEach(tipoHora => {
+
+      otrasHoras.forEach((tipoHora) => {
         if (registro[tipoHora]) {
           // Multiplicadores según tipo de hora
           let multiplicador = 1;
           if (tipoHora.includes('extra')) multiplicador *= 1.25;
           if (tipoHora.includes('nocturna')) multiplicador *= 1.35;
           if (tipoHora.includes('dominical') || tipoHora.includes('festivo')) multiplicador *= 1.75;
-          
+
           salarioTotal += registro[tipoHora] * (empleado.valorHoraOrdinaria * multiplicador);
         }
       });
     });
-    
+
     return salarioTotal;
   }
 
@@ -1423,14 +1433,14 @@ class GestionPersonalManager {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(valor);
   }
 
   calcularNominasGeneradas() {
     // Aquí se podría implementar la lógica para contar nóminas generadas
     // Por ahora retornamos un valor de ejemplo
-    return this.empleados.filter(emp => emp.estado === 'activo').length;
+    return this.empleados.filter((emp) => emp.estado === 'activo').length;
   }
 
   // ===== MÉTODOS DE NÓMINA =====
@@ -1507,22 +1517,26 @@ class GestionPersonalManager {
 
   renderizarListaDepartamentos() {
     const container = document.getElementById('listaDepartamentos');
+    const mensajeNoData = document.getElementById('mensajeNoDepartamentos');
+    
     if (!container) return;
 
     container.innerHTML = '';
 
     if (this.departamentos.length === 0) {
-      container.innerHTML = '<p class="no-data">No hay departamentos registrados</p>';
+      if (mensajeNoData) mensajeNoData.style.display = 'block';
       return;
     }
 
-    this.departamentos.forEach((departamento) => {
+    if (mensajeNoData) mensajeNoData.style.display = 'none';
+
+    this.departamentos.forEach(departamento => {
       const departamentoElement = document.createElement('div');
       departamentoElement.className = 'departamento-item';
       departamentoElement.innerHTML = `
           <div class="departamento-header">
               <div class="departamento-color" style="background-color: ${departamento.color}"></div>
-              <div class="departamento-nombre">${departamento.nombre}</div>
+              <div class="departamento-nombre">${departamento.nombre || 'Sin nombre'}</div>
           </div>
           <div class="departamento-descripcion">${departamento.descripcion || 'Sin descripción'}</div>
           <div class="departamento-actions">
@@ -1919,6 +1933,26 @@ window.mostrarModalDepartamento = () => {
   if (modal) {
     // Renderizar lista de departamentos existentes
     window.gestionPersonal.renderizarListaDepartamentos();
+    
+    // Configurar color picker
+    const colorInput = document.getElementById('colorDepartamento');
+    const colorPreview = document.getElementById('colorPreview');
+    
+    if (colorInput && colorPreview) {
+      // Establecer color inicial
+      colorPreview.style.backgroundColor = colorInput.value;
+      
+      // Actualizar preview cuando cambie el color
+      colorInput.addEventListener('input', (e) => {
+        colorPreview.style.backgroundColor = e.target.value;
+      });
+      
+      // Hacer clic en preview para abrir color picker
+      colorPreview.addEventListener('click', () => {
+        colorInput.click();
+      });
+    }
+    
     modal.style.display = 'block';
   }
 };
@@ -1977,9 +2011,9 @@ window.guardarEmpleado = async () => {
         return;
       }
     } else if (tipoSalario === 'por_horas') {
-      const valorHora = document.getElementById('valorHoraOrdinaria').value;
-      if (!valorHora || parseFloat(valorHora) <= 0) {
-        window.mostrarNotificacion('Por favor ingrese un valor por hora válido', 'warning');
+      const salarioReferencia = document.getElementById('salarioReferenciaEmpleado').value;
+      if (!salarioReferencia || parseFloat(salarioReferencia) <= 0) {
+        window.mostrarNotificacion('Por favor ingrese un salario de referencia válido', 'warning');
         return;
       }
     }
@@ -2001,10 +2035,11 @@ window.guardarEmpleado = async () => {
       empleado.salarioFijo = parseFloat(document.getElementById('salarioFijoEmpleado').value);
       empleado.bonificaciones = parseFloat(document.getElementById('bonificacionesEmpleado').value) || 0;
       empleado.salarioTotal = empleado.salarioFijo + empleado.bonificaciones;
+      empleado.salarioBase = empleado.salarioTotal;
     } else if (tipoSalario === 'por_horas') {
-      empleado.valorHoraOrdinaria = parseFloat(document.getElementById('valorHoraOrdinaria').value);
-      empleado.valorHoraExtraDiurna = parseFloat(document.getElementById('valorHoraExtraDiurna').value) || empleado.valorHoraOrdinaria * 1.25;
-      empleado.salarioBase = 0; // Se calculará por horas trabajadas
+      empleado.salarioReferencia = parseFloat(document.getElementById('salarioReferenciaEmpleado').value);
+      empleado.salarioBase = empleado.salarioReferencia;
+      // Los valores por hora se configuran en el gestor de horas, no aquí
     }
 
     // Validar cédula única
@@ -2120,14 +2155,13 @@ window.eliminarDepartamento = async (departamentoId) => {
     if (confirm('¿Está seguro de que desea eliminar este departamento? Esta acción no se puede deshacer.')) {
       await window.gestionPersonal.eliminarDepartamento(departamentoId);
       window.mostrarNotificacion('Departamento eliminado correctamente', 'success');
-
-      // Actualizar lista y selectores
-      window.gestionPersonal.renderizarListaDepartamentos();
-      window.gestionPersonal.llenarSelectorDepartamentos();
+      
+      // La interfaz se actualiza automáticamente en el método eliminarDepartamento
+      // No es necesario llamar manualmente a renderizarListaDepartamentos
     }
   } catch (error) {
     console.error('❌ Error al eliminar departamento:', error);
-    window.mostrarNotificacion('Error al eliminar departamento', 'error');
+    window.mostrarNotificacion(error.message || 'Error al eliminar departamento', 'error');
   }
 };
 
@@ -2138,7 +2172,7 @@ window.mostrarModalReporteGeneral = () => {
     // Configurar evento para fechas personalizadas
     const periodoSelect = document.getElementById('reporteGeneralPeriodo');
     const fechasPersonalizadas = document.getElementById('fechasReporteGeneral');
-    
+
     if (periodoSelect && fechasPersonalizadas) {
       periodoSelect.addEventListener('change', () => {
         if (periodoSelect.value === 'personalizado') {
@@ -2148,7 +2182,7 @@ window.mostrarModalReporteGeneral = () => {
         }
       });
     }
-    
+
     modal.style.display = 'block';
   }
 };
@@ -2167,18 +2201,20 @@ window.mostrarModalReporteEmpleado = () => {
     const selectorEmpleado = document.getElementById('reporteEmpleadoSelect');
     if (selectorEmpleado) {
       selectorEmpleado.innerHTML = '<option value="">Seleccionar empleado</option>';
-      window.gestionPersonal.empleados.filter(emp => emp.estado === 'activo').forEach(empleado => {
-        const option = document.createElement('option');
-        option.value = empleado.id;
-        option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
-        selectorEmpleado.appendChild(option);
-      });
+      window.gestionPersonal.empleados
+        .filter((emp) => emp.estado === 'activo')
+        .forEach((empleado) => {
+          const option = document.createElement('option');
+          option.value = empleado.id;
+          option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
+          selectorEmpleado.appendChild(option);
+        });
     }
-    
+
     // Configurar evento para fechas personalizadas
     const periodoSelect = document.getElementById('reporteEmpleadoPeriodo');
     const fechasPersonalizadas = document.getElementById('fechasReporteEmpleado');
-    
+
     if (periodoSelect && fechasPersonalizadas) {
       periodoSelect.addEventListener('change', () => {
         if (periodoSelect.value === 'personalizado') {
@@ -2188,7 +2224,7 @@ window.mostrarModalReporteEmpleado = () => {
         }
       });
     }
-    
+
     modal.style.display = 'block';
   }
 };
@@ -2207,18 +2243,18 @@ window.mostrarModalReporteDepartamento = () => {
     const selectorDepartamento = document.getElementById('reporteDepartamentoSelect');
     if (selectorDepartamento) {
       selectorDepartamento.innerHTML = '<option value="">Todos los Departamentos</option>';
-      window.gestionPersonal.departamentos.forEach(departamento => {
+      window.gestionPersonal.departamentos.forEach((departamento) => {
         const option = document.createElement('option');
         option.value = departamento.nombre;
         option.textContent = departamento.nombre;
         selectorDepartamento.appendChild(option);
       });
     }
-    
+
     // Configurar evento para fechas personalizadas
     const periodoSelect = document.getElementById('reporteDepartamentoPeriodo');
     const fechasPersonalizadas = document.getElementById('fechasReporteDepartamento');
-    
+
     if (periodoSelect && fechasPersonalizadas) {
       periodoSelect.addEventListener('change', () => {
         if (periodoSelect.value === 'personalizado') {
@@ -2228,7 +2264,7 @@ window.mostrarModalReporteDepartamento = () => {
         }
       });
     }
-    
+
     modal.style.display = 'block';
   }
 };
@@ -2245,11 +2281,11 @@ window.cambiarTipoSalario = () => {
   const tipoSalario = document.getElementById('tipoSalarioEmpleado').value;
   const camposFijo = document.getElementById('camposSalarioFijo');
   const camposHoras = document.getElementById('camposSalarioHoras');
-  
+
   // Ocultar todos los campos primero
   if (camposFijo) camposFijo.style.display = 'none';
   if (camposHoras) camposHoras.style.display = 'none';
-  
+
   // Mostrar campos según el tipo seleccionado
   if (tipoSalario === 'fijo') {
     if (camposFijo) camposFijo.style.display = 'grid';
@@ -2265,18 +2301,17 @@ window.generarReporteGeneral = () => {
     const graficos = document.getElementById('reporteGraficos').checked;
     const comparativas = document.getElementById('reporteComparativas').checked;
     const proyecciones = document.getElementById('reporteProyecciones').checked;
-    
+
     let mensaje = `Generando reporte general para ${periodo}`;
     if (graficos) mensaje += ' con gráficos de tendencia';
     if (comparativas) mensaje += ', comparativas';
     if (proyecciones) mensaje += ', proyecciones';
-    
+
     window.mostrarNotificacion(mensaje, 'success');
     window.cerrarModalReporteGeneral();
-    
+
     // Aquí iría la lógica real de generación del reporte
     console.log('📊 Generando reporte general con configuración:', { periodo, graficos, comparativas, proyecciones });
-    
   } catch (error) {
     console.error('❌ Error al generar reporte general:', error);
     window.mostrarNotificacion('Error al generar reporte', 'error');
@@ -2291,25 +2326,31 @@ window.generarReporteEmpleado = () => {
     const salarios = document.getElementById('reporteSalarios').checked;
     const rendimiento = document.getElementById('reporteRendimiento').checked;
     const comparativas = document.getElementById('reporteComparativas').checked;
-    
+
     if (!empleadoId) {
       window.mostrarNotificacion('Por favor seleccione un empleado', 'warning');
       return;
     }
-    
-    const empleado = window.gestionPersonal.empleados.find(emp => emp.id === empleadoId);
+
+    const empleado = window.gestionPersonal.empleados.find((emp) => emp.id === empleadoId);
     let mensaje = `Generando reporte para ${empleado.nombre} (${periodo})`;
     if (horasTrabajadas) mensaje += ' con horas trabajadas';
     if (salarios) mensaje += ', cálculo de salarios';
     if (rendimiento) mensaje += ', rendimiento';
     if (comparativas) mensaje += ', comparativas';
-    
+
     window.mostrarNotificacion(mensaje, 'success');
     window.cerrarModalReporteEmpleado();
-    
+
     // Aquí iría la lógica real de generación del reporte
-    console.log('📊 Generando reporte de empleado:', { empleadoId, periodo, horasTrabajadas, salarios, rendimiento, comparativas });
-    
+    console.log('📊 Generando reporte de empleado:', {
+      empleadoId,
+      periodo,
+      horasTrabajadas,
+      salarios,
+      rendimiento,
+      comparativas,
+    });
   } catch (error) {
     console.error('❌ Error al generar reporte de empleado:', error);
     window.mostrarNotificacion('Error al generar reporte', 'error');
@@ -2324,19 +2365,25 @@ window.generarReporteDepartamento = () => {
     const costos = document.getElementById('reporteCostos').checked;
     const eficiencia = document.getElementById('reporteEficiencia').checked;
     const comparativas = document.getElementById('reporteComparativas').checked;
-    
+
     let mensaje = `Generando reporte de departamento ${departamento || 'todos'} (${periodo})`;
     if (productividad) mensaje += ' con métricas de productividad';
     if (costos) mensaje += ', costos laborales';
     if (eficiencia) mensaje += ', eficiencia';
     if (comparativas) mensaje += ', comparativas';
-    
+
     window.mostrarNotificacion(mensaje, 'success');
     window.cerrarModalReporteDepartamento();
-    
+
     // Aquí iría la lógica real de generación del reporte
-    console.log('📊 Generando reporte de departamento:', { departamento, periodo, productividad, costos, eficiencia, comparativas });
-    
+    console.log('📊 Generando reporte de departamento:', {
+      departamento,
+      periodo,
+      productividad,
+      costos,
+      eficiencia,
+      comparativas,
+    });
   } catch (error) {
     console.error('❌ Error al generar reporte de departamento:', error);
     window.mostrarNotificacion('Error al generar reporte', 'error');

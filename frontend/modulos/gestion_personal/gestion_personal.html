@@ -815,12 +815,9 @@
             <!-- Campos para Salario por Horas -->
             <div id="camposSalarioHoras" class="form-row" style="display: none;">
               <div class="form-group">
-                <label>Valor Hora Ordinaria *</label>
-                <input type="number" id="valorHoraOrdinaria" min="0" step="100" placeholder="Valor por hora normal">
-              </div>
-              <div class="form-group">
-                <label>Valor Hora Extra Diurna</label>
-                <input type="number" id="valorHoraExtraDiurna" min="0" step="100" placeholder="Valor por hora extra diurna">
+                <label>Salario Base Mensual (Referencia)</label>
+                <input type="number" id="salarioReferenciaEmpleado" min="0" step="1000" placeholder="Salario base de referencia">
+                <small class="form-help">Este valor se usará como referencia para cálculos. Los valores por hora se configuran en el gestor de horas.</small>
               </div>
             </div>
             
@@ -861,27 +858,38 @@
         </div>
         <div class="modal-body">
           <div class="departamentos-lista">
-            <h4>Departamentos Existentes</h4>
+            <h4><i class="fas fa-list"></i> Departamentos Existentes</h4>
             <div id="listaDepartamentos" class="departamentos-grid">
               <!-- Se llena dinámicamente -->
             </div>
+            <div id="mensajeNoDepartamentos" class="no-data" style="display: none;">
+              <i class="fas fa-info-circle"></i>
+              <p>No hay departamentos registrados. Agrega el primero para comenzar.</p>
+            </div>
           </div>
+          
           <div class="departamento-nuevo">
-            <h4>Agregar Nuevo Departamento</h4>
+            <h4><i class="fas fa-plus-circle"></i> Agregar Nuevo Departamento</h4>
             <form id="formDepartamento" class="departamento-form">
               <div class="form-row">
                 <div class="form-group">
                   <label>Nombre del Departamento *</label>
-                  <input type="text" id="nombreDepartamento" required placeholder="Ingrese el nombre">
+                  <input type="text" id="nombreDepartamento" required placeholder="Ej: Tecnología, Ventas, Recursos Humanos">
+                  <small class="form-help">Ingrese un nombre descriptivo y único para el departamento</small>
                 </div>
                 <div class="form-group">
                   <label>Color de Identificación</label>
-                  <input type="color" id="colorDepartamento" value="#4f81bd">
+                  <div class="color-picker-container">
+                    <input type="color" id="colorDepartamento" value="#4f81bd">
+                    <span class="color-preview" id="colorPreview"></span>
+                  </div>
+                  <small class="form-help">Seleccione un color para identificar visualmente el departamento</small>
                 </div>
               </div>
               <div class="form-group">
                 <label>Descripción</label>
-                <textarea id="descripcionDepartamento" rows="3" placeholder="Descripción del departamento"></textarea>
+                <textarea id="descripcionDepartamento" rows="3" placeholder="Describa las funciones y responsabilidades del departamento"></textarea>
+                <small class="form-help">Opcional: Agregue una descripción detallada del departamento</small>
               </div>
             </form>
           </div>
