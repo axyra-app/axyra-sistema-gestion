@@ -413,29 +413,73 @@
                                 </div>
                             </div>
                             
+                            <!-- 1. Horas Ordinarias -->
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">Horas Ordinarias</label>
-                                    <input type="number" class="form-input" id="horasOrdinarias" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" id="valorHoraOrdinaria">Valor: $0</div>
+                                    <input type="number" class="form-input" id="horas_ordinarias" name="horas_ordinarias" min="0" step="0.5" value="0">
+                                    <div class="valor-hora" data-tipo-hora="ordinarias">Valor: $0</div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Horas Nocturnas</label>
-                                    <input type="number" class="form-input" id="horasNocturnas" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" id="valorHoraNocturna">Valor: $0</div>
+                                    <label class="form-label">Recargo Nocturno</label>
+                                    <input type="number" class="form-input" id="horas_recargo_nocturno" name="horas_recargo_nocturno" min="0" step="0.5" value="0">
+                                    <div class="valor-hora" data-tipo-hora="recargo_nocturno">Valor: $0</div>
                                 </div>
                             </div>
                             
+                            <!-- 2. Recargos Dominicales -->
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">Horas Extra Diurnas</label>
-                                    <input type="number" class="form-input" id="horasExtraDiurnas" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" id="valorHoraExtraDiurna">Valor: $0</div>
+                                    <label class="form-label">Recargo Diurno Dominical</label>
+                                    <input type="number" class="form-input" id="horas_recargo_diurno_dominical" name="horas_recargo_diurno_dominical" min="0" step="0.5" value="0">
+                                    <div class="valor-hora" data-tipo-hora="recargo_diurno_dominical">Valor: $0</div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Horas Extra Nocturnas</label>
-                                    <input type="number" class="form-input" id="horasExtraNocturnas" min="0" step="0.5" value="0">
-                                    <div class="valor-hora" id="valorHoraExtraNocturna">Valor: $0</div>
+                                    <label class="form-label">Recargo Nocturno Dominical</label>
+                                    <input type="number" class="form-input" id="horas_recargo_nocturno_dominical" name="horas_recargo_nocturno_dominical" min="0" step="0.5" value="0">
+                                    <div class="valor-hora" data-tipo-hora="recargo_nocturno_dominical">Valor: $0</div>
+                                </div>
+                            </div>
+                            
+                            <!-- 3. Horas Extra -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Hora Extra Diurna</label>
+                                    <input type="number" class="form-input" id="horas_hora_extra_diurna" name="horas_hora_extra_diurna" min="0" step="0.5" value="0">
+                                    <div class="valor-hora" data-tipo-hora="hora_extra_diurna">Valor: $0</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Hora Extra Nocturna</label>
+                                    <input type="number" class="form-input" id="horas_hora_extra_nocturna" name="horas_hora_extra_nocturna" min="0" step="0.5" value="0">
+                                    <div class="valor-hora" data-tipo-hora="hora_extra_nocturna">Valor: $0</div>
+                                </div>
+                            </div>
+                            
+                            <!-- 4. Horas Dominicales/Festivos -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Hora Diurna Dominical/Festivo</label>
+                                    <input type="number" class="form-input" id="horas_hora_diurna_dominical_o_festivo" name="horas_hora_diurna_dominical_o_festivo" min="0" step="0.5" value="0">
+                                    <div class="valor-hora" data-tipo-hora="hora_diurna_dominical_o_festivo">Valor: $0</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Hora Extra Diurna Dominical/Festivo</label>
+                                    <input type="number" class="form-input" id="horas_hora_extra_diurna_dominical_o_festivo" name="horas_hora_extra_diurna_dominical_o_festivo" min="0" step="0.5" value="0">
+                                    <div class="valor-hora" data-tipo-hora="hora_extra_diurna_dominical_o_festivo">Valor: $0</div>
+                                </div>
+                            </div>
+                            
+                            <!-- 5. Horas Nocturnas Dominicales/Festivos -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Hora Nocturna Dominical/Festivo</label>
+                                    <input type="number" class="form-input" id="horas_hora_nocturna_dominical_o_festivo" name="horas_hora_nocturna_dominical_o_festivo" min="0" step="0.5" value="0">
+                                    <div class="valor-hora" data-tipo-hora="hora_nocturna_dominical_o_festivo">Valor: $0</div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Hora Extra Nocturna Dominical/Festivo</label>
+                                    <input type="number" class="form-input" id="horas_hora_extra_nocturna_dominical_o_festivo" name="horas_hora_extra_nocturna_dominical_o_festivo" min="0" step="0.5" value="0">
+                                    <div class="valor-hora" data-tipo-hora="hora_extra_nocturna_dominical_o_festivo">Valor: $0</div>
                                 </div>
                             </div>
                             
@@ -456,9 +500,16 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Empleado</th>
-                                <th>Horas Ordinarias</th>
-                                <th>Horas Nocturnas</th>
-                                <th>Horas Extra</th>
+                                <th>Ordinarias</th>
+                                <th>Rec. Nocturno</th>
+                                <th>Rec. Diurno Dom.</th>
+                                <th>Rec. Noct. Dom.</th>
+                                <th>Extra Diurna</th>
+                                <th>Extra Nocturna</th>
+                                <th>Dominical</th>
+                                <th>Extra Dominical</th>
+                                <th>Noct. Dominical</th>
+                                <th>Extra Noct. Dom.</th>
                                 <th>Total Horas</th>
                                 <th>Total Pago</th>
                                 <th>Acciones</th>

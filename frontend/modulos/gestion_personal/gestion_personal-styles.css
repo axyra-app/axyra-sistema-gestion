@@ -616,6 +616,68 @@
     font-size: 1.1rem;
 }
 
+/* ===== MODAL DETALLE DE HORAS ===== */
+.detalle-horas-container h4 {
+    color: var(--axyra-primary);
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.3rem;
+}
+
+.detalle-horas-container p {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--axyra-secondary);
+}
+
+.detalle-horas-grid {
+    display: grid;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.detalle-hora-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 15px;
+    align-items: center;
+    padding: 15px;
+    background: var(--axyra-light);
+    border-radius: var(--axyra-radius);
+    border-left: 4px solid var(--axyra-primary);
+}
+
+.detalle-hora-item .tipo-hora {
+    font-weight: 600;
+    color: var(--axyra-dark);
+}
+
+.detalle-hora-item .horas-cantidad {
+    text-align: center;
+    font-weight: 600;
+    color: var(--axyra-primary);
+}
+
+.detalle-hora-item .salario-valor {
+    text-align: right;
+    font-weight: 700;
+    color: var(--axyra-success);
+}
+
+.detalle-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background: var(--axyra-primary-light);
+    border-radius: var(--axyra-radius);
+    border: 2px solid var(--axyra-primary);
+}
+
+.detalle-total strong {
+    color: var(--axyra-primary-dark);
+    font-size: 1.1rem;
+}
+
 /* ===== MODAL NÓMINA ===== */
 .nomina-container h4 {
     color: var(--axyra-primary);

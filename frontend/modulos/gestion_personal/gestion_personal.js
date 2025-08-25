@@ -202,7 +202,7 @@ class GestionPersonalManager {
                 return;
             }
 
-            // Recopilar horas de todos los tipos
+            // Recopilar horas de todos los tipos (10 tipos según ley laboral colombiana)
             const horasData = {};
             let totalHoras = 0;
             
@@ -219,6 +219,8 @@ class GestionPersonalManager {
                     const valor = parseFloat(input.value) || 0;
                     horasData[tipo] = valor;
                     totalHoras += valor;
+                } else {
+                    console.warn(`⚠️ Campo no encontrado para tipo de hora: ${tipo}`);
                 }
             });
 
@@ -826,8 +828,18 @@ class GestionPersonalManager {
                             <tr>
                                 <th>Empleado</th>
                                 <th>Fecha</th>
+                                <th>Ordinarias</th>
+                                <th>Rec. Nocturno</th>
+                                <th>Rec. Diurno Dom.</th>
+                                <th>Rec. Noct. Dom.</th>
+                                <th>Extra Diurna</th>
+                                <th>Extra Nocturna</th>
+                                <th>Dominical</th>
+                                <th>Extra Dominical</th>
+                                <th>Noct. Dominical</th>
+                                <th>Extra Noct. Dom.</th>
                                 <th>Total Horas</th>
-                                <th>Total Salario</th>
+                                <th>Total Pago</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -835,12 +847,23 @@ class GestionPersonalManager {
         `;
 
         this.horas.forEach(registro => {
+            const horas = registro.horas || {};
             html += `
                 <tr>
                     <td>${registro.empleadoNombre}</td>
                     <td>${registro.fecha}</td>
-                    <td>${registro.totalHoras}</td>
-                    <td>$${registro.totalSalario.toLocaleString()}</td>
+                    <td>${horas.ordinarias || 0}</td>
+                    <td>${horas.recargo_nocturno || 0}</td>
+                    <td>${horas.recargo_diurno_dominical || 0}</td>
+                    <td>${horas.recargo_nocturno_dominical || 0}</td>
+                    <td>${horas.hora_extra_diurna || 0}</td>
+                    <td>${horas.hora_extra_nocturna || 0}</td>
+                    <td>${horas.hora_diurna_dominical_o_festivo || 0}</td>
+                    <td>${horas.hora_extra_diurna_dominical_o_festivo || 0}</td>
+                    <td>${horas.hora_nocturna_dominical_o_festivo || 0}</td>
+                    <td>${horas.hora_extra_nocturna_dominical_o_festivo || 0}</td>
+                    <td>${registro.totalHoras || 0}</td>
+                    <td>$${(registro.totalSalario || 0).toLocaleString()}</td>
                     <td>
                         <button class="btn btn-sm btn-outline-info" onclick="gestionPersonal.verDetalleHoras('${registro.id}')">
                             <i class="fas fa-eye"></i>
@@ -958,6 +981,121 @@ class GestionPersonalManager {
         return localStorage.getItem('currentUserId') || 'default';
     }
 
+    verDetalleHoras(registroId) {
+        try {
+            const registro = this.horas.find(h => h.id === registroId);
+            if (!registro) {
+                this.mostrarNotificacion('Registro de horas no encontrado', 'error');
+                return;
+            }
+
+            const horas = registro.horas || {};
+            const salarios = registro.salarios || {};
+
+            let html = `
+                <div class="detalle-horas-container">
+                    <h4>Detalle de Horas - ${registro.empleadoNombre}</h4>
+                    <p><strong>Fecha:</strong> ${registro.fecha}</p>
+                    
+                    <div class="detalle-horas-grid">
+                        <div class="detalle-hora-item">
+                            <span class="tipo-hora">Horas Ordinarias</span>
+                            <span class="horas-cantidad">${horas.ordinarias || 0} hrs</span>
+                            <span class="salario-valor">$${(salarios.ordinarias || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="detalle-hora-item">
+                            <span class="tipo-hora">Recargo Nocturno</span>
+                            <span class="horas-cantidad">${horas.recargo_nocturno || 0} hrs</span>
+                            <span class="salario-valor">$${(salarios.recargo_nocturno || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="detalle-hora-item">
+                            <span class="tipo-hora">Recargo Diurno Dominical</span>
+                            <span class="horas-cantidad">${horas.recargo_diurno_dominical || 0} hrs</span>
+                            <span class="salario-valor">$${(salarios.recargo_diurno_dominical || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="detalle-hora-item">
+                            <span class="tipo-hora">Recargo Nocturno Dominical</span>
+                            <span class="horas-cantidad">${horas.recargo_nocturno_dominical || 0} hrs</span>
+                            <span class="salario-valor">$${(salarios.recargo_nocturno_dominical || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="detalle-hora-item">
+                            <span class="tipo-hora">Hora Extra Diurna</span>
+                            <span class="horas-cantidad">${horas.hora_extra_diurna || 0} hrs</span>
+                            <span class="salario-valor">$${(salarios.hora_extra_diurna || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="detalle-hora-item">
+                            <span class="tipo-hora">Hora Extra Nocturna</span>
+                            <span class="horas-cantidad">${horas.hora_extra_nocturna || 0} hrs</span>
+                            <span class="salario-valor">$${(salarios.hora_extra_nocturna || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="detalle-hora-item">
+                            <span class="tipo-hora">Hora Diurna Dominical/Festivo</span>
+                            <span class="horas-cantidad">${horas.hora_diurna_dominical_o_festivo || 0} hrs</span>
+                            <span class="salario-valor">$${(salarios.hora_diurna_dominical_o_festivo || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="detalle-hora-item">
+                            <span class="tipo-hora">Hora Extra Diurna Dominical/Festivo</span>
+                            <span class="horas-cantidad">${horas.hora_extra_diurna_dominical_o_festivo || 0} hrs</span>
+                            <span class="salario-valor">$${(salarios.hora_extra_diurna_dominical_o_festivo || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="detalle-hora-item">
+                            <span class="tipo-hora">Hora Nocturna Dominical/Festivo</span>
+                            <span class="horas-cantidad">${horas.hora_nocturna_dominical_o_festivo || 0} hrs</span>
+                            <span class="salario-valor">$${(salarios.hora_nocturna_dominical_o_festivo || 0).toLocaleString()}</span>
+                        </div>
+                        <div class="detalle-hora-item">
+                            <span class="tipo-hora">Hora Extra Nocturna Dominical/Festivo</span>
+                            <span class="horas-cantidad">${horas.hora_extra_nocturna_dominical_o_festivo || 0} hrs</span>
+                            <span class="salario-valor">$${(salarios.hora_extra_nocturna_dominical_o_festivo || 0).toLocaleString()}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detalle-total">
+                        <strong>Total Horas: ${registro.totalHoras || 0}</strong>
+                        <strong>Total Salario: $${(registro.totalSalario || 0).toLocaleString()}</strong>
+                    </div>
+                </div>
+            `;
+
+            // Mostrar en modal
+            this.mostrarModalDetalleHoras(html);
+        } catch (error) {
+            console.error('❌ Error al mostrar detalle de horas:', error);
+            this.mostrarNotificacion('Error al mostrar detalle de horas', 'error');
+        }
+    }
+
+    mostrarModalDetalleHoras(html) {
+        // Crear modal dinámicamente si no existe
+        let modal = document.getElementById('modalDetalleHoras');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'modalDetalleHoras';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4>Detalle de Horas</h4>
+                        <button class="modal-close" onclick="gestionPersonal.cerrarModalDetalleHoras()">&times;</button>
+                    </div>
+                    <div class="modal-body"></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        const modalBody = modal.querySelector('.modal-body');
+        modalBody.innerHTML = html;
+        modal.style.display = 'block';
+    }
+
+    cerrarModalDetalleHoras() {
+        const modal = document.getElementById('modalDetalleHoras');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
     actualizarEstadisticas() {
         try {
             const statsContainer = document.getElementById('estadisticasContainer');
@@ -1052,5 +1190,11 @@ window.cerrarModalCalculoHoras = () => {
 window.cerrarModalPrevisualizacion = () => {
     if (window.gestionPersonal) {
         window.gestionPersonal.cerrarModalPrevisualizacion();
+    }
+};
+
+window.cerrarModalDetalleHoras = () => {
+    if (window.gestionPersonal) {
+        window.gestionPersonal.cerrarModalDetalleHoras();
     }
 };
