@@ -8,7 +8,7 @@ class AxyraMembresias {
         this.planes = {
             basico: {
                 nombre: 'Básico',
-                precio: 29900,
+                precio: 59900,
                 caracteristicas: [
                     'Hasta 5 empleados',
                     'Gestión básica de nómina',
@@ -20,7 +20,7 @@ class AxyraMembresias {
             },
             profesional: {
                 nombre: 'Profesional',
-                precio: 59900,
+                precio: 99900,
                 caracteristicas: [
                     'Hasta 25 empleados',
                     'Gestión completa de nómina',
@@ -35,7 +35,7 @@ class AxyraMembresias {
             },
             empresarial: {
                 nombre: 'Empresarial',
-                precio: 99900,
+                precio: 159900,
                 caracteristicas: [
                     'Empleados ilimitados',
                     'Todas las funciones',

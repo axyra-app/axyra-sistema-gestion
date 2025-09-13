@@ -1,0 +1,384 @@
+/* ========================================
+   AXYRA SUBSCRIPTION SYSTEM
+   Sistema de Validación de Suscripciones
+   ======================================== */
+
+class AxyraSubscriptionSystem {
+  constructor() {
+    this.plans = {
+      basico: {
+        nombre: 'Básico',
+        precio: 59900,
+        limiteEmpleados: 5,
+        caracteristicas: [
+          'Hasta 5 empleados',
+          'Gestión básica de nómina',
+          'Inventario simple',
+          'Reportes básicos',
+          'Soporte por email',
+          '5GB de almacenamiento'
+        ],
+        funciones: {
+          empleados: { max: 5, features: ['view', 'create', 'edit'] },
+          nomina: { max: 5, features: ['view', 'create'] },
+          inventario: { features: ['view', 'create'] },
+          reportes: { features: ['view', 'basic'] },
+          cuadreCaja: false,
+          chatIA: false,
+          multiplesSucursales: false,
+          apiPersonalizada: false,
+          reportesPersonalizados: false
+        }
+      },
+      profesional: {
+        nombre: 'Profesional',
+        precio: 99900,
+        limiteEmpleados: 25,
+        caracteristicas: [
+          'Hasta 25 empleados',
+          'Gestión completa de nómina',
+          'Inventario avanzado',
+          'Cuadre de caja',
+          'Reportes avanzados',
+          'Chat de IA incluido',
+          'Soporte prioritario',
+          '50GB de almacenamiento',
+          'Integración con bancos'
+        ],
+        funciones: {
+          empleados: { max: 25, features: ['view', 'create', 'edit', 'delete'] },
+          nomina: { max: 25, features: ['view', 'create', 'edit', 'delete', 'advanced'] },
+          inventario: { features: ['view', 'create', 'edit', 'delete', 'advanced'] },
+          reportes: { features: ['view', 'create', 'advanced', 'export'] },
+          cuadreCaja: true,
+          chatIA: true,
+          multiplesSucursales: false,
+          apiPersonalizada: false,
+          reportesPersonalizados: false
+        }
+      },
+      empresarial: {
+        nombre: 'Empresarial',
+        precio: 159900,
+        limiteEmpleados: -1, // Ilimitado
+        caracteristicas: [
+          'Empleados ilimitados',
+          'Todas las funciones',
+          'Múltiples sucursales',
+          'API personalizada',
+          'Reportes personalizados',
+          'Soporte 24/7',
+          'Almacenamiento ilimitado',
+          'Integraciones avanzadas',
+          'Capacitación incluida'
+        ],
+        funciones: {
+          empleados: { max: -1, features: ['view', 'create', 'edit', 'delete', 'advanced'] },
+          nomina: { max: -1, features: ['view', 'create', 'edit', 'delete', 'advanced', 'custom'] },
+          inventario: { features: ['view', 'create', 'edit', 'delete', 'advanced', 'custom'] },
+          reportes: { features: ['view', 'create', 'advanced', 'export', 'custom', 'scheduled'] },
+          cuadreCaja: true,
+          chatIA: true,
+          multiplesSucursales: true,
+          apiPersonalizada: true,
+          reportesPersonalizados: true
+        }
+      }
+    };
+
+    this.currentUser = null;
+    this.currentSubscription = null;
+    this.trialDays = 7;
+    
+    this.init();
+  }
+
+  init() {
+    console.log('💳 Inicializando Sistema de Suscripciones AXYRA...');
+    this.loadUserSubscription();
+    this.setupEventListeners();
+  }
+
+  setupEventListeners() {
+    // Escuchar cambios en la autenticación
+    document.addEventListener('userAuthenticated', (e) => {
+      this.currentUser = e.detail.user;
+      this.loadUserSubscription();
+    });
+
+    // Escuchar logout
+    document.addEventListener('userLogout', () => {
+      this.currentUser = null;
+      this.currentSubscription = null;
+    });
+  }
+
+  loadUserSubscription() {
+    try {
+      const user = this.getCurrentUser();
+      if (!user) return;
+
+      // Cargar suscripción desde localStorage o Firebase
+      const subscription = localStorage.getItem(`axyra_subscription_${user.uid}`);
+      if (subscription) {
+        this.currentSubscription = JSON.parse(subscription);
+        console.log('✅ Suscripción cargada:', this.currentSubscription);
+      } else {
+        // Usuario sin suscripción - modo gratuito
+        this.currentSubscription = {
+          plan: 'gratuito',
+          estado: 'activo',
+          fechaInicio: new Date().toISOString(),
+          fechaFin: null,
+          trial: true,
+          diasRestantes: this.trialDays
+        };
+        this.saveUserSubscription();
+      }
+
+      this.updateUI();
+    } catch (error) {
+      console.error('❌ Error cargando suscripción:', error);
+    }
+  }
+
+  saveUserSubscription() {
+    try {
+      const user = this.getCurrentUser();
+      if (user && this.currentSubscription) {
+        localStorage.setItem(`axyra_subscription_${user.uid}`, JSON.stringify(this.currentSubscription));
+      }
+    } catch (error) {
+      console.error('❌ Error guardando suscripción:', error);
+    }
+  }
+
+  getCurrentUser() {
+    try {
+      const user = localStorage.getItem('axyra_user');
+      return user ? JSON.parse(user) : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  // Validar si el usuario puede acceder a una función
+  canAccessFeature(feature, action = 'view') {
+    if (!this.currentSubscription) return false;
+
+    const plan = this.plans[this.currentSubscription.plan];
+    if (!plan) return false;
+
+    // Verificar si la suscripción está activa
+    if (!this.isSubscriptionActive()) {
+      this.showUpgradeModal('Tu suscripción ha expirado');
+      return false;
+    }
+
+    // Verificar función específica
+    if (plan.funciones[feature]) {
+      const featureConfig = plan.funciones[feature];
+      
+      if (typeof featureConfig === 'boolean') {
+        return featureConfig;
+      }
+      
+      if (featureConfig.features) {
+        return featureConfig.features.includes(action);
+      }
+    }
+
+    return false;
+  }
+
+  // Verificar límite de empleados
+  canAddEmployee() {
+    if (!this.currentSubscription) return false;
+
+    const plan = this.plans[this.currentSubscription.plan];
+    if (!plan) return false;
+
+    if (plan.limiteEmpleados === -1) return true; // Ilimitado
+
+    // Contar empleados actuales
+    const empleados = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
+    return empleados.length < plan.limiteEmpleados;
+  }
+
+  // Verificar si la suscripción está activa
+  isSubscriptionActive() {
+    if (!this.currentSubscription) return false;
+
+    if (this.currentSubscription.trial) {
+      const diasTranscurridos = this.getDaysSinceStart();
+      return diasTranscurridos <= this.trialDays;
+    }
+
+    if (this.currentSubscription.fechaFin) {
+      return new Date() <= new Date(this.currentSubscription.fechaFin);
+    }
+
+    return this.currentSubscription.estado === 'activo';
+  }
+
+  getDaysSinceStart() {
+    if (!this.currentSubscription || !this.currentSubscription.fechaInicio) return 0;
+    
+    const inicio = new Date(this.currentSubscription.fechaInicio);
+    const ahora = new Date();
+    const diffTime = Math.abs(ahora - inicio);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  // Mostrar modal de upgrade
+  showUpgradeModal(message = 'Esta función requiere una suscripción') {
+    const modal = document.createElement('div');
+    modal.className = 'axyra-modal-overlay';
+    modal.innerHTML = `
+      <div class="axyra-modal axyra-modal-md">
+        <div class="axyra-modal-header">
+          <h3>🔒 Función Premium</h3>
+          <button class="axyra-modal-close" onclick="this.closest('.axyra-modal-overlay').remove()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="axyra-modal-body">
+          <div class="axyra-upgrade-content">
+            <div class="axyra-upgrade-icon">
+              <i class="fas fa-crown"></i>
+            </div>
+            <h4>${message}</h4>
+            <p>Para acceder a esta función, necesitas una suscripción activa.</p>
+            
+            <div class="axyra-plans-preview">
+              <div class="axyra-plan-preview">
+                <h5>Básico - $59.900/mes</h5>
+                <ul>
+                  <li>Hasta 5 empleados</li>
+                  <li>Funciones básicas</li>
+                </ul>
+              </div>
+              <div class="axyra-plan-preview">
+                <h5>Profesional - $99.900/mes</h5>
+                <ul>
+                  <li>Hasta 25 empleados</li>
+                  <li>Todas las funciones</li>
+                </ul>
+              </div>
+              <div class="axyra-plan-preview">
+                <h5>Empresarial - $159.900/mes</h5>
+                <ul>
+                  <li>Empleados ilimitados</li>
+                  <li>Funciones avanzadas</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="axyra-modal-footer">
+          <button class="axyra-btn axyra-btn-primary" onclick="window.location.href='../membresias/membresias.html'">
+            <i class="fas fa-crown"></i> Ver Planes
+          </button>
+          <button class="axyra-btn axyra-btn-secondary" onclick="this.closest('.axyra-modal-overlay').remove()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+  }
+
+  // Activar suscripción manualmente (para administrador)
+  activateSubscription(userId, plan, metodoPago = 'manual') {
+    const subscription = {
+      plan: plan,
+      estado: 'activo',
+      fechaInicio: new Date().toISOString(),
+      fechaFin: this.calculateEndDate(plan),
+      trial: false,
+      metodoPago: metodoPago,
+      activadoPor: 'admin'
+    };
+
+    // Guardar suscripción
+    localStorage.setItem(`axyra_subscription_${userId}`, JSON.stringify(subscription));
+    
+    // Si es el usuario actual, actualizar
+    if (this.currentUser && this.currentUser.uid === userId) {
+      this.currentSubscription = subscription;
+      this.updateUI();
+    }
+
+    console.log('✅ Suscripción activada:', subscription);
+    return subscription;
+  }
+
+  calculateEndDate(plan) {
+    const fechaFin = new Date();
+    fechaFin.setMonth(fechaFin.getMonth() + 1); // 1 mes
+    return fechaFin.toISOString();
+  }
+
+  // Actualizar UI según suscripción
+  updateUI() {
+    // Actualizar indicador de suscripción en header
+    this.updateSubscriptionIndicator();
+    
+    // Mostrar/ocultar funciones según plan
+    this.updateFeatureVisibility();
+  }
+
+  updateSubscriptionIndicator() {
+    const indicator = document.getElementById('subscription-indicator');
+    if (!indicator) return;
+
+    if (this.currentSubscription) {
+      const plan = this.plans[this.currentSubscription.plan];
+      if (plan) {
+        indicator.innerHTML = `
+          <span class="subscription-plan">${plan.nombre}</span>
+          ${this.currentSubscription.trial ? 
+            `<span class="subscription-trial">Prueba (${this.trialDays - this.getDaysSinceStart()} días)</span>` : 
+            '<span class="subscription-active">Activo</span>'
+          }
+        `;
+      }
+    }
+  }
+
+  updateFeatureVisibility() {
+    // Ocultar/mostrar botones según suscripción
+    const premiumButtons = document.querySelectorAll('[data-requires-subscription]');
+    premiumButtons.forEach(button => {
+      const feature = button.dataset.requiresSubscription;
+      const action = button.dataset.action || 'view';
+      
+      if (this.canAccessFeature(feature, action)) {
+        button.style.display = 'block';
+        button.disabled = false;
+      } else {
+        button.style.display = 'none';
+        button.disabled = true;
+      }
+    });
+  }
+
+  // Obtener información de la suscripción actual
+  getSubscriptionInfo() {
+    return {
+      plan: this.currentSubscription?.plan || 'gratuito',
+      planInfo: this.plans[this.currentSubscription?.plan] || null,
+      isActive: this.isSubscriptionActive(),
+      isTrial: this.currentSubscription?.trial || false,
+      daysRemaining: this.currentSubscription?.trial ? 
+        this.trialDays - this.getDaysSinceStart() : null
+    };
+  }
+}
+
+// Inicializar sistema de suscripciones
+window.axyraSubscription = new AxyraSubscriptionSystem();
+
+// Exportar para uso global
+window.AxyraSubscriptionSystem = AxyraSubscriptionSystem;
