@@ -34,7 +34,7 @@ class AxyraDashboard {
 
         // Redirigir al login después de un breve delay
         setTimeout(() => {
-          window.location.href = '../../login.html';
+          window.location.href = '/login.html';
         }, 2000);
       }
     } catch (error) {
@@ -43,7 +43,7 @@ class AxyraDashboard {
 
       // En caso de error, también redirigir al login
       setTimeout(() => {
-        window.location.href = '../../login.html';
+        window.location.href = '/login.html';
       }, 3000);
     }
   }
@@ -1317,7 +1317,7 @@ class AxyraDashboard {
                     <div class="axyra-login-message">
                         <h2>Inicia sesión para continuar</h2>
                         <p>Necesitas autenticarte para acceder al dashboard</p>
-                        <a href="../../login.html" class="axyra-btn axyra-btn-primary">Ir al Login</a>
+                        <a href="/login.html" class="axyra-btn axyra-btn-primary">Ir al Login</a>
                     </div>
                 `;
       }

@@ -76,7 +76,7 @@ class AxyraDashboardInitializer {
     const user = localStorage.getItem('axyra_user');
     if (!user) {
       console.log('⚠️ No hay usuario autenticado, redirigiendo al login...');
-      window.location.href = '../../login.html';
+      window.location.href = '/login.html';
       return;
     }
     
@@ -93,7 +93,7 @@ class AxyraDashboardInitializer {
       
     } catch (error) {
       console.error('❌ Error parseando datos de usuario:', error);
-      window.location.href = '../../login.html';
+      window.location.href = '/login.html';
     }
   }
 

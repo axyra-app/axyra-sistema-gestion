@@ -132,7 +132,7 @@ class AxyraUnifiedAuthSystem {
       
       // Redirigir al login
       if (this.config.autoRedirect) {
-        window.location.href = '../../login.html';
+        window.location.href = '/login.html';
       }
     } catch (error) {
       console.warn('⚠️ Error en logout:', error);
