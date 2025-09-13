@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../static/axyra-styles.css" />
     <link rel="stylesheet" href="../../static/modal-fixes.css" />
     <link rel="stylesheet" href="nomina-styles.css" />
+    <link rel="stylesheet" href="nomina-avanzada-styles.css" />
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -46,6 +47,9 @@
 
     <!-- Verificación del Header Compartido -->
     <script src="../../static/header-verification.js"></script>
+
+    <!-- Sistema Avanzado de Nómina AXYRA -->
+    <script src="nomina-avanzada.js"></script>
 
     <style>
       /* Estilos específicos para el módulo de nómina */
@@ -174,6 +178,44 @@
         margin: 0;
       }
 
+      /* Filtros y Controles */
+      .axyra-filtros-container {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-radius: 16px;
+        padding: 25px;
+        margin: 30px 0;
+        border: 1px solid #e2e8f0;
+      }
+
+      .axyra-filtros-header h3 {
+        color: #1e3a8a;
+        margin: 0 0 20px 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .axyra-filtros-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        align-items: end;
+      }
+
+      .axyra-filtro-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .axyra-filtro-group label {
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.9rem;
+      }
+
       /* Responsive design */
       @media (max-width: 768px) {
         .axyra-actions-bar {
@@ -186,6 +228,10 @@
 
         .axyra-metrics-dashboard {
           grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+
+        .axyra-filtros-content {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -204,20 +250,26 @@
 
         <!-- Botones de Acción -->
         <div class="axyra-actions-bar">
-          <button class="axyra-btn axyra-btn-primary" onclick="mostrarModalGenerarNomina()">
+          <button id="btnGenerarNomina" class="axyra-btn axyra-btn-primary">
             <i class="fas fa-plus"></i> Generar Nómina
           </button>
-          <button class="axyra-btn axyra-btn-secondary" onclick="exportarNominaSimple()">
+          <button id="btnExportarExcel" class="axyra-btn axyra-btn-secondary">
             <i class="fas fa-download"></i> Exportar a Excel
           </button>
-          <button class="axyra-btn axyra-btn-success" onclick="generarPDFSimple()">
+          <button id="btnGenerarPDF" class="axyra-btn axyra-btn-success">
             <i class="fas fa-file-pdf"></i> Generar PDF
           </button>
-          <button class="axyra-btn axyra-btn-warning" onclick="generarReporteSimple()">
-            <i class="fas fa-chart-bar"></i> Reportes
+          <button id="btnReportes" class="axyra-btn axyra-btn-warning">
+            <i class="fas fa-chart-bar"></i> Reportes Avanzados
           </button>
-          <button class="axyra-btn axyra-btn-info" onclick="mostrarConfiguracionSimple()">
+          <button id="btnConfiguracion" class="axyra-btn axyra-btn-info">
             <i class="fas fa-cog"></i> Configuración
+          </button>
+          <button id="btnHistorial" class="axyra-btn axyra-btn-secondary">
+            <i class="fas fa-history"></i> Historial
+          </button>
+          <button id="btnAuditoria" class="axyra-btn axyra-btn-secondary">
+            <i class="fas fa-shield-alt"></i> Auditoría
           </button>
         </div>
 
@@ -280,6 +332,39 @@
             <div class="metric-content">
               <div class="metric-value" id="nominasEsteMes">0</div>
               <div class="metric-label">Nóminas Este Mes</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros y Controles -->
+        <div class="axyra-filtros-container">
+          <div class="axyra-filtros-header">
+            <h3><i class="fas fa-filter"></i> Filtros y Búsqueda</h3>
+          </div>
+          <div class="axyra-filtros-content">
+            <div class="axyra-filtro-group">
+              <label for="filtroEmpleado">Empleado:</label>
+              <select id="filtroEmpleado" class="axyra-form-control">
+                <option value="">Todos los empleados</option>
+              </select>
+            </div>
+            <div class="axyra-filtro-group">
+              <label for="filtroMes">Mes:</label>
+              <input type="month" id="filtroMes" class="axyra-form-control" value="" />
+            </div>
+            <div class="axyra-filtro-group">
+              <label for="filtroEstado">Estado:</label>
+              <select id="filtroEstado" class="axyra-form-control">
+                <option value="">Todos los estados</option>
+                <option value="GENERADA">Generada</option>
+                <option value="PAGADA">Pagada</option>
+                <option value="ANULADA">Anulada</option>
+              </select>
+            </div>
+            <div class="axyra-filtro-group">
+              <button class="axyra-btn axyra-btn-primary" onclick="axyraNomina.aplicarFiltros()">
+                <i class="fas fa-search"></i> Aplicar Filtros
+              </button>
             </div>
           </div>
         </div>

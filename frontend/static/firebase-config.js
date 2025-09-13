@@ -5,25 +5,25 @@
 // Configuración de Firebase para AXYRA
 const firebaseConfig = {
   // 🔑 API Key de Firebase - REEMPLAZAR CON TU CONFIGURACIÓN REAL
-  apiKey: "AIzaSyDZIgISusap5LecwLzdXR9AhqjH3QiASSY",
-  
+  apiKey: 'AIzaSyDZIgISusap5LecwLzdXR9AhqjH3QiASSY',
+
   // 🌐 Dominio de autenticación
-  authDomain: "axyra-32d95.firebaseapp.com",
-  
+  authDomain: 'axyra-32d95.firebaseapp.com',
+
   // 📁 ID del proyecto
-  projectId: "axyra-32d95",
-  
+  projectId: 'axyra-32d95',
+
   // 🗄️ Bucket de almacenamiento
-  storageBucket: "axyra-32d95.firebasestorage.app",
-  
+  storageBucket: 'axyra-32d95.firebasestorage.app',
+
   // 📱 ID del remitente de mensajes
-  messagingSenderId: "105198865804",
-  
+  messagingSenderId: '105198865804',
+
   // 🆔 ID de la aplicación
-  appId: "1:105198865804:web:2656885e240ad6a4bedaa9",
-  
+  appId: '1:105198865804:web:2656885e240ad6a4bedaa9',
+
   // 📊 ID de medición (opcional)
-  measurementId: "G-Y6H4Y6QX1G"
+  measurementId: 'G-Y6H4Y6QX1G',
 };
 
 // Dominios autorizados para OAuth
@@ -32,7 +32,7 @@ const authorizedDomains = [
   'axyra-sistema-gestion.vercel.app',
   'axyra-sistema-gestion-imj6s312h-axyras-projects.vercel.app',
   'localhost',
-  '127.0.0.1'
+  '127.0.0.1',
 ];
 
 // Verificar si el dominio actual está autorizado
@@ -58,31 +58,32 @@ function initializeFirebase() {
       } else {
         console.log('🔥 Firebase ya estaba inicializado');
       }
-      
+
       // Inicializar servicios
       const firebaseAuth = firebase.auth();
       const firebaseFirestore = firebase.firestore();
-      
+
       // Configurar Firestore con merge: true para evitar warnings
       firebaseFirestore.settings({
         cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-        merge: true
+        merge: true,
       });
-      
+
       // Configurar persistencia de autenticación
-      firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      firebaseAuth
+        .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
         .then(() => {
           console.log('✅ Persistencia de autenticación configurada');
         })
         .catch((error) => {
           console.warn('⚠️ Error configurando persistencia:', error);
         });
-      
+
       // Configurar listener de estado de autenticación
       firebaseAuth.onAuthStateChanged((user) => {
         if (user) {
           console.log('🔐 Usuario autenticado en Firebase:', user.email);
-          
+
           // Crear y guardar usuario en formato dashboard
           const userInfo = {
             uid: user.uid,
@@ -94,30 +95,30 @@ function initializeFirebase() {
             hasPassword: true,
             emailVerified: user.emailVerified,
             id: user.uid,
-            isAuthenticated: true
+            isAuthenticated: true,
           };
-          
+
           // Guardar en localStorage para el dashboard
           localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
           localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
-          
+
           console.log('✅ Usuario Firebase guardado en localStorage');
         } else {
           console.log('🔐 Usuario no autenticado en Firebase');
         }
       });
-      
+
       // Exportar para uso global
       window.axyraFirebase = {
         auth: firebaseAuth,
         firestore: firebaseFirestore,
         config: firebaseConfig,
-        isDomainAuthorized: isDomainAuthorized()
+        isDomainAuthorized: isDomainAuthorized(),
+        FieldValue: firebase.firestore.FieldValue,
       };
-      
+
       console.log('✅ Servicios de Firebase disponibles');
       return true;
-      
     } catch (error) {
       console.error('❌ Error inicializando Firebase:', error);
       return false;
@@ -176,13 +177,13 @@ function generateCompanyId() {
 // Función para obtener o crear ID de empresa
 function getOrCreateCompanyId() {
   let companyId = localStorage.getItem('axyra_company_id');
-  
+
   if (!companyId) {
     companyId = generateCompanyId();
     localStorage.setItem('axyra_company_id', companyId);
     console.log('🏢 Nueva empresa creada con ID:', companyId);
   }
-  
+
   return companyId;
 }
 
@@ -190,7 +191,7 @@ function getOrCreateCompanyId() {
 function clearPreviousCompanyData() {
   // Limpiar todos los datos excepto el ID de empresa actual
   const currentCompanyId = localStorage.getItem('axyra_company_id');
-  
+
   // Lista de claves a limpiar
   const keysToClean = [
     'axyra_empleados',
@@ -198,27 +199,27 @@ function clearPreviousCompanyData() {
     'axyra_nomina',
     'axyra_facturas',
     'axyra_configuracion',
-    'axyra_areas_trabajo'
+    'axyra_areas_trabajo',
   ];
-  
-  keysToClean.forEach(key => {
+
+  keysToClean.forEach((key) => {
     if (localStorage.getItem(key)) {
       localStorage.removeItem(key);
       console.log(`🧹 Datos limpiados: ${key}`);
     }
   });
-  
+
   console.log('✅ Datos de empresa anterior limpiados');
 }
 
 // Función para limpiar datos al cambiar de usuario
 function clearUserDataOnChange(newUserId) {
   const currentUserId = localStorage.getItem('axyra_isolated_user_id');
-  
+
   if (currentUserId && currentUserId !== newUserId) {
     console.log('🔄 Usuario cambiado, limpiando datos...');
     clearPreviousCompanyData();
-    
+
     // Generar nuevo ID de empresa
     const newCompanyId = generateCompanyId();
     localStorage.setItem('axyra_company_id', newCompanyId);
@@ -232,14 +233,14 @@ async function firebaseLogout() {
     try {
       await firebase.auth().signOut();
       console.log('✅ Logout de Firebase exitoso');
-      
+
       // Limpiar localStorage pero mantener ID de empresa
       const companyId = localStorage.getItem('axyra_company_id');
       localStorage.clear();
       if (companyId) {
         localStorage.setItem('axyra_company_id', companyId);
       }
-      
+
       return true;
     } catch (error) {
       console.error('❌ Error en logout de Firebase:', error);
@@ -260,7 +261,7 @@ function getFirebaseUserInfo() {
       photoURL: user.photoURL,
       emailVerified: user.emailVerified,
       providerData: user.providerData,
-      companyId: getOrCreateCompanyId()
+      companyId: getOrCreateCompanyId(),
     };
   }
   return null;
@@ -271,19 +272,16 @@ async function createFirebaseUser(userData) {
   if (isFirebaseAvailable() && userData) {
     try {
       const companyId = getOrCreateCompanyId();
-      
+
       // Agregar ID de empresa al usuario
       const userWithCompany = {
         ...userData,
         companyId: companyId,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
-      
-      await window.axyraFirebase.firestore
-        .collection('users')
-        .doc(userData.uid)
-        .set(userWithCompany, { merge: true });
-      
+
+      await window.axyraFirebase.firestore.collection('users').doc(userData.uid).set(userWithCompany, { merge: true });
+
       console.log('✅ Usuario creado en Firestore con empresa:', companyId);
       return true;
     } catch (error) {
@@ -300,29 +298,29 @@ async function getFirestoreData(collection, options = {}) {
     try {
       const companyId = getOrCreateCompanyId();
       let query = window.axyraFirebase.firestore.collection(collection);
-      
+
       // Aplicar filtro de empresa si no se especifica lo contrario
       if (!options.ignoreCompany) {
         query = query.where('companyId', '==', companyId);
       }
-      
+
       // Aplicar otros filtros si se especifican
       if (options.where) {
-        options.where.forEach(filter => {
+        options.where.forEach((filter) => {
           query = query.where(filter.field, filter.operator, filter.value);
         });
       }
-      
+
       // Aplicar ordenamiento si se especifica
       if (options.orderBy) {
         query = query.orderBy(options.orderBy.field, options.orderBy.direction || 'asc');
       }
-      
+
       // Aplicar límite si se especifica
       if (options.limit) {
         query = query.limit(options.limit);
       }
-      
+
       const snapshot = await query.get();
       return snapshot;
     } catch (error) {
@@ -338,21 +336,21 @@ async function saveFirestoreData(collection, docId, data, options = {}) {
   if (isFirebaseAvailable()) {
     try {
       const companyId = getOrCreateCompanyId();
-      
+
       // Agregar companyId si no se especifica lo contrario
       if (!options.ignoreCompany) {
         data.companyId = companyId;
       }
-      
+
       // Agregar timestamp de creación/actualización
       if (!data.createdAt) {
         data.createdAt = new Date().toISOString();
       }
       data.updatedAt = new Date().toISOString();
-      
+
       const docRef = window.axyraFirebase.firestore.collection(collection).doc(docId);
       await docRef.set(data, { merge: true });
-      
+
       console.log(`✅ Datos guardados en ${collection}/${docId}`);
       return docRef;
     } catch (error) {
@@ -378,6 +376,45 @@ async function deleteFirestoreData(collection, docId) {
   throw new Error('Firebase no disponible');
 }
 
+// Función global para obtener usuario actual (compatible con sistema existente)
+function obtenerUsuarioActual() {
+  // Intentar obtener de Firebase primero
+  if (isFirebaseAvailable()) {
+    const firebaseUser = getCurrentFirebaseUser();
+    if (firebaseUser) {
+      return {
+        id: firebaseUser.uid,
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        nombre: firebaseUser.displayName || firebaseUser.email.split('@')[0],
+        timestamp: Date.now(),
+      };
+    }
+  }
+
+  // Fallback a localStorage
+  const usuario = localStorage.getItem('axyra_isolated_user') || localStorage.getItem('axyra_usuario_actual');
+  if (usuario) {
+    try {
+      return JSON.parse(usuario);
+    } catch (error) {
+      console.warn('Error parseando usuario del localStorage:', error);
+    }
+  }
+
+  // Crear usuario temporal único
+  const usuarioTemp = {
+    id: 'usuario_' + Date.now(),
+    uid: 'usuario_' + Date.now(),
+    nombre: 'Usuario',
+    email: 'usuario@axyra.com',
+    timestamp: Date.now(),
+  };
+
+  localStorage.setItem('axyra_usuario_actual', JSON.stringify(usuarioTemp));
+  return usuarioTemp;
+}
+
 // Exportar funciones para uso global
 window.axyraFirebaseUtils = {
   isAvailable: isFirebaseAvailable,
@@ -391,5 +428,8 @@ window.axyraFirebaseUtils = {
   deleteData: deleteFirestoreData,
   getCompanyId: getOrCreateCompanyId,
   clearCompanyData: clearPreviousCompanyData,
-  initialize: initializeFirebase
+  initialize: initializeFirebase,
 };
+
+// Exportar función global
+window.obtenerUsuarioActual = obtenerUsuarioActual;

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../static/responsive-styles.css" />
     <link rel="stylesheet" href="../../static/modal-fixes.css" />
     <link rel="stylesheet" href="config-styles.css" />
+    <link rel="stylesheet" href="configuracion-avanzada-styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module">
@@ -100,6 +101,16 @@
 
     <!-- Sistema Unificado de Auditoría AXYRA -->
     <script src="../../static/audit-system-unified.js"></script>
+
+    <!-- Nuevos Sistemas Avanzados AXYRA -->
+    <script src="../../static/system-integrator.js"></script>
+    <script src="../../static/integration-api-system.js"></script>
+    <script src="../../static/advanced-security-system.js"></script>
+    <script src="../../static/data-analytics-system.js"></script>
+    <script src="../../static/advanced-configuration-system.js"></script>
+    <script src="../../static/advanced-user-management-system.js"></script>
+    <script src="../../static/file-document-management-system.js"></script>
+    <script src="../../static/project-task-management-system.js"></script>
   </head>
   <body>
     <!-- Header Compartido AXYRA - Se insertará automáticamente -->
@@ -115,6 +126,14 @@
           <div class="axyra-system-header">
             <h3>📊 Dashboard de Métricas del Sistema</h3>
             <p>Monitoreo en tiempo real del rendimiento y estado del sistema</p>
+            <div class="axyra-dashboard-controls">
+              <button id="btnVerMetricas" class="axyra-btn axyra-btn-primary">
+                <i class="fas fa-chart-line"></i> Ver Métricas Detalladas
+              </button>
+              <button id="btnActualizarMetricas" class="axyra-btn axyra-btn-secondary">
+                <i class="fas fa-sync-alt"></i> Actualizar
+              </button>
+            </div>
           </div>
           
           <div class="axyra-system-grid">
@@ -198,8 +217,8 @@
                   <span class="axyra-2fa-value" id="2faStatusValue">No configurado</span>
                 </div>
                 <div class="axyra-security-actions">
-                  <button class="axyra-btn axyra-btn-primary" onclick="setup2FA()">
-                    <i class="fas fa-cog"></i> Configurar 2FA
+                  <button id="btnConfigurarSeguridad" class="axyra-btn axyra-btn-primary">
+                    <i class="fas fa-cog"></i> Configurar Seguridad
                   </button>
                   <button class="axyra-btn axyra-btn-secondary" onclick="test2FA()">
                     <i class="fas fa-test-tube"></i> Probar
@@ -267,11 +286,11 @@
                   <span class="axyra-backup-time" id="lastBackupTime">Nunca</span>
                 </div>
                 <div class="axyra-security-actions">
-                  <button class="axyra-btn axyra-btn-primary" onclick="createBackup()">
+                  <button id="btnCrearBackup" class="axyra-btn axyra-btn-primary">
                     <i class="fas fa-download"></i> Crear Backup
                   </button>
-                  <button class="axyra-btn axyra-btn-secondary" onclick="configureBackup()">
-                    <i class="fas fa-cog"></i> Configurar
+                  <button id="btnRestaurarBackup" class="axyra-btn axyra-btn-secondary">
+                    <i class="fas fa-upload"></i> Restaurar
                   </button>
                 </div>
               </div>
@@ -289,8 +308,8 @@
             <div class="axyra-users-card">
               <div class="axyra-users-card-header">
                 <h4>Usuarios del Sistema</h4>
-                <button class="axyra-btn axyra-btn-primary" onclick="agregarNuevoUsuario()">
-                  <i class="fas fa-plus"></i> Nuevo Usuario
+                <button id="btnGestionarUsuarios" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-users"></i> Gestionar Usuarios
                 </button>
               </div>
               <div class="axyra-users-list" id="usuariosList">
@@ -335,6 +354,11 @@
                   <div class="axyra-theme-preview axyra-theme-corporate"></div>
                   <span>Corporate</span>
                 </div>
+              </div>
+              <div class="axyra-theme-actions">
+                <button id="btnPersonalizarTema" class="axyra-btn axyra-btn-primary">
+                  <i class="fas fa-palette"></i> Personalizar Tema
+                </button>
               </div>
             </div>
 
@@ -393,7 +417,7 @@
                   <button class="axyra-btn axyra-btn-primary" onclick="testNotifications()">
                     <i class="fas fa-bell"></i> Probar Notificación
                   </button>
-                  <button class="axyra-btn axyra-btn-secondary" onclick="configureNotifications()">
+                  <button id="btnConfigurarNotificaciones" class="axyra-btn axyra-btn-secondary">
                     <i class="fas fa-cog"></i> Configurar
                   </button>
                 </div>
@@ -425,9 +449,48 @@
           </div>
         </div>
 
+        <!-- Sistemas Avanzados -->
+        <div class="axyra-advanced-systems-section">
+          <div class="axyra-section-header">
+            <h2 class="axyra-section-title">🔧 Sistemas Avanzados</h2>
+            <p>Acceso a sistemas avanzados de gestión</p>
+          </div>
+          <div class="axyra-dashboard-controls">
+            <button class="axyra-btn axyra-btn-primary" onclick="window.axyraSystemIntegrator?.showSystemDashboard()">
+              <i class="fas fa-cogs"></i> Dashboard de Sistemas
+            </button>
+            <button class="axyra-btn axyra-btn-secondary" onclick="window.axyraIntegrationAPISystem?.showIntegrationDashboard()">
+              <i class="fas fa-plug"></i> Integraciones y APIs
+            </button>
+            <button class="axyra-btn axyra-btn-info" onclick="window.axyraAdvancedSecuritySystem?.showSecurityDashboard()">
+              <i class="fas fa-shield-alt"></i> Seguridad Avanzada
+            </button>
+            <button class="axyra-btn axyra-btn-warning" onclick="window.axyraDataAnalyticsSystem?.showDataAnalyticsDashboard()">
+              <i class="fas fa-chart-bar"></i> Datos y Análisis
+            </button>
+            <button class="axyra-btn axyra-btn-success" onclick="window.axyraAdvancedConfigurationSystem?.showConfigurationDashboard()">
+              <i class="fas fa-sliders-h"></i> Configuración Avanzada
+            </button>
+            <button class="axyra-btn axyra-btn-dark" onclick="window.axyraAdvancedUserManagementSystem?.showUserManagementDashboard()">
+              <i class="fas fa-users-cog"></i> Gestión de Usuarios
+            </button>
+            <button class="axyra-btn axyra-btn-light" onclick="window.axyraFileDocumentManagementSystem?.showFileManagementDashboard()">
+              <i class="fas fa-folder-open"></i> Gestión de Archivos
+            </button>
+            <button class="axyra-btn axyra-btn-outline-primary" onclick="window.axyraProjectTaskManagementSystem?.showProjectManagementDashboard()">
+              <i class="fas fa-tasks"></i> Gestión de Proyectos
+            </button>
+          </div>
+        </div>
+
         <!-- Configuración de Empresa -->
         <div class="axyra-company-section">
-          <h2 class="axyra-section-title">Configuración de Empresa</h2>
+          <div class="axyra-section-header">
+            <h2 class="axyra-section-title">Configuración de Empresa</h2>
+            <button id="btnConfigurarEmpresa" class="axyra-btn axyra-btn-primary">
+              <i class="fas fa-building"></i> Configurar Empresa
+            </button>
+          </div>
           <div class="axyra-company-form">
             <div class="axyra-form-group">
               <label for="companyName">Nombre de la Empresa</label>
@@ -542,6 +605,9 @@
     <script src="../../static/backup-system.js"></script>
 
     <script src="config.js"></script>
+    
+    <!-- Sistema Avanzado de Configuración AXYRA -->
+    <script src="configuracion-avanzada.js"></script>
 
     <!-- FUNCIONES AVANZADAS DE CONFIGURACIÓN - IMPLEMENTACIÓN COMPLETA -->
     <script>
@@ -1349,6 +1415,28 @@
         cursor: pointer;
       }
 
+      /* Controles del Dashboard */
+      .axyra-dashboard-controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        justify-content: center;
+      }
+
+      /* Encabezado de Sección */
+      .axyra-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      /* Acciones de Tema */
+      .axyra-theme-actions {
+        margin-top: 20px;
+        text-align: center;
+      }
+
       /* Responsive */
       @media (max-width: 768px) {
         .axyra-system-grid,
@@ -1364,6 +1452,17 @@
         .axyra-theme-selector {
           flex-direction: column;
           align-items: center;
+        }
+
+        .axyra-dashboard-controls {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .axyra-section-header {
+          flex-direction: column;
+          gap: 15px;
+          align-items: flex-start;
         }
       }
     </style>

@@ -23,6 +23,9 @@
     <!-- AXYRA Firebase Scripts -->
     <script src="../../static/firebase-config.js"></script>
 
+    <!-- Sistema de Sincronización Firebase ↔ localStorage -->
+    <script src="../../static/firebase-sync-manager.js"></script>
+
     <!-- Sistema de Roles y Permisos AXYRA -->
     <script src="../../static/roles-config.js"></script>
 
@@ -48,6 +51,12 @@
 
     <!-- Verificación del Header Compartido -->
     <script src="../../static/header-verification.js"></script>
+
+    <!-- Sistema de Validaciones Avanzadas AXYRA -->
+    <script src="../../static/advanced-validation-system.js"></script>
+
+    <!-- Sistema de Cuadre de Caja AXYRA -->
+    <script src="cuadre_caja.js"></script>
   </head>
   <body>
     <!-- Header Compartido AXYRA - Se insertará automáticamente -->
@@ -66,7 +75,7 @@
             <h3>💰 Analytics Financieros Avanzados</h3>
             <p>Análisis detallado de ingresos, tendencias y rentabilidad</p>
           </div>
-          
+
           <div class="axyra-financial-grid">
             <!-- Gráfico de Ingresos por Mes -->
             <div class="axyra-financial-card">
@@ -1750,14 +1759,14 @@
         background: white;
         border-radius: 16px;
         padding: 25px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         border: 1px solid #e0f2fe;
         transition: all 0.3s ease;
       }
 
       .axyra-financial-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
       }
 
       .axyra-financial-card-header {
@@ -1836,7 +1845,7 @@
         .axyra-financial-grid {
           grid-template-columns: 1fr;
         }
-        
+
         .axyra-financial-metrics {
           grid-template-columns: 1fr;
         }
@@ -2495,14 +2504,16 @@
               type: 'line',
               data: {
                 labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-                datasets: [{
-                  label: 'Ingresos Mensuales',
-                  data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                  borderColor: '#0284c7',
-                  backgroundColor: 'rgba(2, 132, 199, 0.1)',
-                  tension: 0.4,
-                  fill: true
-                }]
+                datasets: [
+                  {
+                    label: 'Ingresos Mensuales',
+                    data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    borderColor: '#0284c7',
+                    backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                  },
+                ],
               },
               options: {
                 responsive: true,
@@ -2513,20 +2524,20 @@
                   },
                   title: {
                     display: true,
-                    text: 'Evolución de Ingresos Mensuales'
-                  }
+                    text: 'Evolución de Ingresos Mensuales',
+                  },
                 },
                 scales: {
                   y: {
                     beginAtZero: true,
                     ticks: {
-                      callback: function(value) {
+                      callback: function (value) {
                         return '$' + value.toLocaleString();
-                      }
-                    }
-                  }
-                }
-              }
+                      },
+                    },
+                  },
+                },
+              },
             });
           }
 
@@ -2537,13 +2548,15 @@
               type: 'bar',
               data: {
                 labels: [],
-                datasets: [{
-                  label: 'Ingresos por Encargado',
-                  data: [],
-                  backgroundColor: 'rgba(2, 132, 199, 0.8)',
-                  borderColor: '#0284c7',
-                  borderWidth: 1
-                }]
+                datasets: [
+                  {
+                    label: 'Ingresos por Encargado',
+                    data: [],
+                    backgroundColor: 'rgba(2, 132, 199, 0.8)',
+                    borderColor: '#0284c7',
+                    borderWidth: 1,
+                  },
+                ],
               },
               options: {
                 responsive: true,
@@ -2554,20 +2567,20 @@
                   },
                   title: {
                     display: true,
-                    text: 'Rendimiento del Equipo'
-                  }
+                    text: 'Rendimiento del Equipo',
+                  },
                 },
                 scales: {
                   y: {
                     beginAtZero: true,
                     ticks: {
-                      callback: function(value) {
+                      callback: function (value) {
                         return '$' + value.toLocaleString();
-                      }
-                    }
-                  }
-                }
-              }
+                      },
+                    },
+                  },
+                },
+              },
             });
           }
 
@@ -2578,14 +2591,16 @@
               type: 'radar',
               data: {
                 labels: ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'],
-                datasets: [{
-                  label: 'Ingresos por Día',
-                  data: [0, 0, 0, 0, 0, 0, 0],
-                  borderColor: '#0c4a6e',
-                  backgroundColor: 'rgba(12, 74, 110, 0.2)',
-                  pointBackgroundColor: '#0284c7',
-                  pointBorderColor: '#0c4a6e'
-                }]
+                datasets: [
+                  {
+                    label: 'Ingresos por Día',
+                    data: [0, 0, 0, 0, 0, 0, 0],
+                    borderColor: '#0c4a6e',
+                    backgroundColor: 'rgba(12, 74, 110, 0.2)',
+                    pointBackgroundColor: '#0284c7',
+                    pointBorderColor: '#0c4a6e',
+                  },
+                ],
               },
               options: {
                 responsive: true,
@@ -2596,20 +2611,20 @@
                   },
                   title: {
                     display: true,
-                    text: 'Patrones Semanales de Ingresos'
-                  }
+                    text: 'Patrones Semanales de Ingresos',
+                  },
                 },
                 scales: {
                   r: {
                     beginAtZero: true,
                     ticks: {
-                      callback: function(value) {
+                      callback: function (value) {
                         return '$' + value.toLocaleString();
-                      }
-                    }
-                  }
-                }
-              }
+                      },
+                    },
+                  },
+                },
+              },
             });
           }
 
@@ -2639,8 +2654,8 @@
         try {
           const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
           const ingresosMensuales = new Array(12).fill(0);
-          
-          facturas.forEach(factura => {
+
+          facturas.forEach((factura) => {
             const fecha = new Date(factura.fecha);
             if (fecha.getFullYear() == año) {
               const mes = fecha.getMonth();
@@ -2662,14 +2677,15 @@
         try {
           const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
           const rendimientoPorEncargado = {};
-          
-          facturas.forEach(factura => {
+
+          facturas.forEach((factura) => {
             const encargado = factura.encargado || 'Sin asignar';
-            rendimientoPorEncargado[encargado] = (rendimientoPorEncargado[encargado] || 0) + parseFloat(factura.valor || 0);
+            rendimientoPorEncargado[encargado] =
+              (rendimientoPorEncargado[encargado] || 0) + parseFloat(factura.valor || 0);
           });
 
           const encargados = Object.keys(rendimientoPorEncargado).slice(0, 8); // Top 8
-          const valores = encargados.map(encargado => rendimientoPorEncargado[encargado]);
+          const valores = encargados.map((encargado) => rendimientoPorEncargado[encargado]);
 
           if (rendimientoEncargadoChart) {
             rendimientoEncargadoChart.data.labels = encargados;
@@ -2686,8 +2702,8 @@
         try {
           const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
           const ingresosPorDia = new Array(7).fill(0);
-          
-          facturas.forEach(factura => {
+
+          facturas.forEach((factura) => {
             const fecha = new Date(factura.fecha);
             const diaSemana = fecha.getDay(); // 0 = Domingo, 1 = Lunes, etc.
             ingresosPorDia[diaSemana] += parseFloat(factura.valor || 0);
@@ -2701,7 +2717,7 @@
             ingresosPorDia[4], // Jueves
             ingresosPorDia[5], // Viernes
             ingresosPorDia[6], // Sábado
-            ingresosPorDia[0]  // Domingo
+            ingresosPorDia[0], // Domingo
           ];
 
           if (tendenciasDiariasChart) {
@@ -2717,37 +2733,39 @@
       function actualizarKPIsFinancieros() {
         try {
           const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
-          
+
           // Calcular ingreso promedio
           const totalIngresos = facturas.reduce((sum, f) => sum + parseFloat(f.valor || 0), 0);
           const ingresoPromedio = facturas.length > 0 ? totalIngresos / facturas.length : 0;
-          
+
           // Calcular facturas por día (últimos 30 días)
           const fechaLimite = new Date();
           fechaLimite.setDate(fechaLimite.getDate() - 30);
-          const facturasRecientes = facturas.filter(f => new Date(f.fecha) >= fechaLimite);
+          const facturasRecientes = facturas.filter((f) => new Date(f.fecha) >= fechaLimite);
           const facturasPorDia = facturasRecientes.length / 30;
-          
+
           // Calcular crecimiento mensual
           const mesActual = new Date().getMonth();
           const añoActual = new Date().getFullYear();
-          const facturasMesActual = facturas.filter(f => {
+          const facturasMesActual = facturas.filter((f) => {
             const fecha = new Date(f.fecha);
             return fecha.getMonth() === mesActual && fecha.getFullYear() === añoActual;
           });
-          const facturasMesAnterior = facturas.filter(f => {
+          const facturasMesAnterior = facturas.filter((f) => {
             const fecha = new Date(f.fecha);
             const mesAnterior = mesActual === 0 ? 11 : mesActual - 1;
             const añoAnterior = mesActual === 0 ? añoActual - 1 : añoActual;
             return fecha.getMonth() === mesAnterior && fecha.getFullYear() === añoAnterior;
           });
-          
+
           const ingresosMesActual = facturasMesActual.reduce((sum, f) => sum + parseFloat(f.valor || 0), 0);
           const ingresosMesAnterior = facturasMesAnterior.reduce((sum, f) => sum + parseFloat(f.valor || 0), 0);
-          const crecimientoMensual = ingresosMesAnterior > 0 ? ((ingresosMesActual - ingresosMesAnterior) / ingresosMesAnterior) * 100 : 0;
-          
+          const crecimientoMensual =
+            ingresosMesAnterior > 0 ? ((ingresosMesActual - ingresosMesAnterior) / ingresosMesAnterior) * 100 : 0;
+
           // Actualizar UI
-          document.getElementById('ingresoPromedio').textContent = '$' + ingresoPromedio.toLocaleString(undefined, {maximumFractionDigits: 0});
+          document.getElementById('ingresoPromedio').textContent =
+            '$' + ingresoPromedio.toLocaleString(undefined, { maximumFractionDigits: 0 });
           document.getElementById('facturasPorDia').textContent = facturasPorDia.toFixed(1);
           document.getElementById('crecimientoMensual').textContent = crecimientoMensual.toFixed(1) + '%';
         } catch (error) {

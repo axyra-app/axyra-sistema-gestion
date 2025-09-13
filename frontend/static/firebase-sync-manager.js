@@ -111,6 +111,10 @@ class FirebaseSyncManager {
 
   async saveEmpleadoToFirebase(empleado) {
     try {
+      if (!window.axyraFirebase?.firestore) {
+        throw new Error('Firebase no está disponible');
+      }
+
       const db = window.axyraFirebase.firestore;
       const currentUser = window.axyraFirebase.auth.currentUser;
 
@@ -121,7 +125,7 @@ class FirebaseSyncManager {
       const empleadoData = {
         ...empleado,
         userId: currentUser.uid,
-        lastUpdated: window.axyraFirebase.firestore.FieldValue.serverTimestamp(),
+        lastUpdated: window.axyraFirebase?.FieldValue?.serverTimestamp() || new Date().toISOString(),
       };
 
       if (empleado.id && empleado.id !== 'temp') {
@@ -211,6 +215,10 @@ class FirebaseSyncManager {
 
   async saveHorasToFirebase(horas) {
     try {
+      if (!window.axyraFirebase?.firestore) {
+        throw new Error('Firebase no está disponible');
+      }
+
       const db = window.axyraFirebase.firestore;
       const currentUser = window.axyraFirebase.auth.currentUser;
 
@@ -221,7 +229,7 @@ class FirebaseSyncManager {
       const horasData = {
         ...horas,
         userId: currentUser.uid,
-        lastUpdated: window.axyraFirebase.firestore.FieldValue.serverTimestamp(),
+        lastUpdated: window.axyraFirebase?.FieldValue?.serverTimestamp() || new Date().toISOString(),
       };
 
       if (horas.id && horas.id !== 'temp') {
@@ -530,6 +538,10 @@ class FirebaseSyncManager {
 
   async saveDepartamentoToFirebase(departamento) {
     try {
+      if (!window.axyraFirebase?.firestore) {
+        throw new Error('Firebase no está disponible');
+      }
+
       const db = window.axyraFirebase.firestore;
       const currentUser = window.axyraFirebase.auth.currentUser;
 
@@ -540,7 +552,7 @@ class FirebaseSyncManager {
       const departamentoData = {
         ...departamento,
         userId: currentUser.uid,
-        lastUpdated: window.axyraFirebase.firestore.FieldValue.serverTimestamp(),
+        lastUpdated: window.axyraFirebase?.FieldValue?.serverTimestamp() || new Date().toISOString(),
       };
 
       if (departamento.id && departamento.id !== 'temp') {
