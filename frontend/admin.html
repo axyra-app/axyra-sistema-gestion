@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXYRA - Panel de Administración</title>
+    
+    <!-- Estilos AXYRA -->
+    <link rel="stylesheet" href="static/axyra-styles.css">
+    <link rel="stylesheet" href="static/modal-fixes.css">
+    <link rel="stylesheet" href="static/modal-positioning-fix.css">
+    <link rel="stylesheet" href="static/modal-emergency-fix.css">
+    <link rel="stylesheet" href="static/header-fixes.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        .admin-container {
+            min-height: 100vh;
+            background: #f8fafc;
+            padding: 20px;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .admin-title {
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+        
+        .admin-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+        
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .stat-card.success {
+            border-left-color: #10b981;
+        }
+        
+        .stat-card.warning {
+            border-left-color: #f59e0b;
+        }
+        
+        .stat-card.danger {
+            border-left-color: #ef4444;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: 5px 0 0 0;
+        }
+        
+        .stat-change {
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        .stat-change.positive {
+            color: #10b981;
+        }
+        
+        .stat-change.negative {
+            color: #ef4444;
+        }
+        
+        .admin-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        .admin-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin: 0 0 20px 0;
+            font-weight: 600;
+        }
+        
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .users-table th,
+        .users-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .users-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .users-table tr:hover {
+            background: #f8fafc;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .plan-badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .plan-basico {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .plan-profesional {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .plan-empresarial {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .plan-gratuito {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        .status-active {
+            color: #10b981;
+            font-weight: 500;
+        }
+        
+        .status-trial {
+            color: #f59e0b;
+            font-weight: 500;
+        }
+        
+        .status-expired {
+            color: #ef4444;
+            font-weight: 500;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 5px;
+        }
+        
+        .action-btn.primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .action-btn.primary:hover {
+            background: #5a67d8;
+        }
+        
+        .action-btn.secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .action-btn.secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .action-btn.danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .action-btn.danger:hover {
+            background: #dc2626;
+        }
+        
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .quick-action-btn {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .quick-action-btn.secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .quick-action-btn.secondary:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-tab {
+            padding: 8px 16px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .filter-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .filter-tab:hover {
+            border-color: #667eea;
+        }
+        
+        .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        .admin-modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6b7280;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            z-index: 10001;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .notification.success {
+            background: #10b981;
+        }
+        
+        .notification.error {
+            background: #ef4444;
+        }
+        
+        .notification.warning {
+            background: #f59e0b;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            margin: 0 0 10px 0;
+            color: #374151;
+        }
+        
+        .empty-state p {
+            margin: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .users-table {
+                font-size: 0.9rem;
+            }
+            
+            .users-table th,
+            .users-table td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="admin-header">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 class="admin-title">👑 Panel de Administración AXYRA</h1>
+                    <p class="admin-subtitle">Control total de usuarios y suscripciones</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span id="admin-user-info" style="color: white; font-weight: 500;"></span>
+                    <button onclick="logoutAdmin()" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estadísticas -->
+        <div class="admin-stats" id="admin-stats">
+            <div class="stat-card">
+                <p class="stat-value" id="total-users">0</p>
+                <p class="stat-label">Usuarios Totales</p>
+                <p class="stat-change positive" id="users-change">+0 este mes</p>
+            </div>
+            <div class="stat-card success">
+                <p class="stat-value" id="active-subscriptions">0</p>
+                <p class="stat-label">Suscripciones Activas</p>
+                <p class="stat-change positive" id="subscriptions-change">+0 este mes</p>
+            </div>
+            <div class="stat-card warning">
+                <p class="stat-value" id="trial-users">0</p>
+                <p class="stat-label">Usuarios en Prueba</p>
+                <p class="stat-change" id="trial-change">0 por vencer</p>
+            </div>
+            <div class="stat-card danger">
+                <p class="stat-value" id="monthly-revenue">$0</p>
+                <p class="stat-label">Ingresos Mensuales</p>
+                <p class="stat-change positive" id="revenue-change">+0% vs mes anterior</p>
+            </div>
+        </div>
+        
+        <!-- Contenido Principal -->
+        <div class="admin-content">
+            <!-- Lista de Usuarios -->
+            <div class="admin-section">
+                <h2 class="section-title">👥 Gestión de Usuarios</h2>
+                
+                <!-- Búsqueda y Filtros -->
+                <input type="text" class="search-box" id="user-search" placeholder="Buscar usuarios por nombre, email o empresa...">
+                
+                <div class="filter-tabs">
+                    <div class="filter-tab active" data-filter="all">Todos</div>
+                    <div class="filter-tab" data-filter="active">Activos</div>
+                    <div class="filter-tab" data-filter="trial">En Prueba</div>
+                    <div class="filter-tab" data-filter="expired">Expirados</div>
+                </div>
+                
+                <!-- Tabla de Usuarios -->
+                <div class="table-container">
+                    <table class="users-table" id="users-table">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Empresa</th>
+                                <th>Plan</th>
+                                <th>Estado</th>
+                                <th>Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody">
+                            <!-- Usuarios se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="empty-state" id="empty-users" style="display: none;">
+                    <i class="fas fa-users"></i>
+                    <h3>No hay usuarios</h3>
+                    <p>Los usuarios aparecerán aquí cuando se registren</p>
+                </div>
+            </div>
+            
+            <!-- Acciones Rápidas -->
+            <div class="admin-section">
+                <h2 class="section-title">⚡ Acciones Rápidas</h2>
+                
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="showAddUserModal()">
+                        <i class="fas fa-user-plus"></i>
+                        Agregar Usuario
+                    </button>
+                    <button class="quick-action-btn" onclick="showActivateSubscriptionModal()">
+                        <i class="fas fa-crown"></i>
+                        Activar Suscripción
+                    </button>
+                    <button class="quick-action-btn" onclick="exportUsers()">
+                        <i class="fas fa-download"></i>
+                        Exportar Usuarios
+                    </button>
+                    <button class="quick-action-btn" onclick="exportSubscriptions()">
+                        <i class="fas fa-file-csv"></i>
+                        Exportar Suscripciones
+                    </button>
+                    <button class="quick-action-btn secondary" onclick="showBulkActionsModal()">
+                        <i class="fas fa-cogs"></i>
+                        Acciones Masivas
+                    </button>
+                </div>
+                
+                <!-- Gráfico de Ingresos -->
+                <div class="chart-container">
+                    <canvas id="revenue-chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Agregar Usuario -->
+    <div class="admin-modal" id="add-user-modal">
+        <div class="admin-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Agregar Usuario</h3>
+                <button class="modal-close" onclick="closeModal('add-user-modal')">&times;</button>
+            </div>
+            <form id="add-user-form">
+                <div class="form-group">
+                    <label for="user-name">Nombre Completo</label>
+                    <input type="text" id="user-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-email">Email</label>
+                    <input type="email" id="user-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-company">Empresa</label>
+                    <input type="text" id="user-company" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-plan">Plan</label>
+                    <select id="user-plan" required>
+                        <option value="gratuito">Gratuito (Prueba)</option>
+                        <option value="basico">Básico - $59.900/mes</option>
+                        <option value="profesional">Profesional - $99.900/mes</option>
+                        <option value="empresarial">Empresarial - $159.900/mes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="user-phone">Teléfono</label>
+                    <input type="tel" id="user-phone">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('add-user-modal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Agregar Usuario</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal de Activar Suscripción -->
+    <div class="admin-modal" id="activate-subscription-modal">
+        <div class="admin-modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Activar Suscripción</h3>
+                <button class="modal-close" onclick="closeModal('activate-subscription-modal')">&times;</button>
+            </div>
+            <form id="activate-subscription-form">
+                <div class="form-group">
+                    <label for="sub-user-email">Email del Usuario</label>
+                    <input type="email" id="sub-user-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="sub-plan">Plan</label>
+                    <select id="sub-plan" required>
+                        <option value="basico">Básico - $59.900/mes</option>
+                        <option value="profesional">Profesional - $99.900/mes</option>
+                        <option value="empresarial">Empresarial - $159.900/mes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sub-payment-method">Método de Pago</label>
+                    <select id="sub-payment-method" required>
+                        <option value="wompi">Wompi</option>
+                        <option value="transferencia">Transferencia Bancaria</option>
+                        <option value="efectivo">Efectivo</option>
+                        <option value="manual">Manual</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sub-notes">Notas</label>
+                    <textarea id="sub-notes" placeholder="Notas adicionales..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('activate-subscription-modal')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Activar Suscripción</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="static/firebase-config.js"></script>
+    <script src="static/subscription-system.js"></script>
+    <script src="static/admin-subscription-manager.js"></script>
+    <script src="static/admin-auth.js"></script>
+    
+    <script>
+        // Configuración Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBvQvqQvqQvqQvqQvqQvqQvqQvqQvqQvqQ",
+            authDomain: "villa-venecia-nomina.firebaseapp.com",
+            projectId: "villa-venecia-nomina",
+            storageBucket: "villa-venecia-nomina.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // Variables globales
+        let allUsers = [];
+        let filteredUsers = [];
+        let revenueChart = null;
+        
+        // Verificar acceso de administrador
+        function checkAdminAccess() {
+            if (!window.axyraAdminAuth) {
+                window.location.href = 'admin-login.html';
+                return false;
+            }
+            
+            if (!window.axyraAdminAuth.requireAuth()) {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Inicializar página
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAdminAccess()) return;
+            
+            showAdminInfo();
+            loadUsers();
+            setupEventListeners();
+            initializeChart();
+        });
+        
+        // Mostrar información del administrador
+        function showAdminInfo() {
+            const admin = window.axyraAdminAuth.getCurrentAdmin();
+            if (admin) {
+                document.getElementById('admin-user-info').textContent = 
+                    `👤 ${admin.name} (${admin.email})`;
+            }
+        }
+        
+        // Cerrar sesión de administrador
+        function logoutAdmin() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                window.axyraAdminAuth.logout();
+            }
+        }
+        
+        // Cargar usuarios
+        async function loadUsers() {
+            try {
+                showLoading('Cargando usuarios...');
+                
+                // Simular carga de usuarios (en producción esto vendría de Firebase)
+                const users = JSON.parse(localStorage.getItem('axyra_all_users') || '[]');
+                allUsers = users;
+                filteredUsers = [...users];
+                
+                renderUsers();
+                updateStats();
+                
+                hideLoading();
+            } catch (error) {
+                console.error('Error cargando usuarios:', error);
+                showNotification('Error cargando usuarios', 'error');
+                hideLoading();
+            }
+        }
+        
+        // Renderizar usuarios en tabla
+        function renderUsers() {
+            const tbody = document.getElementById('users-tbody');
+            const emptyState = document.getElementById('empty-users');
+            
+            if (filteredUsers.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            tbody.innerHTML = filteredUsers.map(user => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="user-avatar">
+                                ${user.nombre ? user.nombre.charAt(0).toUpperCase() : 'U'}
+                            </div>
+                            <div>
+                                <div style="font-weight: 500;">${user.nombre || 'Sin nombre'}</div>
+                                <div style="color: #6b7280; font-size: 0.9rem;">${user.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.empresa || 'Sin empresa'}</td>
+                    <td>
+                        <span class="plan-badge plan-${user.plan || 'gratuito'}">
+                            ${getPlanName(user.plan || 'gratuito')}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="status-${getUserStatus(user)}">
+                            ${getUserStatusText(user)}
+                        </span>
+                    </td>
+                    <td>${formatDate(user.fechaRegistro)}</td>
+                    <td>
+                        <button class="action-btn primary" onclick="editUser('${user.uid || user.email}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn secondary" onclick="viewUserDetails('${user.uid || user.email}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="action-btn danger" onclick="deleteUser('${user.uid || user.email}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // Obtener nombre del plan
+        function getPlanName(plan) {
+            const plans = {
+                'gratuito': 'Gratuito',
+                'basico': 'Básico',
+                'profesional': 'Profesional',
+                'empresarial': 'Empresarial'
+            };
+            return plans[plan] || 'Desconocido';
+        }
+        
+        // Obtener estado del usuario
+        function getUserStatus(user) {
+            if (user.trial) return 'trial';
+            if (user.plan && user.plan !== 'gratuito') return 'active';
+            return 'expired';
+        }
+        
+        // Obtener texto del estado
+        function getUserStatusText(user) {
+            if (user.trial) return 'En Prueba';
+            if (user.plan && user.plan !== 'gratuito') return 'Activo';
+            return 'Expirado';
+        }
+        
+        // Formatear fecha
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('es-ES');
+        }
+        
+        // Actualizar estadísticas
+        function updateStats() {
+            const totalUsers = allUsers.length;
+            const activeSubscriptions = allUsers.filter(user => user.plan && user.plan !== 'gratuito').length;
+            const trialUsers = allUsers.filter(user => user.trial).length;
+            
+            const plans = {
+                'basico': 59900,
+                'profesional': 99900,
+                'empresarial': 159900
+            };
+            
+            const monthlyRevenue = allUsers.reduce((total, user) => {
+                return total + (plans[user.plan] || 0);
+            }, 0);
+            
+            document.getElementById('total-users').textContent = totalUsers;
+            document.getElementById('active-subscriptions').textContent = activeSubscriptions;
+            document.getElementById('trial-users').textContent = trialUsers;
+            document.getElementById('monthly-revenue').textContent = `$${monthlyRevenue.toLocaleString()}`;
+        }
+        
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Búsqueda
+            document.getElementById('user-search').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                filteredUsers = allUsers.filter(user => 
+                    (user.nombre && user.nombre.toLowerCase().includes(searchTerm)) ||
+                    (user.email && user.email.toLowerCase().includes(searchTerm)) ||
+                    (user.empresa && user.empresa.toLowerCase().includes(searchTerm))
+                );
+                renderUsers();
+            });
+            
+            // Filtros
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.dataset.filter;
+                    if (filter === 'all') {
+                        filteredUsers = [...allUsers];
+                    } else if (filter === 'active') {
+                        filteredUsers = allUsers.filter(user => user.plan && user.plan !== 'gratuito');
+                    } else if (filter === 'trial') {
+                        filteredUsers = allUsers.filter(user => user.trial);
+                    } else if (filter === 'expired') {
+                        filteredUsers = allUsers.filter(user => !user.trial && (!user.plan || user.plan === 'gratuito'));
+                    }
+                    
+                    renderUsers();
+                });
+            });
+        }
+        
+        // Inicializar gráfico
+        function initializeChart() {
+            const ctx = document.getElementById('revenue-chart').getContext('2d');
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Ingresos Mensuales',
+                        data: [0, 0, 0, 0, 0, 0],
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Mostrar modal
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+        
+        // Cerrar modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Mostrar modal de agregar usuario
+        function showAddUserModal() {
+            showModal('add-user-modal');
+        }
+        
+        // Mostrar modal de activar suscripción
+        function showActivateSubscriptionModal() {
+            showModal('activate-subscription-modal');
+        }
+        
+        // Mostrar modal de acciones masivas
+        function showBulkActionsModal() {
+            showNotification('Funcionalidad en desarrollo', 'warning');
+        }
+        
+        // Exportar usuarios
+        function exportUsers() {
+            const csvContent = [
+                ['Nombre', 'Email', 'Empresa', 'Plan', 'Estado', 'Fecha Registro'],
+                ...allUsers.map(user => [
+                    user.nombre || '',
+                    user.email || '',
+                    user.empresa || '',
+                    getPlanName(user.plan || 'gratuito'),
+                    getUserStatusText(user),
+                    formatDate(user.fechaRegistro)
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            downloadCSV(csvContent, 'usuarios_axyra.csv');
+            showNotification('Usuarios exportados correctamente', 'success');
+        }
+        
+        // Exportar suscripciones
+        function exportSubscriptions() {
+            const subscriptions = allUsers.filter(user => user.plan && user.plan !== 'gratuito');
+            const csvContent = [
+                ['Email', 'Plan', 'Estado', 'Fecha Inicio', 'Método Pago'],
+                ...subscriptions.map(user => [
+                    user.email || '',
+                    getPlanName(user.plan),
+                    getUserStatusText(user),
+                    formatDate(user.fechaRegistro),
+                    user.metodoPago || 'N/A'
+                ])
+            ].map(row => row.join(',')).join('\n');
+            
+            downloadCSV(csvContent, 'suscripciones_axyra.csv');
+            showNotification('Suscripciones exportadas correctamente', 'success');
+        }
+        
+        // Descargar CSV
+        function downloadCSV(content, filename) {
+            const blob = new Blob([content], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Mostrar notificación
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Mostrar loading
+        function showLoading(message = 'Cargando...') {
+            // Implementar loading si es necesario
+        }
+        
+        // Ocultar loading
+        function hideLoading() {
+            // Implementar hide loading si es necesario
+        }
+        
+        // Editar usuario
+        function editUser(userId) {
+            showNotification('Funcionalidad en desarrollo', 'warning');
+        }
+        
+        // Ver detalles del usuario
+        function viewUserDetails(userId) {
+            showNotification('Funcionalidad en desarrollo', 'warning');
+        }
+        
+        // Eliminar usuario
+        function deleteUser(userId) {
+            if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
+                allUsers = allUsers.filter(user => (user.uid || user.email) !== userId);
+                filteredUsers = [...allUsers];
+                renderUsers();
+                updateStats();
+                showNotification('Usuario eliminado correctamente', 'success');
+            }
+        }
+        
+        // Manejar formulario de agregar usuario
+        document.getElementById('add-user-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const userData = {
+                uid: 'user_' + Date.now(),
+                nombre: document.getElementById('user-name').value,
+                email: document.getElementById('user-email').value,
+                empresa: document.getElementById('user-company').value,
+                plan: document.getElementById('user-plan').value,
+                telefono: document.getElementById('user-phone').value,
+                fechaRegistro: new Date().toISOString(),
+                trial: document.getElementById('user-plan').value === 'gratuito'
+            };
+            
+            allUsers.push(userData);
+            filteredUsers = [...allUsers];
+            renderUsers();
+            updateStats();
+            
+            // Guardar en localStorage
+            localStorage.setItem('axyra_all_users', JSON.stringify(allUsers));
+            
+            closeModal('add-user-modal');
+            showNotification('Usuario agregado correctamente', 'success');
+            
+            // Limpiar formulario
+            e.target.reset();
+        });
+        
+        // Manejar formulario de activar suscripción
+        document.getElementById('activate-subscription-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('sub-user-email').value;
+            const plan = document.getElementById('sub-plan').value;
+            const paymentMethod = document.getElementById('sub-payment-method').value;
+            const notes = document.getElementById('sub-notes').value;
+            
+            // Buscar usuario
+            const user = allUsers.find(u => u.email === email);
+            if (!user) {
+                showNotification('Usuario no encontrado', 'error');
+                return;
+            }
+            
+            // Actualizar usuario
+            user.plan = plan;
+            user.metodoPago = paymentMethod;
+            user.notas = notes;
+            user.trial = false;
+            
+            // Guardar cambios
+            localStorage.setItem('axyra_all_users', JSON.stringify(allUsers));
+            
+            // Actualizar UI
+            renderUsers();
+            updateStats();
+            
+            closeModal('activate-subscription-modal');
+            showNotification(`Suscripción ${plan} activada para ${email}`, 'success');
+            
+            // Limpiar formulario
+            e.target.reset();
+        });
+    </script>
+</body>
+</html>
