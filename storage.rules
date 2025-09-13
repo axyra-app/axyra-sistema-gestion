@@ -1,0 +1,110 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Función para verificar si el usuario está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Función para verificar si el usuario es el propietario del archivo
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // Función para verificar si el usuario es admin
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
+        get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Función para validar tipo de archivo
+    function isValidFileType() {
+      return resource.contentType.matches('image/.*') ||
+        resource.contentType.matches('application/pdf') ||
+        resource.contentType.matches('application/vnd.openxmlformats-officedocument.*') ||
+        resource.contentType.matches('text/.*');
+    }
+    
+    // Función para validar tamaño de archivo (10MB máximo)
+    function isValidFileSize() {
+      return resource.size < 10 * 1024 * 1024;
+    }
+    
+    // Reglas para documentos de usuarios
+    match /users/{userId}/documents/{documentId} {
+      allow read, write: if isOwner(userId);
+      allow read: if isAdmin();
+      
+      // Validar al subir archivos
+      allow create: if isOwner(userId) && 
+        isValidFileType() && 
+        isValidFileSize();
+    }
+    
+    // Reglas para documentos de empresas
+    match /companies/{companyId}/documents/{documentId} {
+      allow read, write: if isOwner(resource.metadata.userId);
+      allow read: if isAdmin();
+      
+      // Validar al subir archivos
+      allow create: if isOwner(request.resource.metadata.userId) && 
+        isValidFileType() && 
+        isValidFileSize();
+    }
+    
+    // Reglas para avatares de empleados
+    match /employees/{employeeId}/avatar/{avatarId} {
+      allow read, write: if isOwner(resource.metadata.userId);
+      allow read: if isAdmin();
+      
+      // Solo imágenes para avatares
+      allow create: if isOwner(request.resource.metadata.userId) && 
+        request.resource.contentType.matches('image/.*') && 
+        isValidFileSize();
+    }
+    
+    // Reglas para documentos de nómina
+    match /payrolls/{payrollId}/documents/{documentId} {
+      allow read, write: if isOwner(resource.metadata.userId);
+      allow read: if isAdmin();
+      
+      // Validar al subir archivos
+      allow create: if isOwner(request.resource.metadata.userId) && 
+        isValidFileType() && 
+        isValidFileSize();
+    }
+    
+    // Reglas para reportes
+    match /reports/{reportId}/files/{fileId} {
+      allow read, write: if isOwner(resource.metadata.userId);
+      allow read: if isAdmin();
+      
+      // Validar al subir archivos
+      allow create: if isOwner(request.resource.metadata.userId) && 
+        isValidFileType() && 
+        isValidFileSize();
+    }
+    
+    // Reglas para backups del sistema (solo admins)
+    match /system/backups/{backupId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Reglas para logs del sistema (solo admins)
+    match /system/logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if false; // Solo el sistema puede escribir logs
+    }
+    
+    // Reglas para archivos temporales
+    match /temp/{userId}/{fileId} {
+      allow read, write: if isOwner(userId);
+      
+      // Los archivos temporales se eliminan automáticamente después de 24 horas
+      allow create: if isOwner(userId) && 
+        isValidFileType() && 
+        isValidFileSize();
+    }
+  }
+}

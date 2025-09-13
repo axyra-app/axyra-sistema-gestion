@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "axyra-sistema-gestion",
+  "name": "axyra-enterprise-management",
   "builds": [
     {
       "src": "frontend/**",
@@ -10,7 +10,23 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://us-central1-axyra-sistema-gestion.cloudfunctions.net/api/$1"
+      "destination": "https://us-central1-axyra-enterprise.cloudfunctions.net/api/$1"
+    },
+    {
+      "source": "/admin/(.*)",
+      "destination": "/frontend/admin.html"
+    },
+    {
+      "source": "/dashboard/(.*)",
+      "destination": "/frontend/dashboard.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/frontend/login.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/frontend/register.html"
     },
     {
       "source": "/(.*)",
@@ -21,7 +37,36 @@
       "destination": "/frontend/index.html"
     }
   ],
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/app",
+      "destination": "/dashboard",
+      "permanent": true
+    }
+  ],
   "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "https://axyra-enterprise-management.vercel.app"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [
@@ -40,11 +85,22 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.firebaseio.com https://*.cloudfunctions.net https://*.wompi.co https://*.payulatam.com;"
         }
       ]
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "APP_NAME": "AXYRA Enterprise Management",
+    "APP_VERSION": "1.0.0",
+    "APP_ENVIRONMENT": "production"
   }
 }

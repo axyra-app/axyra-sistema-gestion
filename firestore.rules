@@ -1,46 +1,147 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Reglas para transacciones
-    match /transactions/{transactionId} {
-      allow read, write: if request.auth != null && 
-        request.auth.uid == resource.data.userId;
+    // Función para verificar si el usuario está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
     }
     
-    // Reglas para suscripciones
-    match /subscriptions/{subscriptionId} {
-      allow read, write: if request.auth != null && 
-        request.auth.uid == resource.data.userId;
+    // Función para verificar si el usuario es el propietario del recurso
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
     }
     
-    // Reglas para empresas
-    match /companies/{companyId} {
-      allow read, write: if request.auth != null && 
-        request.auth.uid == resource.data.userId;
+    // Función para verificar si el usuario es admin
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     
-    // Reglas para empleados
-    match /employees/{employeeId} {
-      allow read, write: if request.auth != null && 
-        request.auth.uid == resource.data.userId;
+    // Función para validar datos de transacción
+    function isValidTransaction() {
+      return request.resource.data.keys().hasAll(['amount', 'currency', 'status', 'userId']) &&
+        request.resource.data.amount is number &&
+        request.resource.data.amount > 0 &&
+        request.resource.data.currency is string &&
+        request.resource.data.status in ['PENDING', 'APPROVED', 'DECLINED', 'VOIDED'];
     }
     
-    // Reglas para horas
-    match /hours/{hourId} {
-      allow read, write: if request.auth != null && 
-        request.auth.uid == resource.data.userId;
-    }
-    
-    // Reglas para nóminas
-    match /payrolls/{payrollId} {
-      allow read, write: if request.auth != null && 
-        request.auth.uid == resource.data.userId;
+    // Función para validar datos de empleado
+    function isValidEmployee() {
+      return request.resource.data.keys().hasAll(['name', 'email', 'userId']) &&
+        request.resource.data.name is string &&
+        request.resource.data.email is string &&
+        request.resource.data.email.matches('.*@.*\\..*');
     }
     
     // Reglas para usuarios (perfil)
     match /users/{userId} {
-      allow read, write: if request.auth != null && 
-        request.auth.uid == userId;
+      allow read, write: if isOwner(userId);
+      allow read: if isAdmin();
+    }
+    
+    // Reglas para empresas
+    match /companies/{companyId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear/actualizar
+      allow create: if isOwner(request.resource.data.userId) &&
+        request.resource.data.keys().hasAll(['name', 'nit', 'userId']) &&
+        request.resource.data.name is string &&
+        request.resource.data.nit is string;
+    }
+    
+    // Reglas para empleados
+    match /employees/{employeeId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear/actualizar
+      allow create: if isOwner(request.resource.data.userId) && isValidEmployee();
+      allow update: if isOwner(resource.data.userId) && isValidEmployee();
+    }
+    
+    // Reglas para horas
+    match /hours/{hourId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear/actualizar
+      allow create: if isOwner(request.resource.data.userId) &&
+        request.resource.data.keys().hasAll(['employeeId', 'date', 'hours', 'userId']) &&
+        request.resource.data.hours is number &&
+        request.resource.data.hours > 0 &&
+        request.resource.data.hours <= 24;
+    }
+    
+    // Reglas para nóminas
+    match /payrolls/{payrollId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear
+      allow create: if isOwner(request.resource.data.userId) &&
+        request.resource.data.keys().hasAll(['period', 'employees', 'userId']) &&
+        request.resource.data.period is string &&
+        request.resource.data.employees is list;
+    }
+    
+    // Reglas para transacciones
+    match /transactions/{transactionId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear
+      allow create: if isOwner(request.resource.data.userId) && isValidTransaction();
+    }
+    
+    // Reglas para suscripciones
+    match /subscriptions/{subscriptionId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear
+      allow create: if isOwner(request.resource.data.userId) &&
+        request.resource.data.keys().hasAll(['planId', 'status', 'userId']) &&
+        request.resource.data.planId in ['basic', 'professional', 'enterprise'] &&
+        request.resource.data.status in ['active', 'cancelled', 'expired', 'pending'];
+    }
+    
+    // Reglas para métodos de pago
+    match /payment_methods/{methodId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+    }
+    
+    // Reglas para reportes
+    match /reports/{reportId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+    }
+    
+    // Reglas para auditoría (solo lectura para admins)
+    match /audit_logs/{logId} {
+      allow read: if isAdmin();
+      allow write: if false; // Solo el sistema puede escribir logs
+    }
+    
+    // Reglas para configuraciones del sistema (solo admins)
+    match /system_config/{configId} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Reglas para notificaciones
+    match /notifications/{notificationId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+    }
+    
+    // Reglas para archivos/documents
+    match /documents/{documentId} {
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
     }
   }
 }
