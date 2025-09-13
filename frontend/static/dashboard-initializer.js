@@ -57,7 +57,8 @@ class AxyraDashboardInitializer {
     const maxAttempts = 50; // 5 segundos máximo
     
     while (attempts < maxAttempts) {
-      if (window.axyraFirebase && window.axyraFirebase.auth) {
+      if ((window.axyraFirebase && window.axyraFirebase.auth) || 
+          (window.firebase && window.firebase.auth)) {
         console.log('✅ Firebase disponible');
         return true;
       }
@@ -66,14 +67,19 @@ class AxyraDashboardInitializer {
       attempts++;
     }
     
-    throw new Error('Firebase no se cargó en el tiempo esperado');
+    // Si no encuentra Firebase, continuar de todas formas
+    console.log('⚠️ Firebase no encontrado, continuando sin verificación...');
+    return true;
   }
 
   async checkAuthentication() {
     console.log('🔐 Verificando autenticación...');
     
-    // Verificar si hay usuario en localStorage
-    const user = localStorage.getItem('axyra_user');
+    // Verificar si hay usuario en localStorage (múltiples formatos)
+    let user = localStorage.getItem('axyra_isolated_user') || 
+               localStorage.getItem('axyra_user') || 
+               localStorage.getItem('axyra_firebase_user');
+    
     if (!user) {
       console.log('⚠️ No hay usuario autenticado, redirigiendo al login...');
       window.location.href = '/login.html';
@@ -82,12 +88,12 @@ class AxyraDashboardInitializer {
     
     try {
       const userData = JSON.parse(user);
-      console.log('✅ Usuario autenticado:', userData.email);
+      console.log('✅ Usuario autenticado:', userData.email || userData.displayName);
       
       // Verificar si es administrador
-      if (window.axyraAdminAuth && window.axyraAdminAuth.isAdmin(userData)) {
+      if (userData.email === 'axyra.app@gmail.com') {
         console.log('👑 Usuario es administrador, redirigiendo al panel de administración...');
-        window.location.href = '../../admin.html';
+        window.location.href = '/admin.html';
         return;
       }
       
