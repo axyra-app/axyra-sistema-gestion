@@ -11,171 +11,296 @@ class AxyraAdminAuth {
       'juan@axyra.com' // Agregar tu email personal
     ];
     
-    this.adminPassword = 'AxyraAdmin2024!'; // Contraseña temporal
-    this.isAuthenticated = false;
-    this.currentAdmin = null;
-    
     this.init();
   }
 
   init() {
     console.log('🔐 Inicializando Autenticación de Administradores AXYRA...');
-    this.checkExistingAuth();
-    this.setupEventListeners();
+    this.setupAuthListeners();
   }
 
-  setupEventListeners() {
+  setupAuthListeners() {
     // Escuchar cambios en la autenticación
-    document.addEventListener('adminAuthenticated', (e) => {
-      this.isAuthenticated = true;
-      this.currentAdmin = e.detail.admin;
-      this.redirectToAdmin();
+    document.addEventListener('userAuthenticated', (e) => {
+      if (this.isAdmin(e.detail.user)) {
+        this.showAdminAccess();
+      }
     });
 
     // Escuchar logout
-    document.addEventListener('adminLogout', () => {
-      this.isAuthenticated = false;
-      this.currentAdmin = null;
-      this.redirectToLogin();
+    document.addEventListener('userLogout', () => {
+      this.hideAdminAccess();
     });
   }
 
-  checkExistingAuth() {
-    try {
-      const adminData = localStorage.getItem('axyra_admin');
-      if (adminData) {
-        const admin = JSON.parse(adminData);
-        if (this.isValidAdmin(admin)) {
-          this.isAuthenticated = true;
-          this.currentAdmin = admin;
-          this.redirectToAdmin();
-        } else {
-          this.logout();
+  isAdmin(user) {
+    if (!user || !user.email) return false;
+    return this.adminEmails.includes(user.email.toLowerCase());
+  }
+
+  showAdminAccess() {
+    // Mostrar botón de administración en el header
+    this.addAdminButton();
+    
+    // Mostrar panel de administración flotante
+    this.addFloatingAdminPanel();
+  }
+
+  hideAdminAccess() {
+    // Ocultar elementos de administración
+    const adminButton = document.getElementById('admin-access-button');
+    if (adminButton) adminButton.remove();
+    
+    const adminPanel = document.getElementById('floating-admin-panel');
+    if (adminPanel) adminPanel.remove();
+  }
+
+  addAdminButton() {
+    // Verificar si ya existe
+    if (document.getElementById('admin-access-button')) return;
+
+    const header = document.querySelector('.axyra-header, .header, header');
+    if (!header) return;
+
+    const adminButton = document.createElement('div');
+    adminButton.id = 'admin-access-button';
+    adminButton.innerHTML = `
+      <button onclick="window.location.href='admin.html'" class="admin-access-btn">
+        <i class="fas fa-crown"></i>
+        <span>Administración</span>
+      </button>
+    `;
+
+    // Estilos del botón
+    const styles = document.createElement('style');
+    styles.textContent = `
+      .admin-access-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .admin-access-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .admin-access-btn i {
+        font-size: 1.1rem;
+      }
+
+      .admin-access-btn span {
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .admin-access-btn span {
+          display: none;
+        }
+        
+        .admin-access-btn {
+          padding: 10px 15px;
         }
       }
-    } catch (error) {
-      console.error('Error verificando autenticación:', error);
-      this.logout();
+    `;
+
+    document.head.appendChild(styles);
+    header.appendChild(adminButton);
+  }
+
+  addFloatingAdminPanel() {
+    // Verificar si ya existe
+    if (document.getElementById('floating-admin-panel')) return;
+
+    const panel = document.createElement('div');
+    panel.id = 'floating-admin-panel';
+    panel.innerHTML = `
+      <div class="floating-admin-content">
+        <div class="floating-admin-header">
+          <h4><i class="fas fa-crown"></i> Panel Admin</h4>
+          <button onclick="this.parentElement.parentElement.parentElement.remove()" class="floating-admin-close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="floating-admin-actions">
+          <button onclick="window.location.href='admin.html'" class="floating-admin-btn">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </button>
+          <button onclick="window.axyraAdminSubscription.activateUserSubscription()" class="floating-admin-btn">
+            <i class="fas fa-user-plus"></i>
+            <span>Activar Usuario</span>
+          </button>
+          <button onclick="window.axyraAdminSubscription.viewAllSubscriptions()" class="floating-admin-btn">
+            <i class="fas fa-list"></i>
+            <span>Ver Suscripciones</span>
+          </button>
+          <button onclick="window.axyraAdminSubscription.exportSubscriptions()" class="floating-admin-btn">
+            <i class="fas fa-download"></i>
+            <span>Exportar</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    // Estilos del panel flotante
+    const styles = document.createElement('style');
+    styles.textContent = `
+      #floating-admin-panel {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 250px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        border: 2px solid #667eea;
+      }
+
+      .floating-admin-content {
+        padding: 0;
+      }
+
+      .floating-admin-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        border-radius: 15px 15px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .floating-admin-header h4 {
+        margin: 0;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .floating-admin-close {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+      }
+
+      .floating-admin-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .floating-admin-actions {
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .floating-admin-btn {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        color: #374151;
+        padding: 12px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .floating-admin-btn:hover {
+        background: #667eea;
+        color: white;
+        transform: translateX(5px);
+      }
+
+      .floating-admin-btn i {
+        width: 16px;
+        text-align: center;
+      }
+
+      @media (max-width: 768px) {
+        #floating-admin-panel {
+          width: 200px;
+          top: 10px;
+          right: 10px;
+        }
+        
+        .floating-admin-btn span {
+          font-size: 0.8rem;
+        }
+      }
+    `;
+
+    document.head.appendChild(styles);
+    document.body.appendChild(panel);
+  }
+
+  // Verificar acceso de administrador
+  checkAdminAccess() {
+    const user = this.getCurrentUser();
+    if (user && this.isAdmin(user)) {
+      this.showAdminAccess();
+      return true;
     }
+    return false;
   }
 
-  isValidAdmin(admin) {
-    return admin && 
-           admin.email && 
-           this.adminEmails.includes(admin.email) &&
-           admin.expiresAt && 
-           new Date(admin.expiresAt) > new Date();
-  }
-
-  async authenticate(email, password) {
+  getCurrentUser() {
     try {
-      // Verificar credenciales
-      if (!this.adminEmails.includes(email)) {
-        throw new Error('Email no autorizado');
-      }
-
-      if (password !== this.adminPassword) {
-        throw new Error('Contraseña incorrecta');
-      }
-
-      // Crear sesión de administrador
-      const admin = {
-        email: email,
-        name: this.getAdminName(email),
-        role: 'super_admin',
-        loginTime: new Date().toISOString(),
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 horas
-      };
-
-      // Guardar en localStorage
-      localStorage.setItem('axyra_admin', JSON.stringify(admin));
-      
-      this.isAuthenticated = true;
-      this.currentAdmin = admin;
-
-      // Disparar evento
-      document.dispatchEvent(new CustomEvent('adminAuthenticated', {
-        detail: { admin }
-      }));
-
-      return { success: true, admin };
+      const user = localStorage.getItem('axyra_user');
+      return user ? JSON.parse(user) : null;
     } catch (error) {
-      console.error('Error en autenticación:', error);
-      throw error;
+      return null;
     }
   }
 
-  getAdminName(email) {
-    const names = {
-      'admin@axyra.com': 'Administrador Principal',
-      'axyra.app@gmail.com': 'Juan Fernando',
-      'juan@axyra.com': 'Juan Fernando'
-    };
-    return names[email] || 'Administrador';
-  }
-
-  logout() {
-    localStorage.removeItem('axyra_admin');
-    this.isAuthenticated = false;
-    this.currentAdmin = null;
-    
-    document.dispatchEvent(new CustomEvent('adminLogout'));
-  }
-
-  redirectToAdmin() {
-    if (window.location.pathname !== '/admin.html') {
-      window.location.href = 'admin.html';
+  // Agregar email de administrador
+  addAdminEmail(email) {
+    if (!this.adminEmails.includes(email.toLowerCase())) {
+      this.adminEmails.push(email.toLowerCase());
+      console.log('✅ Email de administrador agregado:', email);
     }
   }
 
-  redirectToLogin() {
-    if (window.location.pathname !== '/admin-login.html') {
-      window.location.href = 'admin-login.html';
-    }
-  }
-
-  requireAuth() {
-    if (!this.isAuthenticated) {
-      this.redirectToLogin();
-      return false;
-    }
-    return true;
-  }
-
-  getCurrentAdmin() {
-    return this.currentAdmin;
-  }
-
-  isAdmin(email) {
-    return this.adminEmails.includes(email);
-  }
-
-  // Método para cambiar contraseña (solo para desarrollo)
-  changePassword(newPassword) {
-    this.adminPassword = newPassword;
-    console.log('Contraseña de administrador actualizada');
-  }
-
-  // Método para agregar nuevo administrador
-  addAdmin(email, name) {
-    if (!this.adminEmails.includes(email)) {
-      this.adminEmails.push(email);
-      console.log(`Nuevo administrador agregado: ${email}`);
-    }
-  }
-
-  // Método para remover administrador
-  removeAdmin(email) {
-    const index = this.adminEmails.indexOf(email);
+  // Remover email de administrador
+  removeAdminEmail(email) {
+    const index = this.adminEmails.indexOf(email.toLowerCase());
     if (index > -1) {
       this.adminEmails.splice(index, 1);
-      console.log(`Administrador removido: ${email}`);
+      console.log('❌ Email de administrador removido:', email);
     }
+  }
+
+  // Obtener lista de administradores
+  getAdminEmails() {
+    return [...this.adminEmails];
   }
 }
 
-// Inicializar sistema de autenticación de administradores
+// Inicializar autenticación de administradores
 window.axyraAdminAuth = new AxyraAdminAuth();
 
-// Exportar para uso global
-window.AxyraAdminAuth = AxyraAdminAuth;
+// Verificar acceso al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.axyraAdminAuth) {
+    window.axyraAdminAuth.checkAdminAccess();
+  }
+});
