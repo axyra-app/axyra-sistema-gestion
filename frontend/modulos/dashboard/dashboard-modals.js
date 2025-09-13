@@ -44,7 +44,8 @@ class DashboardModals {
     // Cerrar modales
     document.addEventListener('click', (e) => {
       if (e.target.classList.contains('axyra-modal-close') || 
-          e.target.classList.contains('axyra-modal-overlay')) {
+          e.target.classList.contains('axyra-modal-overlay') ||
+          e.target.closest('.axyra-modal-close')) {
         this.closeAllModals();
       }
     });
