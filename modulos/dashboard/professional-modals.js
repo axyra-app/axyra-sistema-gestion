@@ -5,13 +5,27 @@
 
 class AxyraDashboardModals {
   constructor() {
-    this.modalSystem = window.axyraModals;
+    this.modalSystem = null;
     this.init();
   }
 
   init() {
+    // Esperar a que el sistema de modales esté disponible
+    this.waitForModalSystem();
     this.setupEventListeners();
     console.log('✅ Modales profesionales del dashboard inicializados');
+  }
+
+  waitForModalSystem() {
+    const checkModalSystem = () => {
+      if (window.axyraModals) {
+        this.modalSystem = window.axyraModals;
+        console.log('✅ Sistema de modales AXYRA disponible');
+      } else {
+        setTimeout(checkModalSystem, 100);
+      }
+    };
+    checkModalSystem();
   }
 
   setupEventListeners() {
@@ -37,6 +51,11 @@ class AxyraDashboardModals {
   }
 
   showPersonalizeDashboardModal() {
+    if (!this.modalSystem) {
+      console.error('❌ Sistema de modales no disponible');
+      return;
+    }
+
     const content = `
       <div class="axyra-personalize-dashboard">
         <div class="axyra-personalize-header">
@@ -151,6 +170,11 @@ class AxyraDashboardModals {
   }
 
   showConfigurationModal() {
+    if (!this.modalSystem) {
+      console.error('❌ Sistema de modales no disponible');
+      return;
+    }
+
     const content = `
       <div class="axyra-configuration-dashboard">
         <div class="axyra-config-section">
@@ -232,6 +256,11 @@ class AxyraDashboardModals {
   }
 
   showDeleteWidgetModal(widgetId, widgetName) {
+    if (!this.modalSystem) {
+      console.error('❌ Sistema de modales no disponible');
+      return;
+    }
+
     const content = `
       <div class="axyra-delete-widget">
         <div class="axyra-delete-icon">
