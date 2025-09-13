@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Firebase AXYRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <h1>Test de Firebase AXYRA</h1>
+    <div id="status"></div>
+    <div id="results"></div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="static/firebase-config.js"></script>
+    
+    <script>
+        async function testFirebase() {
+            const statusDiv = document.getElementById('status');
+            const resultsDiv = document.getElementById('results');
+            
+            statusDiv.innerHTML = '<p>🔄 Probando Firebase...</p>';
+            
+            try {
+                // Verificar que Firebase esté disponible
+                if (typeof firebase === 'undefined') {
+                    throw new Error('Firebase no está disponible');
+                }
+                
+                statusDiv.innerHTML += '<p>✅ Firebase SDK cargado</p>';
+                
+                // Verificar autenticación
+                const auth = firebase.auth();
+                const user = auth.currentUser;
+                
+                if (user) {
+                    statusDiv.innerHTML += `<p>✅ Usuario autenticado: ${user.email}</p>`;
+                    
+                    // Probar Firestore
+                    const db = firebase.firestore();
+                    
+                    // Intentar leer datos del usuario
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        statusDiv.innerHTML += '<p>✅ Usuario encontrado en Firestore</p>';
+                        resultsDiv.innerHTML = '<h3>Datos del usuario:</h3><pre>' + JSON.stringify(userDoc.data(), null, 2) + '</pre>';
+                    } else {
+                        statusDiv.innerHTML += '<p>⚠️ Usuario no encontrado en Firestore</p>';
+                        
+                        // Intentar crear el usuario
+                        const userData = {
+                            uid: user.uid,
+                            email: user.email,
+                            displayName: user.displayName || user.email.split('@')[0],
+                            username: user.email.split('@')[0],
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                            provider: 'test',
+                            hasPassword: false,
+                            emailVerified: user.emailVerified,
+                            role: 'empleado'
+                        };
+                        
+                        await db.collection('users').doc(user.uid).set(userData);
+                        statusDiv.innerHTML += '<p>✅ Usuario creado en Firestore</p>';
+                        resultsDiv.innerHTML = '<h3>Datos del usuario creado:</h3><pre>' + JSON.stringify(userData, null, 2) + '</pre>';
+                    }
+                } else {
+                    statusDiv.innerHTML += '<p>❌ No hay usuario autenticado</p>';
+                    statusDiv.innerHTML += '<p>🔑 <a href="login.html">Iniciar sesión</a></p>';
+                }
+                
+            } catch (error) {
+                statusDiv.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+                console.error('Error en test de Firebase:', error);
+            }
+        }
+        
+        // Ejecutar test cuando se cargue la página
+        document.addEventListener('DOMContentLoaded', testFirebase);
+    </script>
+</body>
+</html>

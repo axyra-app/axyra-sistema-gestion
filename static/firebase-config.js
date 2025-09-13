@@ -80,7 +80,7 @@ function initializeFirebase() {
         });
 
       // Configurar listener de estado de autenticación
-      firebaseAuth.onAuthStateChanged((user) => {
+      firebaseAuth.onAuthStateChanged(async (user) => {
         if (user) {
           console.log('🔐 Usuario autenticado en Firebase:', user.email);
 
@@ -96,7 +96,18 @@ function initializeFirebase() {
             emailVerified: user.emailVerified,
             id: user.uid,
             isAuthenticated: true,
+            role: 'empleado', // Rol por defecto
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
           };
+
+          // Guardar usuario en Firestore
+          try {
+            await firebaseFirestore.collection('users').doc(user.uid).set(userInfo, { merge: true });
+            console.log('✅ Usuario guardado en Firestore:', user.email);
+          } catch (error) {
+            console.error('❌ Error guardando usuario en Firestore:', error);
+          }
 
           // Guardar en localStorage para el dashboard
           localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));

@@ -37,7 +37,11 @@ service cloud.firestore {
     
     // Reglas para usuarios (perfil)
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      // Permitir lectura y escritura si el usuario está autenticado y es el propietario
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      // Permitir creación si el usuario está autenticado (para nuevos registros)
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      // Permitir lectura si es admin
       allow read: if isAdmin();
     }
     
