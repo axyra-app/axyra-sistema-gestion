@@ -289,5 +289,29 @@
     <script src="../../static/ai-chat-system.js"></script>
     <script src="dashboard.js"></script>
     <script src="dashboard-avanzado.js"></script>
+    
+    <!-- Script de verificación del chat de IA -->
+    <script>
+      // Verificar si el chat se cargó después de un tiempo
+      setTimeout(() => {
+        console.log('🔍 Verificando chat de IA en dashboard...');
+        console.log('window.axyraAIChat:', window.axyraAIChat);
+        console.log('Elemento del chat:', document.getElementById('axyra-ai-chat'));
+        console.log('Botón toggle:', document.getElementById('axyraChatToggle'));
+        
+        if (window.axyraAIChat) {
+          console.log('✅ Chat de IA cargado correctamente en dashboard');
+        } else {
+          console.log('❌ Chat de IA NO se cargó en dashboard');
+          // Intentar inicializar manualmente
+          try {
+            window.axyraAIChat = new AxyraAIChatSystem();
+            console.log('🔄 Chat de IA inicializado manualmente');
+          } catch (error) {
+            console.error('❌ Error al inicializar chat de IA:', error);
+          }
+        }
+      }, 3000);
+    </script>
   </body>
 </html>
