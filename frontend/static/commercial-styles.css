@@ -142,7 +142,8 @@
   font-weight: 600;
 }
 
-.status-item, .revenue-item {
+.status-item,
+.revenue-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -150,7 +151,8 @@
   border-bottom: 1px solid #f3f4f6;
 }
 
-.status-item:last-child, .revenue-item:last-child {
+.status-item:last-child,
+.revenue-item:last-child {
   border-bottom: none;
 }
 
@@ -217,7 +219,7 @@
 }
 
 .plan-features li::before {
-  content: "✓";
+  content: '✓';
   position: absolute;
   left: 0;
   color: #10b981;
@@ -536,7 +538,8 @@
   align-items: center;
 }
 
-.tour-actions, .completion-actions {
+.tour-actions,
+.completion-actions {
   display: flex;
   gap: 15px;
   justify-content: center;
@@ -616,36 +619,36 @@
     width: 95%;
     margin: 10px;
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
-  
+
   .payment-plans {
     grid-template-columns: 1fr;
   }
-  
+
   .overview-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .welcome-features,
   .tour-features {
     grid-template-columns: 1fr;
   }
-  
+
   .team-setup-options {
     grid-template-columns: 1fr;
   }
-  
+
   .onboarding-content {
     padding: 20px;
   }
-  
+
   .onboarding-step h2 {
     font-size: 1.5rem;
   }
-  
+
   .step-icon {
     font-size: 3rem;
   }

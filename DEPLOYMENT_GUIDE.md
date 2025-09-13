@@ -13,6 +13,7 @@ Esta guía te ayudará a desplegar AXYRA en Vercel para producción.
 ### 1. Preparar el Repositorio
 
 Asegúrate de que tu repositorio tenga los siguientes archivos:
+
 - `vercel.json` ✅
 - `package.json` ✅
 - `README.md` ✅
@@ -70,10 +71,12 @@ Si necesitas configurar variables de entorno:
 ## 🌐 Configuración de Dominio Personalizado
 
 ### Opción 1: Dominio de Vercel (Gratis)
+
 - Usa la URL proporcionada por Vercel
 - Ejemplo: `https://axyra-sistema-gestion.vercel.app`
 
 ### Opción 2: Dominio Personalizado
+
 1. Ve a "Settings" > "Domains"
 2. Agrega tu dominio personalizado
 3. Configura los DNS según las instrucciones de Vercel
@@ -81,18 +84,22 @@ Si necesitas configurar variables de entorno:
 ## 🔧 Configuración Post-Despliegue
 
 ### 1. Configurar Firebase
+
 1. Ve a [Firebase Console](https://console.firebase.google.com)
 2. Crea un nuevo proyecto o usa uno existente
 3. Habilita Authentication y Firestore
 4. Actualiza la configuración en `firebase-config.js`
 
 ### 2. Configurar Pagos
+
 1. Configura tu cuenta de Bancolombia para pagos
 2. Configura Nequi para pagos móviles
 3. Actualiza las claves de API en el sistema de pagos
 
 ### 3. Configurar SSL
+
 Vercel maneja SSL automáticamente, pero puedes:
+
 1. Verificar que el certificado esté activo
 2. Configurar redirección HTTPS
 3. Configurar headers de seguridad
@@ -100,11 +107,13 @@ Vercel maneja SSL automáticamente, pero puedes:
 ## 📊 Monitoreo y Analytics
 
 ### 1. Vercel Analytics
+
 1. Habilita Vercel Analytics en el dashboard
 2. Monitorea el rendimiento de tu aplicación
 3. Revisa métricas de uso
 
 ### 2. Google Analytics
+
 1. Crea una cuenta en Google Analytics
 2. Agrega el código de seguimiento a tu aplicación
 3. Configura eventos personalizados
@@ -112,25 +121,31 @@ Vercel maneja SSL automáticamente, pero puedes:
 ## 🔒 Seguridad
 
 ### 1. Headers de Seguridad
+
 El archivo `vercel.json` incluye headers de seguridad:
+
 - X-Content-Type-Options
 - X-Frame-Options
 - X-XSS-Protection
 - Referrer-Policy
 
 ### 2. HTTPS
+
 Vercel proporciona HTTPS automáticamente
 
 ### 3. Variables de Entorno
+
 Nunca expongas claves secretas en el código
 
 ## 🚀 Actualizaciones
 
 ### 1. Despliegue Automático
+
 - Cada push a la rama `main` desplegará automáticamente
 - Las ramas de desarrollo se desplegarán como previews
 
 ### 2. Despliegue Manual
+
 ```bash
 # Instalar Vercel CLI
 npm i -g vercel
@@ -145,11 +160,13 @@ vercel --prod
 ## 📱 Configuración para Móviles
 
 ### 1. PWA (Progressive Web App)
+
 1. Agrega un `manifest.json`
 2. Configura el Service Worker
 3. Optimiza para móviles
 
 ### 2. Responsive Design
+
 - La aplicación ya es responsive
 - Prueba en diferentes dispositivos
 - Optimiza imágenes
@@ -157,26 +174,31 @@ vercel --prod
 ## 🔧 Solución de Problemas
 
 ### 1. Error 404
+
 - Verifica las rutas en `vercel.json`
 - Asegúrate de que los archivos estén en la ubicación correcta
 
 ### 2. Error de Build
+
 - Revisa los logs en Vercel
 - Verifica que no haya errores de JavaScript
 - Asegúrate de que todas las dependencias estén disponibles
 
 ### 3. Problemas de CORS
+
 - Configura las políticas de CORS
 - Verifica las URLs permitidas
 
 ## 📈 Optimización
 
 ### 1. Performance
+
 - Usa Vercel Analytics para monitorear
 - Optimiza imágenes
 - Minimiza CSS y JavaScript
 
 ### 2. SEO
+
 - Configura meta tags
 - Usa URLs amigables
 - Configura sitemap
@@ -184,10 +206,12 @@ vercel --prod
 ## 🆘 Soporte
 
 ### 1. Vercel Support
+
 - [Documentación de Vercel](https://vercel.com/docs)
 - [Comunidad de Vercel](https://github.com/vercel/vercel/discussions)
 
 ### 2. AXYRA Support
+
 - Email: soporte@axyra.com
 - GitHub Issues: [Crear un issue](https://github.com/JuanFerUran/axyra-sistema-gestion/issues)
 

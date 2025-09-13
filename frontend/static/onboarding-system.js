@@ -9,7 +9,7 @@ class AxyraOnboardingSystem {
     this.currentStep = 0;
     this.userProgress = {};
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -28,43 +28,43 @@ class AxyraOnboardingSystem {
         title: '¡Bienvenido a AXYRA!',
         description: 'Te guiaremos paso a paso para configurar tu cuenta',
         component: 'welcome',
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: 'company_info',
         title: 'Información de tu Empresa',
         description: 'Configura los datos básicos de tu empresa',
         component: 'company_info',
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: 'payment_setup',
         title: 'Configuración de Pagos',
         description: 'Selecciona tu plan y método de pago',
         component: 'payment_setup',
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: 'team_setup',
         title: 'Configuración del Equipo',
         description: 'Agrega los primeros empleados a tu sistema',
         component: 'team_setup',
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: 'system_tour',
         title: 'Tour del Sistema',
         description: 'Conoce las principales funcionalidades',
         component: 'system_tour',
-        isCompleted: false
+        isCompleted: false,
       },
       {
         id: 'completion',
         title: '¡Configuración Completa!',
         description: 'Ya estás listo para usar AXYRA',
         component: 'completion',
-        isCompleted: false
-      }
+        isCompleted: false,
+      },
     ];
   }
 
@@ -96,9 +96,9 @@ class AxyraOnboardingSystem {
 
   handleStepCompleted(stepData) {
     const { stepId, data } = stepData;
-    
+
     // Marcar paso como completado
-    const step = this.steps.find(s => s.id === stepId);
+    const step = this.steps.find((s) => s.id === stepId);
     if (step) {
       step.isCompleted = true;
     }
@@ -135,7 +135,9 @@ class AxyraOnboardingSystem {
             ${this.renderCurrentStep()}
           </div>
           <div class="onboarding-footer">
-            <button class="btn btn-secondary" onclick="axyraOnboardingSystem.previousStep()" ${this.currentStep === 0 ? 'disabled' : ''}>
+            <button class="btn btn-secondary" onclick="axyraOnboardingSystem.previousStep()" ${
+              this.currentStep === 0 ? 'disabled' : ''
+            }>
               Anterior
             </button>
             <button class="btn btn-primary" onclick="axyraOnboardingSystem.nextStep()">
@@ -165,7 +167,7 @@ class AxyraOnboardingSystem {
 
   renderCurrentStep() {
     const step = this.steps[this.currentStep];
-    
+
     switch (step.component) {
       case 'welcome':
         return this.renderWelcomeStep();
@@ -411,7 +413,7 @@ class AxyraOnboardingSystem {
       const content = modal.querySelector('.onboarding-content');
       const progressFill = modal.querySelector('.progress-fill');
       const progressText = modal.querySelector('.progress-text');
-      
+
       content.innerHTML = this.renderCurrentStep();
       progressFill.style.width = `${(this.currentStep / this.steps.length) * 100}%`;
       progressText.textContent = `Paso ${this.currentStep + 1} de ${this.steps.length}`;
@@ -422,13 +424,13 @@ class AxyraOnboardingSystem {
     // Guardar selección de plan
     this.userProgress.payment_setup = { planId };
     this.saveUserProgress();
-    
+
     // Actualizar UI
-    document.querySelectorAll('.plan-card').forEach(card => {
+    document.querySelectorAll('.plan-card').forEach((card) => {
       card.classList.remove('selected');
     });
     document.querySelector(`[data-plan="${planId}"]`).classList.add('selected');
-    
+
     alert(`Plan ${planId} seleccionado`);
   }
 
@@ -461,13 +463,13 @@ class AxyraOnboardingSystem {
     this.userProgress.completed = true;
     this.userProgress.completedAt = new Date().toISOString();
     this.saveUserProgress();
-    
+
     // Cerrar modal
     this.closeOnboarding();
-    
+
     // Mostrar mensaje de bienvenida
     alert('¡Bienvenido a AXYRA! Tu cuenta está lista para usar.');
-    
+
     // Redirigir al dashboard
     window.location.href = 'dashboard.html';
   }
@@ -484,11 +486,11 @@ class AxyraOnboardingSystem {
   }
 
   getOnboardingProgress() {
-    const completedSteps = this.steps.filter(step => step.isCompleted).length;
+    const completedSteps = this.steps.filter((step) => step.isCompleted).length;
     return {
       totalSteps: this.steps.length,
       completedSteps,
-      progress: (completedSteps / this.steps.length) * 100
+      progress: (completedSteps / this.steps.length) * 100,
     };
   }
 }
@@ -498,7 +500,7 @@ let axyraOnboardingSystem;
 document.addEventListener('DOMContentLoaded', () => {
   axyraOnboardingSystem = new AxyraOnboardingSystem();
   window.axyraOnboardingSystem = axyraOnboardingSystem;
-  
+
   // Verificar si el usuario necesita onboarding
   if (!axyraOnboardingSystem.isOnboardingCompleted()) {
     // Mostrar botón de onboarding en el header

@@ -10,7 +10,7 @@ class AxyraPaymentSystem {
     this.paymentHistory = [];
     this.plans = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -123,9 +123,9 @@ class AxyraPaymentSystem {
             'Gestión básica de nómina',
             'Reportes básicos',
             'Soporte por email',
-            '1GB de almacenamiento'
+            '1GB de almacenamiento',
           ],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'professional',
@@ -140,9 +140,9 @@ class AxyraPaymentSystem {
             'Reportes avanzados',
             'Soporte prioritario',
             '5GB de almacenamiento',
-            'Integraciones API'
+            'Integraciones API',
           ],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'enterprise',
@@ -158,10 +158,10 @@ class AxyraPaymentSystem {
             'Soporte 24/7',
             '50GB de almacenamiento',
             'API completa',
-            'Soporte dedicado'
+            'Soporte dedicado',
           ],
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.savePlans();
     }
@@ -169,7 +169,7 @@ class AxyraPaymentSystem {
 
   handlePaymentProcessed(paymentData) {
     const { subscriptionId, amount, status, method } = paymentData;
-    
+
     // Crear registro de pago
     const payment = {
       id: 'payment_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
@@ -180,8 +180,8 @@ class AxyraPaymentSystem {
       status,
       timestamp: new Date().toISOString(),
       metadata: {
-        processedBy: this.getCurrentUser()
-      }
+        processedBy: this.getCurrentUser(),
+      },
     };
 
     this.paymentHistory.push(payment);
@@ -202,8 +202,8 @@ class AxyraPaymentSystem {
       isActive: subscriptionData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.subscriptions.push(subscription);
@@ -224,8 +224,8 @@ class AxyraPaymentSystem {
       isActive: methodData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.paymentMethods.push(method);
@@ -236,7 +236,7 @@ class AxyraPaymentSystem {
   }
 
   calculateEndDate(planId) {
-    const plan = this.plans.find(p => p.id === planId);
+    const plan = this.plans.find((p) => p.id === planId);
     if (plan && plan.interval === 'monthly') {
       const endDate = new Date();
       endDate.setMonth(endDate.getMonth() + 1);
@@ -247,10 +247,10 @@ class AxyraPaymentSystem {
 
   processPayment(paymentData) {
     const { subscriptionId, amount, method, accountNumber } = paymentData;
-    
+
     // Simular procesamiento de pago
     const paymentResult = this.simulatePayment(method, amount, accountNumber);
-    
+
     if (paymentResult.success) {
       // Crear registro de pago exitoso
       const payment = {
@@ -263,15 +263,15 @@ class AxyraPaymentSystem {
         transactionId: paymentResult.transactionId,
         timestamp: new Date().toISOString(),
         metadata: {
-          processedBy: this.getCurrentUser()
-        }
+          processedBy: this.getCurrentUser(),
+        },
       };
 
       this.paymentHistory.push(payment);
       this.savePaymentHistory();
 
       // Actualizar suscripción
-      const subscription = this.subscriptions.find(s => s.id === subscriptionId);
+      const subscription = this.subscriptions.find((s) => s.id === subscriptionId);
       if (subscription) {
         subscription.status = 'active';
         subscription.endDate = this.calculateEndDate(subscription.planId);
@@ -289,28 +289,28 @@ class AxyraPaymentSystem {
   simulatePayment(method, amount, accountNumber) {
     // Simular procesamiento de pago
     const isSuccess = Math.random() > 0.1; // 90% de éxito
-    
+
     if (isSuccess) {
       return {
         success: true,
         transactionId: 'TXN_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
-        message: `Pago de $${amount.toLocaleString()} COP procesado exitosamente via ${method}`
+        message: `Pago de $${amount.toLocaleString()} COP procesado exitosamente via ${method}`,
       };
     } else {
       return {
         success: false,
-        error: 'Error procesando el pago. Por favor intenta nuevamente.'
+        error: 'Error procesando el pago. Por favor intenta nuevamente.',
       };
     }
   }
 
   getPaymentStatistics() {
     const totalSubscriptions = this.subscriptions.length;
-    const activeSubscriptions = this.subscriptions.filter(s => s.status === 'active').length;
+    const activeSubscriptions = this.subscriptions.filter((s) => s.status === 'active').length;
     const totalPayments = this.paymentHistory.length;
-    const successfulPayments = this.paymentHistory.filter(p => p.status === 'completed').length;
+    const successfulPayments = this.paymentHistory.filter((p) => p.status === 'completed').length;
     const totalRevenue = this.paymentHistory
-      .filter(p => p.status === 'completed')
+      .filter((p) => p.status === 'completed')
       .reduce((sum, p) => sum + p.amount, 0);
 
     return {
@@ -318,7 +318,7 @@ class AxyraPaymentSystem {
       activeSubscriptions,
       totalPayments,
       successfulPayments,
-      totalRevenue
+      totalRevenue,
     };
   }
 
@@ -391,13 +391,13 @@ class AxyraPaymentSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -406,7 +406,7 @@ class AxyraPaymentSystem {
 
   renderPaymentStats() {
     const stats = this.getPaymentStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -435,7 +435,7 @@ class AxyraPaymentSystem {
 
   renderOverview() {
     const stats = this.getPaymentStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -447,7 +447,9 @@ class AxyraPaymentSystem {
             </div>
             <div class="status-item">
               <span>Tasa de Éxito</span>
-              <span>${stats.totalPayments > 0 ? Math.round((stats.successfulPayments / stats.totalPayments) * 100) : 0}%</span>
+              <span>${
+                stats.totalPayments > 0 ? Math.round((stats.successfulPayments / stats.totalPayments) * 100) : 0
+              }%</span>
             </div>
           </div>
         </div>
@@ -469,7 +471,9 @@ class AxyraPaymentSystem {
   }
 
   renderPlansList() {
-    return this.plans.map(plan => `
+    return this.plans
+      .map(
+        (plan) => `
       <div class="plan-card">
         <div class="plan-header">
           <h5>${plan.name}</h5>
@@ -478,20 +482,24 @@ class AxyraPaymentSystem {
         <div class="plan-info">
           <p>${plan.description}</p>
           <ul class="plan-features">
-            ${plan.features.map(feature => `<li>${feature}</li>`).join('')}
+            ${plan.features.map((feature) => `<li>${feature}</li>`).join('')}
           </ul>
         </div>
         <div class="plan-actions">
           <button onclick="axyraPaymentSystem.subscribeToPlan('${plan.id}')">Suscribirse</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderSubscriptionsList() {
     const subscriptions = this.subscriptions.slice(-20);
-    
-    return subscriptions.map(subscription => `
+
+    return subscriptions
+      .map(
+        (subscription) => `
       <div class="subscription-card">
         <div class="subscription-header">
           <h5>Suscripción ${subscription.id.substring(0, 8)}</h5>
@@ -508,13 +516,17 @@ class AxyraPaymentSystem {
           <button onclick="axyraPaymentSystem.cancelSubscription('${subscription.id}')">Cancelar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderPaymentsList() {
     const payments = this.paymentHistory.slice(-20);
-    
-    return payments.map(payment => `
+
+    return payments
+      .map(
+        (payment) => `
       <div class="payment-card">
         <div class="payment-header">
           <h5>Pago ${payment.id.substring(0, 8)}</h5>
@@ -527,17 +539,23 @@ class AxyraPaymentSystem {
           <p>Transacción: ${payment.transactionId || 'N/A'}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderMethodsList() {
     const methods = this.paymentMethods.slice(-20);
-    
-    return methods.map(method => `
+
+    return methods
+      .map(
+        (method) => `
       <div class="method-card">
         <div class="method-header">
           <h5>${method.type.toUpperCase()}</h5>
-          <span class="method-status ${method.isActive ? 'active' : 'inactive'}">${method.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="method-status ${method.isActive ? 'active' : 'inactive'}">${
+          method.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="method-info">
           <p>Número: ${method.accountNumber}</p>
@@ -549,12 +567,14 @@ class AxyraPaymentSystem {
           <button onclick="axyraPaymentSystem.editMethod('${method.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showPlansDialog() {
     const planId = prompt('Selecciona un plan (basic, professional, enterprise):');
-    if (planId && this.plans.find(p => p.id === planId)) {
+    if (planId && this.plans.find((p) => p.id === planId)) {
       this.subscribeToPlan(planId);
     }
   }
@@ -569,7 +589,7 @@ class AxyraPaymentSystem {
   }
 
   subscribeToPlan(planId) {
-    const plan = this.plans.find(p => p.id === planId);
+    const plan = this.plans.find((p) => p.id === planId);
     if (plan) {
       const subscription = this.createSubscription({ planId });
       alert(`Te has suscrito al ${plan.name} por $${plan.price.toLocaleString()} COP/mes`);
@@ -577,14 +597,16 @@ class AxyraPaymentSystem {
   }
 
   showSubscriptionDetails(subscriptionId) {
-    const subscription = this.subscriptions.find(s => s.id === subscriptionId);
+    const subscription = this.subscriptions.find((s) => s.id === subscriptionId);
     if (subscription) {
-      alert(`Suscripción: ${subscription.id}\nPlan: ${subscription.planId}\nEstado: ${subscription.status}\nMétodo: ${subscription.paymentMethod}`);
+      alert(
+        `Suscripción: ${subscription.id}\nPlan: ${subscription.planId}\nEstado: ${subscription.status}\nMétodo: ${subscription.paymentMethod}`
+      );
     }
   }
 
   cancelSubscription(subscriptionId) {
-    const subscription = this.subscriptions.find(s => s.id === subscriptionId);
+    const subscription = this.subscriptions.find((s) => s.id === subscriptionId);
     if (subscription) {
       subscription.status = 'cancelled';
       this.saveSubscriptions();
@@ -593,14 +615,18 @@ class AxyraPaymentSystem {
   }
 
   showMethodDetails(methodId) {
-    const method = this.paymentMethods.find(m => m.id === methodId);
+    const method = this.paymentMethods.find((m) => m.id === methodId);
     if (method) {
-      alert(`Método: ${method.type}\nNúmero: ${method.accountNumber}\nNombre: ${method.accountName}\nActivo: ${method.isActive ? 'Sí' : 'No'}`);
+      alert(
+        `Método: ${method.type}\nNúmero: ${method.accountNumber}\nNombre: ${method.accountName}\nActivo: ${
+          method.isActive ? 'Sí' : 'No'
+        }`
+      );
     }
   }
 
   editMethod(methodId) {
-    const method = this.paymentMethods.find(m => m.id === methodId);
+    const method = this.paymentMethods.find((m) => m.id === methodId);
     if (method) {
       const newAccountNumber = prompt('Nuevo número de cuenta:', method.accountNumber);
       if (newAccountNumber) {
