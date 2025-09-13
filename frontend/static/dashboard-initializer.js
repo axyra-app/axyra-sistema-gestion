@@ -13,7 +13,7 @@ class AxyraDashboardInitializer {
 
   init() {
     console.log('🚀 Inicializando Dashboard AXYRA...');
-    
+
     // Esperar a que el DOM esté listo
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.initializeDashboard());
@@ -25,25 +25,24 @@ class AxyraDashboardInitializer {
   async initializeDashboard() {
     try {
       console.log('📋 Iniciando proceso de inicialización del dashboard...');
-      
+
       // 1. Verificar Firebase
       await this.waitForFirebase();
-      
+
       // 2. Verificar autenticación
       await this.checkAuthentication();
-      
+
       // 3. Inicializar componentes
       await this.initializeComponents();
-      
+
       // 4. Cargar datos
       await this.loadDashboardData();
-      
+
       // 5. Mostrar dashboard
       this.showDashboard();
-      
+
       this.initialized = true;
       console.log('✅ Dashboard AXYRA inicializado correctamente');
-      
     } catch (error) {
       console.error('❌ Error inicializando dashboard:', error);
       this.handleInitializationError(error);
@@ -52,21 +51,20 @@ class AxyraDashboardInitializer {
 
   async waitForFirebase() {
     console.log('🔥 Esperando Firebase...');
-    
+
     let attempts = 0;
     const maxAttempts = 50; // 5 segundos máximo
-    
+
     while (attempts < maxAttempts) {
-      if ((window.axyraFirebase && window.axyraFirebase.auth) || 
-          (window.firebase && window.firebase.auth)) {
+      if ((window.axyraFirebase && window.axyraFirebase.auth) || (window.firebase && window.firebase.auth)) {
         console.log('✅ Firebase disponible');
         return true;
       }
-      
+
       await this.sleep(100);
       attempts++;
     }
-    
+
     // Si no encuentra Firebase, continuar de todas formas
     console.log('⚠️ Firebase no encontrado, continuando sin verificación...');
     return true;
@@ -74,29 +72,29 @@ class AxyraDashboardInitializer {
 
   async checkAuthentication() {
     console.log('🔐 Verificando autenticación...');
-    
+
     // Verificar si hay usuario en localStorage (múltiples formatos)
-    let user = localStorage.getItem('axyra_isolated_user') || 
-               localStorage.getItem('axyra_user') || 
-               localStorage.getItem('axyra_firebase_user');
-    
+    let user =
+      localStorage.getItem('axyra_isolated_user') ||
+      localStorage.getItem('axyra_user') ||
+      localStorage.getItem('axyra_firebase_user');
+
     if (!user) {
       console.log('⚠️ No hay usuario autenticado, redirigiendo al login...');
       window.location.href = '/login.html';
       return;
     }
-    
+
     try {
       const userData = JSON.parse(user);
       console.log('✅ Usuario autenticado:', userData.email || userData.displayName);
-      
+
       // Verificar si es administrador
       if (userData.email === 'axyra.app@gmail.com') {
         console.log('👑 Usuario es administrador, redirigiendo al panel de administración...');
-        window.location.href = '/admin.html';
+        window.location.href = '/admin-brutal.html';
         return;
       }
-      
     } catch (error) {
       console.error('❌ Error parseando datos de usuario:', error);
       window.location.href = '/login.html';
@@ -105,7 +103,7 @@ class AxyraDashboardInitializer {
 
   async initializeComponents() {
     console.log('🧩 Inicializando componentes...');
-    
+
     // Inicializar chat de IA
     if (window.AxyraAIChatProfessional && !window.axyraAIChat) {
       try {
@@ -115,7 +113,7 @@ class AxyraDashboardInitializer {
         console.warn('⚠️ Error inicializando chat de IA:', error);
       }
     }
-    
+
     // Inicializar sistema de modales
     if (window.AxyraModalSystem && !window.axyraModalSystem) {
       try {
@@ -125,7 +123,7 @@ class AxyraDashboardInitializer {
         console.warn('⚠️ Error inicializando sistema de modales:', error);
       }
     }
-    
+
     // Inicializar sistema de administración
     if (window.axyraAdminAuth) {
       try {
@@ -139,49 +137,49 @@ class AxyraDashboardInitializer {
 
   async loadDashboardData() {
     console.log('📊 Cargando datos del dashboard...');
-    
+
     // Simular carga de datos
     await this.sleep(500);
-    
+
     // Aquí se cargarían los datos reales del dashboard
     console.log('✅ Datos del dashboard cargados');
   }
 
   showDashboard() {
     console.log('🎯 Mostrando dashboard...');
-    
+
     // Ocultar loader si existe
     const loader = document.getElementById('dashboard-loader');
     if (loader) {
       loader.style.display = 'none';
     }
-    
+
     // Mostrar contenido principal
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.style.display = 'block';
     }
-    
+
     // Mostrar header si existe
     const header = document.querySelector('.axyra-header');
     if (header) {
       header.style.display = 'block';
     }
-    
+
     console.log('✅ Dashboard visible');
   }
 
   handleInitializationError(error) {
     console.error('❌ Error crítico en inicialización:', error);
-    
+
     // Mostrar mensaje de error al usuario
     this.showErrorMessage('Error cargando el dashboard. Por favor, recarga la página.');
-    
+
     // Intentar reinicializar después de un tiempo
     if (this.retryCount < this.maxRetries) {
       this.retryCount++;
       console.log(`🔄 Reintentando inicialización (${this.retryCount}/${this.maxRetries})...`);
-      
+
       setTimeout(() => {
         this.initializeDashboard();
       }, 2000);
@@ -224,12 +222,12 @@ class AxyraDashboardInitializer {
         ">Recargar Página</button>
       </div>
     `;
-    
+
     document.body.appendChild(errorDiv);
   }
 
   sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 
