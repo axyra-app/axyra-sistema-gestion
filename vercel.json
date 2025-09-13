@@ -9,6 +9,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "https://us-central1-axyra-sistema-gestion.cloudfunctions.net/api/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/frontend/$1"
     },
