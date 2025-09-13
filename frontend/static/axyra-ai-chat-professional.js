@@ -341,11 +341,14 @@ class AxyraAIChatProfessional {
 
       .axyra-ai-message-content {
         background: white;
+        color: #1a202c;
         padding: 12px 16px;
         border-radius: 12px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         max-width: 80%;
         word-wrap: break-word;
+        font-weight: 500;
+        line-height: 1.5;
       }
 
       .axyra-ai-message.user .axyra-ai-message-content {
@@ -928,7 +931,10 @@ class AxyraAIChatProfessional {
 
     messageElement.innerHTML = `
       <div class="axyra-ai-message-avatar">
-        <i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i>
+        ${sender === 'user' ? 
+          '<i class="fas fa-user"></i>' : 
+          '<img src="../../logo.png" alt="Axyra-IA" class="axyra-ai-message-logo">'
+        }
       </div>
       <div class="axyra-ai-message-content">
         ${this.formatMessage(content)}
