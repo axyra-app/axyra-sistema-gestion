@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Chat IA AXYRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <h1>Test del Chat de IA AXYRA</h1>
+    <p>Si el chat funciona, deberías ver un botón flotante azul en la esquina inferior derecha.</p>
+    
+    <script src="static/ai-chat-system.js"></script>
+    <script>
+        // Verificar que el chat se cargó
+        setTimeout(() => {
+            console.log('🔍 Verificando chat de IA...');
+            console.log('window.axyraAIChat:', window.axyraAIChat);
+            console.log('Elemento del chat:', document.getElementById('axyra-ai-chat'));
+            console.log('Botón toggle:', document.getElementById('axyraChatToggle'));
+            
+            if (window.axyraAIChat) {
+                console.log('✅ Chat de IA cargado correctamente');
+            } else {
+                console.log('❌ Chat de IA NO se cargó');
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
