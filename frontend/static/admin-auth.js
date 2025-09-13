@@ -6,9 +6,7 @@
 class AxyraAdminAuth {
   constructor() {
     this.adminEmails = [
-      'admin@axyra.com',
-      'axyra.app@gmail.com',
-      'juan@axyra.com' // Agregar tu email personal
+      'axyra.app@gmail.com' // Solo tu email de administrador
     ];
     
     this.init();
