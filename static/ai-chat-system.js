@@ -117,6 +117,7 @@ class AxyraAIChatSystem {
   }
 
   createChatInterface() {
+    console.log('🔧 Creando interfaz del chat de IA...');
     // Crear contenedor principal del chat
     const chatContainer = document.createElement('div');
     chatContainer.id = 'axyra-ai-chat';
@@ -189,6 +190,7 @@ class AxyraAIChatSystem {
 
     // Insertar en el body
     document.body.appendChild(chatContainer);
+    console.log('✅ Interfaz del chat de IA creada e insertada en el DOM');
   }
 
   addChatStyles() {
@@ -215,7 +217,10 @@ class AxyraAIChatSystem {
                 cursor: pointer;
                 box-shadow: 0 4px 20px rgba(79, 129, 189, 0.4);
                 transition: all 0.3s ease;
-                position: relative;
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                z-index: 10000;
             }
 
             .axyra-chat-toggle:hover {
@@ -854,8 +859,20 @@ class AxyraAIChatSystem {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 DOM cargado, inicializando chat de IA...');
   window.axyraAIChat = new AxyraAIChatSystem();
 });
+
+// También inicializar si el DOM ya está listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 DOM cargado, inicializando chat de IA...');
+    window.axyraAIChat = new AxyraAIChatSystem();
+  });
+} else {
+  console.log('🚀 DOM ya listo, inicializando chat de IA inmediatamente...');
+  window.axyraAIChat = new AxyraAIChatSystem();
+}
 
 // Exportar para uso global
 window.AxyraAIChatSystem = AxyraAIChatSystem;
