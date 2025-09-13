@@ -1014,3 +1014,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraIntegrationAPISystem = AxyraIntegrationAPISystem;
+

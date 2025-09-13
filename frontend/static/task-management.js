@@ -719,3 +719,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraTaskManagement = AxyraTaskManagement;
+

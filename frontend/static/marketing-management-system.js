@@ -928,3 +928,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraMarketingManagementSystem = AxyraMarketingManagementSystem;
+

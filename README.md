@@ -1,254 +1,182 @@
 # 🚀 AXYRA - Sistema de Gestión Empresarial
 
-**AXYRA** es un sistema completo de gestión empresarial diseñado para pequeñas y medianas empresas en Colombia. Incluye gestión de empleados, control de horas, cálculo de nómina, reportes avanzados y mucho más.
+<div align="center">
+  <img src="logo.png" alt="AXYRA Logo" width="200" height="200">
+  
+  **Sistema Integral de Gestión Empresarial**
+  
+  [![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/tu-usuario/axyra-sistema-gestion)
+  [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+  [![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen.svg)](https://github.com/tu-usuario/axyra-sistema-gestion)
+</div>
+
+## 📋 Descripción
+
+AXYRA es un sistema completo de gestión empresarial diseñado para optimizar y automatizar los procesos administrativos de pequeñas y medianas empresas. El sistema integra múltiples módulos especializados para ofrecer una solución unificada y eficiente.
 
 ## ✨ Características Principales
 
-### 👥 Gestión de Empleados
+### 🏢 **Dashboard Inteligente**
+- Widgets personalizables y modales profesionales
+- KPIs en tiempo real con visualizaciones avanzadas
+- Navegación intuitiva y diseño responsivo
+- Sistema de notificaciones integrado
 
-- Registro completo de información de empleados
-- Gestión de departamentos y roles
-- Control de acceso basado en permisos
-- Historial de empleados
+### 👥 **Gestión de Personal**
+- Registro completo de empleados con información laboral
+- Cálculo automático de nóminas según legislación colombiana
+- Gestión de horas trabajadas y horas extras
+- Sistema de departamentos y roles
+- Exportación de reportes en Excel y PDF
 
-### ⏰ Control de Horas
+### 💰 **Cuadre de Caja**
+- Control financiero completo con KPIs profesionales
+- Gestión de facturas y estados de pago
+- Exportación auténtica a Excel con plantillas personalizadas
+- Historial detallado de transacciones
+- Análisis visual con gráficos interactivos
 
-- Registro de horas trabajadas
-- Cálculo automático de horas extras
-- Diferentes tipos de horas (ordinarias, extras, nocturnas, festivas)
-- Cumplimiento con normativa laboral colombiana
+### 📦 **Sistema de Inventario**
+- Gestión completa de productos y categorías
+- Control de stock con alertas automáticas
+- Movimientos de entrada y salida
+- Búsqueda avanzada y filtros
+- Reportes de valoración de inventario
 
-### 💰 Sistema de Nómina
+### ⚙️ **Configuración Avanzada**
+- Gestión de usuarios y permisos
+- Configuración de seguridad y auditoría
+- Sistema de notificaciones personalizable
+- Backup y restauración de datos
+- Configuración multi-idioma
 
-- Cálculo automático de salarios
-- Deducciones y aportes legales
-- Generación de comprobantes de pago
-- Historial de nóminas
+### 🤖 **Asistente con IA**
+- Chat inteligente para soporte técnico
+- Base de conocimiento integrada
+- Respuestas automáticas sobre funcionalidades
+- Interfaz de chat flotante y profesional
 
-### 📊 Reportes y Análisis
+## 🛠️ Tecnologías Utilizadas
 
-- Dashboard con métricas en tiempo real
-- Reportes de nómina y horas
-- Análisis de costos laborales
-- Exportación a PDF y Excel
+### Frontend
+- **HTML5** - Estructura semántica y accesible
+- **CSS3** - Diseño responsivo y animaciones modernas
+- **JavaScript ES6+** - Lógica de aplicación y interactividad
+- **Chart.js** - Visualizaciones y gráficos interactivos
+- **Font Awesome** - Iconografía profesional
+- **XLSX.js** - Exportación a Excel
+- **jsPDF** - Generación de PDFs
 
-### 🔧 Sistemas Avanzados
+### Backend
+- **Python 3.x** - Lógica de servidor
+- **FastAPI** - Framework web moderno y rápido
+- **SQLite** - Base de datos ligera y eficiente
+- **ReportLab** - Generación de PDFs avanzada
+- **OpenPyXL** - Manipulación de archivos Excel
 
-- **Integraciones y APIs**: Conecta con sistemas externos
-- **Seguridad Avanzada**: Políticas de seguridad y auditoría
-- **Análisis de Datos**: Visualizaciones y métricas avanzadas
-- **Gestión de Archivos**: Almacenamiento y versionado de documentos
-- **Gestión de Proyectos**: Control de tareas y equipos
-- **Configuración Avanzada**: Personalización del sistema
+### Infraestructura
+- **Firebase** - Autenticación y base de datos en la nube
+- **Firebase Hosting** - Alojamiento web
+- **Firebase Functions** - Funciones serverless
+- **Vercel** - Despliegue y CDN
 
-## 🚀 Instalación y Configuración
+## 📱 Diseño Responsivo
 
-### Requisitos del Sistema
-
-- Navegador web moderno (Chrome, Firefox, Safari, Edge)
-- Conexión a internet
-- JavaScript habilitado
-
-### Instalación Local
-
-1. Clona el repositorio:
-
-```bash
-git clone https://github.com/JuanFerUran/axyra-sistema-gestion.git
-```
-
-2. Navega al directorio del proyecto:
-
-```bash
-cd axyra-sistema-gestion
-```
-
-3. Abre el archivo `index.html` en tu navegador o usa un servidor local:
-
-```bash
-# Con Python
-python -m http.server 8000
-
-# Con Node.js
-npx http-server
-
-# Con PHP
-php -S localhost:8000
-```
-
-4. Accede a `http://localhost:8000` en tu navegador
-
-### Despliegue en Vercel
-
-1. Conecta tu repositorio a Vercel
-2. Configura las variables de entorno necesarias
-3. Despliega automáticamente
-
-## 💳 Planes y Precios
-
-### Plan Básico - $29,000 COP/mes
-
-- Hasta 5 empleados
-- Gestión básica de nómina
-- Reportes básicos
-- Soporte por email
-- 1GB de almacenamiento
-
-### Plan Profesional - $59,000 COP/mes
-
-- Hasta 25 empleados
-- Gestión completa de nómina
-- Reportes avanzados
-- Soporte prioritario
-- 5GB de almacenamiento
-- Integraciones API
-
-### Plan Empresarial - $99,000 COP/mes
-
-- Empleados ilimitados
-- Todas las funcionalidades
-- Reportes personalizados
-- Soporte 24/7
-- 50GB de almacenamiento
-- API completa
-- Soporte dedicado
-
-## 🔧 Configuración Inicial
-
-### 1. Registro de Usuario
-
-- Completa el proceso de onboarding
-- Configura la información de tu empresa
-- Selecciona tu plan de suscripción
-
-### 2. Configuración de la Empresa
-
-- Nombre y NIT de la empresa
-- Dirección y datos de contacto
-- Configuración de parámetros laborales
-
-### 3. Agregar Empleados
-
-- Registra la información de tus empleados
-- Asigna departamentos y roles
-- Configura salarios y tipos de contrato
-
-### 4. Configuración de Horas
-
-- Define horarios de trabajo
-- Configura tipos de horas
-- Establece reglas de cálculo
-
-## 📖 Guía de Uso
-
-### Dashboard Principal
-
-El dashboard te muestra:
-
-- Resumen de empleados activos
-- Horas trabajadas del mes
-- Costos de nómina
-- Alertas y notificaciones
-
-### Gestión de Empleados
-
-1. Ve a "Empleados" en el menú principal
-2. Haz clic en "Agregar Empleado"
-3. Completa la información requerida
-4. Guarda el empleado
-
-### Registro de Horas
-
-1. Ve a "Horas" en el menú principal
-2. Selecciona el empleado
-3. Ingresa las horas trabajadas
-4. El sistema calculará automáticamente el pago
-
-### Generación de Nómina
-
-1. Ve a "Nómina" en el menú principal
-2. Selecciona el período
-3. Revisa los cálculos automáticos
-4. Genera la nómina
+El sistema está completamente optimizado para:
+- 💻 **Escritorio** - Experiencia completa con todas las funcionalidades
+- 📱 **Tablet** - Interfaz adaptada para pantallas medianas
+- 📱 **Móvil** - Navegación optimizada para dispositivos táctiles
 
 ## 🔒 Seguridad
 
-- **Autenticación**: Sistema de login seguro
-- **Autorización**: Control de acceso basado en roles
-- **Encriptación**: Datos sensibles encriptados
-- **Auditoría**: Registro de todas las acciones
-- **Backup**: Respaldo automático de datos
+- **Autenticación Firebase** - Sistema de login seguro
+- **Validación de datos** - Frontend y backend
+- **Control de acceso** - Sistema de roles y permisos
+- **Cifrado** - Datos sensibles protegidos
+- **Auditoría** - Logs de todas las acciones importantes
+
+## 📊 Módulos del Sistema
+
+### 1. **Dashboard**
+- Panel de control principal
+- Widgets personalizables
+- Estadísticas en tiempo real
+- Navegación rápida
+
+### 2. **Gestión Personal**
+- Registro de empleados
+- Cálculo de nóminas
+- Gestión de horas
+- Reportes laborales
+
+### 3. **Cuadre de Caja**
+- Control financiero
+- Gestión de facturas
+- KPIs financieros
+- Exportación de datos
+
+### 4. **Inventario**
+- Gestión de productos
+- Control de stock
+- Categorización
+- Movimientos de inventario
+
+### 5. **Configuración**
+- Gestión de usuarios
+- Configuración del sistema
+- Seguridad y auditoría
+- Backup y restauración
+
+## 🎨 Interfaz de Usuario
+
+- **Diseño Moderno** - Interfaz limpia y profesional
+- **Colores Consistentes** - Paleta de colores AXYRA
+- **Iconografía** - Font Awesome para mejor UX
+- **Animaciones** - Transiciones suaves y profesionales
+- **Modales** - Ventanas emergentes elegantes
+
+## 📈 Beneficios del Sistema
+
+### Para la Empresa
+- ✅ **Automatización** - Reduce trabajo manual en un 80%
+- ✅ **Eficiencia** - Procesos más rápidos y precisos
+- ✅ **Control** - Visibilidad completa de operaciones
+- ✅ **Escalabilidad** - Crece con tu empresa
+- ✅ **Ahorro** - Reduce costos operativos
+
+### Para los Usuarios
+- ✅ **Facilidad de uso** - Interfaz intuitiva
+- ✅ **Acceso móvil** - Trabaja desde cualquier lugar
+- ✅ **Reportes automáticos** - Información al instante
+- ✅ **Soporte IA** - Asistencia inteligente integrada
+
+## 🚀 Características Avanzadas
+
+### Sistema de IA Integrado
+- Chat inteligente para soporte
+- Respuestas automáticas sobre funcionalidades
+- Base de conocimiento completa
+- Reducción de consultas de soporte
+
+### Exportación Avanzada
+- Excel con plantillas personalizadas
+- PDFs profesionales
+- Reportes detallados
+- Datos estructurados
+
+### Integración Firebase
+- Sincronización en tiempo real
+- Backup automático
+- Escalabilidad en la nube
+- Seguridad empresarial
 
 ## 📞 Soporte
 
-### Canales de Soporte
-
-- **Email**: soporte@axyra.com
-- **Chat**: Disponible en la aplicación
-- **Teléfono**: +57 300 123 4567
-
-### Horarios de Atención
-
-- **Lunes a Viernes**: 8:00 AM - 6:00 PM
-- **Sábados**: 9:00 AM - 1:00 PM
-- **Domingos**: Cerrado
-
-### Documentación Adicional
-
-- [Guía de Usuario Completa](docs/user-guide.md)
-- [API Documentation](docs/api.md)
-- [FAQ](docs/faq.md)
-- [Video Tutoriales](https://youtube.com/axyra)
-
-## 🛠️ Desarrollo
-
-### Tecnologías Utilizadas
-
-- **Frontend**: HTML5, CSS3, JavaScript ES6+
-- **Backend**: Firebase (Firestore, Authentication)
-- **Almacenamiento**: LocalStorage + Firebase
-- **Gráficos**: Chart.js
-- **PDF**: jsPDF
-- **Excel**: XLSX.js
-
-### Estructura del Proyecto
-
-```
-axyra-sistema-gestion/
-├── frontend/
-│   ├── static/          # Archivos estáticos
-│   ├── modulos/         # Módulos de la aplicación
-│   └── index.html       # Página principal
-├── docs/                # Documentación
-└── README.md           # Este archivo
-```
-
-### Contribuir
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## 🙏 Agradecimientos
-
-- Equipo de desarrollo AXYRA
-- Comunidad de desarrolladores
-- Usuarios beta que proporcionaron feedback
-
-## 📞 Contacto
-
-**AXYRA Team**
-
-- Website: [https://axyra.com](https://axyra.com)
-- Email: info@axyra.com
-- GitHub: [@JuanFerUran](https://github.com/JuanFerUran)
+Para soporte técnico o consultas sobre el sistema, contacta a nuestro equipo de desarrollo.
 
 ---
 
-**© 2024 AXYRA. Todos los derechos reservados.**
+<div align="center">
+  <p><strong>© 2024 AXYRA - Sistema de Gestión Empresarial</strong></p>
+  <p>Desarrollado con ❤️ para optimizar tu empresa</p>
+</div>

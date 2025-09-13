@@ -979,3 +979,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraMaintenanceManagementSystem = AxyraMaintenanceManagementSystem;
+

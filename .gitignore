@@ -1,60 +1,87 @@
-# Dependencies
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Environment variables
+# Archivos de configuración sensibles
+config.json
+firebase-config.js
 .env
 .env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.production
 
-# Build outputs
-dist/
-build/
-.next/
-out/
+# Archivos de base de datos
+*.db
+*.sqlite
+*.sqlite3
 
-# IDE files
+# Archivos de backup
+backup/
+backups/
+*.backup
+
+# Archivos de logs
+logs/
+*.log
+
+# Archivos temporales
+temp/
+tmp/
+*.tmp
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS files
-.DS_Store
-Thumbs.db
+# Archivos de dependencias
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
 
-# Logs
-logs/
-*.log
+# Archivos de build
+dist/
+build/
+*.min.js
+*.min.css
 
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
+# Archivos de PDFs generados
+backend/pdfs/
+*.pdf
 
-# Coverage directory used by tools like istanbul
-coverage/
+# Archivos de Excel generados
+plantillas/
+*.xlsx
+*.xls
 
-# Firebase
-.firebase/
-firebase-debug.log
-firebase-debug.*.log
+# Archivos de configuración específicos del entorno
+vercel.json
+firebase.json
+firestore.indexes.json
+firestore.rules
+storage.rules
 
-# Temporary files
-*.tmp
-*.temp
+# Archivos de credenciales
+credentials.json
+service-account.json
+key.json
 
-# Database files
-*.db
-*.sqlite
-*.sqlite3
+# Archivos de cache
+.cache/
+*.cache
 
-# Backup files
-*.bak
-*.backup
-.vercel
+# Archivos de test
+test/
+tests/
+__tests__/
+
+# Archivos de documentación interna
+docs/
+documentation/
+internal/
+
+# Archivos de configuración de producción
+production/
+prod/

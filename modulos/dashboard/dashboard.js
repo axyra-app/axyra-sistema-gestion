@@ -177,7 +177,7 @@ class AxyraDashboard {
       // Usar el sistema de sincronización si está disponible
       if (window.firebaseSyncManager) {
         try {
-          this.horas = await window.firebaseSyncManager.getHoras() || [];
+          this.horas = (await window.firebaseSyncManager.getHoras()) || [];
           console.log('✅ Horas cargadas desde Firebase Sync Manager:', this.horas.length);
         } catch (error) {
           console.warn('⚠️ Error con Firebase Sync Manager, usando método directo:', error);
@@ -379,30 +379,33 @@ class AxyraDashboard {
         const estado = e.estado.toUpperCase();
         return estado !== 'INACTIVO' && estado !== 'BAJA' && estado !== 'DESPEDIDO';
       }).length;
-      
+
       const empleadosActivosElement = document.getElementById('empleadosActivos');
       if (empleadosActivosElement) {
         empleadosActivosElement.textContent = empleadosActivos;
       }
-      
+
       // Debug: mostrar información de empleados
       console.log('👥 Empleados cargados:', this.empleados.length);
       console.log('✅ Empleados activos:', empleadosActivos);
-      console.log('🔍 Detalle de empleados:', this.empleados.map(e => ({ id: e.id, nombre: e.nombre, estado: e.estado, tipoContrato: e.tipoContrato })));
+      console.log(
+        '🔍 Detalle de empleados:',
+        this.empleados.map((e) => ({ id: e.id, nombre: e.nombre, estado: e.estado, tipoContrato: e.tipoContrato }))
+      );
 
       // Horas trabajadas - calcular correctamente según estructura de datos
       const totalHoras = this.horas.reduce((sum, h) => {
         if (!h || !h.horas) return sum;
-        
+
         // Sumar todos los tipos de horas
         const horasOrdinarias = h.horas.ordinarias || 0;
         const horasExtras = h.horas.extras || 0;
         const horasFestivas = h.horas.extrasFestivas || 0;
         const horasNocturnas = h.horas.extrasFestivasNocturnas || 0;
-        
+
         return sum + horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
       }, 0);
-      
+
       const horasTrabajadasElement = document.getElementById('horasTrabajadas');
       if (horasTrabajadasElement) {
         horasTrabajadasElement.textContent = totalHoras.toFixed(1);
@@ -420,16 +423,16 @@ class AxyraDashboard {
         })
         .reduce((sum, h) => {
           if (!h || !h.horas) return sum;
-          
+
           // Sumar todos los tipos de horas
           const horasOrdinarias = h.horas.ordinarias || 0;
           const horasExtras = h.horas.extras || 0;
           const horasFestivas = h.horas.extrasFestivas || 0;
           const horasNocturnas = h.horas.extrasFestivasNocturnas || 0;
-          
+
           return sum + horasOrdinarias + horasExtras + horasFestivas + horasNocturnas;
         }, 0);
-      
+
       const horasMesElement = document.getElementById('horasMes');
       if (horasMesElement) {
         horasMesElement.textContent = horasMes.toFixed(1);
@@ -465,11 +468,11 @@ class AxyraDashboard {
       // Total pagos por horas trabajadas - calcular según ley colombiana
       const totalPagosHoras = this.horas.reduce((sum, h) => {
         if (!h || !h.horas || !h.salarios) return sum;
-        
+
         // Obtener el empleado para saber su tipo de contrato
-        const empleado = this.empleados.find(e => e.id == h.empleadoId);
+        const empleado = this.empleados.find((e) => e.id == h.empleadoId);
         if (!empleado) return sum;
-        
+
         // Calcular según tipo de contrato
         if (empleado.tipoContrato === 'Fijo') {
           // Empleados fijos: 44 horas semanales, salario/2
@@ -478,12 +481,12 @@ class AxyraDashboard {
           const horasExtras = h.horas.extras || 0;
           const horasFestivas = h.horas.extrasFestivas || 0;
           const horasNocturnas = h.horas.extrasFestivasNocturnas || 0;
-          
+
           const pagoOrdinario = horasOrdinarias * salarioHora;
           const pagoExtras = horasExtras * (salarioHora * 1.25); // 25% extra
           const pagoFestivas = horasFestivas * (salarioHora * 1.75); // 75% extra
           const pagoNocturnas = horasNocturnas * (salarioHora * 2.1); // 110% extra
-          
+
           return sum + pagoOrdinario + pagoExtras + pagoFestivas + pagoNocturnas;
         } else {
           // Empleados por horas: salario/240
@@ -492,16 +495,16 @@ class AxyraDashboard {
           const horasExtras = h.horas.extras || 0;
           const horasFestivas = h.horas.extrasFestivas || 0;
           const horasNocturnas = h.horas.extrasFestivasNocturnas || 0;
-          
+
           const pagoOrdinario = horasOrdinarias * salarioHora;
           const pagoExtras = horasExtras * (salarioHora * 1.25); // 25% extra
           const pagoFestivas = horasFestivas * (salarioHora * 1.75); // 75% extra
           const pagoNocturnas = horasNocturnas * (salarioHora * 2.1); // 110% extra
-          
+
           return sum + pagoOrdinario + pagoExtras + pagoFestivas + pagoNocturnas;
         }
       }, 0);
-      
+
       const totalPagosElement = document.getElementById('totalPagos');
       if (totalPagosElement) {
         totalPagosElement.textContent = `$${totalPagosHoras.toFixed(0)}`;
@@ -511,17 +514,17 @@ class AxyraDashboard {
       const diasTrabajados = this.horas
         .filter((h) => {
           if (!h || !h.empleadoId) return false;
-          const empleado = this.empleados.find(e => e.id == h.empleadoId);
+          const empleado = this.empleados.find((e) => e.id == h.empleadoId);
           return empleado && empleado.tipoContrato === 'Fijo';
         })
         .reduce((sum, h) => {
           if (!h || !h.horas) return sum;
-          
+
           // Para empleados fijos, contar días con horas ordinarias
           const horasOrdinarias = h.horas.ordinarias || 0;
           return sum + (horasOrdinarias > 0 ? 1 : 0);
         }, 0);
-      
+
       const diasTrabajadosElement = document.getElementById('diasTrabajados');
       if (diasTrabajadosElement) {
         diasTrabajadosElement.textContent = diasTrabajados;
@@ -1371,6 +1374,26 @@ class AxyraDashboard {
           }
         });
       });
+
+      // Event listeners para botones de personalización y configuración
+      const btnPersonalizar = document.getElementById('btnPersonalizarDashboard');
+      const btnConfigurar = document.getElementById('btnConfigurarDashboard');
+
+      if (btnPersonalizar) {
+        btnPersonalizar.addEventListener('click', () => {
+          if (window.axyraModals) {
+            window.axyraModals.showPersonalizeDashboardModal();
+          }
+        });
+      }
+
+      if (btnConfigurar) {
+        btnConfigurar.addEventListener('click', () => {
+          if (window.axyraModals) {
+            window.axyraModals.showConfigurationModal();
+          }
+        });
+      }
 
       // Event listeners para búsqueda global
       const searchInput = document.getElementById('globalSearchInput');

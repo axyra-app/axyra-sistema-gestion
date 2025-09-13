@@ -779,3 +779,4 @@ class AxyraReportesAvanzados {
 document.addEventListener('DOMContentLoaded', function () {
   window.axyraReportes = new AxyraReportesAvanzados();
 });
+

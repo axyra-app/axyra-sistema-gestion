@@ -630,3 +630,4 @@ window.axyraValidation = new AxyraValidationSystem();
 window.AxyraValidationSystem = AxyraValidationSystem;
 
 console.log('🔍 Sistema de Validaciones AXYRA cargado');
+

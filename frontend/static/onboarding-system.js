@@ -516,3 +516,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.AxyraOnboardingSystem = AxyraOnboardingSystem;
+

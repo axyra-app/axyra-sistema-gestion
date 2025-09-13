@@ -840,3 +840,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraSystemConfiguration = AxyraSystemConfiguration;
+

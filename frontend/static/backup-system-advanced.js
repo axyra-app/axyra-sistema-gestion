@@ -695,3 +695,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraBackupSystemAdvanced = AxyraBackupSystemAdvanced;
+

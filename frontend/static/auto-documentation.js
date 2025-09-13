@@ -590,3 +590,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraAutoDocumentation = AxyraAutoDocumentation;
+

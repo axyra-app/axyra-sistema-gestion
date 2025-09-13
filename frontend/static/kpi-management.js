@@ -867,3 +867,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraKPIManagement = AxyraKPIManagement;
+

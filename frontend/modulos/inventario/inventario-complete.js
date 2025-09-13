@@ -1020,3 +1020,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 console.log('📦 Sistema de Inventario AXYRA cargado');
+

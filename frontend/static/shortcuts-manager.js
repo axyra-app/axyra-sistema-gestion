@@ -927,3 +927,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraShortcutsManager = AxyraShortcutsManager;
+

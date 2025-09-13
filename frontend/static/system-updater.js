@@ -576,3 +576,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraSystemUpdater = AxyraSystemUpdater;
+

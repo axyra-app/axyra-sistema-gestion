@@ -226,3 +226,4 @@ setTimeout(() => {
 
 console.log('🔍 Sistema de diagnóstico AXYRA cargado');
 console.log('💡 Usa axyraDiagnostic.runFullDiagnostic() para ejecutar diagnóstico manual');
+

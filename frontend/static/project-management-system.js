@@ -856,3 +856,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraProjectManagementSystem = AxyraProjectManagementSystem;
+

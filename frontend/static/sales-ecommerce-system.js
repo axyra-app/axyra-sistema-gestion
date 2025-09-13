@@ -1061,3 +1061,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraSalesEcommerceSystem = AxyraSalesEcommerceSystem;
+

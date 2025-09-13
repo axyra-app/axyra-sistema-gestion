@@ -688,3 +688,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraWorkflowManagement = AxyraWorkflowManagement;
+

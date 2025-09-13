@@ -551,3 +551,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraLoggingSystem = AxyraLoggingSystem;
+

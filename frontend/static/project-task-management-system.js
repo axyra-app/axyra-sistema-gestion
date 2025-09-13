@@ -1228,3 +1228,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraProjectTaskManagementSystem = AxyraProjectTaskManagementSystem;
+

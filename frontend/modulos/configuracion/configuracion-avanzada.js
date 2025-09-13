@@ -1077,3 +1077,4 @@ class AxyraConfiguracionAvanzada {
 document.addEventListener('DOMContentLoaded', function () {
   window.axyraConfig = new AxyraConfiguracionAvanzada();
 });
+

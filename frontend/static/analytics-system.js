@@ -482,3 +482,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraAnalyticsSystem = AxyraAnalyticsSystem;
+

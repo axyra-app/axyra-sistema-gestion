@@ -832,3 +832,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraThemeManager = AxyraThemeManager;
+

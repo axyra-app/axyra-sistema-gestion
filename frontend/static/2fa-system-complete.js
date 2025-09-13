@@ -799,3 +799,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.Axyra2FASystem = Axyra2FASystem;
+

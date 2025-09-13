@@ -999,3 +999,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraAdvancedSecuritySystem = AxyraAdvancedSecuritySystem;
+

@@ -467,3 +467,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraPerformanceMonitor = AxyraPerformanceMonitor;
+

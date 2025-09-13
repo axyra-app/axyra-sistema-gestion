@@ -666,3 +666,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraSystemMetrics = AxyraSystemMetrics;
+

@@ -812,3 +812,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraFileManagementSystem = AxyraFileManagementSystem;
+

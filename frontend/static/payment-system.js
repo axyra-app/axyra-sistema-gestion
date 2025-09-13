@@ -653,3 +653,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.AxyraPaymentSystem = AxyraPaymentSystem;
+

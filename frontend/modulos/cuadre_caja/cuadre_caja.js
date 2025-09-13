@@ -1036,3 +1036,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 console.log('📊 Sistema de Cuadre de Caja AXYRA cargado');
+

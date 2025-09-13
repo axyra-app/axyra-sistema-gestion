@@ -660,3 +660,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Exportar para uso global
 window.AxyraSecuritySystem = AxyraSecuritySystem;
+

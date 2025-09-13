@@ -983,3 +983,4 @@ class AxyraDashboardAvanzado {
 document.addEventListener('DOMContentLoaded', function () {
   window.axyraDashboard = new AxyraDashboardAvanzado();
 });
+
