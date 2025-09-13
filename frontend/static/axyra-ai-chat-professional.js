@@ -53,8 +53,8 @@ class AxyraAIChatProfessional {
     chatContainer.id = 'axyra-ai-chat-container';
     chatContainer.innerHTML = `
       <!-- Botón flotante -->
-      <button class="axyra-ai-toggle" id="axyraAIToggle" title="Asistente AXYRA">
-        <i class="fas fa-robot"></i>
+      <button class="axyra-ai-toggle" id="axyraAIToggle" title="Axyra-IA">
+        <img src="../../logo.png" alt="Axyra-IA" class="axyra-ai-logo">
         <span class="axyra-ai-badge" id="axyraAIBadge" style="display: none;">1</span>
       </button>
 
@@ -64,10 +64,10 @@ class AxyraAIChatProfessional {
         <div class="axyra-ai-header">
           <div class="axyra-ai-title">
             <div class="axyra-ai-avatar">
-              <i class="fas fa-robot"></i>
+              <img src="../../logo.png" alt="Axyra-IA" class="axyra-ai-avatar-logo">
             </div>
             <div class="axyra-ai-info">
-              <h3>Asistente AXYRA</h3>
+              <h3>Axyra-IA</h3>
               <span class="axyra-ai-status">En línea</span>
             </div>
           </div>
@@ -85,11 +85,11 @@ class AxyraAIChatProfessional {
         <div class="axyra-ai-messages" id="axyraAIMessages">
           <div class="axyra-ai-welcome">
             <div class="axyra-ai-welcome-avatar">
-              <i class="fas fa-robot"></i>
+              <img src="../../logo.png" alt="Axyra-IA" class="axyra-ai-welcome-logo">
             </div>
             <div class="axyra-ai-welcome-content">
-              <h4>¡Hola! Soy tu asistente AXYRA</h4>
-              <p>Puedo ayudarte con:</p>
+              <h4>¡Hola! Soy Axyra-IA</h4>
+              <p>Tu asistente inteligente de AXYRA. Puedo ayudarte con:</p>
               <ul>
                 <li>Gestión de personal y nómina</li>
                 <li>Control de inventario</li>
@@ -171,6 +171,14 @@ class AxyraAIChatProfessional {
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
+      }
+
+      .axyra-ai-logo {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        filter: brightness(0) invert(1);
       }
 
       .axyra-ai-toggle:hover {
@@ -241,6 +249,14 @@ class AxyraAIChatProfessional {
         align-items: center;
         justify-content: center;
         font-size: 18px;
+        overflow: hidden;
+      }
+
+      .axyra-ai-avatar-logo {
+        width: 30px;
+        height: 30px;
+        object-fit: contain;
+        filter: brightness(0) invert(1);
       }
 
       .axyra-ai-info h3 {
@@ -316,6 +332,13 @@ class AxyraAIChatProfessional {
         color: white;
       }
 
+      .axyra-ai-message-logo {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        filter: brightness(0) invert(1);
+      }
+
       .axyra-ai-message-content {
         background: white;
         padding: 12px 16px;
@@ -357,6 +380,14 @@ class AxyraAIChatProfessional {
         font-size: 24px;
         color: white;
         margin: 0 auto 16px;
+        overflow: hidden;
+      }
+
+      .axyra-ai-welcome-logo {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        filter: brightness(0) invert(1);
       }
 
       .axyra-ai-welcome-content h4 {
@@ -649,7 +680,10 @@ class AxyraAIChatProfessional {
 
     messageElement.innerHTML = `
       <div class="axyra-ai-message-avatar">
-        <i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i>
+        ${sender === 'user' ? 
+          '<i class="fas fa-user"></i>' : 
+          '<img src="../../logo.png" alt="Axyra-IA" class="axyra-ai-message-logo">'
+        }
       </div>
       <div class="axyra-ai-message-content">
         ${this.formatMessage(content)}
@@ -688,7 +722,7 @@ class AxyraAIChatProfessional {
     typingElement.id = 'axyraAITyping';
     typingElement.innerHTML = `
       <div class="axyra-ai-message-avatar">
-        <i class="fas fa-robot"></i>
+        <img src="../../logo.png" alt="Axyra-IA" class="axyra-ai-message-logo">
       </div>
       <div class="axyra-ai-message-content">
         <div class="axyra-ai-typing">
