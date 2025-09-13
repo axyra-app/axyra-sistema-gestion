@@ -147,5 +147,35 @@ service cloud.firestore {
       allow read, write: if isOwner(resource.data.userId);
       allow read: if isAdmin();
     }
+    
+    // Reglas para cuadre de caja
+    match /cuadre_caja/{cuadreId} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    // Reglas para facturas
+    match /facturas/{facturaId} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    // Reglas para inventario
+    match /inventario/{itemId} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    // Reglas para categorías
+    match /categorias/{categoriaId} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    // Reglas para movimientos de inventario
+    match /movimientos_inventario/{movimientoId} {
+      allow read, write: if isAuthenticated();
+    }
+    
+    // Reglas para departamentos
+    match /departamentos/{departamentoId} {
+      allow read, write: if isAuthenticated();
+    }
   }
 }

@@ -2075,6 +2075,41 @@
         }
       }
 
+      // Función para verificar autenticación
+      async function verificarAutenticacion() {
+        try {
+          const usuario = localStorage.getItem('axyra_user');
+          if (!usuario) {
+            throw new Error('Usuario no autenticado');
+          }
+          console.log('✅ Usuario autenticado:', JSON.parse(usuario).email);
+        } catch (error) {
+          console.error('❌ Error de autenticación:', error);
+          throw error;
+        }
+      }
+
+      // Función para mostrar notificaciones
+      function mostrarNotificacion(mensaje, tipo = 'info') {
+        try {
+          if (window.axyraNotifications) {
+            window.axyraNotifications.show(mensaje, tipo);
+          } else {
+            // Fallback a alert si no hay sistema de notificaciones
+            console.log(`[${tipo.toUpperCase()}] ${mensaje}`);
+            if (tipo === 'error') {
+              alert(`Error: ${mensaje}`);
+            } else if (tipo === 'success') {
+              alert(`Éxito: ${mensaje}`);
+            } else if (tipo === 'warning') {
+              alert(`Advertencia: ${mensaje}`);
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error mostrando notificación:', error);
+        }
+      }
+
       // Función de inicialización mejorada
       async function inicializarCuadreCaja() {
         try {
@@ -2784,5 +2819,8 @@
       window.exportarTendencias = exportarTendencias;
       window.actualizarGraficosFinancieros = actualizarGraficosFinancieros;
     </script>
+    
+    <!-- Chat de IA AXYRA -->
+    <script src="../../static/ai-chat-system.js"></script>
   </body>
 </html>
