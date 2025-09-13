@@ -286,31 +286,46 @@
     <script src="../../static/custom-reports-system.js"></script>
     <script src="../../static/auth-manager.js"></script>
     <script src="professional-modals.js"></script>
-    <script src="../../static/ai-chat-system.js"></script>
     <script src="dashboard.js"></script>
     
-    <!-- Script de verificación del chat de IA -->
+    <!-- Chat de IA AXYRA - Cargar al final -->
+    <script src="../../static/ai-chat-system.js"></script>
     <script>
-      // Verificar si el chat se cargó después de un tiempo
-      setTimeout(() => {
-        console.log('🔍 Verificando chat de IA en dashboard...');
-        console.log('window.axyraAIChat:', window.axyraAIChat);
-        console.log('Elemento del chat:', document.getElementById('axyra-ai-chat'));
-        console.log('Botón toggle:', document.getElementById('axyraChatToggle'));
-        
-        if (window.axyraAIChat) {
-          console.log('✅ Chat de IA cargado correctamente en dashboard');
-        } else {
-          console.log('❌ Chat de IA NO se cargó en dashboard');
-          // Intentar inicializar manualmente
+      // Inicialización robusta del chat de IA
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('🚀 DOM cargado, inicializando chat de IA en dashboard...');
+        if (!window.axyraAIChat) {
           try {
             window.axyraAIChat = new AxyraAIChatSystem();
-            console.log('🔄 Chat de IA inicializado manualmente');
+            console.log('✅ Chat de IA inicializado en dashboard');
           } catch (error) {
-            console.error('❌ Error al inicializar chat de IA:', error);
+            console.error('❌ Error inicializando chat de IA:', error);
           }
         }
-      }, 3000);
+      });
+      
+      // Fallback si el DOM ya está listo
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          if (!window.axyraAIChat) {
+            try {
+              window.axyraAIChat = new AxyraAIChatSystem();
+              console.log('✅ Chat de IA inicializado en dashboard (fallback)');
+            } catch (error) {
+              console.error('❌ Error inicializando chat de IA (fallback):', error);
+            }
+          }
+        });
+      } else {
+        if (!window.axyraAIChat) {
+          try {
+            window.axyraAIChat = new AxyraAIChatSystem();
+            console.log('✅ Chat de IA inicializado en dashboard (inmediato)');
+          } catch (error) {
+            console.error('❌ Error inicializando chat de IA (inmediato):', error);
+          }
+        }
+      }
     </script>
   </body>
 </html>

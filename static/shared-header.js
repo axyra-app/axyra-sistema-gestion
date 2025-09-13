@@ -11,6 +11,7 @@ class AxyraSharedHeader {
       { href: '../gestion_personal/gestion_personal.html', icon: 'fas fa-users-cog', text: 'Gestión Personal', show: true },
       { href: '../cuadre_caja/cuadre_caja.html', icon: 'fas fa-calculator', text: 'Caja', show: true },
       { href: '../inventario/inventario.html', icon: 'fas fa-boxes', text: 'Inventario', show: true },
+      { href: '../membresias/membresias.html', icon: 'fas fa-crown', text: 'Membresías', show: true },
       { href: '../configuracion/configuracion.html', icon: 'fas fa-cog', text: 'Config', show: true }
     ];
     
@@ -52,6 +53,8 @@ class AxyraSharedHeader {
       } else if (this.currentPage === 'caja' && item.text === 'Caja') {
         isCurrentPage = true;
       } else if (this.currentPage === 'inventario' && item.text === 'Inventario') {
+        isCurrentPage = true;
+      } else if (this.currentPage === 'membresias' && item.text === 'Membresías') {
         isCurrentPage = true;
       } else if (this.currentPage === 'configuracion' && item.text === 'Config') {
         isCurrentPage = true;
@@ -252,6 +255,9 @@ class AxyraSharedHeader {
     } else if (url.includes('/inventario/') || pathname.includes('/inventario/')) {
       console.log('🎯 Página detectada como: inventario');
       return 'inventario';
+    } else if (url.includes('/membresias/') || pathname.includes('/membresias/')) {
+      console.log('🎯 Página detectada como: membresias');
+      return 'membresias';
     } else if (url.includes('/configuracion/') || pathname.includes('/configuracion/')) {
       console.log('🎯 Página detectada como: configuracion');
       return 'configuracion';

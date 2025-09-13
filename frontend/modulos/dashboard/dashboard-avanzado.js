@@ -963,6 +963,76 @@ class AxyraDashboardAvanzado {
     }, 5000);
   }
 
+  // Configurar sistema de alertas
+  configurarAlertas() {
+    try {
+      console.log('🔔 Configurando sistema de alertas...');
+      
+      // Configurar alertas de stock bajo
+      this.configurarAlertasStock();
+      
+      // Configurar alertas de nómina
+      this.configurarAlertasNomina();
+      
+      // Configurar alertas de caja
+      this.configurarAlertasCaja();
+      
+      console.log('✅ Sistema de alertas configurado correctamente');
+    } catch (error) {
+      console.error('❌ Error configurando alertas:', error);
+    }
+  }
+
+  configurarAlertasStock() {
+    // Verificar stock bajo cada 5 minutos
+    setInterval(() => {
+      if (this.datos?.inventario) {
+        const productosStockBajo = this.datos.inventario.filter(
+          producto => producto.stock < (producto.stockMinimo || 10)
+        );
+        
+        if (productosStockBajo.length > 0) {
+          this.mostrarNotificacion(
+            `${productosStockBajo.length} productos con stock bajo`,
+            'warning'
+          );
+        }
+      }
+    }, 300000); // 5 minutos
+  }
+
+  configurarAlertasNomina() {
+    // Verificar nóminas pendientes cada hora
+    setInterval(() => {
+      const hoy = new Date();
+      const diaMes = hoy.getDate();
+      
+      // Si es día 25-31, verificar nóminas pendientes
+      if (diaMes >= 25) {
+        this.mostrarNotificacion(
+          'Recordatorio: Verificar nóminas pendientes del mes',
+          'info'
+        );
+      }
+    }, 3600000); // 1 hora
+  }
+
+  configurarAlertasCaja() {
+    // Verificar caja cada 30 minutos
+    setInterval(() => {
+      if (this.datos?.caja) {
+        const totalCaja = this.datos.caja.reduce((sum, item) => sum + item.valor, 0);
+        
+        if (totalCaja < 100000) { // Menos de $100,000
+          this.mostrarNotificacion(
+            'Atención: Caja con saldo bajo',
+            'warning'
+          );
+        }
+      }
+    }, 1800000); // 30 minutos
+  }
+
   // Limpiar recursos
   destroy() {
     Object.values(this.intervalos).forEach((intervalo) => {
