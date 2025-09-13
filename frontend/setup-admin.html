@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXYRA - Setup Administrador</title>
+    <link rel="icon" href="nomina.ico" type="image/x-icon">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="static/firebase-config.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .setup-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: #718096;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .message.error {
+            background: #fed7d7;
+            color: #c53030;
+            border: 1px solid #feb2b2;
+        }
+        
+        .message.success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        
+        .loading {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .credentials {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .credentials h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+        
+        .credentials p {
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="logo">
+            <img src="logo.png" alt="AXYRA Logo">
+            <div class="logo-text">AXYRA</div>
+        </div>
+        
+        <h1 class="title">Setup Administrador</h1>
+        <p class="subtitle">Configuración inicial del usuario administrador</p>
+        
+        <!-- Mensajes -->
+        <div id="errorMessage" class="message error"></div>
+        <div id="successMessage" class="message success"></div>
+        
+        <!-- Credenciales del admin -->
+        <div class="credentials">
+            <h3>Credenciales del Administrador:</h3>
+            <p><strong>Email:</strong> axyra.app@gmail.com</p>
+            <p><strong>Contraseña:</strong> AxyraAdmin2024!</p>
+        </div>
+        
+        <button id="setupBtn" class="btn" onclick="setupAdmin()">
+            <span id="btnText">Crear Usuario Administrador</span>
+            <div id="btnLoading" class="loading"></div>
+        </button>
+        
+        <button class="btn" onclick="window.location.href='login.html'" style="background: #4a5568;">
+            Ir al Login
+        </button>
+    </div>
+
+    <script>
+        async function setupAdmin() {
+            const btn = document.getElementById('setupBtn');
+            const btnText = document.getElementById('btnText');
+            const btnLoading = document.getElementById('btnLoading');
+            
+            // Mostrar loading
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'block';
+            btn.disabled = true;
+            
+            try {
+                console.log('🔧 Iniciando setup del administrador...');
+                
+                // Verificar Firebase
+                if (typeof firebase === 'undefined') {
+                    throw new Error('Firebase no está disponible');
+                }
+                
+                // Crear usuario administrador
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(
+                    'axyra.app@gmail.com', 
+                    'AxyraAdmin2024!'
+                );
+                
+                console.log('✅ Usuario administrador creado:', userCredential.user.email);
+                
+                // Crear perfil en Firestore
+                await firebase.firestore().collection('users').doc(userCredential.user.uid).set({
+                    uid: userCredential.user.uid,
+                    email: 'axyra.app@gmail.com',
+                    displayName: 'Administrador AXYRA',
+                    username: 'admin',
+                    role: 'admin',
+                    isAdmin: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    provider: 'email',
+                    hasPassword: true,
+                    emailVerified: false
+                });
+                
+                console.log('✅ Perfil de administrador creado en Firestore');
+                
+                // Cerrar sesión
+                await firebase.auth().signOut();
+                console.log('✅ Sesión cerrada');
+                
+                showSuccess('¡Usuario administrador creado exitosamente! Ya puedes hacer login.');
+                
+            } catch (error) {
+                console.error('❌ Error creando admin:', error);
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    showSuccess('El usuario administrador ya existe. Puedes hacer login.');
+                } else {
+                    showError('Error creando administrador: ' + error.message);
+                }
+            } finally {
+                // Restaurar botón
+                btnText.style.display = 'inline-block';
+                btnLoading.style.display = 'none';
+                btn.disabled = false;
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
