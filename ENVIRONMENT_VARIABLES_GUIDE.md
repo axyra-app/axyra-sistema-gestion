@@ -6,83 +6,85 @@ Esta guía te ayudará a configurar todas las variables de entorno necesarias pa
 
 ### 1. **Configuración Básica de la Aplicación**
 
-| Variable | Valor | Descripción |
-|----------|-------|-------------|
-| `NODE_ENV` | `production` | Entorno de ejecución |
-| `APP_NAME` | `AXYRA Enterprise Management` | Nombre de la aplicación |
-| `APP_VERSION` | `1.0.0` | Versión de la aplicación |
-| `APP_ENVIRONMENT` | `production` | Entorno de la aplicación |
+| Variable          | Valor                         | Descripción              |
+| ----------------- | ----------------------------- | ------------------------ |
+| `NODE_ENV`        | `production`                  | Entorno de ejecución     |
+| `APP_NAME`        | `AXYRA Enterprise Management` | Nombre de la aplicación  |
+| `APP_VERSION`     | `1.0.0`                       | Versión de la aplicación |
+| `APP_ENVIRONMENT` | `production`                  | Entorno de la aplicación |
 
 ### 2. **Configuración de Firebase**
 
-| Variable | Valor | Descripción |
-|----------|-------|-------------|
-| `FIREBASE_API_KEY` | `AIzaSyC...` | Clave API de Firebase |
-| `FIREBASE_AUTH_DOMAIN` | `axyra-enterprise.firebaseapp.com` | Dominio de autenticación |
-| `FIREBASE_PROJECT_ID` | `axyra-enterprise` | ID del proyecto Firebase |
-| `FIREBASE_STORAGE_BUCKET` | `axyra-enterprise.appspot.com` | Bucket de almacenamiento |
-| `FIREBASE_MESSAGING_SENDER_ID` | `123456789` | ID del remitente de mensajes |
-| `FIREBASE_APP_ID` | `1:123456789:web:abc123` | ID de la aplicación |
-| `FIREBASE_MEASUREMENT_ID` | `G-XXXXXXXXXX` | ID de medición (opcional) |
+| Variable                       | Valor                              | Descripción                  |
+| ------------------------------ | ---------------------------------- | ---------------------------- |
+| `FIREBASE_API_KEY`             | `AIzaSyC...`                       | Clave API de Firebase        |
+| `FIREBASE_AUTH_DOMAIN`         | `axyra-enterprise.firebaseapp.com` | Dominio de autenticación     |
+| `FIREBASE_PROJECT_ID`          | `axyra-enterprise`                 | ID del proyecto Firebase     |
+| `FIREBASE_STORAGE_BUCKET`      | `axyra-enterprise.appspot.com`     | Bucket de almacenamiento     |
+| `FIREBASE_MESSAGING_SENDER_ID` | `123456789`                        | ID del remitente de mensajes |
+| `FIREBASE_APP_ID`              | `1:123456789:web:abc123`           | ID de la aplicación          |
+| `FIREBASE_MEASUREMENT_ID`      | `G-XXXXXXXXXX`                     | ID de medición (opcional)    |
 
 ### 3. **Configuración de APIs de Pago**
 
 #### **Wompi (Recomendado)**
-| Variable | Valor | Descripción |
-|----------|-------|-------------|
-| `WOMPI_PUBLIC_KEY` | `pub_test_xxx` | Clave pública de Wompi |
-| `WOMPI_PRIVATE_KEY` | `prv_test_xxx` | Clave privada de Wompi |
-| `WOMPI_ENVIRONMENT` | `sandbox` o `production` | Entorno de Wompi |
-| `WOMPI_WEBHOOK_SECRET` | `whsec_xxx` | Secreto del webhook |
+
+| Variable               | Valor                    | Descripción            |
+| ---------------------- | ------------------------ | ---------------------- |
+| `WOMPI_PUBLIC_KEY`     | `pub_test_xxx`           | Clave pública de Wompi |
+| `WOMPI_PRIVATE_KEY`    | `prv_test_xxx`           | Clave privada de Wompi |
+| `WOMPI_ENVIRONMENT`    | `sandbox` o `production` | Entorno de Wompi       |
+| `WOMPI_WEBHOOK_SECRET` | `whsec_xxx`              | Secreto del webhook    |
 
 #### **PayU (Alternativa)**
-| Variable | Valor | Descripción |
-|----------|-------|-------------|
-| `PAYU_MERCHANT_ID` | `123456` | ID del comerciante |
-| `PAYU_API_KEY` | `abc123` | Clave API de PayU |
-| `PAYU_API_LOGIN` | `def456` | Login API de PayU |
-| `PAYU_ENVIRONMENT` | `sandbox` o `production` | Entorno de PayU |
+
+| Variable           | Valor                    | Descripción        |
+| ------------------ | ------------------------ | ------------------ |
+| `PAYU_MERCHANT_ID` | `123456`                 | ID del comerciante |
+| `PAYU_API_KEY`     | `abc123`                 | Clave API de PayU  |
+| `PAYU_API_LOGIN`   | `def456`                 | Login API de PayU  |
+| `PAYU_ENVIRONMENT` | `sandbox` o `production` | Entorno de PayU    |
 
 ### 4. **Configuración de Base de Datos**
 
-| Variable | Valor | Descripción |
-|----------|-------|-------------|
-| `DATABASE_URL` | `https://axyra-enterprise.firebaseio.com` | URL de la base de datos |
-| `FIRESTORE_EMULATOR_HOST` | `localhost:8080` | Host del emulador (desarrollo) |
+| Variable                  | Valor                                     | Descripción                    |
+| ------------------------- | ----------------------------------------- | ------------------------------ |
+| `DATABASE_URL`            | `https://axyra-enterprise.firebaseio.com` | URL de la base de datos        |
+| `FIRESTORE_EMULATOR_HOST` | `localhost:8080`                          | Host del emulador (desarrollo) |
 
 ### 5. **Configuración de Seguridad**
 
-| Variable | Valor | Descripción |
-|----------|-------|-------------|
-| `JWT_SECRET` | `tu_jwt_secret_muy_seguro` | Secreto para JWT |
-| `ENCRYPTION_KEY` | `tu_clave_de_encriptacion` | Clave de encriptación |
-| `CORS_ORIGIN` | `https://axyra-enterprise-management.vercel.app` | Origen permitido para CORS |
+| Variable         | Valor                                            | Descripción                |
+| ---------------- | ------------------------------------------------ | -------------------------- |
+| `JWT_SECRET`     | `tu_jwt_secret_muy_seguro`                       | Secreto para JWT           |
+| `ENCRYPTION_KEY` | `tu_clave_de_encriptacion`                       | Clave de encriptación      |
+| `CORS_ORIGIN`    | `https://axyra-enterprise-management.vercel.app` | Origen permitido para CORS |
 
 ### 6. **Configuración de Email**
 
-| Variable | Valor | Descripción |
-|----------|-------|-------------|
-| `SMTP_HOST` | `smtp.gmail.com` | Host del servidor SMTP |
-| `SMTP_PORT` | `587` | Puerto del servidor SMTP |
-| `SMTP_USER` | `tu_email@gmail.com` | Usuario SMTP |
-| `SMTP_PASS` | `tu_password` | Contraseña SMTP |
-| `SMTP_FROM` | `noreply@axyra.com` | Email remitente |
+| Variable    | Valor                | Descripción              |
+| ----------- | -------------------- | ------------------------ |
+| `SMTP_HOST` | `smtp.gmail.com`     | Host del servidor SMTP   |
+| `SMTP_PORT` | `587`                | Puerto del servidor SMTP |
+| `SMTP_USER` | `tu_email@gmail.com` | Usuario SMTP             |
+| `SMTP_PASS` | `tu_password`        | Contraseña SMTP          |
+| `SMTP_FROM` | `noreply@axyra.com`  | Email remitente          |
 
 ### 7. **Configuración de Notificaciones**
 
-| Variable | Valor | Descripción |
-|----------|-------|-------------|
-| `FCM_SERVER_KEY` | `AAAA...` | Clave del servidor FCM |
-| `FCM_SENDER_ID` | `123456789` | ID del remitente FCM |
-| `PUSH_NOTIFICATIONS_ENABLED` | `true` | Habilitar notificaciones push |
+| Variable                     | Valor       | Descripción                   |
+| ---------------------------- | ----------- | ----------------------------- |
+| `FCM_SERVER_KEY`             | `AAAA...`   | Clave del servidor FCM        |
+| `FCM_SENDER_ID`              | `123456789` | ID del remitente FCM          |
+| `PUSH_NOTIFICATIONS_ENABLED` | `true`      | Habilitar notificaciones push |
 
 ### 8. **Configuración de Analytics**
 
-| Variable | Valor | Descripción |
-|----------|-------|-------------|
-| `GOOGLE_ANALYTICS_ID` | `G-XXXXXXXXXX` | ID de Google Analytics |
-| `MIXPANEL_TOKEN` | `abc123` | Token de Mixpanel (opcional) |
-| `HOTJAR_ID` | `123456` | ID de Hotjar (opcional) |
+| Variable              | Valor          | Descripción                  |
+| --------------------- | -------------- | ---------------------------- |
+| `GOOGLE_ANALYTICS_ID` | `G-XXXXXXXXXX` | ID de Google Analytics       |
+| `MIXPANEL_TOKEN`      | `abc123`       | Token de Mixpanel (opcional) |
+| `HOTJAR_ID`           | `123456`       | ID de Hotjar (opcional)      |
 
 ## 🔥 **VARIABLES DE ENTORNO PARA FIREBASE FUNCTIONS**
 
@@ -302,6 +304,7 @@ vercel --prod
 ## ✅ **CHECKLIST DE CONFIGURACIÓN**
 
 ### **Vercel**
+
 - [ ] Variables básicas configuradas
 - [ ] Variables de Firebase configuradas
 - [ ] Variables de APIs de pago configuradas
@@ -310,6 +313,7 @@ vercel --prod
 - [ ] Variables de notificaciones configuradas
 
 ### **Firebase**
+
 - [ ] Proyecto creado
 - [ ] Firestore configurado
 - [ ] Authentication habilitado
@@ -319,6 +323,7 @@ vercel --prod
 - [ ] Índices desplegados
 
 ### **APIs de Pago**
+
 - [ ] Cuenta Wompi creada
 - [ ] Cuenta PayU creada
 - [ ] Claves de API obtenidas
@@ -326,6 +331,7 @@ vercel --prod
 - [ ] Variables de entorno configuradas
 
 ### **Seguridad**
+
 - [ ] JWT configurado
 - [ ] Encriptación configurada
 - [ ] CORS configurado

@@ -1,0 +1,1079 @@
+/**
+ * AXYRA - Sistema Avanzado de Configuración
+ * Gestión completa de configuración del sistema, usuarios, temas y seguridad
+ */
+
+class AxyraConfiguracionAvanzada {
+  constructor() {
+    this.usuarios = [];
+    this.roles = [];
+    this.configuracion = this.getConfiguracionDefault();
+    this.metricas = {};
+    this.temas = this.getTemasDefault();
+    this.auditoria = [];
+
+    this.init();
+  }
+
+  init() {
+    try {
+      console.log('🔧 Inicializando sistema avanzado de configuración...');
+
+      // Cargar datos
+      this.cargarDatos();
+
+      // Configurar event listeners
+      this.configurarEventListeners();
+
+      // Inicializar métricas del sistema
+      this.inicializarMetricas();
+
+      // Aplicar configuración guardada
+      this.aplicarConfiguracion();
+
+      console.log('✅ Sistema de configuración inicializado correctamente');
+    } catch (error) {
+      console.error('❌ Error inicializando configuración:', error);
+    }
+  }
+
+  cargarDatos() {
+    // Cargar usuarios
+    this.usuarios = JSON.parse(localStorage.getItem('axyra_usuarios') || '[]');
+
+    // Cargar roles
+    this.roles = JSON.parse(localStorage.getItem('axyra_roles') || '[]');
+
+    // Cargar configuración
+    const configGuardada = localStorage.getItem('axyra_configuracion_completa');
+    if (configGuardada) {
+      this.configuracion = { ...this.configuracion, ...JSON.parse(configGuardada) };
+    }
+
+    // Cargar auditoría
+    this.auditoria = JSON.parse(localStorage.getItem('axyra_auditoria_configuracion') || '[]');
+
+    console.log(`📊 Datos cargados: ${this.usuarios.length} usuarios, ${this.roles.length} roles`);
+  }
+
+  getConfiguracionDefault() {
+    return {
+      empresa: {
+        nombre: 'VILLA VENECIA',
+        nit: '900123456-7',
+        direccion: 'Calle Principal #123',
+        telefono: '+57 300 123 4567',
+        email: 'contacto@villavenecia.com',
+        logo: 'logo.png',
+        industria: 'Restaurante y Eventos',
+        regimen: 'Responsable de IVA',
+        tipoEmpresa: 'Sociedad por Acciones Simplificada',
+      },
+      sistema: {
+        autoSave: true,
+        darkMode: false,
+        notifications: true,
+        sessionTimeout: 30,
+        maxLoginAttempts: 5,
+        backupAutomatico: true,
+        backupFrecuencia: 'DIARIO',
+        backupRetencion: 30,
+        idioma: 'es',
+        zonaHoraria: 'America/Bogota',
+      },
+      seguridad: {
+        passwordMinLength: 8,
+        requireSpecialChars: true,
+        requireNumbers: true,
+        requireUppercase: true,
+        sessionEncryption: true,
+        auditLog: true,
+        ipWhitelist: [],
+        allowedDomains: [],
+        twoFactorAuth: false,
+        sessionTimeout: 30,
+      },
+      notificaciones: {
+        email: true,
+        push: true,
+        sms: false,
+        whatsapp: false,
+        frecuencia: 'INMEDIATA',
+        horarioInicio: '08:00',
+        horarioFin: '18:00',
+      },
+      tema: {
+        nombre: 'default',
+        colores: {
+          primario: '#667eea',
+          secundario: '#764ba2',
+          acento: '#f59e0b',
+          fondo: '#ffffff',
+          texto: '#374151',
+        },
+      },
+    };
+  }
+
+  getTemasDefault() {
+    return {
+      default: {
+        nombre: 'Default',
+        colores: {
+          primario: '#667eea',
+          secundario: '#764ba2',
+          acento: '#f59e0b',
+          fondo: '#ffffff',
+          texto: '#374151',
+        },
+      },
+      dark: {
+        nombre: 'Dark',
+        colores: {
+          primario: '#1f2937',
+          secundario: '#374151',
+          acento: '#10b981',
+          fondo: '#111827',
+          texto: '#f9fafb',
+        },
+      },
+      corporate: {
+        nombre: 'Corporate',
+        colores: {
+          primario: '#059669',
+          secundario: '#10b981',
+          acento: '#f59e0b',
+          fondo: '#ffffff',
+          texto: '#374151',
+        },
+      },
+    };
+  }
+
+  configurarEventListeners() {
+    // Event listeners para botones principales
+    this.configurarBotonesPrincipales();
+
+    // Event listeners para formularios
+    this.configurarFormularios();
+
+    // Event listeners para temas
+    this.configurarTemas();
+
+    // Event listeners para métricas
+    this.configurarMetricas();
+  }
+
+  configurarBotonesPrincipales() {
+    const botones = {
+      btnConfigurarEmpresa: () => this.mostrarConfiguracionEmpresa(),
+      btnGestionarUsuarios: () => this.mostrarGestionUsuarios(),
+      btnConfigurarSeguridad: () => this.mostrarConfiguracionSeguridad(),
+      btnConfigurarNotificaciones: () => this.mostrarConfiguracionNotificaciones(),
+      btnPersonalizarTema: () => this.mostrarPersonalizacionTema(),
+      btnCrearBackup: () => this.crearBackup(),
+      btnRestaurarBackup: () => this.restaurarBackup(),
+      btnVerMetricas: () => this.mostrarMetricasSistema(),
+    };
+
+    Object.entries(botones).forEach(([id, funcion]) => {
+      const boton = document.getElementById(id);
+      if (boton) {
+        boton.addEventListener('click', funcion);
+      }
+    });
+  }
+
+  configurarFormularios() {
+    // Auto-guardado en formularios
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach((input) => {
+      input.addEventListener('change', () => this.guardarConfiguracionParcial());
+    });
+  }
+
+  configurarTemas() {
+    // Selector de temas
+    const opcionesTema = document.querySelectorAll('.axyra-theme-option');
+    opcionesTema.forEach((opcion) => {
+      opcion.addEventListener('click', () => {
+        const tema = opcion.dataset.theme;
+        this.aplicarTema(tema);
+      });
+    });
+
+    // Selector de colores
+    const selectoresColor = document.querySelectorAll('input[type="color"]');
+    selectoresColor.forEach((selector) => {
+      selector.addEventListener('change', (e) => {
+        this.cambiarColor(e.target.id, e.target.value);
+      });
+    });
+  }
+
+  configurarMetricas() {
+    // Actualizar métricas cada 30 segundos
+    setInterval(() => {
+      this.actualizarMetricas();
+    }, 30000);
+
+    // Actualizar métricas al cambiar período
+    const selectPeriodo = document.getElementById('userMetricsPeriod');
+    if (selectPeriodo) {
+      selectPeriodo.addEventListener('change', () => {
+        this.actualizarMetricas();
+      });
+    }
+  }
+
+  inicializarMetricas() {
+    this.metricas = {
+      usuarios: {
+        total: this.usuarios.length,
+        activos: this.usuarios.filter((u) => u.activo !== false).length,
+        inactivos: this.usuarios.filter((u) => u.activo === false).length,
+      },
+      sistema: {
+        uptime: '99.9%',
+        memoria: this.obtenerUsoMemoria(),
+        cpu: this.obtenerUsoCPU(),
+        almacenamiento: this.obtenerUsoAlmacenamiento(),
+      },
+      seguridad: {
+        intentosFallidos: this.contarIntentosFallidos(),
+        sesionesActivas: this.contarSesionesActivas(),
+        alertas: this.contarAlertasSeguridad(),
+      },
+    };
+
+    this.actualizarUI();
+  }
+
+  actualizarMetricas() {
+    try {
+      // Actualizar métricas de usuarios
+      this.metricas.usuarios = {
+        total: this.usuarios.length,
+        activos: this.usuarios.filter((u) => u.activo !== false).length,
+        inactivos: this.usuarios.filter((u) => u.activo === false).length,
+      };
+
+      // Actualizar métricas del sistema
+      this.metricas.sistema = {
+        uptime: '99.9%',
+        memoria: this.obtenerUsoMemoria(),
+        cpu: this.obtenerUsoCPU(),
+        almacenamiento: this.obtenerUsoAlmacenamiento(),
+      };
+
+      // Actualizar métricas de seguridad
+      this.metricas.seguridad = {
+        intentosFallidos: this.contarIntentosFallidos(),
+        sesionesActivas: this.contarSesionesActivas(),
+        alertas: this.contarAlertasSeguridad(),
+      };
+
+      this.actualizarUI();
+      this.generarGraficos();
+    } catch (error) {
+      console.error('Error actualizando métricas:', error);
+    }
+  }
+
+  actualizarUI() {
+    // Actualizar KPIs
+    this.actualizarElemento('uptimeSistema', this.metricas.sistema.uptime);
+    this.actualizarElemento('usuariosActivos', this.metricas.usuarios.activos);
+    this.actualizarElemento('alertasSeguridad', this.metricas.seguridad.alertas);
+
+    // Actualizar información de 2FA
+    this.actualizarElemento(
+      '2faStatusValue',
+      this.configuracion.seguridad.twoFactorAuth ? 'Configurado' : 'No configurado'
+    );
+
+    // Actualizar información de sesión
+    this.actualizarElemento('sessionTime', this.obtenerTiempoSesion());
+
+    // Actualizar información de backup
+    this.actualizarElemento('lastBackupTime', this.obtenerUltimoBackup());
+  }
+
+  actualizarElemento(id, valor) {
+    const elemento = document.getElementById(id);
+    if (elemento) {
+      elemento.textContent = valor;
+    }
+  }
+
+  generarGraficos() {
+    this.generarGraficoUsuarios();
+    this.generarGraficoRendimiento();
+    this.generarGraficoSeguridad();
+  }
+
+  generarGraficoUsuarios() {
+    const ctx = document.getElementById('usuariosChart');
+    if (!ctx) return;
+
+    const periodo = document.getElementById('userMetricsPeriod')?.value || 'week';
+    const datos = this.obtenerDatosUsuarios(periodo);
+
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: datos.labels,
+        datasets: [
+          {
+            label: 'Usuarios Activos',
+            data: datos.activos,
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            tension: 0.4,
+          },
+          {
+            label: 'Nuevos Usuarios',
+            data: datos.nuevos,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Actividad de Usuarios',
+          },
+        },
+      },
+    });
+  }
+
+  generarGraficoRendimiento() {
+    const ctx = document.getElementById('rendimientoChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Memoria', 'CPU', 'Almacenamiento', 'Red'],
+        datasets: [
+          {
+            data: [this.metricas.sistema.memoria, this.metricas.sistema.cpu, this.metricas.sistema.almacenamiento, 85],
+            backgroundColor: ['#667eea', '#10b981', '#f59e0b', '#ef4444'],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Uso de Recursos del Sistema',
+          },
+        },
+      },
+    });
+  }
+
+  generarGraficoSeguridad() {
+    const ctx = document.getElementById('seguridadChart');
+    if (!ctx) return;
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Intentos Fallidos', 'Sesiones Activas', 'Alertas', 'Accesos Exitosos'],
+        datasets: [
+          {
+            label: 'Eventos de Seguridad',
+            data: [
+              this.metricas.seguridad.intentosFallidos,
+              this.metricas.seguridad.sesionesActivas,
+              this.metricas.seguridad.alertas,
+              this.metricas.usuarios.activos,
+            ],
+            backgroundColor: ['#ef4444', '#10b981', '#f59e0b', '#667eea'],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Métricas de Seguridad',
+          },
+        },
+      },
+    });
+  }
+
+  obtenerDatosUsuarios(periodo) {
+    const ahora = new Date();
+    const datos = { labels: [], activos: [], nuevos: [] };
+
+    switch (periodo) {
+      case 'today':
+        for (let i = 23; i >= 0; i--) {
+          const hora = new Date(ahora.getTime() - i * 60 * 60 * 1000);
+          datos.labels.push(hora.getHours() + ':00');
+          datos.activos.push(Math.floor(Math.random() * 10) + 5);
+          datos.nuevos.push(Math.floor(Math.random() * 3));
+        }
+        break;
+      case 'week':
+        for (let i = 6; i >= 0; i--) {
+          const dia = new Date(ahora.getTime() - i * 24 * 60 * 60 * 1000);
+          datos.labels.push(dia.toLocaleDateString('es', { weekday: 'short' }));
+          datos.activos.push(Math.floor(Math.random() * 20) + 10);
+          datos.nuevos.push(Math.floor(Math.random() * 5));
+        }
+        break;
+      case 'month':
+        for (let i = 29; i >= 0; i--) {
+          const dia = new Date(ahora.getTime() - i * 24 * 60 * 60 * 1000);
+          datos.labels.push(dia.getDate());
+          datos.activos.push(Math.floor(Math.random() * 30) + 15);
+          datos.nuevos.push(Math.floor(Math.random() * 8));
+        }
+        break;
+    }
+
+    return datos;
+  }
+
+  // Métodos de utilidad para métricas
+  obtenerUsoMemoria() {
+    return Math.floor(Math.random() * 30) + 40; // Simulado
+  }
+
+  obtenerUsoCPU() {
+    return Math.floor(Math.random() * 20) + 20; // Simulado
+  }
+
+  obtenerUsoAlmacenamiento() {
+    return Math.floor(Math.random() * 40) + 30; // Simulado
+  }
+
+  contarIntentosFallidos() {
+    return this.auditoria.filter((a) => a.tipo === 'LOGIN_FALLIDO').length;
+  }
+
+  contarSesionesActivas() {
+    return this.usuarios.filter((u) => u.activo !== false).length;
+  }
+
+  contarAlertasSeguridad() {
+    return this.auditoria.filter((a) => a.tipo === 'ALERTA_SEGURIDAD').length;
+  }
+
+  obtenerTiempoSesion() {
+    const timeout = this.configuracion.sistema.sessionTimeout || 30;
+    return `${timeout} min`;
+  }
+
+  obtenerUltimoBackup() {
+    const backups = JSON.parse(localStorage.getItem('axyra_backups') || '[]');
+    if (backups.length > 0) {
+      const ultimo = backups[backups.length - 1];
+      return new Date(ultimo.fecha).toLocaleDateString();
+    }
+    return 'Nunca';
+  }
+
+  // Gestión de configuración
+  mostrarConfiguracionEmpresa() {
+    const modal = this.crearModal(
+      'modalConfiguracionEmpresa',
+      'Configuración de Empresa',
+      this.getHTMLConfiguracionEmpresa()
+    );
+    document.body.appendChild(modal);
+  }
+
+  getHTMLConfiguracionEmpresa() {
+    return `
+      <div class="axyra-form-grid">
+        <div class="axyra-form-group">
+          <label for="empresaNombre">Nombre de la Empresa</label>
+          <input type="text" id="empresaNombre" value="${this.configuracion.empresa.nombre}" class="axyra-form-control">
+        </div>
+        <div class="axyra-form-group">
+          <label for="empresaNIT">NIT</label>
+          <input type="text" id="empresaNIT" value="${this.configuracion.empresa.nit}" class="axyra-form-control">
+        </div>
+        <div class="axyra-form-group">
+          <label for="empresaDireccion">Dirección</label>
+          <input type="text" id="empresaDireccion" value="${
+            this.configuracion.empresa.direccion
+          }" class="axyra-form-control">
+        </div>
+        <div class="axyra-form-group">
+          <label for="empresaTelefono">Teléfono</label>
+          <input type="tel" id="empresaTelefono" value="${
+            this.configuracion.empresa.telefono
+          }" class="axyra-form-control">
+        </div>
+        <div class="axyra-form-group">
+          <label for="empresaEmail">Email</label>
+          <input type="email" id="empresaEmail" value="${this.configuracion.empresa.email}" class="axyra-form-control">
+        </div>
+        <div class="axyra-form-group">
+          <label for="empresaIndustria">Industria</label>
+          <select id="empresaIndustria" class="axyra-form-control">
+            <option value="Restaurante y Eventos" ${
+              this.configuracion.empresa.industria === 'Restaurante y Eventos' ? 'selected' : ''
+            }>Restaurante y Eventos</option>
+            <option value="Tecnología" ${
+              this.configuracion.empresa.industria === 'Tecnología' ? 'selected' : ''
+            }>Tecnología</option>
+            <option value="Retail" ${
+              this.configuracion.empresa.industria === 'Retail' ? 'selected' : ''
+            }>Retail</option>
+            <option value="Servicios" ${
+              this.configuracion.empresa.industria === 'Servicios' ? 'selected' : ''
+            }>Servicios</option>
+          </select>
+        </div>
+      </div>
+    `;
+  }
+
+  mostrarGestionUsuarios() {
+    const modal = this.crearModal('modalGestionUsuarios', 'Gestión de Usuarios', this.getHTMLGestionUsuarios());
+    document.body.appendChild(modal);
+  }
+
+  getHTMLGestionUsuarios() {
+    return `
+      <div class="axyra-users-management">
+        <div class="axyra-users-header">
+          <button class="axyra-btn axyra-btn-primary" onclick="axyraConfig.agregarUsuario()">
+            <i class="fas fa-plus"></i> Nuevo Usuario
+          </button>
+        </div>
+        <div class="axyra-users-list">
+          ${this.usuarios
+            .map(
+              (usuario) => `
+            <div class="axyra-user-item">
+              <div class="axyra-user-info">
+                <h4>${usuario.nombre || usuario.email}</h4>
+                <span class="axyra-user-role">${usuario.rol || 'Sin rol'}</span>
+                <span class="axyra-user-status ${usuario.activo !== false ? 'activo' : 'inactivo'}">
+                  ${usuario.activo !== false ? 'Activo' : 'Inactivo'}
+                </span>
+              </div>
+              <div class="axyra-user-actions">
+                <button class="axyra-btn axyra-btn-sm axyra-btn-primary" onclick="axyraConfig.editarUsuario('${
+                  usuario.id
+                }')">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="axyra-btn axyra-btn-sm axyra-btn-${
+                  usuario.activo !== false ? 'warning' : 'success'
+                }" onclick="axyraConfig.cambiarEstadoUsuario('${usuario.id}')">
+                  <i class="fas fa-${usuario.activo !== false ? 'pause' : 'play'}"></i>
+                </button>
+              </div>
+            </div>
+          `
+            )
+            .join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  mostrarConfiguracionSeguridad() {
+    const modal = this.crearModal(
+      'modalConfiguracionSeguridad',
+      'Configuración de Seguridad',
+      this.getHTMLConfiguracionSeguridad()
+    );
+    document.body.appendChild(modal);
+  }
+
+  getHTMLConfiguracionSeguridad() {
+    return `
+      <div class="axyra-security-config">
+        <div class="axyra-form-group">
+          <label class="axyra-switch">
+            <input type="checkbox" id="twoFactorAuth" ${this.configuracion.seguridad.twoFactorAuth ? 'checked' : ''}>
+            <span class="axyra-slider"></span>
+          </label>
+          <span>Autenticación de Dos Factores (2FA)</span>
+        </div>
+        <div class="axyra-form-group">
+          <label for="passwordMinLength">Longitud mínima de contraseña</label>
+          <input type="number" id="passwordMinLength" value="${
+            this.configuracion.seguridad.passwordMinLength
+          }" min="6" max="20" class="axyra-form-control">
+        </div>
+        <div class="axyra-form-group">
+          <label class="axyra-switch">
+            <input type="checkbox" id="requireSpecialChars" ${
+              this.configuracion.seguridad.requireSpecialChars ? 'checked' : ''
+            }>
+            <span class="axyra-slider"></span>
+          </label>
+          <span>Requerir caracteres especiales</span>
+        </div>
+        <div class="axyra-form-group">
+          <label class="axyra-switch">
+            <input type="checkbox" id="requireNumbers" ${this.configuracion.seguridad.requireNumbers ? 'checked' : ''}>
+            <span class="axyra-slider"></span>
+          </label>
+          <span>Requerir números</span>
+        </div>
+        <div class="axyra-form-group">
+          <label class="axyra-switch">
+            <input type="checkbox" id="requireUppercase" ${
+              this.configuracion.seguridad.requireUppercase ? 'checked' : ''
+            }>
+            <span class="axyra-slider"></span>
+          </label>
+          <span>Requerir mayúsculas</span>
+        </div>
+        <div class="axyra-form-group">
+          <label for="sessionTimeout">Timeout de sesión (minutos)</label>
+          <input type="number" id="sessionTimeout" value="${
+            this.configuracion.seguridad.sessionTimeout
+          }" min="5" max="480" class="axyra-form-control">
+        </div>
+      </div>
+    `;
+  }
+
+  mostrarConfiguracionNotificaciones() {
+    const modal = this.crearModal(
+      'modalConfiguracionNotificaciones',
+      'Configuración de Notificaciones',
+      this.getHTMLConfiguracionNotificaciones()
+    );
+    document.body.appendChild(modal);
+  }
+
+  getHTMLConfiguracionNotificaciones() {
+    return `
+      <div class="axyra-notifications-config">
+        <div class="axyra-form-group">
+          <label class="axyra-switch">
+            <input type="checkbox" id="notificationsEmail" ${this.configuracion.notificaciones.email ? 'checked' : ''}>
+            <span class="axyra-slider"></span>
+          </label>
+          <span>Notificaciones por Email</span>
+        </div>
+        <div class="axyra-form-group">
+          <label class="axyra-switch">
+            <input type="checkbox" id="notificationsPush" ${this.configuracion.notificaciones.push ? 'checked' : ''}>
+            <span class="axyra-slider"></span>
+          </label>
+          <span>Notificaciones Push</span>
+        </div>
+        <div class="axyra-form-group">
+          <label for="notificationsFrecuencia">Frecuencia</label>
+          <select id="notificationsFrecuencia" class="axyra-form-control">
+            <option value="INMEDIATA" ${
+              this.configuracion.notificaciones.frecuencia === 'INMEDIATA' ? 'selected' : ''
+            }>Inmediata</option>
+            <option value="CADA_5_MIN" ${
+              this.configuracion.notificaciones.frecuencia === 'CADA_5_MIN' ? 'selected' : ''
+            }>Cada 5 minutos</option>
+            <option value="CADA_15_MIN" ${
+              this.configuracion.notificaciones.frecuencia === 'CADA_15_MIN' ? 'selected' : ''
+            }>Cada 15 minutos</option>
+            <option value="CADA_HORA" ${
+              this.configuracion.notificaciones.frecuencia === 'CADA_HORA' ? 'selected' : ''
+            }>Cada hora</option>
+          </select>
+        </div>
+        <div class="axyra-form-group">
+          <label for="notificationsHorarioInicio">Horario de inicio</label>
+          <input type="time" id="notificationsHorarioInicio" value="${
+            this.configuracion.notificaciones.horarioInicio
+          }" class="axyra-form-control">
+        </div>
+        <div class="axyra-form-group">
+          <label for="notificationsHorarioFin">Horario de fin</label>
+          <input type="time" id="notificationsHorarioFin" value="${
+            this.configuracion.notificaciones.horarioFin
+          }" class="axyra-form-control">
+        </div>
+      </div>
+    `;
+  }
+
+  mostrarPersonalizacionTema() {
+    const modal = this.crearModal(
+      'modalPersonalizacionTema',
+      'Personalización de Tema',
+      this.getHTMLPersonalizacionTema()
+    );
+    document.body.appendChild(modal);
+  }
+
+  getHTMLPersonalizacionTema() {
+    return `
+      <div class="axyra-theme-customization">
+        <div class="axyra-theme-selector">
+          <h4>Seleccionar Tema</h4>
+          <div class="axyra-theme-options">
+            ${Object.entries(this.temas)
+              .map(
+                ([key, tema]) => `
+              <div class="axyra-theme-option ${
+                this.configuracion.tema.nombre === key ? 'active' : ''
+              }" data-theme="${key}">
+                <div class="axyra-theme-preview" style="background: linear-gradient(135deg, ${
+                  tema.colores.primario
+                } 0%, ${tema.colores.secundario} 100%)"></div>
+                <span>${tema.nombre}</span>
+              </div>
+            `
+              )
+              .join('')}
+          </div>
+        </div>
+        <div class="axyra-color-customization">
+          <h4>Colores Personalizados</h4>
+          <div class="axyra-color-picker">
+            <div class="axyra-color-item">
+              <label>Color Primario:</label>
+              <input type="color" id="colorPrimario" value="${this.configuracion.tema.colores.primario}">
+            </div>
+            <div class="axyra-color-item">
+              <label>Color Secundario:</label>
+              <input type="color" id="colorSecundario" value="${this.configuracion.tema.colores.secundario}">
+            </div>
+            <div class="axyra-color-item">
+              <label>Color de Acento:</label>
+              <input type="color" id="colorAcento" value="${this.configuracion.tema.colores.acento}">
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  mostrarMetricasSistema() {
+    const modal = this.crearModal('modalMetricasSistema', 'Métricas del Sistema', this.getHTMLMetricasSistema());
+    document.body.appendChild(modal);
+  }
+
+  getHTMLMetricasSistema() {
+    return `
+      <div class="axyra-system-metrics">
+        <div class="axyra-metrics-grid">
+          <div class="axyra-metric-card">
+            <h4>Usuarios</h4>
+            <div class="axyra-metric-value">${this.metricas.usuarios.total}</div>
+            <div class="axyra-metric-label">Total</div>
+          </div>
+          <div class="axyra-metric-card">
+            <h4>Activos</h4>
+            <div class="axyra-metric-value">${this.metricas.usuarios.activos}</div>
+            <div class="axyra-metric-label">Usuarios</div>
+          </div>
+          <div class="axyra-metric-card">
+            <h4>Uptime</h4>
+            <div class="axyra-metric-value">${this.metricas.sistema.uptime}</div>
+            <div class="axyra-metric-label">Sistema</div>
+          </div>
+          <div class="axyra-metric-card">
+            <h4>Memoria</h4>
+            <div class="axyra-metric-value">${this.metricas.sistema.memoria}%</div>
+            <div class="axyra-metric-label">Uso</div>
+          </div>
+        </div>
+        <div class="axyra-charts-container">
+          <canvas id="metricasChart" width="400" height="200"></canvas>
+        </div>
+      </div>
+    `;
+  }
+
+  // Métodos de gestión de usuarios
+  agregarUsuario() {
+    const nombre = prompt('Nombre del usuario:');
+    const email = prompt('Email del usuario:');
+    const rol = prompt('Rol del usuario (admin, usuario, supervisor):');
+
+    if (nombre && email && rol) {
+      const nuevoUsuario = {
+        id: 'user_' + Date.now(),
+        nombre,
+        email,
+        rol,
+        activo: true,
+        fechaCreacion: new Date().toISOString(),
+      };
+
+      this.usuarios.push(nuevoUsuario);
+      this.guardarUsuarios();
+      this.actualizarMetricas();
+      this.mostrarExito('Usuario agregado correctamente');
+    }
+  }
+
+  editarUsuario(id) {
+    const usuario = this.usuarios.find((u) => u.id === id);
+    if (usuario) {
+      const nuevoNombre = prompt('Nuevo nombre:', usuario.nombre);
+      const nuevoRol = prompt('Nuevo rol:', usuario.rol);
+
+      if (nuevoNombre && nuevoRol) {
+        usuario.nombre = nuevoNombre;
+        usuario.rol = nuevoRol;
+        this.guardarUsuarios();
+        this.actualizarMetricas();
+        this.mostrarExito('Usuario actualizado correctamente');
+      }
+    }
+  }
+
+  cambiarEstadoUsuario(id) {
+    const usuario = this.usuarios.find((u) => u.id === id);
+    if (usuario) {
+      usuario.activo = !usuario.activo;
+      this.guardarUsuarios();
+      this.actualizarMetricas();
+      this.mostrarExito(`Usuario ${usuario.activo ? 'activado' : 'desactivado'} correctamente`);
+    }
+  }
+
+  // Gestión de temas
+  aplicarTema(nombreTema) {
+    if (this.temas[nombreTema]) {
+      this.configuracion.tema.nombre = nombreTema;
+      this.configuracion.tema.colores = { ...this.temas[nombreTema].colores };
+
+      this.aplicarColoresTema();
+      this.guardarConfiguracion();
+      this.mostrarExito(`Tema ${nombreTema} aplicado correctamente`);
+    }
+  }
+
+  cambiarColor(tipoColor, valor) {
+    this.configuracion.tema.colores[tipoColor.replace('color', '').toLowerCase()] = valor;
+    this.aplicarColoresTema();
+    this.guardarConfiguracion();
+  }
+
+  aplicarColoresTema() {
+    const colores = this.configuracion.tema.colores;
+    const root = document.documentElement;
+
+    root.style.setProperty('--color-primario', colores.primario);
+    root.style.setProperty('--color-secundario', colores.secundario);
+    root.style.setProperty('--color-acento', colores.acento);
+    root.style.setProperty('--color-fondo', colores.fondo);
+    root.style.setProperty('--color-texto', colores.texto);
+  }
+
+  // Gestión de backup
+  crearBackup() {
+    try {
+      const backup = {
+        fecha: new Date().toISOString(),
+        version: '1.0.0',
+        datos: {
+          usuarios: this.usuarios,
+          configuracion: this.configuracion,
+          auditoria: this.auditoria,
+        },
+        metadata: {
+          totalRegistros: this.usuarios.length,
+          tamañoAproximado: JSON.stringify(this.configuracion).length,
+        },
+      };
+
+      const backups = JSON.parse(localStorage.getItem('axyra_backups') || '[]');
+      backups.push(backup);
+      localStorage.setItem('axyra_backups', JSON.stringify(backups));
+
+      // Descargar backup
+      const dataStr = JSON.stringify(backup, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `AXYRA_Config_Backup_${new Date().toISOString().split('T')[0]}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+
+      this.mostrarExito('Backup creado correctamente');
+    } catch (error) {
+      console.error('Error creando backup:', error);
+      this.mostrarError('Error creando backup: ' + error.message);
+    }
+  }
+
+  restaurarBackup() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const backup = JSON.parse(e.target.result);
+            this.restaurarDatosBackup(backup);
+            this.mostrarExito('Backup restaurado correctamente');
+          } catch (error) {
+            this.mostrarError('Error restaurando backup: ' + error.message);
+          }
+        };
+        reader.readAsText(file);
+      }
+    };
+
+    input.click();
+  }
+
+  restaurarDatosBackup(backup) {
+    if (backup.datos) {
+      if (backup.datos.usuarios) {
+        this.usuarios = backup.datos.usuarios;
+        this.guardarUsuarios();
+      }
+      if (backup.datos.configuracion) {
+        this.configuracion = { ...this.configuracion, ...backup.datos.configuracion };
+        this.guardarConfiguracion();
+      }
+      if (backup.datos.auditoria) {
+        this.auditoria = backup.datos.auditoria;
+        localStorage.setItem('axyra_auditoria_configuracion', JSON.stringify(this.auditoria));
+      }
+    }
+  }
+
+  // Métodos de guardado
+  guardarConfiguracion() {
+    localStorage.setItem('axyra_configuracion_completa', JSON.stringify(this.configuracion));
+    this.registrarAuditoria('CONFIGURACION_ACTUALIZADA', 'Configuración actualizada');
+  }
+
+  guardarConfiguracionParcial() {
+    // Guardar configuración parcial sin auditoría
+    localStorage.setItem('axyra_configuracion_completa', JSON.stringify(this.configuracion));
+  }
+
+  guardarUsuarios() {
+    localStorage.setItem('axyra_usuarios', JSON.stringify(this.usuarios));
+  }
+
+  aplicarConfiguracion() {
+    // Aplicar configuración al sistema
+    this.aplicarColoresTema();
+
+    // Aplicar configuración de sesión
+    if (window.axyraSessionTimeout) {
+      window.axyraSessionTimeout.setTimeout(this.configuracion.sistema.sessionTimeout * 60 * 1000);
+    }
+
+    // Aplicar configuración de notificaciones
+    if (window.axyraNotificationSystem) {
+      window.axyraNotificationSystem.updateConfig(this.configuracion.notificaciones);
+    }
+  }
+
+  // Métodos de utilidad
+  crearModal(id, titulo, contenido) {
+    const modal = document.createElement('div');
+    modal.className = 'axyra-modal-overlay';
+    modal.id = id;
+    modal.innerHTML = `
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3>${titulo}</h3>
+          <button class="axyra-modal-close" onclick="axyraConfig.cerrarModal('${id}')">×</button>
+        </div>
+        <div class="axyra-modal-body">
+          ${contenido}
+        </div>
+        <div class="axyra-modal-footer">
+          <button class="axyra-btn axyra-btn-secondary" onclick="axyraConfig.cerrarModal('${id}')">
+            <i class="fas fa-times"></i> Cerrar
+          </button>
+          <button class="axyra-btn axyra-btn-primary" onclick="axyraConfig.guardarConfiguracion()">
+            <i class="fas fa-save"></i> Guardar
+          </button>
+        </div>
+      </div>
+    `;
+    return modal;
+  }
+
+  cerrarModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) {
+      modal.remove();
+    }
+  }
+
+  mostrarExito(mensaje) {
+    this.mostrarNotificacion(mensaje, 'success');
+  }
+
+  mostrarError(mensaje) {
+    this.mostrarNotificacion(mensaje, 'error');
+  }
+
+  mostrarNotificacion(mensaje, tipo) {
+    const notificacion = document.createElement('div');
+    notificacion.className = `axyra-notificacion axyra-notificacion-${tipo}`;
+    notificacion.innerHTML = `
+      <div class="axyra-notificacion-content">
+        <i class="fas fa-${
+          tipo === 'error' ? 'exclamation-triangle' : tipo === 'success' ? 'check-circle' : 'info-circle'
+        }"></i>
+        <span>${mensaje}</span>
+        <button onclick="this.parentElement.parentElement.remove()">×</button>
+      </div>
+    `;
+
+    document.body.appendChild(notificacion);
+
+    setTimeout(() => {
+      if (notificacion.parentElement) {
+        notificacion.remove();
+      }
+    }, 5000);
+  }
+
+  registrarAuditoria(tipo, descripcion) {
+    this.auditoria.push({
+      id: 'audit_' + Date.now(),
+      tipo,
+      descripcion,
+      usuario: this.obtenerUsuarioActual()?.nombre || 'Sistema',
+      fecha: new Date().toISOString(),
+      ip: 'localhost',
+    });
+
+    localStorage.setItem('axyra_auditoria_configuracion', JSON.stringify(this.auditoria));
+  }
+
+  obtenerUsuarioActual() {
+    if (window.obtenerUsuarioActual) {
+      return window.obtenerUsuarioActual();
+    }
+    return { nombre: 'Sistema', email: 'sistema@axyra.com' };
+  }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function () {
+  window.axyraConfig = new AxyraConfiguracionAvanzada();
+});

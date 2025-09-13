@@ -57,3 +57,4 @@ firebase-debug.*.log
 # Backup files
 *.bak
 *.backup
+.vercel

@@ -386,6 +386,7 @@ firebase firestore:indexes
 ## ✅ **CHECKLIST DE DESPLIEGUE**
 
 ### **Firebase**
+
 - [ ] Proyecto creado
 - [ ] Firestore configurado
 - [ ] Authentication habilitado
@@ -396,6 +397,7 @@ firebase firestore:indexes
 - [ ] Storage configurado
 
 ### **Vercel**
+
 - [ ] Proyecto conectado
 - [ ] Variables de entorno configuradas
 - [ ] Dominio configurado
@@ -403,6 +405,7 @@ firebase firestore:indexes
 - [ ] Analytics habilitado
 
 ### **APIs de Pago**
+
 - [ ] Cuenta Wompi creada
 - [ ] Cuenta PayU creada
 - [ ] Claves de API obtenidas
@@ -410,6 +413,7 @@ firebase firestore:indexes
 - [ ] Variables de entorno configuradas
 
 ### **Seguridad**
+
 - [ ] JWT configurado
 - [ ] Encriptación configurada
 - [ ] CORS configurado
@@ -418,6 +422,7 @@ firebase firestore:indexes
 - [ ] Reglas de Storage desplegadas
 
 ### **Monitoreo**
+
 - [ ] Vercel Analytics habilitado
 - [ ] Firebase Analytics habilitado
 - [ ] Google Analytics configurado
