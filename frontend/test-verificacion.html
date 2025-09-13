@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Verificación AXYRA</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <!-- Estilos básicos -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-title {
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        
+        .test-button {
+            background: #1e40af;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        .test-button:hover {
+            background: #1e3a8a;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+    </style>
+    
+    <!-- AXYRA Modal System -->
+    <link rel="stylesheet" href="static/modal-fixes.css">
+    <script src="static/axyra-modal-system.js"></script>
+    
+    <!-- AXYRA AI Chat -->
+    <script src="static/axyra-ai-chat-professional.js"></script>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1 class="test-title">🧪 Test de Verificación AXYRA</h1>
+            <p>Verificando funcionalidades del sistema</p>
+        </div>
+        
+        <div class="test-section">
+            <h3>1. Test de Modales</h3>
+            <p>Haz clic en los botones para probar los modales:</p>
+            <button class="test-button" onclick="testModalPersonalizar()">Test Modal Personalizar</button>
+            <button class="test-button" onclick="testModalConfigurar()">Test Modal Configurar</button>
+            <div id="modalStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. Test de Chat de IA</h3>
+            <p>Verificando si el chat de IA aparece:</p>
+            <button class="test-button" onclick="testAIChat()">Verificar Chat IA</button>
+            <div id="chatStatus"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. Test de Sistema de Modales</h3>
+            <p>Verificando sistema de modales profesional:</p>
+            <button class="test-button" onclick="testModalSystem()">Test Sistema Modales</button>
+            <div id="systemStatus"></div>
+        </div>
+    </div>
+
+    <script>
+        function testModalPersonalizar() {
+            const status = document.getElementById('modalStatus');
+            try {
+                if (window.axyraModals) {
+                    window.axyraModals.showModal({
+                        title: 'Test Modal Personalizar',
+                        titleIcon: 'fas fa-palette',
+                        content: '<p>Este es un test del modal de personalización. Debería aparecer centrado en pantalla.</p>',
+                        size: 'md',
+                        showConfirm: true,
+                        showCancel: true,
+                        confirmText: 'Aceptar',
+                        cancelText: 'Cancelar'
+                    });
+                    status.innerHTML = '<div class="status success">✅ Modal de personalización mostrado correctamente</div>';
+                } else {
+                    status.innerHTML = '<div class="status error">❌ Sistema de modales no disponible</div>';
+                }
+            } catch (error) {
+                status.innerHTML = '<div class="status error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+        
+        function testModalConfigurar() {
+            const status = document.getElementById('modalStatus');
+            try {
+                if (window.axyraModals) {
+                    window.axyraModals.showModal({
+                        title: 'Test Modal Configurar',
+                        titleIcon: 'fas fa-cog',
+                        content: '<p>Este es un test del modal de configuración. Debería aparecer centrado en pantalla.</p>',
+                        size: 'lg',
+                        showConfirm: true,
+                        showCancel: true,
+                        confirmText: 'Guardar',
+                        cancelText: 'Cancelar'
+                    });
+                    status.innerHTML = '<div class="status success">✅ Modal de configuración mostrado correctamente</div>';
+                } else {
+                    status.innerHTML = '<div class="status error">❌ Sistema de modales no disponible</div>';
+                }
+            } catch (error) {
+                status.innerHTML = '<div class="status error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+        
+        function testAIChat() {
+            const status = document.getElementById('chatStatus');
+            try {
+                if (window.axyraAIChat) {
+                    status.innerHTML = '<div class="status success">✅ Chat de IA disponible - Debería aparecer un botón azul en la esquina inferior derecha</div>';
+                } else {
+                    status.innerHTML = '<div class="status error">❌ Chat de IA no disponible</div>';
+                }
+            } catch (error) {
+                status.innerHTML = '<div class="status error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+        
+        function testModalSystem() {
+            const status = document.getElementById('systemStatus');
+            try {
+                if (window.axyraModals) {
+                    status.innerHTML = '<div class="status success">✅ Sistema de modales AXYRA disponible</div>';
+                } else {
+                    status.innerHTML = '<div class="status error">❌ Sistema de modales no disponible</div>';
+                }
+            } catch (error) {
+                status.innerHTML = '<div class="status error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+        
+        // Verificar al cargar la página
+        window.addEventListener('load', () => {
+            console.log('🔍 Verificando sistemas AXYRA...');
+            console.log('Sistema de modales:', window.axyraModals ? '✅ Disponible' : '❌ No disponible');
+            console.log('Chat de IA:', window.axyraAIChat ? '✅ Disponible' : '❌ No disponible');
+        });
+    </script>
+</body>
+</html>

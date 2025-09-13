@@ -11,6 +11,38 @@
 /* Modales específicos del dashboard AXYRA */
 .axyra-modal {
   z-index: 10000 !important; /* Z-index alto para estar por encima del header */
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  overflow: hidden !important;
+  display: none !important;
+}
+
+.axyra-modal.active {
+  display: block !important;
+}
+
+/* Overlay para modales del dashboard */
+.axyra-modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 9999 !important;
+  display: none !important;
+}
+
+.axyra-modal-overlay.active {
+  display: block !important;
 }
 
 .axyra-modal-content {
