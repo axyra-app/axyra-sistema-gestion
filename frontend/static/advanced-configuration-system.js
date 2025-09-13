@@ -15,7 +15,7 @@ class AxyraAdvancedConfigurationSystem {
     this.configDependencies = [];
     this.configLogs = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -226,22 +226,22 @@ class AxyraAdvancedConfigurationSystem {
           name: 'Configuración General',
           description: 'Configuraciones generales del sistema',
           category: 'system',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'user_interface',
           name: 'Interfaz de Usuario',
           description: 'Configuraciones de la interfaz de usuario',
           category: 'ui',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'security_settings',
           name: 'Configuración de Seguridad',
           description: 'Configuraciones de seguridad del sistema',
           category: 'security',
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveConfigGroups();
     }
@@ -257,7 +257,7 @@ class AxyraAdvancedConfigurationSystem {
           value: 'AXYRA Sistema de Gestión',
           defaultValue: 'AXYRA Sistema de Gestión',
           isRequired: true,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'system_version',
@@ -268,7 +268,7 @@ class AxyraAdvancedConfigurationSystem {
           value: '1.0.0',
           defaultValue: '1.0.0',
           isRequired: true,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'theme_mode',
@@ -280,7 +280,7 @@ class AxyraAdvancedConfigurationSystem {
           defaultValue: 'light',
           options: ['light', 'dark', 'auto'],
           isRequired: false,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'session_timeout',
@@ -293,8 +293,8 @@ class AxyraAdvancedConfigurationSystem {
           min: 5,
           max: 480,
           isRequired: true,
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveConfigParameters();
     }
@@ -302,21 +302,21 @@ class AxyraAdvancedConfigurationSystem {
 
   handleConfigurationChange(change) {
     const { configId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.configurations.push(data);
         this.saveConfigurations();
         break;
       case 'updated':
-        const configIndex = this.configurations.findIndex(c => c.id === configId);
+        const configIndex = this.configurations.findIndex((c) => c.id === configId);
         if (configIndex !== -1) {
           this.configurations[configIndex] = { ...this.configurations[configIndex], ...data };
           this.saveConfigurations();
         }
         break;
       case 'deleted':
-        this.configurations = this.configurations.filter(c => c.id !== configId);
+        this.configurations = this.configurations.filter((c) => c.id !== configId);
         this.saveConfigurations();
         break;
     }
@@ -324,21 +324,21 @@ class AxyraAdvancedConfigurationSystem {
 
   handleParameterChange(change) {
     const { parameterId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.configParameters.push(data);
         this.saveConfigParameters();
         break;
       case 'updated':
-        const parameterIndex = this.configParameters.findIndex(p => p.id === parameterId);
+        const parameterIndex = this.configParameters.findIndex((p) => p.id === parameterId);
         if (parameterIndex !== -1) {
           this.configParameters[parameterIndex] = { ...this.configParameters[parameterIndex], ...data };
           this.saveConfigParameters();
         }
         break;
       case 'deleted':
-        this.configParameters = this.configParameters.filter(p => p.id !== parameterId);
+        this.configParameters = this.configParameters.filter((p) => p.id !== parameterId);
         this.saveConfigParameters();
         break;
     }
@@ -356,8 +356,8 @@ class AxyraAdvancedConfigurationSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.configurations.push(config);
@@ -378,8 +378,8 @@ class AxyraAdvancedConfigurationSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.configGroups.push(group);
@@ -407,8 +407,8 @@ class AxyraAdvancedConfigurationSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.configParameters.push(parameter);
@@ -430,8 +430,8 @@ class AxyraAdvancedConfigurationSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.configTemplates.push(template);
@@ -453,8 +453,8 @@ class AxyraAdvancedConfigurationSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.configProfiles.push(profile);
@@ -474,8 +474,8 @@ class AxyraAdvancedConfigurationSystem {
       reason: historyData.reason || '',
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.configHistory.push(history);
@@ -495,8 +495,8 @@ class AxyraAdvancedConfigurationSystem {
       isPassed: validationData.isPassed || false,
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.configValidation.push(validation);
@@ -518,8 +518,8 @@ class AxyraAdvancedConfigurationSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.configDependencies.push(dependency);
@@ -539,8 +539,8 @@ class AxyraAdvancedConfigurationSystem {
       data: logData.data || {},
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.configLogs.push(log);
@@ -552,22 +552,22 @@ class AxyraAdvancedConfigurationSystem {
 
   getConfigurationStatistics() {
     const totalConfigurations = this.configurations.length;
-    const activeConfigurations = this.configurations.filter(c => c.isActive).length;
+    const activeConfigurations = this.configurations.filter((c) => c.isActive).length;
     const totalGroups = this.configGroups.length;
-    const activeGroups = this.configGroups.filter(g => g.isActive).length;
+    const activeGroups = this.configGroups.filter((g) => g.isActive).length;
     const totalParameters = this.configParameters.length;
-    const activeParameters = this.configParameters.filter(p => p.isActive).length;
+    const activeParameters = this.configParameters.filter((p) => p.isActive).length;
     const totalTemplates = this.configTemplates.length;
-    const activeTemplates = this.configTemplates.filter(t => t.isActive).length;
+    const activeTemplates = this.configTemplates.filter((t) => t.isActive).length;
     const totalProfiles = this.configProfiles.length;
-    const activeProfiles = this.configProfiles.filter(p => p.isActive).length;
+    const activeProfiles = this.configProfiles.filter((p) => p.isActive).length;
     const totalHistory = this.configHistory.length;
     const totalValidation = this.configValidation.length;
-    const passedValidation = this.configValidation.filter(v => v.isPassed).length;
+    const passedValidation = this.configValidation.filter((v) => v.isPassed).length;
     const totalDependencies = this.configDependencies.length;
-    const activeDependencies = this.configDependencies.filter(d => d.isActive).length;
+    const activeDependencies = this.configDependencies.filter((d) => d.isActive).length;
     const totalLogs = this.configLogs.length;
-    const errorLogs = this.configLogs.filter(l => l.level === 'error').length;
+    const errorLogs = this.configLogs.filter((l) => l.level === 'error').length;
 
     return {
       totalConfigurations,
@@ -586,7 +586,7 @@ class AxyraAdvancedConfigurationSystem {
       totalDependencies,
       activeDependencies,
       totalLogs,
-      errorLogs
+      errorLogs,
     };
   }
 
@@ -679,13 +679,13 @@ class AxyraAdvancedConfigurationSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -694,7 +694,7 @@ class AxyraAdvancedConfigurationSystem {
 
   renderConfigurationStats() {
     const stats = this.getConfigurationStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -771,7 +771,7 @@ class AxyraAdvancedConfigurationSystem {
 
   renderOverview() {
     const stats = this.getConfigurationStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -831,12 +831,16 @@ class AxyraAdvancedConfigurationSystem {
 
   renderConfigurationsList() {
     const configurations = this.configurations.slice(-20); // Últimas 20 configuraciones
-    
-    return configurations.map(config => `
+
+    return configurations
+      .map(
+        (config) => `
       <div class="configuration-card">
         <div class="configuration-header">
           <h5>${config.name}</h5>
-          <span class="configuration-status ${config.isActive ? 'active' : 'inactive'}">${config.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="configuration-status ${config.isActive ? 'active' : 'inactive'}">${
+          config.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="configuration-info">
           <p>${config.description}</p>
@@ -848,17 +852,23 @@ class AxyraAdvancedConfigurationSystem {
           <button onclick="axyraAdvancedConfigurationSystem.editConfiguration('${config.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderGroupsList() {
     const groups = this.configGroups.slice(-20); // Últimos 20 grupos
-    
-    return groups.map(group => `
+
+    return groups
+      .map(
+        (group) => `
       <div class="group-card">
         <div class="group-header">
           <h5>${group.name}</h5>
-          <span class="group-status ${group.isActive ? 'active' : 'inactive'}">${group.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="group-status ${group.isActive ? 'active' : 'inactive'}">${
+          group.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="group-info">
           <p>${group.description}</p>
@@ -869,13 +879,17 @@ class AxyraAdvancedConfigurationSystem {
           <button onclick="axyraAdvancedConfigurationSystem.editGroup('${group.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderParametersList() {
     const parameters = this.configParameters.slice(-20); // Últimos 20 parámetros
-    
-    return parameters.map(parameter => `
+
+    return parameters
+      .map(
+        (parameter) => `
       <div class="parameter-card">
         <div class="parameter-header">
           <h5>${parameter.name}</h5>
@@ -891,17 +905,23 @@ class AxyraAdvancedConfigurationSystem {
           <button onclick="axyraAdvancedConfigurationSystem.editParameter('${parameter.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderTemplatesList() {
     const templates = this.configTemplates.slice(-20); // Últimas 20 plantillas
-    
-    return templates.map(template => `
+
+    return templates
+      .map(
+        (template) => `
       <div class="template-card">
         <div class="template-header">
           <h5>${template.name}</h5>
-          <span class="template-status ${template.isActive ? 'active' : 'inactive'}">${template.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="template-status ${template.isActive ? 'active' : 'inactive'}">${
+          template.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="template-info">
           <p>${template.description}</p>
@@ -913,17 +933,23 @@ class AxyraAdvancedConfigurationSystem {
           <button onclick="axyraAdvancedConfigurationSystem.editTemplate('${template.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderProfilesList() {
     const profiles = this.configProfiles.slice(-20); // Últimos 20 perfiles
-    
-    return profiles.map(profile => `
+
+    return profiles
+      .map(
+        (profile) => `
       <div class="profile-card">
         <div class="profile-header">
           <h5>${profile.name}</h5>
-          <span class="profile-status ${profile.isActive ? 'active' : 'inactive'}">${profile.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="profile-status ${profile.isActive ? 'active' : 'inactive'}">${
+          profile.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="profile-info">
           <p>${profile.description}</p>
@@ -935,13 +961,17 @@ class AxyraAdvancedConfigurationSystem {
           <button onclick="axyraAdvancedConfigurationSystem.editProfile('${profile.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderHistoryList() {
     const history = this.configHistory.slice(-20); // Últimos 20 historiales
-    
-    return history.map(hist => `
+
+    return history
+      .map(
+        (hist) => `
       <div class="history-card">
         <div class="history-header">
           <h5>${hist.action}</h5>
@@ -954,17 +984,23 @@ class AxyraAdvancedConfigurationSystem {
           <p>Nuevo valor: ${hist.newValue || 'N/A'}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderValidationList() {
     const validations = this.configValidation.slice(-20); // Últimas 20 validaciones
-    
-    return validations.map(validation => `
+
+    return validations
+      .map(
+        (validation) => `
       <div class="validation-card">
         <div class="validation-header">
           <h5>${validation.rule}</h5>
-          <span class="validation-status ${validation.isPassed ? 'passed' : 'failed'}">${validation.isPassed ? 'Exitoso' : 'Fallido'}</span>
+          <span class="validation-status ${validation.isPassed ? 'passed' : 'failed'}">${
+          validation.isPassed ? 'Exitoso' : 'Fallido'
+        }</span>
         </div>
         <div class="validation-info">
           <p>Parámetro: ${validation.parameterId}</p>
@@ -972,17 +1008,23 @@ class AxyraAdvancedConfigurationSystem {
           <p>Valor: ${validation.value}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderDependenciesList() {
     const dependencies = this.configDependencies.slice(-20); // Últimas 20 dependencias
-    
-    return dependencies.map(dependency => `
+
+    return dependencies
+      .map(
+        (dependency) => `
       <div class="dependency-card">
         <div class="dependency-header">
           <h5>${dependency.condition}</h5>
-          <span class="dependency-status ${dependency.isActive ? 'active' : 'inactive'}">${dependency.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="dependency-status ${dependency.isActive ? 'active' : 'inactive'}">${
+          dependency.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="dependency-info">
           <p>Parámetro origen: ${dependency.sourceParameterId}</p>
@@ -994,13 +1036,17 @@ class AxyraAdvancedConfigurationSystem {
           <button onclick="axyraAdvancedConfigurationSystem.editDependency('${dependency.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderLogsList() {
     const logs = this.configLogs.slice(-20); // Últimos 20 logs
-    
-    return logs.map(log => `
+
+    return logs
+      .map(
+        (log) => `
       <div class="log-card">
         <div class="log-header">
           <h5>${log.message}</h5>
@@ -1012,7 +1058,9 @@ class AxyraAdvancedConfigurationSystem {
           <p>Fecha: ${new Date(log.timestamp).toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreateConfigurationDialog() {
@@ -1032,14 +1080,18 @@ class AxyraAdvancedConfigurationSystem {
   }
 
   showConfigurationDetails(configId) {
-    const config = this.configurations.find(c => c.id === configId);
+    const config = this.configurations.find((c) => c.id === configId);
     if (config) {
-      alert(`Configuración: ${config.name}\nDescripción: ${config.description}\nCategoría: ${config.category}\nParámetros: ${Object.keys(config.parameters).length}`);
+      alert(
+        `Configuración: ${config.name}\nDescripción: ${config.description}\nCategoría: ${
+          config.category
+        }\nParámetros: ${Object.keys(config.parameters).length}`
+      );
     }
   }
 
   editConfiguration(configId) {
-    const config = this.configurations.find(c => c.id === configId);
+    const config = this.configurations.find((c) => c.id === configId);
     if (config) {
       const newName = prompt('Nuevo nombre:', config.name);
       if (newName) {
@@ -1050,14 +1102,14 @@ class AxyraAdvancedConfigurationSystem {
   }
 
   showGroupDetails(groupId) {
-    const group = this.configGroups.find(g => g.id === groupId);
+    const group = this.configGroups.find((g) => g.id === groupId);
     if (group) {
       alert(`Grupo: ${group.name}\nDescripción: ${group.description}\nCategoría: ${group.category}`);
     }
   }
 
   editGroup(groupId) {
-    const group = this.configGroups.find(g => g.id === groupId);
+    const group = this.configGroups.find((g) => g.id === groupId);
     if (group) {
       const newName = prompt('Nuevo nombre:', group.name);
       if (newName) {
@@ -1068,14 +1120,18 @@ class AxyraAdvancedConfigurationSystem {
   }
 
   showParameterDetails(parameterId) {
-    const parameter = this.configParameters.find(p => p.id === parameterId);
+    const parameter = this.configParameters.find((p) => p.id === parameterId);
     if (parameter) {
-      alert(`Parámetro: ${parameter.name}\nDescripción: ${parameter.description}\nTipo: ${parameter.type}\nValor: ${parameter.value}\nRequerido: ${parameter.isRequired ? 'Sí' : 'No'}`);
+      alert(
+        `Parámetro: ${parameter.name}\nDescripción: ${parameter.description}\nTipo: ${parameter.type}\nValor: ${
+          parameter.value
+        }\nRequerido: ${parameter.isRequired ? 'Sí' : 'No'}`
+      );
     }
   }
 
   editParameter(parameterId) {
-    const parameter = this.configParameters.find(p => p.id === parameterId);
+    const parameter = this.configParameters.find((p) => p.id === parameterId);
     if (parameter) {
       const newValue = prompt('Nuevo valor:', parameter.value);
       if (newValue !== null) {
@@ -1086,14 +1142,18 @@ class AxyraAdvancedConfigurationSystem {
   }
 
   showTemplateDetails(templateId) {
-    const template = this.configTemplates.find(t => t.id === templateId);
+    const template = this.configTemplates.find((t) => t.id === templateId);
     if (template) {
-      alert(`Plantilla: ${template.name}\nDescripción: ${template.description}\nCategoría: ${template.category}\nParámetros: ${Object.keys(template.parameters).length}`);
+      alert(
+        `Plantilla: ${template.name}\nDescripción: ${template.description}\nCategoría: ${
+          template.category
+        }\nParámetros: ${Object.keys(template.parameters).length}`
+      );
     }
   }
 
   editTemplate(templateId) {
-    const template = this.configTemplates.find(t => t.id === templateId);
+    const template = this.configTemplates.find((t) => t.id === templateId);
     if (template) {
       const newName = prompt('Nuevo nombre:', template.name);
       if (newName) {
@@ -1104,14 +1164,18 @@ class AxyraAdvancedConfigurationSystem {
   }
 
   showProfileDetails(profileId) {
-    const profile = this.configProfiles.find(p => p.id === profileId);
+    const profile = this.configProfiles.find((p) => p.id === profileId);
     if (profile) {
-      alert(`Perfil: ${profile.name}\nDescripción: ${profile.description}\nCategoría: ${profile.category}\nConfiguraciones: ${Object.keys(profile.configurations).length}`);
+      alert(
+        `Perfil: ${profile.name}\nDescripción: ${profile.description}\nCategoría: ${
+          profile.category
+        }\nConfiguraciones: ${Object.keys(profile.configurations).length}`
+      );
     }
   }
 
   editProfile(profileId) {
-    const profile = this.configProfiles.find(p => p.id === profileId);
+    const profile = this.configProfiles.find((p) => p.id === profileId);
     if (profile) {
       const newName = prompt('Nuevo nombre:', profile.name);
       if (newName) {
@@ -1122,14 +1186,16 @@ class AxyraAdvancedConfigurationSystem {
   }
 
   showDependencyDetails(dependencyId) {
-    const dependency = this.configDependencies.find(d => d.id === dependencyId);
+    const dependency = this.configDependencies.find((d) => d.id === dependencyId);
     if (dependency) {
-      alert(`Dependencia: ${dependency.condition}\nParámetro origen: ${dependency.sourceParameterId}\nParámetro destino: ${dependency.targetParameterId}\nAcción: ${dependency.action}`);
+      alert(
+        `Dependencia: ${dependency.condition}\nParámetro origen: ${dependency.sourceParameterId}\nParámetro destino: ${dependency.targetParameterId}\nAcción: ${dependency.action}`
+      );
     }
   }
 
   editDependency(dependencyId) {
-    const dependency = this.configDependencies.find(d => d.id === dependencyId);
+    const dependency = this.configDependencies.find((d) => d.id === dependencyId);
     if (dependency) {
       const newCondition = prompt('Nueva condición:', dependency.condition);
       if (newCondition) {

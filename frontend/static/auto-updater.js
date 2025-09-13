@@ -11,7 +11,7 @@ class AxyraAutoUpdater {
     this.isChecking = false;
     this.updateAvailable = false;
     this.updateInfo = null;
-    
+
     this.init();
   }
 
@@ -40,9 +40,9 @@ class AxyraAutoUpdater {
     const versionInfo = {
       version: this.currentVersion,
       lastCheck: new Date().toISOString(),
-      updateAvailable: this.updateAvailable
+      updateAvailable: this.updateAvailable,
     };
-    
+
     localStorage.setItem('axyra_version_info', JSON.stringify(versionInfo));
   }
 
@@ -57,15 +57,15 @@ class AxyraAutoUpdater {
     if (this.isChecking) {
       return;
     }
-    
+
     this.isChecking = true;
     console.log('🔍 Verificando actualizaciones...');
-    
+
     try {
       // Simular verificación de actualizaciones
       // En un entorno real, esto haría una petición al servidor
       const updateInfo = await this.fetchUpdateInfo();
-      
+
       if (updateInfo && this.isNewerVersion(updateInfo.version, this.currentVersion)) {
         this.updateAvailable = true;
         this.updateInfo = updateInfo;
@@ -74,10 +74,9 @@ class AxyraAutoUpdater {
         this.updateAvailable = false;
         this.updateInfo = null;
       }
-      
+
       this.lastUpdateCheck = new Date().toISOString();
       this.saveVersionInfo();
-      
     } catch (error) {
       console.error('Error verificando actualizaciones:', error);
     } finally {
@@ -92,7 +91,7 @@ class AxyraAutoUpdater {
       setTimeout(() => {
         // Simular que hay una nueva versión disponible
         const hasUpdate = Math.random() > 0.7; // 30% de probabilidad
-        
+
         if (hasUpdate) {
           resolve({
             version: '1.1.0',
@@ -101,10 +100,10 @@ class AxyraAutoUpdater {
               'Nuevas funcionalidades en el módulo de nómina',
               'Mejoras en el sistema de reportes',
               'Optimizaciones de rendimiento',
-              'Corrección de bugs menores'
+              'Corrección de bugs menores',
             ],
             downloadUrl: 'https://github.com/JuanFerUran/axyra-sistema-gestion/releases/latest',
-            changelogUrl: 'https://github.com/JuanFerUran/axyra-sistema-gestion/blob/main/CHANGELOG.md'
+            changelogUrl: 'https://github.com/JuanFerUran/axyra-sistema-gestion/blob/main/CHANGELOG.md',
           });
         } else {
           resolve(null);
@@ -116,43 +115,40 @@ class AxyraAutoUpdater {
   isNewerVersion(newVersion, currentVersion) {
     const newParts = newVersion.split('.').map(Number);
     const currentParts = currentVersion.split('.').map(Number);
-    
+
     for (let i = 0; i < Math.max(newParts.length, currentParts.length); i++) {
       const newPart = newParts[i] || 0;
       const currentPart = currentParts[i] || 0;
-      
+
       if (newPart > currentPart) {
         return true;
       } else if (newPart < currentPart) {
         return false;
       }
     }
-    
+
     return false;
   }
 
   notifyUpdateAvailable(updateInfo) {
     console.log('🆕 Nueva versión disponible:', updateInfo.version);
-    
+
     if (window.axyraNotificationSystem) {
-      window.axyraNotificationSystem.showInfo(
-        `Nueva versión disponible: ${updateInfo.version}`,
-        {
-          duration: 10000,
-          actions: [
-            {
-              text: 'Ver Detalles',
-              action: () => this.showUpdateDetails(updateInfo)
-            },
-            {
-              text: 'Actualizar Ahora',
-              action: () => this.performUpdate(updateInfo)
-            }
-          ]
-        }
-      );
+      window.axyraNotificationSystem.showInfo(`Nueva versión disponible: ${updateInfo.version}`, {
+        duration: 10000,
+        actions: [
+          {
+            text: 'Ver Detalles',
+            action: () => this.showUpdateDetails(updateInfo),
+          },
+          {
+            text: 'Actualizar Ahora',
+            action: () => this.performUpdate(updateInfo),
+          },
+        ],
+      });
     }
-    
+
     // Mostrar notificación persistente en la UI
     this.showUpdateNotification(updateInfo);
   }
@@ -182,7 +178,7 @@ class AxyraAutoUpdater {
         </div>
       </div>
     `;
-    
+
     // Agregar estilos
     if (!document.getElementById('update-notification-styles')) {
       const styles = document.createElement('style');
@@ -285,7 +281,7 @@ class AxyraAutoUpdater {
       `;
       document.head.appendChild(styles);
     }
-    
+
     // Agregar al DOM
     document.body.appendChild(notification);
   }
@@ -293,7 +289,7 @@ class AxyraAutoUpdater {
   showUpdateDetails(updateInfo = null) {
     const info = updateInfo || this.updateInfo;
     if (!info) return;
-    
+
     const modal = document.createElement('div');
     modal.className = 'modal-overlay';
     modal.innerHTML = `
@@ -311,7 +307,7 @@ class AxyraAutoUpdater {
           <div class="changes">
             <h5>Cambios en esta versión:</h5>
             <ul>
-              ${info.changes.map(change => `<li>${change}</li>`).join('')}
+              ${info.changes.map((change) => `<li>${change}</li>`).join('')}
             </ul>
           </div>
           
@@ -334,20 +330,20 @@ class AxyraAutoUpdater {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(modal);
   }
 
   performUpdate(updateInfo = null) {
     const info = updateInfo || this.updateInfo;
     if (!info) return;
-    
+
     console.log('🔄 Iniciando actualización...');
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showInfo('Iniciando actualización...');
     }
-    
+
     // Simular proceso de actualización
     setTimeout(() => {
       this.simulateUpdateProcess(info);
@@ -359,19 +355,19 @@ class AxyraAutoUpdater {
       'Descargando actualización...',
       'Verificando integridad...',
       'Aplicando cambios...',
-      'Reiniciando sistema...'
+      'Reiniciando sistema...',
     ];
-    
+
     let currentStep = 0;
-    
+
     const updateInterval = setInterval(() => {
       if (currentStep < steps.length) {
         console.log(`🔄 ${steps[currentStep]}`);
-        
+
         if (window.axyraNotificationSystem) {
           window.axyraNotificationSystem.showInfo(steps[currentStep]);
         }
-        
+
         currentStep++;
       } else {
         clearInterval(updateInterval);
@@ -382,23 +378,21 @@ class AxyraAutoUpdater {
 
   completeUpdate(updateInfo) {
     console.log('✅ Actualización completada');
-    
+
     // Actualizar versión
     this.currentVersion = updateInfo.version;
     this.updateAvailable = false;
     this.updateInfo = null;
     this.saveVersionInfo();
-    
+
     // Ocultar notificación
     this.dismissUpdate();
-    
+
     // Mostrar mensaje de éxito
     if (window.axyraNotificationSystem) {
-      window.axyraNotificationSystem.showSuccess(
-        `Sistema actualizado a la versión ${updateInfo.version}`
-      );
+      window.axyraNotificationSystem.showSuccess(`Sistema actualizado a la versión ${updateInfo.version}`);
     }
-    
+
     // Recargar página para aplicar cambios
     setTimeout(() => {
       if (confirm('La actualización se ha completado. ¿Desea recargar la página para aplicar los cambios?')) {
@@ -420,7 +414,7 @@ class AxyraAutoUpdater {
       updateAvailable: this.updateAvailable,
       updateInfo: this.updateInfo,
       lastCheck: this.lastUpdateCheck,
-      isChecking: this.isChecking
+      isChecking: this.isChecking,
     };
   }
 
@@ -431,12 +425,12 @@ class AxyraAutoUpdater {
 
   setUpdateCheckInterval(interval) {
     this.updateCheckInterval = interval;
-    
+
     if (this.updateCheckTimer) {
       clearInterval(this.updateCheckTimer);
       this.setupUpdateCheck();
     }
-    
+
     console.log(`⚙️ Intervalo de verificación actualizado: ${interval}ms`);
   }
 
@@ -445,7 +439,7 @@ class AxyraAutoUpdater {
       clearInterval(this.updateCheckTimer);
       this.updateCheckTimer = null;
     }
-    
+
     console.log('⏸️ Actualizaciones automáticas deshabilitadas');
   }
 

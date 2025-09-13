@@ -21,15 +21,15 @@ class AxyraSystemIntegrator {
     // Registrar todos los sistemas disponibles
     const systemClasses = [
       'AxyraIntegrationAPISystem',
-      'AxyraAdvancedSecuritySystem', 
+      'AxyraAdvancedSecuritySystem',
       'AxyraDataAnalyticsSystem',
       'AxyraAdvancedConfigurationSystem',
       'AxyraAdvancedUserManagementSystem',
       'AxyraFileDocumentManagementSystem',
-      'AxyraProjectTaskManagementSystem'
+      'AxyraProjectTaskManagementSystem',
     ];
 
-    systemClasses.forEach(className => {
+    systemClasses.forEach((className) => {
       if (window[className]) {
         this.systems.set(className, window[className]);
         console.log(`✅ Sistema registrado: ${className}`);
@@ -46,7 +46,7 @@ class AxyraSystemIntegrator {
 
   handleSystemEvent(eventData) {
     const { source, target, action, data } = eventData;
-    
+
     if (this.systems.has(target)) {
       const targetSystem = this.systems.get(target);
       if (targetSystem && targetSystem[action]) {
@@ -60,7 +60,7 @@ class AxyraSystemIntegrator {
     this.systems.forEach((system, name) => {
       status[name] = {
         available: !!system,
-        initialized: system.isInitialized || false
+        initialized: system.isInitialized || false,
       };
     });
     return status;
@@ -95,7 +95,9 @@ class AxyraSystemIntegrator {
 
   renderSystemStatus() {
     const status = this.getSystemStatus();
-    return Object.entries(status).map(([name, info]) => `
+    return Object.entries(status)
+      .map(
+        ([name, info]) => `
       <div class="system-card">
         <h4>${name}</h4>
         <p>Disponible: ${info.available ? '✅' : '❌'}</p>
@@ -104,7 +106,9 @@ class AxyraSystemIntegrator {
           Abrir Dashboard
         </button>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 }
 

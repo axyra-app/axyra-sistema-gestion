@@ -14,7 +14,7 @@ class AxyraInventoryManagementSystem {
     this.priceHistory = [];
     this.lowStockAlerts = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -206,21 +206,21 @@ class AxyraInventoryManagementSystem {
 
   handleProductChange(change) {
     const { productId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.products.push(data);
         this.saveProducts();
         break;
       case 'updated':
-        const productIndex = this.products.findIndex(p => p.id === productId);
+        const productIndex = this.products.findIndex((p) => p.id === productId);
         if (productIndex !== -1) {
           this.products[productIndex] = { ...this.products[productIndex], ...data };
           this.saveProducts();
         }
         break;
       case 'deleted':
-        this.products = this.products.filter(p => p.id !== productId);
+        this.products = this.products.filter((p) => p.id !== productId);
         this.saveProducts();
         break;
     }
@@ -228,7 +228,7 @@ class AxyraInventoryManagementSystem {
 
   handleStockChange(change) {
     const { productId, action, data } = change;
-    
+
     switch (action) {
       case 'movement':
         this.stockMovements.push(data);
@@ -264,8 +264,8 @@ class AxyraInventoryManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.products.push(product);
@@ -279,20 +279,20 @@ class AxyraInventoryManagementSystem {
   }
 
   updateProduct(productId, updates) {
-    const productIndex = this.products.findIndex(p => p.id === productId);
+    const productIndex = this.products.findIndex((p) => p.id === productId);
     if (productIndex === -1) {
       throw new Error('Producto no encontrado');
     }
 
     const oldProduct = this.products[productIndex];
-    const newProduct = { 
-      ...oldProduct, 
+    const newProduct = {
+      ...oldProduct,
       ...updates,
       metadata: {
         ...oldProduct.metadata,
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     // Si cambió el precio, registrar en historial
@@ -308,13 +308,13 @@ class AxyraInventoryManagementSystem {
   }
 
   deleteProduct(productId) {
-    const productIndex = this.products.findIndex(p => p.id === productId);
+    const productIndex = this.products.findIndex((p) => p.id === productId);
     if (productIndex === -1) {
       throw new Error('Producto no encontrado');
     }
 
     const product = this.products[productIndex];
-    
+
     // Verificar si tiene stock
     if (product.currentStock > 0) {
       throw new Error('No se puede eliminar un producto que tiene stock');
@@ -338,8 +338,8 @@ class AxyraInventoryManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.categories.push(category);
@@ -368,8 +368,8 @@ class AxyraInventoryManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.suppliers.push(supplier);
@@ -380,14 +380,14 @@ class AxyraInventoryManagementSystem {
   }
 
   addStock(productId, quantity, reason = 'Ajuste de stock') {
-    const product = this.products.find(p => p.id === productId);
+    const product = this.products.find((p) => p.id === productId);
     if (!product) {
       throw new Error('Producto no encontrado');
     }
 
     const oldStock = product.currentStock;
     product.currentStock += quantity;
-    
+
     this.saveProducts();
     this.addStockMovement(productId, 'in', quantity, reason);
 
@@ -396,7 +396,7 @@ class AxyraInventoryManagementSystem {
   }
 
   removeStock(productId, quantity, reason = 'Ajuste de stock') {
-    const product = this.products.find(p => p.id === productId);
+    const product = this.products.find((p) => p.id === productId);
     if (!product) {
       throw new Error('Producto no encontrado');
     }
@@ -407,7 +407,7 @@ class AxyraInventoryManagementSystem {
 
     const oldStock = product.currentStock;
     product.currentStock -= quantity;
-    
+
     this.saveProducts();
     this.addStockMovement(productId, 'out', quantity, reason);
 
@@ -416,14 +416,14 @@ class AxyraInventoryManagementSystem {
   }
 
   adjustStock(productId, newQuantity, reason = 'Ajuste de stock') {
-    const product = this.products.find(p => p.id === productId);
+    const product = this.products.find((p) => p.id === productId);
     if (!product) {
       throw new Error('Producto no encontrado');
     }
 
     const oldStock = product.currentStock;
     const difference = newQuantity - oldStock;
-    
+
     product.currentStock = newQuantity;
     this.saveProducts();
 
@@ -448,8 +448,8 @@ class AxyraInventoryManagementSystem {
       userId: this.getCurrentUser(),
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.stockMovements.push(movement);
@@ -468,8 +468,8 @@ class AxyraInventoryManagementSystem {
       userId: this.getCurrentUser(),
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.priceHistory.push(priceEntry);
@@ -493,8 +493,8 @@ class AxyraInventoryManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.purchases.push(purchase);
@@ -502,7 +502,7 @@ class AxyraInventoryManagementSystem {
 
     // Si la compra está confirmada, agregar stock
     if (purchase.status === 'confirmed') {
-      purchase.items.forEach(item => {
+      purchase.items.forEach((item) => {
         this.addStock(item.productId, item.quantity, `Compra ${purchase.id}`);
       });
     }
@@ -524,15 +524,15 @@ class AxyraInventoryManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.sales.push(sale);
     this.saveSales();
 
     // Remover stock de los productos vendidos
-    sale.items.forEach(item => {
+    sale.items.forEach((item) => {
       this.removeStock(item.productId, item.quantity, `Venta ${sale.id}`);
     });
 
@@ -541,14 +541,10 @@ class AxyraInventoryManagementSystem {
   }
 
   checkLowStock() {
-    const lowStockProducts = this.products.filter(p => 
-      p.isActive && p.currentStock <= p.minStock
-    );
+    const lowStockProducts = this.products.filter((p) => p.isActive && p.currentStock <= p.minStock);
 
-    lowStockProducts.forEach(product => {
-      const existingAlert = this.lowStockAlerts.find(a => 
-        a.productId === product.id && a.status === 'active'
-      );
+    lowStockProducts.forEach((product) => {
+      const existingAlert = this.lowStockAlerts.find((a) => a.productId === product.id && a.status === 'active');
 
       if (!existingAlert) {
         const alert = {
@@ -559,7 +555,7 @@ class AxyraInventoryManagementSystem {
           minStock: product.minStock,
           status: 'active',
           createdAt: new Date().toISOString(),
-          createdBy: this.getCurrentUser()
+          createdBy: this.getCurrentUser(),
         };
 
         this.lowStockAlerts.push(alert);
@@ -582,27 +578,28 @@ class AxyraInventoryManagementSystem {
     let filteredProducts = [...this.products];
 
     if (filters.categoryId) {
-      filteredProducts = filteredProducts.filter(p => p.categoryId === filters.categoryId);
+      filteredProducts = filteredProducts.filter((p) => p.categoryId === filters.categoryId);
     }
 
     if (filters.supplierId) {
-      filteredProducts = filteredProducts.filter(p => p.supplierId === filters.supplierId);
+      filteredProducts = filteredProducts.filter((p) => p.supplierId === filters.supplierId);
     }
 
     if (filters.lowStock) {
-      filteredProducts = filteredProducts.filter(p => p.currentStock <= p.minStock);
+      filteredProducts = filteredProducts.filter((p) => p.currentStock <= p.minStock);
     }
 
     if (filters.outOfStock) {
-      filteredProducts = filteredProducts.filter(p => p.currentStock === 0);
+      filteredProducts = filteredProducts.filter((p) => p.currentStock === 0);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredProducts = filteredProducts.filter(p => 
-        p.name.toLowerCase().includes(searchTerm) ||
-        p.sku.toLowerCase().includes(searchTerm) ||
-        p.description.toLowerCase().includes(searchTerm)
+      filteredProducts = filteredProducts.filter(
+        (p) =>
+          p.name.toLowerCase().includes(searchTerm) ||
+          p.sku.toLowerCase().includes(searchTerm) ||
+          p.description.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -611,17 +608,17 @@ class AxyraInventoryManagementSystem {
 
   getInventoryStatistics() {
     const totalProducts = this.products.length;
-    const activeProducts = this.products.filter(p => p.isActive).length;
-    const outOfStockProducts = this.products.filter(p => p.currentStock === 0).length;
-    const lowStockProducts = this.products.filter(p => p.currentStock <= p.minStock).length;
-    
-    const totalStockValue = this.products.reduce((sum, p) => sum + (p.currentStock * p.costPrice), 0);
+    const activeProducts = this.products.filter((p) => p.isActive).length;
+    const outOfStockProducts = this.products.filter((p) => p.currentStock === 0).length;
+    const lowStockProducts = this.products.filter((p) => p.currentStock <= p.minStock).length;
+
+    const totalStockValue = this.products.reduce((sum, p) => sum + p.currentStock * p.costPrice, 0);
     const totalSalesValue = this.sales.reduce((sum, s) => sum + s.totalAmount, 0);
     const totalPurchaseValue = this.purchases.reduce((sum, p) => sum + p.totalAmount, 0);
 
     const categoryStats = {};
-    this.products.forEach(product => {
-      const category = this.categories.find(c => c.id === product.categoryId);
+    this.products.forEach((product) => {
+      const category = this.categories.find((c) => c.id === product.categoryId);
       if (category) {
         categoryStats[category.name] = (categoryStats[category.name] || 0) + 1;
       }
@@ -635,7 +632,7 @@ class AxyraInventoryManagementSystem {
       totalStockValue,
       totalSalesValue,
       totalPurchaseValue,
-      categoryStats
+      categoryStats,
     };
   }
 
@@ -715,13 +712,13 @@ class AxyraInventoryManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -730,7 +727,7 @@ class AxyraInventoryManagementSystem {
 
   renderInventoryStats() {
     const stats = this.getInventoryStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -763,8 +760,10 @@ class AxyraInventoryManagementSystem {
 
   renderProductsList() {
     const products = this.getProducts();
-    
-    return products.map(product => `
+
+    return products
+      .map(
+        (product) => `
       <div class="product-card">
         <div class="product-header">
           <h4>${product.name}</h4>
@@ -781,13 +780,17 @@ class AxyraInventoryManagementSystem {
           <button onclick="axyraInventoryManagementSystem.adjustStockDialog('${product.id}')">Ajustar Stock</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderCategoriesList() {
     const categories = this.categories;
-    
-    return categories.map(category => `
+
+    return categories
+      .map(
+        (category) => `
       <div class="category-card">
         <div class="category-header">
           <h4>${category.name}</h4>
@@ -798,13 +801,17 @@ class AxyraInventoryManagementSystem {
           <button onclick="axyraInventoryManagementSystem.editCategory('${category.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderSuppliersList() {
     const suppliers = this.suppliers;
-    
-    return suppliers.map(supplier => `
+
+    return suppliers
+      .map(
+        (supplier) => `
       <div class="supplier-card">
         <div class="supplier-header">
           <h4>${supplier.name}</h4>
@@ -819,13 +826,17 @@ class AxyraInventoryManagementSystem {
           <button onclick="axyraInventoryManagementSystem.editSupplier('${supplier.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderMovementsList() {
     const movements = this.stockMovements.slice(-20); // Últimos 20 movimientos
-    
-    return movements.map(movement => `
+
+    return movements
+      .map(
+        (movement) => `
       <div class="movement-card">
         <div class="movement-header">
           <h5>${movement.type.toUpperCase()}</h5>
@@ -836,13 +847,17 @@ class AxyraInventoryManagementSystem {
           <p>Razón: ${movement.reason}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderAlertsList() {
-    const activeAlerts = this.lowStockAlerts.filter(a => a.status === 'active');
-    
-    return activeAlerts.map(alert => `
+    const activeAlerts = this.lowStockAlerts.filter((a) => a.status === 'active');
+
+    return activeAlerts
+      .map(
+        (alert) => `
       <div class="alert-card">
         <div class="alert-header">
           <h5>⚠️ Stock Bajo</h5>
@@ -857,7 +872,9 @@ class AxyraInventoryManagementSystem {
           <button onclick="axyraInventoryManagementSystem.resolveAlert('${alert.id}')">Resolver</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreateProductDialog() {
@@ -880,14 +897,16 @@ class AxyraInventoryManagementSystem {
   }
 
   showProductDetails(productId) {
-    const product = this.products.find(p => p.id === productId);
+    const product = this.products.find((p) => p.id === productId);
     if (product) {
-      alert(`Producto: ${product.name}\nSKU: ${product.sku}\nStock: ${product.currentStock} ${product.unit}\nPrecio: $${product.sellingPrice}\nCosto: $${product.costPrice}`);
+      alert(
+        `Producto: ${product.name}\nSKU: ${product.sku}\nStock: ${product.currentStock} ${product.unit}\nPrecio: $${product.sellingPrice}\nCosto: $${product.costPrice}`
+      );
     }
   }
 
   editProduct(productId) {
-    const product = this.products.find(p => p.id === productId);
+    const product = this.products.find((p) => p.id === productId);
     if (product) {
       const newPrice = parseFloat(prompt('Nuevo precio de venta:', product.sellingPrice));
       if (newPrice) {
@@ -897,7 +916,7 @@ class AxyraInventoryManagementSystem {
   }
 
   adjustStockDialog(productId) {
-    const product = this.products.find(p => p.id === productId);
+    const product = this.products.find((p) => p.id === productId);
     if (product) {
       const newStock = parseInt(prompt('Nuevo stock:', product.currentStock));
       if (newStock !== null) {
@@ -907,14 +926,14 @@ class AxyraInventoryManagementSystem {
   }
 
   showCategoryDetails(categoryId) {
-    const category = this.categories.find(c => c.id === categoryId);
+    const category = this.categories.find((c) => c.id === categoryId);
     if (category) {
       alert(`Categoría: ${category.name}\nDescripción: ${category.description}`);
     }
   }
 
   editCategory(categoryId) {
-    const category = this.categories.find(c => c.id === categoryId);
+    const category = this.categories.find((c) => c.id === categoryId);
     if (category) {
       const newName = prompt('Nuevo nombre:', category.name);
       if (newName) {
@@ -925,14 +944,16 @@ class AxyraInventoryManagementSystem {
   }
 
   showSupplierDetails(supplierId) {
-    const supplier = this.suppliers.find(s => s.id === supplierId);
+    const supplier = this.suppliers.find((s) => s.id === supplierId);
     if (supplier) {
-      alert(`Proveedor: ${supplier.name}\nEmail: ${supplier.email}\nTeléfono: ${supplier.phone}\nContacto: ${supplier.contactPerson}`);
+      alert(
+        `Proveedor: ${supplier.name}\nEmail: ${supplier.email}\nTeléfono: ${supplier.phone}\nContacto: ${supplier.contactPerson}`
+      );
     }
   }
 
   editSupplier(supplierId) {
-    const supplier = this.suppliers.find(s => s.id === supplierId);
+    const supplier = this.suppliers.find((s) => s.id === supplierId);
     if (supplier) {
       const newName = prompt('Nuevo nombre:', supplier.name);
       if (newName) {
@@ -943,7 +964,7 @@ class AxyraInventoryManagementSystem {
   }
 
   resolveAlert(alertId) {
-    const alert = this.lowStockAlerts.find(a => a.id === alertId);
+    const alert = this.lowStockAlerts.find((a) => a.id === alertId);
     if (alert) {
       alert.status = 'resolved';
       this.saveLowStockAlerts();

@@ -14,7 +14,7 @@ class AxyraAdvancedThemeManager {
     this.isDarkMode = false;
     this.autoTheme = true;
     this.systemTheme = 'light';
-    
+
     this.init();
   }
 
@@ -91,34 +91,34 @@ class AxyraAdvancedThemeManager {
             text: '#212529',
             textSecondary: '#6c757d',
             border: '#dee2e6',
-            shadow: 'rgba(0, 0, 0, 0.1)'
+            shadow: 'rgba(0, 0, 0, 0.1)',
           },
           fonts: {
             primary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             secondary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            mono: 'SF Mono, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace'
+            mono: 'SF Mono, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
           },
           spacing: {
             xs: '0.25rem',
             sm: '0.5rem',
             md: '1rem',
             lg: '1.5rem',
-            xl: '3rem'
+            xl: '3rem',
           },
           borderRadius: {
             sm: '0.25rem',
             md: '0.375rem',
             lg: '0.5rem',
-            xl: '1rem'
+            xl: '1rem',
           },
           shadows: {
             sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
             md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
             lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-            xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+            xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
           },
           isDefault: true,
-          isBuiltIn: true
+          isBuiltIn: true,
         },
         {
           id: 'dark',
@@ -139,34 +139,34 @@ class AxyraAdvancedThemeManager {
             text: '#ffffff',
             textSecondary: '#b3b3b3',
             border: '#333333',
-            shadow: 'rgba(0, 0, 0, 0.3)'
+            shadow: 'rgba(0, 0, 0, 0.3)',
           },
           fonts: {
             primary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             secondary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            mono: 'SF Mono, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace'
+            mono: 'SF Mono, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
           },
           spacing: {
             xs: '0.25rem',
             sm: '0.5rem',
             md: '1rem',
             lg: '1.5rem',
-            xl: '3rem'
+            xl: '3rem',
           },
           borderRadius: {
             sm: '0.25rem',
             md: '0.375rem',
             lg: '0.5rem',
-            xl: '1rem'
+            xl: '1rem',
           },
           shadows: {
             sm: '0 1px 2px 0 rgba(0, 0, 0, 0.3)',
             md: '0 4px 6px -1px rgba(0, 0, 0, 0.4)',
             lg: '0 10px 15px -3px rgba(0, 0, 0, 0.4)',
-            xl: '0 20px 25px -5px rgba(0, 0, 0, 0.4)'
+            xl: '0 20px 25px -5px rgba(0, 0, 0, 0.4)',
           },
           isDefault: false,
-          isBuiltIn: true
+          isBuiltIn: true,
         },
         {
           id: 'blue',
@@ -187,34 +187,34 @@ class AxyraAdvancedThemeManager {
             text: '#1e293b',
             textSecondary: '#64748b',
             border: '#e2e8f0',
-            shadow: 'rgba(30, 64, 175, 0.1)'
+            shadow: 'rgba(30, 64, 175, 0.1)',
           },
           fonts: {
             primary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             secondary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            mono: 'SF Mono, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace'
+            mono: 'SF Mono, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
           },
           spacing: {
             xs: '0.25rem',
             sm: '0.5rem',
             md: '1rem',
             lg: '1.5rem',
-            xl: '3rem'
+            xl: '3rem',
           },
           borderRadius: {
             sm: '0.25rem',
             md: '0.375rem',
             lg: '0.5rem',
-            xl: '1rem'
+            xl: '1rem',
           },
           shadows: {
             sm: '0 1px 2px 0 rgba(30, 64, 175, 0.05)',
             md: '0 4px 6px -1px rgba(30, 64, 175, 0.1)',
             lg: '0 10px 15px -3px rgba(30, 64, 175, 0.1)',
-            xl: '0 20px 25px -5px rgba(30, 64, 175, 0.1)'
+            xl: '0 20px 25px -5px rgba(30, 64, 175, 0.1)',
           },
           isDefault: false,
-          isBuiltIn: true
+          isBuiltIn: true,
         },
         {
           id: 'green',
@@ -235,37 +235,37 @@ class AxyraAdvancedThemeManager {
             text: '#064e3b',
             textSecondary: '#64748b',
             border: '#d1fae5',
-            shadow: 'rgba(5, 150, 105, 0.1)'
+            shadow: 'rgba(5, 150, 105, 0.1)',
           },
           fonts: {
             primary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             secondary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            mono: 'SF Mono, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace'
+            mono: 'SF Mono, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
           },
           spacing: {
             xs: '0.25rem',
             sm: '0.5rem',
             md: '1rem',
             lg: '1.5rem',
-            xl: '3rem'
+            xl: '3rem',
           },
           borderRadius: {
             sm: '0.25rem',
             md: '0.375rem',
             lg: '0.5rem',
-            xl: '1rem'
+            xl: '1rem',
           },
           shadows: {
             sm: '0 1px 2px 0 rgba(5, 150, 105, 0.05)',
             md: '0 4px 6px -1px rgba(5, 150, 105, 0.1)',
             lg: '0 10px 15px -3px rgba(5, 150, 105, 0.1)',
-            xl: '0 20px 25px -5px rgba(5, 150, 105, 0.1)'
+            xl: '0 20px 25px -5px rgba(5, 150, 105, 0.1)',
           },
           isDefault: false,
-          isBuiltIn: true
-        }
+          isBuiltIn: true,
+        },
       ];
-      
+
       this.saveThemes();
     }
   }
@@ -278,7 +278,7 @@ class AxyraAdvancedThemeManager {
         family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         category: 'sans-serif',
         weights: ['300', '400', '500', '600', '700'],
-        isDefault: true
+        isDefault: true,
       },
       {
         id: 'roboto',
@@ -286,7 +286,7 @@ class AxyraAdvancedThemeManager {
         family: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         category: 'sans-serif',
         weights: ['300', '400', '500', '700'],
-        isDefault: false
+        isDefault: false,
       },
       {
         id: 'open-sans',
@@ -294,7 +294,7 @@ class AxyraAdvancedThemeManager {
         family: 'Open Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         category: 'sans-serif',
         weights: ['300', '400', '600', '700'],
-        isDefault: false
+        isDefault: false,
       },
       {
         id: 'lato',
@@ -302,7 +302,7 @@ class AxyraAdvancedThemeManager {
         family: 'Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         category: 'sans-serif',
         weights: ['300', '400', '700', '900'],
-        isDefault: false
+        isDefault: false,
       },
       {
         id: 'poppins',
@@ -310,7 +310,7 @@ class AxyraAdvancedThemeManager {
         family: 'Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         category: 'sans-serif',
         weights: ['300', '400', '500', '600', '700'],
-        isDefault: false
+        isDefault: false,
       },
       {
         id: 'source-code-pro',
@@ -318,8 +318,8 @@ class AxyraAdvancedThemeManager {
         family: 'Source Code Pro, SF Mono, Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
         category: 'monospace',
         weights: ['300', '400', '500', '600', '700'],
-        isDefault: false
-      }
+        isDefault: false,
+      },
     ];
   }
 
@@ -329,38 +329,38 @@ class AxyraAdvancedThemeManager {
         id: 'default',
         name: 'Por Defecto',
         colors: ['#007bff', '#6c757d', '#28a745', '#dc3545', '#ffc107', '#17a2b8'],
-        isDefault: true
+        isDefault: true,
       },
       {
         id: 'blue',
         name: 'Azul',
         colors: ['#1e40af', '#3b82f6', '#60a5fa', '#93c5fd', '#dbeafe', '#eff6ff'],
-        isDefault: false
+        isDefault: false,
       },
       {
         id: 'green',
         name: 'Verde',
         colors: ['#059669', '#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#d1fae5'],
-        isDefault: false
+        isDefault: false,
       },
       {
         id: 'purple',
         name: 'Púrpura',
         colors: ['#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd', '#ddd6fe', '#ede9fe'],
-        isDefault: false
+        isDefault: false,
       },
       {
         id: 'orange',
         name: 'Naranja',
         colors: ['#ea580c', '#f97316', '#fb923c', '#fdba74', '#fed7aa', '#ffedd5'],
-        isDefault: false
+        isDefault: false,
       },
       {
         id: 'red',
         name: 'Rojo',
         colors: ['#dc2626', '#ef4444', '#f87171', '#fca5a5', '#fecaca', '#fee2e2'],
-        isDefault: false
-      }
+        isDefault: false,
+      },
     ];
   }
 
@@ -376,9 +376,9 @@ class AxyraAdvancedThemeManager {
           footerHeight: '40px',
           contentPadding: '20px',
           borderRadius: '8px',
-          shadow: '0 2px 4px rgba(0,0,0,0.1)'
+          shadow: '0 2px 4px rgba(0,0,0,0.1)',
         },
-        isDefault: true
+        isDefault: true,
       },
       {
         id: 'compact',
@@ -390,9 +390,9 @@ class AxyraAdvancedThemeManager {
           footerHeight: '30px',
           contentPadding: '15px',
           borderRadius: '6px',
-          shadow: '0 1px 3px rgba(0,0,0,0.1)'
+          shadow: '0 1px 3px rgba(0,0,0,0.1)',
         },
-        isDefault: false
+        isDefault: false,
       },
       {
         id: 'spacious',
@@ -404,10 +404,10 @@ class AxyraAdvancedThemeManager {
           footerHeight: '50px',
           contentPadding: '30px',
           borderRadius: '12px',
-          shadow: '0 4px 8px rgba(0,0,0,0.1)'
+          shadow: '0 4px 8px rgba(0,0,0,0.1)',
         },
-        isDefault: false
-      }
+        isDefault: false,
+      },
     ];
   }
 
@@ -415,7 +415,7 @@ class AxyraAdvancedThemeManager {
     if (window.matchMedia) {
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       this.systemTheme = mediaQuery.matches ? 'dark' : 'light';
-      
+
       mediaQuery.addEventListener('change', (e) => {
         this.systemTheme = e.matches ? 'dark' : 'light';
         if (this.autoTheme) {
@@ -450,7 +450,7 @@ class AxyraAdvancedThemeManager {
   }
 
   setTheme(themeId) {
-    const theme = this.themes.find(t => t.id === themeId);
+    const theme = this.themes.find((t) => t.id === themeId);
     if (!theme) {
       console.warn('Tema no encontrado:', themeId);
       return;
@@ -458,16 +458,16 @@ class AxyraAdvancedThemeManager {
 
     this.currentTheme = theme;
     this.applyTheme(theme);
-    
+
     // Guardar preferencia
     localStorage.setItem('axyra_current_theme', themeId);
-    
+
     console.log('🎨 Tema aplicado:', theme.name);
   }
 
   applyTheme(theme) {
     const root = document.documentElement;
-    
+
     // Aplicar colores
     Object.entries(theme.colors).forEach(([key, value]) => {
       root.style.setProperty(`--color-${key}`, value);
@@ -503,7 +503,7 @@ class AxyraAdvancedThemeManager {
 
   applyCustomizations() {
     const root = document.documentElement;
-    
+
     Object.entries(this.customizations).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         root.style.setProperty(`--custom-${key}`, value);
@@ -518,7 +518,7 @@ class AxyraAdvancedThemeManager {
     } else if (this.autoTheme) {
       this.applySystemTheme();
     } else {
-      const defaultTheme = this.themes.find(t => t.isDefault);
+      const defaultTheme = this.themes.find((t) => t.isDefault);
       if (defaultTheme) {
         this.setTheme(defaultTheme.id);
       }
@@ -526,7 +526,7 @@ class AxyraAdvancedThemeManager {
   }
 
   applySystemTheme() {
-    const systemTheme = this.themes.find(t => t.id === this.systemTheme);
+    const systemTheme = this.themes.find((t) => t.id === this.systemTheme);
     if (systemTheme) {
       this.setTheme(systemTheme.id);
     }
@@ -546,7 +546,7 @@ class AxyraAdvancedThemeManager {
       isDefault: false,
       isBuiltIn: false,
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.themes.push(theme);
@@ -557,14 +557,14 @@ class AxyraAdvancedThemeManager {
   }
 
   updateTheme(themeId, updates) {
-    const themeIndex = this.themes.findIndex(t => t.id === themeId);
+    const themeIndex = this.themes.findIndex((t) => t.id === themeId);
     if (themeIndex === -1) {
       throw new Error('Tema no encontrado');
     }
 
-    this.themes[themeIndex] = { 
-      ...this.themes[themeIndex], 
-      ...updates 
+    this.themes[themeIndex] = {
+      ...this.themes[themeIndex],
+      ...updates,
     };
 
     this.saveThemes();
@@ -574,13 +574,13 @@ class AxyraAdvancedThemeManager {
   }
 
   deleteTheme(themeId) {
-    const themeIndex = this.themes.findIndex(t => t.id === themeId);
+    const themeIndex = this.themes.findIndex((t) => t.id === themeId);
     if (themeIndex === -1) {
       throw new Error('Tema no encontrado');
     }
 
     const theme = this.themes[themeIndex];
-    
+
     // No permitir eliminar temas del sistema
     if (theme.isBuiltIn) {
       throw new Error('No se puede eliminar un tema del sistema');
@@ -597,18 +597,17 @@ class AxyraAdvancedThemeManager {
     let filteredThemes = [...this.themes];
 
     if (filters.type) {
-      filteredThemes = filteredThemes.filter(t => t.type === filters.type);
+      filteredThemes = filteredThemes.filter((t) => t.type === filters.type);
     }
 
     if (filters.builtIn !== undefined) {
-      filteredThemes = filteredThemes.filter(t => t.isBuiltIn === filters.builtIn);
+      filteredThemes = filteredThemes.filter((t) => t.isBuiltIn === filters.builtIn);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredThemes = filteredThemes.filter(t => 
-        t.name.toLowerCase().includes(searchTerm) ||
-        t.description.toLowerCase().includes(searchTerm)
+      filteredThemes = filteredThemes.filter(
+        (t) => t.name.toLowerCase().includes(searchTerm) || t.description.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -617,17 +616,17 @@ class AxyraAdvancedThemeManager {
 
   getThemeStatistics() {
     const totalThemes = this.themes.length;
-    const builtInThemes = this.themes.filter(t => t.isBuiltIn).length;
-    const customThemes = this.themes.filter(t => !t.isBuiltIn).length;
-    const lightThemes = this.themes.filter(t => t.type === 'light').length;
-    const darkThemes = this.themes.filter(t => t.type === 'dark').length;
+    const builtInThemes = this.themes.filter((t) => t.isBuiltIn).length;
+    const customThemes = this.themes.filter((t) => !t.isBuiltIn).length;
+    const lightThemes = this.themes.filter((t) => t.type === 'light').length;
+    const darkThemes = this.themes.filter((t) => t.type === 'dark').length;
 
     return {
       total: totalThemes,
       builtIn: builtInThemes,
       custom: customThemes,
       light: lightThemes,
-      dark: darkThemes
+      dark: darkThemes,
     };
   }
 
@@ -635,7 +634,7 @@ class AxyraAdvancedThemeManager {
     this.customizations[key] = value;
     this.saveCustomizations();
     this.applyCurrentTheme();
-    
+
     console.log('🎨 Personalización actualizada:', key, value);
   }
 
@@ -647,24 +646,24 @@ class AxyraAdvancedThemeManager {
     this.customizations = {};
     this.saveCustomizations();
     this.applyCurrentTheme();
-    
+
     console.log('🔄 Personalizaciones restablecidas');
   }
 
   exportTheme(themeId) {
-    const theme = this.themes.find(t => t.id === themeId);
+    const theme = this.themes.find((t) => t.id === themeId);
     if (!theme) {
       throw new Error('Tema no encontrado');
     }
 
     const data = {
       theme: theme,
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
 
     const dataStr = JSON.stringify(data, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    
+
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
@@ -672,30 +671,30 @@ class AxyraAdvancedThemeManager {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log('📊 Tema exportado:', theme.name);
   }
 
   importTheme(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result);
-          
+
           if (data.theme) {
             const theme = data.theme;
             theme.id = 'theme_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
             theme.isBuiltIn = false;
             theme.createdAt = new Date().toISOString();
             theme.createdBy = this.getCurrentUser();
-            
+
             this.themes.push(theme);
             this.saveThemes();
-            
+
             console.log('✅ Tema importado:', theme.name);
             resolve(theme);
           } else {
@@ -706,11 +705,11 @@ class AxyraAdvancedThemeManager {
           reject(error);
         }
       };
-      
+
       reader.onerror = () => {
         reject(new Error('Error leyendo archivo'));
       };
-      
+
       reader.readAsText(file);
     });
   }
@@ -775,13 +774,13 @@ class AxyraAdvancedThemeManager {
     const tabBtns = editor.querySelectorAll('.tab-btn');
     const tabContents = editor.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -790,8 +789,10 @@ class AxyraAdvancedThemeManager {
 
   renderColorEditor() {
     const colors = this.currentTheme?.colors || {};
-    
-    return Object.entries(colors).map(([key, value]) => `
+
+    return Object.entries(colors)
+      .map(
+        ([key, value]) => `
       <div class="color-input-group">
         <label for="color-${key}">${key.charAt(0).toUpperCase() + key.slice(1)}</label>
         <div class="color-input-wrapper">
@@ -799,45 +800,63 @@ class AxyraAdvancedThemeManager {
           <input type="text" value="${value}" onchange="axyraAdvancedThemeManager.updateColor('${key}', this.value)">
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderFontEditor() {
     const fonts = this.currentTheme?.fonts || {};
-    
-    return Object.entries(fonts).map(([key, value]) => `
+
+    return Object.entries(fonts)
+      .map(
+        ([key, value]) => `
       <div class="font-input-group">
         <label for="font-${key}">${key.charAt(0).toUpperCase() + key.slice(1)}</label>
         <select id="font-${key}" onchange="axyraAdvancedThemeManager.updateFont('${key}', this.value)">
-          ${this.fonts.map(font => `
+          ${this.fonts
+            .map(
+              (font) => `
             <option value="${font.family}" ${font.family === value ? 'selected' : ''}>${font.name}</option>
-          `).join('')}
+          `
+            )
+            .join('')}
         </select>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderSpacingEditor() {
     const spacing = this.currentTheme?.spacing || {};
-    
-    return Object.entries(spacing).map(([key, value]) => `
+
+    return Object.entries(spacing)
+      .map(
+        ([key, value]) => `
       <div class="spacing-input-group">
         <label for="spacing-${key}">${key.charAt(0).toUpperCase() + key.slice(1)}</label>
         <input type="text" id="spacing-${key}" value="${value}" onchange="axyraAdvancedThemeManager.updateSpacing('${key}', this.value)">
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderLayoutEditor() {
     const layouts = this.layouts;
-    
+
     return `
       <div class="layout-selector">
         <label for="layout-select">Layout</label>
         <select id="layout-select" onchange="axyraAdvancedThemeManager.applyLayout(this.value)">
-          ${layouts.map(layout => `
+          ${layouts
+            .map(
+              (layout) => `
             <option value="${layout.id}">${layout.name}</option>
-          `).join('')}
+          `
+            )
+            .join('')}
         </select>
       </div>
     `;
@@ -865,7 +884,7 @@ class AxyraAdvancedThemeManager {
   }
 
   applyLayout(layoutId) {
-    const layout = this.layouts.find(l => l.id === layoutId);
+    const layout = this.layouts.find((l) => l.id === layoutId);
     if (layout) {
       const root = document.documentElement;
       Object.entries(layout.properties).forEach(([key, value]) => {

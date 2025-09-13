@@ -15,7 +15,7 @@ class AxyraMaintenanceManagementSystem {
     this.inspections = [];
     this.failures = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -227,7 +227,7 @@ class AxyraMaintenanceManagementSystem {
           specialization: 'Mecánica',
           experience: '5 años',
           certifications: ['Soldadura', 'Electricidad'],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'tech_2',
@@ -235,8 +235,8 @@ class AxyraMaintenanceManagementSystem {
           specialization: 'Eléctrica',
           experience: '3 años',
           certifications: ['Electricidad Industrial', 'PLC'],
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveTechnicians();
     }
@@ -250,7 +250,7 @@ class AxyraMaintenanceManagementSystem {
           phone: '300-123-4567',
           email: 'ventas@repuestos.com',
           specialties: ['Mecánica', 'Hidráulica'],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'supplier_2',
@@ -259,8 +259,8 @@ class AxyraMaintenanceManagementSystem {
           phone: '300-987-6543',
           email: 'info@componentes.com',
           specialties: ['Eléctrica', 'Electrónica'],
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveSuppliers();
     }
@@ -268,21 +268,21 @@ class AxyraMaintenanceManagementSystem {
 
   handleAssetChange(change) {
     const { assetId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.assets.push(data);
         this.saveAssets();
         break;
       case 'updated':
-        const assetIndex = this.assets.findIndex(a => a.id === assetId);
+        const assetIndex = this.assets.findIndex((a) => a.id === assetId);
         if (assetIndex !== -1) {
           this.assets[assetIndex] = { ...this.assets[assetIndex], ...data };
           this.saveAssets();
         }
         break;
       case 'deleted':
-        this.assets = this.assets.filter(a => a.id !== assetId);
+        this.assets = this.assets.filter((a) => a.id !== assetId);
         this.saveAssets();
         break;
     }
@@ -290,21 +290,21 @@ class AxyraMaintenanceManagementSystem {
 
   handleWorkOrderChange(change) {
     const { workOrderId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.workOrders.push(data);
         this.saveWorkOrders();
         break;
       case 'updated':
-        const workOrderIndex = this.workOrders.findIndex(wo => wo.id === workOrderId);
+        const workOrderIndex = this.workOrders.findIndex((wo) => wo.id === workOrderId);
         if (workOrderIndex !== -1) {
           this.workOrders[workOrderIndex] = { ...this.workOrders[workOrderIndex], ...data };
           this.saveWorkOrders();
         }
         break;
       case 'deleted':
-        this.workOrders = this.workOrders.filter(wo => wo.id !== workOrderId);
+        this.workOrders = this.workOrders.filter((wo) => wo.id !== workOrderId);
         this.saveWorkOrders();
         break;
     }
@@ -339,8 +339,8 @@ class AxyraMaintenanceManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.assets.push(asset);
@@ -351,19 +351,19 @@ class AxyraMaintenanceManagementSystem {
   }
 
   updateAsset(assetId, updates) {
-    const assetIndex = this.assets.findIndex(a => a.id === assetId);
+    const assetIndex = this.assets.findIndex((a) => a.id === assetId);
     if (assetIndex === -1) {
       throw new Error('Activo no encontrado');
     }
 
-    this.assets[assetIndex] = { 
-      ...this.assets[assetIndex], 
+    this.assets[assetIndex] = {
+      ...this.assets[assetIndex],
       ...updates,
       metadata: {
         ...this.assets[assetIndex].metadata,
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.saveAssets();
@@ -399,8 +399,8 @@ class AxyraMaintenanceManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.workOrders.push(workOrder);
@@ -432,8 +432,8 @@ class AxyraMaintenanceManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.maintenanceSchedules.push(schedule);
@@ -467,8 +467,8 @@ class AxyraMaintenanceManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.spareParts.push(sparePart);
@@ -497,8 +497,8 @@ class AxyraMaintenanceManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.inspections.push(inspection);
@@ -531,8 +531,8 @@ class AxyraMaintenanceManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.failures.push(failure);
@@ -559,8 +559,8 @@ class AxyraMaintenanceManagementSystem {
       afterPhotos: historyData.afterPhotos || [],
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.maintenanceHistory.push(history);
@@ -569,7 +569,7 @@ class AxyraMaintenanceManagementSystem {
     // Actualizar último mantenimiento del activo
     this.updateAsset(historyData.assetId, {
       lastMaintenance: historyData.performedDate,
-      nextMaintenance: this.calculateNextMaintenance(historyData.assetId, historyData.performedDate)
+      nextMaintenance: this.calculateNextMaintenance(historyData.assetId, historyData.performedDate),
     });
 
     console.log('✅ Historial de mantenimiento registrado:', history.description);
@@ -577,28 +577,34 @@ class AxyraMaintenanceManagementSystem {
   }
 
   calculateNextMaintenance(assetId, lastMaintenanceDate) {
-    const asset = this.assets.find(a => a.id === assetId);
+    const asset = this.assets.find((a) => a.id === assetId);
     if (!asset || !asset.maintenanceInterval) return null;
 
     const lastDate = new Date(lastMaintenanceDate);
-    const nextDate = new Date(lastDate.getTime() + (asset.maintenanceInterval * 24 * 60 * 60 * 1000));
-    
+    const nextDate = new Date(lastDate.getTime() + asset.maintenanceInterval * 24 * 60 * 60 * 1000);
+
     return nextDate.toISOString();
   }
 
   getMaintenanceStatistics() {
     const totalAssets = this.assets.length;
-    const activeAssets = this.assets.filter(a => a.status === 'active').length;
-    const assetsInMaintenance = this.assets.filter(a => a.status === 'maintenance').length;
+    const activeAssets = this.assets.filter((a) => a.status === 'active').length;
+    const assetsInMaintenance = this.assets.filter((a) => a.status === 'maintenance').length;
     const totalWorkOrders = this.workOrders.length;
-    const openWorkOrders = this.workOrders.filter(wo => wo.status === 'open' || wo.status === 'assigned' || wo.status === 'in_progress').length;
-    const completedWorkOrders = this.workOrders.filter(wo => wo.status === 'completed').length;
+    const openWorkOrders = this.workOrders.filter(
+      (wo) => wo.status === 'open' || wo.status === 'assigned' || wo.status === 'in_progress'
+    ).length;
+    const completedWorkOrders = this.workOrders.filter((wo) => wo.status === 'completed').length;
     const totalFailures = this.failures.length;
-    const openFailures = this.failures.filter(f => f.status === 'reported' || f.status === 'investigating' || f.status === 'repairing').length;
+    const openFailures = this.failures.filter(
+      (f) => f.status === 'reported' || f.status === 'investigating' || f.status === 'repairing'
+    ).length;
     const totalSpareParts = this.spareParts.length;
-    const lowStockParts = this.spareParts.filter(sp => sp.quantity <= sp.minQuantity).length;
+    const lowStockParts = this.spareParts.filter((sp) => sp.quantity <= sp.minQuantity).length;
     const totalInspections = this.inspections.length;
-    const pendingInspections = this.inspections.filter(i => i.status === 'scheduled' || i.status === 'in_progress').length;
+    const pendingInspections = this.inspections.filter(
+      (i) => i.status === 'scheduled' || i.status === 'in_progress'
+    ).length;
 
     return {
       totalAssets,
@@ -612,7 +618,7 @@ class AxyraMaintenanceManagementSystem {
       totalSpareParts,
       lowStockParts,
       totalInspections,
-      pendingInspections
+      pendingInspections,
     };
   }
 
@@ -685,13 +691,13 @@ class AxyraMaintenanceManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -700,7 +706,7 @@ class AxyraMaintenanceManagementSystem {
 
   renderMaintenanceStats() {
     const stats = this.getMaintenanceStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -757,7 +763,7 @@ class AxyraMaintenanceManagementSystem {
 
   renderOverview() {
     const stats = this.getMaintenanceStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -813,8 +819,10 @@ class AxyraMaintenanceManagementSystem {
 
   renderAssetsList() {
     const assets = this.assets.slice(-20); // Últimos 20 activos
-    
-    return assets.map(asset => `
+
+    return assets
+      .map(
+        (asset) => `
       <div class="asset-card">
         <div class="asset-header">
           <h5>${asset.name}</h5>
@@ -832,13 +840,17 @@ class AxyraMaintenanceManagementSystem {
           <button onclick="axyraMaintenanceManagementSystem.editAsset('${asset.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderWorkOrdersList() {
     const workOrders = this.workOrders.slice(-20); // Últimas 20 órdenes de trabajo
-    
-    return workOrders.map(wo => `
+
+    return workOrders
+      .map(
+        (wo) => `
       <div class="workorder-card">
         <div class="workorder-header">
           <h5>${wo.title}</h5>
@@ -852,17 +864,23 @@ class AxyraMaintenanceManagementSystem {
           <p>Fecha: ${new Date(wo.createdDate).toLocaleDateString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderSparePartsList() {
     const spareParts = this.spareParts.slice(-20); // Últimos 20 repuestos
-    
-    return spareParts.map(part => `
+
+    return spareParts
+      .map(
+        (part) => `
       <div class="sparepart-card">
         <div class="sparepart-header">
           <h5>${part.name}</h5>
-          <span class="sparepart-stock ${part.quantity <= part.minQuantity ? 'low-stock' : 'normal-stock'}">${part.quantity}</span>
+          <span class="sparepart-stock ${part.quantity <= part.minQuantity ? 'low-stock' : 'normal-stock'}">${
+          part.quantity
+        }</span>
         </div>
         <div class="sparepart-info">
           <p>${part.description}</p>
@@ -872,13 +890,17 @@ class AxyraMaintenanceManagementSystem {
           <p>Costo: $${part.cost.toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderFailuresList() {
     const failures = this.failures.slice(-20); // Últimas 20 fallas
-    
-    return failures.map(failure => `
+
+    return failures
+      .map(
+        (failure) => `
       <div class="failure-card">
         <div class="failure-header">
           <h5>${failure.title}</h5>
@@ -892,7 +914,9 @@ class AxyraMaintenanceManagementSystem {
           <p>Fecha: ${new Date(failure.reportedDate).toLocaleDateString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreateAssetDialog() {
@@ -917,14 +941,18 @@ class AxyraMaintenanceManagementSystem {
   }
 
   showAssetDetails(assetId) {
-    const asset = this.assets.find(a => a.id === assetId);
+    const asset = this.assets.find((a) => a.id === assetId);
     if (asset) {
-      alert(`Activo: ${asset.name}\nDescripción: ${asset.description}\nCategoría: ${asset.category}\nUbicación: ${asset.location}\nEstado: ${asset.status}\nCondición: ${asset.condition}\nValor: $${asset.currentValue.toLocaleString()}`);
+      alert(
+        `Activo: ${asset.name}\nDescripción: ${asset.description}\nCategoría: ${asset.category}\nUbicación: ${
+          asset.location
+        }\nEstado: ${asset.status}\nCondición: ${asset.condition}\nValor: $${asset.currentValue.toLocaleString()}`
+      );
     }
   }
 
   editAsset(assetId) {
-    const asset = this.assets.find(a => a.id === assetId);
+    const asset = this.assets.find((a) => a.id === assetId);
     if (asset) {
       const newCondition = prompt('Nueva condición (excellent, good, fair, poor, critical):', asset.condition);
       if (newCondition) {

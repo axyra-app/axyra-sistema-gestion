@@ -15,7 +15,7 @@ class AxyraEventCalendarSystem {
     this.timeSlots = [];
     this.availability = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -226,22 +226,22 @@ class AxyraEventCalendarSystem {
           name: 'Personal',
           description: 'Calendario personal',
           color: '#4285f4',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'work',
           name: 'Trabajo',
           description: 'Calendario de trabajo',
           color: '#34a853',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'meetings',
           name: 'Reuniones',
           description: 'Calendario de reuniones',
           color: '#fbbc04',
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveCalendars();
     }
@@ -255,7 +255,7 @@ class AxyraEventCalendarSystem {
           capacity: 10,
           location: 'Piso 1',
           amenities: ['Proyector', 'Pizarra', 'WiFi'],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'room_2',
@@ -264,7 +264,7 @@ class AxyraEventCalendarSystem {
           capacity: 20,
           location: 'Piso 2',
           amenities: ['Proyector', 'Pizarra', 'WiFi', 'Video Conferencia'],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'car_1',
@@ -273,8 +273,8 @@ class AxyraEventCalendarSystem {
           capacity: 4,
           location: 'Estacionamiento',
           amenities: ['Aire Acondicionado', 'Radio'],
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveResources();
     }
@@ -282,21 +282,21 @@ class AxyraEventCalendarSystem {
 
   handleEventChange(change) {
     const { eventId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.events.push(data);
         this.saveEvents();
         break;
       case 'updated':
-        const eventIndex = this.events.findIndex(e => e.id === eventId);
+        const eventIndex = this.events.findIndex((e) => e.id === eventId);
         if (eventIndex !== -1) {
           this.events[eventIndex] = { ...this.events[eventIndex], ...data };
           this.saveEvents();
         }
         break;
       case 'deleted':
-        this.events = this.events.filter(e => e.id !== eventId);
+        this.events = this.events.filter((e) => e.id !== eventId);
         this.saveEvents();
         break;
     }
@@ -304,21 +304,21 @@ class AxyraEventCalendarSystem {
 
   handleMeetingChange(change) {
     const { meetingId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.meetings.push(data);
         this.saveMeetings();
         break;
       case 'updated':
-        const meetingIndex = this.meetings.findIndex(m => m.id === meetingId);
+        const meetingIndex = this.meetings.findIndex((m) => m.id === meetingId);
         if (meetingIndex !== -1) {
           this.meetings[meetingIndex] = { ...this.meetings[meetingIndex], ...data };
           this.saveMeetings();
         }
         break;
       case 'deleted':
-        this.meetings = this.meetings.filter(m => m.id !== meetingId);
+        this.meetings = this.meetings.filter((m) => m.id !== meetingId);
         this.saveMeetings();
         break;
     }
@@ -346,8 +346,8 @@ class AxyraEventCalendarSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.events.push(event);
@@ -368,8 +368,8 @@ class AxyraEventCalendarSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.calendars.push(calendar);
@@ -390,8 +390,8 @@ class AxyraEventCalendarSystem {
       isActive: reminderData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.reminders.push(reminder);
@@ -420,8 +420,8 @@ class AxyraEventCalendarSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.meetings.push(meeting);
@@ -444,8 +444,8 @@ class AxyraEventCalendarSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.resources.push(resource);
@@ -467,8 +467,8 @@ class AxyraEventCalendarSystem {
       isRequired: attendeeData.isRequired || false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.attendees.push(attendee);
@@ -495,8 +495,8 @@ class AxyraEventCalendarSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.recurringEvents.push(recurringEvent);
@@ -515,8 +515,8 @@ class AxyraEventCalendarSystem {
       isAvailable: timeSlotData.isAvailable !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.timeSlots.push(timeSlot);
@@ -528,7 +528,7 @@ class AxyraEventCalendarSystem {
 
   getEventsByDate(date) {
     const targetDate = new Date(date);
-    return this.events.filter(event => {
+    return this.events.filter((event) => {
       const eventDate = new Date(event.startDate);
       return eventDate.toDateString() === targetDate.toDateString();
     });
@@ -537,25 +537,29 @@ class AxyraEventCalendarSystem {
   getEventsByRange(startDate, endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
-    return this.events.filter(event => {
+
+    return this.events.filter((event) => {
       const eventStart = new Date(event.startDate);
       const eventEnd = new Date(event.endDate);
-      
-      return (eventStart >= start && eventStart <= end) || 
-             (eventEnd >= start && eventEnd <= end) ||
-             (eventStart <= start && eventEnd >= end);
+
+      return (
+        (eventStart >= start && eventStart <= end) ||
+        (eventEnd >= start && eventEnd <= end) ||
+        (eventStart <= start && eventEnd >= end)
+      );
     });
   }
 
   getUpcomingEvents(days = 7) {
     const today = new Date();
-    const futureDate = new Date(today.getTime() + (days * 24 * 60 * 60 * 1000));
-    
-    return this.events.filter(event => {
-      const eventDate = new Date(event.startDate);
-      return eventDate >= today && eventDate <= futureDate;
-    }).sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+    const futureDate = new Date(today.getTime() + days * 24 * 60 * 60 * 1000);
+
+    return this.events
+      .filter((event) => {
+        const eventDate = new Date(event.startDate);
+        return eventDate >= today && eventDate <= futureDate;
+      })
+      .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
   }
 
   getCalendarStatistics() {
@@ -566,7 +570,7 @@ class AxyraEventCalendarSystem {
     const upcomingEvents = this.getUpcomingEvents().length;
     const todayEvents = this.getEventsByDate(new Date()).length;
     const totalAttendees = this.attendees.length;
-    const confirmedAttendees = this.attendees.filter(a => a.response === 'accepted').length;
+    const confirmedAttendees = this.attendees.filter((a) => a.response === 'accepted').length;
 
     return {
       totalEvents,
@@ -576,7 +580,7 @@ class AxyraEventCalendarSystem {
       upcomingEvents,
       todayEvents,
       totalAttendees,
-      confirmedAttendees
+      confirmedAttendees,
     };
   }
 
@@ -649,13 +653,13 @@ class AxyraEventCalendarSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -664,7 +668,7 @@ class AxyraEventCalendarSystem {
 
   renderCalendarStats() {
     const stats = this.getCalendarStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -706,7 +710,7 @@ class AxyraEventCalendarSystem {
   renderOverview() {
     const stats = this.getCalendarStatistics();
     const upcomingEvents = this.getUpcomingEvents(7);
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -718,12 +722,17 @@ class AxyraEventCalendarSystem {
         <div class="overview-card">
           <h4>Próximos Eventos</h4>
           <div class="upcoming-events">
-            ${upcomingEvents.slice(0, 5).map(event => `
+            ${upcomingEvents
+              .slice(0, 5)
+              .map(
+                (event) => `
               <div class="upcoming-event">
                 <span class="event-time">${new Date(event.startDate).toLocaleTimeString()}</span>
                 <span class="event-title">${event.title}</span>
               </div>
-            `).join('')}
+            `
+              )
+              .join('')}
           </div>
         </div>
         <div class="overview-card">
@@ -738,8 +747,10 @@ class AxyraEventCalendarSystem {
 
   renderEventsList() {
     const events = this.events.slice(-20); // Últimos 20 eventos
-    
-    return events.map(event => `
+
+    return events
+      .map(
+        (event) => `
       <div class="event-card">
         <div class="event-header">
           <h5>${event.title}</h5>
@@ -752,13 +763,17 @@ class AxyraEventCalendarSystem {
           <p>Ubicación: ${event.location}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderMeetingsList() {
     const meetings = this.meetings.slice(-20); // Últimas 20 reuniones
-    
-    return meetings.map(meeting => `
+
+    return meetings
+      .map(
+        (meeting) => `
       <div class="meeting-card">
         <div class="meeting-header">
           <h5>${meeting.title}</h5>
@@ -772,13 +787,17 @@ class AxyraEventCalendarSystem {
           <p>Asistentes: ${meeting.attendees.length}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderResourcesList() {
     const resources = this.resources;
-    
-    return resources.map(resource => `
+
+    return resources
+      .map(
+        (resource) => `
       <div class="resource-card">
         <div class="resource-header">
           <h5>${resource.name}</h5>
@@ -790,25 +809,36 @@ class AxyraEventCalendarSystem {
           <p>Amenidades: ${resource.amenities.join(', ')}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderCalendarView() {
     const today = new Date();
     const events = this.getEventsByDate(today);
-    
+
     return `
       <div class="calendar-view">
         <div class="calendar-header">
-          <h4>${today.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h4>
+          <h4>${today.toLocaleDateString('es-ES', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}</h4>
         </div>
         <div class="calendar-events">
-          ${events.map(event => `
+          ${events
+            .map(
+              (event) => `
             <div class="calendar-event">
               <span class="event-time">${new Date(event.startDate).toLocaleTimeString()}</span>
               <span class="event-title">${event.title}</span>
             </div>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
       </div>
     `;

@@ -1,234 +1,224 @@
 # 🚀 AXYRA - Sistema de Gestión Empresarial
 
-**AXYRA** es un sistema completo de gestión empresarial que incluye gestión de empleados, nóminas, control de horas, cuadre de caja y más. Desarrollado con tecnologías modernas y una interfaz profesional.
+**AXYRA** es un sistema completo de gestión empresarial diseñado para pequeñas y medianas empresas en Colombia. Incluye gestión de empleados, control de horas, cálculo de nómina, reportes avanzados y mucho más.
 
-## ✨ **Características Principales**
+## ✨ Características Principales
 
-### 🔐 **Sistema de Autenticación**
-
-- **Firebase Authentication** integrado
-- **Google OAuth** para inicio de sesión rápido
-- **Verificación de email** en tiempo real
-- **Sistema de 2FA** personalizado
-- **Gestión de sesiones** segura
-
-### 👥 **Gestión de Empleados**
-
-- Registro completo de empleados
-- Gestión de departamentos y cargos
+### 👥 Gestión de Empleados
+- Registro completo de información de empleados
+- Gestión de departamentos y roles
+- Control de acceso basado en permisos
 - Historial de empleados
-- Importación/exportación masiva
-- Plantillas profesionales de Excel
 
-### ⏰ **Control de Horas**
+### ⏰ Control de Horas
+- Registro de horas trabajadas
+- Cálculo automático de horas extras
+- Diferentes tipos de horas (ordinarias, extras, nocturnas, festivas)
+- Cumplimiento con normativa laboral colombiana
 
-- Registro de entrada y salida
-- Cálculo automático de horas ordinarias y nocturnas
-- Gestión de turnos
-- Reportes de tiempo trabajado
-- Integración con nóminas
-
-### 💰 **Gestión de Nóminas**
-
+### 💰 Sistema de Nómina
 - Cálculo automático de salarios
-- Generación de comprobantes
-- Gestión de períodos de pago
-- Cálculo de prestaciones sociales
-- Exportación a Excel profesional
+- Deducciones y aportes legales
+- Generación de comprobantes de pago
+- Historial de nóminas
 
-### 🧮 **Cuadre de Caja**
+### 📊 Reportes y Análisis
+- Dashboard con métricas en tiempo real
+- Reportes de nómina y horas
+- Análisis de costos laborales
+- Exportación a PDF y Excel
 
-- Registro de facturas
-- Control de ingresos por área
-- Resumen diario de caja
-- Exportación de reportes
-- Gestión de métodos de pago
+### 🔧 Sistemas Avanzados
+- **Integraciones y APIs**: Conecta con sistemas externos
+- **Seguridad Avanzada**: Políticas de seguridad y auditoría
+- **Análisis de Datos**: Visualizaciones y métricas avanzadas
+- **Gestión de Archivos**: Almacenamiento y versionado de documentos
+- **Gestión de Proyectos**: Control de tareas y equipos
+- **Configuración Avanzada**: Personalización del sistema
 
-### 📊 **Dashboard Inteligente**
+## 🚀 Instalación y Configuración
 
-- Estadísticas en tiempo real
-- Gráficos de rendimiento
-- Actividad reciente
-- Indicadores clave de rendimiento
-- Resumen ejecutivo
+### Requisitos del Sistema
+- Navegador web moderno (Chrome, Firefox, Safari, Edge)
+- Conexión a internet
+- JavaScript habilitado
 
-## 🛠️ **Tecnologías Utilizadas**
-
-### **Frontend**
-
-- **HTML5** + **CSS3** moderno
-- **JavaScript ES6+** con async/await
-- **Font Awesome** para iconografía
-- **Responsive Design** para todos los dispositivos
-
-### **Backend & Base de Datos**
-
-- **Firebase Firestore** como base de datos principal
-- **Firebase Authentication** para autenticación
-- **localStorage** como fallback offline
-- **Sistema híbrido** Firebase + localStorage
-
-### **Integraciones**
-
-- **Google OAuth** para autenticación social
-- **EmailJS** para verificación de emails
-- **SheetJS** para exportación a Excel
-- **jsPDF** para generación de PDFs
-
-## 🚀 **Despliegue Rápido**
-
-### **Opción 1: Vercel (Recomendado)**
-
-1. **Fork** este repositorio en GitHub
-2. **Conecta** tu cuenta de Vercel
-3. **Importa** el proyecto desde GitHub
-4. **Configura** las variables de entorno de Firebase
-5. **¡Despliega!** en segundos
-
-### **Opción 2: Firebase Hosting**
-
-1. Instala Firebase CLI: `npm install -g firebase-tools`
-2. Login: `firebase login`
-3. Inicializa: `firebase init hosting`
-4. Despliega: `firebase deploy`
-
-### **Opción 3: GitHub Pages**
-
-1. Ve a Settings > Pages en tu repositorio
-2. Selecciona la rama `main`
-3. Configura el directorio `/frontend`
-4. ¡Listo!
-
-## ⚙️ **Configuración de Firebase**
-
-### **1. Crear Proyecto Firebase**
-
-- Ve a [Firebase Console](https://console.firebase.google.com/)
-- Crea un nuevo proyecto
-- Habilita **Authentication** y **Firestore**
-
-### **2. Configurar Autenticación**
-
-- Habilita **Email/Password**
-- Habilita **Google Sign-in**
-- Configura dominios autorizados
-
-### **3. Configurar Firestore**
-
-- Crea la base de datos en modo de prueba
-- Configura las reglas de seguridad
-- Estructura las colecciones
-
-### **4. Obtener Credenciales**
-
-- Ve a Configuración del proyecto
-- Copia la configuración de Firebase
-- Actualiza `firebase-config.js`
-
-## 📱 **Uso del Sistema**
-
-### **Para Administradores**
-
-1. **Inicia sesión** con tu cuenta Google o email
-2. **Verifica tu email** si es la primera vez
-3. **Accede al dashboard** para ver estadísticas
-4. **Gestiona empleados** desde el módulo correspondiente
-5. **Configura parámetros** del sistema
-
-### **Para Usuarios**
-
-1. **Regístrate** con tu email
-2. **Verifica tu cuenta** con el código enviado
-3. **Inicia sesión** en el sistema
-4. **Accede a los módulos** según tu rol
-
-## 🔧 **Desarrollo Local**
-
-### **Requisitos**
-
-- Navegador moderno (Chrome, Firefox, Safari, Edge)
-- Editor de código (VS Code recomendado)
-- Cuenta de Firebase
-
-### **Instalación**
-
-1. **Clona** el repositorio:
-
-   ```bash
-   git clone https://github.com/tu-usuario/axyra.git
-   cd axyra
-   ```
-
-2. **Configura Firebase**:
-
-   - Copia tu configuración de Firebase
-   - Actualiza `frontend/static/firebase-config.js`
-
-3. **Abre** `frontend/index.html` en tu navegador
-
-4. **¡Listo para desarrollar!**
-
-## 📁 **Estructura del Proyecto**
-
-```
-axyra/
-├── frontend/                 # Frontend principal
-│   ├── modulos/             # Módulos de la aplicación
-│   │   ├── dashboard/       # Dashboard principal
-│   │   ├── empleados/       # Gestión de empleados
-│   │   ├── horas/           # Control de horas
-│   │   ├── nomina/          # Gestión de nóminas
-│   │   └── cuadre_caja/     # Cuadre de caja
-│   ├── static/              # Archivos estáticos
-│   │   ├── firebase-config.js
-│   │   ├── firebase-user-system.js
-│   │   ├── firebase-data-system.js
-│   │   └── axyra-styles.css
-│   ├── login.html           # Página de login
-│   ├── register.html        # Página de registro
-│   └── index.html           # Página principal
-├── plantillas/              # Plantillas Excel
-├── README.md                # Este archivo
-└── .gitignore              # Archivos a ignorar
+### Instalación Local
+1. Clona el repositorio:
+```bash
+git clone https://github.com/JuanFerUran/axyra-sistema-gestion.git
 ```
 
-## 🎯 **Próximas Funcionalidades**
+2. Navega al directorio del proyecto:
+```bash
+cd axyra-sistema-gestion
+```
 
-- [ ] **App móvil** nativa para Android/iOS
-- [ ] **Notificaciones push** en tiempo real
-- [ ] **Reportes avanzados** con gráficos interactivos
-- [ ] **Integración con bancos** para pagos automáticos
-- [ ] **Sistema de roles** y permisos avanzados
-- [ ] **API REST** para integraciones externas
-- [ ] **Backup automático** en la nube
-- [ ] **Multi-idioma** (Español, Inglés, Portugués)
+3. Abre el archivo `index.html` en tu navegador o usa un servidor local:
+```bash
+# Con Python
+python -m http.server 8000
 
-## 🤝 **Contribuir**
+# Con Node.js
+npx http-server
 
-1. **Fork** el proyecto
-2. **Crea** una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. **Commit** tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. **Push** a la rama (`git push origin feature/AmazingFeature`)
-5. **Abre** un Pull Request
+# Con PHP
+php -S localhost:8000
+```
 
-## 📄 **Licencia**
+4. Accede a `http://localhost:8000` en tu navegador
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+### Despliegue en Vercel
+1. Conecta tu repositorio a Vercel
+2. Configura las variables de entorno necesarias
+3. Despliega automáticamente
 
-## 📞 **Soporte**
+## 💳 Planes y Precios
 
+### Plan Básico - $29,000 COP/mes
+- Hasta 5 empleados
+- Gestión básica de nómina
+- Reportes básicos
+- Soporte por email
+- 1GB de almacenamiento
+
+### Plan Profesional - $59,000 COP/mes
+- Hasta 25 empleados
+- Gestión completa de nómina
+- Reportes avanzados
+- Soporte prioritario
+- 5GB de almacenamiento
+- Integraciones API
+
+### Plan Empresarial - $99,000 COP/mes
+- Empleados ilimitados
+- Todas las funcionalidades
+- Reportes personalizados
+- Soporte 24/7
+- 50GB de almacenamiento
+- API completa
+- Soporte dedicado
+
+## 🔧 Configuración Inicial
+
+### 1. Registro de Usuario
+- Completa el proceso de onboarding
+- Configura la información de tu empresa
+- Selecciona tu plan de suscripción
+
+### 2. Configuración de la Empresa
+- Nombre y NIT de la empresa
+- Dirección y datos de contacto
+- Configuración de parámetros laborales
+
+### 3. Agregar Empleados
+- Registra la información de tus empleados
+- Asigna departamentos y roles
+- Configura salarios y tipos de contrato
+
+### 4. Configuración de Horas
+- Define horarios de trabajo
+- Configura tipos de horas
+- Establece reglas de cálculo
+
+## 📖 Guía de Uso
+
+### Dashboard Principal
+El dashboard te muestra:
+- Resumen de empleados activos
+- Horas trabajadas del mes
+- Costos de nómina
+- Alertas y notificaciones
+
+### Gestión de Empleados
+1. Ve a "Empleados" en el menú principal
+2. Haz clic en "Agregar Empleado"
+3. Completa la información requerida
+4. Guarda el empleado
+
+### Registro de Horas
+1. Ve a "Horas" en el menú principal
+2. Selecciona el empleado
+3. Ingresa las horas trabajadas
+4. El sistema calculará automáticamente el pago
+
+### Generación de Nómina
+1. Ve a "Nómina" en el menú principal
+2. Selecciona el período
+3. Revisa los cálculos automáticos
+4. Genera la nómina
+
+## 🔒 Seguridad
+
+- **Autenticación**: Sistema de login seguro
+- **Autorización**: Control de acceso basado en roles
+- **Encriptación**: Datos sensibles encriptados
+- **Auditoría**: Registro de todas las acciones
+- **Backup**: Respaldo automático de datos
+
+## 📞 Soporte
+
+### Canales de Soporte
 - **Email**: soporte@axyra.com
-- **Documentación**: [docs.axyra.com](https://docs.axyra.com)
-- **Issues**: [GitHub Issues](https://github.com/tu-usuario/axyra/issues)
+- **Chat**: Disponible en la aplicación
+- **Teléfono**: +57 300 123 4567
 
-## 🙏 **Agradecimientos**
+### Horarios de Atención
+- **Lunes a Viernes**: 8:00 AM - 6:00 PM
+- **Sábados**: 9:00 AM - 1:00 PM
+- **Domingos**: Cerrado
 
-- **Firebase** por la infraestructura robusta
-- **Vercel** por el hosting gratuito
-- **Comunidad open source** por las librerías utilizadas
+### Documentación Adicional
+- [Guía de Usuario Completa](docs/user-guide.md)
+- [API Documentation](docs/api.md)
+- [FAQ](docs/faq.md)
+- [Video Tutoriales](https://youtube.com/axyra)
+
+## 🛠️ Desarrollo
+
+### Tecnologías Utilizadas
+- **Frontend**: HTML5, CSS3, JavaScript ES6+
+- **Backend**: Firebase (Firestore, Authentication)
+- **Almacenamiento**: LocalStorage + Firebase
+- **Gráficos**: Chart.js
+- **PDF**: jsPDF
+- **Excel**: XLSX.js
+
+### Estructura del Proyecto
+```
+axyra-sistema-gestion/
+├── frontend/
+│   ├── static/          # Archivos estáticos
+│   ├── modulos/         # Módulos de la aplicación
+│   └── index.html       # Página principal
+├── docs/                # Documentación
+└── README.md           # Este archivo
+```
+
+### Contribuir
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## 🙏 Agradecimientos
+
+- Equipo de desarrollo AXYRA
+- Comunidad de desarrolladores
+- Usuarios beta que proporcionaron feedback
+
+## 📞 Contacto
+
+**AXYRA Team**
+- Website: [https://axyra.com](https://axyra.com)
+- Email: info@axyra.com
+- GitHub: [@JuanFerUran](https://github.com/JuanFerUran)
 
 ---
 
-**¿Listo para revolucionar la gestión de tu empresa? ¡Empieza con AXYRA hoy mismo!** 🚀✨
-
-**Desarrollado con ❤️ para empresas que quieren crecer**
+**© 2024 AXYRA. Todos los derechos reservados.**

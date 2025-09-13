@@ -10,26 +10,26 @@ class AxyraAuditSystem {
     this.retentionDays = 90; // Días de retención
     this.isEnabled = true;
     this.sensitiveFields = ['password', 'token', 'secret', 'key', 'pin'];
-    
+
     this.init();
   }
 
   init() {
     try {
       console.log('🔍 Inicializando sistema de auditoría completo...');
-      
+
       // Cargar logs existentes
       this.loadAuditLogs();
-      
+
       // Configurar listeners globales
       this.setupGlobalListeners();
-      
+
       // Configurar limpieza automática
       this.setupAutoCleanup();
-      
+
       // Registrar inicio del sistema
       this.logSystemEvent('SYSTEM_START', 'Sistema de auditoría inicializado');
-      
+
       console.log('✅ Sistema de auditoría inicializado correctamente');
     } catch (error) {
       console.error('❌ Error inicializando auditoría:', error);
@@ -55,7 +55,7 @@ class AxyraAuditSystem {
         sessionId: this.getSessionId(),
         module: this.getCurrentModule(),
         severity: this.getSeverityLevel(type),
-        category: this.getEventCategory(type)
+        category: this.getEventCategory(type),
       };
 
       // Agregar al array de logs
@@ -106,9 +106,9 @@ class AxyraAuditSystem {
     const securityDetails = {
       ...details,
       securityEvent: true,
-      riskLevel: this.assessRiskLevel(type, details)
+      riskLevel: this.assessRiskLevel(type, details),
     };
-    
+
     return this.logEvent(type, description, securityDetails, userId);
   }
 
@@ -121,7 +121,7 @@ class AxyraAuditSystem {
       entity: entity,
       entityId: entityId,
       changes: changes,
-      dataEvent: true
+      dataEvent: true,
     };
 
     return this.logEvent('DATA_' + operation, `${operation} ${entity}`, dataDetails, userId);
@@ -135,7 +135,7 @@ class AxyraAuditSystem {
       configKey: configKey,
       oldValue: this.sanitizeValue(oldValue),
       newValue: this.sanitizeValue(newValue),
-      configEvent: true
+      configEvent: true,
     };
 
     return this.logEvent('CONFIG_' + type, `Configuración ${type}: ${configKey}`, configDetails, userId);
@@ -149,7 +149,7 @@ class AxyraAuditSystem {
       authType: type,
       timestamp: new Date().toISOString(),
       success: details.success !== false,
-      ...details
+      ...details,
     };
 
     return this.logEvent('AUTH_' + type, `Autenticación ${type}`, authDetails, userId);
@@ -163,10 +163,10 @@ class AxyraAuditSystem {
       error: {
         message: error.message,
         stack: error.stack,
-        name: error.name
+        name: error.name,
       },
       context: context,
-      errorEvent: true
+      errorEvent: true,
     };
 
     return this.logEvent('ERROR', 'Error del sistema', errorDetails, userId);
@@ -180,38 +180,38 @@ class AxyraAuditSystem {
 
     // Filtrar por tipo
     if (filters.type) {
-      filteredLogs = filteredLogs.filter(log => log.type === filters.type);
+      filteredLogs = filteredLogs.filter((log) => log.type === filters.type);
     }
 
     // Filtrar por usuario
     if (filters.userId) {
-      filteredLogs = filteredLogs.filter(log => log.userId === filters.userId);
+      filteredLogs = filteredLogs.filter((log) => log.userId === filters.userId);
     }
 
     // Filtrar por severidad
     if (filters.severity) {
-      filteredLogs = filteredLogs.filter(log => log.severity === filters.severity);
+      filteredLogs = filteredLogs.filter((log) => log.severity === filters.severity);
     }
 
     // Filtrar por categoría
     if (filters.category) {
-      filteredLogs = filteredLogs.filter(log => log.category === filters.category);
+      filteredLogs = filteredLogs.filter((log) => log.category === filters.category);
     }
 
     // Filtrar por fecha
     if (filters.startDate) {
       const startDate = new Date(filters.startDate);
-      filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) >= startDate);
+      filteredLogs = filteredLogs.filter((log) => new Date(log.timestamp) >= startDate);
     }
 
     if (filters.endDate) {
       const endDate = new Date(filters.endDate);
-      filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) <= endDate);
+      filteredLogs = filteredLogs.filter((log) => new Date(log.timestamp) <= endDate);
     }
 
     // Filtrar por módulo
     if (filters.module) {
-      filteredLogs = filteredLogs.filter(log => log.module === filters.module);
+      filteredLogs = filteredLogs.filter((log) => log.module === filters.module);
     }
 
     // Ordenar por timestamp (más recientes primero)
@@ -251,7 +251,7 @@ class AxyraAuditSystem {
 
     const recentLogs = this.getLogs({
       startDate: startDate.toISOString(),
-      endDate: now.toISOString()
+      endDate: now.toISOString(),
     });
 
     const stats = {
@@ -266,28 +266,28 @@ class AxyraAuditSystem {
       errorEvents: 0,
       timeRange: {
         start: startDate.toISOString(),
-        end: now.toISOString()
-      }
+        end: now.toISOString(),
+      },
     };
 
-    recentLogs.forEach(log => {
+    recentLogs.forEach((log) => {
       // Contar por tipo
       stats.byType[log.type] = (stats.byType[log.type] || 0) + 1;
-      
+
       // Contar por severidad
       stats.bySeverity[log.severity] = (stats.bySeverity[log.severity] || 0) + 1;
-      
+
       // Contar por categoría
       stats.byCategory[log.category] = (stats.byCategory[log.category] || 0) + 1;
-      
+
       // Contar por usuario
       stats.byUser[log.userId] = (stats.byUser[log.userId] || 0) + 1;
-      
+
       // Contar por módulo
       if (log.module) {
         stats.byModule[log.module] = (stats.byModule[log.module] || 0) + 1;
       }
-      
+
       // Contar eventos especiales
       if (log.severity === 'CRITICAL') stats.criticalEvents++;
       if (log.details?.securityEvent) stats.securityEvents++;
@@ -302,7 +302,7 @@ class AxyraAuditSystem {
    */
   exportLogs(format = 'json', filters = {}) {
     const logs = this.getLogs(filters);
-    
+
     switch (format.toLowerCase()) {
       case 'json':
         return this.exportToJSON(logs);
@@ -325,12 +325,10 @@ class AxyraAuditSystem {
     cutoffDate.setDate(cutoffDate.getDate() - this.retentionDays);
 
     const originalLength = this.auditLogs.length;
-    this.auditLogs = this.auditLogs.filter(log => 
-      new Date(log.timestamp) > cutoffDate
-    );
+    this.auditLogs = this.auditLogs.filter((log) => new Date(log.timestamp) > cutoffDate);
 
     const removedCount = originalLength - this.auditLogs.length;
-    
+
     if (removedCount > 0) {
       this.logSystemEvent('AUDIT_CLEANUP', `Limpieza de auditoría: ${removedCount} logs eliminados`);
       this.saveAuditLogs();
@@ -348,7 +346,7 @@ class AxyraAuditSystem {
       this.logError(event.error, {
         filename: event.filename,
         lineno: event.lineno,
-        colno: event.colno
+        colno: event.colno,
       });
     });
 
@@ -356,7 +354,7 @@ class AxyraAuditSystem {
     window.addEventListener('unhandledrejection', (event) => {
       this.logError(new Error(event.reason), {
         type: 'unhandledrejection',
-        promise: event.promise
+        promise: event.promise,
       });
     });
 
@@ -381,7 +379,7 @@ class AxyraAuditSystem {
       this.logDataEvent('UPDATE', 'localStorage', key, {
         operation: 'setItem',
         key: key,
-        newValue: this.sanitizeValue(value)
+        newValue: this.sanitizeValue(value),
       });
       return originalSetItem.call(localStorage, key, value);
     };
@@ -389,7 +387,7 @@ class AxyraAuditSystem {
     localStorage.removeItem = (key) => {
       this.logDataEvent('DELETE', 'localStorage', key, {
         operation: 'removeItem',
-        key: key
+        key: key,
       });
       return originalRemoveItem.call(localStorage, key);
     };
@@ -404,7 +402,7 @@ class AxyraAuditSystem {
       if (form.tagName === 'FORM') {
         const formData = new FormData(form);
         const formObject = {};
-        
+
         for (let [key, value] of formData.entries()) {
           formObject[key] = this.sanitizeValue(value);
         }
@@ -412,7 +410,7 @@ class AxyraAuditSystem {
         this.logUserEvent('FORM_SUBMIT', `Formulario enviado: ${form.id || form.className}`, {
           formId: form.id,
           formClass: form.className,
-          formData: formObject
+          formData: formObject,
         });
       }
     });
@@ -424,13 +422,13 @@ class AxyraAuditSystem {
   interceptImportantClicks() {
     document.addEventListener('click', (event) => {
       const target = event.target;
-      
+
       // Botones de acción importantes
       if (target.matches('button[data-audit-important], .axyra-btn[data-audit-important]')) {
         this.logUserEvent('BUTTON_CLICK', `Botón importante clickeado: ${target.textContent.trim()}`, {
           buttonText: target.textContent.trim(),
           buttonClass: target.className,
-          buttonId: target.id
+          buttonId: target.id,
         });
       }
 
@@ -438,7 +436,7 @@ class AxyraAuditSystem {
       if (target.matches('a[href]')) {
         this.logUserEvent('NAVIGATION', `Navegación: ${target.href}`, {
           href: target.href,
-          text: target.textContent.trim()
+          text: target.textContent.trim(),
         });
       }
     });
@@ -459,19 +457,16 @@ class AxyraAuditSystem {
    */
   notifyCriticalEvent(auditEntry) {
     if (window.axyraNotificationSystem) {
-      window.axyraNotificationSystem.showError(
-        `Evento crítico detectado: ${auditEntry.description}`,
-        {
-          title: 'Alerta de Seguridad',
-          persistent: true,
-          actions: [
-            {
-              label: 'Ver Detalles',
-              action: () => this.showEventDetails(auditEntry.id)
-            }
-          ]
-        }
-      );
+      window.axyraNotificationSystem.showError(`Evento crítico detectado: ${auditEntry.description}`, {
+        title: 'Alerta de Seguridad',
+        persistent: true,
+        actions: [
+          {
+            label: 'Ver Detalles',
+            action: () => this.showEventDetails(auditEntry.id),
+          },
+        ],
+      });
     }
   }
 
@@ -479,7 +474,7 @@ class AxyraAuditSystem {
    * Muestra detalles de un evento
    */
   showEventDetails(eventId) {
-    const event = this.auditLogs.find(log => log.id === eventId);
+    const event = this.auditLogs.find((log) => log.id === eventId);
     if (!event) return;
 
     const modal = this.createEventDetailsModal(event);
@@ -517,7 +512,9 @@ class AxyraAuditSystem {
                 </div>
                 <div class="axyra-audit-item">
                   <label>Severidad:</label>
-                  <span class="axyra-audit-severity axyra-severity-${event.severity.toLowerCase()}">${event.severity}</span>
+                  <span class="axyra-audit-severity axyra-severity-${event.severity.toLowerCase()}">${
+      event.severity
+    }</span>
                 </div>
                 <div class="axyra-audit-item">
                   <label>Categoría:</label>
@@ -553,7 +550,9 @@ class AxyraAuditSystem {
           <button class="axyra-btn axyra-btn-secondary" onclick="this.closest('.axyra-modal-overlay').remove()">
             Cerrar
           </button>
-          <button class="axyra-btn axyra-btn-primary" onclick="axyraAuditSystem.exportLogs('json', {id: '${event.id}'})">
+          <button class="axyra-btn axyra-btn-primary" onclick="axyraAuditSystem.exportLogs('json', {id: '${
+            event.id
+          }'})">
             Exportar
           </button>
         </div>
@@ -569,9 +568,9 @@ class AxyraAuditSystem {
 
   sanitizeDetails(details) {
     const sanitized = { ...details };
-    
+
     // Remover campos sensibles
-    this.sensitiveFields.forEach(field => {
+    this.sensitiveFields.forEach((field) => {
       if (sanitized[field]) {
         sanitized[field] = '[REDACTED]';
       }
@@ -584,7 +583,7 @@ class AxyraAuditSystem {
     if (typeof value === 'string') {
       // Verificar si contiene datos sensibles
       const lowerValue = value.toLowerCase();
-      if (this.sensitiveFields.some(field => lowerValue.includes(field))) {
+      if (this.sensitiveFields.some((field) => lowerValue.includes(field))) {
         return '[REDACTED]';
       }
     }
@@ -618,10 +617,10 @@ class AxyraAuditSystem {
     const criticalTypes = ['ERROR', 'SECURITY_BREACH', 'DATA_CORRUPTION', 'SYSTEM_FAILURE'];
     const highTypes = ['AUTH_FAILED', 'PERMISSION_DENIED', 'CONFIG_CHANGE', 'DATA_DELETE'];
     const mediumTypes = ['USER_ACTION', 'DATA_UPDATE', 'FORM_SUBMIT'];
-    
-    if (criticalTypes.some(t => type.includes(t))) return 'CRITICAL';
-    if (highTypes.some(t => type.includes(t))) return 'HIGH';
-    if (mediumTypes.some(t => type.includes(t))) return 'MEDIUM';
+
+    if (criticalTypes.some((t) => type.includes(t))) return 'CRITICAL';
+    if (highTypes.some((t) => type.includes(t))) return 'HIGH';
+    if (mediumTypes.some((t) => type.includes(t))) return 'MEDIUM';
     return 'LOW';
   }
 
@@ -665,7 +664,7 @@ class AxyraAuditSystem {
     const data = {
       exportDate: new Date().toISOString(),
       totalLogs: logs.length,
-      logs: logs
+      logs: logs,
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -681,17 +680,19 @@ class AxyraAuditSystem {
     const headers = ['ID', 'Timestamp', 'Type', 'Description', 'User', 'IP', 'Module', 'Severity', 'Category'];
     const csvContent = [
       headers.join(','),
-      ...logs.map(log => [
-        log.id,
-        log.timestamp,
-        log.type,
-        `"${log.description.replace(/"/g, '""')}"`,
-        log.userId,
-        log.ip,
-        log.module || '',
-        log.severity,
-        log.category
-      ].join(','))
+      ...logs.map((log) =>
+        [
+          log.id,
+          log.timestamp,
+          log.type,
+          `"${log.description.replace(/"/g, '""')}"`,
+          log.userId,
+          log.ip,
+          log.module || '',
+          log.severity,
+          log.category,
+        ].join(',')
+      ),
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -737,7 +738,7 @@ class AxyraAuditSystem {
     const health = {
       status: 'HEALTHY',
       issues: [],
-      recommendations: []
+      recommendations: [],
     };
 
     // Verificar eventos críticos

@@ -14,7 +14,7 @@ class AxyraAdvancedSecuritySystem {
     this.securityLogs = [];
     this.securityConfig = {};
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -211,9 +211,9 @@ class AxyraAdvancedSecuritySystem {
             requireNumbers: true,
             requireSpecialChars: true,
             maxAge: 90, // días
-            preventReuse: 5
+            preventReuse: 5,
           },
-          isActive: true
+          isActive: true,
         },
         {
           id: 'session_policy',
@@ -222,10 +222,10 @@ class AxyraAdvancedSecuritySystem {
           rules: {
             timeout: 30, // minutos
             maxConcurrent: 3,
-            requireReauth: true
+            requireReauth: true,
           },
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveSecurityPolicies();
     }
@@ -235,20 +235,20 @@ class AxyraAdvancedSecuritySystem {
         encryption: {
           algorithm: 'AES-256-GCM',
           keyRotation: 90, // días
-          isEnabled: true
+          isEnabled: true,
         },
         authentication: {
           mfaRequired: true,
           lockoutAttempts: 5,
           lockoutDuration: 15, // minutos
-          isEnabled: true
+          isEnabled: true,
         },
         monitoring: {
           logLevel: 'info',
           retentionDays: 365,
           realTimeAlerts: true,
-          isEnabled: true
-        }
+          isEnabled: true,
+        },
       };
       this.saveSecurityConfig();
     }
@@ -256,21 +256,21 @@ class AxyraAdvancedSecuritySystem {
 
   handleSecurityPolicyChange(change) {
     const { policyId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.securityPolicies.push(data);
         this.saveSecurityPolicies();
         break;
       case 'updated':
-        const policyIndex = this.securityPolicies.findIndex(p => p.id === policyId);
+        const policyIndex = this.securityPolicies.findIndex((p) => p.id === policyId);
         if (policyIndex !== -1) {
           this.securityPolicies[policyIndex] = { ...this.securityPolicies[policyIndex], ...data };
           this.saveSecurityPolicies();
         }
         break;
       case 'deleted':
-        this.securityPolicies = this.securityPolicies.filter(p => p.id !== policyId);
+        this.securityPolicies = this.securityPolicies.filter((p) => p.id !== policyId);
         this.saveSecurityPolicies();
         break;
     }
@@ -278,21 +278,21 @@ class AxyraAdvancedSecuritySystem {
 
   handleSecurityEventChange(change) {
     const { eventId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.securityEvents.push(data);
         this.saveSecurityEvents();
         break;
       case 'updated':
-        const eventIndex = this.securityEvents.findIndex(e => e.id === eventId);
+        const eventIndex = this.securityEvents.findIndex((e) => e.id === eventId);
         if (eventIndex !== -1) {
           this.securityEvents[eventIndex] = { ...this.securityEvents[eventIndex], ...data };
           this.saveSecurityEvents();
         }
         break;
       case 'deleted':
-        this.securityEvents = this.securityEvents.filter(e => e.id !== eventId);
+        this.securityEvents = this.securityEvents.filter((e) => e.id !== eventId);
         this.saveSecurityEvents();
         break;
     }
@@ -311,8 +311,8 @@ class AxyraAdvancedSecuritySystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.securityPolicies.push(policy);
@@ -335,8 +335,8 @@ class AxyraAdvancedSecuritySystem {
       data: eventData.data || {},
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.securityEvents.push(event);
@@ -361,8 +361,8 @@ class AxyraAdvancedSecuritySystem {
       data: alertData.data || {},
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.securityAlerts.push(alert);
@@ -392,8 +392,8 @@ class AxyraAdvancedSecuritySystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.securityIncidents.push(incident);
@@ -421,8 +421,8 @@ class AxyraAdvancedSecuritySystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.securityReports.push(report);
@@ -444,8 +444,8 @@ class AxyraAdvancedSecuritySystem {
       isAboveThreshold: metricData.isAboveThreshold || false,
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.securityMetrics.push(metric);
@@ -465,8 +465,8 @@ class AxyraAdvancedSecuritySystem {
       data: logData.data || {},
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.securityLogs.push(log);
@@ -478,19 +478,19 @@ class AxyraAdvancedSecuritySystem {
 
   getSecurityStatistics() {
     const totalPolicies = this.securityPolicies.length;
-    const activePolicies = this.securityPolicies.filter(p => p.isActive).length;
+    const activePolicies = this.securityPolicies.filter((p) => p.isActive).length;
     const totalEvents = this.securityEvents.length;
-    const criticalEvents = this.securityEvents.filter(e => e.severity === 'critical').length;
+    const criticalEvents = this.securityEvents.filter((e) => e.severity === 'critical').length;
     const totalAlerts = this.securityAlerts.length;
-    const unresolvedAlerts = this.securityAlerts.filter(a => !a.isResolved).length;
+    const unresolvedAlerts = this.securityAlerts.filter((a) => !a.isResolved).length;
     const totalIncidents = this.securityIncidents.length;
-    const openIncidents = this.securityIncidents.filter(i => i.status === 'open').length;
+    const openIncidents = this.securityIncidents.filter((i) => i.status === 'open').length;
     const totalReports = this.securityReports.length;
-    const generatedReports = this.securityReports.filter(r => r.isGenerated).length;
+    const generatedReports = this.securityReports.filter((r) => r.isGenerated).length;
     const totalMetrics = this.securityMetrics.length;
-    const aboveThresholdMetrics = this.securityMetrics.filter(m => m.isAboveThreshold).length;
+    const aboveThresholdMetrics = this.securityMetrics.filter((m) => m.isAboveThreshold).length;
     const totalLogs = this.securityLogs.length;
-    const errorLogs = this.securityLogs.filter(l => l.level === 'error').length;
+    const errorLogs = this.securityLogs.filter((l) => l.level === 'error').length;
 
     return {
       totalPolicies,
@@ -506,7 +506,7 @@ class AxyraAdvancedSecuritySystem {
       totalMetrics,
       aboveThresholdMetrics,
       totalLogs,
-      errorLogs
+      errorLogs,
     };
   }
 
@@ -587,13 +587,13 @@ class AxyraAdvancedSecuritySystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -602,7 +602,7 @@ class AxyraAdvancedSecuritySystem {
 
   renderSecurityStats() {
     const stats = this.getSecurityStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -667,7 +667,7 @@ class AxyraAdvancedSecuritySystem {
 
   renderOverview() {
     const stats = this.getSecurityStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -727,8 +727,10 @@ class AxyraAdvancedSecuritySystem {
 
   renderPoliciesList() {
     const policies = this.securityPolicies.slice(-20); // Últimas 20 políticas
-    
-    return policies.map(policy => `
+
+    return policies
+      .map(
+        (policy) => `
       <div class="policy-card">
         <div class="policy-header">
           <h5>${policy.name}</h5>
@@ -744,13 +746,17 @@ class AxyraAdvancedSecuritySystem {
           <button onclick="axyraAdvancedSecuritySystem.editPolicy('${policy.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderEventsList() {
     const events = this.securityEvents.slice(-20); // Últimos 20 eventos
-    
-    return events.map(event => `
+
+    return events
+      .map(
+        (event) => `
       <div class="event-card">
         <div class="event-header">
           <h5>${event.message}</h5>
@@ -763,13 +769,17 @@ class AxyraAdvancedSecuritySystem {
           <p>Fecha: ${new Date(event.timestamp).toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderAlertsList() {
     const alerts = this.securityAlerts.slice(-20); // Últimas 20 alertas
-    
-    return alerts.map(alert => `
+
+    return alerts
+      .map(
+        (alert) => `
       <div class="alert-card">
         <div class="alert-header">
           <h5>${alert.title}</h5>
@@ -786,13 +796,17 @@ class AxyraAdvancedSecuritySystem {
           <button onclick="axyraAdvancedSecuritySystem.resolveAlert('${alert.id}')">Resolver</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderIncidentsList() {
     const incidents = this.securityIncidents.slice(-20); // Últimos 20 incidentes
-    
-    return incidents.map(incident => `
+
+    return incidents
+      .map(
+        (incident) => `
       <div class="incident-card">
         <div class="incident-header">
           <h5>${incident.title}</h5>
@@ -810,17 +824,23 @@ class AxyraAdvancedSecuritySystem {
           <button onclick="axyraAdvancedSecuritySystem.updateIncident('${incident.id}')">Actualizar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderReportsList() {
     const reports = this.securityReports.slice(-20); // Últimos 20 reportes
-    
-    return reports.map(report => `
+
+    return reports
+      .map(
+        (report) => `
       <div class="report-card">
         <div class="report-header">
           <h5>${report.title}</h5>
-          <span class="report-status ${report.isGenerated ? 'generated' : 'pending'}">${report.isGenerated ? 'Generado' : 'Pendiente'}</span>
+          <span class="report-status ${report.isGenerated ? 'generated' : 'pending'}">${
+          report.isGenerated ? 'Generado' : 'Pendiente'
+        }</span>
         </div>
         <div class="report-info">
           <p>${report.description}</p>
@@ -833,13 +853,17 @@ class AxyraAdvancedSecuritySystem {
           <button onclick="axyraAdvancedSecuritySystem.generateReport('${report.id}')">Generar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderLogsList() {
     const logs = this.securityLogs.slice(-20); // Últimos 20 logs
-    
-    return logs.map(log => `
+
+    return logs
+      .map(
+        (log) => `
       <div class="log-card">
         <div class="log-header">
           <h5>${log.message}</h5>
@@ -851,7 +875,9 @@ class AxyraAdvancedSecuritySystem {
           <p>Fecha: ${new Date(log.timestamp).toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreatePolicyDialog() {
@@ -873,14 +899,18 @@ class AxyraAdvancedSecuritySystem {
   }
 
   showPolicyDetails(policyId) {
-    const policy = this.securityPolicies.find(p => p.id === policyId);
+    const policy = this.securityPolicies.find((p) => p.id === policyId);
     if (policy) {
-      alert(`Política: ${policy.name}\nDescripción: ${policy.description}\nCategoría: ${policy.category}\nSeveridad: ${policy.severity}\nEstado: ${policy.isActive ? 'Activo' : 'Inactivo'}`);
+      alert(
+        `Política: ${policy.name}\nDescripción: ${policy.description}\nCategoría: ${policy.category}\nSeveridad: ${
+          policy.severity
+        }\nEstado: ${policy.isActive ? 'Activo' : 'Inactivo'}`
+      );
     }
   }
 
   editPolicy(policyId) {
-    const policy = this.securityPolicies.find(p => p.id === policyId);
+    const policy = this.securityPolicies.find((p) => p.id === policyId);
     if (policy) {
       const newName = prompt('Nuevo nombre:', policy.name);
       if (newName) {
@@ -891,14 +921,18 @@ class AxyraAdvancedSecuritySystem {
   }
 
   showAlertDetails(alertId) {
-    const alert = this.securityAlerts.find(a => a.id === alertId);
+    const alert = this.securityAlerts.find((a) => a.id === alertId);
     if (alert) {
-      alert(`Alerta: ${alert.title}\nDescripción: ${alert.description}\nTipo: ${alert.type}\nSeveridad: ${alert.severity}\nEstado: ${alert.isResolved ? 'Resuelto' : 'Pendiente'}`);
+      alert(
+        `Alerta: ${alert.title}\nDescripción: ${alert.description}\nTipo: ${alert.type}\nSeveridad: ${
+          alert.severity
+        }\nEstado: ${alert.isResolved ? 'Resuelto' : 'Pendiente'}`
+      );
     }
   }
 
   resolveAlert(alertId) {
-    const alert = this.securityAlerts.find(a => a.id === alertId);
+    const alert = this.securityAlerts.find((a) => a.id === alertId);
     if (alert) {
       alert.isResolved = true;
       alert.resolvedAt = new Date().toISOString();
@@ -908,14 +942,16 @@ class AxyraAdvancedSecuritySystem {
   }
 
   showIncidentDetails(incidentId) {
-    const incident = this.securityIncidents.find(i => i.id === incidentId);
+    const incident = this.securityIncidents.find((i) => i.id === incidentId);
     if (incident) {
-      alert(`Incidente: ${incident.title}\nDescripción: ${incident.description}\nTipo: ${incident.type}\nSeveridad: ${incident.severity}\nEstado: ${incident.status}\nPrioridad: ${incident.priority}`);
+      alert(
+        `Incidente: ${incident.title}\nDescripción: ${incident.description}\nTipo: ${incident.type}\nSeveridad: ${incident.severity}\nEstado: ${incident.status}\nPrioridad: ${incident.priority}`
+      );
     }
   }
 
   updateIncident(incidentId) {
-    const incident = this.securityIncidents.find(i => i.id === incidentId);
+    const incident = this.securityIncidents.find((i) => i.id === incidentId);
     if (incident) {
       const newStatus = prompt('Nuevo estado (open, investigating, resolved, closed):', incident.status);
       if (newStatus) {
@@ -926,14 +962,18 @@ class AxyraAdvancedSecuritySystem {
   }
 
   showReportDetails(reportId) {
-    const report = this.securityReports.find(r => r.id === reportId);
+    const report = this.securityReports.find((r) => r.id === reportId);
     if (report) {
-      alert(`Reporte: ${report.title}\nDescripción: ${report.description}\nTipo: ${report.type}\nPeríodo: ${report.period}\nEstado: ${report.isGenerated ? 'Generado' : 'Pendiente'}`);
+      alert(
+        `Reporte: ${report.title}\nDescripción: ${report.description}\nTipo: ${report.type}\nPeríodo: ${
+          report.period
+        }\nEstado: ${report.isGenerated ? 'Generado' : 'Pendiente'}`
+      );
     }
   }
 
   generateReport(reportId) {
-    const report = this.securityReports.find(r => r.id === reportId);
+    const report = this.securityReports.find((r) => r.id === reportId);
     if (report) {
       report.isGenerated = true;
       report.generatedAt = new Date().toISOString();

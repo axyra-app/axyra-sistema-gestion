@@ -1,0 +1,35 @@
+{
+  "name": "axyra-sistema-gestion",
+  "version": "1.0.0",
+  "description": "Sistema completo de gestión empresarial para pequeñas y medianas empresas en Colombia",
+  "main": "frontend/index.html",
+  "scripts": {
+    "dev": "http-server frontend -p 3000 -o",
+    "build": "echo 'Build completed'",
+    "start": "http-server frontend -p 3000",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "gestión empresarial",
+    "nómina",
+    "empleados",
+    "horas",
+    "reportes",
+    "colombia",
+    "pymes"
+  ],
+  "author": "AXYRA Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JuanFerUran/axyra-sistema-gestion.git"
+  },
+  "homepage": "https://axyra-sistema-gestion.vercel.app",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "vercel": "^32.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

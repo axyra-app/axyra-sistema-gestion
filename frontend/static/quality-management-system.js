@@ -15,7 +15,7 @@ class AxyraQualityManagementSystem {
     this.risks = [];
     this.incidents = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -235,9 +235,9 @@ class AxyraQualityManagementSystem {
             'Soporte',
             'Operación',
             'Evaluación del desempeño',
-            'Mejora'
+            'Mejora',
           ],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'iso_14001',
@@ -253,9 +253,9 @@ class AxyraQualityManagementSystem {
             'Soporte',
             'Operación',
             'Evaluación del desempeño',
-            'Mejora'
+            'Mejora',
           ],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'ohsas_18001',
@@ -268,33 +268,33 @@ class AxyraQualityManagementSystem {
             'Planificación',
             'Implementación y operación',
             'Verificación y acción correctiva',
-            'Revisión por la dirección'
+            'Revisión por la dirección',
           ],
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
-      
+
       this.saveStandards();
     }
   }
 
   handleAuditChange(change) {
     const { auditId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.audits.push(data);
         this.saveAudits();
         break;
       case 'updated':
-        const auditIndex = this.audits.findIndex(a => a.id === auditId);
+        const auditIndex = this.audits.findIndex((a) => a.id === auditId);
         if (auditIndex !== -1) {
           this.audits[auditIndex] = { ...this.audits[auditIndex], ...data };
           this.saveAudits();
         }
         break;
       case 'deleted':
-        this.audits = this.audits.filter(a => a.id !== auditId);
+        this.audits = this.audits.filter((a) => a.id !== auditId);
         this.saveAudits();
         break;
     }
@@ -302,21 +302,21 @@ class AxyraQualityManagementSystem {
 
   handleNonConformityChange(change) {
     const { nonConformityId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.nonConformities.push(data);
         this.saveNonConformities();
         break;
       case 'updated':
-        const nonConformityIndex = this.nonConformities.findIndex(nc => nc.id === nonConformityId);
+        const nonConformityIndex = this.nonConformities.findIndex((nc) => nc.id === nonConformityId);
         if (nonConformityIndex !== -1) {
           this.nonConformities[nonConformityIndex] = { ...this.nonConformities[nonConformityIndex], ...data };
           this.saveNonConformities();
         }
         break;
       case 'deleted':
-        this.nonConformities = this.nonConformities.filter(nc => nc.id !== nonConformityId);
+        this.nonConformities = this.nonConformities.filter((nc) => nc.id !== nonConformityId);
         this.saveNonConformities();
         break;
     }
@@ -337,8 +337,8 @@ class AxyraQualityManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.standards.push(standard);
@@ -368,8 +368,8 @@ class AxyraQualityManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.audits.push(audit);
@@ -401,8 +401,8 @@ class AxyraQualityManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.nonConformities.push(nonConformity);
@@ -432,8 +432,8 @@ class AxyraQualityManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.correctiveActions.push(action);
@@ -462,8 +462,8 @@ class AxyraQualityManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.certifications.push(certification);
@@ -494,8 +494,8 @@ class AxyraQualityManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.documents.push(document);
@@ -527,8 +527,8 @@ class AxyraQualityManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.procedures.push(procedure);
@@ -558,8 +558,8 @@ class AxyraQualityManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.risks.push(risk);
@@ -594,8 +594,8 @@ class AxyraQualityManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.incidents.push(incident);
@@ -607,17 +607,17 @@ class AxyraQualityManagementSystem {
 
   getQualityStatistics() {
     const totalAudits = this.audits.length;
-    const completedAudits = this.audits.filter(a => a.status === 'completed').length;
+    const completedAudits = this.audits.filter((a) => a.status === 'completed').length;
     const totalNonConformities = this.nonConformities.length;
-    const openNonConformities = this.nonConformities.filter(nc => nc.status === 'open').length;
+    const openNonConformities = this.nonConformities.filter((nc) => nc.status === 'open').length;
     const totalCorrectiveActions = this.correctiveActions.length;
-    const completedActions = this.correctiveActions.filter(ca => ca.status === 'completed').length;
+    const completedActions = this.correctiveActions.filter((ca) => ca.status === 'completed').length;
     const totalCertifications = this.certifications.length;
-    const activeCertifications = this.certifications.filter(c => c.status === 'active').length;
+    const activeCertifications = this.certifications.filter((c) => c.status === 'active').length;
     const totalRisks = this.risks.length;
-    const highRisks = this.risks.filter(r => r.riskLevel === 'high' || r.riskLevel === 'critical').length;
+    const highRisks = this.risks.filter((r) => r.riskLevel === 'high' || r.riskLevel === 'critical').length;
     const totalIncidents = this.incidents.length;
-    const openIncidents = this.incidents.filter(i => i.status === 'reported' || i.status === 'investigating').length;
+    const openIncidents = this.incidents.filter((i) => i.status === 'reported' || i.status === 'investigating').length;
 
     return {
       totalAudits,
@@ -631,7 +631,7 @@ class AxyraQualityManagementSystem {
       totalRisks,
       highRisks,
       totalIncidents,
-      openIncidents
+      openIncidents,
     };
   }
 
@@ -704,13 +704,13 @@ class AxyraQualityManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -719,7 +719,7 @@ class AxyraQualityManagementSystem {
 
   renderQualityStats() {
     const stats = this.getQualityStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -776,7 +776,7 @@ class AxyraQualityManagementSystem {
 
   renderOverview() {
     const stats = this.getQualityStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -815,8 +815,10 @@ class AxyraQualityManagementSystem {
 
   renderAuditsList() {
     const audits = this.audits.slice(-20); // Últimas 20 auditorías
-    
-    return audits.map(audit => `
+
+    return audits
+      .map(
+        (audit) => `
       <div class="audit-card">
         <div class="audit-header">
           <h5>${audit.name}</h5>
@@ -830,13 +832,17 @@ class AxyraQualityManagementSystem {
           <p>Puntuación: ${audit.score}/100</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderNonConformitiesList() {
     const nonConformities = this.nonConformities.slice(-20); // Últimas 20 no conformidades
-    
-    return nonConformities.map(nc => `
+
+    return nonConformities
+      .map(
+        (nc) => `
       <div class="nonconformity-card">
         <div class="nonconformity-header">
           <h5>${nc.title}</h5>
@@ -850,13 +856,17 @@ class AxyraQualityManagementSystem {
           <p>Fecha: ${new Date(nc.detectedDate).toLocaleDateString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderCertificationsList() {
     const certifications = this.certifications;
-    
-    return certifications.map(cert => `
+
+    return certifications
+      .map(
+        (cert) => `
       <div class="certification-card">
         <div class="certification-header">
           <h5>${cert.name}</h5>
@@ -869,13 +879,17 @@ class AxyraQualityManagementSystem {
           <p>Vigencia: ${new Date(cert.expiryDate).toLocaleDateString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderRisksList() {
     const risks = this.risks.slice(-20); // Últimos 20 riesgos
-    
-    return risks.map(risk => `
+
+    return risks
+      .map(
+        (risk) => `
       <div class="risk-card">
         <div class="risk-header">
           <h5>${risk.title}</h5>
@@ -889,7 +903,9 @@ class AxyraQualityManagementSystem {
           <p>Estado: ${risk.status}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreateAuditDialog() {

@@ -16,7 +16,7 @@ class AxyraSystemConfiguration {
         language: 'es',
         currency: 'COP',
         dateFormat: 'DD/MM/YYYY',
-        timeFormat: '24h'
+        timeFormat: '24h',
       },
       security: {
         sessionTimeout: 30 * 60 * 1000,
@@ -28,7 +28,7 @@ class AxyraSystemConfiguration {
         requireUppercase: true,
         enable2FA: false,
         enableAudit: true,
-        enableEncryption: false
+        enableEncryption: false,
       },
       notifications: {
         enabled: true,
@@ -41,8 +41,8 @@ class AxyraSystemConfiguration {
         quietHours: {
           enabled: false,
           start: '22:00',
-          end: '08:00'
-        }
+          end: '08:00',
+        },
       },
       backup: {
         enabled: true,
@@ -51,7 +51,7 @@ class AxyraSystemConfiguration {
         compression: true,
         encryption: false,
         cloudSync: false,
-        autoCleanup: true
+        autoCleanup: true,
       },
       performance: {
         cacheEnabled: true,
@@ -59,7 +59,7 @@ class AxyraSystemConfiguration {
         lazyLoading: true,
         imageOptimization: true,
         minification: true,
-        compression: true
+        compression: true,
       },
       integrations: {
         firebase: {
@@ -69,7 +69,7 @@ class AxyraSystemConfiguration {
           authDomain: '',
           storageBucket: '',
           messagingSenderId: '',
-          appId: ''
+          appId: '',
         },
         email: {
           enabled: false,
@@ -78,15 +78,15 @@ class AxyraSystemConfiguration {
           port: 587,
           secure: false,
           username: '',
-          password: ''
+          password: '',
         },
         sms: {
           enabled: false,
           provider: 'twilio',
           accountSid: '',
           authToken: '',
-          phoneNumber: ''
-        }
+          phoneNumber: '',
+        },
       },
       ui: {
         theme: 'light',
@@ -98,7 +98,7 @@ class AxyraSystemConfiguration {
         animations: true,
         sidebarCollapsed: false,
         showTooltips: true,
-        showShortcuts: true
+        showShortcuts: true,
       },
       business: {
         companyName: '',
@@ -114,15 +114,15 @@ class AxyraSystemConfiguration {
         workingHours: {
           start: '08:00',
           end: '17:00',
-          days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
-        }
-      }
+          days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+        },
+      },
     };
-    
+
     this.preferences = {};
     this.settings = {};
     this.isLoaded = false;
-    
+
     this.init();
   }
 
@@ -196,7 +196,7 @@ class AxyraSystemConfiguration {
 
   mergeConfig(target, source) {
     const result = { ...target };
-    
+
     for (const key in source) {
       if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
         result[key] = this.mergeConfig(target[key] || {}, source[key]);
@@ -204,7 +204,7 @@ class AxyraSystemConfiguration {
         result[key] = source[key];
       }
     }
-    
+
     return result;
   }
 
@@ -213,12 +213,12 @@ class AxyraSystemConfiguration {
     document.addEventListener('configChanged', (event) => {
       this.handleConfigChange(event.detail);
     });
-    
+
     // Escuchar cambios de tema
     document.addEventListener('themeChanged', (event) => {
       this.applyTheme(event.detail.theme);
     });
-    
+
     // Escuchar cambios de idioma
     document.addEventListener('languageChanged', (event) => {
       this.applyLanguage(event.detail.language);
@@ -227,12 +227,12 @@ class AxyraSystemConfiguration {
 
   handleConfigChange(change) {
     const { section, key, value } = change;
-    
+
     if (this.config[section]) {
       this.config[section][key] = value;
       this.saveConfiguration();
       this.applyConfiguration();
-      
+
       console.log(`⚙️ Configuración actualizada: ${section}.${key} = ${value}`);
     }
   }
@@ -249,20 +249,20 @@ class AxyraSystemConfiguration {
 
   applySystemConfig() {
     const sys = this.config.system;
-    
+
     // Aplicar configuración de idioma
     document.documentElement.lang = sys.language;
-    
+
     // Aplicar configuración de zona horaria
     if (window.Intl && window.Intl.DateTimeFormat) {
       window.axyraTimezone = sys.timezone;
     }
-    
+
     // Aplicar configuración de debug
     if (sys.debug) {
       window.axyraDebug = true;
     }
-    
+
     // Aplicar configuración de mantenimiento
     if (sys.maintenance) {
       this.enableMaintenanceMode();
@@ -271,7 +271,7 @@ class AxyraSystemConfiguration {
 
   applySecurityConfig() {
     const sec = this.config.security;
-    
+
     // Aplicar configuración de sesión
     if (window.axyraSecuritySystem) {
       window.axyraSecuritySystem.updateSecurityConfig({
@@ -281,15 +281,15 @@ class AxyraSystemConfiguration {
         passwordMinLength: sec.passwordMinLength,
         requireSpecialChars: sec.requireSpecialChars,
         requireNumbers: sec.requireNumbers,
-        requireUppercase: sec.requireUppercase
+        requireUppercase: sec.requireUppercase,
       });
     }
-    
+
     // Aplicar configuración de 2FA
     if (sec.enable2FA && window.axyra2FASystem) {
       window.axyra2FAEnabled = true;
     }
-    
+
     // Aplicar configuración de auditoría
     if (sec.enableAudit && window.axyraAuditSystem) {
       window.axyraAuditEnabled = true;
@@ -298,17 +298,17 @@ class AxyraSystemConfiguration {
 
   applyNotificationConfig() {
     const notif = this.config.notifications;
-    
+
     // Aplicar configuración de notificaciones
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.updateConfig({
         enabled: notif.enabled,
         sound: notif.sound,
         desktop: notif.desktop,
-        frequency: notif.frequency
+        frequency: notif.frequency,
       });
     }
-    
+
     // Aplicar configuración de horas silenciosas
     if (notif.quietHours.enabled) {
       this.setupQuietHours(notif.quietHours);
@@ -320,11 +320,12 @@ class AxyraSystemConfiguration {
     const currentTime = now.getHours() * 60 + now.getMinutes();
     const startTime = this.timeToMinutes(quietHours.start);
     const endTime = this.timeToMinutes(quietHours.end);
-    
-    const isQuietTime = startTime > endTime ? 
-      (currentTime >= startTime || currentTime < endTime) :
-      (currentTime >= startTime && currentTime < endTime);
-    
+
+    const isQuietTime =
+      startTime > endTime
+        ? currentTime >= startTime || currentTime < endTime
+        : currentTime >= startTime && currentTime < endTime;
+
     if (isQuietTime) {
       window.axyraQuietHours = true;
     }
@@ -337,7 +338,7 @@ class AxyraSystemConfiguration {
 
   applyBackupConfig() {
     const backup = this.config.backup;
-    
+
     // Aplicar configuración de backup
     if (window.axyraDataRecoverySystem) {
       window.axyraDataRecoverySystem.updateBackupConfig({
@@ -345,36 +346,36 @@ class AxyraSystemConfiguration {
         backupInterval: this.getBackupInterval(backup.frequency),
         maxBackups: backup.retention,
         compressionEnabled: backup.compression,
-        encryptionEnabled: backup.encryption
+        encryptionEnabled: backup.encryption,
       });
     }
   }
 
   getBackupInterval(frequency) {
     const intervals = {
-      'hourly': 60 * 60 * 1000,
-      'daily': 24 * 60 * 60 * 1000,
-      'weekly': 7 * 24 * 60 * 60 * 1000,
-      'monthly': 30 * 24 * 60 * 60 * 1000
+      hourly: 60 * 60 * 1000,
+      daily: 24 * 60 * 60 * 1000,
+      weekly: 7 * 24 * 60 * 60 * 1000,
+      monthly: 30 * 24 * 60 * 60 * 1000,
     };
-    
+
     return intervals[frequency] || intervals.daily;
   }
 
   applyPerformanceConfig() {
     const perf = this.config.performance;
-    
+
     // Aplicar configuración de caché
     if (perf.cacheEnabled) {
       window.axyraCacheEnabled = true;
       window.axyraCacheSize = perf.cacheSize;
     }
-    
+
     // Aplicar configuración de carga perezosa
     if (perf.lazyLoading) {
       window.axyraLazyLoading = true;
     }
-    
+
     // Aplicar configuración de optimización de imágenes
     if (perf.imageOptimization) {
       window.axyraImageOptimization = true;
@@ -383,28 +384,28 @@ class AxyraSystemConfiguration {
 
   applyUIConfig() {
     const ui = this.config.ui;
-    
+
     // Aplicar tema
     this.applyTheme(ui.theme);
-    
+
     // Aplicar colores
     this.applyColors(ui.primaryColor, ui.secondaryColor, ui.accentColor);
-    
+
     // Aplicar configuración de fuente
     this.applyFontSize(ui.fontSize);
-    
+
     // Aplicar configuración de densidad
     this.applyDensity(ui.density);
-    
+
     // Aplicar configuración de animaciones
     this.applyAnimations(ui.animations);
-    
+
     // Aplicar configuración de sidebar
     this.applySidebarConfig(ui.sidebarCollapsed);
-    
+
     // Aplicar configuración de tooltips
     this.applyTooltips(ui.showTooltips);
-    
+
     // Aplicar configuración de atajos
     this.applyShortcuts(ui.showShortcuts);
   }
@@ -412,10 +413,10 @@ class AxyraSystemConfiguration {
   applyTheme(theme) {
     document.body.className = document.body.className.replace(/theme-\w+/g, '');
     document.body.classList.add(`theme-${theme}`);
-    
+
     // Aplicar tema a elementos específicos
     const themeElements = document.querySelectorAll('[data-theme]');
-    themeElements.forEach(element => {
+    themeElements.forEach((element) => {
       element.setAttribute('data-theme', theme);
     });
   }
@@ -429,22 +430,22 @@ class AxyraSystemConfiguration {
 
   applyFontSize(size) {
     const sizes = {
-      'small': '12px',
-      'medium': '14px',
-      'large': '16px',
-      'xlarge': '18px'
+      small: '12px',
+      medium: '14px',
+      large: '16px',
+      xlarge: '18px',
     };
-    
+
     document.documentElement.style.fontSize = sizes[size] || sizes.medium;
   }
 
   applyDensity(density) {
     const densities = {
-      'compact': 'compact',
-      'comfortable': 'comfortable',
-      'spacious': 'spacious'
+      compact: 'compact',
+      comfortable: 'comfortable',
+      spacious: 'spacious',
     };
-    
+
     document.body.className = document.body.className.replace(/density-\w+/g, '');
     document.body.classList.add(`density-${densities[density] || 'comfortable'}`);
   }
@@ -478,17 +479,17 @@ class AxyraSystemConfiguration {
 
   applyBusinessConfig() {
     const business = this.config.business;
-    
+
     // Aplicar configuración de empresa
     if (business.companyName) {
       document.title = `${business.companyName} - AXYRA`;
     }
-    
+
     // Aplicar configuración de zona horaria de negocio
     if (business.timezone) {
       window.axyraBusinessTimezone = business.timezone;
     }
-    
+
     // Aplicar configuración de horarios de trabajo
     if (business.workingHours) {
       window.axyraWorkingHours = business.workingHours;
@@ -505,7 +506,7 @@ class AxyraSystemConfiguration {
         <div class="maintenance-spinner"></div>
       </div>
     `;
-    
+
     maintenanceOverlay.style.cssText = `
       position: fixed;
       top: 0;
@@ -520,7 +521,7 @@ class AxyraSystemConfiguration {
       z-index: 10000;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     `;
-    
+
     document.body.appendChild(maintenanceOverlay);
   }
 
@@ -546,11 +547,13 @@ class AxyraSystemConfiguration {
       this.config[section][key] = value;
       this.saveConfiguration();
       this.applyConfiguration();
-      
+
       // Disparar evento de cambio
-      document.dispatchEvent(new CustomEvent('configChanged', {
-        detail: { section, key, value }
-      }));
+      document.dispatchEvent(
+        new CustomEvent('configChanged', {
+          detail: { section, key, value },
+        })
+      );
     }
   }
 
@@ -584,7 +587,7 @@ class AxyraSystemConfiguration {
         language: 'es',
         currency: 'COP',
         dateFormat: 'DD/MM/YYYY',
-        timeFormat: '24h'
+        timeFormat: '24h',
       },
       security: {
         sessionTimeout: 30 * 60 * 1000,
@@ -596,7 +599,7 @@ class AxyraSystemConfiguration {
         requireUppercase: true,
         enable2FA: false,
         enableAudit: true,
-        enableEncryption: false
+        enableEncryption: false,
       },
       notifications: {
         enabled: true,
@@ -609,8 +612,8 @@ class AxyraSystemConfiguration {
         quietHours: {
           enabled: false,
           start: '22:00',
-          end: '08:00'
-        }
+          end: '08:00',
+        },
       },
       backup: {
         enabled: true,
@@ -619,7 +622,7 @@ class AxyraSystemConfiguration {
         compression: true,
         encryption: false,
         cloudSync: false,
-        autoCleanup: true
+        autoCleanup: true,
       },
       performance: {
         cacheEnabled: true,
@@ -627,7 +630,7 @@ class AxyraSystemConfiguration {
         lazyLoading: true,
         imageOptimization: true,
         minification: true,
-        compression: true
+        compression: true,
       },
       integrations: {
         firebase: {
@@ -637,7 +640,7 @@ class AxyraSystemConfiguration {
           authDomain: '',
           storageBucket: '',
           messagingSenderId: '',
-          appId: ''
+          appId: '',
         },
         email: {
           enabled: false,
@@ -646,15 +649,15 @@ class AxyraSystemConfiguration {
           port: 587,
           secure: false,
           username: '',
-          password: ''
+          password: '',
         },
         sms: {
           enabled: false,
           provider: 'twilio',
           accountSid: '',
           authToken: '',
-          phoneNumber: ''
-        }
+          phoneNumber: '',
+        },
       },
       ui: {
         theme: 'light',
@@ -666,7 +669,7 @@ class AxyraSystemConfiguration {
         animations: true,
         sidebarCollapsed: false,
         showTooltips: true,
-        showShortcuts: true
+        showShortcuts: true,
       },
       business: {
         companyName: '',
@@ -682,14 +685,14 @@ class AxyraSystemConfiguration {
         workingHours: {
           start: '08:00',
           end: '17:00',
-          days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday']
-        }
-      }
+          days: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+        },
+      },
     };
-    
+
     this.saveConfiguration();
     this.applyConfiguration();
-    
+
     console.log('🔄 Configuración restablecida a valores por defecto');
   }
 
@@ -699,12 +702,12 @@ class AxyraSystemConfiguration {
       preferences: this.preferences,
       settings: this.settings,
       exportDate: new Date().toISOString(),
-      version: this.config.system.version
+      version: this.config.system.version,
     };
-    
+
     const dataStr = JSON.stringify(configData, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    
+
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
@@ -712,36 +715,36 @@ class AxyraSystemConfiguration {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log('📤 Configuración exportada');
   }
 
   importConfig(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         try {
           const configData = JSON.parse(event.target.result);
-          
+
           if (configData.config) {
             this.config = this.mergeConfig(this.config, configData.config);
             this.saveConfiguration();
             this.applyConfiguration();
           }
-          
+
           if (configData.preferences) {
             this.preferences = { ...this.preferences, ...configData.preferences };
             this.savePreferences();
           }
-          
+
           if (configData.settings) {
             this.settings = { ...this.settings, ...configData.settings };
             this.saveSettings();
           }
-          
+
           console.log('✅ Configuración importada exitosamente');
           resolve();
         } catch (error) {
@@ -749,41 +752,41 @@ class AxyraSystemConfiguration {
           reject(error);
         }
       };
-      
+
       reader.onerror = () => {
         reject(new Error('Error leyendo archivo'));
       };
-      
+
       reader.readAsText(file);
     });
   }
 
   validateConfig() {
     const errors = [];
-    
+
     // Validar configuración de seguridad
     if (this.config.security.passwordMinLength < 6) {
       errors.push('La longitud mínima de contraseña debe ser al menos 6 caracteres');
     }
-    
+
     if (this.config.security.sessionTimeout < 5 * 60 * 1000) {
       errors.push('El tiempo de sesión debe ser al menos 5 minutos');
     }
-    
+
     // Validar configuración de backup
     if (this.config.backup.retention < 1) {
       errors.push('La retención de backups debe ser al menos 1');
     }
-    
+
     // Validar configuración de negocio
     if (!this.config.business.companyName) {
       errors.push('El nombre de la empresa es requerido');
     }
-    
+
     if (!this.config.business.companyId) {
       errors.push('El ID de la empresa es requerido');
     }
-    
+
     return errors;
   }
 
@@ -794,36 +797,36 @@ class AxyraSystemConfiguration {
         version: this.config.system.version,
         environment: this.config.system.environment,
         debug: this.config.system.debug,
-        maintenance: this.config.system.maintenance
+        maintenance: this.config.system.maintenance,
       },
       security: {
         sessionTimeout: this.config.security.sessionTimeout,
         maxLoginAttempts: this.config.security.maxLoginAttempts,
         enable2FA: this.config.security.enable2FA,
-        enableAudit: this.config.security.enableAudit
+        enableAudit: this.config.security.enableAudit,
       },
       notifications: {
         enabled: this.config.notifications.enabled,
         email: this.config.notifications.email,
         sms: this.config.notifications.sms,
-        push: this.config.notifications.push
+        push: this.config.notifications.push,
       },
       backup: {
         enabled: this.config.backup.enabled,
         frequency: this.config.backup.frequency,
-        retention: this.config.backup.retention
+        retention: this.config.backup.retention,
       },
       ui: {
         theme: this.config.ui.theme,
         primaryColor: this.config.ui.primaryColor,
         fontSize: this.config.ui.fontSize,
-        density: this.config.ui.density
+        density: this.config.ui.density,
       },
       business: {
         companyName: this.config.business.companyName,
         industry: this.config.business.industry,
-        size: this.config.business.size
-      }
+        size: this.config.business.size,
+      },
     };
   }
 }

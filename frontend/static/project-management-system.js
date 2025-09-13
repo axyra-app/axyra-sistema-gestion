@@ -13,7 +13,7 @@ class AxyraProjectManagementSystem {
     this.comments = [];
     this.attachments = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -177,21 +177,21 @@ class AxyraProjectManagementSystem {
 
   handleProjectChange(change) {
     const { projectId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.projects.push(data);
         this.saveProjects();
         break;
       case 'updated':
-        const projectIndex = this.projects.findIndex(p => p.id === projectId);
+        const projectIndex = this.projects.findIndex((p) => p.id === projectId);
         if (projectIndex !== -1) {
           this.projects[projectIndex] = { ...this.projects[projectIndex], ...data };
           this.saveProjects();
         }
         break;
       case 'deleted':
-        this.projects = this.projects.filter(p => p.id !== projectId);
+        this.projects = this.projects.filter((p) => p.id !== projectId);
         this.saveProjects();
         break;
     }
@@ -199,21 +199,21 @@ class AxyraProjectManagementSystem {
 
   handleTaskChange(change) {
     const { taskId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.tasks.push(data);
         this.saveTasks();
         break;
       case 'updated':
-        const taskIndex = this.tasks.findIndex(t => t.id === taskId);
+        const taskIndex = this.tasks.findIndex((t) => t.id === taskId);
         if (taskIndex !== -1) {
           this.tasks[taskIndex] = { ...this.tasks[taskIndex], ...data };
           this.saveTasks();
         }
         break;
       case 'deleted':
-        this.tasks = this.tasks.filter(t => t.id !== taskId);
+        this.tasks = this.tasks.filter((t) => t.id !== taskId);
         this.saveTasks();
         break;
     }
@@ -237,9 +237,9 @@ class AxyraProjectManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.projects.push(project);
@@ -250,19 +250,19 @@ class AxyraProjectManagementSystem {
   }
 
   updateProject(projectId, updates) {
-    const projectIndex = this.projects.findIndex(p => p.id === projectId);
+    const projectIndex = this.projects.findIndex((p) => p.id === projectId);
     if (projectIndex === -1) {
       throw new Error('Proyecto no encontrado');
     }
 
-    this.projects[projectIndex] = { 
-      ...this.projects[projectIndex], 
+    this.projects[projectIndex] = {
+      ...this.projects[projectIndex],
       ...updates,
       metadata: {
         ...this.projects[projectIndex].metadata,
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.saveProjects();
@@ -272,15 +272,15 @@ class AxyraProjectManagementSystem {
   }
 
   deleteProject(projectId) {
-    const projectIndex = this.projects.findIndex(p => p.id === projectId);
+    const projectIndex = this.projects.findIndex((p) => p.id === projectId);
     if (projectIndex === -1) {
       throw new Error('Proyecto no encontrado');
     }
 
     const project = this.projects[projectIndex];
-    
+
     // Verificar si tiene tareas
-    const hasTasks = this.tasks.some(t => t.projectId === projectId);
+    const hasTasks = this.tasks.some((t) => t.projectId === projectId);
     if (hasTasks) {
       throw new Error('No se puede eliminar un proyecto que tiene tareas');
     }
@@ -313,9 +313,9 @@ class AxyraProjectManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.tasks.push(task);
@@ -326,19 +326,19 @@ class AxyraProjectManagementSystem {
   }
 
   updateTask(taskId, updates) {
-    const taskIndex = this.tasks.findIndex(t => t.id === taskId);
+    const taskIndex = this.tasks.findIndex((t) => t.id === taskId);
     if (taskIndex === -1) {
       throw new Error('Tarea no encontrada');
     }
 
-    this.tasks[taskIndex] = { 
-      ...this.tasks[taskIndex], 
+    this.tasks[taskIndex] = {
+      ...this.tasks[taskIndex],
       ...updates,
       metadata: {
         ...this.tasks[taskIndex].metadata,
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.saveTasks();
@@ -348,7 +348,7 @@ class AxyraProjectManagementSystem {
   }
 
   deleteTask(taskId) {
-    const taskIndex = this.tasks.findIndex(t => t.id === taskId);
+    const taskIndex = this.tasks.findIndex((t) => t.id === taskId);
     if (taskIndex === -1) {
       throw new Error('Tarea no encontrada');
     }
@@ -372,9 +372,9 @@ class AxyraProjectManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.teams.push(team);
@@ -385,7 +385,7 @@ class AxyraProjectManagementSystem {
   }
 
   addTeamMember(teamId, userId, role = 'member') {
-    const teamIndex = this.teams.findIndex(t => t.id === teamId);
+    const teamIndex = this.teams.findIndex((t) => t.id === teamId);
     if (teamIndex === -1) {
       throw new Error('Equipo no encontrado');
     }
@@ -394,7 +394,7 @@ class AxyraProjectManagementSystem {
       userId,
       role,
       joinedAt: new Date().toISOString(),
-      addedBy: this.getCurrentUser()
+      addedBy: this.getCurrentUser(),
     };
 
     this.teams[teamIndex].members.push(member);
@@ -405,12 +405,12 @@ class AxyraProjectManagementSystem {
   }
 
   removeTeamMember(teamId, userId) {
-    const teamIndex = this.teams.findIndex(t => t.id === teamId);
+    const teamIndex = this.teams.findIndex((t) => t.id === teamId);
     if (teamIndex === -1) {
       throw new Error('Equipo no encontrado');
     }
 
-    this.teams[teamIndex].members = this.teams[teamIndex].members.filter(m => m.userId !== userId);
+    this.teams[teamIndex].members = this.teams[teamIndex].members.filter((m) => m.userId !== userId);
     this.saveTeams();
 
     console.log('❌ Miembro removido del equipo:', userId);
@@ -429,9 +429,9 @@ class AxyraProjectManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.milestones.push(milestone);
@@ -452,9 +452,9 @@ class AxyraProjectManagementSystem {
       date: timeEntryData.date || new Date().toISOString(),
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
+        createdBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.timeEntries.push(timeEntry);
@@ -468,12 +468,12 @@ class AxyraProjectManagementSystem {
   }
 
   updateTaskActualHours(taskId) {
-    const task = this.tasks.find(t => t.id === taskId);
+    const task = this.tasks.find((t) => t.id === taskId);
     if (task) {
       const totalHours = this.timeEntries
-        .filter(te => te.taskId === taskId && te.isActive)
+        .filter((te) => te.taskId === taskId && te.isActive)
         .reduce((sum, te) => sum + te.hours, 0);
-      
+
       task.actualHours = totalHours;
       this.saveTasks();
     }
@@ -488,9 +488,9 @@ class AxyraProjectManagementSystem {
       author: commentData.author || this.getCurrentUser(),
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
+        createdBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.comments.push(comment);
@@ -504,22 +504,21 @@ class AxyraProjectManagementSystem {
     let filteredProjects = [...this.projects];
 
     if (filters.status) {
-      filteredProjects = filteredProjects.filter(p => p.status === filters.status);
+      filteredProjects = filteredProjects.filter((p) => p.status === filters.status);
     }
 
     if (filters.priority) {
-      filteredProjects = filteredProjects.filter(p => p.priority === filters.priority);
+      filteredProjects = filteredProjects.filter((p) => p.priority === filters.priority);
     }
 
     if (filters.team) {
-      filteredProjects = filteredProjects.filter(p => p.team.includes(filters.team));
+      filteredProjects = filteredProjects.filter((p) => p.team.includes(filters.team));
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredProjects = filteredProjects.filter(p => 
-        p.name.toLowerCase().includes(searchTerm) ||
-        p.description.toLowerCase().includes(searchTerm)
+      filteredProjects = filteredProjects.filter(
+        (p) => p.name.toLowerCase().includes(searchTerm) || p.description.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -530,26 +529,25 @@ class AxyraProjectManagementSystem {
     let filteredTasks = [...this.tasks];
 
     if (filters.projectId) {
-      filteredTasks = filteredTasks.filter(t => t.projectId === filters.projectId);
+      filteredTasks = filteredTasks.filter((t) => t.projectId === filters.projectId);
     }
 
     if (filters.status) {
-      filteredTasks = filteredTasks.filter(t => t.status === filters.status);
+      filteredTasks = filteredTasks.filter((t) => t.status === filters.status);
     }
 
     if (filters.assignee) {
-      filteredTasks = filteredTasks.filter(t => t.assignee === filters.assignee);
+      filteredTasks = filteredTasks.filter((t) => t.assignee === filters.assignee);
     }
 
     if (filters.priority) {
-      filteredTasks = filteredTasks.filter(t => t.priority === filters.priority);
+      filteredTasks = filteredTasks.filter((t) => t.priority === filters.priority);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredTasks = filteredTasks.filter(t => 
-        t.title.toLowerCase().includes(searchTerm) ||
-        t.description.toLowerCase().includes(searchTerm)
+      filteredTasks = filteredTasks.filter(
+        (t) => t.title.toLowerCase().includes(searchTerm) || t.description.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -557,18 +555,18 @@ class AxyraProjectManagementSystem {
   }
 
   getProjectStatistics(projectId) {
-    const project = this.projects.find(p => p.id === projectId);
+    const project = this.projects.find((p) => p.id === projectId);
     if (!project) return null;
 
-    const projectTasks = this.tasks.filter(t => t.projectId === projectId);
+    const projectTasks = this.tasks.filter((t) => t.projectId === projectId);
     const totalTasks = projectTasks.length;
-    const completedTasks = projectTasks.filter(t => t.status === 'done').length;
-    const inProgressTasks = projectTasks.filter(t => t.status === 'in_progress').length;
-    const todoTasks = projectTasks.filter(t => t.status === 'todo').length;
-    
+    const completedTasks = projectTasks.filter((t) => t.status === 'done').length;
+    const inProgressTasks = projectTasks.filter((t) => t.status === 'in_progress').length;
+    const todoTasks = projectTasks.filter((t) => t.status === 'todo').length;
+
     const totalEstimatedHours = projectTasks.reduce((sum, t) => sum + (t.estimatedHours || 0), 0);
     const totalActualHours = projectTasks.reduce((sum, t) => sum + (t.actualHours || 0), 0);
-    
+
     const progress = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
     return {
@@ -580,18 +578,18 @@ class AxyraProjectManagementSystem {
       totalActualHours,
       progress: Math.round(progress),
       budget: project.budget,
-      spent: totalActualHours * 50 // Asumiendo $50 por hora
+      spent: totalActualHours * 50, // Asumiendo $50 por hora
     };
   }
 
   getTaskStatistics() {
     const totalTasks = this.tasks.length;
-    const completedTasks = this.tasks.filter(t => t.status === 'done').length;
-    const inProgressTasks = this.tasks.filter(t => t.status === 'in_progress').length;
-    const todoTasks = this.tasks.filter(t => t.status === 'todo').length;
-    
-    const overdueTasks = this.tasks.filter(t => 
-      t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'done'
+    const completedTasks = this.tasks.filter((t) => t.status === 'done').length;
+    const inProgressTasks = this.tasks.filter((t) => t.status === 'in_progress').length;
+    const todoTasks = this.tasks.filter((t) => t.status === 'todo').length;
+
+    const overdueTasks = this.tasks.filter(
+      (t) => t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'done'
     ).length;
 
     const totalEstimatedHours = this.tasks.reduce((sum, t) => sum + (t.estimatedHours || 0), 0);
@@ -605,7 +603,7 @@ class AxyraProjectManagementSystem {
       overdueTasks,
       totalEstimatedHours,
       totalActualHours,
-      completionRate: totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+      completionRate: totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0,
     };
   }
 
@@ -674,13 +672,13 @@ class AxyraProjectManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -689,7 +687,7 @@ class AxyraProjectManagementSystem {
 
   renderProjectStats() {
     const stats = this.getTaskStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -722,10 +720,11 @@ class AxyraProjectManagementSystem {
 
   renderProjectsList() {
     const projects = this.getProjects();
-    
-    return projects.map(project => {
-      const stats = this.getProjectStatistics(project.id);
-      return `
+
+    return projects
+      .map((project) => {
+        const stats = this.getProjectStatistics(project.id);
+        return `
         <div class="project-card">
           <div class="project-header">
             <h4>${project.name}</h4>
@@ -745,13 +744,16 @@ class AxyraProjectManagementSystem {
           </div>
         </div>
       `;
-    }).join('');
+      })
+      .join('');
   }
 
   renderTasksList() {
     const tasks = this.getTasks();
-    
-    return tasks.map(task => `
+
+    return tasks
+      .map(
+        (task) => `
       <div class="task-card">
         <div class="task-header">
           <h5>${task.title}</h5>
@@ -764,13 +766,17 @@ class AxyraProjectManagementSystem {
           <span class="task-hours">${task.actualHours}/${task.estimatedHours}h</span>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderTeamsList() {
     const teams = this.teams;
-    
-    return teams.map(team => `
+
+    return teams
+      .map(
+        (team) => `
       <div class="team-card">
         <div class="team-header">
           <h4>${team.name}</h4>
@@ -781,19 +787,25 @@ class AxyraProjectManagementSystem {
           <span class="member-count">${team.members.length} miembros</span>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderTimeline() {
     const tasks = this.getTasks();
-    const timeline = tasks.map(task => ({
-      ...task,
-      date: task.dueDate || task.metadata.createdAt
-    })).sort((a, b) => new Date(a.date) - new Date(b.date));
+    const timeline = tasks
+      .map((task) => ({
+        ...task,
+        date: task.dueDate || task.metadata.createdAt,
+      }))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
 
     return `
       <div class="timeline">
-        ${timeline.map(task => `
+        ${timeline
+          .map(
+            (task) => `
           <div class="timeline-item">
             <div class="timeline-date">${new Date(task.date).toLocaleDateString()}</div>
             <div class="timeline-content">
@@ -802,7 +814,9 @@ class AxyraProjectManagementSystem {
               <span class="timeline-status status-${task.status}">${task.status}</span>
             </div>
           </div>
-        `).join('')}
+        `
+          )
+          .join('')}
       </div>
     `;
   }

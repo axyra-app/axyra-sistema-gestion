@@ -16,7 +16,7 @@ class AxyraIntegrationAPISystem {
     this.logs = [];
     this.monitoring = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -249,7 +249,7 @@ class AxyraIntegrationAPISystem {
           baseUrl: 'https://api.axyra.com',
           version: 'v1',
           authentication: 'bearer',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'graphql_api',
@@ -258,8 +258,8 @@ class AxyraIntegrationAPISystem {
           baseUrl: 'https://graphql.axyra.com',
           version: 'v1',
           authentication: 'bearer',
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveAPIs();
     }
@@ -273,7 +273,7 @@ class AxyraIntegrationAPISystem {
           method: 'GET',
           description: 'Obtener lista de usuarios',
           apiId: 'rest_api',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'users_create_endpoint',
@@ -282,8 +282,8 @@ class AxyraIntegrationAPISystem {
           method: 'POST',
           description: 'Crear un nuevo usuario',
           apiId: 'rest_api',
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveEndpoints();
     }
@@ -291,21 +291,21 @@ class AxyraIntegrationAPISystem {
 
   handleIntegrationChange(change) {
     const { integrationId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.integrations.push(data);
         this.saveIntegrations();
         break;
       case 'updated':
-        const integrationIndex = this.integrations.findIndex(i => i.id === integrationId);
+        const integrationIndex = this.integrations.findIndex((i) => i.id === integrationId);
         if (integrationIndex !== -1) {
           this.integrations[integrationIndex] = { ...this.integrations[integrationIndex], ...data };
           this.saveIntegrations();
         }
         break;
       case 'deleted':
-        this.integrations = this.integrations.filter(i => i.id !== integrationId);
+        this.integrations = this.integrations.filter((i) => i.id !== integrationId);
         this.saveIntegrations();
         break;
     }
@@ -313,21 +313,21 @@ class AxyraIntegrationAPISystem {
 
   handleAPIChange(change) {
     const { apiId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.apis.push(data);
         this.saveAPIs();
         break;
       case 'updated':
-        const apiIndex = this.apis.findIndex(a => a.id === apiId);
+        const apiIndex = this.apis.findIndex((a) => a.id === apiId);
         if (apiIndex !== -1) {
           this.apis[apiIndex] = { ...this.apis[apiIndex], ...data };
           this.saveAPIs();
         }
         break;
       case 'deleted':
-        this.apis = this.apis.filter(a => a.id !== apiId);
+        this.apis = this.apis.filter((a) => a.id !== apiId);
         this.saveAPIs();
         break;
     }
@@ -348,8 +348,8 @@ class AxyraIntegrationAPISystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.integrations.push(integration);
@@ -375,8 +375,8 @@ class AxyraIntegrationAPISystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.apis.push(api);
@@ -399,8 +399,8 @@ class AxyraIntegrationAPISystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.webhooks.push(webhook);
@@ -426,8 +426,8 @@ class AxyraIntegrationAPISystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.syncJobs.push(syncJob);
@@ -448,8 +448,8 @@ class AxyraIntegrationAPISystem {
       isActive: apiKeyData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.apiKeys.push(apiKey);
@@ -475,8 +475,8 @@ class AxyraIntegrationAPISystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.endpoints.push(endpoint);
@@ -497,8 +497,8 @@ class AxyraIntegrationAPISystem {
       timestamp: new Date().toISOString(),
       status: 'pending',
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.requests.push(request);
@@ -508,7 +508,7 @@ class AxyraIntegrationAPISystem {
       const response = await fetch(request.url, {
         method: request.method,
         headers: request.headers,
-        body: request.body ? JSON.stringify(request.body) : null
+        body: request.body ? JSON.stringify(request.body) : null,
       });
 
       const responseData = {
@@ -518,7 +518,7 @@ class AxyraIntegrationAPISystem {
         statusText: response.statusText,
         headers: Object.fromEntries(response.headers.entries()),
         body: await response.text(),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       this.responses.push(responseData);
@@ -529,7 +529,6 @@ class AxyraIntegrationAPISystem {
 
       console.log('✅ Solicitud API completada:', request.id);
       return responseData;
-
     } catch (error) {
       request.status = 'failed';
       this.saveRequests();
@@ -548,8 +547,8 @@ class AxyraIntegrationAPISystem {
       data: logData.data || {},
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.logs.push(log);
@@ -573,8 +572,8 @@ class AxyraIntegrationAPISystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.monitoring.push(monitoring);
@@ -595,17 +594,17 @@ class AxyraIntegrationAPISystem {
 
   getIntegrationStatistics() {
     const totalIntegrations = this.integrations.length;
-    const activeIntegrations = this.integrations.filter(i => i.isActive).length;
+    const activeIntegrations = this.integrations.filter((i) => i.isActive).length;
     const totalAPIs = this.apis.length;
-    const activeAPIs = this.apis.filter(a => a.isActive).length;
+    const activeAPIs = this.apis.filter((a) => a.isActive).length;
     const totalWebhooks = this.webhooks.length;
-    const activeWebhooks = this.webhooks.filter(w => w.isActive).length;
+    const activeWebhooks = this.webhooks.filter((w) => w.isActive).length;
     const totalSyncJobs = this.syncJobs.length;
-    const runningSyncJobs = this.syncJobs.filter(s => s.status === 'running').length;
+    const runningSyncJobs = this.syncJobs.filter((s) => s.status === 'running').length;
     const totalRequests = this.requests.length;
-    const successfulRequests = this.requests.filter(r => r.status === 'completed').length;
+    const successfulRequests = this.requests.filter((r) => r.status === 'completed').length;
     const totalLogs = this.logs.length;
-    const errorLogs = this.logs.filter(l => l.level === 'error').length;
+    const errorLogs = this.logs.filter((l) => l.level === 'error').length;
 
     return {
       totalIntegrations,
@@ -619,7 +618,7 @@ class AxyraIntegrationAPISystem {
       totalRequests,
       successfulRequests,
       totalLogs,
-      errorLogs
+      errorLogs,
     };
   }
 
@@ -692,13 +691,13 @@ class AxyraIntegrationAPISystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -707,7 +706,7 @@ class AxyraIntegrationAPISystem {
 
   renderIntegrationStats() {
     const stats = this.getIntegrationStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -756,7 +755,7 @@ class AxyraIntegrationAPISystem {
 
   renderOverview() {
     const stats = this.getIntegrationStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -789,7 +788,9 @@ class AxyraIntegrationAPISystem {
             </div>
             <div class="activity-item">
               <span>Tasa de Éxito</span>
-              <span>${stats.totalRequests > 0 ? Math.round((stats.successfulRequests / stats.totalRequests) * 100) : 0}%</span>
+              <span>${
+                stats.totalRequests > 0 ? Math.round((stats.successfulRequests / stats.totalRequests) * 100) : 0
+              }%</span>
             </div>
           </div>
         </div>
@@ -812,8 +813,10 @@ class AxyraIntegrationAPISystem {
 
   renderIntegrationsList() {
     const integrations = this.integrations.slice(-20); // Últimas 20 integraciones
-    
-    return integrations.map(integration => `
+
+    return integrations
+      .map(
+        (integration) => `
       <div class="integration-card">
         <div class="integration-header">
           <h5>${integration.name}</h5>
@@ -830,17 +833,23 @@ class AxyraIntegrationAPISystem {
           <button onclick="axyraIntegrationAPISystem.editIntegration('${integration.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderAPIsList() {
     const apis = this.apis.slice(-20); // Últimas 20 APIs
-    
-    return apis.map(api => `
+
+    return apis
+      .map(
+        (api) => `
       <div class="api-card">
         <div class="api-header">
           <h5>${api.name}</h5>
-          <span class="api-status ${api.isActive ? 'active' : 'inactive'}">${api.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="api-status ${api.isActive ? 'active' : 'inactive'}">${
+          api.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="api-info">
           <p>${api.description}</p>
@@ -853,17 +862,23 @@ class AxyraIntegrationAPISystem {
           <button onclick="axyraIntegrationAPISystem.editAPI('${api.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderWebhooksList() {
     const webhooks = this.webhooks.slice(-20); // Últimos 20 webhooks
-    
-    return webhooks.map(webhook => `
+
+    return webhooks
+      .map(
+        (webhook) => `
       <div class="webhook-card">
         <div class="webhook-header">
           <h5>${webhook.name}</h5>
-          <span class="webhook-status ${webhook.isActive ? 'active' : 'inactive'}">${webhook.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="webhook-status ${webhook.isActive ? 'active' : 'inactive'}">${
+          webhook.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="webhook-info">
           <p>${webhook.description}</p>
@@ -875,13 +890,17 @@ class AxyraIntegrationAPISystem {
           <button onclick="axyraIntegrationAPISystem.editWebhook('${webhook.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderLogsList() {
     const logs = this.logs.slice(-20); // Últimos 20 logs
-    
-    return logs.map(log => `
+
+    return logs
+      .map(
+        (log) => `
       <div class="log-card">
         <div class="log-header">
           <h5>${log.message}</h5>
@@ -892,7 +911,9 @@ class AxyraIntegrationAPISystem {
           <p>Fecha: ${new Date(log.timestamp).toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreateIntegrationDialog() {
@@ -914,14 +935,16 @@ class AxyraIntegrationAPISystem {
   }
 
   showIntegrationDetails(integrationId) {
-    const integration = this.integrations.find(i => i.id === integrationId);
+    const integration = this.integrations.find((i) => i.id === integrationId);
     if (integration) {
-      alert(`Integración: ${integration.name}\nDescripción: ${integration.description}\nTipo: ${integration.type}\nProveedor: ${integration.provider}\nEstado: ${integration.status}`);
+      alert(
+        `Integración: ${integration.name}\nDescripción: ${integration.description}\nTipo: ${integration.type}\nProveedor: ${integration.provider}\nEstado: ${integration.status}`
+      );
     }
   }
 
   editIntegration(integrationId) {
-    const integration = this.integrations.find(i => i.id === integrationId);
+    const integration = this.integrations.find((i) => i.id === integrationId);
     if (integration) {
       const newName = prompt('Nuevo nombre:', integration.name);
       if (newName) {
@@ -932,14 +955,16 @@ class AxyraIntegrationAPISystem {
   }
 
   showAPIDetails(apiId) {
-    const api = this.apis.find(a => a.id === apiId);
+    const api = this.apis.find((a) => a.id === apiId);
     if (api) {
-      alert(`API: ${api.name}\nDescripción: ${api.description}\nURL: ${api.baseUrl}\nVersión: ${api.version}\nAutenticación: ${api.authentication}`);
+      alert(
+        `API: ${api.name}\nDescripción: ${api.description}\nURL: ${api.baseUrl}\nVersión: ${api.version}\nAutenticación: ${api.authentication}`
+      );
     }
   }
 
   editAPI(apiId) {
-    const api = this.apis.find(a => a.id === apiId);
+    const api = this.apis.find((a) => a.id === apiId);
     if (api) {
       const newName = prompt('Nuevo nombre:', api.name);
       if (newName) {
@@ -950,14 +975,18 @@ class AxyraIntegrationAPISystem {
   }
 
   showWebhookDetails(webhookId) {
-    const webhook = this.webhooks.find(w => w.id === webhookId);
+    const webhook = this.webhooks.find((w) => w.id === webhookId);
     if (webhook) {
-      alert(`Webhook: ${webhook.name}\nDescripción: ${webhook.description}\nURL: ${webhook.url}\nEventos: ${webhook.events.join(', ')}`);
+      alert(
+        `Webhook: ${webhook.name}\nDescripción: ${webhook.description}\nURL: ${
+          webhook.url
+        }\nEventos: ${webhook.events.join(', ')}`
+      );
     }
   }
 
   editWebhook(webhookId) {
-    const webhook = this.webhooks.find(w => w.id === webhookId);
+    const webhook = this.webhooks.find((w) => w.id === webhookId);
     if (webhook) {
       const newName = prompt('Nuevo nombre:', webhook.name);
       if (newName) {

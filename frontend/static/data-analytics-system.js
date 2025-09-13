@@ -15,7 +15,7 @@ class AxyraDataAnalyticsSystem {
     this.dataAlerts = [];
     this.dataLogs = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -227,7 +227,7 @@ class AxyraDataAnalyticsSystem {
           description: 'Datos almacenados en localStorage del navegador',
           type: 'local_storage',
           connectionString: 'localStorage',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'firebase',
@@ -235,8 +235,8 @@ class AxyraDataAnalyticsSystem {
           description: 'Base de datos en la nube de Firebase',
           type: 'firebase',
           connectionString: 'firebase://axyra-db',
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveDataSources();
     }
@@ -250,7 +250,7 @@ class AxyraDataAnalyticsSystem {
           sourceId: 'local_storage',
           tableName: 'axyra_empleados',
           fields: ['id', 'nombre', 'apellido', 'email', 'departamento', 'salario'],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'hours_dataset',
@@ -259,8 +259,8 @@ class AxyraDataAnalyticsSystem {
           sourceId: 'local_storage',
           tableName: 'axyra_horas',
           fields: ['id', 'empleado_id', 'fecha', 'horas_trabajadas', 'tipo_hora'],
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveDataSets();
     }
@@ -268,21 +268,21 @@ class AxyraDataAnalyticsSystem {
 
   handleDataSourceChange(change) {
     const { sourceId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.dataSources.push(data);
         this.saveDataSources();
         break;
       case 'updated':
-        const sourceIndex = this.dataSources.findIndex(s => s.id === sourceId);
+        const sourceIndex = this.dataSources.findIndex((s) => s.id === sourceId);
         if (sourceIndex !== -1) {
           this.dataSources[sourceIndex] = { ...this.dataSources[sourceIndex], ...data };
           this.saveDataSources();
         }
         break;
       case 'deleted':
-        this.dataSources = this.dataSources.filter(s => s.id !== sourceId);
+        this.dataSources = this.dataSources.filter((s) => s.id !== sourceId);
         this.saveDataSources();
         break;
     }
@@ -290,21 +290,21 @@ class AxyraDataAnalyticsSystem {
 
   handleDataSetChange(change) {
     const { dataSetId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.dataSets.push(data);
         this.saveDataSets();
         break;
       case 'updated':
-        const dataSetIndex = this.dataSets.findIndex(d => d.id === dataSetId);
+        const dataSetIndex = this.dataSets.findIndex((d) => d.id === dataSetId);
         if (dataSetIndex !== -1) {
           this.dataSets[dataSetIndex] = { ...this.dataSets[dataSetIndex], ...data };
           this.saveDataSets();
         }
         break;
       case 'deleted':
-        this.dataSets = this.dataSets.filter(d => d.id !== dataSetId);
+        this.dataSets = this.dataSets.filter((d) => d.id !== dataSetId);
         this.saveDataSets();
         break;
     }
@@ -324,8 +324,8 @@ class AxyraDataAnalyticsSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.dataSources.push(source);
@@ -349,8 +349,8 @@ class AxyraDataAnalyticsSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.dataSets.push(dataSet);
@@ -373,8 +373,8 @@ class AxyraDataAnalyticsSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.dataQueries.push(query);
@@ -397,8 +397,8 @@ class AxyraDataAnalyticsSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.dataVisualizations.push(visualization);
@@ -423,8 +423,8 @@ class AxyraDataAnalyticsSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.dataReports.push(report);
@@ -446,8 +446,8 @@ class AxyraDataAnalyticsSystem {
       isAboveThreshold: metricData.isAboveThreshold || false,
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.dataMetrics.push(metric);
@@ -472,8 +472,8 @@ class AxyraDataAnalyticsSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.dataInsights.push(insight);
@@ -500,8 +500,8 @@ class AxyraDataAnalyticsSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.dataAlerts.push(alert);
@@ -521,8 +521,8 @@ class AxyraDataAnalyticsSystem {
       data: logData.data || {},
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.dataLogs.push(log);
@@ -534,23 +534,23 @@ class AxyraDataAnalyticsSystem {
 
   getDataStatistics() {
     const totalSources = this.dataSources.length;
-    const activeSources = this.dataSources.filter(s => s.isActive).length;
+    const activeSources = this.dataSources.filter((s) => s.isActive).length;
     const totalDataSets = this.dataSets.length;
-    const activeDataSets = this.dataSets.filter(d => d.isActive).length;
+    const activeDataSets = this.dataSets.filter((d) => d.isActive).length;
     const totalQueries = this.dataQueries.length;
-    const activeQueries = this.dataQueries.filter(q => q.isActive).length;
+    const activeQueries = this.dataQueries.filter((q) => q.isActive).length;
     const totalVisualizations = this.dataVisualizations.length;
-    const activeVisualizations = this.dataVisualizations.filter(v => v.isActive).length;
+    const activeVisualizations = this.dataVisualizations.filter((v) => v.isActive).length;
     const totalReports = this.dataReports.length;
-    const generatedReports = this.dataReports.filter(r => r.isGenerated).length;
+    const generatedReports = this.dataReports.filter((r) => r.isGenerated).length;
     const totalMetrics = this.dataMetrics.length;
-    const aboveThresholdMetrics = this.dataMetrics.filter(m => m.isAboveThreshold).length;
+    const aboveThresholdMetrics = this.dataMetrics.filter((m) => m.isAboveThreshold).length;
     const totalInsights = this.dataInsights.length;
-    const actionableInsights = this.dataInsights.filter(i => i.isActionable).length;
+    const actionableInsights = this.dataInsights.filter((i) => i.isActionable).length;
     const totalAlerts = this.dataAlerts.length;
-    const triggeredAlerts = this.dataAlerts.filter(a => a.isTriggered).length;
+    const triggeredAlerts = this.dataAlerts.filter((a) => a.isTriggered).length;
     const totalLogs = this.dataLogs.length;
-    const errorLogs = this.dataLogs.filter(l => l.level === 'error').length;
+    const errorLogs = this.dataLogs.filter((l) => l.level === 'error').length;
 
     return {
       totalSources,
@@ -570,7 +570,7 @@ class AxyraDataAnalyticsSystem {
       totalAlerts,
       triggeredAlerts,
       totalLogs,
-      errorLogs
+      errorLogs,
     };
   }
 
@@ -659,13 +659,13 @@ class AxyraDataAnalyticsSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -674,7 +674,7 @@ class AxyraDataAnalyticsSystem {
 
   renderDataStats() {
     const stats = this.getDataStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -747,7 +747,7 @@ class AxyraDataAnalyticsSystem {
 
   renderOverview() {
     const stats = this.getDataStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -807,12 +807,16 @@ class AxyraDataAnalyticsSystem {
 
   renderSourcesList() {
     const sources = this.dataSources.slice(-20); // Últimas 20 fuentes
-    
-    return sources.map(source => `
+
+    return sources
+      .map(
+        (source) => `
       <div class="source-card">
         <div class="source-header">
           <h5>${source.name}</h5>
-          <span class="source-status ${source.isActive ? 'active' : 'inactive'}">${source.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="source-status ${source.isActive ? 'active' : 'inactive'}">${
+          source.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="source-info">
           <p>${source.description}</p>
@@ -824,17 +828,23 @@ class AxyraDataAnalyticsSystem {
           <button onclick="axyraDataAnalyticsSystem.editSource('${source.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderDataSetsList() {
     const dataSets = this.dataSets.slice(-20); // Últimos 20 conjuntos
-    
-    return dataSets.map(dataSet => `
+
+    return dataSets
+      .map(
+        (dataSet) => `
       <div class="dataset-card">
         <div class="dataset-header">
           <h5>${dataSet.name}</h5>
-          <span class="dataset-status ${dataSet.isActive ? 'active' : 'inactive'}">${dataSet.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="dataset-status ${dataSet.isActive ? 'active' : 'inactive'}">${
+          dataSet.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="dataset-info">
           <p>${dataSet.description}</p>
@@ -846,17 +856,23 @@ class AxyraDataAnalyticsSystem {
           <button onclick="axyraDataAnalyticsSystem.editDataSet('${dataSet.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderQueriesList() {
     const queries = this.dataQueries.slice(-20); // Últimas 20 consultas
-    
-    return queries.map(query => `
+
+    return queries
+      .map(
+        (query) => `
       <div class="query-card">
         <div class="query-header">
           <h5>${query.name}</h5>
-          <span class="query-status ${query.isActive ? 'active' : 'inactive'}">${query.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="query-status ${query.isActive ? 'active' : 'inactive'}">${
+          query.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="query-info">
           <p>${query.description}</p>
@@ -867,17 +883,23 @@ class AxyraDataAnalyticsSystem {
           <button onclick="axyraDataAnalyticsSystem.editQuery('${query.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderVisualizationsList() {
     const visualizations = this.dataVisualizations.slice(-20); // Últimas 20 visualizaciones
-    
-    return visualizations.map(visualization => `
+
+    return visualizations
+      .map(
+        (visualization) => `
       <div class="visualization-card">
         <div class="visualization-header">
           <h5>${visualization.name}</h5>
-          <span class="visualization-status ${visualization.isActive ? 'active' : 'inactive'}">${visualization.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="visualization-status ${visualization.isActive ? 'active' : 'inactive'}">${
+          visualization.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="visualization-info">
           <p>${visualization.description}</p>
@@ -888,17 +910,23 @@ class AxyraDataAnalyticsSystem {
           <button onclick="axyraDataAnalyticsSystem.editVisualization('${visualization.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderReportsList() {
     const reports = this.dataReports.slice(-20); // Últimos 20 reportes
-    
-    return reports.map(report => `
+
+    return reports
+      .map(
+        (report) => `
       <div class="report-card">
         <div class="report-header">
           <h5>${report.name}</h5>
-          <span class="report-status ${report.isGenerated ? 'generated' : 'pending'}">${report.isGenerated ? 'Generado' : 'Pendiente'}</span>
+          <span class="report-status ${report.isGenerated ? 'generated' : 'pending'}">${
+          report.isGenerated ? 'Generado' : 'Pendiente'
+        }</span>
         </div>
         <div class="report-info">
           <p>${report.description}</p>
@@ -910,13 +938,17 @@ class AxyraDataAnalyticsSystem {
           <button onclick="axyraDataAnalyticsSystem.generateReport('${report.id}')">Generar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderInsightsList() {
     const insights = this.dataInsights.slice(-20); // Últimos 20 insights
-    
-    return insights.map(insight => `
+
+    return insights
+      .map(
+        (insight) => `
       <div class="insight-card">
         <div class="insight-header">
           <h5>${insight.title}</h5>
@@ -933,17 +965,23 @@ class AxyraDataAnalyticsSystem {
           <button onclick="axyraDataAnalyticsSystem.editInsight('${insight.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderAlertsList() {
     const alerts = this.dataAlerts.slice(-20); // Últimas 20 alertas
-    
-    return alerts.map(alert => `
+
+    return alerts
+      .map(
+        (alert) => `
       <div class="alert-card">
         <div class="alert-header">
           <h5>${alert.name}</h5>
-          <span class="alert-status ${alert.isTriggered ? 'triggered' : 'normal'}">${alert.isTriggered ? 'Activada' : 'Normal'}</span>
+          <span class="alert-status ${alert.isTriggered ? 'triggered' : 'normal'}">${
+          alert.isTriggered ? 'Activada' : 'Normal'
+        }</span>
         </div>
         <div class="alert-info">
           <p>${alert.description}</p>
@@ -956,13 +994,17 @@ class AxyraDataAnalyticsSystem {
           <button onclick="axyraDataAnalyticsSystem.resolveAlert('${alert.id}')">Resolver</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderLogsList() {
     const logs = this.dataLogs.slice(-20); // Últimos 20 logs
-    
-    return logs.map(log => `
+
+    return logs
+      .map(
+        (log) => `
       <div class="log-card">
         <div class="log-header">
           <h5>${log.message}</h5>
@@ -974,7 +1016,9 @@ class AxyraDataAnalyticsSystem {
           <p>Fecha: ${new Date(log.timestamp).toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreateDataSourceDialog() {
@@ -996,14 +1040,16 @@ class AxyraDataAnalyticsSystem {
   }
 
   showSourceDetails(sourceId) {
-    const source = this.dataSources.find(s => s.id === sourceId);
+    const source = this.dataSources.find((s) => s.id === sourceId);
     if (source) {
-      alert(`Fuente: ${source.name}\nDescripción: ${source.description}\nTipo: ${source.type}\nConexión: ${source.connectionString}`);
+      alert(
+        `Fuente: ${source.name}\nDescripción: ${source.description}\nTipo: ${source.type}\nConexión: ${source.connectionString}`
+      );
     }
   }
 
   editSource(sourceId) {
-    const source = this.dataSources.find(s => s.id === sourceId);
+    const source = this.dataSources.find((s) => s.id === sourceId);
     if (source) {
       const newName = prompt('Nuevo nombre:', source.name);
       if (newName) {
@@ -1014,14 +1060,18 @@ class AxyraDataAnalyticsSystem {
   }
 
   showDataSetDetails(dataSetId) {
-    const dataSet = this.dataSets.find(d => d.id === dataSetId);
+    const dataSet = this.dataSets.find((d) => d.id === dataSetId);
     if (dataSet) {
-      alert(`Conjunto: ${dataSet.name}\nDescripción: ${dataSet.description}\nTabla: ${dataSet.tableName}\nCampos: ${dataSet.fields.join(', ')}`);
+      alert(
+        `Conjunto: ${dataSet.name}\nDescripción: ${dataSet.description}\nTabla: ${
+          dataSet.tableName
+        }\nCampos: ${dataSet.fields.join(', ')}`
+      );
     }
   }
 
   editDataSet(dataSetId) {
-    const dataSet = this.dataSets.find(d => d.id === dataSetId);
+    const dataSet = this.dataSets.find((d) => d.id === dataSetId);
     if (dataSet) {
       const newName = prompt('Nuevo nombre:', dataSet.name);
       if (newName) {
@@ -1032,14 +1082,14 @@ class AxyraDataAnalyticsSystem {
   }
 
   showQueryDetails(queryId) {
-    const query = this.dataQueries.find(q => q.id === queryId);
+    const query = this.dataQueries.find((q) => q.id === queryId);
     if (query) {
       alert(`Consulta: ${query.name}\nDescripción: ${query.description}\nSQL: ${query.sql}`);
     }
   }
 
   editQuery(queryId) {
-    const query = this.dataQueries.find(q => q.id === queryId);
+    const query = this.dataQueries.find((q) => q.id === queryId);
     if (query) {
       const newName = prompt('Nuevo nombre:', query.name);
       if (newName) {
@@ -1050,14 +1100,16 @@ class AxyraDataAnalyticsSystem {
   }
 
   showVisualizationDetails(visualizationId) {
-    const visualization = this.dataVisualizations.find(v => v.id === visualizationId);
+    const visualization = this.dataVisualizations.find((v) => v.id === visualizationId);
     if (visualization) {
-      alert(`Visualización: ${visualization.name}\nDescripción: ${visualization.description}\nTipo: ${visualization.type}`);
+      alert(
+        `Visualización: ${visualization.name}\nDescripción: ${visualization.description}\nTipo: ${visualization.type}`
+      );
     }
   }
 
   editVisualization(visualizationId) {
-    const visualization = this.dataVisualizations.find(v => v.id === visualizationId);
+    const visualization = this.dataVisualizations.find((v) => v.id === visualizationId);
     if (visualization) {
       const newName = prompt('Nuevo nombre:', visualization.name);
       if (newName) {
@@ -1068,14 +1120,18 @@ class AxyraDataAnalyticsSystem {
   }
 
   showReportDetails(reportId) {
-    const report = this.dataReports.find(r => r.id === reportId);
+    const report = this.dataReports.find((r) => r.id === reportId);
     if (report) {
-      alert(`Reporte: ${report.name}\nDescripción: ${report.description}\nTipo: ${report.type}\nEstado: ${report.isGenerated ? 'Generado' : 'Pendiente'}`);
+      alert(
+        `Reporte: ${report.name}\nDescripción: ${report.description}\nTipo: ${report.type}\nEstado: ${
+          report.isGenerated ? 'Generado' : 'Pendiente'
+        }`
+      );
     }
   }
 
   generateReport(reportId) {
-    const report = this.dataReports.find(r => r.id === reportId);
+    const report = this.dataReports.find((r) => r.id === reportId);
     if (report) {
       report.isGenerated = true;
       report.generatedAt = new Date().toISOString();
@@ -1084,14 +1140,18 @@ class AxyraDataAnalyticsSystem {
   }
 
   showInsightDetails(insightId) {
-    const insight = this.dataInsights.find(i => i.id === insightId);
+    const insight = this.dataInsights.find((i) => i.id === insightId);
     if (insight) {
-      alert(`Insight: ${insight.title}\nDescripción: ${insight.description}\nCategoría: ${insight.category}\nConfianza: ${insight.confidence}%\nAccionable: ${insight.isActionable ? 'Sí' : 'No'}`);
+      alert(
+        `Insight: ${insight.title}\nDescripción: ${insight.description}\nCategoría: ${insight.category}\nConfianza: ${
+          insight.confidence
+        }%\nAccionable: ${insight.isActionable ? 'Sí' : 'No'}`
+      );
     }
   }
 
   editInsight(insightId) {
-    const insight = this.dataInsights.find(i => i.id === insightId);
+    const insight = this.dataInsights.find((i) => i.id === insightId);
     if (insight) {
       const newTitle = prompt('Nuevo título:', insight.title);
       if (newTitle) {
@@ -1102,14 +1162,16 @@ class AxyraDataAnalyticsSystem {
   }
 
   showAlertDetails(alertId) {
-    const alert = this.dataAlerts.find(a => a.id === alertId);
+    const alert = this.dataAlerts.find((a) => a.id === alertId);
     if (alert) {
-      alert(`Alerta: ${alert.name}\nDescripción: ${alert.description}\nTipo: ${alert.type}\nCondición: ${alert.condition}\nUmbral: ${alert.threshold}`);
+      alert(
+        `Alerta: ${alert.name}\nDescripción: ${alert.description}\nTipo: ${alert.type}\nCondición: ${alert.condition}\nUmbral: ${alert.threshold}`
+      );
     }
   }
 
   resolveAlert(alertId) {
-    const alert = this.dataAlerts.find(a => a.id === alertId);
+    const alert = this.dataAlerts.find((a) => a.id === alertId);
     if (alert) {
       alert.isResolved = true;
       alert.resolvedAt = new Date().toISOString();

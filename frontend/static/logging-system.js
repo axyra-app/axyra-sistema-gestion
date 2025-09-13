@@ -11,7 +11,7 @@ class AxyraLoggingSystem {
     this.maxLogs = 1000;
     this.isDebugMode = false;
     this.isEnabled = true;
-    
+
     this.init();
   }
 
@@ -52,7 +52,7 @@ class AxyraLoggingSystem {
       info: console.info,
       warn: console.warn,
       error: console.error,
-      debug: console.debug
+      debug: console.debug,
     };
 
     // Override console methods
@@ -89,7 +89,7 @@ class AxyraLoggingSystem {
         filename: event.filename,
         lineno: event.lineno,
         colno: event.colno,
-        stack: event.error?.stack
+        stack: event.error?.stack,
       });
     });
 
@@ -97,19 +97,23 @@ class AxyraLoggingSystem {
     window.addEventListener('unhandledrejection', (event) => {
       this.log('error', 'promise', `Unhandled Promise Rejection: ${event.reason}`, {
         reason: event.reason,
-        stack: event.reason?.stack
+        stack: event.reason?.stack,
       });
     });
 
     // Capturar errores de recursos
-    window.addEventListener('error', (event) => {
-      if (event.target !== window) {
-        this.log('error', 'resource', `Resource Error: ${event.target.src || event.target.href}`, {
-          tagName: event.target.tagName,
-          src: event.target.src || event.target.href
-        });
-      }
-    }, true);
+    window.addEventListener(
+      'error',
+      (event) => {
+        if (event.target !== window) {
+          this.log('error', 'resource', `Resource Error: ${event.target.src || event.target.href}`, {
+            tagName: event.target.tagName,
+            src: event.target.src || event.target.href,
+          });
+        }
+      },
+      true
+    );
   }
 
   setupPerformanceMonitoring() {
@@ -124,7 +128,7 @@ class AxyraLoggingSystem {
         this.log('debug', 'performance', 'Memory usage', {
           used: performance.memory.usedJSHeapSize,
           total: performance.memory.totalJSHeapSize,
-          limit: performance.memory.jsHeapSizeLimit
+          limit: performance.memory.jsHeapSizeLimit,
         });
       }, 60000); // Cada minuto
     }
@@ -135,7 +139,7 @@ class AxyraLoggingSystem {
       this.log('info', 'performance', `Page loaded in ${loadTime.toFixed(2)}ms`, {
         loadTime: loadTime,
         navigationStart: performance.timing?.navigationStart,
-        loadEventEnd: performance.timing?.loadEventEnd
+        loadEventEnd: performance.timing?.loadEventEnd,
       });
     });
   }
@@ -159,7 +163,7 @@ class AxyraLoggingSystem {
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
       url: window.location.href,
-      userId: this.getCurrentUser()
+      userId: this.getCurrentUser(),
     };
 
     this.logs.push(logEntry);
@@ -183,7 +187,7 @@ class AxyraLoggingSystem {
       info: '#17a2b8',
       warn: '#ffc107',
       error: '#dc3545',
-      fatal: '#6f42c1'
+      fatal: '#6f42c1',
     };
 
     const color = colors[logEntry.level] || '#6c757d';
@@ -226,34 +230,29 @@ class AxyraLoggingSystem {
     let filteredLogs = [...this.logs];
 
     if (filters.level) {
-      filteredLogs = filteredLogs.filter(log => log.level === filters.level);
+      filteredLogs = filteredLogs.filter((log) => log.level === filters.level);
     }
 
     if (filters.category) {
-      filteredLogs = filteredLogs.filter(log => log.category === filters.category);
+      filteredLogs = filteredLogs.filter((log) => log.category === filters.category);
     }
 
     if (filters.userId) {
-      filteredLogs = filteredLogs.filter(log => log.userId === filters.userId);
+      filteredLogs = filteredLogs.filter((log) => log.userId === filters.userId);
     }
 
     if (filters.dateFrom) {
-      filteredLogs = filteredLogs.filter(log => 
-        new Date(log.timestamp) >= new Date(filters.dateFrom)
-      );
+      filteredLogs = filteredLogs.filter((log) => new Date(log.timestamp) >= new Date(filters.dateFrom));
     }
 
     if (filters.dateTo) {
-      filteredLogs = filteredLogs.filter(log => 
-        new Date(log.timestamp) <= new Date(filters.dateTo)
-      );
+      filteredLogs = filteredLogs.filter((log) => new Date(log.timestamp) <= new Date(filters.dateTo));
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredLogs = filteredLogs.filter(log => 
-        log.message.toLowerCase().includes(searchTerm) ||
-        log.category.toLowerCase().includes(searchTerm)
+      filteredLogs = filteredLogs.filter(
+        (log) => log.message.toLowerCase().includes(searchTerm) || log.category.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -265,7 +264,7 @@ class AxyraLoggingSystem {
     const levelStats = {};
     const categoryStats = {};
 
-    this.logs.forEach(log => {
+    this.logs.forEach((log) => {
       levelStats[log.level] = (levelStats[log.level] || 0) + 1;
       categoryStats[log.category] = (categoryStats[log.category] || 0) + 1;
     });
@@ -280,12 +279,12 @@ class AxyraLoggingSystem {
       categoryStats: categoryStats,
       errorCount: errorCount,
       fatalCount: fatalCount,
-      errorRate: errorRate
+      errorRate: errorRate,
     };
   }
 
   getErrorLogs() {
-    return this.logs.filter(log => log.level === 'error' || log.level === 'fatal');
+    return this.logs.filter((log) => log.level === 'error' || log.level === 'fatal');
   }
 
   getRecentErrors(limit = 10) {
@@ -309,7 +308,7 @@ class AxyraLoggingSystem {
     const data = {
       logs: this.logs,
       statistics: this.getLogStatistics(),
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
 
     let content;
@@ -352,18 +351,18 @@ class AxyraLoggingSystem {
     rows.push(['Timestamp', 'Level', 'Category', 'Message', 'User', 'URL']);
 
     // Datos
-    this.logs.forEach(log => {
+    this.logs.forEach((log) => {
       rows.push([
         new Date(log.timestamp).toLocaleString(),
         log.level,
         log.category,
         log.message,
         log.userId || 'system',
-        log.url
+        log.url,
       ]);
     });
 
-    return rows.map(row => row.join(',')).join('\n');
+    return rows.map((row) => row.join(',')).join('\n');
   }
 
   enableDebugMode() {
@@ -471,7 +470,7 @@ class AxyraLoggingSystem {
       const filters = {
         level: levelFilter.value,
         category: categoryFilter.value,
-        search: searchInput.value
+        search: searchInput.value,
       };
       const filteredLogs = this.getLogs(filters);
       document.getElementById('log-list').innerHTML = this.renderLogs(filteredLogs);
@@ -484,14 +483,15 @@ class AxyraLoggingSystem {
 
   renderLogs(logs = null) {
     const logsToRender = logs || this.logs.slice(-100);
-    
-    return logsToRender.map(log => {
-      const timestamp = new Date(log.timestamp).toLocaleString();
-      const levelClass = `log-level-${log.level}`;
-      const dataStr = Object.keys(log.data).length > 0 ? 
-        `<div class="log-data">${JSON.stringify(log.data, null, 2)}</div>` : '';
 
-      return `
+    return logsToRender
+      .map((log) => {
+        const timestamp = new Date(log.timestamp).toLocaleString();
+        const levelClass = `log-level-${log.level}`;
+        const dataStr =
+          Object.keys(log.data).length > 0 ? `<div class="log-data">${JSON.stringify(log.data, null, 2)}</div>` : '';
+
+        return `
         <div class="log-entry ${levelClass}">
           <div class="log-header">
             <span class="log-timestamp">${timestamp}</span>
@@ -503,7 +503,8 @@ class AxyraLoggingSystem {
           ${dataStr}
         </div>
       `;
-    }).join('');
+      })
+      .join('');
   }
 
   getPerformanceMetrics() {
@@ -511,7 +512,7 @@ class AxyraLoggingSystem {
       loadTime: 0,
       memoryUsage: 0,
       errorCount: 0,
-      logCount: this.logs.length
+      logCount: this.logs.length,
     };
 
     if (performance.timing) {
@@ -536,7 +537,7 @@ class AxyraLoggingSystem {
       statistics: statistics,
       performance: performance,
       recentErrors: recentErrors,
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
     };
   }
 }

@@ -111,6 +111,11 @@
     <script src="../../static/advanced-user-management-system.js"></script>
     <script src="../../static/file-document-management-system.js"></script>
     <script src="../../static/project-task-management-system.js"></script>
+    
+    <!-- Sistemas Comerciales AXYRA -->
+    <script src="../../static/payment-system.js"></script>
+    <script src="../../static/onboarding-system.js"></script>
+    <link rel="stylesheet" href="../../static/commercial-styles.css" />
   </head>
   <body>
     <!-- Header Compartido AXYRA - Se insertará automáticamente -->
@@ -479,6 +484,28 @@
             </button>
             <button class="axyra-btn axyra-btn-outline-primary" onclick="window.axyraProjectTaskManagementSystem?.showProjectManagementDashboard()">
               <i class="fas fa-tasks"></i> Gestión de Proyectos
+            </button>
+          </div>
+        </div>
+
+        <!-- Sistemas Comerciales -->
+        <div class="axyra-commercial-systems-section">
+          <div class="axyra-section-header">
+            <h2 class="axyra-section-title">💼 Sistemas Comerciales</h2>
+            <p>Gestión de pagos, suscripciones y onboarding de usuarios</p>
+          </div>
+          <div class="axyra-dashboard-controls">
+            <button class="axyra-btn axyra-btn-primary" onclick="window.axyraPaymentSystem?.showPaymentDashboard()">
+              <i class="fas fa-credit-card"></i> Sistema de Pagos
+            </button>
+            <button class="axyra-btn axyra-btn-secondary" onclick="window.axyraOnboardingSystem?.startOnboarding()">
+              <i class="fas fa-user-plus"></i> Onboarding de Usuarios
+            </button>
+            <button class="axyra-btn axyra-btn-info" onclick="window.axyraPaymentSystem?.showPlansDialog()">
+              <i class="fas fa-tags"></i> Gestionar Planes
+            </button>
+            <button class="axyra-btn axyra-btn-warning" onclick="window.axyraPaymentSystem?.showPaymentMethodsDialog()">
+              <i class="fas fa-wallet"></i> Métodos de Pago
             </button>
           </div>
         </div>

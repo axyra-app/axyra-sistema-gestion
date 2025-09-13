@@ -11,7 +11,7 @@ class AxyraWorkflowManagement {
     this.conditions = [];
     this.actions = [];
     this.executions = [];
-    
+
     this.init();
   }
 
@@ -59,7 +59,7 @@ class AxyraWorkflowManagement {
           status: 'active',
           trigger: 'employee_created',
           steps: ['create_account', 'send_welcome_email', 'assign_manager', 'schedule_training'],
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'payroll_approval',
@@ -68,7 +68,7 @@ class AxyraWorkflowManagement {
           status: 'active',
           trigger: 'payroll_generated',
           steps: ['notify_manager', 'wait_approval', 'send_notifications', 'finalize_payroll'],
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'inventory_low_stock',
@@ -77,8 +77,8 @@ class AxyraWorkflowManagement {
           status: 'active',
           trigger: 'inventory_low_stock',
           steps: ['check_stock', 'notify_purchasing', 'create_purchase_order', 'update_inventory'],
-          createdAt: new Date().toISOString()
-        }
+          createdAt: new Date().toISOString(),
+        },
       ];
       this.saveData();
     }
@@ -89,7 +89,7 @@ class AxyraWorkflowManagement {
     this.engine = {
       isRunning: false,
       currentExecution: null,
-      queue: []
+      queue: [],
     };
   }
 
@@ -114,7 +114,7 @@ class AxyraWorkflowManagement {
       settings: workflowData.settings || {},
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.workflows.push(workflow);
@@ -125,15 +125,15 @@ class AxyraWorkflowManagement {
   }
 
   updateWorkflow(workflowId, updates) {
-    const workflowIndex = this.workflows.findIndex(w => w.id === workflowId);
+    const workflowIndex = this.workflows.findIndex((w) => w.id === workflowId);
     if (workflowIndex === -1) {
       throw new Error('Workflow no encontrado');
     }
 
-    this.workflows[workflowIndex] = { 
-      ...this.workflows[workflowIndex], 
-      ...updates, 
-      updatedAt: new Date().toISOString() 
+    this.workflows[workflowIndex] = {
+      ...this.workflows[workflowIndex],
+      ...updates,
+      updatedAt: new Date().toISOString(),
     };
 
     this.saveData();
@@ -142,7 +142,7 @@ class AxyraWorkflowManagement {
   }
 
   deleteWorkflow(workflowId) {
-    const workflowIndex = this.workflows.findIndex(w => w.id === workflowId);
+    const workflowIndex = this.workflows.findIndex((w) => w.id === workflowId);
     if (workflowIndex === -1) {
       throw new Error('Workflow no encontrado');
     }
@@ -171,7 +171,7 @@ class AxyraWorkflowManagement {
       timeout: stepData.timeout || 300000, // 5 minutos
       retries: stepData.retries || 0,
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.steps.push(step);
@@ -194,7 +194,7 @@ class AxyraWorkflowManagement {
       apiEndpoint: conditionData.apiEndpoint || '',
       databaseQuery: conditionData.databaseQuery || '',
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.conditions.push(condition);
@@ -215,7 +215,7 @@ class AxyraWorkflowManagement {
       recipients: actionData.recipients || [],
       data: actionData.data || {},
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.actions.push(action);
@@ -226,7 +226,7 @@ class AxyraWorkflowManagement {
   }
 
   executeWorkflow(workflowId, data = {}) {
-    const workflow = this.workflows.find(w => w.id === workflowId);
+    const workflow = this.workflows.find((w) => w.id === workflowId);
     if (!workflow) {
       throw new Error('Workflow no encontrado');
     }
@@ -247,7 +247,7 @@ class AxyraWorkflowManagement {
       errors: [],
       startedAt: new Date().toISOString(),
       completedAt: null,
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.executions.push(execution);
@@ -268,7 +268,7 @@ class AxyraWorkflowManagement {
       for (let i = 0; i < execution.steps.length; i++) {
         execution.currentStep = i;
         const stepId = execution.steps[i];
-        const step = this.steps.find(s => s.id === stepId);
+        const step = this.steps.find((s) => s.id === stepId);
 
         if (!step) {
           throw new Error(`Paso no encontrado: ${stepId}`);
@@ -280,7 +280,7 @@ class AxyraWorkflowManagement {
           stepId: stepId,
           stepName: step.name,
           result: result,
-          executedAt: new Date().toISOString()
+          executedAt: new Date().toISOString(),
         });
 
         // Verificar condiciones
@@ -295,13 +295,12 @@ class AxyraWorkflowManagement {
 
       execution.status = 'completed';
       execution.completedAt = new Date().toISOString();
-
     } catch (error) {
       execution.status = 'failed';
       execution.errors.push({
         step: execution.currentStep,
         error: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } finally {
       this.engine.isRunning = false;
@@ -329,7 +328,7 @@ class AxyraWorkflowManagement {
     const results = [];
 
     for (const actionId of step.actions) {
-      const action = this.actions.find(a => a.id === actionId);
+      const action = this.actions.find((a) => a.id === actionId);
       if (!action) {
         throw new Error(`Acción no encontrada: ${actionId}`);
       }
@@ -364,13 +363,9 @@ class AxyraWorkflowManagement {
     if (window.axyraExternalIntegrations) {
       const subject = this.replaceVariables(action.template, data);
       const body = this.replaceVariables(action.config.body || '', data);
-      
+
       for (const recipient of action.recipients) {
-        await window.axyraExternalIntegrations.sendEmail(
-          recipient.email,
-          subject,
-          body
-        );
+        await window.axyraExternalIntegrations.sendEmail(recipient.email, subject, body);
       }
     }
     return { success: true, action: 'email' };
@@ -379,12 +374,9 @@ class AxyraWorkflowManagement {
   async sendSMSAction(action, data) {
     if (window.axyraExternalIntegrations) {
       const message = this.replaceVariables(action.template, data);
-      
+
       for (const recipient of action.recipients) {
-        await window.axyraExternalIntegrations.sendSMS(
-          recipient.phone,
-          message
-        );
+        await window.axyraExternalIntegrations.sendSMS(recipient.phone, message);
       }
     }
     return { success: true, action: 'sms' };
@@ -394,12 +386,12 @@ class AxyraWorkflowManagement {
     if (window.axyraAdvancedNotifications) {
       const title = this.replaceVariables(action.config.title || '', data);
       const message = this.replaceVariables(action.template, data);
-      
+
       await window.axyraAdvancedNotifications.createNotification({
         title: title,
         message: message,
         recipients: action.recipients,
-        channels: action.config.channels || ['in-app']
+        channels: action.config.channels || ['in-app'],
       });
     }
     return { success: true, action: 'notification' };
@@ -425,9 +417,9 @@ class AxyraWorkflowManagement {
   }
 
   async executeConditionStep(step, data) {
-    const conditions = step.conditions.map(conditionId => 
-      this.conditions.find(c => c.id === conditionId)
-    ).filter(Boolean);
+    const conditions = step.conditions
+      .map((conditionId) => this.conditions.find((c) => c.id === conditionId))
+      .filter(Boolean);
 
     return await this.evaluateConditions(conditions, data);
   }
@@ -442,8 +434,11 @@ class AxyraWorkflowManagement {
   }
 
   async executeParallelStep(step, data) {
-    const promises = step.actions.map(actionId => 
-      this.executeAction(this.actions.find(a => a.id === actionId), data)
+    const promises = step.actions.map((actionId) =>
+      this.executeAction(
+        this.actions.find((a) => a.id === actionId),
+        data
+      )
     );
 
     const results = await Promise.all(promises);
@@ -503,7 +498,7 @@ class AxyraWorkflowManagement {
       const expression = condition.expression.replace(/\{\{(\w+)\}\}/g, (match, key) => {
         return this.getNestedValue(data, key) || match;
       });
-      
+
       return eval(expression);
     } catch (error) {
       console.error('Error evaluando expresión:', error);
@@ -537,14 +532,12 @@ class AxyraWorkflowManagement {
 
   handleWorkflowEvent(eventData) {
     const { eventType, data } = eventData;
-    
+
     // Buscar workflows que respondan a este evento
-    const triggeredWorkflows = this.workflows.filter(w => 
-      w.status === 'active' && w.trigger === eventType
-    );
+    const triggeredWorkflows = this.workflows.filter((w) => w.status === 'active' && w.trigger === eventType);
 
     // Ejecutar workflows
-    triggeredWorkflows.forEach(workflow => {
+    triggeredWorkflows.forEach((workflow) => {
       this.executeWorkflow(workflow.id, data);
     });
   }
@@ -553,18 +546,17 @@ class AxyraWorkflowManagement {
     let filteredWorkflows = [...this.workflows];
 
     if (filters.status) {
-      filteredWorkflows = filteredWorkflows.filter(w => w.status === filters.status);
+      filteredWorkflows = filteredWorkflows.filter((w) => w.status === filters.status);
     }
 
     if (filters.trigger) {
-      filteredWorkflows = filteredWorkflows.filter(w => w.trigger === filters.trigger);
+      filteredWorkflows = filteredWorkflows.filter((w) => w.trigger === filters.trigger);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredWorkflows = filteredWorkflows.filter(w => 
-        w.name.toLowerCase().includes(searchTerm) ||
-        w.description.toLowerCase().includes(searchTerm)
+      filteredWorkflows = filteredWorkflows.filter(
+        (w) => w.name.toLowerCase().includes(searchTerm) || w.description.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -575,23 +567,19 @@ class AxyraWorkflowManagement {
     let filteredExecutions = [...this.executions];
 
     if (filters.workflowId) {
-      filteredExecutions = filteredExecutions.filter(e => e.workflowId === filters.workflowId);
+      filteredExecutions = filteredExecutions.filter((e) => e.workflowId === filters.workflowId);
     }
 
     if (filters.status) {
-      filteredExecutions = filteredExecutions.filter(e => e.status === filters.status);
+      filteredExecutions = filteredExecutions.filter((e) => e.status === filters.status);
     }
 
     if (filters.dateFrom) {
-      filteredExecutions = filteredExecutions.filter(e => 
-        new Date(e.startedAt) >= new Date(filters.dateFrom)
-      );
+      filteredExecutions = filteredExecutions.filter((e) => new Date(e.startedAt) >= new Date(filters.dateFrom));
     }
 
     if (filters.dateTo) {
-      filteredExecutions = filteredExecutions.filter(e => 
-        new Date(e.startedAt) <= new Date(filters.dateTo)
-      );
+      filteredExecutions = filteredExecutions.filter((e) => new Date(e.startedAt) <= new Date(filters.dateTo));
     }
 
     return filteredExecutions;
@@ -599,10 +587,10 @@ class AxyraWorkflowManagement {
 
   getWorkflowStatistics() {
     const totalWorkflows = this.workflows.length;
-    const activeWorkflows = this.workflows.filter(w => w.status === 'active').length;
+    const activeWorkflows = this.workflows.filter((w) => w.status === 'active').length;
     const totalExecutions = this.executions.length;
-    const successfulExecutions = this.executions.filter(e => e.status === 'completed').length;
-    const failedExecutions = this.executions.filter(e => e.status === 'failed').length;
+    const successfulExecutions = this.executions.filter((e) => e.status === 'completed').length;
+    const failedExecutions = this.executions.filter((e) => e.status === 'failed').length;
 
     return {
       totalWorkflows: totalWorkflows,
@@ -610,7 +598,7 @@ class AxyraWorkflowManagement {
       totalExecutions: totalExecutions,
       successfulExecutions: successfulExecutions,
       failedExecutions: failedExecutions,
-      successRate: totalExecutions > 0 ? (successfulExecutions / totalExecutions) * 100 : 0
+      successRate: totalExecutions > 0 ? (successfulExecutions / totalExecutions) * 100 : 0,
     };
   }
 
@@ -628,7 +616,7 @@ class AxyraWorkflowManagement {
       steps: this.steps,
       conditions: this.conditions,
       actions: this.actions,
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
 
     let content;
@@ -675,7 +663,7 @@ class AxyraWorkflowManagement {
     rows.push(['ID', 'Nombre', 'Descripción', 'Estado', 'Trigger', 'Pasos', 'Creado']);
 
     // Datos
-    this.workflows.forEach(workflow => {
+    this.workflows.forEach((workflow) => {
       rows.push([
         workflow.id,
         workflow.name,
@@ -683,11 +671,11 @@ class AxyraWorkflowManagement {
         workflow.status,
         workflow.trigger,
         workflow.steps.length,
-        new Date(workflow.createdAt).toLocaleDateString()
+        new Date(workflow.createdAt).toLocaleDateString(),
       ]);
     });
 
-    return rows.map(row => row.join(',')).join('\n');
+    return rows.map((row) => row.join(',')).join('\n');
   }
 }
 

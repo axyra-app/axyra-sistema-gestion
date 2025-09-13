@@ -3,20 +3,14 @@
  */
 
 const CACHE_NAME = 'axyra-v1';
-const urlsToCache = [
-  '/',
-  '/static/axyra-styles.css',
-  '/static/firebase-config.js',
-  '/static/notifications-system.js'
-];
+const urlsToCache = ['/', '/static/axyra-styles.css', '/static/firebase-config.js', '/static/notifications-system.js'];
 
 // Instalar Service Worker
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(urlsToCache);
+    })
   );
 });
 
@@ -38,13 +32,12 @@ self.addEventListener('activate', (event) => {
 // Interceptar requests
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
+    caches.match(event.request).then((response) => {
+      if (response) {
+        return response;
+      }
+      return fetch(event.request);
+    })
   );
 });
 
@@ -60,19 +53,17 @@ self.addEventListener('push', (event) => {
       {
         action: 'open',
         title: 'Abrir',
-        icon: '/icon-192x192.png'
+        icon: '/icon-192x192.png',
       },
       {
         action: 'close',
         title: 'Cerrar',
-        icon: '/icon-192x192.png'
-      }
-    ]
+        icon: '/icon-192x192.png',
+      },
+    ],
   };
 
-  event.waitUntil(
-    self.registration.showNotification('AXYRA', options)
-  );
+  event.waitUntil(self.registration.showNotification('AXYRA', options));
 });
 
 // Manejar clics en notificaciones

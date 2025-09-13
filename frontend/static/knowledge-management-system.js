@@ -16,7 +16,7 @@ class AxyraKnowledgeManagementSystem {
     this.templates = [];
     this.workflows = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -247,29 +247,29 @@ class AxyraKnowledgeManagementSystem {
           name: 'General',
           description: 'Información general de la empresa',
           parentId: null,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'procedures',
           name: 'Procedimientos',
           description: 'Procedimientos y procesos internos',
           parentId: null,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'faq',
           name: 'Preguntas Frecuentes',
           description: 'Preguntas y respuestas comunes',
           parentId: null,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'tutorials',
           name: 'Tutoriales',
           description: 'Guías paso a paso',
           parentId: null,
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveCategories();
     }
@@ -280,7 +280,7 @@ class AxyraKnowledgeManagementSystem {
         { id: 'urgent', name: 'Urgente', color: '#ff8800' },
         { id: 'new', name: 'Nuevo', color: '#00aa00' },
         { id: 'updated', name: 'Actualizado', color: '#0088ff' },
-        { id: 'deprecated', name: 'Obsoleto', color: '#888888' }
+        { id: 'deprecated', name: 'Obsoleto', color: '#888888' },
       ];
       this.saveTags();
     }
@@ -292,22 +292,23 @@ class AxyraKnowledgeManagementSystem {
           name: 'Plantilla de Artículo',
           type: 'article',
           content: '# Título del Artículo\n\n## Resumen\n\n## Contenido Principal\n\n## Conclusión\n\n## Referencias',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'faq_template',
           name: 'Plantilla de FAQ',
           type: 'faq',
           content: '## Pregunta\n\n**P:** ¿Pregunta frecuente?\n\n**R:** Respuesta detallada.\n\n## Referencias',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'tutorial_template',
           name: 'Plantilla de Tutorial',
           type: 'tutorial',
-          content: '# Tutorial: [Título]\n\n## Objetivo\n\n## Requisitos Previos\n\n## Pasos\n\n### Paso 1: [Descripción]\n\n### Paso 2: [Descripción]\n\n## Conclusión',
-          isActive: true
-        }
+          content:
+            '# Tutorial: [Título]\n\n## Objetivo\n\n## Requisitos Previos\n\n## Pasos\n\n### Paso 1: [Descripción]\n\n### Paso 2: [Descripción]\n\n## Conclusión',
+          isActive: true,
+        },
       ];
       this.saveTemplates();
     }
@@ -315,21 +316,21 @@ class AxyraKnowledgeManagementSystem {
 
   handleArticleChange(change) {
     const { articleId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.articles.push(data);
         this.saveArticles();
         break;
       case 'updated':
-        const articleIndex = this.articles.findIndex(a => a.id === articleId);
+        const articleIndex = this.articles.findIndex((a) => a.id === articleId);
         if (articleIndex !== -1) {
           this.articles[articleIndex] = { ...this.articles[articleIndex], ...data };
           this.saveArticles();
         }
         break;
       case 'deleted':
-        this.articles = this.articles.filter(a => a.id !== articleId);
+        this.articles = this.articles.filter((a) => a.id !== articleId);
         this.saveArticles();
         break;
     }
@@ -337,21 +338,21 @@ class AxyraKnowledgeManagementSystem {
 
   handleCategoryChange(change) {
     const { categoryId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.categories.push(data);
         this.saveCategories();
         break;
       case 'updated':
-        const categoryIndex = this.categories.findIndex(c => c.id === categoryId);
+        const categoryIndex = this.categories.findIndex((c) => c.id === categoryId);
         if (categoryIndex !== -1) {
           this.categories[categoryIndex] = { ...this.categories[categoryIndex], ...data };
           this.saveCategories();
         }
         break;
       case 'deleted':
-        this.categories = this.categories.filter(c => c.id !== categoryId);
+        this.categories = this.categories.filter((c) => c.id !== categoryId);
         this.saveCategories();
         break;
     }
@@ -376,8 +377,8 @@ class AxyraKnowledgeManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.articles.push(article);
@@ -398,8 +399,8 @@ class AxyraKnowledgeManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.categories.push(category);
@@ -418,8 +419,8 @@ class AxyraKnowledgeManagementSystem {
       isActive: tagData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.tags.push(tag);
@@ -440,8 +441,8 @@ class AxyraKnowledgeManagementSystem {
       isActive: versionData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.versions.push(version);
@@ -461,8 +462,8 @@ class AxyraKnowledgeManagementSystem {
       isActive: commentData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.comments.push(comment);
@@ -482,8 +483,8 @@ class AxyraKnowledgeManagementSystem {
       isActive: ratingData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.ratings.push(rating);
@@ -504,8 +505,8 @@ class AxyraKnowledgeManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.templates.push(template);
@@ -526,8 +527,8 @@ class AxyraKnowledgeManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.workflows.push(workflow);
@@ -539,28 +540,27 @@ class AxyraKnowledgeManagementSystem {
 
   searchArticles(query, filters = {}) {
     const searchTerm = query.toLowerCase();
-    let results = this.articles.filter(article => 
-      article.title.toLowerCase().includes(searchTerm) ||
-      article.content.toLowerCase().includes(searchTerm) ||
-      article.summary.toLowerCase().includes(searchTerm)
+    let results = this.articles.filter(
+      (article) =>
+        article.title.toLowerCase().includes(searchTerm) ||
+        article.content.toLowerCase().includes(searchTerm) ||
+        article.summary.toLowerCase().includes(searchTerm)
     );
 
     if (filters.categoryId) {
-      results = results.filter(article => article.categoryId === filters.categoryId);
+      results = results.filter((article) => article.categoryId === filters.categoryId);
     }
 
     if (filters.tags && filters.tags.length > 0) {
-      results = results.filter(article => 
-        filters.tags.some(tag => article.tags.includes(tag))
-      );
+      results = results.filter((article) => filters.tags.some((tag) => article.tags.includes(tag)));
     }
 
     if (filters.status) {
-      results = results.filter(article => article.status === filters.status);
+      results = results.filter((article) => article.status === filters.status);
     }
 
     if (filters.author) {
-      results = results.filter(article => article.author === filters.author);
+      results = results.filter((article) => article.author === filters.author);
     }
 
     // Guardar en historial de búsqueda
@@ -574,11 +574,11 @@ class AxyraKnowledgeManagementSystem {
       id: 'search_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
       query,
       timestamp: new Date().toISOString(),
-      userId: this.getCurrentUser()
+      userId: this.getCurrentUser(),
     };
 
     this.searchHistory.unshift(historyItem);
-    
+
     // Mantener solo las últimas 50 búsquedas
     if (this.searchHistory.length > 50) {
       this.searchHistory = this.searchHistory.slice(0, 50);
@@ -589,28 +589,28 @@ class AxyraKnowledgeManagementSystem {
 
   getPopularArticles(limit = 10) {
     return this.articles
-      .filter(article => article.status === 'published')
+      .filter((article) => article.status === 'published')
       .sort((a, b) => b.views - a.views)
       .slice(0, limit);
   }
 
   getRecentArticles(limit = 10) {
     return this.articles
-      .filter(article => article.status === 'published')
+      .filter((article) => article.status === 'published')
       .sort((a, b) => new Date(b.metadata.createdAt) - new Date(a.metadata.createdAt))
       .slice(0, limit);
   }
 
   getKnowledgeStatistics() {
     const totalArticles = this.articles.length;
-    const publishedArticles = this.articles.filter(a => a.status === 'published').length;
-    const draftArticles = this.articles.filter(a => a.status === 'draft').length;
+    const publishedArticles = this.articles.filter((a) => a.status === 'published').length;
+    const draftArticles = this.articles.filter((a) => a.status === 'draft').length;
     const totalCategories = this.categories.length;
     const totalTags = this.tags.length;
     const totalComments = this.comments.length;
     const totalRatings = this.ratings.length;
-    const averageRating = this.ratings.length > 0 ? 
-      this.ratings.reduce((sum, r) => sum + r.rating, 0) / this.ratings.length : 0;
+    const averageRating =
+      this.ratings.length > 0 ? this.ratings.reduce((sum, r) => sum + r.rating, 0) / this.ratings.length : 0;
     const totalViews = this.articles.reduce((sum, a) => sum + a.views, 0);
     const totalLikes = this.articles.reduce((sum, a) => sum + a.likes, 0);
 
@@ -624,7 +624,7 @@ class AxyraKnowledgeManagementSystem {
       totalRatings,
       averageRating: Math.round(averageRating * 10) / 10,
       totalViews,
-      totalLikes
+      totalLikes,
     };
   }
 
@@ -697,13 +697,13 @@ class AxyraKnowledgeManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -712,7 +712,7 @@ class AxyraKnowledgeManagementSystem {
 
   renderKnowledgeStats() {
     const stats = this.getKnowledgeStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -759,29 +759,37 @@ class AxyraKnowledgeManagementSystem {
     const stats = this.getKnowledgeStatistics();
     const popularArticles = this.getPopularArticles(5);
     const recentArticles = this.getRecentArticles(5);
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
           <h4>Artículos Populares</h4>
           <div class="popular-articles">
-            ${popularArticles.map(article => `
+            ${popularArticles
+              .map(
+                (article) => `
               <div class="article-item">
                 <span class="article-title">${article.title}</span>
                 <span class="article-views">${article.views} vistas</span>
               </div>
-            `).join('')}
+            `
+              )
+              .join('')}
           </div>
         </div>
         <div class="overview-card">
           <h4>Artículos Recientes</h4>
           <div class="recent-articles">
-            ${recentArticles.map(article => `
+            ${recentArticles
+              .map(
+                (article) => `
               <div class="article-item">
                 <span class="article-title">${article.title}</span>
                 <span class="article-date">${new Date(article.metadata.createdAt).toLocaleDateString()}</span>
               </div>
-            `).join('')}
+            `
+              )
+              .join('')}
           </div>
         </div>
         <div class="overview-card">
@@ -807,8 +815,10 @@ class AxyraKnowledgeManagementSystem {
 
   renderArticlesList() {
     const articles = this.articles.slice(-20); // Últimos 20 artículos
-    
-    return articles.map(article => `
+
+    return articles
+      .map(
+        (article) => `
       <div class="article-card">
         <div class="article-header">
           <h5>${article.title}</h5>
@@ -826,17 +836,23 @@ class AxyraKnowledgeManagementSystem {
           <button onclick="axyraKnowledgeManagementSystem.editArticle('${article.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderCategoriesList() {
     const categories = this.categories;
-    
-    return categories.map(category => `
+
+    return categories
+      .map(
+        (category) => `
       <div class="category-card">
         <div class="category-header">
           <h5>${category.name}</h5>
-          <span class="category-status ${category.isActive ? 'active' : 'inactive'}">${category.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="category-status ${category.isActive ? 'active' : 'inactive'}">${
+          category.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="category-info">
           <p>${category.description}</p>
@@ -846,7 +862,9 @@ class AxyraKnowledgeManagementSystem {
           <button onclick="axyraKnowledgeManagementSystem.editCategory('${category.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderSearchInterface() {
@@ -859,9 +877,13 @@ class AxyraKnowledgeManagementSystem {
         <div class="search-filters">
           <select id="category-filter" onchange="axyraKnowledgeManagementSystem.applyFilters()">
             <option value="">Todas las categorías</option>
-            ${this.categories.map(category => `
+            ${this.categories
+              .map(
+                (category) => `
               <option value="${category.id}">${category.name}</option>
-            `).join('')}
+            `
+              )
+              .join('')}
           </select>
           <select id="status-filter" onchange="axyraKnowledgeManagementSystem.applyFilters()">
             <option value="">Todos los estados</option>
@@ -879,8 +901,10 @@ class AxyraKnowledgeManagementSystem {
 
   renderTemplatesList() {
     const templates = this.templates;
-    
-    return templates.map(template => `
+
+    return templates
+      .map(
+        (template) => `
       <div class="template-card">
         <div class="template-header">
           <h5>${template.name}</h5>
@@ -894,17 +918,22 @@ class AxyraKnowledgeManagementSystem {
           <button onclick="axyraKnowledgeManagementSystem.editTemplate('${template.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   performSearch(query) {
     if (!query.trim()) {
-      document.getElementById('search-results').innerHTML = '<div class="search-placeholder">Ingresa un término de búsqueda</div>';
+      document.getElementById('search-results').innerHTML =
+        '<div class="search-placeholder">Ingresa un término de búsqueda</div>';
       return;
     }
 
     const results = this.searchArticles(query);
-    const resultsHtml = results.map(article => `
+    const resultsHtml = results
+      .map(
+        (article) => `
       <div class="search-result">
         <h6>${article.title}</h6>
         <p>${article.summary}</p>
@@ -914,9 +943,12 @@ class AxyraKnowledgeManagementSystem {
           <span>Fecha: ${new Date(article.metadata.createdAt).toLocaleDateString()}</span>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
 
-    document.getElementById('search-results').innerHTML = resultsHtml || '<div class="no-results">No se encontraron resultados</div>';
+    document.getElementById('search-results').innerHTML =
+      resultsHtml || '<div class="no-results">No se encontraron resultados</div>';
   }
 
   applyFilters() {
@@ -925,16 +957,19 @@ class AxyraKnowledgeManagementSystem {
     const query = document.getElementById('knowledge-search').value;
 
     if (!query.trim()) {
-      document.getElementById('search-results').innerHTML = '<div class="search-placeholder">Ingresa un término de búsqueda</div>';
+      document.getElementById('search-results').innerHTML =
+        '<div class="search-placeholder">Ingresa un término de búsqueda</div>';
       return;
     }
 
     const results = this.searchArticles(query, {
       categoryId: categoryFilter || undefined,
-      status: statusFilter || undefined
+      status: statusFilter || undefined,
     });
 
-    const resultsHtml = results.map(article => `
+    const resultsHtml = results
+      .map(
+        (article) => `
       <div class="search-result">
         <h6>${article.title}</h6>
         <p>${article.summary}</p>
@@ -944,9 +979,12 @@ class AxyraKnowledgeManagementSystem {
           <span>Fecha: ${new Date(article.metadata.createdAt).toLocaleDateString()}</span>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
 
-    document.getElementById('search-results').innerHTML = resultsHtml || '<div class="no-results">No se encontraron resultados</div>';
+    document.getElementById('search-results').innerHTML =
+      resultsHtml || '<div class="no-results">No se encontraron resultados</div>';
   }
 
   showCreateArticleDialog() {
@@ -967,14 +1005,16 @@ class AxyraKnowledgeManagementSystem {
   }
 
   showArticleDetails(articleId) {
-    const article = this.articles.find(a => a.id === articleId);
+    const article = this.articles.find((a) => a.id === articleId);
     if (article) {
-      alert(`Artículo: ${article.title}\nResumen: ${article.summary}\nAutor: ${article.author}\nVistas: ${article.views}\nMe Gusta: ${article.likes}`);
+      alert(
+        `Artículo: ${article.title}\nResumen: ${article.summary}\nAutor: ${article.author}\nVistas: ${article.views}\nMe Gusta: ${article.likes}`
+      );
     }
   }
 
   editArticle(articleId) {
-    const article = this.articles.find(a => a.id === articleId);
+    const article = this.articles.find((a) => a.id === articleId);
     if (article) {
       const newTitle = prompt('Nuevo título:', article.title);
       if (newTitle) {
@@ -985,14 +1025,14 @@ class AxyraKnowledgeManagementSystem {
   }
 
   showCategoryDetails(categoryId) {
-    const category = this.categories.find(c => c.id === categoryId);
+    const category = this.categories.find((c) => c.id === categoryId);
     if (category) {
       alert(`Categoría: ${category.name}\nDescripción: ${category.description}`);
     }
   }
 
   editCategory(categoryId) {
-    const category = this.categories.find(c => c.id === categoryId);
+    const category = this.categories.find((c) => c.id === categoryId);
     if (category) {
       const newName = prompt('Nuevo nombre:', category.name);
       if (newName) {
@@ -1003,7 +1043,7 @@ class AxyraKnowledgeManagementSystem {
   }
 
   useTemplate(templateId) {
-    const template = this.templates.find(t => t.id === templateId);
+    const template = this.templates.find((t) => t.id === templateId);
     if (template) {
       const title = prompt('Título del artículo:');
       if (title) {
@@ -1013,7 +1053,7 @@ class AxyraKnowledgeManagementSystem {
   }
 
   editTemplate(templateId) {
-    const template = this.templates.find(t => t.id === templateId);
+    const template = this.templates.find((t) => t.id === templateId);
     if (template) {
       const newName = prompt('Nuevo nombre:', template.name);
       if (newName) {

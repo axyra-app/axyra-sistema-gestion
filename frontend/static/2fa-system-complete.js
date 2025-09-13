@@ -15,23 +15,23 @@ class Axyra2FASystem {
     this.digits = 6;
     this.period = 30;
     this.window = 1;
-    
+
     this.init();
   }
 
   init() {
     try {
       console.log('🔐 Inicializando sistema 2FA completo...');
-      
+
       // Cargar configuración
       this.loadConfig();
-      
+
       // Verificar si 2FA está habilitado
       this.check2FAStatus();
-      
+
       // Configurar listeners
       this.setupEventListeners();
-      
+
       console.log('✅ Sistema 2FA inicializado correctamente');
     } catch (error) {
       console.error('❌ Error inicializando 2FA:', error);
@@ -44,9 +44,9 @@ class Axyra2FASystem {
   async setup2FA(userId, method = 'totp') {
     try {
       console.log(`🔧 Configurando 2FA para usuario ${userId} con método ${method}`);
-      
+
       this.currentMethod = method;
-      
+
       switch (method) {
         case 'totp':
           return await this.setupTOTP(userId);
@@ -70,13 +70,13 @@ class Axyra2FASystem {
     try {
       // Generar clave secreta
       this.secretKey = this.generateSecretKey();
-      
+
       // Generar códigos de respaldo
       this.backupCodes = this.generateBackupCodes();
-      
+
       // Generar QR code para la app autenticadora
       const qrCodeData = this.generateQRCodeData(userId);
-      
+
       // Guardar configuración
       const config = {
         userId: userId,
@@ -84,16 +84,16 @@ class Axyra2FASystem {
         secretKey: this.secretKey,
         backupCodes: this.backupCodes,
         setupDate: new Date().toISOString(),
-        enabled: false // Se habilitará después de la verificación
+        enabled: false, // Se habilitará después de la verificación
       };
-      
+
       this.save2FAConfig(config);
-      
+
       return {
         secretKey: this.secretKey,
         qrCodeData: qrCodeData,
         backupCodes: this.backupCodes,
-        manualEntryKey: this.secretKey
+        manualEntryKey: this.secretKey,
       };
     } catch (error) {
       console.error('❌ Error configurando TOTP:', error);
@@ -108,24 +108,24 @@ class Axyra2FASystem {
     try {
       // En un entorno real, aquí se integraría con un servicio SMS
       const phoneNumber = await this.getUserPhoneNumber(userId);
-      
+
       if (!phoneNumber) {
         throw new Error('Número de teléfono no encontrado');
       }
-      
+
       const config = {
         userId: userId,
         method: 'sms',
         phoneNumber: phoneNumber,
         setupDate: new Date().toISOString(),
-        enabled: false
+        enabled: false,
       };
-      
+
       this.save2FAConfig(config);
-      
+
       return {
         phoneNumber: this.maskPhoneNumber(phoneNumber),
-        message: 'Se enviará un código SMS para verificación'
+        message: 'Se enviará un código SMS para verificación',
       };
     } catch (error) {
       console.error('❌ Error configurando SMS:', error);
@@ -139,24 +139,24 @@ class Axyra2FASystem {
   async setupEmail(userId) {
     try {
       const email = await this.getUserEmail(userId);
-      
+
       if (!email) {
         throw new Error('Email no encontrado');
       }
-      
+
       const config = {
         userId: userId,
         method: 'email',
         email: email,
         setupDate: new Date().toISOString(),
-        enabled: false
+        enabled: false,
       };
-      
+
       this.save2FAConfig(config);
-      
+
       return {
         email: this.maskEmail(email),
-        message: 'Se enviará un código por email para verificación'
+        message: 'Se enviará un código por email para verificación',
       };
     } catch (error) {
       console.error('❌ Error configurando Email:', error);
@@ -170,13 +170,13 @@ class Axyra2FASystem {
   async verify2FA(userId, code, method = null) {
     try {
       const config = this.get2FAConfig(userId);
-      
+
       if (!config) {
         throw new Error('2FA no configurado para este usuario');
       }
-      
+
       const verifyMethod = method || config.method;
-      
+
       switch (verifyMethod) {
         case 'totp':
           return await this.verifyTOTP(code, config);
@@ -202,19 +202,19 @@ class Axyra2FASystem {
     try {
       const currentTime = Math.floor(Date.now() / 1000);
       const timeStep = Math.floor(currentTime / this.period);
-      
+
       // Verificar código actual y códigos en ventana de tiempo
       for (let i = -this.window; i <= this.window; i++) {
         const testTime = timeStep + i;
         const expectedCode = this.generateTOTPCode(config.secretKey, testTime);
-        
+
         if (code === expectedCode) {
           // Código válido
           this.log2FAEvent('TOTP_VERIFIED', config.userId, { method: 'totp' });
           return { success: true, method: 'totp' };
         }
       }
-      
+
       // Código inválido
       this.log2FAEvent('TOTP_FAILED', config.userId, { method: 'totp', code: code });
       throw new Error('Código TOTP inválido o expirado');
@@ -231,16 +231,16 @@ class Axyra2FASystem {
     try {
       // En un entorno real, aquí se verificaría con el servicio SMS
       const storedCode = this.getStoredSMSCode(config.userId);
-      
+
       if (!storedCode) {
         throw new Error('Código SMS no encontrado o expirado');
       }
-      
+
       if (code === storedCode.code && new Date() < new Date(storedCode.expires)) {
         this.log2FAEvent('SMS_VERIFIED', config.userId, { method: 'sms' });
         return { success: true, method: 'sms' };
       }
-      
+
       this.log2FAEvent('SMS_FAILED', config.userId, { method: 'sms', code: code });
       throw new Error('Código SMS inválido o expirado');
     } catch (error) {
@@ -256,16 +256,16 @@ class Axyra2FASystem {
     try {
       // En un entorno real, aquí se verificaría con el servicio de email
       const storedCode = this.getStoredEmailCode(config.userId);
-      
+
       if (!storedCode) {
         throw new Error('Código de email no encontrado o expirado');
       }
-      
+
       if (code === storedCode.code && new Date() < new Date(storedCode.expires)) {
         this.log2FAEvent('EMAIL_VERIFIED', config.userId, { method: 'email' });
         return { success: true, method: 'email' };
       }
-      
+
       this.log2FAEvent('EMAIL_FAILED', config.userId, { method: 'email', code: code });
       throw new Error('Código de email inválido o expirado');
     } catch (error) {
@@ -282,22 +282,20 @@ class Axyra2FASystem {
       if (!config.backupCodes || !Array.isArray(config.backupCodes)) {
         throw new Error('Códigos de respaldo no disponibles');
       }
-      
-      const codeIndex = config.backupCodes.findIndex(backupCode => 
-        backupCode.code === code && !backupCode.used
-      );
-      
+
+      const codeIndex = config.backupCodes.findIndex((backupCode) => backupCode.code === code && !backupCode.used);
+
       if (codeIndex === -1) {
         this.log2FAEvent('BACKUP_FAILED', config.userId, { method: 'backup', code: code });
         throw new Error('Código de respaldo inválido o ya utilizado');
       }
-      
+
       // Marcar código como usado
       config.backupCodes[codeIndex].used = true;
       config.backupCodes[codeIndex].usedDate = new Date().toISOString();
-      
+
       this.save2FAConfig(config);
-      
+
       this.log2FAEvent('BACKUP_VERIFIED', config.userId, { method: 'backup' });
       return { success: true, method: 'backup' };
     } catch (error) {
@@ -312,13 +310,13 @@ class Axyra2FASystem {
   async send2FACode(userId, method = null) {
     try {
       const config = this.get2FAConfig(userId);
-      
+
       if (!config) {
         throw new Error('2FA no configurado para este usuario');
       }
-      
+
       const sendMethod = method || config.method;
-      
+
       switch (sendMethod) {
         case 'sms':
           return await this.sendSMSCode(userId, config);
@@ -340,19 +338,19 @@ class Axyra2FASystem {
     try {
       const code = this.generateRandomCode(6);
       const expires = new Date(Date.now() + 5 * 60 * 1000); // 5 minutos
-      
+
       // En un entorno real, aquí se enviaría el SMS
       console.log(`📱 SMS enviado a ${config.phoneNumber}: ${code}`);
-      
+
       // Guardar código temporalmente
       this.storeSMSCode(userId, code, expires);
-      
+
       this.log2FAEvent('SMS_SENT', userId, { method: 'sms' });
-      
+
       return {
         success: true,
         message: `Código enviado a ${this.maskPhoneNumber(config.phoneNumber)}`,
-        expires: expires
+        expires: expires,
       };
     } catch (error) {
       console.error('❌ Error enviando SMS:', error);
@@ -367,19 +365,19 @@ class Axyra2FASystem {
     try {
       const code = this.generateRandomCode(6);
       const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutos
-      
+
       // En un entorno real, aquí se enviaría el email
       console.log(`📧 Email enviado a ${config.email}: ${code}`);
-      
+
       // Guardar código temporalmente
       this.storeEmailCode(userId, code, expires);
-      
+
       this.log2FAEvent('EMAIL_SENT', userId, { method: 'email' });
-      
+
       return {
         success: true,
         message: `Código enviado a ${this.maskEmail(config.email)}`,
-        expires: expires
+        expires: expires,
       };
     } catch (error) {
       console.error('❌ Error enviando Email:', error);
@@ -393,28 +391,28 @@ class Axyra2FASystem {
   async enable2FA(userId, verificationCode) {
     try {
       const config = this.get2FAConfig(userId);
-      
+
       if (!config) {
         throw new Error('Configuración 2FA no encontrada');
       }
-      
+
       // Verificar código antes de habilitar
       await this.verify2FA(userId, verificationCode, config.method);
-      
+
       // Habilitar 2FA
       config.enabled = true;
       config.enabledDate = new Date().toISOString();
-      
+
       this.save2FAConfig(config);
-      
+
       this.log2FAEvent('2FA_ENABLED', userId, { method: config.method });
-      
+
       console.log(`✅ 2FA habilitado para usuario ${userId}`);
-      
+
       return {
         success: true,
         message: '2FA habilitado exitosamente',
-        method: config.method
+        method: config.method,
       };
     } catch (error) {
       console.error('❌ Error habilitando 2FA:', error);
@@ -428,27 +426,27 @@ class Axyra2FASystem {
   async disable2FA(userId, verificationCode) {
     try {
       const config = this.get2FAConfig(userId);
-      
+
       if (!config) {
         throw new Error('2FA no configurado para este usuario');
       }
-      
+
       // Verificar código antes de deshabilitar
       await this.verify2FA(userId, verificationCode, config.method);
-      
+
       // Deshabilitar 2FA
       config.enabled = false;
       config.disabledDate = new Date().toISOString();
-      
+
       this.save2FAConfig(config);
-      
+
       this.log2FAEvent('2FA_DISABLED', userId, { method: config.method });
-      
+
       console.log(`❌ 2FA deshabilitado para usuario ${userId}`);
-      
+
       return {
         success: true,
-        message: '2FA deshabilitado exitosamente'
+        message: '2FA deshabilitado exitosamente',
       };
     } catch (error) {
       console.error('❌ Error deshabilitando 2FA:', error);
@@ -462,17 +460,17 @@ class Axyra2FASystem {
   async generateNewBackupCodes(userId) {
     try {
       const config = this.get2FAConfig(userId);
-      
+
       if (!config) {
         throw new Error('2FA no configurado para este usuario');
       }
-      
+
       // Generar nuevos códigos
       const newBackupCodes = this.generateBackupCodes();
-      
+
       // Guardar códigos anteriores como usados
       if (config.backupCodes) {
-        config.backupCodes.forEach(backupCode => {
+        config.backupCodes.forEach((backupCode) => {
           if (!backupCode.used) {
             backupCode.used = true;
             backupCode.usedDate = new Date().toISOString();
@@ -480,19 +478,19 @@ class Axyra2FASystem {
           }
         });
       }
-      
+
       // Agregar nuevos códigos
       config.backupCodes = [...(config.backupCodes || []), ...newBackupCodes];
       config.lastBackupCodesGenerated = new Date().toISOString();
-      
+
       this.save2FAConfig(config);
-      
+
       this.log2FAEvent('BACKUP_CODES_GENERATED', userId, { count: newBackupCodes.length });
-      
+
       return {
         success: true,
         backupCodes: newBackupCodes,
-        message: 'Nuevos códigos de respaldo generados'
+        message: 'Nuevos códigos de respaldo generados',
       };
     } catch (error) {
       console.error('❌ Error generando códigos de respaldo:', error);
@@ -505,22 +503,22 @@ class Axyra2FASystem {
    */
   get2FAStatus(userId) {
     const config = this.get2FAConfig(userId);
-    
+
     if (!config) {
       return {
         enabled: false,
         configured: false,
-        method: null
+        method: null,
       };
     }
-    
+
     return {
       enabled: config.enabled,
       configured: true,
       method: config.method,
       setupDate: config.setupDate,
       enabledDate: config.enabledDate,
-      backupCodesCount: config.backupCodes ? config.backupCodes.filter(c => !c.used).length : 0
+      backupCodesCount: config.backupCodes ? config.backupCodes.filter((c) => !c.used).length : 0,
     };
   }
 
@@ -529,28 +527,26 @@ class Axyra2FASystem {
    */
   get2FAStats() {
     const allConfigs = this.getAll2FAConfigs();
-    
+
     const stats = {
       totalUsers: allConfigs.length,
-      enabledUsers: allConfigs.filter(c => c.enabled).length,
-      disabledUsers: allConfigs.filter(c => !c.enabled).length,
+      enabledUsers: allConfigs.filter((c) => c.enabled).length,
+      disabledUsers: allConfigs.filter((c) => !c.enabled).length,
       byMethod: {},
-      recentActivity: []
+      recentActivity: [],
     };
-    
+
     // Contar por método
-    allConfigs.forEach(config => {
+    allConfigs.forEach((config) => {
       stats.byMethod[config.method] = (stats.byMethod[config.method] || 0) + 1;
     });
-    
+
     // Obtener actividad reciente (últimos 30 días)
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const recentLogs = this.get2FALogs().filter(log => 
-      new Date(log.timestamp) > thirtyDaysAgo
-    );
-    
+    const recentLogs = this.get2FALogs().filter((log) => new Date(log.timestamp) > thirtyDaysAgo);
+
     stats.recentActivity = recentLogs.slice(0, 10);
-    
+
     return stats;
   }
 
@@ -570,7 +566,7 @@ class Axyra2FASystem {
       codes.push({
         code: this.generateRandomCode(8),
         generated: new Date().toISOString(),
-        used: false
+        used: false,
       });
     }
     return codes;
@@ -589,7 +585,7 @@ class Axyra2FASystem {
     const accountName = userId;
     const secret = this.secretKey;
     const issuer = this.issuer;
-    
+
     return `otpauth://totp/${issuer}:${accountName}?secret=${secret}&issuer=${issuer}&algorithm=${this.algorithm}&digits=${this.digits}&period=${this.period}`;
   }
 
@@ -600,11 +596,12 @@ class Axyra2FASystem {
     const timeBuffer = this.intToBytes(time);
     const hmac = this.hmacSha1(key, timeBuffer);
     const offset = hmac[hmac.length - 1] & 0xf;
-    const code = ((hmac[offset] & 0x7f) << 24) |
-                 ((hmac[offset + 1] & 0xff) << 16) |
-                 ((hmac[offset + 2] & 0xff) << 8) |
-                 (hmac[offset + 3] & 0xff);
-    
+    const code =
+      ((hmac[offset] & 0x7f) << 24) |
+      ((hmac[offset + 1] & 0xff) << 16) |
+      ((hmac[offset + 2] & 0xff) << 8) |
+      (hmac[offset + 3] & 0xff);
+
     return (code % Math.pow(10, this.digits)).toString().padStart(this.digits, '0');
   }
 
@@ -655,7 +652,7 @@ class Axyra2FASystem {
   getUser(userId) {
     // Implementación básica - en producción consultar base de datos
     const users = JSON.parse(localStorage.getItem('axyra_usuarios') || '[]');
-    return users.find(u => u.id === userId);
+    return users.find((u) => u.id === userId);
   }
 
   get2FAConfig(userId) {
@@ -722,10 +719,15 @@ class Axyra2FASystem {
 
   log2FAEvent(type, userId, details = {}) {
     if (window.axyraAuditSystem) {
-      window.axyraAuditSystem.logSecurityEvent(type, `2FA: ${type}`, {
-        userId: userId,
-        ...details
-      }, userId);
+      window.axyraAuditSystem.logSecurityEvent(
+        type,
+        `2FA: ${type}`,
+        {
+          userId: userId,
+          ...details,
+        },
+        userId
+      );
     }
   }
 
@@ -733,7 +735,7 @@ class Axyra2FASystem {
     if (window.axyraAuditSystem) {
       return window.axyraAuditSystem.getLogs({
         category: 'SECURITY',
-        type: ['2FA_ENABLED', '2FA_DISABLED', 'TOTP_VERIFIED', 'SMS_VERIFIED', 'EMAIL_VERIFIED', 'BACKUP_VERIFIED']
+        type: ['2FA_ENABLED', '2FA_DISABLED', 'TOTP_VERIFIED', 'SMS_VERIFIED', 'EMAIL_VERIFIED', 'BACKUP_VERIFIED'],
       });
     }
     return [];
@@ -779,7 +781,7 @@ class Axyra2FASystem {
         algorithm: this.algorithm,
         digits: this.digits,
         period: this.period,
-        window: this.window
+        window: this.window,
       };
       localStorage.setItem('axyra_2fa_config', JSON.stringify(config));
     } catch (error) {

@@ -15,7 +15,7 @@ class AxyraFinancialManagementSystem {
     this.taxRates = [];
     this.fiscalPeriods = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -229,7 +229,7 @@ class AxyraFinancialManagementSystem {
           category: 'current_asset',
           code: '1000',
           balance: 0,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'bank',
@@ -238,7 +238,7 @@ class AxyraFinancialManagementSystem {
           category: 'current_asset',
           code: '1100',
           balance: 0,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'accounts_receivable',
@@ -247,7 +247,7 @@ class AxyraFinancialManagementSystem {
           category: 'current_asset',
           code: '1200',
           balance: 0,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'inventory',
@@ -256,7 +256,7 @@ class AxyraFinancialManagementSystem {
           category: 'current_asset',
           code: '1300',
           balance: 0,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'accounts_payable',
@@ -265,7 +265,7 @@ class AxyraFinancialManagementSystem {
           category: 'current_liability',
           code: '2000',
           balance: 0,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'sales_revenue',
@@ -274,7 +274,7 @@ class AxyraFinancialManagementSystem {
           category: 'operating_revenue',
           code: '4000',
           balance: 0,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'cost_of_goods_sold',
@@ -283,7 +283,7 @@ class AxyraFinancialManagementSystem {
           category: 'operating_expense',
           code: '5000',
           balance: 0,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'operating_expenses',
@@ -292,10 +292,10 @@ class AxyraFinancialManagementSystem {
           category: 'operating_expense',
           code: '6000',
           balance: 0,
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
-      
+
       this.saveAccounts();
     }
   }
@@ -308,31 +308,31 @@ class AxyraFinancialManagementSystem {
           name: 'IVA 19%',
           rate: 19,
           type: 'vat',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'rete_fuente',
           name: 'Retención en la Fuente',
           rate: 3.5,
           type: 'withholding',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'rete_ica',
           name: 'Retención ICA',
           rate: 1,
           type: 'withholding',
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
-      
+
       this.saveTaxRates();
     }
   }
 
   handleTransactionChange(change) {
     const { transactionId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.transactions.push(data);
@@ -340,14 +340,14 @@ class AxyraFinancialManagementSystem {
         this.updateAccountBalances(data);
         break;
       case 'updated':
-        const transactionIndex = this.transactions.findIndex(t => t.id === transactionId);
+        const transactionIndex = this.transactions.findIndex((t) => t.id === transactionId);
         if (transactionIndex !== -1) {
           this.transactions[transactionIndex] = { ...this.transactions[transactionIndex], ...data };
           this.saveTransactions();
         }
         break;
       case 'deleted':
-        this.transactions = this.transactions.filter(t => t.id !== transactionId);
+        this.transactions = this.transactions.filter((t) => t.id !== transactionId);
         this.saveTransactions();
         break;
     }
@@ -355,21 +355,21 @@ class AxyraFinancialManagementSystem {
 
   handleBudgetChange(change) {
     const { budgetId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.budgets.push(data);
         this.saveBudgets();
         break;
       case 'updated':
-        const budgetIndex = this.budgets.findIndex(b => b.id === budgetId);
+        const budgetIndex = this.budgets.findIndex((b) => b.id === budgetId);
         if (budgetIndex !== -1) {
           this.budgets[budgetIndex] = { ...this.budgets[budgetIndex], ...data };
           this.saveBudgets();
         }
         break;
       case 'deleted':
-        this.budgets = this.budgets.filter(b => b.id !== budgetId);
+        this.budgets = this.budgets.filter((b) => b.id !== budgetId);
         this.saveBudgets();
         break;
     }
@@ -389,8 +389,8 @@ class AxyraFinancialManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.accounts.push(account);
@@ -416,8 +416,8 @@ class AxyraFinancialManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.transactions.push(transaction);
@@ -431,7 +431,7 @@ class AxyraFinancialManagementSystem {
   updateAccountBalances(transaction) {
     // Actualizar saldo de cuenta de débito
     if (transaction.debitAccountId) {
-      const debitAccount = this.accounts.find(a => a.id === transaction.debitAccountId);
+      const debitAccount = this.accounts.find((a) => a.id === transaction.debitAccountId);
       if (debitAccount) {
         if (debitAccount.type === 'asset' || debitAccount.type === 'expense') {
           debitAccount.balance += transaction.amount;
@@ -443,7 +443,7 @@ class AxyraFinancialManagementSystem {
 
     // Actualizar saldo de cuenta de crédito
     if (transaction.creditAccountId) {
-      const creditAccount = this.accounts.find(a => a.id === transaction.creditAccountId);
+      const creditAccount = this.accounts.find((a) => a.id === transaction.creditAccountId);
       if (creditAccount) {
         if (creditAccount.type === 'liability' || creditAccount.type === 'equity' || creditAccount.type === 'revenue') {
           creditAccount.balance += transaction.amount;
@@ -472,8 +472,8 @@ class AxyraFinancialManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.budgets.push(budget);
@@ -503,8 +503,8 @@ class AxyraFinancialManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.invoices.push(invoice);
@@ -525,8 +525,8 @@ class AxyraFinancialManagementSystem {
       notes: paymentData.notes || '',
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.payments.push(payment);
@@ -540,10 +540,10 @@ class AxyraFinancialManagementSystem {
   }
 
   updateInvoiceStatus(invoiceId) {
-    const invoice = this.invoices.find(i => i.id === invoiceId);
+    const invoice = this.invoices.find((i) => i.id === invoiceId);
     if (invoice) {
       const totalPayments = this.payments
-        .filter(p => p.invoiceId === invoiceId)
+        .filter((p) => p.invoiceId === invoiceId)
         .reduce((sum, p) => sum + p.amount, 0);
 
       if (totalPayments >= invoice.total) {
@@ -571,8 +571,8 @@ class AxyraFinancialManagementSystem {
       tags: expenseData.tags || [],
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.expenses.push(expense);
@@ -584,7 +584,7 @@ class AxyraFinancialManagementSystem {
       amount: expense.amount,
       debitAccountId: expense.accountId,
       creditAccountId: 'cash',
-      category: 'expense'
+      category: 'expense',
     });
 
     console.log('✅ Gasto registrado:', expense.description);
@@ -604,8 +604,8 @@ class AxyraFinancialManagementSystem {
       tags: revenueData.tags || [],
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.revenues.push(revenue);
@@ -617,7 +617,7 @@ class AxyraFinancialManagementSystem {
       amount: revenue.amount,
       debitAccountId: 'cash',
       creditAccountId: revenue.accountId,
-      category: 'revenue'
+      category: 'revenue',
     });
 
     console.log('✅ Ingreso registrado:', revenue.description);
@@ -627,7 +627,7 @@ class AxyraFinancialManagementSystem {
   generateInvoiceNumber() {
     const year = new Date().getFullYear();
     const month = String(new Date().getMonth() + 1).padStart(2, '0');
-    const count = this.invoices.filter(i => i.number.startsWith(`INV-${year}${month}`)).length + 1;
+    const count = this.invoices.filter((i) => i.number.startsWith(`INV-${year}${month}`)).length + 1;
     return `INV-${year}${month}-${String(count).padStart(4, '0')}`;
   }
 
@@ -635,25 +635,19 @@ class AxyraFinancialManagementSystem {
     const startDate = filters.startDate || new Date(new Date().getFullYear(), 0, 1).toISOString();
     const endDate = filters.endDate || new Date().toISOString();
 
-    const filteredTransactions = this.transactions.filter(t => 
-      t.date >= startDate && t.date <= endDate
-    );
+    const filteredTransactions = this.transactions.filter((t) => t.date >= startDate && t.date <= endDate);
 
-    const filteredExpenses = this.expenses.filter(e => 
-      e.date >= startDate && e.date <= endDate
-    );
+    const filteredExpenses = this.expenses.filter((e) => e.date >= startDate && e.date <= endDate);
 
-    const filteredRevenues = this.revenues.filter(r => 
-      r.date >= startDate && r.date <= endDate
-    );
+    const filteredRevenues = this.revenues.filter((r) => r.date >= startDate && r.date <= endDate);
 
     const totalRevenue = filteredRevenues.reduce((sum, r) => sum + r.amount, 0);
     const totalExpenses = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
     const netIncome = totalRevenue - totalExpenses;
 
-    const accountBalances = this.accounts.map(account => ({
+    const accountBalances = this.accounts.map((account) => ({
       ...account,
-      currentBalance: account.balance
+      currentBalance: account.balance,
     }));
 
     return {
@@ -664,22 +658,24 @@ class AxyraFinancialManagementSystem {
       accountBalances,
       transactionCount: filteredTransactions.length,
       expenseCount: filteredExpenses.length,
-      revenueCount: filteredRevenues.length
+      revenueCount: filteredRevenues.length,
     };
   }
 
   getBudgetPerformance(budgetId) {
-    const budget = this.budgets.find(b => b.id === budgetId);
+    const budget = this.budgets.find((b) => b.id === budgetId);
     if (!budget) return null;
 
-    const actualAmounts = budget.categories.map(category => {
-      const account = this.accounts.find(a => a.id === category.accountId);
+    const actualAmounts = budget.categories.map((category) => {
+      const account = this.accounts.find((a) => a.id === category.accountId);
       return {
         ...category,
         actualAmount: account ? account.balance : 0,
         variance: category.budgetedAmount - (account ? account.balance : 0),
-        variancePercentage: category.budgetedAmount > 0 ? 
-          ((category.budgetedAmount - (account ? account.balance : 0)) / category.budgetedAmount) * 100 : 0
+        variancePercentage:
+          category.budgetedAmount > 0
+            ? ((category.budgetedAmount - (account ? account.balance : 0)) / category.budgetedAmount) * 100
+            : 0,
       };
     });
 
@@ -688,27 +684,21 @@ class AxyraFinancialManagementSystem {
       categories: actualAmounts,
       totalBudgeted: budget.totalBudgeted,
       totalActual: actualAmounts.reduce((sum, c) => sum + c.actualAmount, 0),
-      totalVariance: budget.totalBudgeted - actualAmounts.reduce((sum, c) => sum + c.actualAmount, 0)
+      totalVariance: budget.totalBudgeted - actualAmounts.reduce((sum, c) => sum + c.actualAmount, 0),
     };
   }
 
   getCashFlow(startDate, endDate) {
-    const transactions = this.transactions.filter(t => 
-      t.date >= startDate && t.date <= endDate
-    );
+    const transactions = this.transactions.filter((t) => t.date >= startDate && t.date <= endDate);
 
-    const cashInflows = transactions
-      .filter(t => t.creditAccountId === 'cash')
-      .reduce((sum, t) => sum + t.amount, 0);
+    const cashInflows = transactions.filter((t) => t.creditAccountId === 'cash').reduce((sum, t) => sum + t.amount, 0);
 
-    const cashOutflows = transactions
-      .filter(t => t.debitAccountId === 'cash')
-      .reduce((sum, t) => sum + t.amount, 0);
+    const cashOutflows = transactions.filter((t) => t.debitAccountId === 'cash').reduce((sum, t) => sum + t.amount, 0);
 
     return {
       inflows: cashInflows,
       outflows: cashOutflows,
-      netCashFlow: cashInflows - cashOutflows
+      netCashFlow: cashInflows - cashOutflows,
     };
   }
 
@@ -781,13 +771,13 @@ class AxyraFinancialManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -796,7 +786,7 @@ class AxyraFinancialManagementSystem {
 
   renderFinancialStats() {
     const reports = this.getFinancialReports();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -822,18 +812,22 @@ class AxyraFinancialManagementSystem {
   renderOverview() {
     const reports = this.getFinancialReports();
     const cashFlow = this.getCashFlow(reports.period.startDate, reports.period.endDate);
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
           <h4>Estado de Cuentas</h4>
           <div class="account-list">
-            ${reports.accountBalances.map(account => `
+            ${reports.accountBalances
+              .map(
+                (account) => `
               <div class="account-item">
                 <span class="account-name">${account.name}</span>
                 <span class="account-balance">$${account.currentBalance.toLocaleString()}</span>
               </div>
-            `).join('')}
+            `
+              )
+              .join('')}
           </div>
         </div>
         <div class="overview-card">
@@ -859,8 +853,10 @@ class AxyraFinancialManagementSystem {
 
   renderTransactionsList() {
     const transactions = this.transactions.slice(-20); // Últimas 20 transacciones
-    
-    return transactions.map(transaction => `
+
+    return transactions
+      .map(
+        (transaction) => `
       <div class="transaction-card">
         <div class="transaction-header">
           <h5>${transaction.description}</h5>
@@ -871,13 +867,17 @@ class AxyraFinancialManagementSystem {
           <p>Referencia: ${transaction.reference}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderInvoicesList() {
     const invoices = this.invoices.slice(-20); // Últimas 20 facturas
-    
-    return invoices.map(invoice => `
+
+    return invoices
+      .map(
+        (invoice) => `
       <div class="invoice-card">
         <div class="invoice-header">
           <h5>${invoice.number}</h5>
@@ -889,13 +889,17 @@ class AxyraFinancialManagementSystem {
           <p>Fecha: ${new Date(invoice.issueDate).toLocaleDateString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderBudgetsList() {
     const budgets = this.budgets;
-    
-    return budgets.map(budget => `
+
+    return budgets
+      .map(
+        (budget) => `
       <div class="budget-card">
         <div class="budget-header">
           <h5>${budget.name}</h5>
@@ -907,7 +911,9 @@ class AxyraFinancialManagementSystem {
           <p>Actual: $${budget.totalActual.toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderReports() {
@@ -950,23 +956,33 @@ class AxyraFinancialManagementSystem {
 
   generateIncomeStatement() {
     const reports = this.getFinancialReports();
-    alert(`Estado de Resultados\n\nIngresos: $${reports.revenue.toLocaleString()}\nGastos: $${reports.expenses.toLocaleString()}\nIngreso Neto: $${reports.netIncome.toLocaleString()}`);
+    alert(
+      `Estado de Resultados\n\nIngresos: $${reports.revenue.toLocaleString()}\nGastos: $${reports.expenses.toLocaleString()}\nIngreso Neto: $${reports.netIncome.toLocaleString()}`
+    );
   }
 
   generateBalanceSheet() {
     const reports = this.getFinancialReports();
-    const assets = reports.accountBalances.filter(a => a.type === 'asset');
-    const liabilities = reports.accountBalances.filter(a => a.type === 'liability');
-    const equity = reports.accountBalances.filter(a => a.type === 'equity');
-    
-    alert(`Balance General\n\nActivos: $${assets.reduce((sum, a) => sum + a.currentBalance, 0).toLocaleString()}\nPasivos: $${liabilities.reduce((sum, l) => sum + l.currentBalance, 0).toLocaleString()}\nPatrimonio: $${equity.reduce((sum, e) => sum + e.currentBalance, 0).toLocaleString()}`);
+    const assets = reports.accountBalances.filter((a) => a.type === 'asset');
+    const liabilities = reports.accountBalances.filter((a) => a.type === 'liability');
+    const equity = reports.accountBalances.filter((a) => a.type === 'equity');
+
+    alert(
+      `Balance General\n\nActivos: $${assets
+        .reduce((sum, a) => sum + a.currentBalance, 0)
+        .toLocaleString()}\nPasivos: $${liabilities
+        .reduce((sum, l) => sum + l.currentBalance, 0)
+        .toLocaleString()}\nPatrimonio: $${equity.reduce((sum, e) => sum + e.currentBalance, 0).toLocaleString()}`
+    );
   }
 
   generateCashFlowStatement() {
     const reports = this.getFinancialReports();
     const cashFlow = this.getCashFlow(reports.period.startDate, reports.period.endDate);
-    
-    alert(`Estado de Flujo de Efectivo\n\nEntradas: $${cashFlow.inflows.toLocaleString()}\nSalidas: $${cashFlow.outflows.toLocaleString()}\nFlujo Neto: $${cashFlow.netCashFlow.toLocaleString()}`);
+
+    alert(
+      `Estado de Flujo de Efectivo\n\nEntradas: $${cashFlow.inflows.toLocaleString()}\nSalidas: $${cashFlow.outflows.toLocaleString()}\nFlujo Neto: $${cashFlow.netCashFlow.toLocaleString()}`
+    );
   }
 
   getCurrentUser() {

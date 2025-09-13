@@ -11,13 +11,13 @@ class AxyraAnalyticsSystem {
       errors: 0,
       performance: {},
       usage: {},
-      features: {}
+      features: {},
     };
-    
+
     this.events = [];
     this.sessionStart = Date.now();
     this.isTracking = true;
-    
+
     this.init();
   }
 
@@ -36,22 +36,22 @@ class AxyraAnalyticsSystem {
         this.trackEvent('button_click', {
           buttonText: event.target.textContent,
           buttonId: event.target.id,
-          buttonClass: event.target.className
+          buttonClass: event.target.className,
         });
       }
     });
-    
+
     // Trackear envío de formularios
     document.addEventListener('submit', (event) => {
       if (this.isTracking) {
         this.trackEvent('form_submit', {
           formId: event.target.id,
           formClass: event.target.className,
-          formAction: event.target.action
+          formAction: event.target.action,
         });
       }
     });
-    
+
     // Trackear navegación entre módulos
     document.addEventListener('click', (event) => {
       if (this.isTracking && event.target.tagName === 'A') {
@@ -59,7 +59,7 @@ class AxyraAnalyticsSystem {
         if (href && href.includes('#')) {
           this.trackEvent('module_navigation', {
             targetModule: href.split('#')[1],
-            linkText: event.target.textContent
+            linkText: event.target.textContent,
           });
         }
       }
@@ -73,11 +73,11 @@ class AxyraAnalyticsSystem {
         const loadTime = performance.now();
         this.trackEvent('page_load', {
           loadTime: loadTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
     });
-    
+
     // Trackear errores JavaScript
     window.addEventListener('error', (event) => {
       if (this.isTracking) {
@@ -85,17 +85,17 @@ class AxyraAnalyticsSystem {
           message: event.message,
           filename: event.filename,
           lineno: event.lineno,
-          colno: event.colno
+          colno: event.colno,
         });
       }
     });
-    
+
     // Trackear promesas rechazadas
     window.addEventListener('unhandledrejection', (event) => {
       if (this.isTracking) {
         this.trackEvent('promise_rejection', {
           reason: event.reason,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
     });
@@ -104,18 +104,18 @@ class AxyraAnalyticsSystem {
   setupUserBehaviorTracking() {
     // Trackear tiempo en página
     let pageStartTime = Date.now();
-    
+
     setInterval(() => {
       if (this.isTracking) {
         const timeOnPage = Date.now() - pageStartTime;
         this.trackEvent('time_on_page', {
           duration: timeOnPage,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
         pageStartTime = Date.now();
       }
     }, 60000); // Cada minuto
-    
+
     // Trackear scroll
     let scrollTimeout;
     window.addEventListener('scroll', () => {
@@ -124,12 +124,12 @@ class AxyraAnalyticsSystem {
         scrollTimeout = setTimeout(() => {
           this.trackEvent('scroll', {
             scrollY: window.scrollY,
-            scrollPercent: (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100
+            scrollPercent: (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100,
           });
         }, 1000);
       }
     });
-    
+
     // Trackear resize de ventana
     let resizeTimeout;
     window.addEventListener('resize', () => {
@@ -138,7 +138,7 @@ class AxyraAnalyticsSystem {
         resizeTimeout = setTimeout(() => {
           this.trackEvent('window_resize', {
             width: window.innerWidth,
-            height: window.innerHeight
+            height: window.innerHeight,
           });
         }, 500);
       }
@@ -152,17 +152,17 @@ class AxyraAnalyticsSystem {
       data: eventData,
       timestamp: new Date().toISOString(),
       sessionId: this.getSessionId(),
-      userId: this.getCurrentUserId()
+      userId: this.getCurrentUserId(),
     };
-    
+
     this.events.push(event);
     this.updateMetrics(eventType, eventData);
-    
+
     // Limitar número de eventos en memoria
     if (this.events.length > 1000) {
       this.events = this.events.slice(-500);
     }
-    
+
     // Guardar eventos periódicamente
     if (this.events.length % 10 === 0) {
       this.saveEvents();
@@ -178,27 +178,27 @@ class AxyraAnalyticsSystem {
     } else if (eventType.includes('error') || eventType.includes('rejection')) {
       this.metrics.errors++;
     }
-    
+
     // Actualizar métricas de rendimiento
     if (eventType === 'page_load' && eventData.loadTime) {
       this.metrics.performance.loadTime = eventData.loadTime;
     }
-    
+
     // Actualizar métricas de uso
     if (eventType === 'module_navigation' && eventData.targetModule) {
       if (!this.metrics.usage.modules) {
         this.metrics.usage.modules = {};
       }
-      this.metrics.usage.modules[eventData.targetModule] = 
+      this.metrics.usage.modules[eventData.targetModule] =
         (this.metrics.usage.modules[eventData.targetModule] || 0) + 1;
     }
-    
+
     // Actualizar métricas de características
     if (eventType === 'button_click' && eventData.buttonText) {
       if (!this.metrics.features.buttons) {
         this.metrics.features.buttons = {};
       }
-      this.metrics.features.buttons[eventData.buttonText] = 
+      this.metrics.features.buttons[eventData.buttonText] =
         (this.metrics.features.buttons[eventData.buttonText] || 0) + 1;
     }
   }
@@ -252,27 +252,26 @@ class AxyraAnalyticsSystem {
   getAnalyticsReport() {
     const sessionDuration = Date.now() - this.sessionStart;
     const totalEvents = this.events.length;
-    
+
     // Calcular métricas de sesión
     const sessionMetrics = {
       duration: sessionDuration,
       eventsPerMinute: totalEvents / (sessionDuration / 60000),
       errorRate: (this.metrics.errors / totalEvents) * 100,
-      userActionsPerMinute: this.metrics.userActions / (sessionDuration / 60000)
+      userActionsPerMinute: this.metrics.userActions / (sessionDuration / 60000),
     };
-    
+
     // Calcular métricas de uso por módulo
     const moduleUsage = this.metrics.usage.modules || {};
-    const mostUsedModule = Object.keys(moduleUsage).reduce((a, b) => 
-      moduleUsage[a] > moduleUsage[b] ? a : b, 'N/A'
-    );
-    
+    const mostUsedModule = Object.keys(moduleUsage).reduce((a, b) => (moduleUsage[a] > moduleUsage[b] ? a : b), 'N/A');
+
     // Calcular métricas de características
     const featureUsage = this.metrics.features.buttons || {};
-    const mostUsedFeature = Object.keys(featureUsage).reduce((a, b) => 
-      featureUsage[a] > featureUsage[b] ? a : b, 'N/A'
+    const mostUsedFeature = Object.keys(featureUsage).reduce(
+      (a, b) => (featureUsage[a] > featureUsage[b] ? a : b),
+      'N/A'
     );
-    
+
     return {
       summary: {
         sessionDuration: this.formatDuration(sessionDuration),
@@ -280,21 +279,21 @@ class AxyraAnalyticsSystem {
         pageViews: this.metrics.pageViews,
         userActions: this.metrics.userActions,
         errors: this.metrics.errors,
-        errorRate: sessionMetrics.errorRate.toFixed(2) + '%'
+        errorRate: sessionMetrics.errorRate.toFixed(2) + '%',
       },
       performance: {
         loadTime: this.metrics.performance.loadTime || 0,
         eventsPerMinute: sessionMetrics.eventsPerMinute.toFixed(2),
-        userActionsPerMinute: sessionMetrics.userActionsPerMinute.toFixed(2)
+        userActionsPerMinute: sessionMetrics.userActionsPerMinute.toFixed(2),
       },
       usage: {
         mostUsedModule: mostUsedModule,
         moduleUsage: moduleUsage,
         mostUsedFeature: mostUsedFeature,
-        featureUsage: featureUsage
+        featureUsage: featureUsage,
       },
       events: this.events.slice(-50), // Últimos 50 eventos
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -302,7 +301,7 @@ class AxyraAnalyticsSystem {
     const seconds = Math.floor(milliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
-    
+
     if (hours > 0) {
       return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
     } else if (minutes > 0) {
@@ -314,11 +313,11 @@ class AxyraAnalyticsSystem {
 
   exportAnalytics(format = 'json') {
     const report = this.getAnalyticsReport();
-    
+
     let content;
     let filename;
     let mimeType;
-    
+
     switch (format) {
       case 'csv':
         content = this.convertToCSV(report);
@@ -332,21 +331,21 @@ class AxyraAnalyticsSystem {
         mimeType = 'application/json';
         break;
     }
-    
+
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log(`📊 Analytics exportados: ${filename}`);
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showSuccess(`Analytics exportados: ${filename}`);
     }
@@ -354,7 +353,7 @@ class AxyraAnalyticsSystem {
 
   convertToCSV(report) {
     const rows = [];
-    
+
     // Resumen
     rows.push(['Métrica', 'Valor']);
     rows.push(['Duración de Sesión', report.summary.sessionDuration]);
@@ -363,20 +362,20 @@ class AxyraAnalyticsSystem {
     rows.push(['Acciones de Usuario', report.summary.userActions]);
     rows.push(['Errores', report.summary.errors]);
     rows.push(['Tasa de Errores', report.summary.errorRate]);
-    
+
     rows.push([]);
     rows.push(['Módulo', 'Uso']);
     Object.entries(report.usage.moduleUsage).forEach(([module, usage]) => {
       rows.push([module, usage]);
     });
-    
+
     rows.push([]);
     rows.push(['Característica', 'Uso']);
     Object.entries(report.usage.featureUsage).forEach(([feature, usage]) => {
       rows.push([feature, usage]);
     });
-    
-    return rows.map(row => row.join(',')).join('\n');
+
+    return rows.map((row) => row.join(',')).join('\n');
   }
 
   getRealTimeMetrics() {
@@ -384,25 +383,23 @@ class AxyraAnalyticsSystem {
       currentSession: {
         duration: this.formatDuration(Date.now() - this.sessionStart),
         events: this.events.length,
-        errors: this.metrics.errors
+        errors: this.metrics.errors,
       },
       performance: {
         loadTime: this.metrics.performance.loadTime || 0,
-        memoryUsage: performance.memory ? performance.memory.usedJSHeapSize : 0
+        memoryUsage: performance.memory ? performance.memory.usedJSHeapSize : 0,
       },
       usage: {
         pageViews: this.metrics.pageViews,
         userActions: this.metrics.userActions,
-        mostUsedModule: this.getMostUsedModule()
-      }
+        mostUsedModule: this.getMostUsedModule(),
+      },
     };
   }
 
   getMostUsedModule() {
     const moduleUsage = this.metrics.usage.modules || {};
-    return Object.keys(moduleUsage).reduce((a, b) => 
-      moduleUsage[a] > moduleUsage[b] ? a : b, 'N/A'
-    );
+    return Object.keys(moduleUsage).reduce((a, b) => (moduleUsage[a] > moduleUsage[b] ? a : b), 'N/A');
   }
 
   startTracking() {
@@ -423,14 +420,14 @@ class AxyraAnalyticsSystem {
       errors: 0,
       performance: {},
       usage: {},
-      features: {}
+      features: {},
     };
-    
+
     localStorage.removeItem('axyra_analytics_events');
     localStorage.removeItem('axyra_analytics_metrics');
-    
+
     console.log('🧹 Analytics limpiados');
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showSuccess('Analytics limpiados');
     }
@@ -441,19 +438,15 @@ class AxyraAnalyticsSystem {
   }
 
   getEventsByType(eventType) {
-    return this.events.filter(event => event.type === eventType);
+    return this.events.filter((event) => event.type === eventType);
   }
 
   getErrorEvents() {
-    return this.events.filter(event => 
-      event.type.includes('error') || event.type.includes('rejection')
-    );
+    return this.events.filter((event) => event.type.includes('error') || event.type.includes('rejection'));
   }
 
   getPerformanceEvents() {
-    return this.events.filter(event => 
-      event.type === 'page_load' || event.type === 'time_on_page'
-    );
+    return this.events.filter((event) => event.type === 'page_load' || event.type === 'time_on_page');
   }
 
   // Método para trackear eventos personalizados
@@ -466,7 +459,7 @@ class AxyraAnalyticsSystem {
     this.trackEvent('custom_error', {
       message: error.message,
       stack: error.stack,
-      context: context
+      context: context,
     });
   }
 
@@ -475,7 +468,7 @@ class AxyraAnalyticsSystem {
     this.trackEvent('business_metric', {
       metric: metricName,
       value: value,
-      context: context
+      context: context,
     });
   }
 }

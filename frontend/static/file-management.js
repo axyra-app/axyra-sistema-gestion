@@ -10,17 +10,26 @@ class AxyraFileManagement {
     this.categories = [];
     this.versions = [];
     this.shares = [];
-    
+
     this.maxFileSize = 10 * 1024 * 1024; // 10MB
     this.allowedTypes = [
-      'image/jpeg', 'image/png', 'image/gif', 'image/webp',
-      'application/pdf', 'text/plain', 'text/csv',
-      'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-      'application/zip', 'application/x-rar-compressed'
+      'image/jpeg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'application/pdf',
+      'text/plain',
+      'text/csv',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-powerpoint',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      'application/zip',
+      'application/x-rar-compressed',
     ];
-    
+
     this.init();
   }
 
@@ -64,7 +73,7 @@ class AxyraFileManagement {
         { id: 'spreadsheets', name: 'Hojas de Cálculo', icon: '📊', color: '#27ae60' },
         { id: 'presentations', name: 'Presentaciones', icon: '📽️', color: '#f39c12' },
         { id: 'archives', name: 'Archivos Comprimidos', icon: '📦', color: '#9b59b6' },
-        { id: 'other', name: 'Otros', icon: '📁', color: '#95a5a6' }
+        { id: 'other', name: 'Otros', icon: '📁', color: '#95a5a6' },
       ];
       this.saveData();
     }
@@ -85,7 +94,7 @@ class AxyraFileManagement {
       'application/msword': this.handleWordFile.bind(this),
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document': this.handleWordFile.bind(this),
       'application/zip': this.handleArchiveFile.bind(this),
-      'application/x-rar-compressed': this.handleArchiveFile.bind(this)
+      'application/x-rar-compressed': this.handleArchiveFile.bind(this),
     };
   }
 
@@ -117,7 +126,7 @@ class AxyraFileManagement {
       updatedAt: new Date().toISOString(),
       createdBy: this.getCurrentUser(),
       size: 0,
-      fileCount: 0
+      fileCount: 0,
     };
 
     this.folders.push(folder);
@@ -157,12 +166,12 @@ class AxyraFileManagement {
         version: 1,
         url: null,
         thumbnail: null,
-        metadata: {}
+        metadata: {},
       };
 
       // Procesar archivo
       this.processFile(file, fileData)
-        .then(processedFile => {
+        .then((processedFile) => {
           this.files.push(processedFile);
           this.updateFolderStats(processedFile.folderId);
           this.saveData();
@@ -175,7 +184,7 @@ class AxyraFileManagement {
 
           resolve(processedFile);
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('Error procesando archivo:', error);
           reject(error);
         });
@@ -183,9 +192,7 @@ class AxyraFileManagement {
   }
 
   uploadFiles(files, options = {}) {
-    const uploadPromises = Array.from(files).map(file => 
-      this.uploadFile(file, options)
-    );
+    const uploadPromises = Array.from(files).map((file) => this.uploadFile(file, options));
 
     return Promise.all(uploadPromises);
   }
@@ -220,7 +227,7 @@ class AxyraFileManagement {
       'application/vnd.ms-powerpoint': 'presentations',
       'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'presentations',
       'application/zip': 'archives',
-      'application/x-rar-compressed': 'archives'
+      'application/x-rar-compressed': 'archives',
     };
 
     return categoryMap[fileType] || 'other';
@@ -240,18 +247,17 @@ class AxyraFileManagement {
       const reader = new FileReader();
       reader.onload = (e) => {
         fileData.url = e.target.result;
-        
+
         // Crear thumbnail
-        this.createThumbnail(file, 150, 150)
-          .then(thumbnail => {
-            fileData.thumbnail = thumbnail;
-            fileData.metadata = {
-              width: 0,
-              height: 0,
-              format: file.type
-            };
-            resolve(fileData);
-          });
+        this.createThumbnail(file, 150, 150).then((thumbnail) => {
+          fileData.thumbnail = thumbnail;
+          fileData.metadata = {
+            width: 0,
+            height: 0,
+            format: file.type,
+          };
+          resolve(fileData);
+        });
       };
       reader.readAsDataURL(file);
     });
@@ -264,7 +270,7 @@ class AxyraFileManagement {
         fileData.url = e.target.result;
         fileData.metadata = {
           pages: 0,
-          format: 'PDF'
+          format: 'PDF',
         };
         resolve(fileData);
       };
@@ -280,7 +286,7 @@ class AxyraFileManagement {
         fileData.metadata = {
           content: e.target.result,
           lines: e.target.result.split('\n').length,
-          characters: e.target.result.length
+          characters: e.target.result.length,
         };
         resolve(fileData);
       };
@@ -297,7 +303,7 @@ class AxyraFileManagement {
         fileData.metadata = {
           rows: lines.length,
           columns: lines[0] ? lines[0].split(',').length : 0,
-          content: e.target.result
+          content: e.target.result,
         };
         resolve(fileData);
       };
@@ -312,7 +318,7 @@ class AxyraFileManagement {
         fileData.url = e.target.result;
         fileData.metadata = {
           format: 'Excel',
-          sheets: 1
+          sheets: 1,
         };
         resolve(fileData);
       };
@@ -327,7 +333,7 @@ class AxyraFileManagement {
         fileData.url = e.target.result;
         fileData.metadata = {
           format: 'Word',
-          pages: 0
+          pages: 0,
         };
         resolve(fileData);
       };
@@ -342,7 +348,7 @@ class AxyraFileManagement {
         fileData.url = e.target.result;
         fileData.metadata = {
           format: file.type.includes('zip') ? 'ZIP' : 'RAR',
-          compressed: true
+          compressed: true,
         };
         resolve(fileData);
       };
@@ -356,7 +362,7 @@ class AxyraFileManagement {
       reader.onload = (e) => {
         fileData.url = e.target.result;
         fileData.metadata = {
-          format: file.type
+          format: file.type,
         };
         resolve(fileData);
       };
@@ -384,15 +390,15 @@ class AxyraFileManagement {
   }
 
   updateFile(fileId, updates) {
-    const fileIndex = this.files.findIndex(f => f.id === fileId);
+    const fileIndex = this.files.findIndex((f) => f.id === fileId);
     if (fileIndex === -1) {
       throw new Error('Archivo no encontrado');
     }
 
-    this.files[fileIndex] = { 
-      ...this.files[fileIndex], 
-      ...updates, 
-      updatedAt: new Date().toISOString() 
+    this.files[fileIndex] = {
+      ...this.files[fileIndex],
+      ...updates,
+      updatedAt: new Date().toISOString(),
     };
 
     this.saveData();
@@ -402,7 +408,7 @@ class AxyraFileManagement {
   }
 
   deleteFile(fileId) {
-    const fileIndex = this.files.findIndex(f => f.id === fileId);
+    const fileIndex = this.files.findIndex((f) => f.id === fileId);
     if (fileIndex === -1) {
       throw new Error('Archivo no encontrado');
     }
@@ -424,10 +430,10 @@ class AxyraFileManagement {
   updateFolderStats(folderId) {
     if (!folderId) return;
 
-    const folder = this.folders.find(f => f.id === folderId);
+    const folder = this.folders.find((f) => f.id === folderId);
     if (!folder) return;
 
-    const folderFiles = this.files.filter(f => f.folderId === folderId);
+    const folderFiles = this.files.filter((f) => f.folderId === folderId);
     folder.fileCount = folderFiles.length;
     folder.size = folderFiles.reduce((total, file) => total + file.size, 0);
     folder.updatedAt = new Date().toISOString();
@@ -439,40 +445,37 @@ class AxyraFileManagement {
     let filteredFiles = [...this.files];
 
     if (filters.folderId) {
-      filteredFiles = filteredFiles.filter(f => f.folderId === filters.folderId);
+      filteredFiles = filteredFiles.filter((f) => f.folderId === filters.folderId);
     }
 
     if (filters.category) {
-      filteredFiles = filteredFiles.filter(f => f.category === filters.category);
+      filteredFiles = filteredFiles.filter((f) => f.category === filters.category);
     }
 
     if (filters.type) {
-      filteredFiles = filteredFiles.filter(f => f.type === filters.type);
+      filteredFiles = filteredFiles.filter((f) => f.type === filters.type);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredFiles = filteredFiles.filter(f => 
-        f.name.toLowerCase().includes(searchTerm) ||
-        f.description.toLowerCase().includes(searchTerm) ||
-        f.tags.some(tag => tag.toLowerCase().includes(searchTerm))
+      filteredFiles = filteredFiles.filter(
+        (f) =>
+          f.name.toLowerCase().includes(searchTerm) ||
+          f.description.toLowerCase().includes(searchTerm) ||
+          f.tags.some((tag) => tag.toLowerCase().includes(searchTerm))
       );
     }
 
     if (filters.uploadedBy) {
-      filteredFiles = filteredFiles.filter(f => f.uploadedBy === filters.uploadedBy);
+      filteredFiles = filteredFiles.filter((f) => f.uploadedBy === filters.uploadedBy);
     }
 
     if (filters.dateFrom) {
-      filteredFiles = filteredFiles.filter(f => 
-        new Date(f.createdAt) >= new Date(filters.dateFrom)
-      );
+      filteredFiles = filteredFiles.filter((f) => new Date(f.createdAt) >= new Date(filters.dateFrom));
     }
 
     if (filters.dateTo) {
-      filteredFiles = filteredFiles.filter(f => 
-        new Date(f.createdAt) <= new Date(filters.dateTo)
-      );
+      filteredFiles = filteredFiles.filter((f) => new Date(f.createdAt) <= new Date(filters.dateTo));
     }
 
     return filteredFiles;
@@ -482,18 +485,17 @@ class AxyraFileManagement {
     let filteredFolders = [...this.folders];
 
     if (filters.parentId !== undefined) {
-      filteredFolders = filteredFolders.filter(f => f.parentId === filters.parentId);
+      filteredFolders = filteredFolders.filter((f) => f.parentId === filters.parentId);
     }
 
     if (filters.category) {
-      filteredFolders = filteredFolders.filter(f => f.category === filters.category);
+      filteredFolders = filteredFolders.filter((f) => f.category === filters.category);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredFolders = filteredFolders.filter(f => 
-        f.name.toLowerCase().includes(searchTerm) ||
-        f.description.toLowerCase().includes(searchTerm)
+      filteredFolders = filteredFolders.filter(
+        (f) => f.name.toLowerCase().includes(searchTerm) || f.description.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -501,15 +503,15 @@ class AxyraFileManagement {
   }
 
   getFileById(fileId) {
-    return this.files.find(f => f.id === fileId);
+    return this.files.find((f) => f.id === fileId);
   }
 
   getFolderById(folderId) {
-    return this.folders.find(f => f.id === folderId);
+    return this.folders.find((f) => f.id === folderId);
   }
 
   getFileVersions(fileId) {
-    return this.versions.filter(v => v.fileId === fileId);
+    return this.versions.filter((v) => v.fileId === fileId);
   }
 
   createFileVersion(fileId, file, description = '') {
@@ -527,18 +529,17 @@ class AxyraFileManagement {
       type: file.type,
       url: null,
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     // Procesar archivo de versión
-    this.processFile(file, version)
-      .then(processedVersion => {
-        this.versions.push(processedVersion);
-        this.updateFile(fileId, { version: processedVersion.version });
-        this.saveData();
+    this.processFile(file, version).then((processedVersion) => {
+      this.versions.push(processedVersion);
+      this.updateFile(fileId, { version: processedVersion.version });
+      this.saveData();
 
-        console.log('✅ Versión creada para archivo:', fileData.name);
-      });
+      console.log('✅ Versión creada para archivo:', fileData.name);
+    });
 
     return version;
   }
@@ -560,7 +561,7 @@ class AxyraFileManagement {
       createdAt: new Date().toISOString(),
       createdBy: this.getCurrentUser(),
       accessCount: 0,
-      lastAccessed: null
+      lastAccessed: null,
     };
 
     this.shares.push(share);
@@ -576,7 +577,7 @@ class AxyraFileManagement {
   }
 
   getSharedFiles(userId) {
-    return this.shares.filter(s => s.sharedWith === userId);
+    return this.shares.filter((s) => s.sharedWith === userId);
   }
 
   downloadFile(fileId) {
@@ -638,7 +639,7 @@ class AxyraFileManagement {
     const categoryStats = {};
     const typeStats = {};
 
-    this.files.forEach(file => {
+    this.files.forEach((file) => {
       categoryStats[file.category] = (categoryStats[file.category] || 0) + 1;
       typeStats[file.type] = (typeStats[file.type] || 0) + 1;
     });
@@ -650,7 +651,7 @@ class AxyraFileManagement {
       categoryStats: categoryStats,
       typeStats: typeStats,
       totalFolders: this.folders.length,
-      totalShares: this.shares.length
+      totalShares: this.shares.length,
     };
   }
 
@@ -675,7 +676,7 @@ class AxyraFileManagement {
       files: this.files,
       folders: this.folders,
       categories: this.categories,
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
 
     let content;
@@ -722,7 +723,7 @@ class AxyraFileManagement {
     rows.push(['ID', 'Nombre', 'Tipo', 'Tamaño', 'Categoría', 'Carpeta', 'Subido por', 'Fecha']);
 
     // Datos
-    this.files.forEach(file => {
+    this.files.forEach((file) => {
       const folder = file.folderId ? this.getFolderById(file.folderId) : null;
       rows.push([
         file.id,
@@ -732,11 +733,11 @@ class AxyraFileManagement {
         file.category,
         folder ? folder.name : 'Sin carpeta',
         file.uploadedBy,
-        new Date(file.createdAt).toLocaleDateString()
+        new Date(file.createdAt).toLocaleDateString(),
       ]);
     });
 
-    return rows.map(row => row.join(',')).join('\n');
+    return rows.map((row) => row.join(',')).join('\n');
   }
 
   importFiles(file) {

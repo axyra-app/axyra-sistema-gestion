@@ -17,7 +17,7 @@ class AxyraMarketingManagementSystem {
     this.events = [];
     this.templates = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -269,7 +269,7 @@ class AxyraMarketingManagementSystem {
           type: 'email',
           subject: '¡Bienvenido a nuestra empresa!',
           content: 'Gracias por unirte a nosotros. Estamos emocionados de tenerte como parte de nuestra comunidad.',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'email_promotion',
@@ -277,15 +277,15 @@ class AxyraMarketingManagementSystem {
           type: 'email',
           subject: '¡Oferta especial para ti!',
           content: 'No te pierdas esta increíble oferta. Aprovecha ahora y ahorra hasta un 50%.',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'sms_reminder',
           name: 'SMS Recordatorio',
           type: 'sms',
           content: 'Recordatorio: Tienes una cita mañana a las 10:00 AM. ¡No olvides asistir!',
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveTemplates();
     }
@@ -293,21 +293,21 @@ class AxyraMarketingManagementSystem {
 
   handleCampaignChange(change) {
     const { campaignId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.campaigns.push(data);
         this.saveCampaigns();
         break;
       case 'updated':
-        const campaignIndex = this.campaigns.findIndex(c => c.id === campaignId);
+        const campaignIndex = this.campaigns.findIndex((c) => c.id === campaignId);
         if (campaignIndex !== -1) {
           this.campaigns[campaignIndex] = { ...this.campaigns[campaignIndex], ...data };
           this.saveCampaigns();
         }
         break;
       case 'deleted':
-        this.campaigns = this.campaigns.filter(c => c.id !== campaignId);
+        this.campaigns = this.campaigns.filter((c) => c.id !== campaignId);
         this.saveCampaigns();
         break;
     }
@@ -315,21 +315,21 @@ class AxyraMarketingManagementSystem {
 
   handleLeadChange(change) {
     const { leadId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.leads.push(data);
         this.saveLeads();
         break;
       case 'updated':
-        const leadIndex = this.leads.findIndex(l => l.id === leadId);
+        const leadIndex = this.leads.findIndex((l) => l.id === leadId);
         if (leadIndex !== -1) {
           this.leads[leadIndex] = { ...this.leads[leadIndex], ...data };
           this.saveLeads();
         }
         break;
       case 'deleted':
-        this.leads = this.leads.filter(l => l.id !== leadId);
+        this.leads = this.leads.filter((l) => l.id !== leadId);
         this.saveLeads();
         break;
     }
@@ -354,8 +354,8 @@ class AxyraMarketingManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.campaigns.push(campaign);
@@ -377,8 +377,8 @@ class AxyraMarketingManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.segments.push(segment);
@@ -401,8 +401,8 @@ class AxyraMarketingManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.automations.push(automation);
@@ -431,8 +431,8 @@ class AxyraMarketingManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.leads.push(lead);
@@ -458,8 +458,8 @@ class AxyraMarketingManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.contacts.push(contact);
@@ -486,8 +486,8 @@ class AxyraMarketingManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.emails.push(email);
@@ -511,8 +511,8 @@ class AxyraMarketingManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.sms.push(sms);
@@ -536,8 +536,8 @@ class AxyraMarketingManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.socialMedia.push(post);
@@ -564,8 +564,8 @@ class AxyraMarketingManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.events.push(event);
@@ -588,8 +588,8 @@ class AxyraMarketingManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.templates.push(template);
@@ -601,16 +601,16 @@ class AxyraMarketingManagementSystem {
 
   getMarketingStatistics() {
     const totalCampaigns = this.campaigns.length;
-    const activeCampaigns = this.campaigns.filter(c => c.status === 'running').length;
+    const activeCampaigns = this.campaigns.filter((c) => c.status === 'running').length;
     const totalLeads = this.leads.length;
-    const qualifiedLeads = this.leads.filter(l => l.status === 'qualified').length;
+    const qualifiedLeads = this.leads.filter((l) => l.status === 'qualified').length;
     const totalContacts = this.contacts.length;
     const totalEmails = this.emails.length;
-    const sentEmails = this.emails.filter(e => e.status === 'sent').length;
+    const sentEmails = this.emails.filter((e) => e.status === 'sent').length;
     const totalSMS = this.sms.length;
-    const sentSMS = this.sms.filter(s => s.status === 'sent').length;
+    const sentSMS = this.sms.filter((s) => s.status === 'sent').length;
     const totalEvents = this.events.length;
-    const upcomingEvents = this.events.filter(e => new Date(e.startDate) > new Date()).length;
+    const upcomingEvents = this.events.filter((e) => new Date(e.startDate) > new Date()).length;
 
     return {
       totalCampaigns,
@@ -623,7 +623,7 @@ class AxyraMarketingManagementSystem {
       totalSMS,
       sentSMS,
       totalEvents,
-      upcomingEvents
+      upcomingEvents,
     };
   }
 
@@ -696,13 +696,13 @@ class AxyraMarketingManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -711,7 +711,7 @@ class AxyraMarketingManagementSystem {
 
   renderMarketingStats() {
     const stats = this.getMarketingStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -764,7 +764,7 @@ class AxyraMarketingManagementSystem {
 
   renderOverview() {
     const stats = this.getMarketingStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -799,8 +799,10 @@ class AxyraMarketingManagementSystem {
 
   renderCampaignsList() {
     const campaigns = this.campaigns.slice(-20); // Últimas 20 campañas
-    
-    return campaigns.map(campaign => `
+
+    return campaigns
+      .map(
+        (campaign) => `
       <div class="campaign-card">
         <div class="campaign-header">
           <h5>${campaign.name}</h5>
@@ -813,13 +815,17 @@ class AxyraMarketingManagementSystem {
           <p>Fecha: ${new Date(campaign.startDate).toLocaleDateString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderLeadsList() {
     const leads = this.leads.slice(-20); // Últimos 20 leads
-    
-    return leads.map(lead => `
+
+    return leads
+      .map(
+        (lead) => `
       <div class="lead-card">
         <div class="lead-header">
           <h5>${lead.firstName} ${lead.lastName}</h5>
@@ -832,17 +838,23 @@ class AxyraMarketingManagementSystem {
           <p>Score: ${lead.score}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderContactsList() {
     const contacts = this.contacts.slice(-20); // Últimos 20 contactos
-    
-    return contacts.map(contact => `
+
+    return contacts
+      .map(
+        (contact) => `
       <div class="contact-card">
         <div class="contact-header">
           <h5>${contact.firstName} ${contact.lastName}</h5>
-          <span class="contact-status ${contact.isActive ? 'active' : 'inactive'}">${contact.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="contact-status ${contact.isActive ? 'active' : 'inactive'}">${
+          contact.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="contact-info">
           <p>Email: ${contact.email}</p>
@@ -850,13 +862,17 @@ class AxyraMarketingManagementSystem {
           <p>Empresa: ${contact.company}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderEmailsList() {
     const emails = this.emails.slice(-20); // Últimos 20 emails
-    
-    return emails.map(email => `
+
+    return emails
+      .map(
+        (email) => `
       <div class="email-card">
         <div class="email-header">
           <h5>${email.subject}</h5>
@@ -869,7 +885,9 @@ class AxyraMarketingManagementSystem {
           <p>Tasa de Clics: ${email.clickRate}%</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreateCampaignDialog() {

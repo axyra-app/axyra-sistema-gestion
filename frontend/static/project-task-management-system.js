@@ -15,7 +15,7 @@ class AxyraProjectTaskManagementSystem {
     this.timeTracking = [];
     this.projectLogs = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -226,22 +226,22 @@ class AxyraProjectTaskManagementSystem {
           name: 'Equipo de Desarrollo',
           description: 'Equipo encargado del desarrollo de software',
           members: [],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'design_team',
           name: 'Equipo de Diseño',
           description: 'Equipo encargado del diseño y UX/UI',
           members: [],
-          isActive: true
+          isActive: true,
         },
         {
           id: 'qa_team',
           name: 'Equipo de QA',
           description: 'Equipo encargado de la calidad y testing',
           members: [],
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveTeams();
     }
@@ -249,21 +249,21 @@ class AxyraProjectTaskManagementSystem {
 
   handleProjectChange(change) {
     const { projectId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.projects.push(data);
         this.saveProjects();
         break;
       case 'updated':
-        const projectIndex = this.projects.findIndex(p => p.id === projectId);
+        const projectIndex = this.projects.findIndex((p) => p.id === projectId);
         if (projectIndex !== -1) {
           this.projects[projectIndex] = { ...this.projects[projectIndex], ...data };
           this.saveProjects();
         }
         break;
       case 'deleted':
-        this.projects = this.projects.filter(p => p.id !== projectId);
+        this.projects = this.projects.filter((p) => p.id !== projectId);
         this.saveProjects();
         break;
     }
@@ -271,21 +271,21 @@ class AxyraProjectTaskManagementSystem {
 
   handleTaskChange(change) {
     const { taskId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.tasks.push(data);
         this.saveTasks();
         break;
       case 'updated':
-        const taskIndex = this.tasks.findIndex(t => t.id === taskId);
+        const taskIndex = this.tasks.findIndex((t) => t.id === taskId);
         if (taskIndex !== -1) {
           this.tasks[taskIndex] = { ...this.tasks[taskIndex], ...data };
           this.saveTasks();
         }
         break;
       case 'deleted':
-        this.tasks = this.tasks.filter(t => t.id !== taskId);
+        this.tasks = this.tasks.filter((t) => t.id !== taskId);
         this.saveTasks();
         break;
     }
@@ -308,8 +308,8 @@ class AxyraProjectTaskManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.projects.push(project);
@@ -337,8 +337,8 @@ class AxyraProjectTaskManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.tasks.push(task);
@@ -359,8 +359,8 @@ class AxyraProjectTaskManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.teams.push(team);
@@ -383,8 +383,8 @@ class AxyraProjectTaskManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.milestones.push(milestone);
@@ -404,8 +404,8 @@ class AxyraProjectTaskManagementSystem {
       isActive: assignmentData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.assignments.push(assignment);
@@ -424,8 +424,8 @@ class AxyraProjectTaskManagementSystem {
       isActive: commentData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.comments.push(comment);
@@ -447,8 +447,8 @@ class AxyraProjectTaskManagementSystem {
       isActive: attachmentData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.attachments.push(attachment);
@@ -470,8 +470,8 @@ class AxyraProjectTaskManagementSystem {
       isActive: timeTrackingData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.timeTracking.push(timeTracking);
@@ -494,8 +494,8 @@ class AxyraProjectTaskManagementSystem {
       data: logData.data || {},
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.projectLogs.push(log);
@@ -507,20 +507,20 @@ class AxyraProjectTaskManagementSystem {
 
   getProjectStatistics() {
     const totalProjects = this.projects.length;
-    const activeProjects = this.projects.filter(p => p.isActive).length;
+    const activeProjects = this.projects.filter((p) => p.isActive).length;
     const totalTasks = this.tasks.length;
-    const activeTasks = this.tasks.filter(t => t.isActive).length;
+    const activeTasks = this.tasks.filter((t) => t.isActive).length;
     const totalTeams = this.teams.length;
-    const activeTeams = this.teams.filter(t => t.isActive).length;
+    const activeTeams = this.teams.filter((t) => t.isActive).length;
     const totalMilestones = this.milestones.length;
-    const activeMilestones = this.milestones.filter(m => m.isActive).length;
+    const activeMilestones = this.milestones.filter((m) => m.isActive).length;
     const totalAssignments = this.assignments.length;
-    const activeAssignments = this.assignments.filter(a => a.isActive).length;
+    const activeAssignments = this.assignments.filter((a) => a.isActive).length;
     const totalComments = this.comments.length;
     const totalAttachments = this.attachments.length;
     const totalTimeTracking = this.timeTracking.length;
     const totalLogs = this.projectLogs.length;
-    const errorLogs = this.projectLogs.filter(l => l.level === 'error').length;
+    const errorLogs = this.projectLogs.filter((l) => l.level === 'error').length;
 
     return {
       totalProjects,
@@ -537,7 +537,7 @@ class AxyraProjectTaskManagementSystem {
       totalAttachments,
       totalTimeTracking,
       totalLogs,
-      errorLogs
+      errorLogs,
     };
   }
 
@@ -630,13 +630,13 @@ class AxyraProjectTaskManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -645,7 +645,7 @@ class AxyraProjectTaskManagementSystem {
 
   renderProjectStats() {
     const stats = this.getProjectStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -714,7 +714,7 @@ class AxyraProjectTaskManagementSystem {
 
   renderOverview() {
     const stats = this.getProjectStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -774,8 +774,10 @@ class AxyraProjectTaskManagementSystem {
 
   renderProjectsList() {
     const projects = this.projects.slice(-20); // Últimos 20 proyectos
-    
-    return projects.map(project => `
+
+    return projects
+      .map(
+        (project) => `
       <div class="project-card">
         <div class="project-header">
           <h5>${project.name}</h5>
@@ -792,13 +794,17 @@ class AxyraProjectTaskManagementSystem {
           <button onclick="axyraProjectTaskManagementSystem.editProject('${project.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderTasksList() {
     const tasks = this.tasks.slice(-20); // Últimas 20 tareas
-    
-    return tasks.map(task => `
+
+    return tasks
+      .map(
+        (task) => `
       <div class="task-card">
         <div class="task-header">
           <h5>${task.title}</h5>
@@ -815,17 +821,23 @@ class AxyraProjectTaskManagementSystem {
           <button onclick="axyraProjectTaskManagementSystem.editTask('${task.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderTeamsList() {
     const teams = this.teams.slice(-20); // Últimos 20 equipos
-    
-    return teams.map(team => `
+
+    return teams
+      .map(
+        (team) => `
       <div class="team-card">
         <div class="team-header">
           <h5>${team.name}</h5>
-          <span class="team-status ${team.isActive ? 'active' : 'inactive'}">${team.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="team-status ${team.isActive ? 'active' : 'inactive'}">${
+          team.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="team-info">
           <p>${team.description}</p>
@@ -836,13 +848,17 @@ class AxyraProjectTaskManagementSystem {
           <button onclick="axyraProjectTaskManagementSystem.editTeam('${team.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderMilestonesList() {
     const milestones = this.milestones.slice(-20); // Últimos 20 hitos
-    
-    return milestones.map(milestone => `
+
+    return milestones
+      .map(
+        (milestone) => `
       <div class="milestone-card">
         <div class="milestone-header">
           <h5>${milestone.name}</h5>
@@ -857,17 +873,23 @@ class AxyraProjectTaskManagementSystem {
           <button onclick="axyraProjectTaskManagementSystem.editMilestone('${milestone.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderAssignmentsList() {
     const assignments = this.assignments.slice(-20); // Últimas 20 asignaciones
-    
-    return assignments.map(assignment => `
+
+    return assignments
+      .map(
+        (assignment) => `
       <div class="assignment-card">
         <div class="assignment-header">
           <h5>Asignación ${assignment.id.substring(0, 8)}</h5>
-          <span class="assignment-status ${assignment.isActive ? 'active' : 'inactive'}">${assignment.isActive ? 'Activa' : 'Inactiva'}</span>
+          <span class="assignment-status ${assignment.isActive ? 'active' : 'inactive'}">${
+          assignment.isActive ? 'Activa' : 'Inactiva'
+        }</span>
         </div>
         <div class="assignment-info">
           <p>Tarea: ${assignment.taskId}</p>
@@ -879,17 +901,23 @@ class AxyraProjectTaskManagementSystem {
           <button onclick="axyraProjectTaskManagementSystem.editAssignment('${assignment.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderCommentsList() {
     const comments = this.comments.slice(-20); // Últimos 20 comentarios
-    
-    return comments.map(comment => `
+
+    return comments
+      .map(
+        (comment) => `
       <div class="comment-card">
         <div class="comment-header">
           <h5>Comentario ${comment.id.substring(0, 8)}</h5>
-          <span class="comment-status ${comment.isActive ? 'active' : 'inactive'}">${comment.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="comment-status ${comment.isActive ? 'active' : 'inactive'}">${
+          comment.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="comment-info">
           <p>Tarea: ${comment.taskId}</p>
@@ -901,17 +929,23 @@ class AxyraProjectTaskManagementSystem {
           <button onclick="axyraProjectTaskManagementSystem.editComment('${comment.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderAttachmentsList() {
     const attachments = this.attachments.slice(-20); // Últimos 20 adjuntos
-    
-    return attachments.map(attachment => `
+
+    return attachments
+      .map(
+        (attachment) => `
       <div class="attachment-card">
         <div class="attachment-header">
           <h5>${attachment.fileName}</h5>
-          <span class="attachment-status ${attachment.isActive ? 'active' : 'inactive'}">${attachment.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="attachment-status ${attachment.isActive ? 'active' : 'inactive'}">${
+          attachment.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="attachment-info">
           <p>Tarea: ${attachment.taskId}</p>
@@ -923,17 +957,23 @@ class AxyraProjectTaskManagementSystem {
           <button onclick="axyraProjectTaskManagementSystem.editAttachment('${attachment.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderTimeTrackingList() {
     const timeTracking = this.timeTracking.slice(-20); // Últimos 20 seguimientos
-    
-    return timeTracking.map(time => `
+
+    return timeTracking
+      .map(
+        (time) => `
       <div class="time-card">
         <div class="time-header">
           <h5>Seguimiento ${time.id.substring(0, 8)}</h5>
-          <span class="time-status ${time.isActive ? 'active' : 'inactive'}">${time.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="time-status ${time.isActive ? 'active' : 'inactive'}">${
+          time.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="time-info">
           <p>Tarea: ${time.taskId}</p>
@@ -946,13 +986,17 @@ class AxyraProjectTaskManagementSystem {
           <button onclick="axyraProjectTaskManagementSystem.editTimeTracking('${time.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderLogsList() {
     const logs = this.projectLogs.slice(-20); // Últimos 20 logs
-    
-    return logs.map(log => `
+
+    return logs
+      .map(
+        (log) => `
       <div class="log-card">
         <div class="log-header">
           <h5>${log.message}</h5>
@@ -967,7 +1011,9 @@ class AxyraProjectTaskManagementSystem {
           <p>Fecha: ${new Date(log.timestamp).toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   formatFileSize(bytes) {
@@ -997,14 +1043,16 @@ class AxyraProjectTaskManagementSystem {
   }
 
   showProjectDetails(projectId) {
-    const project = this.projects.find(p => p.id === projectId);
+    const project = this.projects.find((p) => p.id === projectId);
     if (project) {
-      alert(`Proyecto: ${project.name}\nDescripción: ${project.description}\nEstado: ${project.status}\nPrioridad: ${project.priority}\nProgreso: ${project.progress}%`);
+      alert(
+        `Proyecto: ${project.name}\nDescripción: ${project.description}\nEstado: ${project.status}\nPrioridad: ${project.priority}\nProgreso: ${project.progress}%`
+      );
     }
   }
 
   editProject(projectId) {
-    const project = this.projects.find(p => p.id === projectId);
+    const project = this.projects.find((p) => p.id === projectId);
     if (project) {
       const newName = prompt('Nuevo nombre:', project.name);
       if (newName) {
@@ -1015,14 +1063,16 @@ class AxyraProjectTaskManagementSystem {
   }
 
   showTaskDetails(taskId) {
-    const task = this.tasks.find(t => t.id === taskId);
+    const task = this.tasks.find((t) => t.id === taskId);
     if (task) {
-      alert(`Tarea: ${task.title}\nDescripción: ${task.description}\nEstado: ${task.status}\nPrioridad: ${task.priority}\nHoras estimadas: ${task.estimatedHours}`);
+      alert(
+        `Tarea: ${task.title}\nDescripción: ${task.description}\nEstado: ${task.status}\nPrioridad: ${task.priority}\nHoras estimadas: ${task.estimatedHours}`
+      );
     }
   }
 
   editTask(taskId) {
-    const task = this.tasks.find(t => t.id === taskId);
+    const task = this.tasks.find((t) => t.id === taskId);
     if (task) {
       const newTitle = prompt('Nuevo título:', task.title);
       if (newTitle) {
@@ -1033,14 +1083,18 @@ class AxyraProjectTaskManagementSystem {
   }
 
   showTeamDetails(teamId) {
-    const team = this.teams.find(t => t.id === teamId);
+    const team = this.teams.find((t) => t.id === teamId);
     if (team) {
-      alert(`Equipo: ${team.name}\nDescripción: ${team.description}\nMiembros: ${team.members.length}\nEstado: ${team.isActive ? 'Activo' : 'Inactivo'}`);
+      alert(
+        `Equipo: ${team.name}\nDescripción: ${team.description}\nMiembros: ${team.members.length}\nEstado: ${
+          team.isActive ? 'Activo' : 'Inactivo'
+        }`
+      );
     }
   }
 
   editTeam(teamId) {
-    const team = this.teams.find(t => t.id === teamId);
+    const team = this.teams.find((t) => t.id === teamId);
     if (team) {
       const newName = prompt('Nuevo nombre:', team.name);
       if (newName) {
@@ -1051,14 +1105,18 @@ class AxyraProjectTaskManagementSystem {
   }
 
   showMilestoneDetails(milestoneId) {
-    const milestone = this.milestones.find(m => m.id === milestoneId);
+    const milestone = this.milestones.find((m) => m.id === milestoneId);
     if (milestone) {
-      alert(`Hito: ${milestone.name}\nDescripción: ${milestone.description}\nEstado: ${milestone.status}\nFecha límite: ${new Date(milestone.dueDate).toLocaleDateString()}`);
+      alert(
+        `Hito: ${milestone.name}\nDescripción: ${milestone.description}\nEstado: ${
+          milestone.status
+        }\nFecha límite: ${new Date(milestone.dueDate).toLocaleDateString()}`
+      );
     }
   }
 
   editMilestone(milestoneId) {
-    const milestone = this.milestones.find(m => m.id === milestoneId);
+    const milestone = this.milestones.find((m) => m.id === milestoneId);
     if (milestone) {
       const newName = prompt('Nuevo nombre:', milestone.name);
       if (newName) {
@@ -1069,14 +1127,18 @@ class AxyraProjectTaskManagementSystem {
   }
 
   showAssignmentDetails(assignmentId) {
-    const assignment = this.assignments.find(a => a.id === assignmentId);
+    const assignment = this.assignments.find((a) => a.id === assignmentId);
     if (assignment) {
-      alert(`Asignación: ${assignment.id}\nTarea: ${assignment.taskId}\nUsuario: ${assignment.userId}\nAsignado: ${new Date(assignment.assignedAt).toLocaleDateString()}`);
+      alert(
+        `Asignación: ${assignment.id}\nTarea: ${assignment.taskId}\nUsuario: ${assignment.userId}\nAsignado: ${new Date(
+          assignment.assignedAt
+        ).toLocaleDateString()}`
+      );
     }
   }
 
   editAssignment(assignmentId) {
-    const assignment = this.assignments.find(a => a.id === assignmentId);
+    const assignment = this.assignments.find((a) => a.id === assignmentId);
     if (assignment) {
       const newUserId = prompt('Nuevo usuario:', assignment.userId);
       if (newUserId) {
@@ -1087,14 +1149,16 @@ class AxyraProjectTaskManagementSystem {
   }
 
   showCommentDetails(commentId) {
-    const comment = this.comments.find(c => c.id === commentId);
+    const comment = this.comments.find((c) => c.id === commentId);
     if (comment) {
-      alert(`Comentario: ${comment.id}\nTarea: ${comment.taskId}\nUsuario: ${comment.userId}\nContenido: ${comment.content}`);
+      alert(
+        `Comentario: ${comment.id}\nTarea: ${comment.taskId}\nUsuario: ${comment.userId}\nContenido: ${comment.content}`
+      );
     }
   }
 
   editComment(commentId) {
-    const comment = this.comments.find(c => c.id === commentId);
+    const comment = this.comments.find((c) => c.id === commentId);
     if (comment) {
       const newContent = prompt('Nuevo contenido:', comment.content);
       if (newContent !== null) {
@@ -1105,14 +1169,18 @@ class AxyraProjectTaskManagementSystem {
   }
 
   showAttachmentDetails(attachmentId) {
-    const attachment = this.attachments.find(a => a.id === attachmentId);
+    const attachment = this.attachments.find((a) => a.id === attachmentId);
     if (attachment) {
-      alert(`Adjunto: ${attachment.fileName}\nTarea: ${attachment.taskId}\nTamaño: ${this.formatFileSize(attachment.fileSize)}\nTipo: ${attachment.fileType}`);
+      alert(
+        `Adjunto: ${attachment.fileName}\nTarea: ${attachment.taskId}\nTamaño: ${this.formatFileSize(
+          attachment.fileSize
+        )}\nTipo: ${attachment.fileType}`
+      );
     }
   }
 
   editAttachment(attachmentId) {
-    const attachment = this.attachments.find(a => a.id === attachmentId);
+    const attachment = this.attachments.find((a) => a.id === attachmentId);
     if (attachment) {
       const newFileName = prompt('Nuevo nombre de archivo:', attachment.fileName);
       if (newFileName) {
@@ -1123,14 +1191,16 @@ class AxyraProjectTaskManagementSystem {
   }
 
   showTimeTrackingDetails(timeId) {
-    const time = this.timeTracking.find(t => t.id === timeId);
+    const time = this.timeTracking.find((t) => t.id === timeId);
     if (time) {
-      alert(`Seguimiento: ${time.id}\nTarea: ${time.taskId}\nUsuario: ${time.userId}\nDuración: ${time.duration} minutos\nDescripción: ${time.description}`);
+      alert(
+        `Seguimiento: ${time.id}\nTarea: ${time.taskId}\nUsuario: ${time.userId}\nDuración: ${time.duration} minutos\nDescripción: ${time.description}`
+      );
     }
   }
 
   editTimeTracking(timeId) {
-    const time = this.timeTracking.find(t => t.id === timeId);
+    const time = this.timeTracking.find((t) => t.id === timeId);
     if (time) {
       const newDuration = prompt('Nueva duración en minutos:', time.duration);
       if (newDuration !== null) {

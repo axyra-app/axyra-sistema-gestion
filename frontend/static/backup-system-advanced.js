@@ -17,35 +17,35 @@ class AxyraBackupSystemAdvanced {
       maxSize: 100 * 1024 * 1024, // 100MB
       includeAudit: true,
       includeConfig: true,
-      includeData: true
+      includeData: true,
     };
-    
+
     this.backupHistory = [];
     this.scheduledBackups = [];
     this.isRunning = false;
-    
+
     this.init();
   }
 
   init() {
     try {
       console.log('💾 Inicializando sistema avanzado de backup...');
-      
+
       // Cargar configuración
       this.loadConfig();
-      
+
       // Cargar historial de backups
       this.loadBackupHistory();
-      
+
       // Configurar programación automática
       this.setupScheduledBackups();
-      
+
       // Configurar listeners
       this.setupEventListeners();
-      
+
       // Verificar backups pendientes
       this.checkPendingBackups();
-      
+
       console.log('✅ Sistema de backup avanzado inicializado');
     } catch (error) {
       console.error('❌ Error inicializando backup:', error);
@@ -75,7 +75,7 @@ class AxyraBackupSystemAdvanced {
         formats: [],
         size: 0,
         duration: 0,
-        error: null
+        error: null,
       };
 
       this.backupHistory.unshift(backupInfo);
@@ -117,7 +117,7 @@ class AxyraBackupSystemAdvanced {
       backupInfo.status = 'COMPLETED';
       backupInfo.duration = Date.now() - startTime;
       backupInfo.size = this.calculateTotalSize(backupFiles);
-      backupInfo.files = backupFiles.map(f => f.name);
+      backupInfo.files = backupFiles.map((f) => f.name);
 
       // Limpiar backups antiguos
       this.cleanupOldBackups();
@@ -128,16 +128,15 @@ class AxyraBackupSystemAdvanced {
           backupId: backupId,
           formats: backupInfo.formats,
           size: backupInfo.size,
-          duration: backupInfo.duration
+          duration: backupInfo.duration,
         });
       }
 
       console.log('✅ Backup completado exitosamente');
       return backupInfo;
-
     } catch (error) {
       console.error('❌ Error durante backup:', error);
-      
+
       if (backupInfo) {
         backupInfo.status = 'FAILED';
         backupInfo.error = error.message;
@@ -148,7 +147,7 @@ class AxyraBackupSystemAdvanced {
       if (window.axyraAuditSystem) {
         window.axyraAuditSystem.logError(error, {
           context: 'backup_system',
-          backupId: backupId
+          backupId: backupId,
         });
       }
 
@@ -168,12 +167,12 @@ class AxyraBackupSystemAdvanced {
         version: '1.0.0',
         timestamp: new Date().toISOString(),
         system: 'AXYRA',
-        backupType: options.type || 'FULL'
+        backupType: options.type || 'FULL',
       },
       config: {},
       data: {},
       audit: {},
-      files: []
+      files: [],
     };
 
     try {
@@ -184,7 +183,7 @@ class AxyraBackupSystemAdvanced {
           system: JSON.parse(localStorage.getItem('axyra_config_sistema') || '{}'),
           security: JSON.parse(localStorage.getItem('axyra_config_seguridad') || '{}'),
           roles: JSON.parse(localStorage.getItem('axyra_roles') || '[]'),
-          workAreas: JSON.parse(localStorage.getItem('axyra_work_areas') || '[]')
+          workAreas: JSON.parse(localStorage.getItem('axyra_work_areas') || '[]'),
         };
       }
 
@@ -197,7 +196,7 @@ class AxyraBackupSystemAdvanced {
           facturas: JSON.parse(localStorage.getItem('axyra_facturas') || '[]'),
           inventario: JSON.parse(localStorage.getItem('axyra_inventario') || '[]'),
           cuadreCaja: JSON.parse(localStorage.getItem('axyra_cuadre_caja') || '[]'),
-          usuarios: JSON.parse(localStorage.getItem('axyra_usuarios') || '[]')
+          usuarios: JSON.parse(localStorage.getItem('axyra_usuarios') || '[]'),
         };
       }
 
@@ -205,7 +204,7 @@ class AxyraBackupSystemAdvanced {
       if (this.backupConfig.includeAudit && window.axyraAuditSystem) {
         data.audit = {
           logs: window.axyraAuditSystem.getLogs({ limit: 1000 }),
-          stats: window.axyraAuditSystem.getAuditStats('7d')
+          stats: window.axyraAuditSystem.getAuditStats('7d'),
         };
       }
 
@@ -246,12 +245,12 @@ class AxyraBackupSystemAdvanced {
   generateJSONBackup(data, filename) {
     const jsonData = JSON.stringify(data, null, 2);
     const blob = new Blob([jsonData], { type: 'application/json' });
-    
+
     return {
       name: filename,
       blob: blob,
       size: blob.size,
-      type: 'application/json'
+      type: 'application/json',
     };
   }
 
@@ -261,12 +260,12 @@ class AxyraBackupSystemAdvanced {
   generateCSVBackup(data, filename) {
     const csvData = this.convertToCSV(data);
     const blob = new Blob([csvData], { type: 'text/csv' });
-    
+
     return {
       name: filename,
       blob: blob,
       size: blob.size,
-      type: 'text/csv'
+      type: 'text/csv',
     };
   }
 
@@ -291,7 +290,7 @@ class AxyraBackupSystemAdvanced {
    */
   convertToCSV(data) {
     const csvRows = [];
-    
+
     // Agregar metadatos
     csvRows.push('Section,Key,Value');
     csvRows.push(`metadata,version,"${data.metadata.version}"`);
@@ -314,9 +313,9 @@ class AxyraBackupSystemAdvanced {
       if (Array.isArray(records) && records.length > 0) {
         const headers = Object.keys(records[0]);
         csvRows.push(`data,${table},"${headers.join(',')}"`);
-        
-        records.forEach(record => {
-          const values = headers.map(header => `"${record[header] || ''}"`);
+
+        records.forEach((record) => {
+          const values = headers.map((header) => `"${record[header] || ''}"`);
           csvRows.push(`data,${table},"${values.join(',')}"`);
         });
       }
@@ -364,7 +363,7 @@ class AxyraBackupSystemAdvanced {
     if (!this.backupConfig.enabled) return;
 
     // Limpiar programaciones existentes
-    this.scheduledBackups.forEach(backup => {
+    this.scheduledBackups.forEach((backup) => {
       clearTimeout(backup.timeoutId);
     });
     this.scheduledBackups = [];
@@ -372,7 +371,7 @@ class AxyraBackupSystemAdvanced {
     // Programar backup según frecuencia
     const now = new Date();
     const backupTime = this.parseTime(this.backupConfig.time);
-    
+
     let nextBackup = new Date();
     nextBackup.setHours(backupTime.hours, backupTime.minutes, 0, 0);
 
@@ -395,7 +394,7 @@ class AxyraBackupSystemAdvanced {
     }
 
     const timeUntilBackup = nextBackup.getTime() - now.getTime();
-    
+
     const timeoutId = setTimeout(() => {
       this.performScheduledBackup();
     }, timeUntilBackup);
@@ -404,7 +403,7 @@ class AxyraBackupSystemAdvanced {
       id: 'main',
       nextRun: nextBackup,
       timeoutId: timeoutId,
-      frequency: this.backupConfig.frequency
+      frequency: this.backupConfig.frequency,
     });
 
     console.log(`📅 Backup programado para: ${nextBackup.toLocaleString()}`);
@@ -416,18 +415,17 @@ class AxyraBackupSystemAdvanced {
   async performScheduledBackup() {
     try {
       console.log('🕐 Ejecutando backup programado...');
-      
+
       await this.performBackup({
         type: 'SCHEDULED',
-        formats: this.backupConfig.formats
+        formats: this.backupConfig.formats,
       });
 
       // Reprogramar siguiente backup
       this.setupScheduledBackups();
-
     } catch (error) {
       console.error('❌ Error en backup programado:', error);
-      
+
       // Reprogramar para intentar de nuevo en 1 hora
       setTimeout(() => {
         this.performScheduledBackup();
@@ -443,7 +441,7 @@ class AxyraBackupSystemAdvanced {
       console.log('🔄 Iniciando restauración desde backup...');
 
       const data = await this.parseBackupFile(backupFile);
-      
+
       // Validar estructura del backup
       this.validateBackupData(data);
 
@@ -474,17 +472,16 @@ class AxyraBackupSystemAdvanced {
       if (window.axyraAuditSystem) {
         window.axyraAuditSystem.logSystemEvent('BACKUP_RESTORED', 'Sistema restaurado desde backup', {
           backupFile: backupFile.name,
-          backupTimestamp: data.metadata?.timestamp
+          backupTimestamp: data.metadata?.timestamp,
         });
       }
 
       console.log('✅ Restauración completada exitosamente');
-      
+
       // Recargar página para aplicar cambios
       setTimeout(() => {
         window.location.reload();
       }, 2000);
-
     } catch (error) {
       console.error('❌ Error restaurando backup:', error);
       throw error;
@@ -497,7 +494,7 @@ class AxyraBackupSystemAdvanced {
   async parseBackupFile(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = (e) => {
         try {
           const data = JSON.parse(e.target.result);
@@ -506,11 +503,11 @@ class AxyraBackupSystemAdvanced {
           reject(new Error('Error parseando archivo de backup: ' + error.message));
         }
       };
-      
+
       reader.onerror = () => {
         reject(new Error('Error leyendo archivo de backup'));
       };
-      
+
       reader.readAsText(file);
     });
   }
@@ -522,7 +519,7 @@ class AxyraBackupSystemAdvanced {
     if (!data.metadata) {
       throw new Error('Backup inválido: falta metadata');
     }
-    
+
     if (!data.metadata.system || data.metadata.system !== 'AXYRA') {
       throw new Error('Backup inválido: no es un backup de AXYRA');
     }
@@ -534,7 +531,7 @@ class AxyraBackupSystemAdvanced {
   configureBackup(config) {
     this.backupConfig = { ...this.backupConfig, ...config };
     this.saveConfig();
-    
+
     // Reprogramar backups si cambió la configuración
     if (config.frequency || config.time) {
       this.setupScheduledBackups();
@@ -557,15 +554,15 @@ class AxyraBackupSystemAdvanced {
 
     const stats = {
       total: this.backupHistory.length,
-      last24h: this.backupHistory.filter(b => new Date(b.timestamp) > last24h).length,
-      last7d: this.backupHistory.filter(b => new Date(b.timestamp) > last7d).length,
-      last30d: this.backupHistory.filter(b => new Date(b.timestamp) > last30d).length,
-      successful: this.backupHistory.filter(b => b.status === 'COMPLETED').length,
-      failed: this.backupHistory.filter(b => b.status === 'FAILED').length,
+      last24h: this.backupHistory.filter((b) => new Date(b.timestamp) > last24h).length,
+      last7d: this.backupHistory.filter((b) => new Date(b.timestamp) > last7d).length,
+      last30d: this.backupHistory.filter((b) => new Date(b.timestamp) > last30d).length,
+      successful: this.backupHistory.filter((b) => b.status === 'COMPLETED').length,
+      failed: this.backupHistory.filter((b) => b.status === 'FAILED').length,
       totalSize: this.backupHistory.reduce((sum, b) => sum + (b.size || 0), 0),
       averageSize: 0,
       nextScheduled: this.scheduledBackups[0]?.nextRun || null,
-      config: this.backupConfig
+      config: this.backupConfig,
     };
 
     if (stats.successful > 0) {
@@ -583,15 +580,13 @@ class AxyraBackupSystemAdvanced {
     cutoffDate.setDate(cutoffDate.getDate() - this.backupConfig.retention);
 
     const originalLength = this.backupHistory.length;
-    this.backupHistory = this.backupHistory.filter(backup => 
-      new Date(backup.timestamp) > cutoffDate
-    );
+    this.backupHistory = this.backupHistory.filter((backup) => new Date(backup.timestamp) > cutoffDate);
 
     const removedCount = originalLength - this.backupHistory.length;
-    
+
     if (removedCount > 0) {
       console.log(`🧹 Limpieza de backups: ${removedCount} backups antiguos eliminados`);
-      
+
       if (window.axyraAuditSystem) {
         window.axyraAuditSystem.logSystemEvent('BACKUP_CLEANUP', `Limpieza de backups: ${removedCount} eliminados`);
       }
@@ -604,20 +599,20 @@ class AxyraBackupSystemAdvanced {
    * Verifica backups pendientes
    */
   checkPendingBackups() {
-    const pendingBackups = this.backupHistory.filter(b => b.status === 'IN_PROGRESS');
-    
+    const pendingBackups = this.backupHistory.filter((b) => b.status === 'IN_PROGRESS');
+
     if (pendingBackups.length > 0) {
       console.log(`⚠️ ${pendingBackups.length} backups pendientes encontrados`);
-      
+
       // Marcar como fallidos si llevan más de 1 hora
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-      pendingBackups.forEach(backup => {
+      pendingBackups.forEach((backup) => {
         if (new Date(backup.timestamp) < oneHourAgo) {
           backup.status = 'FAILED';
           backup.error = 'Timeout - backup pendiente por más de 1 hora';
         }
       });
-      
+
       this.saveBackupHistory();
     }
   }

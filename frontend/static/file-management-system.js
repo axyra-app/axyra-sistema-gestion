@@ -25,9 +25,9 @@ class AxyraFileManagementSystem {
       'text/plain',
       'text/csv',
       'application/json',
-      'application/zip'
+      'application/zip',
     ];
-    
+
     this.init();
   }
 
@@ -146,21 +146,21 @@ class AxyraFileManagementSystem {
 
   handleFileChange(change) {
     const { fileId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.files.push(data);
         this.saveFiles();
         break;
       case 'updated':
-        const fileIndex = this.files.findIndex(f => f.id === fileId);
+        const fileIndex = this.files.findIndex((f) => f.id === fileId);
         if (fileIndex !== -1) {
           this.files[fileIndex] = { ...this.files[fileIndex], ...data };
           this.saveFiles();
         }
         break;
       case 'deleted':
-        this.files = this.files.filter(f => f.id !== fileId);
+        this.files = this.files.filter((f) => f.id !== fileId);
         this.saveFiles();
         break;
     }
@@ -168,8 +168,8 @@ class AxyraFileManagementSystem {
 
   handlePermissionChange(change) {
     const { fileId, userId, permissions } = change;
-    
-    const permissionIndex = this.permissions.findIndex(p => p.fileId === fileId && p.userId === userId);
+
+    const permissionIndex = this.permissions.findIndex((p) => p.fileId === fileId && p.userId === userId);
     if (permissionIndex !== -1) {
       this.permissions[permissionIndex].permissions = permissions;
     } else {
@@ -178,10 +178,10 @@ class AxyraFileManagementSystem {
         userId,
         permissions,
         grantedAt: new Date().toISOString(),
-        grantedBy: this.getCurrentUser()
+        grantedBy: this.getCurrentUser(),
       });
     }
-    
+
     this.savePermissions();
   }
 
@@ -200,7 +200,7 @@ class AxyraFileManagementSystem {
       }
 
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         const fileData = {
           id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
@@ -212,16 +212,16 @@ class AxyraFileManagementSystem {
           metadata: {
             ...metadata,
             uploadedAt: new Date().toISOString(),
-            uploadedBy: this.getCurrentUser()
+            uploadedBy: this.getCurrentUser(),
           },
           permissions: {
             owner: this.getCurrentUser(),
             read: [this.getCurrentUser()],
             write: [this.getCurrentUser()],
-            delete: [this.getCurrentUser()]
+            delete: [this.getCurrentUser()],
           },
           version: 1,
-          isActive: true
+          isActive: true,
         };
 
         this.files.push(fileData);
@@ -243,8 +243,8 @@ class AxyraFileManagementSystem {
   }
 
   async handleFileUpload(files) {
-    const uploadPromises = files.map(file => this.uploadFile(file));
-    
+    const uploadPromises = files.map((file) => this.uploadFile(file));
+
     try {
       const uploadedFiles = await Promise.all(uploadPromises);
       console.log('✅ Archivos subidos:', uploadedFiles.length);
@@ -256,7 +256,7 @@ class AxyraFileManagementSystem {
   }
 
   downloadFile(fileId) {
-    const file = this.files.find(f => f.id === fileId);
+    const file = this.files.find((f) => f.id === fileId);
     if (!file) {
       throw new Error('Archivo no encontrado');
     }
@@ -283,11 +283,11 @@ class AxyraFileManagementSystem {
     const download = {
       fileId,
       downloadedAt: new Date().toISOString(),
-      downloadedBy: this.getCurrentUser()
+      downloadedBy: this.getCurrentUser(),
     };
 
     this.downloads.push(download);
-    
+
     // Mantener solo las últimas 100 descargas
     if (this.downloads.length > 100) {
       this.downloads = this.downloads.slice(-100);
@@ -304,15 +304,15 @@ class AxyraFileManagementSystem {
       metadata: {
         ...metadata,
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
+        createdBy: this.getCurrentUser(),
       },
       permissions: {
         owner: this.getCurrentUser(),
         read: [this.getCurrentUser()],
         write: [this.getCurrentUser()],
-        delete: [this.getCurrentUser()]
+        delete: [this.getCurrentUser()],
       },
-      isActive: true
+      isActive: true,
     };
 
     this.folders.push(folder);
@@ -323,14 +323,14 @@ class AxyraFileManagementSystem {
   }
 
   updateFolder(folderId, updates) {
-    const folderIndex = this.folders.findIndex(f => f.id === folderId);
+    const folderIndex = this.folders.findIndex((f) => f.id === folderId);
     if (folderIndex === -1) {
       throw new Error('Carpeta no encontrada');
     }
 
-    this.folders[folderIndex] = { 
-      ...this.folders[folderIndex], 
-      ...updates 
+    this.folders[folderIndex] = {
+      ...this.folders[folderIndex],
+      ...updates,
     };
 
     this.saveFolders();
@@ -340,22 +340,22 @@ class AxyraFileManagementSystem {
   }
 
   deleteFolder(folderId) {
-    const folderIndex = this.folders.findIndex(f => f.id === folderId);
+    const folderIndex = this.folders.findIndex((f) => f.id === folderId);
     if (folderIndex === -1) {
       throw new Error('Carpeta no encontrada');
     }
 
     const folder = this.folders[folderIndex];
-    
+
     // Verificar permisos
     if (!this.hasPermission(folderId, 'delete')) {
       throw new Error('Sin permisos para eliminar esta carpeta');
     }
 
     // Verificar si tiene archivos o subcarpetas
-    const hasFiles = this.files.some(f => f.folderId === folderId);
-    const hasSubfolders = this.folders.some(f => f.parentId === folderId);
-    
+    const hasFiles = this.files.some((f) => f.folderId === folderId);
+    const hasSubfolders = this.folders.some((f) => f.parentId === folderId);
+
     if (hasFiles || hasSubfolders) {
       throw new Error('No se puede eliminar una carpeta que contiene archivos o subcarpetas');
     }
@@ -376,9 +376,9 @@ class AxyraFileManagementSystem {
       metadata: {
         ...fileData.metadata,
         versionedAt: new Date().toISOString(),
-        versionedBy: this.getCurrentUser()
+        versionedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.versions.push(version);
@@ -389,16 +389,16 @@ class AxyraFileManagementSystem {
   }
 
   getFileVersions(fileId) {
-    return this.versions.filter(v => v.fileId === fileId && v.isActive);
+    return this.versions.filter((v) => v.fileId === fileId && v.isActive);
   }
 
   restoreVersion(versionId) {
-    const version = this.versions.find(v => v.id === versionId);
+    const version = this.versions.find((v) => v.id === versionId);
     if (!version) {
       throw new Error('Versión no encontrada');
     }
 
-    const fileIndex = this.files.findIndex(f => f.id === version.fileId);
+    const fileIndex = this.files.findIndex((f) => f.id === version.fileId);
     if (fileIndex === -1) {
       throw new Error('Archivo no encontrado');
     }
@@ -412,8 +412,8 @@ class AxyraFileManagementSystem {
         ...this.files[fileIndex].metadata,
         restoredAt: new Date().toISOString(),
         restoredBy: this.getCurrentUser(),
-        restoredFrom: versionId
-      }
+        restoredFrom: versionId,
+      },
     };
 
     this.files[fileIndex] = restoredFile;
@@ -432,10 +432,10 @@ class AxyraFileManagementSystem {
       userId,
       permissions,
       grantedAt: new Date().toISOString(),
-      grantedBy: this.getCurrentUser()
+      grantedBy: this.getCurrentUser(),
     };
 
-    const existingIndex = this.permissions.findIndex(p => p.fileId === fileId && p.userId === userId);
+    const existingIndex = this.permissions.findIndex((p) => p.fileId === fileId && p.userId === userId);
     if (existingIndex !== -1) {
       this.permissions[existingIndex] = permission;
     } else {
@@ -449,16 +449,16 @@ class AxyraFileManagementSystem {
   }
 
   hasPermission(fileId, action) {
-    const file = this.files.find(f => f.id === fileId);
+    const file = this.files.find((f) => f.id === fileId);
     if (!file) return false;
 
     const currentUser = this.getCurrentUser();
-    
+
     // El propietario tiene todos los permisos
     if (file.permissions.owner === currentUser) return true;
 
     // Verificar permisos específicos
-    const permission = this.permissions.find(p => p.fileId === fileId && p.userId === currentUser);
+    const permission = this.permissions.find((p) => p.fileId === fileId && p.userId === currentUser);
     if (permission) {
       return permission.permissions.includes(action);
     }
@@ -471,27 +471,26 @@ class AxyraFileManagementSystem {
     let filteredFiles = [...this.files];
 
     if (filters.folderId) {
-      filteredFiles = filteredFiles.filter(f => f.folderId === filters.folderId);
+      filteredFiles = filteredFiles.filter((f) => f.folderId === filters.folderId);
     }
 
     if (filters.type) {
-      filteredFiles = filteredFiles.filter(f => f.type === filters.type);
+      filteredFiles = filteredFiles.filter((f) => f.type === filters.type);
     }
 
     if (filters.owner) {
-      filteredFiles = filteredFiles.filter(f => f.permissions.owner === filters.owner);
+      filteredFiles = filteredFiles.filter((f) => f.permissions.owner === filters.owner);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredFiles = filteredFiles.filter(f => 
-        f.name.toLowerCase().includes(searchTerm) ||
-        f.metadata.description?.toLowerCase().includes(searchTerm)
+      filteredFiles = filteredFiles.filter(
+        (f) => f.name.toLowerCase().includes(searchTerm) || f.metadata.description?.toLowerCase().includes(searchTerm)
       );
     }
 
     if (filters.permission) {
-      filteredFiles = filteredFiles.filter(f => this.hasPermission(f.id, filters.permission));
+      filteredFiles = filteredFiles.filter((f) => this.hasPermission(f.id, filters.permission));
     }
 
     return filteredFiles;
@@ -501,18 +500,16 @@ class AxyraFileManagementSystem {
     let filteredFolders = [...this.folders];
 
     if (filters.parentId !== undefined) {
-      filteredFolders = filteredFolders.filter(f => f.parentId === filters.parentId);
+      filteredFolders = filteredFolders.filter((f) => f.parentId === filters.parentId);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredFolders = filteredFolders.filter(f => 
-        f.name.toLowerCase().includes(searchTerm)
-      );
+      filteredFolders = filteredFolders.filter((f) => f.name.toLowerCase().includes(searchTerm));
     }
 
     if (filters.permission) {
-      filteredFolders = filteredFolders.filter(f => this.hasPermission(f.id, filters.permission));
+      filteredFolders = filteredFolders.filter((f) => this.hasPermission(f.id, filters.permission));
     }
 
     return filteredFolders;
@@ -525,7 +522,7 @@ class AxyraFileManagementSystem {
     const typeStats = {};
     const ownerStats = {};
 
-    this.files.forEach(file => {
+    this.files.forEach((file) => {
       // Estadísticas por tipo
       const type = file.type.split('/')[0];
       typeStats[type] = (typeStats[type] || 0) + 1;
@@ -540,42 +537,41 @@ class AxyraFileManagementSystem {
       totalFolders,
       totalSize,
       typeStats,
-      ownerStats
+      ownerStats,
     };
   }
 
   searchFiles(query) {
     const searchTerm = query.toLowerCase();
-    
-    const fileResults = this.files.filter(file => 
-      file.name.toLowerCase().includes(searchTerm) ||
-      file.metadata.description?.toLowerCase().includes(searchTerm) ||
-      file.type.toLowerCase().includes(searchTerm)
+
+    const fileResults = this.files.filter(
+      (file) =>
+        file.name.toLowerCase().includes(searchTerm) ||
+        file.metadata.description?.toLowerCase().includes(searchTerm) ||
+        file.type.toLowerCase().includes(searchTerm)
     );
 
-    const folderResults = this.folders.filter(folder => 
-      folder.name.toLowerCase().includes(searchTerm)
-    );
+    const folderResults = this.folders.filter((folder) => folder.name.toLowerCase().includes(searchTerm));
 
     return {
       files: fileResults,
       folders: folderResults,
-      total: fileResults.length + folderResults.length
+      total: fileResults.length + folderResults.length,
     };
   }
 
   exportFiles(fileIds) {
-    const filesToExport = this.files.filter(f => fileIds.includes(f.id));
-    
+    const filesToExport = this.files.filter((f) => fileIds.includes(f.id));
+
     const data = {
       files: filesToExport,
       exportDate: new Date().toISOString(),
-      exportedBy: this.getCurrentUser()
+      exportedBy: this.getCurrentUser(),
     };
 
     const dataStr = JSON.stringify(data, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    
+
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
@@ -583,28 +579,28 @@ class AxyraFileManagementSystem {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log('📊 Archivos exportados:', filesToExport.length);
   }
 
   importFiles(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result);
-          
+
           if (data.files) {
-            data.files.forEach(fileData => {
+            data.files.forEach((fileData) => {
               fileData.id = 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
               fileData.metadata.importedAt = new Date().toISOString();
               fileData.metadata.importedBy = this.getCurrentUser();
               this.files.push(fileData);
             });
-            
+
             this.saveFiles();
             console.log('✅ Archivos importados:', data.files.length);
             resolve(data.files);
@@ -616,11 +612,11 @@ class AxyraFileManagementSystem {
           reject(error);
         }
       };
-      
+
       reader.onerror = () => {
         reject(new Error('Error leyendo archivo'));
       };
-      
+
       reader.readAsText(file);
     });
   }
@@ -682,33 +678,39 @@ class AxyraFileManagementSystem {
   }
 
   renderFolderTree() {
-    const rootFolders = this.folders.filter(f => !f.parentId);
-    
-    return rootFolders.map(folder => this.renderFolderNode(folder)).join('');
+    const rootFolders = this.folders.filter((f) => !f.parentId);
+
+    return rootFolders.map((folder) => this.renderFolderNode(folder)).join('');
   }
 
   renderFolderNode(folder) {
-    const subfolders = this.folders.filter(f => f.parentId === folder.id);
-    
+    const subfolders = this.folders.filter((f) => f.parentId === folder.id);
+
     return `
       <div class="folder-node">
         <div class="folder-item" onclick="axyraFileManagementSystem.selectFolder('${folder.id}')">
           <span class="folder-icon">📁</span>
           <span class="folder-name">${folder.name}</span>
         </div>
-        ${subfolders.length > 0 ? `
+        ${
+          subfolders.length > 0
+            ? `
           <div class="subfolders">
-            ${subfolders.map(subfolder => this.renderFolderNode(subfolder)).join('')}
+            ${subfolders.map((subfolder) => this.renderFolderNode(subfolder)).join('')}
           </div>
-        ` : ''}
+        `
+            : ''
+        }
       </div>
     `;
   }
 
   renderFileGrid() {
     const files = this.getFiles();
-    
-    return files.map(file => `
+
+    return files
+      .map(
+        (file) => `
       <div class="file-item" data-file-id="${file.id}">
         <div class="file-icon">${this.getFileIcon(file.type)}</div>
         <div class="file-name">${file.name}</div>
@@ -719,7 +721,9 @@ class AxyraFileManagementSystem {
           <button onclick="axyraFileManagementSystem.deleteFile('${file.id}')" title="Eliminar">🗑️</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   getFileIcon(type) {
@@ -769,15 +773,19 @@ class AxyraFileManagementSystem {
   }
 
   showFileInfo(fileId) {
-    const file = this.files.find(f => f.id === fileId);
+    const file = this.files.find((f) => f.id === fileId);
     if (file) {
-      alert(`Nombre: ${file.name}\nTipo: ${file.type}\nTamaño: ${this.formatFileSize(file.size)}\nSubido: ${new Date(file.metadata.uploadedAt).toLocaleString()}`);
+      alert(
+        `Nombre: ${file.name}\nTipo: ${file.type}\nTamaño: ${this.formatFileSize(file.size)}\nSubido: ${new Date(
+          file.metadata.uploadedAt
+        ).toLocaleString()}`
+      );
     }
   }
 
   deleteFile(fileId) {
     if (confirm('¿Estás seguro de que quieres eliminar este archivo?')) {
-      const fileIndex = this.files.findIndex(f => f.id === fileId);
+      const fileIndex = this.files.findIndex((f) => f.id === fileId);
       if (fileIndex !== -1) {
         this.files.splice(fileIndex, 1);
         this.saveFiles();

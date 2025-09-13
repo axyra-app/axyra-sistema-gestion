@@ -15,7 +15,7 @@ class AxyraFileDocumentManagementSystem {
     this.folders = [];
     this.fileLogs = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -225,38 +225,38 @@ class AxyraFileDocumentManagementSystem {
           id: 'documents',
           name: 'Documentos',
           description: 'Documentos generales',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'images',
           name: 'Imágenes',
           description: 'Archivos de imagen',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'videos',
           name: 'Videos',
           description: 'Archivos de video',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'audio',
           name: 'Audio',
           description: 'Archivos de audio',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'spreadsheets',
           name: 'Hojas de Cálculo',
           description: 'Archivos de Excel y similares',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'presentations',
           name: 'Presentaciones',
           description: 'Archivos de PowerPoint y similares',
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveCategories();
     }
@@ -268,29 +268,29 @@ class AxyraFileDocumentManagementSystem {
           name: 'Raíz',
           description: 'Carpeta raíz del sistema',
           parentId: null,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'documents',
           name: 'Documentos',
           description: 'Carpeta de documentos',
           parentId: 'root',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'images',
           name: 'Imágenes',
           description: 'Carpeta de imágenes',
           parentId: 'root',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'videos',
           name: 'Videos',
           description: 'Carpeta de videos',
           parentId: 'root',
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveFolders();
     }
@@ -298,21 +298,21 @@ class AxyraFileDocumentManagementSystem {
 
   handleFileChange(change) {
     const { fileId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.files.push(data);
         this.saveFiles();
         break;
       case 'updated':
-        const fileIndex = this.files.findIndex(f => f.id === fileId);
+        const fileIndex = this.files.findIndex((f) => f.id === fileId);
         if (fileIndex !== -1) {
           this.files[fileIndex] = { ...this.files[fileIndex], ...data };
           this.saveFiles();
         }
         break;
       case 'deleted':
-        this.files = this.files.filter(f => f.id !== fileId);
+        this.files = this.files.filter((f) => f.id !== fileId);
         this.saveFiles();
         break;
     }
@@ -320,21 +320,21 @@ class AxyraFileDocumentManagementSystem {
 
   handleDocumentChange(change) {
     const { documentId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.documents.push(data);
         this.saveDocuments();
         break;
       case 'updated':
-        const documentIndex = this.documents.findIndex(d => d.id === documentId);
+        const documentIndex = this.documents.findIndex((d) => d.id === documentId);
         if (documentIndex !== -1) {
           this.documents[documentIndex] = { ...this.documents[documentIndex], ...data };
           this.saveDocuments();
         }
         break;
       case 'deleted':
-        this.documents = this.documents.filter(d => d.id !== documentId);
+        this.documents = this.documents.filter((d) => d.id !== documentId);
         this.saveDocuments();
         break;
     }
@@ -360,8 +360,8 @@ class AxyraFileDocumentManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.files.push(file);
@@ -384,8 +384,8 @@ class AxyraFileDocumentManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.documents.push(document);
@@ -407,8 +407,8 @@ class AxyraFileDocumentManagementSystem {
       isActive: versionData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.versions.push(version);
@@ -431,8 +431,8 @@ class AxyraFileDocumentManagementSystem {
       isActive: permissionData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.permissions.push(permission);
@@ -452,8 +452,8 @@ class AxyraFileDocumentManagementSystem {
       isActive: collaborationData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.collaborations.push(collaboration);
@@ -472,8 +472,8 @@ class AxyraFileDocumentManagementSystem {
       isActive: tagData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.tags.push(tag);
@@ -491,8 +491,8 @@ class AxyraFileDocumentManagementSystem {
       isActive: categoryData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.categories.push(category);
@@ -511,8 +511,8 @@ class AxyraFileDocumentManagementSystem {
       isActive: folderData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.folders.push(folder);
@@ -534,8 +534,8 @@ class AxyraFileDocumentManagementSystem {
       data: logData.data || {},
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.fileLogs.push(log);
@@ -547,22 +547,22 @@ class AxyraFileDocumentManagementSystem {
 
   getFileStatistics() {
     const totalFiles = this.files.length;
-    const activeFiles = this.files.filter(f => f.isActive).length;
+    const activeFiles = this.files.filter((f) => f.isActive).length;
     const totalDocuments = this.documents.length;
-    const activeDocuments = this.documents.filter(d => d.isActive).length;
+    const activeDocuments = this.documents.filter((d) => d.isActive).length;
     const totalVersions = this.versions.length;
     const totalPermissions = this.permissions.length;
-    const activePermissions = this.permissions.filter(p => p.isActive).length;
+    const activePermissions = this.permissions.filter((p) => p.isActive).length;
     const totalCollaborations = this.collaborations.length;
-    const activeCollaborations = this.collaborations.filter(c => c.isActive).length;
+    const activeCollaborations = this.collaborations.filter((c) => c.isActive).length;
     const totalTags = this.tags.length;
-    const activeTags = this.tags.filter(t => t.isActive).length;
+    const activeTags = this.tags.filter((t) => t.isActive).length;
     const totalCategories = this.categories.length;
-    const activeCategories = this.categories.filter(c => c.isActive).length;
+    const activeCategories = this.categories.filter((c) => c.isActive).length;
     const totalFolders = this.folders.length;
-    const activeFolders = this.folders.filter(f => f.isActive).length;
+    const activeFolders = this.folders.filter((f) => f.isActive).length;
     const totalLogs = this.fileLogs.length;
-    const errorLogs = this.fileLogs.filter(l => l.level === 'error').length;
+    const errorLogs = this.fileLogs.filter((l) => l.level === 'error').length;
 
     return {
       totalFiles,
@@ -581,7 +581,7 @@ class AxyraFileDocumentManagementSystem {
       totalFolders,
       activeFolders,
       totalLogs,
-      errorLogs
+      errorLogs,
     };
   }
 
@@ -674,13 +674,13 @@ class AxyraFileDocumentManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -689,7 +689,7 @@ class AxyraFileDocumentManagementSystem {
 
   renderFileStats() {
     const stats = this.getFileStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -766,7 +766,7 @@ class AxyraFileDocumentManagementSystem {
 
   renderOverview() {
     const stats = this.getFileStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -826,8 +826,10 @@ class AxyraFileDocumentManagementSystem {
 
   renderFilesList() {
     const files = this.files.slice(-20); // Últimos 20 archivos
-    
-    return files.map(file => `
+
+    return files
+      .map(
+        (file) => `
       <div class="file-card">
         <div class="file-header">
           <h5>${file.name}</h5>
@@ -844,13 +846,17 @@ class AxyraFileDocumentManagementSystem {
           <button onclick="axyraFileDocumentManagementSystem.editFile('${file.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderDocumentsList() {
     const documents = this.documents.slice(-20); // Últimos 20 documentos
-    
-    return documents.map(document => `
+
+    return documents
+      .map(
+        (document) => `
       <div class="document-card">
         <div class="document-header">
           <h5>${document.title}</h5>
@@ -866,17 +872,23 @@ class AxyraFileDocumentManagementSystem {
           <button onclick="axyraFileDocumentManagementSystem.editDocument('${document.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderVersionsList() {
     const versions = this.versions.slice(-20); // Últimas 20 versiones
-    
-    return versions.map(version => `
+
+    return versions
+      .map(
+        (version) => `
       <div class="version-card">
         <div class="version-header">
           <h5>Versión ${version.version}</h5>
-          <span class="version-status ${version.isActive ? 'active' : 'inactive'}">${version.isActive ? 'Activa' : 'Inactiva'}</span>
+          <span class="version-status ${version.isActive ? 'active' : 'inactive'}">${
+          version.isActive ? 'Activa' : 'Inactiva'
+        }</span>
         </div>
         <div class="version-info">
           <p>Archivo: ${version.fileId}</p>
@@ -888,17 +900,23 @@ class AxyraFileDocumentManagementSystem {
           <button onclick="axyraFileDocumentManagementSystem.restoreVersion('${version.id}')">Restaurar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderPermissionsList() {
     const permissions = this.permissions.slice(-20); // Últimos 20 permisos
-    
-    return permissions.map(permission => `
+
+    return permissions
+      .map(
+        (permission) => `
       <div class="permission-card">
         <div class="permission-header">
           <h5>${permission.role}</h5>
-          <span class="permission-status ${permission.isActive ? 'active' : 'inactive'}">${permission.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="permission-status ${permission.isActive ? 'active' : 'inactive'}">${
+          permission.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="permission-info">
           <p>Archivo: ${permission.fileId}</p>
@@ -913,17 +931,23 @@ class AxyraFileDocumentManagementSystem {
           <button onclick="axyraFileDocumentManagementSystem.editPermission('${permission.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderCollaborationsList() {
     const collaborations = this.collaborations.slice(-20); // Últimas 20 colaboraciones
-    
-    return collaborations.map(collaboration => `
+
+    return collaborations
+      .map(
+        (collaboration) => `
       <div class="collaboration-card">
         <div class="collaboration-header">
           <h5>${collaboration.action}</h5>
-          <span class="collaboration-status ${collaboration.isActive ? 'active' : 'inactive'}">${collaboration.isActive ? 'Activa' : 'Inactiva'}</span>
+          <span class="collaboration-status ${collaboration.isActive ? 'active' : 'inactive'}">${
+          collaboration.isActive ? 'Activa' : 'Inactiva'
+        }</span>
         </div>
         <div class="collaboration-info">
           <p>Archivo: ${collaboration.fileId}</p>
@@ -931,17 +955,23 @@ class AxyraFileDocumentManagementSystem {
           <p>Contenido: ${collaboration.content.substring(0, 100)}...</p>
         </div>
         <div class="collaboration-actions">
-          <button onclick="axyraFileDocumentManagementSystem.showCollaborationDetails('${collaboration.id}')">Ver</button>
+          <button onclick="axyraFileDocumentManagementSystem.showCollaborationDetails('${
+            collaboration.id
+          }')">Ver</button>
           <button onclick="axyraFileDocumentManagementSystem.editCollaboration('${collaboration.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderTagsList() {
     const tags = this.tags.slice(-20); // Últimas 20 etiquetas
-    
-    return tags.map(tag => `
+
+    return tags
+      .map(
+        (tag) => `
       <div class="tag-card">
         <div class="tag-header">
           <h5>${tag.name}</h5>
@@ -956,17 +986,23 @@ class AxyraFileDocumentManagementSystem {
           <button onclick="axyraFileDocumentManagementSystem.editTag('${tag.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderCategoriesList() {
     const categories = this.categories.slice(-20); // Últimas 20 categorías
-    
-    return categories.map(category => `
+
+    return categories
+      .map(
+        (category) => `
       <div class="category-card">
         <div class="category-header">
           <h5>${category.name}</h5>
-          <span class="category-status ${category.isActive ? 'active' : 'inactive'}">${category.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="category-status ${category.isActive ? 'active' : 'inactive'}">${
+          category.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="category-info">
           <p>${category.description}</p>
@@ -976,17 +1012,23 @@ class AxyraFileDocumentManagementSystem {
           <button onclick="axyraFileDocumentManagementSystem.editCategory('${category.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderFoldersList() {
     const folders = this.folders.slice(-20); // Últimas 20 carpetas
-    
-    return folders.map(folder => `
+
+    return folders
+      .map(
+        (folder) => `
       <div class="folder-card">
         <div class="folder-header">
           <h5>${folder.name}</h5>
-          <span class="folder-status ${folder.isActive ? 'active' : 'inactive'}">${folder.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="folder-status ${folder.isActive ? 'active' : 'inactive'}">${
+          folder.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="folder-info">
           <p>${folder.description}</p>
@@ -997,13 +1039,17 @@ class AxyraFileDocumentManagementSystem {
           <button onclick="axyraFileDocumentManagementSystem.editFolder('${folder.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderLogsList() {
     const logs = this.fileLogs.slice(-20); // Últimos 20 logs
-    
-    return logs.map(log => `
+
+    return logs
+      .map(
+        (log) => `
       <div class="log-card">
         <div class="log-header">
           <h5>${log.message}</h5>
@@ -1017,7 +1063,9 @@ class AxyraFileDocumentManagementSystem {
           <p>Fecha: ${new Date(log.timestamp).toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   formatFileSize(bytes) {
@@ -1047,14 +1095,18 @@ class AxyraFileDocumentManagementSystem {
   }
 
   showFileDetails(fileId) {
-    const file = this.files.find(f => f.id === fileId);
+    const file = this.files.find((f) => f.id === fileId);
     if (file) {
-      alert(`Archivo: ${file.name}\nDescripción: ${file.description}\nTipo: ${file.type}\nTamaño: ${this.formatFileSize(file.size)}\nTipo MIME: ${file.mimeType}`);
+      alert(
+        `Archivo: ${file.name}\nDescripción: ${file.description}\nTipo: ${file.type}\nTamaño: ${this.formatFileSize(
+          file.size
+        )}\nTipo MIME: ${file.mimeType}`
+      );
     }
   }
 
   editFile(fileId) {
-    const file = this.files.find(f => f.id === fileId);
+    const file = this.files.find((f) => f.id === fileId);
     if (file) {
       const newName = prompt('Nuevo nombre:', file.name);
       if (newName) {
@@ -1065,14 +1117,18 @@ class AxyraFileDocumentManagementSystem {
   }
 
   showDocumentDetails(documentId) {
-    const document = this.documents.find(d => d.id === documentId);
+    const document = this.documents.find((d) => d.id === documentId);
     if (document) {
-      alert(`Documento: ${document.title}\nTipo: ${document.type}\nVersión: ${document.version}\nEstado: ${document.status}\nContenido: ${document.content.substring(0, 200)}...`);
+      alert(
+        `Documento: ${document.title}\nTipo: ${document.type}\nVersión: ${document.version}\nEstado: ${
+          document.status
+        }\nContenido: ${document.content.substring(0, 200)}...`
+      );
     }
   }
 
   editDocument(documentId) {
-    const document = this.documents.find(d => d.id === documentId);
+    const document = this.documents.find((d) => d.id === documentId);
     if (document) {
       const newTitle = prompt('Nuevo título:', document.title);
       if (newTitle) {
@@ -1083,14 +1139,18 @@ class AxyraFileDocumentManagementSystem {
   }
 
   showVersionDetails(versionId) {
-    const version = this.versions.find(v => v.id === versionId);
+    const version = this.versions.find((v) => v.id === versionId);
     if (version) {
-      alert(`Versión: ${version.version}\nArchivo: ${version.fileId}\nCambios: ${version.changes}\nTamaño: ${this.formatFileSize(version.size)}`);
+      alert(
+        `Versión: ${version.version}\nArchivo: ${version.fileId}\nCambios: ${
+          version.changes
+        }\nTamaño: ${this.formatFileSize(version.size)}`
+      );
     }
   }
 
   restoreVersion(versionId) {
-    const version = this.versions.find(v => v.id === versionId);
+    const version = this.versions.find((v) => v.id === versionId);
     if (version) {
       version.isActive = true;
       this.saveVersions();
@@ -1098,14 +1158,18 @@ class AxyraFileDocumentManagementSystem {
   }
 
   showPermissionDetails(permissionId) {
-    const permission = this.permissions.find(p => p.id === permissionId);
+    const permission = this.permissions.find((p) => p.id === permissionId);
     if (permission) {
-      alert(`Permiso: ${permission.role}\nArchivo: ${permission.fileId}\nUsuario: ${permission.userId}\nLectura: ${permission.canRead ? 'Sí' : 'No'}\nEscritura: ${permission.canWrite ? 'Sí' : 'No'}`);
+      alert(
+        `Permiso: ${permission.role}\nArchivo: ${permission.fileId}\nUsuario: ${permission.userId}\nLectura: ${
+          permission.canRead ? 'Sí' : 'No'
+        }\nEscritura: ${permission.canWrite ? 'Sí' : 'No'}`
+      );
     }
   }
 
   editPermission(permissionId) {
-    const permission = this.permissions.find(p => p.id === permissionId);
+    const permission = this.permissions.find((p) => p.id === permissionId);
     if (permission) {
       const newRole = prompt('Nuevo rol (owner, editor, viewer, commenter):', permission.role);
       if (newRole) {
@@ -1116,14 +1180,16 @@ class AxyraFileDocumentManagementSystem {
   }
 
   showCollaborationDetails(collaborationId) {
-    const collaboration = this.collaborations.find(c => c.id === collaborationId);
+    const collaboration = this.collaborations.find((c) => c.id === collaborationId);
     if (collaboration) {
-      alert(`Colaboración: ${collaboration.action}\nArchivo: ${collaboration.fileId}\nUsuario: ${collaboration.userId}\nContenido: ${collaboration.content}`);
+      alert(
+        `Colaboración: ${collaboration.action}\nArchivo: ${collaboration.fileId}\nUsuario: ${collaboration.userId}\nContenido: ${collaboration.content}`
+      );
     }
   }
 
   editCollaboration(collaborationId) {
-    const collaboration = this.collaborations.find(c => c.id === collaborationId);
+    const collaboration = this.collaborations.find((c) => c.id === collaborationId);
     if (collaboration) {
       const newContent = prompt('Nuevo contenido:', collaboration.content);
       if (newContent !== null) {
@@ -1134,14 +1200,18 @@ class AxyraFileDocumentManagementSystem {
   }
 
   showTagDetails(tagId) {
-    const tag = this.tags.find(t => t.id === tagId);
+    const tag = this.tags.find((t) => t.id === tagId);
     if (tag) {
-      alert(`Etiqueta: ${tag.name}\nDescripción: ${tag.description}\nColor: ${tag.color}\nEstado: ${tag.isActive ? 'Activo' : 'Inactivo'}`);
+      alert(
+        `Etiqueta: ${tag.name}\nDescripción: ${tag.description}\nColor: ${tag.color}\nEstado: ${
+          tag.isActive ? 'Activo' : 'Inactivo'
+        }`
+      );
     }
   }
 
   editTag(tagId) {
-    const tag = this.tags.find(t => t.id === tagId);
+    const tag = this.tags.find((t) => t.id === tagId);
     if (tag) {
       const newName = prompt('Nuevo nombre:', tag.name);
       if (newName) {
@@ -1152,14 +1222,18 @@ class AxyraFileDocumentManagementSystem {
   }
 
   showCategoryDetails(categoryId) {
-    const category = this.categories.find(c => c.id === categoryId);
+    const category = this.categories.find((c) => c.id === categoryId);
     if (category) {
-      alert(`Categoría: ${category.name}\nDescripción: ${category.description}\nEstado: ${category.isActive ? 'Activo' : 'Inactivo'}`);
+      alert(
+        `Categoría: ${category.name}\nDescripción: ${category.description}\nEstado: ${
+          category.isActive ? 'Activo' : 'Inactivo'
+        }`
+      );
     }
   }
 
   editCategory(categoryId) {
-    const category = this.categories.find(c => c.id === categoryId);
+    const category = this.categories.find((c) => c.id === categoryId);
     if (category) {
       const newName = prompt('Nuevo nombre:', category.name);
       if (newName) {
@@ -1170,14 +1244,18 @@ class AxyraFileDocumentManagementSystem {
   }
 
   showFolderDetails(folderId) {
-    const folder = this.folders.find(f => f.id === folderId);
+    const folder = this.folders.find((f) => f.id === folderId);
     if (folder) {
-      alert(`Carpeta: ${folder.name}\nDescripción: ${folder.description}\nPadre: ${folder.parentId || 'Raíz'}\nEstado: ${folder.isActive ? 'Activo' : 'Inactivo'}`);
+      alert(
+        `Carpeta: ${folder.name}\nDescripción: ${folder.description}\nPadre: ${folder.parentId || 'Raíz'}\nEstado: ${
+          folder.isActive ? 'Activo' : 'Inactivo'
+        }`
+      );
     }
   }
 
   editFolder(folderId) {
-    const folder = this.folders.find(f => f.id === folderId);
+    const folder = this.folders.find((f) => f.id === folderId);
     if (folder) {
       const newName = prompt('Nuevo nombre:', folder.name);
       if (newName) {

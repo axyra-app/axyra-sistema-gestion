@@ -15,7 +15,7 @@ class AxyraCRMSystem {
     this.campaigns = [];
     this.leads = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -219,21 +219,21 @@ class AxyraCRMSystem {
 
   handleCustomerChange(change) {
     const { customerId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.customers.push(data);
         this.saveCustomers();
         break;
       case 'updated':
-        const customerIndex = this.customers.findIndex(c => c.id === customerId);
+        const customerIndex = this.customers.findIndex((c) => c.id === customerId);
         if (customerIndex !== -1) {
           this.customers[customerIndex] = { ...this.customers[customerIndex], ...data };
           this.saveCustomers();
         }
         break;
       case 'deleted':
-        this.customers = this.customers.filter(c => c.id !== customerId);
+        this.customers = this.customers.filter((c) => c.id !== customerId);
         this.saveCustomers();
         break;
     }
@@ -241,21 +241,21 @@ class AxyraCRMSystem {
 
   handleOpportunityChange(change) {
     const { opportunityId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.opportunities.push(data);
         this.saveOpportunities();
         break;
       case 'updated':
-        const opportunityIndex = this.opportunities.findIndex(o => o.id === opportunityId);
+        const opportunityIndex = this.opportunities.findIndex((o) => o.id === opportunityId);
         if (opportunityIndex !== -1) {
           this.opportunities[opportunityIndex] = { ...this.opportunities[opportunityIndex], ...data };
           this.saveOpportunities();
         }
         break;
       case 'deleted':
-        this.opportunities = this.opportunities.filter(o => o.id !== opportunityId);
+        this.opportunities = this.opportunities.filter((o) => o.id !== opportunityId);
         this.saveOpportunities();
         break;
     }
@@ -284,9 +284,9 @@ class AxyraCRMSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.customers.push(customer);
@@ -297,19 +297,19 @@ class AxyraCRMSystem {
   }
 
   updateCustomer(customerId, updates) {
-    const customerIndex = this.customers.findIndex(c => c.id === customerId);
+    const customerIndex = this.customers.findIndex((c) => c.id === customerId);
     if (customerIndex === -1) {
       throw new Error('Cliente no encontrado');
     }
 
-    this.customers[customerIndex] = { 
-      ...this.customers[customerIndex], 
+    this.customers[customerIndex] = {
+      ...this.customers[customerIndex],
       ...updates,
       metadata: {
         ...this.customers[customerIndex].metadata,
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.saveCustomers();
@@ -319,17 +319,17 @@ class AxyraCRMSystem {
   }
 
   deleteCustomer(customerId) {
-    const customerIndex = this.customers.findIndex(c => c.id === customerId);
+    const customerIndex = this.customers.findIndex((c) => c.id === customerId);
     if (customerIndex === -1) {
       throw new Error('Cliente no encontrado');
     }
 
     const customer = this.customers[customerIndex];
-    
+
     // Verificar si tiene oportunidades o negocios
-    const hasOpportunities = this.opportunities.some(o => o.customerId === customerId);
-    const hasDeals = this.deals.some(d => d.customerId === customerId);
-    
+    const hasOpportunities = this.opportunities.some((o) => o.customerId === customerId);
+    const hasDeals = this.deals.some((d) => d.customerId === customerId);
+
     if (hasOpportunities || hasDeals) {
       throw new Error('No se puede eliminar un cliente que tiene oportunidades o negocios');
     }
@@ -356,9 +356,9 @@ class AxyraCRMSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.contacts.push(contact);
@@ -388,9 +388,9 @@ class AxyraCRMSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.opportunities.push(opportunity);
@@ -401,19 +401,19 @@ class AxyraCRMSystem {
   }
 
   updateOpportunity(opportunityId, updates) {
-    const opportunityIndex = this.opportunities.findIndex(o => o.id === opportunityId);
+    const opportunityIndex = this.opportunities.findIndex((o) => o.id === opportunityId);
     if (opportunityIndex === -1) {
       throw new Error('Oportunidad no encontrada');
     }
 
-    this.opportunities[opportunityIndex] = { 
-      ...this.opportunities[opportunityIndex], 
+    this.opportunities[opportunityIndex] = {
+      ...this.opportunities[opportunityIndex],
       ...updates,
       metadata: {
         ...this.opportunities[opportunityIndex].metadata,
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.saveOpportunities();
@@ -438,9 +438,9 @@ class AxyraCRMSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.deals.push(deal);
@@ -466,9 +466,9 @@ class AxyraCRMSystem {
       owner: activityData.owner || this.getCurrentUser(),
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
+        createdBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.activities.push(activity);
@@ -489,9 +489,9 @@ class AxyraCRMSystem {
       author: noteData.author || this.getCurrentUser(),
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
+        createdBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.notes.push(note);
@@ -518,9 +518,9 @@ class AxyraCRMSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.tasks.push(task);
@@ -546,9 +546,9 @@ class AxyraCRMSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.campaigns.push(campaign);
@@ -576,9 +576,9 @@ class AxyraCRMSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
+        updatedBy: this.getCurrentUser(),
       },
-      isActive: true
+      isActive: true,
     };
 
     this.leads.push(lead);
@@ -592,23 +592,24 @@ class AxyraCRMSystem {
     let filteredCustomers = [...this.customers];
 
     if (filters.status) {
-      filteredCustomers = filteredCustomers.filter(c => c.status === filters.status);
+      filteredCustomers = filteredCustomers.filter((c) => c.status === filters.status);
     }
 
     if (filters.industry) {
-      filteredCustomers = filteredCustomers.filter(c => c.industry === filters.industry);
+      filteredCustomers = filteredCustomers.filter((c) => c.industry === filters.industry);
     }
 
     if (filters.source) {
-      filteredCustomers = filteredCustomers.filter(c => c.source === filters.source);
+      filteredCustomers = filteredCustomers.filter((c) => c.source === filters.source);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredCustomers = filteredCustomers.filter(c => 
-        c.name.toLowerCase().includes(searchTerm) ||
-        c.email.toLowerCase().includes(searchTerm) ||
-        c.company.toLowerCase().includes(searchTerm)
+      filteredCustomers = filteredCustomers.filter(
+        (c) =>
+          c.name.toLowerCase().includes(searchTerm) ||
+          c.email.toLowerCase().includes(searchTerm) ||
+          c.company.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -619,22 +620,21 @@ class AxyraCRMSystem {
     let filteredOpportunities = [...this.opportunities];
 
     if (filters.stage) {
-      filteredOpportunities = filteredOpportunities.filter(o => o.stage === filters.stage);
+      filteredOpportunities = filteredOpportunities.filter((o) => o.stage === filters.stage);
     }
 
     if (filters.owner) {
-      filteredOpportunities = filteredOpportunities.filter(o => o.owner === filters.owner);
+      filteredOpportunities = filteredOpportunities.filter((o) => o.owner === filters.owner);
     }
 
     if (filters.customerId) {
-      filteredOpportunities = filteredOpportunities.filter(o => o.customerId === filters.customerId);
+      filteredOpportunities = filteredOpportunities.filter((o) => o.customerId === filters.customerId);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredOpportunities = filteredOpportunities.filter(o => 
-        o.name.toLowerCase().includes(searchTerm) ||
-        o.description.toLowerCase().includes(searchTerm)
+      filteredOpportunities = filteredOpportunities.filter(
+        (o) => o.name.toLowerCase().includes(searchTerm) || o.description.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -643,17 +643,19 @@ class AxyraCRMSystem {
 
   getCRMStatistics() {
     const totalCustomers = this.customers.length;
-    const activeCustomers = this.customers.filter(c => c.status === 'active').length;
+    const activeCustomers = this.customers.filter((c) => c.status === 'active').length;
     const totalOpportunities = this.opportunities.length;
-    const openOpportunities = this.opportunities.filter(o => o.stage !== 'closed_won' && o.stage !== 'closed_lost').length;
+    const openOpportunities = this.opportunities.filter(
+      (o) => o.stage !== 'closed_won' && o.stage !== 'closed_lost'
+    ).length;
     const totalDeals = this.deals.length;
-    const closedDeals = this.deals.filter(d => d.status === 'closed').length;
+    const closedDeals = this.deals.filter((d) => d.status === 'closed').length;
     const totalLeads = this.leads.length;
-    const qualifiedLeads = this.leads.filter(l => l.status === 'qualified').length;
-    
+    const qualifiedLeads = this.leads.filter((l) => l.status === 'qualified').length;
+
     const totalOpportunityValue = this.opportunities.reduce((sum, o) => sum + (o.value || 0), 0);
     const totalDealValue = this.deals.reduce((sum, d) => sum + (d.value || 0), 0);
-    
+
     const conversionRate = totalLeads > 0 ? Math.round((qualifiedLeads / totalLeads) * 100) : 0;
     const winRate = totalOpportunities > 0 ? Math.round((closedDeals / totalOpportunities) * 100) : 0;
 
@@ -669,7 +671,7 @@ class AxyraCRMSystem {
       totalOpportunityValue,
       totalDealValue,
       conversionRate,
-      winRate
+      winRate,
     };
   }
 
@@ -742,13 +744,13 @@ class AxyraCRMSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -757,7 +759,7 @@ class AxyraCRMSystem {
 
   renderCRMStats() {
     const stats = this.getCRMStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -814,8 +816,10 @@ class AxyraCRMSystem {
 
   renderCustomersList() {
     const customers = this.getCustomers();
-    
-    return customers.map(customer => `
+
+    return customers
+      .map(
+        (customer) => `
       <div class="customer-card">
         <div class="customer-header">
           <h4>${customer.name}</h4>
@@ -831,13 +835,17 @@ class AxyraCRMSystem {
           <button onclick="axyraCRMSystem.editCustomer('${customer.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderOpportunitiesList() {
     const opportunities = this.getOpportunities();
-    
-    return opportunities.map(opportunity => `
+
+    return opportunities
+      .map(
+        (opportunity) => `
       <div class="opportunity-card">
         <div class="opportunity-header">
           <h4>${opportunity.name}</h4>
@@ -853,13 +861,17 @@ class AxyraCRMSystem {
           <button onclick="axyraCRMSystem.editOpportunity('${opportunity.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderDealsList() {
     const deals = this.deals;
-    
-    return deals.map(deal => `
+
+    return deals
+      .map(
+        (deal) => `
       <div class="deal-card">
         <div class="deal-header">
           <h4>${deal.name}</h4>
@@ -874,13 +886,17 @@ class AxyraCRMSystem {
           <button onclick="axyraCRMSystem.editDeal('${deal.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderLeadsList() {
     const leads = this.leads;
-    
-    return leads.map(lead => `
+
+    return leads
+      .map(
+        (lead) => `
       <div class="lead-card">
         <div class="lead-header">
           <h4>${lead.firstName} ${lead.lastName}</h4>
@@ -897,13 +913,17 @@ class AxyraCRMSystem {
           <button onclick="axyraCRMSystem.editLead('${lead.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderActivitiesList() {
     const activities = this.activities.slice(-10); // Últimas 10 actividades
-    
-    return activities.map(activity => `
+
+    return activities
+      .map(
+        (activity) => `
       <div class="activity-card">
         <div class="activity-header">
           <h5>${activity.subject}</h5>
@@ -914,7 +934,9 @@ class AxyraCRMSystem {
           <p>Fecha: ${new Date(activity.date).toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreateCustomerDialog() {
@@ -937,14 +959,16 @@ class AxyraCRMSystem {
   }
 
   showCustomerDetails(customerId) {
-    const customer = this.customers.find(c => c.id === customerId);
+    const customer = this.customers.find((c) => c.id === customerId);
     if (customer) {
-      alert(`Cliente: ${customer.name}\nEmail: ${customer.email}\nTeléfono: ${customer.phone}\nEmpresa: ${customer.company}\nEstado: ${customer.status}`);
+      alert(
+        `Cliente: ${customer.name}\nEmail: ${customer.email}\nTeléfono: ${customer.phone}\nEmpresa: ${customer.company}\nEstado: ${customer.status}`
+      );
     }
   }
 
   editCustomer(customerId) {
-    const customer = this.customers.find(c => c.id === customerId);
+    const customer = this.customers.find((c) => c.id === customerId);
     if (customer) {
       const newName = prompt('Nuevo nombre:', customer.name);
       if (newName) {
@@ -954,14 +978,16 @@ class AxyraCRMSystem {
   }
 
   showOpportunityDetails(opportunityId) {
-    const opportunity = this.opportunities.find(o => o.id === opportunityId);
+    const opportunity = this.opportunities.find((o) => o.id === opportunityId);
     if (opportunity) {
-      alert(`Oportunidad: ${opportunity.name}\nValor: $${opportunity.value}\nProbabilidad: ${opportunity.probability}%\nEtapa: ${opportunity.stage}`);
+      alert(
+        `Oportunidad: ${opportunity.name}\nValor: $${opportunity.value}\nProbabilidad: ${opportunity.probability}%\nEtapa: ${opportunity.stage}`
+      );
     }
   }
 
   editOpportunity(opportunityId) {
-    const opportunity = this.opportunities.find(o => o.id === opportunityId);
+    const opportunity = this.opportunities.find((o) => o.id === opportunityId);
     if (opportunity) {
       const newValue = parseFloat(prompt('Nuevo valor:', opportunity.value));
       if (newValue) {
@@ -971,14 +997,18 @@ class AxyraCRMSystem {
   }
 
   showDealDetails(dealId) {
-    const deal = this.deals.find(d => d.id === dealId);
+    const deal = this.deals.find((d) => d.id === dealId);
     if (deal) {
-      alert(`Negocio: ${deal.name}\nValor: $${deal.value}\nEstado: ${deal.status}\nFecha de cierre: ${new Date(deal.closeDate).toLocaleDateString()}`);
+      alert(
+        `Negocio: ${deal.name}\nValor: $${deal.value}\nEstado: ${deal.status}\nFecha de cierre: ${new Date(
+          deal.closeDate
+        ).toLocaleDateString()}`
+      );
     }
   }
 
   editDeal(dealId) {
-    const deal = this.deals.find(d => d.id === dealId);
+    const deal = this.deals.find((d) => d.id === dealId);
     if (deal) {
       const newValue = parseFloat(prompt('Nuevo valor:', deal.value));
       if (newValue) {
@@ -989,14 +1019,16 @@ class AxyraCRMSystem {
   }
 
   showLeadDetails(leadId) {
-    const lead = this.leads.find(l => l.id === leadId);
+    const lead = this.leads.find((l) => l.id === leadId);
     if (lead) {
-      alert(`Lead: ${lead.firstName} ${lead.lastName}\nEmail: ${lead.email}\nTeléfono: ${lead.phone}\nEmpresa: ${lead.company}\nScore: ${lead.score}`);
+      alert(
+        `Lead: ${lead.firstName} ${lead.lastName}\nEmail: ${lead.email}\nTeléfono: ${lead.phone}\nEmpresa: ${lead.company}\nScore: ${lead.score}`
+      );
     }
   }
 
   editLead(leadId) {
-    const lead = this.leads.find(l => l.id === leadId);
+    const lead = this.leads.find((l) => l.id === leadId);
     if (lead) {
       const newScore = parseInt(prompt('Nuevo score:', lead.score));
       if (newScore) {

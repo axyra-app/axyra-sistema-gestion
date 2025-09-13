@@ -11,7 +11,7 @@ class AxyraKPIManagement {
     this.widgets = [];
     this.alerts = [];
     this.reports = [];
-    
+
     this.init();
   }
 
@@ -66,7 +66,7 @@ class AxyraKPIManagement {
           formula: '((current_month - previous_month) / previous_month) * 100',
           dataSource: 'cash_flow',
           status: 'active',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'employee_satisfaction',
@@ -81,7 +81,7 @@ class AxyraKPIManagement {
           formula: 'average(satisfaction_scores)',
           dataSource: 'surveys',
           status: 'active',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'customer_retention',
@@ -96,7 +96,7 @@ class AxyraKPIManagement {
           formula: '(retained_customers / total_customers) * 100',
           dataSource: 'customer_data',
           status: 'active',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'operational_efficiency',
@@ -111,8 +111,8 @@ class AxyraKPIManagement {
           formula: 'production_output / hours_worked',
           dataSource: 'operations',
           status: 'active',
-          createdAt: new Date().toISOString()
-        }
+          createdAt: new Date().toISOString(),
+        },
       ];
       this.saveData();
     }
@@ -124,7 +124,7 @@ class AxyraKPIManagement {
       hr: this.calculateHRMetrics.bind(this),
       operations: this.calculateOperationsMetrics.bind(this),
       customer: this.calculateCustomerMetrics.bind(this),
-      system: this.calculateSystemMetrics.bind(this)
+      system: this.calculateSystemMetrics.bind(this),
     };
   }
 
@@ -140,7 +140,7 @@ class AxyraKPIManagement {
       executive: this.generateExecutiveReport.bind(this),
       operational: this.generateOperationalReport.bind(this),
       financial: this.generateFinancialReport.bind(this),
-      hr: this.generateHRReport.bind(this)
+      hr: this.generateHRReport.bind(this),
     };
   }
 
@@ -161,11 +161,11 @@ class AxyraKPIManagement {
       thresholds: kpiData.thresholds || {
         critical: 0,
         warning: 0,
-        good: 0
+        good: 0,
       },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.kpis.push(kpi);
@@ -176,15 +176,15 @@ class AxyraKPIManagement {
   }
 
   updateKPI(kpiId, updates) {
-    const kpiIndex = this.kpis.findIndex(k => k.id === kpiId);
+    const kpiIndex = this.kpis.findIndex((k) => k.id === kpiId);
     if (kpiIndex === -1) {
       throw new Error('KPI no encontrado');
     }
 
-    this.kpis[kpiIndex] = { 
-      ...this.kpis[kpiIndex], 
-      ...updates, 
-      updatedAt: new Date().toISOString() 
+    this.kpis[kpiIndex] = {
+      ...this.kpis[kpiIndex],
+      ...updates,
+      updatedAt: new Date().toISOString(),
     };
 
     this.saveData();
@@ -193,7 +193,7 @@ class AxyraKPIManagement {
   }
 
   deleteKPI(kpiId) {
-    const kpiIndex = this.kpis.findIndex(k => k.id === kpiId);
+    const kpiIndex = this.kpis.findIndex((k) => k.id === kpiId);
     if (kpiIndex === -1) {
       throw new Error('KPI no encontrado');
     }
@@ -207,7 +207,7 @@ class AxyraKPIManagement {
   }
 
   calculateKPI(kpiId) {
-    const kpi = this.kpis.find(k => k.id === kpiId);
+    const kpi = this.kpis.find((k) => k.id === kpiId);
     if (!kpi) {
       throw new Error('KPI no encontrado');
     }
@@ -269,7 +269,7 @@ class AxyraKPIManagement {
     const employees = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
     const payrollData = JSON.parse(localStorage.getItem('axyra_nominas') || '[]');
 
-    const activeEmployees = employees.filter(e => e.activo).length;
+    const activeEmployees = employees.filter((e) => e.activo).length;
     const totalCosts = payrollData.reduce((sum, p) => sum + (p.totalPagar || 0), 0);
 
     if (activeEmployees === 0) return 0;
@@ -298,7 +298,7 @@ class AxyraKPIManagement {
   calculateEmployeeRetention() {
     const employees = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
     const totalEmployees = employees.length;
-    const activeEmployees = employees.filter(e => e.activo).length;
+    const activeEmployees = employees.filter((e) => e.activo).length;
 
     if (totalEmployees === 0) return 0;
 
@@ -337,7 +337,7 @@ class AxyraKPIManagement {
     const inventoryData = JSON.parse(localStorage.getItem('axyra_inventario') || '[]');
     const cashData = JSON.parse(localStorage.getItem('axyra_cuadre_caja') || '[]');
 
-    const totalInventoryValue = inventoryData.reduce((sum, p) => sum + ((p.precio || 0) * (p.stock || 0)), 0);
+    const totalInventoryValue = inventoryData.reduce((sum, p) => sum + (p.precio || 0) * (p.stock || 0), 0);
     const totalSales = cashData.reduce((sum, c) => sum + (c.totalVentas || 0), 0);
 
     if (totalInventoryValue === 0) return 0;
@@ -407,7 +407,7 @@ class AxyraKPIManagement {
   }
 
   checkKPIAlerts() {
-    this.kpis.forEach(kpi => {
+    this.kpis.forEach((kpi) => {
       if (kpi.status !== 'active') return;
 
       const status = this.getKPIStatus(kpi);
@@ -445,7 +445,7 @@ class AxyraKPIManagement {
       createdAt: new Date().toISOString(),
       acknowledged: false,
       acknowledgedBy: null,
-      acknowledgedAt: null
+      acknowledgedAt: null,
     };
 
     this.alerts.push(alert);
@@ -457,7 +457,7 @@ class AxyraKPIManagement {
         title: `Alerta de KPI: ${kpi.name}`,
         message: alert.message,
         type: status === 'critical' ? 'error' : 'warning',
-        channels: ['in-app', 'email']
+        channels: ['in-app', 'email'],
       });
     }
 
@@ -469,14 +469,14 @@ class AxyraKPIManagement {
     const messages = {
       critical: `${kpi.name} está en nivel crítico (${kpi.current}${kpi.unit}). Meta: ${kpi.target}${kpi.unit}`,
       warning: `${kpi.name} está por debajo del objetivo (${kpi.current}${kpi.unit}). Meta: ${kpi.target}${kpi.unit}`,
-      needs_improvement: `${kpi.name} necesita mejora (${kpi.current}${kpi.unit}). Meta: ${kpi.target}${kpi.unit}`
+      needs_improvement: `${kpi.name} necesita mejora (${kpi.current}${kpi.unit}). Meta: ${kpi.target}${kpi.unit}`,
     };
 
     return messages[status] || 'Alerta de KPI';
   }
 
   acknowledgeAlert(alertId) {
-    const alert = this.alerts.find(a => a.id === alertId);
+    const alert = this.alerts.find((a) => a.id === alertId);
     if (alert) {
       alert.acknowledged = true;
       alert.acknowledgedBy = this.getCurrentUser();
@@ -499,7 +499,7 @@ class AxyraKPIManagement {
       status: dashboardData.status || 'active',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.dashboards.push(dashboard);
@@ -520,7 +520,7 @@ class AxyraKPIManagement {
       position: widgetData.position || { x: 0, y: 0, w: 4, h: 3 },
       dashboardId: widgetData.dashboardId || null,
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.widgets.push(widget);
@@ -540,10 +540,10 @@ class AxyraKPIManagement {
         financial: this.getFinancialSummary(),
         operational: this.getOperationalSummary(),
         hr: this.getHRSummary(),
-        customer: this.getCustomerSummary()
+        customer: this.getCustomerSummary(),
       },
       generatedAt: new Date().toISOString(),
-      generatedBy: this.getCurrentUser()
+      generatedBy: this.getCurrentUser(),
     };
 
     this.reports.push(report);
@@ -556,7 +556,7 @@ class AxyraKPIManagement {
     return {
       revenue: this.calculateRevenueGrowth(),
       profit: this.calculateProfitMargin(),
-      costPerEmployee: this.calculateCostPerEmployee()
+      costPerEmployee: this.calculateCostPerEmployee(),
     };
   }
 
@@ -564,7 +564,7 @@ class AxyraKPIManagement {
     return {
       efficiency: this.calculateOperationalEfficiency(),
       inventoryTurnover: this.calculateInventoryTurnover(),
-      quality: this.calculateQualityScore()
+      quality: this.calculateQualityScore(),
     };
   }
 
@@ -572,7 +572,7 @@ class AxyraKPIManagement {
     return {
       satisfaction: this.calculateEmployeeSatisfaction(),
       retention: this.calculateEmployeeRetention(),
-      training: this.calculateTrainingHours()
+      training: this.calculateTrainingHours(),
     };
   }
 
@@ -580,7 +580,7 @@ class AxyraKPIManagement {
     return {
       retention: this.calculateCustomerRetention(),
       satisfaction: this.calculateCustomerSatisfaction(),
-      acquisitionCost: this.calculateCustomerAcquisitionCost()
+      acquisitionCost: this.calculateCustomerAcquisitionCost(),
     };
   }
 
@@ -597,11 +597,11 @@ class AxyraKPIManagement {
         system: {
           uptime: this.calculateSystemUptime(),
           responseTime: this.calculateResponseTime(),
-          errorRate: this.calculateErrorRate()
-        }
+          errorRate: this.calculateErrorRate(),
+        },
       },
       generatedAt: new Date().toISOString(),
-      generatedBy: this.getCurrentUser()
+      generatedBy: this.getCurrentUser(),
     };
 
     this.reports.push(report);
@@ -620,10 +620,10 @@ class AxyraKPIManagement {
         revenue: this.calculateRevenueGrowth(),
         profit: this.calculateProfitMargin(),
         costPerEmployee: this.calculateCostPerEmployee(),
-        cashFlow: this.getCashFlowData()
+        cashFlow: this.getCashFlowData(),
       },
       generatedAt: new Date().toISOString(),
-      generatedBy: this.getCurrentUser()
+      generatedBy: this.getCurrentUser(),
     };
 
     this.reports.push(report);
@@ -642,10 +642,10 @@ class AxyraKPIManagement {
         satisfaction: this.calculateEmployeeSatisfaction(),
         retention: this.calculateEmployeeRetention(),
         training: this.calculateTrainingHours(),
-        demographics: this.getEmployeeDemographics()
+        demographics: this.getEmployeeDemographics(),
       },
       generatedAt: new Date().toISOString(),
-      generatedBy: this.getCurrentUser()
+      generatedBy: this.getCurrentUser(),
     };
 
     this.reports.push(report);
@@ -656,11 +656,11 @@ class AxyraKPIManagement {
 
   getCashFlowData() {
     const cashData = JSON.parse(localStorage.getItem('axyra_cuadre_caja') || '[]');
-    return cashData.map(c => ({
+    return cashData.map((c) => ({
       date: c.fecha,
       sales: c.totalVentas || 0,
       cash: c.totalEfectivo || 0,
-      card: c.totalTarjeta || 0
+      card: c.totalTarjeta || 0,
     }));
   }
 
@@ -668,9 +668,9 @@ class AxyraKPIManagement {
     const employees = JSON.parse(localStorage.getItem('axyra_empleados') || '[]');
     return {
       total: employees.length,
-      active: employees.filter(e => e.activo).length,
+      active: employees.filter((e) => e.activo).length,
       byDepartment: this.groupBy(employees, 'departamento'),
-      byRole: this.groupBy(employees, 'rol')
+      byRole: this.groupBy(employees, 'rol'),
     };
   }
 
@@ -686,18 +686,17 @@ class AxyraKPIManagement {
     let filteredKPIs = [...this.kpis];
 
     if (filters.category) {
-      filteredKPIs = filteredKPIs.filter(k => k.category === filters.category);
+      filteredKPIs = filteredKPIs.filter((k) => k.category === filters.category);
     }
 
     if (filters.status) {
-      filteredKPIs = filteredKPIs.filter(k => k.status === filters.status);
+      filteredKPIs = filteredKPIs.filter((k) => k.status === filters.status);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredKPIs = filteredKPIs.filter(k => 
-        k.name.toLowerCase().includes(searchTerm) ||
-        k.description.toLowerCase().includes(searchTerm)
+      filteredKPIs = filteredKPIs.filter(
+        (k) => k.name.toLowerCase().includes(searchTerm) || k.description.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -708,11 +707,11 @@ class AxyraKPIManagement {
     let filteredDashboards = [...this.dashboards];
 
     if (filters.category) {
-      filteredDashboards = filteredDashboards.filter(d => d.category === filters.category);
+      filteredDashboards = filteredDashboards.filter((d) => d.category === filters.category);
     }
 
     if (filters.status) {
-      filteredDashboards = filteredDashboards.filter(d => d.status === filters.status);
+      filteredDashboards = filteredDashboards.filter((d) => d.status === filters.status);
     }
 
     return filteredDashboards;
@@ -722,15 +721,15 @@ class AxyraKPIManagement {
     let filteredAlerts = [...this.alerts];
 
     if (filters.status) {
-      filteredAlerts = filteredAlerts.filter(a => a.status === filters.status);
+      filteredAlerts = filteredAlerts.filter((a) => a.status === filters.status);
     }
 
     if (filters.acknowledged !== undefined) {
-      filteredAlerts = filteredAlerts.filter(a => a.acknowledged === filters.acknowledged);
+      filteredAlerts = filteredAlerts.filter((a) => a.acknowledged === filters.acknowledged);
     }
 
     if (filters.kpiId) {
-      filteredAlerts = filteredAlerts.filter(a => a.kpiId === filters.kpiId);
+      filteredAlerts = filteredAlerts.filter((a) => a.kpiId === filters.kpiId);
     }
 
     return filteredAlerts;
@@ -740,23 +739,19 @@ class AxyraKPIManagement {
     let filteredReports = [...this.reports];
 
     if (filters.type) {
-      filteredReports = filteredReports.filter(r => r.type === filters.type);
+      filteredReports = filteredReports.filter((r) => r.type === filters.type);
     }
 
     if (filters.period) {
-      filteredReports = filteredReports.filter(r => r.period === filters.period);
+      filteredReports = filteredReports.filter((r) => r.period === filters.period);
     }
 
     if (filters.dateFrom) {
-      filteredReports = filteredReports.filter(r => 
-        new Date(r.generatedAt) >= new Date(filters.dateFrom)
-      );
+      filteredReports = filteredReports.filter((r) => new Date(r.generatedAt) >= new Date(filters.dateFrom));
     }
 
     if (filters.dateTo) {
-      filteredReports = filteredReports.filter(r => 
-        new Date(r.generatedAt) <= new Date(filters.dateTo)
-      );
+      filteredReports = filteredReports.filter((r) => new Date(r.generatedAt) <= new Date(filters.dateTo));
     }
 
     return filteredReports;
@@ -764,12 +759,12 @@ class AxyraKPIManagement {
 
   getKPIStatistics() {
     const totalKPIs = this.kpis.length;
-    const activeKPIs = this.kpis.filter(k => k.status === 'active').length;
+    const activeKPIs = this.kpis.filter((k) => k.status === 'active').length;
     const totalAlerts = this.alerts.length;
-    const unacknowledgedAlerts = this.alerts.filter(a => !a.acknowledged).length;
+    const unacknowledgedAlerts = this.alerts.filter((a) => !a.acknowledged).length;
 
     const categoryStats = {};
-    this.kpis.forEach(kpi => {
+    this.kpis.forEach((kpi) => {
       categoryStats[kpi.category] = (categoryStats[kpi.category] || 0) + 1;
     });
 
@@ -778,7 +773,7 @@ class AxyraKPIManagement {
       activeKPIs: activeKPIs,
       totalAlerts: totalAlerts,
       unacknowledgedAlerts: unacknowledgedAlerts,
-      categoryStats: categoryStats
+      categoryStats: categoryStats,
     };
   }
 
@@ -798,7 +793,7 @@ class AxyraKPIManagement {
       widgets: this.widgets,
       alerts: this.alerts,
       reports: this.reports,
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
 
     let content;
@@ -845,7 +840,7 @@ class AxyraKPIManagement {
     rows.push(['ID', 'Nombre', 'Categoría', 'Tipo', 'Actual', 'Objetivo', 'Unidad', 'Estado', 'Creado']);
 
     // Datos
-    this.kpis.forEach(kpi => {
+    this.kpis.forEach((kpi) => {
       rows.push([
         kpi.id,
         kpi.name,
@@ -855,11 +850,11 @@ class AxyraKPIManagement {
         kpi.target,
         kpi.unit,
         kpi.status,
-        new Date(kpi.createdAt).toLocaleDateString()
+        new Date(kpi.createdAt).toLocaleDateString(),
       ]);
     });
 
-    return rows.map(row => row.join(',')).join('\n');
+    return rows.map((row) => row.join(',')).join('\n');
   }
 }
 

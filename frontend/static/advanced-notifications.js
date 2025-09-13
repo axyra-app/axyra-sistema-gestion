@@ -10,7 +10,7 @@ class AxyraAdvancedNotifications {
     this.channels = ['email', 'sms', 'push', 'in-app'];
     this.priorities = ['low', 'medium', 'high', 'urgent'];
     this.categories = ['system', 'business', 'security', 'user', 'reminder'];
-    
+
     this.init();
   }
 
@@ -50,7 +50,7 @@ class AxyraAdvancedNotifications {
           body: 'Hola {{name}}, bienvenido al sistema AXYRA. Tu cuenta ha sido creada exitosamente.',
           channels: ['email', 'in-app'],
           category: 'user',
-          priority: 'medium'
+          priority: 'medium',
         },
         {
           id: 'password_reset',
@@ -59,7 +59,7 @@ class AxyraAdvancedNotifications {
           body: 'Hola {{name}}, has solicitado restablecer tu contraseña. Haz clic en el enlace: {{resetLink}}',
           channels: ['email'],
           category: 'security',
-          priority: 'high'
+          priority: 'high',
         },
         {
           id: 'task_assigned',
@@ -68,7 +68,7 @@ class AxyraAdvancedNotifications {
           body: 'Hola {{name}}, se te ha asignado una nueva tarea: {{taskTitle}}. Fecha límite: {{dueDate}}',
           channels: ['email', 'in-app', 'push'],
           category: 'business',
-          priority: 'medium'
+          priority: 'medium',
         },
         {
           id: 'system_maintenance',
@@ -77,8 +77,8 @@ class AxyraAdvancedNotifications {
           body: 'El sistema estará en mantenimiento el {{date}} de {{startTime}} a {{endTime}}.',
           channels: ['email', 'in-app'],
           category: 'system',
-          priority: 'high'
-        }
+          priority: 'high',
+        },
       ];
       this.saveData();
     }
@@ -90,7 +90,7 @@ class AxyraAdvancedNotifications {
       email: this.sendEmailNotification.bind(this),
       sms: this.sendSMSNotification.bind(this),
       push: this.sendPushNotification.bind(this),
-      'in-app': this.sendInAppNotification.bind(this)
+      'in-app': this.sendInAppNotification.bind(this),
     };
   }
 
@@ -120,7 +120,7 @@ class AxyraAdvancedNotifications {
       createdBy: this.getCurrentUser(),
       sentAt: null,
       readAt: null,
-      clickedAt: null
+      clickedAt: null,
     };
 
     this.notifications.push(notification);
@@ -161,11 +161,7 @@ class AxyraAdvancedNotifications {
     if (window.axyraExternalIntegrations) {
       for (const recipient of notification.recipients) {
         try {
-          await window.axyraExternalIntegrations.sendEmail(
-            recipient.email,
-            notification.title,
-            notification.message
-          );
+          await window.axyraExternalIntegrations.sendEmail(recipient.email, notification.title, notification.message);
         } catch (error) {
           console.error('Error enviando email:', error);
         }
@@ -177,10 +173,7 @@ class AxyraAdvancedNotifications {
     if (window.axyraExternalIntegrations) {
       for (const recipient of notification.recipients) {
         try {
-          await window.axyraExternalIntegrations.sendSMS(
-            recipient.phone,
-            notification.message
-          );
+          await window.axyraExternalIntegrations.sendSMS(recipient.phone, notification.message);
         } catch (error) {
           console.error('Error enviando SMS:', error);
         }
@@ -194,7 +187,7 @@ class AxyraAdvancedNotifications {
         await window.axyraPushNotifications.sendNotification({
           title: notification.title,
           body: notification.message,
-          data: notification.data
+          data: notification.data,
         });
       } catch (error) {
         console.error('Error enviando push notification:', error);
@@ -204,63 +197,57 @@ class AxyraAdvancedNotifications {
 
   async sendInAppNotification(notification) {
     if (window.axyraNotificationSystem) {
-      window.axyraNotificationSystem.showNotification(
-        notification.title,
-        notification.message,
-        {
-          type: notification.type,
-          duration: this.getDurationByPriority(notification.priority),
-          actions: this.getNotificationActions(notification)
-        }
-      );
+      window.axyraNotificationSystem.showNotification(notification.title, notification.message, {
+        type: notification.type,
+        duration: this.getDurationByPriority(notification.priority),
+        actions: this.getNotificationActions(notification),
+      });
     }
   }
 
   getDurationByPriority(priority) {
     const durations = {
-      'low': 3000,
-      'medium': 5000,
-      'high': 8000,
-      'urgent': 0 // No se cierra automáticamente
+      low: 3000,
+      medium: 5000,
+      high: 8000,
+      urgent: 0, // No se cierra automáticamente
     };
     return durations[priority] || 5000;
   }
 
   getNotificationActions(notification) {
     const actions = [];
-    
+
     if (notification.data.actionUrl) {
       actions.push({
         text: 'Ver',
-        action: () => window.open(notification.data.actionUrl, '_blank')
+        action: () => window.open(notification.data.actionUrl, '_blank'),
       });
     }
-    
+
     if (notification.data.dismissible !== false) {
       actions.push({
         text: 'Cerrar',
-        action: () => this.markAsRead(notification.id)
+        action: () => this.markAsRead(notification.id),
       });
     }
-    
+
     return actions;
   }
 
   processScheduledNotifications() {
     const now = new Date();
-    const scheduledNotifications = this.notifications.filter(n => 
-      n.scheduledFor && 
-      new Date(n.scheduledFor) <= now && 
-      n.status === 'pending'
+    const scheduledNotifications = this.notifications.filter(
+      (n) => n.scheduledFor && new Date(n.scheduledFor) <= now && n.status === 'pending'
     );
 
-    scheduledNotifications.forEach(notification => {
+    scheduledNotifications.forEach((notification) => {
       this.processNotification(notification);
     });
   }
 
   markAsRead(notificationId) {
-    const notification = this.notifications.find(n => n.id === notificationId);
+    const notification = this.notifications.find((n) => n.id === notificationId);
     if (notification) {
       notification.readAt = new Date().toISOString();
       this.saveData();
@@ -268,7 +255,7 @@ class AxyraAdvancedNotifications {
   }
 
   markAsClicked(notificationId) {
-    const notification = this.notifications.find(n => n.id === notificationId);
+    const notification = this.notifications.find((n) => n.id === notificationId);
     if (notification) {
       notification.clickedAt = new Date().toISOString();
       this.saveData();
@@ -279,46 +266,38 @@ class AxyraAdvancedNotifications {
     let filteredNotifications = [...this.notifications];
 
     if (filters.recipient) {
-      filteredNotifications = filteredNotifications.filter(n => 
-        n.recipients.some(r => r.id === filters.recipient)
-      );
+      filteredNotifications = filteredNotifications.filter((n) => n.recipients.some((r) => r.id === filters.recipient));
     }
 
     if (filters.category) {
-      filteredNotifications = filteredNotifications.filter(n => n.category === filters.category);
+      filteredNotifications = filteredNotifications.filter((n) => n.category === filters.category);
     }
 
     if (filters.priority) {
-      filteredNotifications = filteredNotifications.filter(n => n.priority === filters.priority);
+      filteredNotifications = filteredNotifications.filter((n) => n.priority === filters.priority);
     }
 
     if (filters.status) {
-      filteredNotifications = filteredNotifications.filter(n => n.status === filters.status);
+      filteredNotifications = filteredNotifications.filter((n) => n.status === filters.status);
     }
 
     if (filters.unread) {
-      filteredNotifications = filteredNotifications.filter(n => !n.readAt);
+      filteredNotifications = filteredNotifications.filter((n) => !n.readAt);
     }
 
     if (filters.dateFrom) {
-      filteredNotifications = filteredNotifications.filter(n => 
-        new Date(n.createdAt) >= new Date(filters.dateFrom)
-      );
+      filteredNotifications = filteredNotifications.filter((n) => new Date(n.createdAt) >= new Date(filters.dateFrom));
     }
 
     if (filters.dateTo) {
-      filteredNotifications = filteredNotifications.filter(n => 
-        new Date(n.createdAt) <= new Date(filters.dateTo)
-      );
+      filteredNotifications = filteredNotifications.filter((n) => new Date(n.createdAt) <= new Date(filters.dateTo));
     }
 
     return filteredNotifications;
   }
 
   getUnreadCount(recipientId) {
-    return this.notifications.filter(n => 
-      n.recipients.some(r => r.id === recipientId) && !n.readAt
-    ).length;
+    return this.notifications.filter((n) => n.recipients.some((r) => r.id === recipientId) && !n.readAt).length;
   }
 
   createTemplate(templateData) {
@@ -332,7 +311,7 @@ class AxyraAdvancedNotifications {
       priority: templateData.priority || 'medium',
       variables: templateData.variables || [],
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.templates.push(template);
@@ -343,7 +322,7 @@ class AxyraAdvancedNotifications {
   }
 
   sendTemplateNotification(templateId, recipients, data = {}) {
-    const template = this.templates.find(t => t.id === templateId);
+    const template = this.templates.find((t) => t.id === templateId);
     if (!template) {
       throw new Error('Plantilla no encontrada');
     }
@@ -360,7 +339,7 @@ class AxyraAdvancedNotifications {
       data: data,
       status: 'pending',
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     return this.createNotification(notification);
@@ -374,26 +353,26 @@ class AxyraAdvancedNotifications {
 
   getTypeByPriority(priority) {
     const types = {
-      'low': 'info',
-      'medium': 'info',
-      'high': 'warning',
-      'urgent': 'error'
+      low: 'info',
+      medium: 'info',
+      high: 'warning',
+      urgent: 'error',
     };
     return types[priority] || 'info';
   }
 
   getNotificationStatistics() {
     const total = this.notifications.length;
-    const sent = this.notifications.filter(n => n.status === 'sent').length;
-    const pending = this.notifications.filter(n => n.status === 'pending').length;
-    const failed = this.notifications.filter(n => n.status === 'failed').length;
-    const read = this.notifications.filter(n => n.readAt).length;
+    const sent = this.notifications.filter((n) => n.status === 'sent').length;
+    const pending = this.notifications.filter((n) => n.status === 'pending').length;
+    const failed = this.notifications.filter((n) => n.status === 'failed').length;
+    const read = this.notifications.filter((n) => n.readAt).length;
     const unread = total - read;
 
     const categoryStats = {};
     const priorityStats = {};
 
-    this.notifications.forEach(notification => {
+    this.notifications.forEach((notification) => {
       categoryStats[notification.category] = (categoryStats[notification.category] || 0) + 1;
       priorityStats[notification.priority] = (priorityStats[notification.priority] || 0) + 1;
     });
@@ -406,7 +385,7 @@ class AxyraAdvancedNotifications {
       read: read,
       unread: unread,
       categoryStats: categoryStats,
-      priorityStats: priorityStats
+      priorityStats: priorityStats,
     };
   }
 
@@ -422,7 +401,7 @@ class AxyraAdvancedNotifications {
     const data = {
       notifications: this.notifications,
       templates: this.templates,
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
 
     let content;
@@ -469,7 +448,7 @@ class AxyraAdvancedNotifications {
     rows.push(['ID', 'Título', 'Mensaje', 'Tipo', 'Categoría', 'Prioridad', 'Estado', 'Creado']);
 
     // Datos
-    this.notifications.forEach(notification => {
+    this.notifications.forEach((notification) => {
       rows.push([
         notification.id,
         notification.title,
@@ -478,24 +457,20 @@ class AxyraAdvancedNotifications {
         notification.category,
         notification.priority,
         notification.status,
-        new Date(notification.createdAt).toLocaleDateString()
+        new Date(notification.createdAt).toLocaleDateString(),
       ]);
     });
 
-    return rows.map(row => row.join(',')).join('\n');
+    return rows.map((row) => row.join(',')).join('\n');
   }
 
   clearOldNotifications(days = 30) {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - days);
 
-    const oldNotifications = this.notifications.filter(n => 
-      new Date(n.createdAt) < cutoffDate
-    );
+    const oldNotifications = this.notifications.filter((n) => new Date(n.createdAt) < cutoffDate);
 
-    this.notifications = this.notifications.filter(n => 
-      new Date(n.createdAt) >= cutoffDate
-    );
+    this.notifications = this.notifications.filter((n) => new Date(n.createdAt) >= cutoffDate);
 
     this.saveData();
 

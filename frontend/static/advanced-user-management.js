@@ -10,7 +10,7 @@ class AxyraAdvancedUserManagement {
     this.permissions = [];
     this.sessions = [];
     this.auditLog = [];
-    
+
     this.init();
   }
 
@@ -58,21 +58,17 @@ class AxyraAdvancedUserManagement {
           permissions: ['*'],
           color: '#e74c3c',
           icon: '👑',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'manager',
           name: 'Gerente',
           description: 'Gestión de equipos y proyectos',
           level: 80,
-          permissions: [
-            'users.view', 'users.edit',
-            'employees.*', 'hours.*', 'payroll.*',
-            'reports.*', 'dashboard.*'
-          ],
+          permissions: ['users.view', 'users.edit', 'employees.*', 'hours.*', 'payroll.*', 'reports.*', 'dashboard.*'],
           color: '#3498db',
           icon: '👔',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'supervisor',
@@ -80,44 +76,39 @@ class AxyraAdvancedUserManagement {
           description: 'Supervisión de empleados y procesos',
           level: 60,
           permissions: [
-            'employees.view', 'employees.edit',
-            'hours.view', 'hours.edit',
-            'reports.view', 'dashboard.view'
+            'employees.view',
+            'employees.edit',
+            'hours.view',
+            'hours.edit',
+            'reports.view',
+            'dashboard.view',
           ],
           color: '#f39c12',
           icon: '👨‍💼',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'employee',
           name: 'Empleado',
           description: 'Acceso básico del empleado',
           level: 40,
-          permissions: [
-            'employees.view.own',
-            'hours.view.own', 'hours.edit.own',
-            'dashboard.view'
-          ],
+          permissions: ['employees.view.own', 'hours.view.own', 'hours.edit.own', 'dashboard.view'],
           color: '#27ae60',
           icon: '👤',
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: 'accountant',
           name: 'Contador',
           description: 'Gestión financiera y contable',
           level: 70,
-          permissions: [
-            'payroll.*', 'reports.*',
-            'employees.view', 'hours.view',
-            'dashboard.view'
-          ],
+          permissions: ['payroll.*', 'reports.*', 'employees.view', 'hours.view', 'dashboard.view'],
           color: '#9b59b6',
           icon: '🧮',
-          createdAt: new Date().toISOString()
-        }
+          createdAt: new Date().toISOString(),
+        },
       ];
-      
+
       this.saveData();
     }
   }
@@ -130,54 +121,104 @@ class AxyraAdvancedUserManagement {
         { id: 'users.create', name: 'Crear Usuarios', description: 'Crear nuevos usuarios', category: 'users' },
         { id: 'users.edit', name: 'Editar Usuarios', description: 'Editar usuarios existentes', category: 'users' },
         { id: 'users.delete', name: 'Eliminar Usuarios', description: 'Eliminar usuarios', category: 'users' },
-        { id: 'users.manage_roles', name: 'Gestionar Roles', description: 'Asignar y modificar roles', category: 'users' },
-        
+        {
+          id: 'users.manage_roles',
+          name: 'Gestionar Roles',
+          description: 'Asignar y modificar roles',
+          category: 'users',
+        },
+
         // Empleados
         { id: 'employees.view', name: 'Ver Empleados', description: 'Ver lista de empleados', category: 'employees' },
-        { id: 'employees.create', name: 'Crear Empleados', description: 'Crear nuevos empleados', category: 'employees' },
-        { id: 'employees.edit', name: 'Editar Empleados', description: 'Editar empleados existentes', category: 'employees' },
-        { id: 'employees.delete', name: 'Eliminar Empleados', description: 'Eliminar empleados', category: 'employees' },
-        { id: 'employees.view.own', name: 'Ver Propios Datos', description: 'Ver solo sus propios datos', category: 'employees' },
-        
+        {
+          id: 'employees.create',
+          name: 'Crear Empleados',
+          description: 'Crear nuevos empleados',
+          category: 'employees',
+        },
+        {
+          id: 'employees.edit',
+          name: 'Editar Empleados',
+          description: 'Editar empleados existentes',
+          category: 'employees',
+        },
+        {
+          id: 'employees.delete',
+          name: 'Eliminar Empleados',
+          description: 'Eliminar empleados',
+          category: 'employees',
+        },
+        {
+          id: 'employees.view.own',
+          name: 'Ver Propios Datos',
+          description: 'Ver solo sus propios datos',
+          category: 'employees',
+        },
+
         // Horas
         { id: 'hours.view', name: 'Ver Horas', description: 'Ver registros de horas', category: 'hours' },
         { id: 'hours.create', name: 'Registrar Horas', description: 'Registrar horas trabajadas', category: 'hours' },
         { id: 'hours.edit', name: 'Editar Horas', description: 'Editar registros de horas', category: 'hours' },
         { id: 'hours.delete', name: 'Eliminar Horas', description: 'Eliminar registros de horas', category: 'hours' },
-        { id: 'hours.view.own', name: 'Ver Propias Horas', description: 'Ver solo sus propias horas', category: 'hours' },
-        { id: 'hours.edit.own', name: 'Editar Propias Horas', description: 'Editar solo sus propias horas', category: 'hours' },
-        
+        {
+          id: 'hours.view.own',
+          name: 'Ver Propias Horas',
+          description: 'Ver solo sus propias horas',
+          category: 'hours',
+        },
+        {
+          id: 'hours.edit.own',
+          name: 'Editar Propias Horas',
+          description: 'Editar solo sus propias horas',
+          category: 'hours',
+        },
+
         // Nómina
         { id: 'payroll.view', name: 'Ver Nómina', description: 'Ver registros de nómina', category: 'payroll' },
         { id: 'payroll.create', name: 'Generar Nómina', description: 'Generar nómina', category: 'payroll' },
         { id: 'payroll.edit', name: 'Editar Nómina', description: 'Editar registros de nómina', category: 'payroll' },
-        { id: 'payroll.delete', name: 'Eliminar Nómina', description: 'Eliminar registros de nómina', category: 'payroll' },
-        
+        {
+          id: 'payroll.delete',
+          name: 'Eliminar Nómina',
+          description: 'Eliminar registros de nómina',
+          category: 'payroll',
+        },
+
         // Inventario
         { id: 'inventory.view', name: 'Ver Inventario', description: 'Ver inventario', category: 'inventory' },
         { id: 'inventory.create', name: 'Crear Productos', description: 'Crear productos', category: 'inventory' },
         { id: 'inventory.edit', name: 'Editar Inventario', description: 'Editar inventario', category: 'inventory' },
-        { id: 'inventory.delete', name: 'Eliminar Productos', description: 'Eliminar productos', category: 'inventory' },
-        
+        {
+          id: 'inventory.delete',
+          name: 'Eliminar Productos',
+          description: 'Eliminar productos',
+          category: 'inventory',
+        },
+
         // Reportes
         { id: 'reports.view', name: 'Ver Reportes', description: 'Ver reportes', category: 'reports' },
         { id: 'reports.create', name: 'Crear Reportes', description: 'Crear reportes', category: 'reports' },
         { id: 'reports.export', name: 'Exportar Reportes', description: 'Exportar reportes', category: 'reports' },
-        
+
         // Dashboard
         { id: 'dashboard.view', name: 'Ver Dashboard', description: 'Ver dashboard', category: 'dashboard' },
-        { id: 'dashboard.customize', name: 'Personalizar Dashboard', description: 'Personalizar dashboard', category: 'dashboard' },
-        
+        {
+          id: 'dashboard.customize',
+          name: 'Personalizar Dashboard',
+          description: 'Personalizar dashboard',
+          category: 'dashboard',
+        },
+
         // Configuración
         { id: 'config.view', name: 'Ver Configuración', description: 'Ver configuración', category: 'config' },
         { id: 'config.edit', name: 'Editar Configuración', description: 'Editar configuración', category: 'config' },
-        
+
         // Sistema
         { id: 'system.admin', name: 'Administrar Sistema', description: 'Administrar sistema', category: 'system' },
         { id: 'system.backup', name: 'Gestionar Backups', description: 'Gestionar backups', category: 'system' },
-        { id: 'system.audit', name: 'Ver Auditoría', description: 'Ver logs de auditoría', category: 'system' }
+        { id: 'system.audit', name: 'Ver Auditoría', description: 'Ver logs de auditoría', category: 'system' },
       ];
-      
+
       this.saveData();
     }
   }
@@ -217,154 +258,152 @@ class AxyraAdvancedUserManagement {
         language: 'es',
         notifications: true,
         emailNotifications: true,
-        smsNotifications: false
+        smsNotifications: false,
       },
       permissions: this.getRolePermissions(userData.role || 'employee'),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
-    
+
     this.users.push(user);
     this.saveData();
-    
+
     // Log de auditoría
     this.logAuditEvent('USER_CREATED', `Usuario creado: ${user.username}`, {
       userId: user.id,
       username: user.username,
-      role: user.role
+      role: user.role,
     });
-    
+
     console.log('✅ Usuario creado:', user.username);
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showSuccess(`Usuario creado: ${user.username}`);
     }
-    
+
     return user;
   }
 
   updateUser(userId, updates) {
-    const userIndex = this.users.findIndex(u => u.id === userId);
+    const userIndex = this.users.findIndex((u) => u.id === userId);
     if (userIndex === -1) {
       throw new Error('Usuario no encontrado');
     }
-    
+
     const oldUser = { ...this.users[userIndex] };
-    this.users[userIndex] = { 
-      ...this.users[userIndex], 
-      ...updates, 
-      updatedAt: new Date().toISOString() 
+    this.users[userIndex] = {
+      ...this.users[userIndex],
+      ...updates,
+      updatedAt: new Date().toISOString(),
     };
-    
+
     // Actualizar permisos si cambió el rol
     if (updates.role && updates.role !== oldUser.role) {
       this.users[userIndex].permissions = this.getRolePermissions(updates.role);
     }
-    
+
     this.saveData();
-    
+
     // Log de auditoría
     this.logAuditEvent('USER_UPDATED', `Usuario actualizado: ${this.users[userIndex].username}`, {
       userId: userId,
-      changes: Object.keys(updates)
+      changes: Object.keys(updates),
     });
-    
+
     console.log('✅ Usuario actualizado:', this.users[userIndex].username);
-    
+
     return this.users[userIndex];
   }
 
   deleteUser(userId) {
-    const userIndex = this.users.findIndex(u => u.id === userId);
+    const userIndex = this.users.findIndex((u) => u.id === userId);
     if (userIndex === -1) {
       throw new Error('Usuario no encontrado');
     }
-    
+
     const user = this.users[userIndex];
     this.users.splice(userIndex, 1);
     this.saveData();
-    
+
     // Log de auditoría
     this.logAuditEvent('USER_DELETED', `Usuario eliminado: ${user.username}`, {
       userId: userId,
-      username: user.username
+      username: user.username,
     });
-    
+
     console.log('🗑️ Usuario eliminado:', user.username);
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showWarning(`Usuario eliminado: ${user.username}`);
     }
-    
+
     return user;
   }
 
   authenticateUser(username, password) {
-    const user = this.users.find(u => 
-      (u.username === username || u.email === username) && u.status === 'active'
-    );
-    
+    const user = this.users.find((u) => (u.username === username || u.email === username) && u.status === 'active');
+
     if (!user) {
       this.logAuditEvent('LOGIN_FAILED', `Intento de login fallido: ${username}`, {
         username: username,
-        reason: 'Usuario no encontrado'
+        reason: 'Usuario no encontrado',
       });
       throw new Error('Credenciales inválidas');
     }
-    
+
     // Verificar si la cuenta está bloqueada
     if (user.lockedUntil && new Date() < new Date(user.lockedUntil)) {
       this.logAuditEvent('LOGIN_BLOCKED', `Intento de login bloqueado: ${username}`, {
         username: username,
-        reason: 'Cuenta bloqueada'
+        reason: 'Cuenta bloqueada',
       });
       throw new Error('Cuenta bloqueada temporalmente');
     }
-    
+
     // Verificar contraseña
     if (!this.verifyPassword(password, user.password)) {
       user.loginAttempts++;
-      
+
       // Bloquear cuenta después de 5 intentos fallidos
       if (user.loginAttempts >= 5) {
         user.lockedUntil = new Date(Date.now() + 15 * 60 * 1000).toISOString(); // 15 minutos
         this.logAuditEvent('ACCOUNT_LOCKED', `Cuenta bloqueada: ${username}`, {
           username: username,
-          reason: 'Múltiples intentos fallidos'
+          reason: 'Múltiples intentos fallidos',
         });
       }
-      
+
       this.saveData();
-      
+
       this.logAuditEvent('LOGIN_FAILED', `Intento de login fallido: ${username}`, {
         username: username,
         reason: 'Contraseña incorrecta',
-        attempts: user.loginAttempts
+        attempts: user.loginAttempts,
       });
-      
+
       throw new Error('Credenciales inválidas');
     }
-    
+
     // Login exitoso
     user.loginAttempts = 0;
     user.lockedUntil = null;
     user.lastLogin = new Date().toISOString();
-    
+
     // Crear sesión
     const session = this.createSession(user);
-    
+
     this.saveData();
-    
+
     // Log de auditoría
     this.logAuditEvent('LOGIN_SUCCESS', `Login exitoso: ${username}`, {
       userId: user.id,
       username: username,
-      sessionId: session.id
+      sessionId: session.id,
     });
-    
+
     console.log('✅ Login exitoso:', username);
-    
+
     return { user, session };
   }
 
@@ -379,71 +418,71 @@ class AxyraAdvancedUserManagement {
       userAgent: navigator.userAgent,
       createdAt: new Date().toISOString(),
       lastActivity: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString() // 30 minutos
+      expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutos
     };
-    
+
     this.sessions.push(session);
     this.saveData();
-    
+
     return session;
   }
 
   logoutUser(sessionId) {
-    const sessionIndex = this.sessions.findIndex(s => s.id === sessionId);
+    const sessionIndex = this.sessions.findIndex((s) => s.id === sessionId);
     if (sessionIndex === -1) {
       throw new Error('Sesión no encontrada');
     }
-    
+
     const session = this.sessions[sessionIndex];
     this.sessions.splice(sessionIndex, 1);
     this.saveData();
-    
+
     // Log de auditoría
     this.logAuditEvent('LOGOUT', `Logout: ${session.username}`, {
       userId: session.userId,
       username: session.username,
-      sessionId: sessionId
+      sessionId: sessionId,
     });
-    
+
     console.log('👋 Logout:', session.username);
-    
+
     return session;
   }
 
   getCurrentUser() {
     const sessionId = sessionStorage.getItem('axyra_session_id');
     if (!sessionId) return null;
-    
-    const session = this.sessions.find(s => s.id === sessionId);
+
+    const session = this.sessions.find((s) => s.id === sessionId);
     if (!session) return null;
-    
+
     // Verificar si la sesión ha expirado
     if (new Date() > new Date(session.expiresAt)) {
       this.logoutUser(sessionId);
       return null;
     }
-    
+
     // Actualizar última actividad
     session.lastActivity = new Date().toISOString();
     this.saveData();
-    
-    return this.users.find(u => u.id === session.userId);
+
+    return this.users.find((u) => u.id === session.userId);
   }
 
   getCurrentSession() {
     const sessionId = sessionStorage.getItem('axyra_session_id');
     if (!sessionId) return null;
-    
-    return this.sessions.find(s => s.id === sessionId);
+
+    return this.sessions.find((s) => s.id === sessionId);
   }
 
   hasPermission(permission) {
     const session = this.getCurrentSession();
     if (!session) return false;
-    
+
     // Administradores tienen todos los permisos
     if (session.permissions.includes('*')) return true;
-    
+
     // Verificar permiso específico
     return session.permissions.includes(permission);
   }
@@ -451,21 +490,21 @@ class AxyraAdvancedUserManagement {
   hasRole(role) {
     const session = this.getCurrentSession();
     if (!session) return false;
-    
+
     return session.role === role;
   }
 
   hasAnyRole(roles) {
     const session = this.getCurrentSession();
     if (!session) return false;
-    
+
     return roles.includes(session.role);
   }
 
   getRolePermissions(roleId) {
-    const role = this.roles.find(r => r.id === roleId);
+    const role = this.roles.find((r) => r.id === roleId);
     if (!role) return [];
-    
+
     return role.permissions;
   }
 
@@ -479,67 +518,67 @@ class AxyraAdvancedUserManagement {
       color: roleData.color || '#3498db',
       icon: roleData.icon || '👤',
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
-    
+
     this.roles.push(role);
     this.saveData();
-    
+
     // Log de auditoría
     this.logAuditEvent('ROLE_CREATED', `Rol creado: ${role.name}`, {
       roleId: role.id,
-      roleName: role.name
+      roleName: role.name,
     });
-    
+
     console.log('✅ Rol creado:', role.name);
-    
+
     return role;
   }
 
   updateRole(roleId, updates) {
-    const roleIndex = this.roles.findIndex(r => r.id === roleId);
+    const roleIndex = this.roles.findIndex((r) => r.id === roleId);
     if (roleIndex === -1) {
       throw new Error('Rol no encontrado');
     }
-    
+
     this.roles[roleIndex] = { ...this.roles[roleIndex], ...updates };
     this.saveData();
-    
+
     // Log de auditoría
     this.logAuditEvent('ROLE_UPDATED', `Rol actualizado: ${this.roles[roleIndex].name}`, {
       roleId: roleId,
-      changes: Object.keys(updates)
+      changes: Object.keys(updates),
     });
-    
+
     console.log('✅ Rol actualizado:', this.roles[roleIndex].name);
-    
+
     return this.roles[roleIndex];
   }
 
   deleteRole(roleId) {
-    const roleIndex = this.roles.findIndex(r => r.id === roleId);
+    const roleIndex = this.roles.findIndex((r) => r.id === roleId);
     if (roleIndex === -1) {
       throw new Error('Rol no encontrado');
     }
-    
+
     // Verificar si hay usuarios con este rol
-    const usersWithRole = this.users.filter(u => u.role === roleId);
+    const usersWithRole = this.users.filter((u) => u.role === roleId);
     if (usersWithRole.length > 0) {
       throw new Error('No se puede eliminar un rol que está asignado a usuarios');
     }
-    
+
     const role = this.roles[roleIndex];
     this.roles.splice(roleIndex, 1);
     this.saveData();
-    
+
     // Log de auditoría
     this.logAuditEvent('ROLE_DELETED', `Rol eliminado: ${role.name}`, {
       roleId: roleId,
-      roleName: role.name
+      roleName: role.name,
     });
-    
+
     console.log('🗑️ Rol eliminado:', role.name);
-    
+
     return role;
   }
 
@@ -548,7 +587,7 @@ class AxyraAdvancedUserManagement {
     let hash = 0;
     for (let i = 0; i < password.length; i++) {
       const char = password.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convertir a 32-bit integer
     }
     return hash.toString(16);
@@ -565,12 +604,12 @@ class AxyraAdvancedUserManagement {
 
   cleanupExpiredSessions() {
     const now = new Date();
-    const expiredSessions = this.sessions.filter(s => new Date(s.expiresAt) < now);
-    
-    expiredSessions.forEach(session => {
+    const expiredSessions = this.sessions.filter((s) => new Date(s.expiresAt) < now);
+
+    expiredSessions.forEach((session) => {
       this.logoutUser(session.id);
     });
-    
+
     if (expiredSessions.length > 0) {
       console.log(`🧹 ${expiredSessions.length} sesiones expiradas limpiadas`);
     }
@@ -586,44 +625,45 @@ class AxyraAdvancedUserManagement {
       userId: this.getCurrentUser()?.id || 'system',
       username: this.getCurrentUser()?.username || 'system',
       ipAddress: this.getClientIP(),
-      userAgent: navigator.userAgent
+      userAgent: navigator.userAgent,
     };
-    
+
     this.auditLog.push(event);
-    
+
     // Limitar tamaño del log
     if (this.auditLog.length > 1000) {
       this.auditLog = this.auditLog.slice(-500);
     }
-    
+
     this.saveData();
   }
 
   getUsers(filters = {}) {
     let filteredUsers = [...this.users];
-    
+
     if (filters.role) {
-      filteredUsers = filteredUsers.filter(u => u.role === filters.role);
+      filteredUsers = filteredUsers.filter((u) => u.role === filters.role);
     }
-    
+
     if (filters.status) {
-      filteredUsers = filteredUsers.filter(u => u.status === filters.status);
+      filteredUsers = filteredUsers.filter((u) => u.status === filters.status);
     }
-    
+
     if (filters.department) {
-      filteredUsers = filteredUsers.filter(u => u.department === filters.department);
+      filteredUsers = filteredUsers.filter((u) => u.department === filters.department);
     }
-    
+
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredUsers = filteredUsers.filter(u => 
-        u.username.toLowerCase().includes(searchTerm) ||
-        u.email.toLowerCase().includes(searchTerm) ||
-        u.firstName.toLowerCase().includes(searchTerm) ||
-        u.lastName.toLowerCase().includes(searchTerm)
+      filteredUsers = filteredUsers.filter(
+        (u) =>
+          u.username.toLowerCase().includes(searchTerm) ||
+          u.email.toLowerCase().includes(searchTerm) ||
+          u.firstName.toLowerCase().includes(searchTerm) ||
+          u.lastName.toLowerCase().includes(searchTerm)
       );
     }
-    
+
     return filteredUsers;
   }
 
@@ -637,53 +677,49 @@ class AxyraAdvancedUserManagement {
 
   getActiveSessions() {
     const now = new Date();
-    return this.sessions.filter(s => new Date(s.expiresAt) > now);
+    return this.sessions.filter((s) => new Date(s.expiresAt) > now);
   }
 
   getAuditLog(filters = {}) {
     let filteredLog = [...this.auditLog];
-    
+
     if (filters.eventType) {
-      filteredLog = filteredLog.filter(event => event.type === filters.eventType);
+      filteredLog = filteredLog.filter((event) => event.type === filters.eventType);
     }
-    
+
     if (filters.userId) {
-      filteredLog = filteredLog.filter(event => event.userId === filters.userId);
+      filteredLog = filteredLog.filter((event) => event.userId === filters.userId);
     }
-    
+
     if (filters.dateFrom) {
-      filteredLog = filteredLog.filter(event => 
-        new Date(event.timestamp) >= new Date(filters.dateFrom)
-      );
+      filteredLog = filteredLog.filter((event) => new Date(event.timestamp) >= new Date(filters.dateFrom));
     }
-    
+
     if (filters.dateTo) {
-      filteredLog = filteredLog.filter(event => 
-        new Date(event.timestamp) <= new Date(filters.dateTo)
-      );
+      filteredLog = filteredLog.filter((event) => new Date(event.timestamp) <= new Date(filters.dateTo));
     }
-    
+
     return filteredLog.slice(-filters.limit || 100);
   }
 
   getUserStatistics() {
     const totalUsers = this.users.length;
-    const activeUsers = this.users.filter(u => u.status === 'active').length;
-    const inactiveUsers = this.users.filter(u => u.status === 'inactive').length;
-    const lockedUsers = this.users.filter(u => u.lockedUntil && new Date() < new Date(u.lockedUntil)).length;
-    
+    const activeUsers = this.users.filter((u) => u.status === 'active').length;
+    const inactiveUsers = this.users.filter((u) => u.status === 'inactive').length;
+    const lockedUsers = this.users.filter((u) => u.lockedUntil && new Date() < new Date(u.lockedUntil)).length;
+
     const roleDistribution = {};
-    this.users.forEach(user => {
+    this.users.forEach((user) => {
       roleDistribution[user.role] = (roleDistribution[user.role] || 0) + 1;
     });
-    
+
     return {
       total: totalUsers,
       active: activeUsers,
       inactive: inactiveUsers,
       locked: lockedUsers,
       roleDistribution: roleDistribution,
-      activeSessions: this.getActiveSessions().length
+      activeSessions: this.getActiveSessions().length,
     };
   }
 
@@ -692,13 +728,13 @@ class AxyraAdvancedUserManagement {
       users: this.users,
       roles: this.roles,
       permissions: this.permissions,
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
-    
+
     let content;
     let filename;
     let mimeType;
-    
+
     switch (format) {
       case 'csv':
         content = this.convertUsersToCSV();
@@ -712,21 +748,21 @@ class AxyraAdvancedUserManagement {
         mimeType = 'application/json';
         break;
     }
-    
+
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log('📊 Usuarios exportados');
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showSuccess('Usuarios exportados');
     }
@@ -734,12 +770,12 @@ class AxyraAdvancedUserManagement {
 
   convertUsersToCSV() {
     const rows = [];
-    
+
     // Encabezados
     rows.push(['ID', 'Usuario', 'Email', 'Nombre', 'Apellido', 'Rol', 'Estado', 'Departamento', 'Creado']);
-    
+
     // Datos
-    this.users.forEach(user => {
+    this.users.forEach((user) => {
       rows.push([
         user.id,
         user.username,
@@ -749,52 +785,52 @@ class AxyraAdvancedUserManagement {
         user.role,
         user.status,
         user.department || '',
-        new Date(user.createdAt).toLocaleDateString()
+        new Date(user.createdAt).toLocaleDateString(),
       ]);
     });
-    
-    return rows.map(row => row.join(',')).join('\n');
+
+    return rows.map((row) => row.join(',')).join('\n');
   }
 
   importUsers(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result);
-          
+
           if (data.users) {
             this.users = [...this.users, ...data.users];
           }
-          
+
           if (data.roles) {
             this.roles = [...this.roles, ...data.roles];
           }
-          
+
           if (data.permissions) {
             this.permissions = [...this.permissions, ...data.permissions];
           }
-          
+
           this.saveData();
-          
+
           console.log('✅ Usuarios importados exitosamente');
-          
+
           if (window.axyraNotificationSystem) {
             window.axyraNotificationSystem.showSuccess('Usuarios importados exitosamente');
           }
-          
+
           resolve();
         } catch (error) {
           console.error('Error importando usuarios:', error);
           reject(error);
         }
       };
-      
+
       reader.onerror = () => {
         reject(new Error('Error leyendo archivo'));
       };
-      
+
       reader.readAsText(file);
     });
   }

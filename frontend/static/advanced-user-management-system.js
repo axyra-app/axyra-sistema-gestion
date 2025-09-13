@@ -16,7 +16,7 @@ class AxyraAdvancedUserManagementSystem {
     this.userGroups = [];
     this.userLogs = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -247,36 +247,36 @@ class AxyraAdvancedUserManagementSystem {
           name: 'Administrador',
           description: 'Rol con acceso completo al sistema',
           level: 100,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'gerente',
           name: 'Gerente',
           description: 'Rol de gerencia con acceso a la mayoría de funciones',
           level: 80,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'supervisor',
           name: 'Supervisor',
           description: 'Rol de supervisión con acceso limitado',
           level: 60,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'empleado',
           name: 'Empleado',
           description: 'Rol básico de empleado',
           level: 40,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'contador',
           name: 'Contador',
           description: 'Rol especializado en funciones contables',
           level: 70,
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveRoles();
     }
@@ -288,43 +288,43 @@ class AxyraAdvancedUserManagementSystem {
           name: 'Leer Usuarios',
           description: 'Permiso para leer información de usuarios',
           category: 'users',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'write_users',
           name: 'Escribir Usuarios',
           description: 'Permiso para crear y modificar usuarios',
           category: 'users',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'delete_users',
           name: 'Eliminar Usuarios',
           description: 'Permiso para eliminar usuarios',
           category: 'users',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'read_roles',
           name: 'Leer Roles',
           description: 'Permiso para leer información de roles',
           category: 'roles',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'write_roles',
           name: 'Escribir Roles',
           description: 'Permiso para crear y modificar roles',
           category: 'roles',
-          isActive: true
+          isActive: true,
         },
         {
           id: 'delete_roles',
           name: 'Eliminar Roles',
           description: 'Permiso para eliminar roles',
           category: 'roles',
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.savePermissions();
     }
@@ -332,21 +332,21 @@ class AxyraAdvancedUserManagementSystem {
 
   handleUserChange(change) {
     const { userId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.users.push(data);
         this.saveUsers();
         break;
       case 'updated':
-        const userIndex = this.users.findIndex(u => u.id === userId);
+        const userIndex = this.users.findIndex((u) => u.id === userId);
         if (userIndex !== -1) {
           this.users[userIndex] = { ...this.users[userIndex], ...data };
           this.saveUsers();
         }
         break;
       case 'deleted':
-        this.users = this.users.filter(u => u.id !== userId);
+        this.users = this.users.filter((u) => u.id !== userId);
         this.saveUsers();
         break;
     }
@@ -354,21 +354,21 @@ class AxyraAdvancedUserManagementSystem {
 
   handleRoleChange(change) {
     const { roleId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.roles.push(data);
         this.saveRoles();
         break;
       case 'updated':
-        const roleIndex = this.roles.findIndex(r => r.id === roleId);
+        const roleIndex = this.roles.findIndex((r) => r.id === roleId);
         if (roleIndex !== -1) {
           this.roles[roleIndex] = { ...this.roles[roleIndex], ...data };
           this.saveRoles();
         }
         break;
       case 'deleted':
-        this.roles = this.roles.filter(r => r.id !== roleId);
+        this.roles = this.roles.filter((r) => r.id !== roleId);
         this.saveRoles();
         break;
     }
@@ -391,8 +391,8 @@ class AxyraAdvancedUserManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.users.push(user);
@@ -413,8 +413,8 @@ class AxyraAdvancedUserManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.roles.push(role);
@@ -435,8 +435,8 @@ class AxyraAdvancedUserManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.permissions.push(permission);
@@ -456,8 +456,8 @@ class AxyraAdvancedUserManagementSystem {
       isActive: userRoleData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.userRoles.push(userRole);
@@ -477,8 +477,8 @@ class AxyraAdvancedUserManagementSystem {
       isActive: rolePermissionData.isActive !== false,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.rolePermissions.push(rolePermission);
@@ -500,8 +500,8 @@ class AxyraAdvancedUserManagementSystem {
       expiresAt: sessionData.expiresAt || new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutos
       isActive: sessionData.isActive !== false,
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.userSessions.push(session);
@@ -522,8 +522,8 @@ class AxyraAdvancedUserManagementSystem {
       userAgent: activityData.userAgent || navigator.userAgent,
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.userActivities.push(activity);
@@ -545,8 +545,8 @@ class AxyraAdvancedUserManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.userPreferences.push(preference);
@@ -567,8 +567,8 @@ class AxyraAdvancedUserManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.userGroups.push(group);
@@ -589,8 +589,8 @@ class AxyraAdvancedUserManagementSystem {
       data: logData.data || {},
       timestamp: new Date().toISOString(),
       metadata: {
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.userLogs.push(log);
@@ -611,24 +611,24 @@ class AxyraAdvancedUserManagementSystem {
 
   getUserStatistics() {
     const totalUsers = this.users.length;
-    const activeUsers = this.users.filter(u => u.isActive).length;
-    const verifiedUsers = this.users.filter(u => u.isVerified).length;
+    const activeUsers = this.users.filter((u) => u.isActive).length;
+    const verifiedUsers = this.users.filter((u) => u.isVerified).length;
     const totalRoles = this.roles.length;
-    const activeRoles = this.roles.filter(r => r.isActive).length;
+    const activeRoles = this.roles.filter((r) => r.isActive).length;
     const totalPermissions = this.permissions.length;
-    const activePermissions = this.permissions.filter(p => p.isActive).length;
+    const activePermissions = this.permissions.filter((p) => p.isActive).length;
     const totalUserRoles = this.userRoles.length;
-    const activeUserRoles = this.userRoles.filter(ur => ur.isActive).length;
+    const activeUserRoles = this.userRoles.filter((ur) => ur.isActive).length;
     const totalRolePermissions = this.rolePermissions.length;
-    const activeRolePermissions = this.rolePermissions.filter(rp => rp.isActive).length;
+    const activeRolePermissions = this.rolePermissions.filter((rp) => rp.isActive).length;
     const totalSessions = this.userSessions.length;
-    const activeSessions = this.userSessions.filter(s => s.isActive).length;
+    const activeSessions = this.userSessions.filter((s) => s.isActive).length;
     const totalActivities = this.userActivities.length;
     const totalPreferences = this.userPreferences.length;
     const totalGroups = this.userGroups.length;
-    const activeGroups = this.userGroups.filter(g => g.isActive).length;
+    const activeGroups = this.userGroups.filter((g) => g.isActive).length;
     const totalLogs = this.userLogs.length;
-    const errorLogs = this.userLogs.filter(l => l.level === 'error').length;
+    const errorLogs = this.userLogs.filter((l) => l.level === 'error').length;
 
     return {
       totalUsers,
@@ -649,7 +649,7 @@ class AxyraAdvancedUserManagementSystem {
       totalGroups,
       activeGroups,
       totalLogs,
-      errorLogs
+      errorLogs,
     };
   }
 
@@ -738,13 +738,13 @@ class AxyraAdvancedUserManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -753,7 +753,7 @@ class AxyraAdvancedUserManagementSystem {
 
   renderUserStats() {
     const stats = this.getUserStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -822,7 +822,7 @@ class AxyraAdvancedUserManagementSystem {
 
   renderOverview() {
     const stats = this.getUserStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -882,12 +882,16 @@ class AxyraAdvancedUserManagementSystem {
 
   renderUsersList() {
     const users = this.users.slice(-20); // Últimos 20 usuarios
-    
-    return users.map(user => `
+
+    return users
+      .map(
+        (user) => `
       <div class="user-card">
         <div class="user-header">
           <h5>${user.username}</h5>
-          <span class="user-status ${user.isActive ? 'active' : 'inactive'}">${user.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="user-status ${user.isActive ? 'active' : 'inactive'}">${
+          user.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="user-info">
           <p>Email: ${user.email}</p>
@@ -900,13 +904,17 @@ class AxyraAdvancedUserManagementSystem {
           <button onclick="axyraAdvancedUserManagementSystem.editUser('${user.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderRolesList() {
     const roles = this.roles.slice(-20); // Últimos 20 roles
-    
-    return roles.map(role => `
+
+    return roles
+      .map(
+        (role) => `
       <div class="role-card">
         <div class="role-header">
           <h5>${role.name}</h5>
@@ -921,13 +929,17 @@ class AxyraAdvancedUserManagementSystem {
           <button onclick="axyraAdvancedUserManagementSystem.editRole('${role.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderPermissionsList() {
     const permissions = this.permissions.slice(-20); // Últimos 20 permisos
-    
-    return permissions.map(permission => `
+
+    return permissions
+      .map(
+        (permission) => `
       <div class="permission-card">
         <div class="permission-header">
           <h5>${permission.name}</h5>
@@ -942,17 +954,23 @@ class AxyraAdvancedUserManagementSystem {
           <button onclick="axyraAdvancedUserManagementSystem.editPermission('${permission.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderSessionsList() {
     const sessions = this.userSessions.slice(-20); // Últimas 20 sesiones
-    
-    return sessions.map(session => `
+
+    return sessions
+      .map(
+        (session) => `
       <div class="session-card">
         <div class="session-header">
           <h5>Sesión ${session.id.substring(0, 8)}</h5>
-          <span class="session-status ${session.isActive ? 'active' : 'inactive'}">${session.isActive ? 'Activa' : 'Inactiva'}</span>
+          <span class="session-status ${session.isActive ? 'active' : 'inactive'}">${
+          session.isActive ? 'Activa' : 'Inactiva'
+        }</span>
         </div>
         <div class="session-info">
           <p>Usuario: ${session.userId}</p>
@@ -965,13 +983,17 @@ class AxyraAdvancedUserManagementSystem {
           <button onclick="axyraAdvancedUserManagementSystem.terminateSession('${session.id}')">Terminar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderActivitiesList() {
     const activities = this.userActivities.slice(-20); // Últimas 20 actividades
-    
-    return activities.map(activity => `
+
+    return activities
+      .map(
+        (activity) => `
       <div class="activity-card">
         <div class="activity-header">
           <h5>${activity.action}</h5>
@@ -984,13 +1006,17 @@ class AxyraAdvancedUserManagementSystem {
           <p>IP: ${activity.ipAddress}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderPreferencesList() {
     const preferences = this.userPreferences.slice(-20); // Últimas 20 preferencias
-    
-    return preferences.map(preference => `
+
+    return preferences
+      .map(
+        (preference) => `
       <div class="preference-card">
         <div class="preference-header">
           <h5>${preference.key}</h5>
@@ -1006,17 +1032,23 @@ class AxyraAdvancedUserManagementSystem {
           <button onclick="axyraAdvancedUserManagementSystem.editPreference('${preference.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderGroupsList() {
     const groups = this.userGroups.slice(-20); // Últimos 20 grupos
-    
-    return groups.map(group => `
+
+    return groups
+      .map(
+        (group) => `
       <div class="group-card">
         <div class="group-header">
           <h5>${group.name}</h5>
-          <span class="group-status ${group.isActive ? 'active' : 'inactive'}">${group.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="group-status ${group.isActive ? 'active' : 'inactive'}">${
+          group.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="group-info">
           <p>${group.description}</p>
@@ -1027,13 +1059,17 @@ class AxyraAdvancedUserManagementSystem {
           <button onclick="axyraAdvancedUserManagementSystem.editGroup('${group.id}')">Editar</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderLogsList() {
     const logs = this.userLogs.slice(-20); // Últimos 20 logs
-    
-    return logs.map(log => `
+
+    return logs
+      .map(
+        (log) => `
       <div class="log-card">
         <div class="log-header">
           <h5>${log.message}</h5>
@@ -1046,7 +1082,9 @@ class AxyraAdvancedUserManagementSystem {
           <p>Fecha: ${new Date(log.timestamp).toLocaleString()}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreateUserDialog() {
@@ -1069,14 +1107,18 @@ class AxyraAdvancedUserManagementSystem {
   }
 
   showUserDetails(userId) {
-    const user = this.users.find(u => u.id === userId);
+    const user = this.users.find((u) => u.id === userId);
     if (user) {
-      alert(`Usuario: ${user.username}\nEmail: ${user.email}\nNombre: ${user.firstName} ${user.lastName}\nEstado: ${user.isActive ? 'Activo' : 'Inactivo'}\nVerificado: ${user.isVerified ? 'Sí' : 'No'}`);
+      alert(
+        `Usuario: ${user.username}\nEmail: ${user.email}\nNombre: ${user.firstName} ${user.lastName}\nEstado: ${
+          user.isActive ? 'Activo' : 'Inactivo'
+        }\nVerificado: ${user.isVerified ? 'Sí' : 'No'}`
+      );
     }
   }
 
   editUser(userId) {
-    const user = this.users.find(u => u.id === userId);
+    const user = this.users.find((u) => u.id === userId);
     if (user) {
       const newUsername = prompt('Nuevo nombre de usuario:', user.username);
       if (newUsername) {
@@ -1087,14 +1129,18 @@ class AxyraAdvancedUserManagementSystem {
   }
 
   showRoleDetails(roleId) {
-    const role = this.roles.find(r => r.id === roleId);
+    const role = this.roles.find((r) => r.id === roleId);
     if (role) {
-      alert(`Rol: ${role.name}\nDescripción: ${role.description}\nNivel: ${role.level}\nEstado: ${role.isActive ? 'Activo' : 'Inactivo'}`);
+      alert(
+        `Rol: ${role.name}\nDescripción: ${role.description}\nNivel: ${role.level}\nEstado: ${
+          role.isActive ? 'Activo' : 'Inactivo'
+        }`
+      );
     }
   }
 
   editRole(roleId) {
-    const role = this.roles.find(r => r.id === roleId);
+    const role = this.roles.find((r) => r.id === roleId);
     if (role) {
       const newName = prompt('Nuevo nombre:', role.name);
       if (newName) {
@@ -1105,14 +1151,18 @@ class AxyraAdvancedUserManagementSystem {
   }
 
   showPermissionDetails(permissionId) {
-    const permission = this.permissions.find(p => p.id === permissionId);
+    const permission = this.permissions.find((p) => p.id === permissionId);
     if (permission) {
-      alert(`Permiso: ${permission.name}\nDescripción: ${permission.description}\nCategoría: ${permission.category}\nEstado: ${permission.isActive ? 'Activo' : 'Inactivo'}`);
+      alert(
+        `Permiso: ${permission.name}\nDescripción: ${permission.description}\nCategoría: ${
+          permission.category
+        }\nEstado: ${permission.isActive ? 'Activo' : 'Inactivo'}`
+      );
     }
   }
 
   editPermission(permissionId) {
-    const permission = this.permissions.find(p => p.id === permissionId);
+    const permission = this.permissions.find((p) => p.id === permissionId);
     if (permission) {
       const newName = prompt('Nuevo nombre:', permission.name);
       if (newName) {
@@ -1123,14 +1173,18 @@ class AxyraAdvancedUserManagementSystem {
   }
 
   showSessionDetails(sessionId) {
-    const session = this.userSessions.find(s => s.id === sessionId);
+    const session = this.userSessions.find((s) => s.id === sessionId);
     if (session) {
-      alert(`Sesión: ${session.id}\nUsuario: ${session.userId}\nIP: ${session.ipAddress}\nIniciada: ${new Date(session.startedAt).toLocaleString()}\nEstado: ${session.isActive ? 'Activa' : 'Inactiva'}`);
+      alert(
+        `Sesión: ${session.id}\nUsuario: ${session.userId}\nIP: ${session.ipAddress}\nIniciada: ${new Date(
+          session.startedAt
+        ).toLocaleString()}\nEstado: ${session.isActive ? 'Activa' : 'Inactiva'}`
+      );
     }
   }
 
   terminateSession(sessionId) {
-    const session = this.userSessions.find(s => s.id === sessionId);
+    const session = this.userSessions.find((s) => s.id === sessionId);
     if (session) {
       session.isActive = false;
       this.saveUserSessions();
@@ -1138,14 +1192,16 @@ class AxyraAdvancedUserManagementSystem {
   }
 
   showPreferenceDetails(preferenceId) {
-    const preference = this.userPreferences.find(p => p.id === preferenceId);
+    const preference = this.userPreferences.find((p) => p.id === preferenceId);
     if (preference) {
-      alert(`Preferencia: ${preference.key}\nUsuario: ${preference.userId}\nValor: ${preference.value}\nCategoría: ${preference.category}`);
+      alert(
+        `Preferencia: ${preference.key}\nUsuario: ${preference.userId}\nValor: ${preference.value}\nCategoría: ${preference.category}`
+      );
     }
   }
 
   editPreference(preferenceId) {
-    const preference = this.userPreferences.find(p => p.id === preferenceId);
+    const preference = this.userPreferences.find((p) => p.id === preferenceId);
     if (preference) {
       const newValue = prompt('Nuevo valor:', preference.value);
       if (newValue !== null) {
@@ -1156,14 +1212,18 @@ class AxyraAdvancedUserManagementSystem {
   }
 
   showGroupDetails(groupId) {
-    const group = this.userGroups.find(g => g.id === groupId);
+    const group = this.userGroups.find((g) => g.id === groupId);
     if (group) {
-      alert(`Grupo: ${group.name}\nDescripción: ${group.description}\nMiembros: ${group.members.length}\nEstado: ${group.isActive ? 'Activo' : 'Inactivo'}`);
+      alert(
+        `Grupo: ${group.name}\nDescripción: ${group.description}\nMiembros: ${group.members.length}\nEstado: ${
+          group.isActive ? 'Activo' : 'Inactivo'
+        }`
+      );
     }
   }
 
   editGroup(groupId) {
-    const group = this.userGroups.find(g => g.id === groupId);
+    const group = this.userGroups.find((g) => g.id === groupId);
     if (group) {
       const newName = prompt('Nuevo nombre:', group.name);
       if (newName) {

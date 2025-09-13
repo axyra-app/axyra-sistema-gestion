@@ -13,14 +13,14 @@ class AxyraSecuritySystem {
       requireSpecialChars: true,
       requireNumbers: true,
       requireUppercase: true,
-      maxConcurrentSessions: 3
+      maxConcurrentSessions: 3,
     };
-    
+
     this.loginAttempts = {};
     this.activeSessions = {};
     this.securityLog = [];
     this.isMonitoring = false;
-    
+
     this.init();
   }
 
@@ -58,10 +58,10 @@ class AxyraSecuritySystem {
   setupSessionMonitoring() {
     // Verificar sesión activa
     this.checkActiveSession();
-    
+
     // Monitorear actividad del usuario
     this.setupActivityMonitoring();
-    
+
     // Limpiar sesiones expiradas
     setInterval(() => {
       this.cleanupExpiredSessions();
@@ -74,29 +74,33 @@ class AxyraSecuritySystem {
       try {
         const session = JSON.parse(sessionData);
         const now = Date.now();
-        
+
         if (now - session.lastActivity > this.securityConfig.sessionTimeout) {
           this.logoutUser('Sesión expirada por inactividad');
           return false;
         }
-        
+
         return true;
       } catch (error) {
         this.logoutUser('Sesión inválida');
         return false;
       }
     }
-    
+
     return false;
   }
 
   setupActivityMonitoring() {
     const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
-    
-    events.forEach(event => {
-      document.addEventListener(event, () => {
-        this.updateLastActivity();
-      }, true);
+
+    events.forEach((event) => {
+      document.addEventListener(
+        event,
+        () => {
+          this.updateLastActivity();
+        },
+        true
+      );
     });
   }
 
@@ -117,15 +121,16 @@ class AxyraSecuritySystem {
     // Configurar headers de seguridad
     const meta = document.createElement('meta');
     meta.httpEquiv = 'Content-Security-Policy';
-    meta.content = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;";
+    meta.content =
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;";
     document.head.appendChild(meta);
-    
+
     // Configurar X-Frame-Options
     const frameOptions = document.createElement('meta');
     frameOptions.httpEquiv = 'X-Frame-Options';
     frameOptions.content = 'DENY';
     document.head.appendChild(frameOptions);
-    
+
     // Configurar X-Content-Type-Options
     const contentTypeOptions = document.createElement('meta');
     contentTypeOptions.httpEquiv = 'X-Content-Type-Options';
@@ -140,7 +145,7 @@ class AxyraSecuritySystem {
         this.validateInput(event.target);
       }
     });
-    
+
     // Validar formularios antes del envío
     document.addEventListener('submit', (event) => {
       if (!this.validateForm(event.target)) {
@@ -152,13 +157,13 @@ class AxyraSecuritySystem {
   validateInput(input) {
     const value = input.value;
     const type = input.type;
-    
+
     // Validar longitud
     if (input.maxLength && value.length > input.maxLength) {
       this.showInputError(input, 'El texto excede la longitud máxima permitida');
       return false;
     }
-    
+
     // Validar patrones
     if (input.pattern) {
       const regex = new RegExp(input.pattern);
@@ -167,7 +172,7 @@ class AxyraSecuritySystem {
         return false;
       }
     }
-    
+
     // Validar tipos específicos
     switch (type) {
       case 'email':
@@ -189,7 +194,7 @@ class AxyraSecuritySystem {
         }
         break;
     }
-    
+
     this.clearInputError(input);
     return true;
   }
@@ -197,13 +202,13 @@ class AxyraSecuritySystem {
   validateForm(form) {
     const inputs = form.querySelectorAll('input, textarea, select');
     let isValid = true;
-    
-    inputs.forEach(input => {
+
+    inputs.forEach((input) => {
       if (!this.validateInput(input)) {
         isValid = false;
       }
     });
-    
+
     return isValid;
   }
 
@@ -215,23 +220,23 @@ class AxyraSecuritySystem {
   isValidPassword(password) {
     const config = this.securityConfig;
     let isValid = true;
-    
+
     if (password.length < config.passwordMinLength) {
       isValid = false;
     }
-    
+
     if (config.requireUppercase && !/[A-Z]/.test(password)) {
       isValid = false;
     }
-    
+
     if (config.requireNumbers && !/\d/.test(password)) {
       isValid = false;
     }
-    
+
     if (config.requireSpecialChars && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
       isValid = false;
     }
-    
+
     return isValid;
   }
 
@@ -242,14 +247,14 @@ class AxyraSecuritySystem {
 
   showInputError(input, message) {
     this.clearInputError(input);
-    
+
     const errorDiv = document.createElement('div');
     errorDiv.className = 'input-error';
     errorDiv.textContent = message;
     errorDiv.style.color = '#e74c3c';
     errorDiv.style.fontSize = '12px';
     errorDiv.style.marginTop = '4px';
-    
+
     input.parentNode.appendChild(errorDiv);
     input.style.borderColor = '#e74c3c';
   }
@@ -265,16 +270,16 @@ class AxyraSecuritySystem {
   setupXSSProtection() {
     // Sanitizar contenido HTML
     const originalInnerHTML = Element.prototype.innerHTML;
-    Element.prototype.innerHTML = function(html) {
+    Element.prototype.innerHTML = function (html) {
       if (typeof html === 'string') {
         html = this.sanitizeHTML(html);
       }
       return originalInnerHTML.call(this, html);
     }.bind(this);
-    
+
     // Sanitizar atributos
     const originalSetAttribute = Element.prototype.setAttribute;
-    Element.prototype.setAttribute = function(name, value) {
+    Element.prototype.setAttribute = function (name, value) {
       if (typeof value === 'string') {
         value = this.sanitizeAttribute(name, value);
       }
@@ -297,21 +302,21 @@ class AxyraSecuritySystem {
     if (dangerousAttributes.includes(name.toLowerCase())) {
       return '';
     }
-    
+
     // Sanitizar URLs
     if (name.toLowerCase() === 'src' || name.toLowerCase() === 'href') {
       if (value.startsWith('javascript:') || value.startsWith('vbscript:')) {
         return '#';
       }
     }
-    
+
     return value;
   }
 
   setupCSRFProtection() {
     // Generar token CSRF
     this.generateCSRFToken();
-    
+
     // Validar token en formularios
     document.addEventListener('submit', (event) => {
       if (!this.validateCSRFToken(event.target)) {
@@ -330,19 +335,19 @@ class AxyraSecuritySystem {
   validateCSRFToken(form) {
     const formToken = form.querySelector('input[name="csrf_token"]')?.value;
     const sessionToken = sessionStorage.getItem('axyra_csrf_token');
-    
+
     return formToken && sessionToken && formToken === sessionToken;
   }
 
   startSecurityMonitoring() {
     this.isMonitoring = true;
-    
+
     // Monitorear intentos de login
     this.monitorLoginAttempts();
-    
+
     // Monitorear actividad sospechosa
     this.monitorSuspiciousActivity();
-    
+
     // Monitorear cambios en el DOM
     this.monitorDOMChanges();
   }
@@ -353,14 +358,14 @@ class AxyraSecuritySystem {
     if (originalLogin) {
       window.loginUser = (credentials) => {
         const clientId = this.getClientId();
-        
+
         if (this.isAccountLocked(clientId)) {
           this.logSecurityEvent('LOGIN_ATTEMPT_LOCKED', 'Intento de login en cuenta bloqueada');
           return false;
         }
-        
+
         const result = originalLogin(credentials);
-        
+
         if (result) {
           this.clearLoginAttempts(clientId);
           this.logSecurityEvent('LOGIN_SUCCESS', 'Login exitoso');
@@ -368,7 +373,7 @@ class AxyraSecuritySystem {
           this.recordLoginAttempt(clientId);
           this.logSecurityEvent('LOGIN_FAILED', 'Intento de login fallido');
         }
-        
+
         return result;
       };
     }
@@ -381,10 +386,10 @@ class AxyraSecuritySystem {
         this.logSecurityEvent('MULTIPLE_TABS', 'Múltiples pestañas detectadas');
       }
     });
-    
+
     // Monitorear cambios en localStorage
     const originalSetItem = localStorage.setItem;
-    localStorage.setItem = function(key, value) {
+    localStorage.setItem = function (key, value) {
       if (key.startsWith('axyra_')) {
         axyraSecuritySystem.logSecurityEvent('LOCALSTORAGE_CHANGE', `Cambio en ${key}`);
       }
@@ -402,7 +407,7 @@ class AxyraSecuritySystem {
               if (node.tagName === 'SCRIPT') {
                 this.logSecurityEvent('SCRIPT_INJECTION', 'Script inyectado detectado');
               }
-              
+
               // Verificar elementos sospechosos
               if (node.innerHTML && node.innerHTML.includes('javascript:')) {
                 this.logSecurityEvent('XSS_ATTEMPT', 'Intento de XSS detectado');
@@ -412,10 +417,10 @@ class AxyraSecuritySystem {
         }
       });
     });
-    
+
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
   }
 
@@ -431,10 +436,10 @@ class AxyraSecuritySystem {
   isAccountLocked(clientId) {
     const attempts = this.loginAttempts[clientId];
     if (!attempts) return false;
-    
+
     const now = Date.now();
     const lockoutTime = attempts.lastAttempt + this.securityConfig.lockoutDuration;
-    
+
     return attempts.count >= this.securityConfig.maxLoginAttempts && now < lockoutTime;
   }
 
@@ -442,13 +447,16 @@ class AxyraSecuritySystem {
     if (!this.loginAttempts[clientId]) {
       this.loginAttempts[clientId] = { count: 0, lastAttempt: 0 };
     }
-    
+
     const attempts = this.loginAttempts[clientId];
     attempts.count++;
     attempts.lastAttempt = Date.now();
-    
+
     if (attempts.count >= this.securityConfig.maxLoginAttempts) {
-      this.logSecurityEvent('ACCOUNT_LOCKED', `Cuenta bloqueada por ${this.securityConfig.maxLoginAttempts} intentos fallidos`);
+      this.logSecurityEvent(
+        'ACCOUNT_LOCKED',
+        `Cuenta bloqueada por ${this.securityConfig.maxLoginAttempts} intentos fallidos`
+      );
     }
   }
 
@@ -458,7 +466,7 @@ class AxyraSecuritySystem {
 
   cleanupExpiredSessions() {
     const now = Date.now();
-    Object.keys(this.activeSessions).forEach(sessionId => {
+    Object.keys(this.activeSessions).forEach((sessionId) => {
       const session = this.activeSessions[sessionId];
       if (now - session.lastActivity > this.securityConfig.sessionTimeout) {
         delete this.activeSessions[sessionId];
@@ -476,24 +484,24 @@ class AxyraSecuritySystem {
       timestamp: new Date().toISOString(),
       clientId: this.getClientId(),
       userAgent: navigator.userAgent,
-      url: window.location.href
+      url: window.location.href,
     };
-    
+
     this.securityLog.push(event);
-    
+
     // Limitar tamaño del log
     if (this.securityLog.length > 1000) {
       this.securityLog = this.securityLog.slice(-500);
     }
-    
+
     // Guardar en localStorage
     this.saveSecurityLog();
-    
+
     // Mostrar alerta para eventos críticos
     if (this.isCriticalEvent(eventType)) {
       this.showSecurityAlert(event);
     }
-    
+
     console.log(`🔒 Evento de seguridad: ${eventType} - ${description}`);
   }
 
@@ -503,26 +511,23 @@ class AxyraSecuritySystem {
       'XSS_ATTEMPT',
       'SCRIPT_INJECTION',
       'ACCOUNT_LOCKED',
-      'MULTIPLE_TABS'
+      'MULTIPLE_TABS',
     ];
-    
+
     return criticalEvents.includes(eventType);
   }
 
   showSecurityAlert(event) {
     if (window.axyraNotificationSystem) {
-      window.axyraNotificationSystem.showError(
-        `Alerta de seguridad: ${event.description}`,
-        {
-          duration: 10000,
-          actions: [
-            {
-              text: 'Ver Detalles',
-              action: () => this.showSecurityDetails(event)
-            }
-          ]
-        }
-      );
+      window.axyraNotificationSystem.showError(`Alerta de seguridad: ${event.description}`, {
+        duration: 10000,
+        actions: [
+          {
+            text: 'Ver Detalles',
+            action: () => this.showSecurityDetails(event),
+          },
+        ],
+      });
     }
   }
 
@@ -542,10 +547,14 @@ class AxyraSecuritySystem {
             <p><strong>Timestamp:</strong> ${new Date(event.timestamp).toLocaleString()}</p>
             <p><strong>Cliente:</strong> ${event.clientId}</p>
             <p><strong>URL:</strong> ${event.url}</p>
-            ${Object.keys(event.details).length > 0 ? `
+            ${
+              Object.keys(event.details).length > 0
+                ? `
               <h5>Detalles Adicionales:</h5>
               <pre>${JSON.stringify(event.details, null, 2)}</pre>
-            ` : ''}
+            `
+                : ''
+            }
           </div>
         </div>
         <div class="modal-footer">
@@ -555,7 +564,7 @@ class AxyraSecuritySystem {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(modal);
   }
 
@@ -570,24 +579,24 @@ class AxyraSecuritySystem {
 
   getSecurityReport() {
     const now = Date.now();
-    const last24Hours = this.securityLog.filter(event => 
-      now - new Date(event.timestamp).getTime() < 24 * 60 * 60 * 1000
+    const last24Hours = this.securityLog.filter(
+      (event) => now - new Date(event.timestamp).getTime() < 24 * 60 * 60 * 1000
     );
-    
+
     const eventCounts = {};
-    last24Hours.forEach(event => {
+    last24Hours.forEach((event) => {
       eventCounts[event.type] = (eventCounts[event.type] || 0) + 1;
     });
-    
+
     return {
       summary: {
         totalEvents: this.securityLog.length,
         last24Hours: last24Hours.length,
-        criticalEvents: last24Hours.filter(e => this.isCriticalEvent(e.type)).length
+        criticalEvents: last24Hours.filter((e) => this.isCriticalEvent(e.type)).length,
       },
       eventTypes: eventCounts,
       recentEvents: this.securityLog.slice(-20),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -595,7 +604,7 @@ class AxyraSecuritySystem {
     const report = this.getSecurityReport();
     const dataStr = JSON.stringify(report, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    
+
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
@@ -603,11 +612,11 @@ class AxyraSecuritySystem {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log('🔒 Reporte de seguridad exportado');
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showSuccess('Reporte de seguridad exportado');
     }
@@ -621,11 +630,11 @@ class AxyraSecuritySystem {
 
   logoutUser(reason = 'Logout manual') {
     this.logSecurityEvent('LOGOUT', reason);
-    
+
     // Limpiar sesión
     sessionStorage.removeItem('axyra_session');
     sessionStorage.removeItem('axyra_csrf_token');
-    
+
     // Redirigir al login
     if (window.location.pathname !== '/login.html') {
       window.location.href = '/login.html';
@@ -637,9 +646,7 @@ class AxyraSecuritySystem {
       isMonitoring: this.isMonitoring,
       activeSessions: Object.keys(this.activeSessions).length,
       securityEvents: this.securityLog.length,
-      lockedAccounts: Object.keys(this.loginAttempts).filter(
-        clientId => this.isAccountLocked(clientId)
-      ).length
+      lockedAccounts: Object.keys(this.loginAttempts).filter((clientId) => this.isAccountLocked(clientId)).length,
     };
   }
 }

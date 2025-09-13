@@ -11,7 +11,7 @@ class AxyraThemeManager {
     this.colorPalettes = [];
     this.fonts = [];
     this.isLoaded = false;
-    
+
     this.init();
   }
 
@@ -83,12 +83,12 @@ class AxyraThemeManager {
             success: '#28a745',
             warning: '#ffc107',
             error: '#dc3545',
-            info: '#17a2b8'
+            info: '#17a2b8',
           },
           fonts: {
             primary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             secondary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            mono: 'Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace'
+            mono: 'Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
           },
           spacing: {
             xs: '4px',
@@ -96,20 +96,20 @@ class AxyraThemeManager {
             md: '16px',
             lg: '24px',
             xl: '32px',
-            xxl: '48px'
+            xxl: '48px',
           },
           borderRadius: {
             sm: '4px',
             md: '8px',
             lg: '12px',
-            xl: '16px'
+            xl: '16px',
           },
           shadows: {
             sm: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)',
             md: '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)',
             lg: '0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23)',
-            xl: '0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)'
-          }
+            xl: '0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22)',
+          },
         },
         {
           id: 'dark',
@@ -127,12 +127,12 @@ class AxyraThemeManager {
             success: '#28a745',
             warning: '#ffc107',
             error: '#dc3545',
-            info: '#17a2b8'
+            info: '#17a2b8',
           },
           fonts: {
             primary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             secondary: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-            mono: 'Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace'
+            mono: 'Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
           },
           spacing: {
             xs: '4px',
@@ -140,20 +140,20 @@ class AxyraThemeManager {
             md: '16px',
             lg: '24px',
             xl: '32px',
-            xxl: '48px'
+            xxl: '48px',
           },
           borderRadius: {
             sm: '4px',
             md: '8px',
             lg: '12px',
-            xl: '16px'
+            xl: '16px',
           },
           shadows: {
             sm: '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.4)',
             md: '0 3px 6px rgba(0, 0, 0, 0.4), 0 3px 6px rgba(0, 0, 0, 0.5)',
             lg: '0 10px 20px rgba(0, 0, 0, 0.5), 0 6px 6px rgba(0, 0, 0, 0.6)',
-            xl: '0 14px 28px rgba(0, 0, 0, 0.6), 0 10px 10px rgba(0, 0, 0, 0.7)'
-          }
+            xl: '0 14px 28px rgba(0, 0, 0, 0.6), 0 10px 10px rgba(0, 0, 0, 0.7)',
+          },
         },
         {
           id: 'high-contrast',
@@ -171,12 +171,12 @@ class AxyraThemeManager {
             success: '#008000',
             warning: '#ffff00',
             error: '#ff0000',
-            info: '#0000ff'
+            info: '#0000ff',
           },
           fonts: {
             primary: 'Arial, sans-serif',
             secondary: 'Arial, sans-serif',
-            mono: 'Courier New, monospace'
+            mono: 'Courier New, monospace',
           },
           spacing: {
             xs: '4px',
@@ -184,23 +184,23 @@ class AxyraThemeManager {
             md: '16px',
             lg: '24px',
             xl: '32px',
-            xxl: '48px'
+            xxl: '48px',
           },
           borderRadius: {
             sm: '0px',
             md: '0px',
             lg: '0px',
-            xl: '0px'
+            xl: '0px',
           },
           shadows: {
             sm: 'none',
             md: 'none',
             lg: 'none',
-            xl: 'none'
-          }
-        }
+            xl: 'none',
+          },
+        },
       ];
-      
+
       this.saveThemes();
     }
   }
@@ -213,8 +213,8 @@ class AxyraThemeManager {
         colors: {
           primary: '#3498db',
           secondary: '#2c3e50',
-          accent: '#e74c3c'
-        }
+          accent: '#e74c3c',
+        },
       },
       {
         id: 'green',
@@ -222,8 +222,8 @@ class AxyraThemeManager {
         colors: {
           primary: '#27ae60',
           secondary: '#2c3e50',
-          accent: '#e74c3c'
-        }
+          accent: '#e74c3c',
+        },
       },
       {
         id: 'purple',
@@ -231,8 +231,8 @@ class AxyraThemeManager {
         colors: {
           primary: '#9b59b6',
           secondary: '#2c3e50',
-          accent: '#e74c3c'
-        }
+          accent: '#e74c3c',
+        },
       },
       {
         id: 'orange',
@@ -240,8 +240,8 @@ class AxyraThemeManager {
         colors: {
           primary: '#f39c12',
           secondary: '#2c3e50',
-          accent: '#e74c3c'
-        }
+          accent: '#e74c3c',
+        },
       },
       {
         id: 'red',
@@ -249,9 +249,9 @@ class AxyraThemeManager {
         colors: {
           primary: '#e74c3c',
           secondary: '#2c3e50',
-          accent: '#3498db'
-        }
-      }
+          accent: '#3498db',
+        },
+      },
     ];
   }
 
@@ -261,50 +261,50 @@ class AxyraThemeManager {
         id: 'inter',
         name: 'Inter',
         family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        category: 'sans-serif'
+        category: 'sans-serif',
       },
       {
         id: 'roboto',
         name: 'Roboto',
         family: 'Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        category: 'sans-serif'
+        category: 'sans-serif',
       },
       {
         id: 'open-sans',
         name: 'Open Sans',
         family: '"Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        category: 'sans-serif'
+        category: 'sans-serif',
       },
       {
         id: 'lato',
         name: 'Lato',
         family: 'Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        category: 'sans-serif'
+        category: 'sans-serif',
       },
       {
         id: 'poppins',
         name: 'Poppins',
         family: 'Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        category: 'sans-serif'
+        category: 'sans-serif',
       },
       {
         id: 'source-serif',
         name: 'Source Serif Pro',
         family: '"Source Serif Pro", Georgia, serif',
-        category: 'serif'
+        category: 'serif',
       },
       {
         id: 'playfair',
         name: 'Playfair Display',
         family: '"Playfair Display", Georgia, serif',
-        category: 'serif'
+        category: 'serif',
       },
       {
         id: 'monaco',
         name: 'Monaco',
         family: 'Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace',
-        category: 'monospace'
-      }
+        category: 'monospace',
+      },
     ];
   }
 
@@ -316,8 +316,9 @@ class AxyraThemeManager {
   }
 
   getCurrentTheme() {
-    return this.themes.find(t => t.id === this.currentTheme) || 
-           this.customThemes.find(t => t.id === this.currentTheme);
+    return (
+      this.themes.find((t) => t.id === this.currentTheme) || this.customThemes.find((t) => t.id === this.currentTheme)
+    );
   }
 
   applyTheme(theme) {
@@ -325,33 +326,33 @@ class AxyraThemeManager {
 
     // Aplicar colores
     this.applyColors(theme.colors);
-    
+
     // Aplicar fuentes
     this.applyFonts(theme.fonts);
-    
+
     // Aplicar espaciado
     this.applySpacing(theme.spacing);
-    
+
     // Aplicar bordes redondeados
     this.applyBorderRadius(theme.borderRadius);
-    
+
     // Aplicar sombras
     this.applyShadows(theme.shadows);
-    
+
     // Aplicar clase de tema
     document.body.className = document.body.className.replace(/theme-\w+/g, '');
     document.body.classList.add(`theme-${theme.id}`);
-    
+
     // Guardar tema actual
     this.currentTheme = theme.id;
     localStorage.setItem('axyra_current_theme', theme.id);
-    
+
     console.log('🎨 Tema aplicado:', theme.name);
   }
 
   applyColors(colors) {
     const root = document.documentElement;
-    
+
     Object.entries(colors).forEach(([key, value]) => {
       root.style.setProperty(`--color-${key}`, value);
     });
@@ -359,7 +360,7 @@ class AxyraThemeManager {
 
   applyFonts(fonts) {
     const root = document.documentElement;
-    
+
     Object.entries(fonts).forEach(([key, value]) => {
       root.style.setProperty(`--font-${key}`, value);
     });
@@ -367,7 +368,7 @@ class AxyraThemeManager {
 
   applySpacing(spacing) {
     const root = document.documentElement;
-    
+
     Object.entries(spacing).forEach(([key, value]) => {
       root.style.setProperty(`--spacing-${key}`, value);
     });
@@ -375,7 +376,7 @@ class AxyraThemeManager {
 
   applyBorderRadius(borderRadius) {
     const root = document.documentElement;
-    
+
     Object.entries(borderRadius).forEach(([key, value]) => {
       root.style.setProperty(`--border-radius-${key}`, value);
     });
@@ -383,25 +384,26 @@ class AxyraThemeManager {
 
   applyShadows(shadows) {
     const root = document.documentElement;
-    
+
     Object.entries(shadows).forEach(([key, value]) => {
       root.style.setProperty(`--shadow-${key}`, value);
     });
   }
 
   setTheme(themeId) {
-    const theme = this.themes.find(t => t.id === themeId) || 
-                 this.customThemes.find(t => t.id === themeId);
-    
+    const theme = this.themes.find((t) => t.id === themeId) || this.customThemes.find((t) => t.id === themeId);
+
     if (theme) {
       this.currentTheme = themeId;
       this.applyTheme(theme);
-      
+
       // Disparar evento
-      document.dispatchEvent(new CustomEvent('themeChanged', {
-        detail: { theme: themeId, themeData: theme }
-      }));
-      
+      document.dispatchEvent(
+        new CustomEvent('themeChanged', {
+          detail: { theme: themeId, themeData: theme },
+        })
+      );
+
       console.log('🎨 Tema cambiado a:', theme.name);
     }
   }
@@ -418,7 +420,7 @@ class AxyraThemeManager {
       shadows: themeData.shadows || {},
       isCustom: true,
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.customThemes.push(theme);
@@ -429,15 +431,15 @@ class AxyraThemeManager {
   }
 
   updateCustomTheme(themeId, updates) {
-    const themeIndex = this.customThemes.findIndex(t => t.id === themeId);
+    const themeIndex = this.customThemes.findIndex((t) => t.id === themeId);
     if (themeIndex === -1) {
       throw new Error('Tema personalizado no encontrado');
     }
 
-    this.customThemes[themeIndex] = { 
-      ...this.customThemes[themeIndex], 
+    this.customThemes[themeIndex] = {
+      ...this.customThemes[themeIndex],
       ...updates,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     this.saveCustomThemes();
@@ -452,7 +454,7 @@ class AxyraThemeManager {
   }
 
   deleteCustomTheme(themeId) {
-    const themeIndex = this.customThemes.findIndex(t => t.id === themeId);
+    const themeIndex = this.customThemes.findIndex((t) => t.id === themeId);
     if (themeIndex === -1) {
       throw new Error('Tema personalizado no encontrado');
     }
@@ -491,9 +493,9 @@ class AxyraThemeManager {
   }
 
   createThemeFromPalette(paletteId, baseThemeId = 'light') {
-    const palette = this.colorPalettes.find(p => p.id === paletteId);
-    const baseTheme = this.themes.find(t => t.id === baseThemeId);
-    
+    const palette = this.colorPalettes.find((p) => p.id === paletteId);
+    const baseTheme = this.themes.find((t) => t.id === baseThemeId);
+
     if (!palette || !baseTheme) {
       throw new Error('Paleta o tema base no encontrado');
     }
@@ -505,11 +507,11 @@ class AxyraThemeManager {
       description: `Tema basado en ${baseTheme.name} con paleta ${palette.name}`,
       colors: {
         ...baseTheme.colors,
-        ...palette.colors
+        ...palette.colors,
       },
       isCustom: true,
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.customThemes.push(theme);
@@ -520,14 +522,14 @@ class AxyraThemeManager {
   }
 
   exportTheme(themeId) {
-    const theme = this.getThemes().find(t => t.id === themeId);
+    const theme = this.getThemes().find((t) => t.id === themeId);
     if (!theme) {
       throw new Error('Tema no encontrado');
     }
 
     const dataStr = JSON.stringify(theme, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    
+
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
@@ -535,28 +537,28 @@ class AxyraThemeManager {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log('📤 Tema exportado:', theme.name);
   }
 
   importTheme(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         try {
           const theme = JSON.parse(event.target.result);
-          
+
           // Validar tema
           if (!theme.name || !theme.colors) {
             throw new Error('Formato de tema inválido');
           }
-          
+
           // Crear tema personalizado
           const customTheme = this.createCustomTheme(theme);
-          
+
           console.log('✅ Tema importado:', customTheme.name);
           resolve(customTheme);
         } catch (error) {
@@ -564,11 +566,11 @@ class AxyraThemeManager {
           reject(error);
         }
       };
-      
+
       reader.onerror = () => {
         reject(new Error('Error leyendo archivo'));
       };
-      
+
       reader.readAsText(file);
     });
   }
@@ -582,7 +584,7 @@ class AxyraThemeManager {
   }
 
   getThemePreview(themeId) {
-    const theme = this.getThemes().find(t => t.id === themeId);
+    const theme = this.getThemes().find((t) => t.id === themeId);
     if (!theme) return null;
 
     return {
@@ -590,7 +592,7 @@ class AxyraThemeManager {
       name: theme.name,
       colors: theme.colors,
       fonts: theme.fonts,
-      preview: this.generateThemePreview(theme)
+      preview: this.generateThemePreview(theme),
     };
   }
 
@@ -602,10 +604,16 @@ class AxyraThemeManager {
         <h3 style="font-family: ${theme.fonts.primary};">${theme.name}</h3>
       </div>
       <div class="preview-content" style="background: ${theme.colors.background}; color: ${theme.colors.text};">
-        <div class="preview-card" style="background: ${theme.colors.surface}; border: 1px solid ${theme.colors.border};">
+        <div class="preview-card" style="background: ${theme.colors.surface}; border: 1px solid ${
+      theme.colors.border
+    };">
           <h4 style="font-family: ${theme.fonts.primary};">Título de ejemplo</h4>
-          <p style="font-family: ${theme.fonts.secondary}; color: ${theme.colors.textSecondary};">Texto de ejemplo con diferentes colores y fuentes.</p>
-          <button style="background: ${theme.colors.primary}; color: ${theme.colors.text}; border: none; padding: 8px 16px; border-radius: ${theme.borderRadius?.md || '8px'};">
+          <p style="font-family: ${theme.fonts.secondary}; color: ${
+      theme.colors.textSecondary
+    };">Texto de ejemplo con diferentes colores y fuentes.</p>
+          <button style="background: ${theme.colors.primary}; color: ${
+      theme.colors.text
+    }; border: none; padding: 8px 16px; border-radius: ${theme.borderRadius?.md || '8px'};">
             Botón de ejemplo
           </button>
         </div>
@@ -625,7 +633,7 @@ class AxyraThemeManager {
       default: this.themes.length,
       custom: customThemes,
       current: this.currentTheme,
-      mostUsed: mostUsedTheme
+      mostUsed: mostUsedTheme,
     };
   }
 
@@ -696,14 +704,14 @@ class AxyraThemeManager {
     const tabButtons = editor.querySelectorAll('.tab-btn');
     const tabContents = editor.querySelectorAll('.tab-content');
 
-    tabButtons.forEach(button => {
+    tabButtons.forEach((button) => {
       button.addEventListener('click', () => {
         const tabId = button.dataset.tab;
-        
+
         // Remover clase active de todos los tabs
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        tabContents.forEach(content => content.classList.remove('active'));
-        
+        tabButtons.forEach((btn) => btn.classList.remove('active'));
+        tabContents.forEach((content) => content.classList.remove('active'));
+
         // Agregar clase active al tab seleccionado
         button.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
@@ -715,41 +723,59 @@ class AxyraThemeManager {
     const currentTheme = this.getCurrentTheme();
     if (!currentTheme) return '';
 
-    return Object.entries(currentTheme.colors).map(([key, value]) => `
+    return Object.entries(currentTheme.colors)
+      .map(
+        ([key, value]) => `
       <div class="color-input-group">
         <label for="color-${key}">${key}</label>
         <input type="color" id="color-${key}" value="${value}" onchange="axyraThemeManager.updateThemeColor('${key}', this.value)">
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderFontEditor() {
     const currentTheme = this.getCurrentTheme();
     if (!currentTheme) return '';
 
-    return Object.entries(currentTheme.fonts).map(([key, value]) => `
+    return Object.entries(currentTheme.fonts)
+      .map(
+        ([key, value]) => `
       <div class="font-input-group">
         <label for="font-${key}">${key}</label>
         <select id="font-${key}" onchange="axyraThemeManager.updateThemeFont('${key}', this.value)">
-          ${this.fonts.map(font => `
+          ${this.fonts
+            .map(
+              (font) => `
             <option value="${font.family}" ${value === font.family ? 'selected' : ''}>${font.name}</option>
-          `).join('')}
+          `
+            )
+            .join('')}
         </select>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderSpacingEditor() {
     const currentTheme = this.getCurrentTheme();
     if (!currentTheme) return '';
 
-    return Object.entries(currentTheme.spacing).map(([key, value]) => `
+    return Object.entries(currentTheme.spacing)
+      .map(
+        ([key, value]) => `
       <div class="spacing-input-group">
         <label for="spacing-${key}">${key}</label>
-        <input type="range" id="spacing-${key}" min="0" max="64" value="${parseInt(value)}" onchange="axyraThemeManager.updateThemeSpacing('${key}', this.value + 'px')">
+        <input type="range" id="spacing-${key}" min="0" max="64" value="${parseInt(
+          value
+        )}" onchange="axyraThemeManager.updateThemeSpacing('${key}', this.value + 'px')">
         <span>${value}</span>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderPreviewEditor() {

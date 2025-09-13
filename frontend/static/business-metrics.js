@@ -13,7 +13,7 @@ class AxyraBusinessMetrics {
         byDepartment: {},
         byRole: {},
         averageSalary: 0,
-        salaryRange: { min: 0, max: 0 }
+        salaryRange: { min: 0, max: 0 },
       },
       hours: {
         totalWorked: 0,
@@ -21,7 +21,7 @@ class AxyraBusinessMetrics {
         averagePerEmployee: 0,
         byDepartment: {},
         byMonth: {},
-        efficiency: 0
+        efficiency: 0,
       },
       payroll: {
         totalPaid: 0,
@@ -29,14 +29,14 @@ class AxyraBusinessMetrics {
         byMonth: {},
         byDepartment: {},
         overtimeCost: 0,
-        benefitsCost: 0
+        benefitsCost: 0,
       },
       inventory: {
         totalProducts: 0,
         totalValue: 0,
         lowStock: 0,
         byCategory: {},
-        turnoverRate: 0
+        turnoverRate: 0,
       },
       cash: {
         totalSales: 0,
@@ -44,20 +44,20 @@ class AxyraBusinessMetrics {
         totalCard: 0,
         averageTransaction: 0,
         byDay: {},
-        byMonth: {}
+        byMonth: {},
       },
       performance: {
         systemUptime: 0,
         averageResponseTime: 0,
         errorRate: 0,
-        userSatisfaction: 0
-      }
+        userSatisfaction: 0,
+      },
     };
-    
+
     this.kpis = {};
     this.trends = {};
     this.alerts = [];
-    
+
     this.init();
   }
 
@@ -93,148 +93,137 @@ class AxyraBusinessMetrics {
 
   calculateEmployeeMetrics() {
     const employees = this.employees;
-    
+
     this.metrics.employees.total = employees.length;
-    this.metrics.employees.active = employees.filter(e => e.activo).length;
-    this.metrics.employees.inactive = employees.filter(e => !e.activo).length;
-    
+    this.metrics.employees.active = employees.filter((e) => e.activo).length;
+    this.metrics.employees.inactive = employees.filter((e) => !e.activo).length;
+
     // Por departamento
     this.metrics.employees.byDepartment = {};
-    employees.forEach(emp => {
+    employees.forEach((emp) => {
       const dept = emp.departamento || 'Sin departamento';
-      this.metrics.employees.byDepartment[dept] = 
-        (this.metrics.employees.byDepartment[dept] || 0) + 1;
+      this.metrics.employees.byDepartment[dept] = (this.metrics.employees.byDepartment[dept] || 0) + 1;
     });
-    
+
     // Por rol
     this.metrics.employees.byRole = {};
-    employees.forEach(emp => {
+    employees.forEach((emp) => {
       const role = emp.rol || 'Sin rol';
-      this.metrics.employees.byRole[role] = 
-        (this.metrics.employees.byRole[role] || 0) + 1;
+      this.metrics.employees.byRole[role] = (this.metrics.employees.byRole[role] || 0) + 1;
     });
-    
+
     // Salarios
-    const salaries = employees.map(e => e.salario || 0).filter(s => s > 0);
+    const salaries = employees.map((e) => e.salario || 0).filter((s) => s > 0);
     if (salaries.length > 0) {
       this.metrics.employees.averageSalary = salaries.reduce((a, b) => a + b, 0) / salaries.length;
       this.metrics.employees.salaryRange = {
         min: Math.min(...salaries),
-        max: Math.max(...salaries)
+        max: Math.max(...salaries),
       };
     }
   }
 
   calculateHoursMetrics() {
     const hours = this.hours;
-    
+
     this.metrics.hours.totalWorked = hours.reduce((sum, h) => sum + (h.horasTrabajadas || 0), 0);
     this.metrics.hours.totalOvertime = hours.reduce((sum, h) => sum + (h.horasExtras || 0), 0);
-    
+
     if (this.metrics.employees.active > 0) {
       this.metrics.hours.averagePerEmployee = this.metrics.hours.totalWorked / this.metrics.employees.active;
     }
-    
+
     // Por departamento
     this.metrics.hours.byDepartment = {};
-    hours.forEach(h => {
+    hours.forEach((h) => {
       const dept = h.area || 'Sin área';
-      this.metrics.hours.byDepartment[dept] = 
-        (this.metrics.hours.byDepartment[dept] || 0) + (h.horasTrabajadas || 0);
+      this.metrics.hours.byDepartment[dept] = (this.metrics.hours.byDepartment[dept] || 0) + (h.horasTrabajadas || 0);
     });
-    
+
     // Por mes
     this.metrics.hours.byMonth = {};
-    hours.forEach(h => {
+    hours.forEach((h) => {
       if (h.fecha) {
         const month = h.fecha.substring(0, 7); // YYYY-MM
-        this.metrics.hours.byMonth[month] = 
-          (this.metrics.hours.byMonth[month] || 0) + (h.horasTrabajadas || 0);
+        this.metrics.hours.byMonth[month] = (this.metrics.hours.byMonth[month] || 0) + (h.horasTrabajadas || 0);
       }
     });
-    
+
     // Eficiencia (horas trabajadas vs horas planificadas)
     const plannedHours = this.metrics.employees.active * 8 * 22; // 8 horas por día, 22 días por mes
-    this.metrics.hours.efficiency = plannedHours > 0 ? 
-      (this.metrics.hours.totalWorked / plannedHours) * 100 : 0;
+    this.metrics.hours.efficiency = plannedHours > 0 ? (this.metrics.hours.totalWorked / plannedHours) * 100 : 0;
   }
 
   calculatePayrollMetrics() {
     const payroll = this.payroll;
-    
+
     this.metrics.payroll.totalPaid = payroll.reduce((sum, p) => sum + (p.totalPagar || 0), 0);
-    
+
     if (this.metrics.employees.active > 0) {
       this.metrics.payroll.averagePerEmployee = this.metrics.payroll.totalPaid / this.metrics.employees.active;
     }
-    
+
     // Por mes
     this.metrics.payroll.byMonth = {};
-    payroll.forEach(p => {
+    payroll.forEach((p) => {
       if (p.periodo) {
-        this.metrics.payroll.byMonth[p.periodo] = 
-          (this.metrics.payroll.byMonth[p.periodo] || 0) + (p.totalPagar || 0);
+        this.metrics.payroll.byMonth[p.periodo] = (this.metrics.payroll.byMonth[p.periodo] || 0) + (p.totalPagar || 0);
       }
     });
-    
+
     // Costo de horas extras
     this.metrics.payroll.overtimeCost = payroll.reduce((sum, p) => sum + (p.horasExtrasValor || 0), 0);
-    
+
     // Costo de beneficios (aproximado)
     this.metrics.payroll.benefitsCost = this.metrics.payroll.totalPaid * 0.1; // 10% de beneficios
   }
 
   calculateInventoryMetrics() {
     const inventory = this.inventory;
-    
+
     this.metrics.inventory.totalProducts = inventory.length;
-    this.metrics.inventory.totalValue = inventory.reduce((sum, p) => 
-      sum + ((p.precio || 0) * (p.stock || 0)), 0);
-    
-    this.metrics.inventory.lowStock = inventory.filter(p => 
-      (p.stock || 0) < (p.stockMinimo || 10)).length;
-    
+    this.metrics.inventory.totalValue = inventory.reduce((sum, p) => sum + (p.precio || 0) * (p.stock || 0), 0);
+
+    this.metrics.inventory.lowStock = inventory.filter((p) => (p.stock || 0) < (p.stockMinimo || 10)).length;
+
     // Por categoría
     this.metrics.inventory.byCategory = {};
-    inventory.forEach(p => {
+    inventory.forEach((p) => {
       const cat = p.categoria || 'Sin categoría';
-      this.metrics.inventory.byCategory[cat] = 
-        (this.metrics.inventory.byCategory[cat] || 0) + 1;
+      this.metrics.inventory.byCategory[cat] = (this.metrics.inventory.byCategory[cat] || 0) + 1;
     });
-    
+
     // Tasa de rotación (aproximada)
     const totalSales = this.metrics.cash.totalSales;
-    this.metrics.inventory.turnoverRate = this.metrics.inventory.totalValue > 0 ? 
-      totalSales / this.metrics.inventory.totalValue : 0;
+    this.metrics.inventory.turnoverRate =
+      this.metrics.inventory.totalValue > 0 ? totalSales / this.metrics.inventory.totalValue : 0;
   }
 
   calculateCashMetrics() {
     const cash = this.cash;
-    
+
     this.metrics.cash.totalSales = cash.reduce((sum, c) => sum + (c.totalVentas || 0), 0);
     this.metrics.cash.totalCash = cash.reduce((sum, c) => sum + (c.totalEfectivo || 0), 0);
     this.metrics.cash.totalCard = cash.reduce((sum, c) => sum + (c.totalTarjeta || 0), 0);
-    
+
     if (cash.length > 0) {
       this.metrics.cash.averageTransaction = this.metrics.cash.totalSales / cash.length;
     }
-    
+
     // Por día
     this.metrics.cash.byDay = {};
-    cash.forEach(c => {
+    cash.forEach((c) => {
       if (c.fecha) {
-        this.metrics.cash.byDay[c.fecha] = 
-          (this.metrics.cash.byDay[c.fecha] || 0) + (c.totalVentas || 0);
+        this.metrics.cash.byDay[c.fecha] = (this.metrics.cash.byDay[c.fecha] || 0) + (c.totalVentas || 0);
       }
     });
-    
+
     // Por mes
     this.metrics.cash.byMonth = {};
-    cash.forEach(c => {
+    cash.forEach((c) => {
       if (c.fecha) {
         const month = c.fecha.substring(0, 7);
-        this.metrics.cash.byMonth[month] = 
-          (this.metrics.cash.byMonth[month] || 0) + (c.totalVentas || 0);
+        this.metrics.cash.byMonth[month] = (this.metrics.cash.byMonth[month] || 0) + (c.totalVentas || 0);
       }
     });
   }
@@ -253,21 +242,21 @@ class AxyraBusinessMetrics {
       employeeRetentionRate: this.calculateEmployeeRetentionRate(),
       averageEmployeeTenure: this.calculateAverageEmployeeTenure(),
       employeeSatisfaction: this.calculateEmployeeSatisfaction(),
-      
+
       // KPIs financieros
       revenuePerEmployee: this.calculateRevenuePerEmployee(),
       costPerEmployee: this.calculateCostPerEmployee(),
       profitMargin: this.calculateProfitMargin(),
-      
+
       // KPIs operacionales
       productivityIndex: this.calculateProductivityIndex(),
       efficiencyRate: this.metrics.hours.efficiency,
       inventoryTurnover: this.metrics.inventory.turnoverRate,
-      
+
       // KPIs de calidad
       errorRate: this.metrics.performance.errorRate,
       systemUptime: this.metrics.performance.systemUptime,
-      userSatisfaction: this.metrics.performance.userSatisfaction
+      userSatisfaction: this.metrics.performance.userSatisfaction,
     };
   }
 
@@ -313,7 +302,7 @@ class AxyraBusinessMetrics {
       employeeGrowth: this.calculateEmployeeGrowthTrend(),
       revenueGrowth: this.calculateRevenueGrowthTrend(),
       costGrowth: this.calculateCostGrowthTrend(),
-      productivityTrend: this.calculateProductivityTrend()
+      productivityTrend: this.calculateProductivityTrend(),
     };
   }
 
@@ -339,7 +328,7 @@ class AxyraBusinessMetrics {
 
   setupAlerts() {
     this.alerts = [];
-    
+
     // Alertas de empleados
     if (this.metrics.employees.inactive > this.metrics.employees.active * 0.1) {
       this.alerts.push({
@@ -347,10 +336,10 @@ class AxyraBusinessMetrics {
         category: 'employees',
         message: 'Alto porcentaje de empleados inactivos',
         value: this.metrics.employees.inactive,
-        threshold: this.metrics.employees.active * 0.1
+        threshold: this.metrics.employees.active * 0.1,
       });
     }
-    
+
     // Alertas de inventario
     if (this.metrics.inventory.lowStock > this.metrics.inventory.totalProducts * 0.2) {
       this.alerts.push({
@@ -358,10 +347,10 @@ class AxyraBusinessMetrics {
         category: 'inventory',
         message: 'Alto porcentaje de productos con stock bajo',
         value: this.metrics.inventory.lowStock,
-        threshold: this.metrics.inventory.totalProducts * 0.2
+        threshold: this.metrics.inventory.totalProducts * 0.2,
       });
     }
-    
+
     // Alertas de rendimiento
     if (this.metrics.performance.errorRate > 1) {
       this.alerts.push({
@@ -369,10 +358,10 @@ class AxyraBusinessMetrics {
         category: 'performance',
         message: 'Tasa de errores alta',
         value: this.metrics.performance.errorRate,
-        threshold: 1
+        threshold: 1,
       });
     }
-    
+
     // Alertas de eficiencia
     if (this.metrics.hours.efficiency < 80) {
       this.alerts.push({
@@ -380,7 +369,7 @@ class AxyraBusinessMetrics {
         category: 'efficiency',
         message: 'Eficiencia de horas trabajadas baja',
         value: this.metrics.hours.efficiency,
-        threshold: 80
+        threshold: 80,
       });
     }
   }
@@ -393,13 +382,13 @@ class AxyraBusinessMetrics {
         totalRevenue: this.metrics.cash.totalSales,
         totalCosts: this.metrics.payroll.totalPaid,
         profit: this.metrics.cash.totalSales - this.metrics.payroll.totalPaid,
-        profitMargin: this.kpis.profitMargin
+        profitMargin: this.kpis.profitMargin,
       },
       kpis: this.kpis,
       trends: this.trends,
       alerts: this.alerts,
       metrics: this.metrics,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -408,23 +397,23 @@ class AxyraBusinessMetrics {
       financial: {
         revenuePerEmployee: this.kpis.revenuePerEmployee,
         costPerEmployee: this.kpis.costPerEmployee,
-        profitMargin: this.kpis.profitMargin
+        profitMargin: this.kpis.profitMargin,
       },
       operational: {
         productivityIndex: this.kpis.productivityIndex,
         efficiencyRate: this.kpis.efficiencyRate,
-        inventoryTurnover: this.kpis.inventoryTurnover
+        inventoryTurnover: this.kpis.inventoryTurnover,
       },
       quality: {
         errorRate: this.kpis.errorRate,
         systemUptime: this.kpis.systemUptime,
-        userSatisfaction: this.kpis.userSatisfaction
+        userSatisfaction: this.kpis.userSatisfaction,
       },
       employees: {
         retentionRate: this.kpis.employeeRetentionRate,
         averageTenure: this.kpis.averageEmployeeTenure,
-        satisfaction: this.kpis.employeeSatisfaction
-      }
+        satisfaction: this.kpis.employeeSatisfaction,
+      },
     };
   }
 
@@ -433,23 +422,23 @@ class AxyraBusinessMetrics {
       employeeGrowth: {
         trend: this.trends.employeeGrowth,
         direction: this.trends.employeeGrowth > 0 ? 'up' : 'down',
-        impact: 'positive'
+        impact: 'positive',
       },
       revenueGrowth: {
         trend: this.trends.revenueGrowth,
         direction: this.trends.revenueGrowth > 0 ? 'up' : 'down',
-        impact: 'positive'
+        impact: 'positive',
       },
       costGrowth: {
         trend: this.trends.costGrowth,
         direction: this.trends.costGrowth > 0 ? 'up' : 'down',
-        impact: 'negative'
+        impact: 'negative',
       },
       productivityTrend: {
         trend: this.trends.productivityTrend,
         direction: this.trends.productivityTrend > 0 ? 'up' : 'down',
-        impact: 'positive'
-      }
+        impact: 'positive',
+      },
     };
   }
 
@@ -458,20 +447,20 @@ class AxyraBusinessMetrics {
   }
 
   getCriticalAlerts() {
-    return this.alerts.filter(alert => alert.type === 'error');
+    return this.alerts.filter((alert) => alert.type === 'error');
   }
 
   getWarningAlerts() {
-    return this.alerts.filter(alert => alert.type === 'warning');
+    return this.alerts.filter((alert) => alert.type === 'warning');
   }
 
   exportBusinessReport(format = 'json') {
     const report = this.getBusinessReport();
-    
+
     let content;
     let filename;
     let mimeType;
-    
+
     switch (format) {
       case 'csv':
         content = this.convertToCSV(report);
@@ -490,21 +479,21 @@ class AxyraBusinessMetrics {
         mimeType = 'application/json';
         break;
     }
-    
+
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log(`📊 Reporte de negocio exportado: ${filename}`);
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showSuccess(`Reporte de negocio exportado: ${filename}`);
     }
@@ -512,7 +501,7 @@ class AxyraBusinessMetrics {
 
   convertToCSV(report) {
     const rows = [];
-    
+
     // Resumen
     rows.push(['Métrica', 'Valor']);
     rows.push(['Total Empleados', report.summary.totalEmployees]);
@@ -521,20 +510,20 @@ class AxyraBusinessMetrics {
     rows.push(['Costos Totales', report.summary.totalCosts]);
     rows.push(['Beneficio', report.summary.profit]);
     rows.push(['Margen de Beneficio', report.summary.profitMargin + '%']);
-    
+
     rows.push([]);
     rows.push(['KPI', 'Valor']);
     Object.entries(report.kpis).forEach(([kpi, value]) => {
       rows.push([kpi, value]);
     });
-    
+
     rows.push([]);
     rows.push(['Tendencia', 'Valor']);
     Object.entries(report.trends).forEach(([trend, value]) => {
       rows.push([trend, value + '%']);
     });
-    
-    return rows.map(row => row.join(',')).join('\n');
+
+    return rows.map((row) => row.join(',')).join('\n');
   }
 
   convertToExcel(report) {
@@ -549,7 +538,7 @@ class AxyraBusinessMetrics {
     this.setupKPIs();
     this.setupTrends();
     this.setupAlerts();
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showSuccess('Métricas de negocio actualizadas');
     }
@@ -570,7 +559,7 @@ class AxyraBusinessMetrics {
   formatCurrency(value) {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
-      currency: 'COP'
+      currency: 'COP',
     }).format(value);
   }
 

@@ -11,7 +11,7 @@ class AxyraShortcutsManager {
     this.isRecording = false;
     this.recordingShortcut = null;
     this.activeShortcuts = new Set();
-    
+
     this.init();
   }
 
@@ -53,7 +53,7 @@ class AxyraShortcutsManager {
           description: 'Guardar',
           action: 'save',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_n',
@@ -62,7 +62,7 @@ class AxyraShortcutsManager {
           description: 'Nuevo',
           action: 'new',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_o',
@@ -71,7 +71,7 @@ class AxyraShortcutsManager {
           description: 'Abrir',
           action: 'open',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_f',
@@ -80,7 +80,7 @@ class AxyraShortcutsManager {
           description: 'Buscar',
           action: 'search',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_h',
@@ -89,7 +89,7 @@ class AxyraShortcutsManager {
           description: 'Ayuda',
           action: 'help',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_shift_p',
@@ -98,7 +98,7 @@ class AxyraShortcutsManager {
           description: 'Paleta de comandos',
           action: 'command_palette',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_shift_t',
@@ -107,7 +107,7 @@ class AxyraShortcutsManager {
           description: 'Nueva pestaña',
           action: 'new_tab',
           category: 'navigation',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_w',
@@ -116,7 +116,7 @@ class AxyraShortcutsManager {
           description: 'Cerrar pestaña',
           action: 'close_tab',
           category: 'navigation',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_tab',
@@ -125,7 +125,7 @@ class AxyraShortcutsManager {
           description: 'Siguiente pestaña',
           action: 'next_tab',
           category: 'navigation',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_shift_tab',
@@ -134,7 +134,7 @@ class AxyraShortcutsManager {
           description: 'Pestaña anterior',
           action: 'previous_tab',
           category: 'navigation',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'f1',
@@ -143,7 +143,7 @@ class AxyraShortcutsManager {
           description: 'Ayuda',
           action: 'help',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'f2',
@@ -152,7 +152,7 @@ class AxyraShortcutsManager {
           description: 'Renombrar',
           action: 'rename',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'f5',
@@ -161,7 +161,7 @@ class AxyraShortcutsManager {
           description: 'Actualizar',
           action: 'refresh',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'f11',
@@ -170,7 +170,7 @@ class AxyraShortcutsManager {
           description: 'Pantalla completa',
           action: 'fullscreen',
           category: 'view',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'escape',
@@ -179,7 +179,7 @@ class AxyraShortcutsManager {
           description: 'Cancelar',
           action: 'cancel',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_shift_d',
@@ -188,7 +188,7 @@ class AxyraShortcutsManager {
           description: 'Duplicar',
           action: 'duplicate',
           category: 'general',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_shift_c',
@@ -197,7 +197,7 @@ class AxyraShortcutsManager {
           description: 'Copiar formato',
           action: 'copy_format',
           category: 'format',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_shift_v',
@@ -206,7 +206,7 @@ class AxyraShortcutsManager {
           description: 'Pegar formato',
           action: 'paste_format',
           category: 'format',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_shift_z',
@@ -215,7 +215,7 @@ class AxyraShortcutsManager {
           description: 'Rehacer',
           action: 'redo',
           category: 'edit',
-          enabled: true
+          enabled: true,
         },
         {
           id: 'ctrl_shift_s',
@@ -224,10 +224,10 @@ class AxyraShortcutsManager {
           description: 'Guardar como',
           action: 'save_as',
           category: 'general',
-          enabled: true
-        }
+          enabled: true,
+        },
       ];
-      
+
       this.saveShortcuts();
     }
   }
@@ -238,116 +238,116 @@ class AxyraShortcutsManager {
         id: 'save',
         name: 'Guardar',
         description: 'Guarda el documento actual',
-        handler: this.handleSave.bind(this)
+        handler: this.handleSave.bind(this),
       },
       {
         id: 'new',
         name: 'Nuevo',
         description: 'Crea un nuevo documento',
-        handler: this.handleNew.bind(this)
+        handler: this.handleNew.bind(this),
       },
       {
         id: 'open',
         name: 'Abrir',
         description: 'Abre un documento existente',
-        handler: this.handleOpen.bind(this)
+        handler: this.handleOpen.bind(this),
       },
       {
         id: 'search',
         name: 'Buscar',
         description: 'Abre el diálogo de búsqueda',
-        handler: this.handleSearch.bind(this)
+        handler: this.handleSearch.bind(this),
       },
       {
         id: 'help',
         name: 'Ayuda',
         description: 'Muestra la ayuda del sistema',
-        handler: this.handleHelp.bind(this)
+        handler: this.handleHelp.bind(this),
       },
       {
         id: 'command_palette',
         name: 'Paleta de Comandos',
         description: 'Muestra la paleta de comandos',
-        handler: this.handleCommandPalette.bind(this)
+        handler: this.handleCommandPalette.bind(this),
       },
       {
         id: 'new_tab',
         name: 'Nueva Pestaña',
         description: 'Abre una nueva pestaña',
-        handler: this.handleNewTab.bind(this)
+        handler: this.handleNewTab.bind(this),
       },
       {
         id: 'close_tab',
         name: 'Cerrar Pestaña',
         description: 'Cierra la pestaña actual',
-        handler: this.handleCloseTab.bind(this)
+        handler: this.handleCloseTab.bind(this),
       },
       {
         id: 'next_tab',
         name: 'Siguiente Pestaña',
         description: 'Cambia a la siguiente pestaña',
-        handler: this.handleNextTab.bind(this)
+        handler: this.handleNextTab.bind(this),
       },
       {
         id: 'previous_tab',
         name: 'Pestaña Anterior',
         description: 'Cambia a la pestaña anterior',
-        handler: this.handlePreviousTab.bind(this)
+        handler: this.handlePreviousTab.bind(this),
       },
       {
         id: 'rename',
         name: 'Renombrar',
         description: 'Renombra el elemento seleccionado',
-        handler: this.handleRename.bind(this)
+        handler: this.handleRename.bind(this),
       },
       {
         id: 'refresh',
         name: 'Actualizar',
         description: 'Actualiza la página actual',
-        handler: this.handleRefresh.bind(this)
+        handler: this.handleRefresh.bind(this),
       },
       {
         id: 'fullscreen',
         name: 'Pantalla Completa',
         description: 'Alterna el modo de pantalla completa',
-        handler: this.handleFullscreen.bind(this)
+        handler: this.handleFullscreen.bind(this),
       },
       {
         id: 'cancel',
         name: 'Cancelar',
         description: 'Cancela la operación actual',
-        handler: this.handleCancel.bind(this)
+        handler: this.handleCancel.bind(this),
       },
       {
         id: 'duplicate',
         name: 'Duplicar',
         description: 'Duplica el elemento seleccionado',
-        handler: this.handleDuplicate.bind(this)
+        handler: this.handleDuplicate.bind(this),
       },
       {
         id: 'copy_format',
         name: 'Copiar Formato',
         description: 'Copia el formato del elemento seleccionado',
-        handler: this.handleCopyFormat.bind(this)
+        handler: this.handleCopyFormat.bind(this),
       },
       {
         id: 'paste_format',
         name: 'Pegar Formato',
         description: 'Pega el formato copiado',
-        handler: this.handlePasteFormat.bind(this)
+        handler: this.handlePasteFormat.bind(this),
       },
       {
         id: 'redo',
         name: 'Rehacer',
         description: 'Rehace la última acción deshecha',
-        handler: this.handleRedo.bind(this)
+        handler: this.handleRedo.bind(this),
       },
       {
         id: 'save_as',
         name: 'Guardar Como',
         description: 'Guarda el documento con un nuevo nombre',
-        handler: this.handleSaveAs.bind(this)
-      }
+        handler: this.handleSaveAs.bind(this),
+      },
     ];
   }
 
@@ -376,34 +376,32 @@ class AxyraShortcutsManager {
 
   findShortcut(event) {
     const keys = this.getPressedKeys(event);
-    const shortcut = this.shortcuts.find(s => 
-      s.enabled && this.keysMatch(s.keys, keys)
-    );
-    
+    const shortcut = this.shortcuts.find((s) => s.enabled && this.keysMatch(s.keys, keys));
+
     return shortcut;
   }
 
   getPressedKeys(event) {
     const keys = [];
-    
+
     if (event.ctrlKey) keys.push('ctrl');
     if (event.shiftKey) keys.push('shift');
     if (event.altKey) keys.push('alt');
     if (event.metaKey) keys.push('meta');
-    
+
     keys.push(event.key.toLowerCase());
-    
+
     return keys;
   }
 
   keysMatch(shortcutKeys, pressedKeys) {
     if (shortcutKeys.length !== pressedKeys.length) return false;
-    
-    return shortcutKeys.every(key => pressedKeys.includes(key));
+
+    return shortcutKeys.every((key) => pressedKeys.includes(key));
   }
 
   executeShortcut(shortcut) {
-    const command = this.commands.find(c => c.id === shortcut.action);
+    const command = this.commands.find((c) => c.id === shortcut.action);
     if (command) {
       command.handler();
       console.log('⌨️ Shortcut ejecutado:', shortcut.description);
@@ -412,7 +410,7 @@ class AxyraShortcutsManager {
 
   handleShortcutsChange(change) {
     const { shortcutId, enabled } = change;
-    const shortcut = this.shortcuts.find(s => s.id === shortcutId);
+    const shortcut = this.shortcuts.find((s) => s.id === shortcutId);
     if (shortcut) {
       shortcut.enabled = enabled;
       this.saveShortcuts();
@@ -566,9 +564,8 @@ class AxyraShortcutsManager {
 
     searchInput.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase();
-      const filteredCommands = this.commands.filter(c => 
-        c.name.toLowerCase().includes(query) || 
-        c.description.toLowerCase().includes(query)
+      const filteredCommands = this.commands.filter(
+        (c) => c.name.toLowerCase().includes(query) || c.description.toLowerCase().includes(query)
       );
       commandList.innerHTML = this.renderCommandList(filteredCommands);
     });
@@ -606,27 +603,31 @@ class AxyraShortcutsManager {
 
   renderCommandList(commands = null) {
     const commandsToRender = commands || this.commands;
-    
-    return commandsToRender.map(command => `
+
+    return commandsToRender
+      .map(
+        (command) => `
       <div class="command-item" data-command-id="${command.id}">
         <div class="command-name">${command.name}</div>
         <div class="command-description">${command.description}</div>
         <div class="command-shortcut">${this.getCommandShortcut(command.id)}</div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   getCommandShortcut(commandId) {
-    const shortcut = this.shortcuts.find(s => s.action === commandId);
+    const shortcut = this.shortcuts.find((s) => s.action === commandId);
     return shortcut ? shortcut.key : '';
   }
 
   navigateCommands(direction) {
     const commandItems = document.querySelectorAll('.command-item');
     const selected = document.querySelector('.command-item.selected');
-    
+
     if (commandItems.length === 0) return;
-    
+
     let newIndex = 0;
     if (selected) {
       const currentIndex = Array.from(commandItems).indexOf(selected);
@@ -634,13 +635,13 @@ class AxyraShortcutsManager {
       if (newIndex < 0) newIndex = commandItems.length - 1;
       if (newIndex >= commandItems.length) newIndex = 0;
     }
-    
-    commandItems.forEach(item => item.classList.remove('selected'));
+
+    commandItems.forEach((item) => item.classList.remove('selected'));
     commandItems[newIndex].classList.add('selected');
   }
 
   executeCommand(commandId) {
-    const command = this.commands.find(c => c.id === commandId);
+    const command = this.commands.find((c) => c.id === commandId);
     if (command) {
       command.handler();
     }
@@ -656,7 +657,7 @@ class AxyraShortcutsManager {
       category: shortcutData.category || 'general',
       enabled: shortcutData.enabled !== false,
       createdAt: new Date().toISOString(),
-      createdBy: this.getCurrentUser()
+      createdBy: this.getCurrentUser(),
     };
 
     this.shortcuts.push(shortcut);
@@ -667,14 +668,14 @@ class AxyraShortcutsManager {
   }
 
   updateShortcut(shortcutId, updates) {
-    const shortcutIndex = this.shortcuts.findIndex(s => s.id === shortcutId);
+    const shortcutIndex = this.shortcuts.findIndex((s) => s.id === shortcutId);
     if (shortcutIndex === -1) {
       throw new Error('Shortcut no encontrado');
     }
 
-    this.shortcuts[shortcutIndex] = { 
-      ...this.shortcuts[shortcutIndex], 
-      ...updates 
+    this.shortcuts[shortcutIndex] = {
+      ...this.shortcuts[shortcutIndex],
+      ...updates,
     };
 
     this.saveShortcuts();
@@ -684,7 +685,7 @@ class AxyraShortcutsManager {
   }
 
   deleteShortcut(shortcutId) {
-    const shortcutIndex = this.shortcuts.findIndex(s => s.id === shortcutId);
+    const shortcutIndex = this.shortcuts.findIndex((s) => s.id === shortcutId);
     if (shortcutIndex === -1) {
       throw new Error('Shortcut no encontrado');
     }
@@ -701,18 +702,17 @@ class AxyraShortcutsManager {
     let filteredShortcuts = [...this.shortcuts];
 
     if (filters.category) {
-      filteredShortcuts = filteredShortcuts.filter(s => s.category === filters.category);
+      filteredShortcuts = filteredShortcuts.filter((s) => s.category === filters.category);
     }
 
     if (filters.enabled !== undefined) {
-      filteredShortcuts = filteredShortcuts.filter(s => s.enabled === filters.enabled);
+      filteredShortcuts = filteredShortcuts.filter((s) => s.enabled === filters.enabled);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredShortcuts = filteredShortcuts.filter(s => 
-        s.description.toLowerCase().includes(searchTerm) ||
-        s.key.toLowerCase().includes(searchTerm)
+      filteredShortcuts = filteredShortcuts.filter(
+        (s) => s.description.toLowerCase().includes(searchTerm) || s.key.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -721,7 +721,7 @@ class AxyraShortcutsManager {
 
   getShortcutsByCategory() {
     const categories = {};
-    this.shortcuts.forEach(shortcut => {
+    this.shortcuts.forEach((shortcut) => {
       if (!categories[shortcut.category]) {
         categories[shortcut.category] = [];
       }
@@ -732,10 +732,10 @@ class AxyraShortcutsManager {
 
   getShortcutStatistics() {
     const totalShortcuts = this.shortcuts.length;
-    const enabledShortcuts = this.shortcuts.filter(s => s.enabled).length;
+    const enabledShortcuts = this.shortcuts.filter((s) => s.enabled).length;
     const categoryStats = {};
 
-    this.shortcuts.forEach(shortcut => {
+    this.shortcuts.forEach((shortcut) => {
       categoryStats[shortcut.category] = (categoryStats[shortcut.category] || 0) + 1;
     });
 
@@ -743,12 +743,12 @@ class AxyraShortcutsManager {
       total: totalShortcuts,
       enabled: enabledShortcuts,
       disabled: totalShortcuts - enabledShortcuts,
-      categoryStats: categoryStats
+      categoryStats: categoryStats,
     };
   }
 
   enableShortcut(shortcutId) {
-    const shortcut = this.shortcuts.find(s => s.id === shortcutId);
+    const shortcut = this.shortcuts.find((s) => s.id === shortcutId);
     if (shortcut) {
       shortcut.enabled = true;
       this.saveShortcuts();
@@ -757,7 +757,7 @@ class AxyraShortcutsManager {
   }
 
   disableShortcut(shortcutId) {
-    const shortcut = this.shortcuts.find(s => s.id === shortcutId);
+    const shortcut = this.shortcuts.find((s) => s.id === shortcutId);
     if (shortcut) {
       shortcut.enabled = false;
       this.saveShortcuts();
@@ -766,7 +766,7 @@ class AxyraShortcutsManager {
   }
 
   enableAllShortcuts() {
-    this.shortcuts.forEach(shortcut => {
+    this.shortcuts.forEach((shortcut) => {
       shortcut.enabled = true;
     });
     this.saveShortcuts();
@@ -774,7 +774,7 @@ class AxyraShortcutsManager {
   }
 
   disableAllShortcuts() {
-    this.shortcuts.forEach(shortcut => {
+    this.shortcuts.forEach((shortcut) => {
       shortcut.enabled = false;
     });
     this.saveShortcuts();
@@ -805,12 +805,12 @@ class AxyraShortcutsManager {
     const data = {
       shortcuts: this.shortcuts,
       commands: this.commands,
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
 
     const dataStr = JSON.stringify(data, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    
+
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
@@ -818,29 +818,29 @@ class AxyraShortcutsManager {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log('📊 Shortcuts exportados');
   }
 
   importShortcuts(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result);
-          
+
           if (data.shortcuts) {
             this.shortcuts = [...this.shortcuts, ...data.shortcuts];
             this.saveShortcuts();
           }
-          
+
           if (data.commands) {
             this.commands = [...this.commands, ...data.commands];
           }
-          
+
           console.log('✅ Shortcuts importados exitosamente');
           resolve();
         } catch (error) {
@@ -848,11 +848,11 @@ class AxyraShortcutsManager {
           reject(error);
         }
       };
-      
+
       reader.onerror = () => {
         reject(new Error('Error leyendo archivo'));
       };
-      
+
       reader.readAsText(file);
     });
   }
@@ -893,20 +893,28 @@ class AxyraShortcutsManager {
 
   renderShortcutsHelp() {
     const categories = this.getShortcutsByCategory();
-    
-    return Object.entries(categories).map(([category, shortcuts]) => `
+
+    return Object.entries(categories)
+      .map(
+        ([category, shortcuts]) => `
       <div class="shortcuts-category">
         <h4>${category.charAt(0).toUpperCase() + category.slice(1)}</h4>
         <div class="shortcuts-list">
-          ${shortcuts.map(shortcut => `
+          ${shortcuts
+            .map(
+              (shortcut) => `
             <div class="shortcut-item">
               <div class="shortcut-key">${shortcut.key}</div>
               <div class="shortcut-description">${shortcut.description}</div>
             </div>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 }
 

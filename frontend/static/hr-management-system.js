@@ -16,7 +16,7 @@ class AxyraHRManagementSystem {
     this.payroll = [];
     this.documents = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -247,29 +247,29 @@ class AxyraHRManagementSystem {
           name: 'Recursos Humanos',
           description: 'Gestión de personal y talento humano',
           managerId: null,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'finance',
           name: 'Finanzas',
           description: 'Gestión financiera y contable',
           managerId: null,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'it',
           name: 'Tecnología',
           description: 'Sistemas y tecnología',
           managerId: null,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'sales',
           name: 'Ventas',
           description: 'Ventas y marketing',
           managerId: null,
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveDepartments();
     }
@@ -283,7 +283,7 @@ class AxyraHRManagementSystem {
           level: 'senior',
           minSalary: 5000000,
           maxSalary: 8000000,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'supervisor',
@@ -292,7 +292,7 @@ class AxyraHRManagementSystem {
           level: 'mid',
           minSalary: 3000000,
           maxSalary: 5000000,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'employee',
@@ -301,8 +301,8 @@ class AxyraHRManagementSystem {
           level: 'junior',
           minSalary: 2000000,
           maxSalary: 4000000,
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.savePositions();
     }
@@ -310,21 +310,21 @@ class AxyraHRManagementSystem {
 
   handleEmployeeChange(change) {
     const { employeeId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.employees.push(data);
         this.saveEmployees();
         break;
       case 'updated':
-        const employeeIndex = this.employees.findIndex(e => e.id === employeeId);
+        const employeeIndex = this.employees.findIndex((e) => e.id === employeeId);
         if (employeeIndex !== -1) {
           this.employees[employeeIndex] = { ...this.employees[employeeIndex], ...data };
           this.saveEmployees();
         }
         break;
       case 'deleted':
-        this.employees = this.employees.filter(e => e.id !== employeeId);
+        this.employees = this.employees.filter((e) => e.id !== employeeId);
         this.saveEmployees();
         break;
     }
@@ -332,21 +332,21 @@ class AxyraHRManagementSystem {
 
   handleAttendanceChange(change) {
     const { attendanceId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.attendance.push(data);
         this.saveAttendance();
         break;
       case 'updated':
-        const attendanceIndex = this.attendance.findIndex(a => a.id === attendanceId);
+        const attendanceIndex = this.attendance.findIndex((a) => a.id === attendanceId);
         if (attendanceIndex !== -1) {
           this.attendance[attendanceIndex] = { ...this.attendance[attendanceIndex], ...data };
           this.saveAttendance();
         }
         break;
       case 'deleted':
-        this.attendance = this.attendance.filter(a => a.id !== attendanceId);
+        this.attendance = this.attendance.filter((a) => a.id !== attendanceId);
         this.saveAttendance();
         break;
     }
@@ -385,8 +385,8 @@ class AxyraHRManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.employees.push(employee);
@@ -397,24 +397,27 @@ class AxyraHRManagementSystem {
   }
 
   updateEmployee(employeeId, updates) {
-    const employeeIndex = this.employees.findIndex(e => e.id === employeeId);
+    const employeeIndex = this.employees.findIndex((e) => e.id === employeeId);
     if (employeeIndex === -1) {
       throw new Error('Empleado no encontrado');
     }
 
-    this.employees[employeeIndex] = { 
-      ...this.employees[employeeIndex], 
+    this.employees[employeeIndex] = {
+      ...this.employees[employeeIndex],
       ...updates,
       metadata: {
         ...this.employees[employeeIndex].metadata,
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.saveEmployees();
 
-    console.log('✅ Empleado actualizado:', this.employees[employeeIndex].firstName + ' ' + this.employees[employeeIndex].lastName);
+    console.log(
+      '✅ Empleado actualizado:',
+      this.employees[employeeIndex].firstName + ' ' + this.employees[employeeIndex].lastName
+    );
     return this.employees[employeeIndex];
   }
 
@@ -431,8 +434,8 @@ class AxyraHRManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.departments.push(department);
@@ -457,8 +460,8 @@ class AxyraHRManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.positions.push(position);
@@ -485,8 +488,8 @@ class AxyraHRManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.evaluations.push(evaluation);
@@ -515,8 +518,8 @@ class AxyraHRManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.trainings.push(training);
@@ -543,8 +546,8 @@ class AxyraHRManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.benefits.push(benefit);
@@ -569,8 +572,8 @@ class AxyraHRManagementSystem {
       notes: attendanceData.notes || '',
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.attendance.push(attendance);
@@ -597,8 +600,8 @@ class AxyraHRManagementSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.leaves.push(leave);
@@ -618,24 +621,25 @@ class AxyraHRManagementSystem {
     let filteredEmployees = [...this.employees];
 
     if (filters.departmentId) {
-      filteredEmployees = filteredEmployees.filter(e => e.departmentId === filters.departmentId);
+      filteredEmployees = filteredEmployees.filter((e) => e.departmentId === filters.departmentId);
     }
 
     if (filters.positionId) {
-      filteredEmployees = filteredEmployees.filter(e => e.positionId === filters.positionId);
+      filteredEmployees = filteredEmployees.filter((e) => e.positionId === filters.positionId);
     }
 
     if (filters.status) {
-      filteredEmployees = filteredEmployees.filter(e => e.status === filters.status);
+      filteredEmployees = filteredEmployees.filter((e) => e.status === filters.status);
     }
 
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
-      filteredEmployees = filteredEmployees.filter(e => 
-        e.firstName.toLowerCase().includes(searchTerm) ||
-        e.lastName.toLowerCase().includes(searchTerm) ||
-        e.email.toLowerCase().includes(searchTerm) ||
-        e.employeeId.toLowerCase().includes(searchTerm)
+      filteredEmployees = filteredEmployees.filter(
+        (e) =>
+          e.firstName.toLowerCase().includes(searchTerm) ||
+          e.lastName.toLowerCase().includes(searchTerm) ||
+          e.email.toLowerCase().includes(searchTerm) ||
+          e.employeeId.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -644,21 +648,21 @@ class AxyraHRManagementSystem {
 
   getHRStatistics() {
     const totalEmployees = this.employees.length;
-    const activeEmployees = this.employees.filter(e => e.status === 'active').length;
-    const inactiveEmployees = this.employees.filter(e => e.status === 'inactive').length;
-    const terminatedEmployees = this.employees.filter(e => e.status === 'terminated').length;
-    
+    const activeEmployees = this.employees.filter((e) => e.status === 'active').length;
+    const inactiveEmployees = this.employees.filter((e) => e.status === 'inactive').length;
+    const terminatedEmployees = this.employees.filter((e) => e.status === 'terminated').length;
+
     const departmentStats = {};
-    this.employees.forEach(employee => {
-      const department = this.departments.find(d => d.id === employee.departmentId);
+    this.employees.forEach((employee) => {
+      const department = this.departments.find((d) => d.id === employee.departmentId);
       if (department) {
         departmentStats[department.name] = (departmentStats[department.name] || 0) + 1;
       }
     });
 
     const positionStats = {};
-    this.employees.forEach(employee => {
-      const position = this.positions.find(p => p.id === employee.positionId);
+    this.employees.forEach((employee) => {
+      const position = this.positions.find((p) => p.id === employee.positionId);
       if (position) {
         positionStats[position.name] = (positionStats[position.name] || 0) + 1;
       }
@@ -675,7 +679,7 @@ class AxyraHRManagementSystem {
       departmentStats,
       positionStats,
       totalSalary,
-      averageSalary
+      averageSalary,
     };
   }
 
@@ -748,13 +752,13 @@ class AxyraHRManagementSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -763,7 +767,7 @@ class AxyraHRManagementSystem {
 
   renderHRStats() {
     const stats = this.getHRStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -796,12 +800,13 @@ class AxyraHRManagementSystem {
 
   renderEmployeesList() {
     const employees = this.getEmployees();
-    
-    return employees.map(employee => {
-      const department = this.departments.find(d => d.id === employee.departmentId);
-      const position = this.positions.find(p => p.id === employee.positionId);
-      
-      return `
+
+    return employees
+      .map((employee) => {
+        const department = this.departments.find((d) => d.id === employee.departmentId);
+        const position = this.positions.find((p) => p.id === employee.positionId);
+
+        return `
         <div class="employee-card">
           <div class="employee-header">
             <h4>${employee.firstName} ${employee.lastName}</h4>
@@ -820,21 +825,25 @@ class AxyraHRManagementSystem {
           </div>
         </div>
       `;
-    }).join('');
+      })
+      .join('');
   }
 
   renderDepartmentsList() {
     const departments = this.departments;
-    
-    return departments.map(department => {
-      const employeeCount = this.employees.filter(e => e.departmentId === department.id).length;
-      const manager = this.employees.find(e => e.id === department.managerId);
-      
-      return `
+
+    return departments
+      .map((department) => {
+        const employeeCount = this.employees.filter((e) => e.departmentId === department.id).length;
+        const manager = this.employees.find((e) => e.id === department.managerId);
+
+        return `
         <div class="department-card">
           <div class="department-header">
             <h4>${department.name}</h4>
-            <span class="department-status ${department.isActive ? 'active' : 'inactive'}">${department.isActive ? 'Activo' : 'Inactivo'}</span>
+            <span class="department-status ${department.isActive ? 'active' : 'inactive'}">${
+          department.isActive ? 'Activo' : 'Inactivo'
+        }</span>
           </div>
           <div class="department-info">
             <p>${department.description}</p>
@@ -848,16 +857,18 @@ class AxyraHRManagementSystem {
           </div>
         </div>
       `;
-    }).join('');
+      })
+      .join('');
   }
 
   renderAttendanceList() {
     const attendance = this.attendance.slice(-20); // Últimos 20 registros
-    
-    return attendance.map(record => {
-      const employee = this.employees.find(e => e.id === record.employeeId);
-      
-      return `
+
+    return attendance
+      .map((record) => {
+        const employee = this.employees.find((e) => e.id === record.employeeId);
+
+        return `
         <div class="attendance-card">
           <div class="attendance-header">
             <h5>${employee ? employee.firstName + ' ' + employee.lastName : 'Empleado no encontrado'}</h5>
@@ -871,17 +882,19 @@ class AxyraHRManagementSystem {
           </div>
         </div>
       `;
-    }).join('');
+      })
+      .join('');
   }
 
   renderEvaluationsList() {
     const evaluations = this.evaluations.slice(-20); // Últimas 20 evaluaciones
-    
-    return evaluations.map(evaluation => {
-      const employee = this.employees.find(e => e.id === evaluation.employeeId);
-      const evaluator = this.employees.find(e => e.id === evaluation.evaluatorId);
-      
-      return `
+
+    return evaluations
+      .map((evaluation) => {
+        const employee = this.employees.find((e) => e.id === evaluation.employeeId);
+        const evaluator = this.employees.find((e) => e.id === evaluation.evaluatorId);
+
+        return `
         <div class="evaluation-card">
           <div class="evaluation-header">
             <h5>${employee ? employee.firstName + ' ' + employee.lastName : 'Empleado no encontrado'}</h5>
@@ -894,13 +907,16 @@ class AxyraHRManagementSystem {
           </div>
         </div>
       `;
-    }).join('');
+      })
+      .join('');
   }
 
   renderTrainingsList() {
     const trainings = this.trainings.slice(-20); // Últimas 20 capacitaciones
-    
-    return trainings.map(training => `
+
+    return trainings
+      .map(
+        (training) => `
       <div class="training-card">
         <div class="training-header">
           <h5>${training.name}</h5>
@@ -913,7 +929,9 @@ class AxyraHRManagementSystem {
           <p>Participantes: ${training.participants.length}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   showCreateEmployeeDialog() {
@@ -936,17 +954,23 @@ class AxyraHRManagementSystem {
   }
 
   showEmployeeDetails(employeeId) {
-    const employee = this.employees.find(e => e.id === employeeId);
+    const employee = this.employees.find((e) => e.id === employeeId);
     if (employee) {
-      const department = this.departments.find(d => d.id === employee.departmentId);
-      const position = this.positions.find(p => p.id === employee.positionId);
-      
-      alert(`Empleado: ${employee.firstName} ${employee.lastName}\nID: ${employee.employeeId}\nEmail: ${employee.email}\nTeléfono: ${employee.phone}\nDepartamento: ${department ? department.name : 'N/A'}\nPosición: ${position ? position.name : 'N/A'}\nSalario: $${employee.salary.toLocaleString()}`);
+      const department = this.departments.find((d) => d.id === employee.departmentId);
+      const position = this.positions.find((p) => p.id === employee.positionId);
+
+      alert(
+        `Empleado: ${employee.firstName} ${employee.lastName}\nID: ${employee.employeeId}\nEmail: ${
+          employee.email
+        }\nTeléfono: ${employee.phone}\nDepartamento: ${department ? department.name : 'N/A'}\nPosición: ${
+          position ? position.name : 'N/A'
+        }\nSalario: $${employee.salary.toLocaleString()}`
+      );
     }
   }
 
   editEmployee(employeeId) {
-    const employee = this.employees.find(e => e.id === employeeId);
+    const employee = this.employees.find((e) => e.id === employeeId);
     if (employee) {
       const newSalary = parseFloat(prompt('Nuevo salario:', employee.salary));
       if (newSalary) {
@@ -956,15 +980,19 @@ class AxyraHRManagementSystem {
   }
 
   showDepartmentDetails(departmentId) {
-    const department = this.departments.find(d => d.id === departmentId);
+    const department = this.departments.find((d) => d.id === departmentId);
     if (department) {
-      const employeeCount = this.employees.filter(e => e.departmentId === departmentId).length;
-      alert(`Departamento: ${department.name}\nDescripción: ${department.description}\nEmpleados: ${employeeCount}\nPresupuesto: $${department.budget.toLocaleString()}`);
+      const employeeCount = this.employees.filter((e) => e.departmentId === departmentId).length;
+      alert(
+        `Departamento: ${department.name}\nDescripción: ${
+          department.description
+        }\nEmpleados: ${employeeCount}\nPresupuesto: $${department.budget.toLocaleString()}`
+      );
     }
   }
 
   editDepartment(departmentId) {
-    const department = this.departments.find(d => d.id === departmentId);
+    const department = this.departments.find((d) => d.id === departmentId);
     if (department) {
       const newBudget = parseFloat(prompt('Nuevo presupuesto:', department.budget));
       if (newBudget) {

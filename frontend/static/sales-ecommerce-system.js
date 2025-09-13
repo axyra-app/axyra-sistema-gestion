@@ -17,7 +17,7 @@ class AxyraSalesEcommerceSystem {
     this.wishlists = [];
     this.cart = [];
     this.isInitialized = false;
-    
+
     this.init();
   }
 
@@ -268,29 +268,29 @@ class AxyraSalesEcommerceSystem {
           name: 'Electrónicos',
           description: 'Dispositivos electrónicos y tecnología',
           parentId: null,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'clothing',
           name: 'Ropa',
           description: 'Ropa y accesorios',
           parentId: null,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'home',
           name: 'Hogar',
           description: 'Artículos para el hogar',
           parentId: null,
-          isActive: true
+          isActive: true,
         },
         {
           id: 'books',
           name: 'Libros',
           description: 'Libros y publicaciones',
           parentId: null,
-          isActive: true
-        }
+          isActive: true,
+        },
       ];
       this.saveCategories();
     }
@@ -314,7 +314,7 @@ class AxyraSalesEcommerceSystem {
           tags: ['smartphone', 'samsung', 'android'],
           isActive: true,
           isDigital: false,
-          requiresShipping: true
+          requiresShipping: true,
         },
         {
           id: 'product_2',
@@ -333,8 +333,8 @@ class AxyraSalesEcommerceSystem {
           tags: ['camiseta', 'algodon', 'basica'],
           isActive: true,
           isDigital: false,
-          requiresShipping: true
-        }
+          requiresShipping: true,
+        },
       ];
       this.saveProducts();
     }
@@ -342,21 +342,21 @@ class AxyraSalesEcommerceSystem {
 
   handleProductChange(change) {
     const { productId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.products.push(data);
         this.saveProducts();
         break;
       case 'updated':
-        const productIndex = this.products.findIndex(p => p.id === productId);
+        const productIndex = this.products.findIndex((p) => p.id === productId);
         if (productIndex !== -1) {
           this.products[productIndex] = { ...this.products[productIndex], ...data };
           this.saveProducts();
         }
         break;
       case 'deleted':
-        this.products = this.products.filter(p => p.id !== productId);
+        this.products = this.products.filter((p) => p.id !== productId);
         this.saveProducts();
         break;
     }
@@ -364,21 +364,21 @@ class AxyraSalesEcommerceSystem {
 
   handleOrderChange(change) {
     const { orderId, action, data } = change;
-    
+
     switch (action) {
       case 'created':
         this.orders.push(data);
         this.saveOrders();
         break;
       case 'updated':
-        const orderIndex = this.orders.findIndex(o => o.id === orderId);
+        const orderIndex = this.orders.findIndex((o) => o.id === orderId);
         if (orderIndex !== -1) {
           this.orders[orderIndex] = { ...this.orders[orderIndex], ...data };
           this.saveOrders();
         }
         break;
       case 'deleted':
-        this.orders = this.orders.filter(o => o.id !== orderId);
+        this.orders = this.orders.filter((o) => o.id !== orderId);
         this.saveOrders();
         break;
     }
@@ -407,8 +407,8 @@ class AxyraSalesEcommerceSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.products.push(product);
@@ -429,8 +429,8 @@ class AxyraSalesEcommerceSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.categories.push(category);
@@ -459,8 +459,8 @@ class AxyraSalesEcommerceSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.customers.push(customer);
@@ -491,8 +491,8 @@ class AxyraSalesEcommerceSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.orders.push(order);
@@ -512,8 +512,8 @@ class AxyraSalesEcommerceSystem {
       total: orderItemData.total || 0,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.orderItems.push(orderItem);
@@ -535,8 +535,8 @@ class AxyraSalesEcommerceSystem {
       processedAt: paymentData.processedAt || null,
       metadata: {
         createdAt: new Date().toISOString(),
-        createdBy: this.getCurrentUser()
-      }
+        createdBy: this.getCurrentUser(),
+      },
     };
 
     this.payments.push(payment);
@@ -565,8 +565,8 @@ class AxyraSalesEcommerceSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.coupons.push(coupon);
@@ -590,8 +590,8 @@ class AxyraSalesEcommerceSystem {
         createdAt: new Date().toISOString(),
         createdBy: this.getCurrentUser(),
         updatedAt: new Date().toISOString(),
-        updatedBy: this.getCurrentUser()
-      }
+        updatedBy: this.getCurrentUser(),
+      },
     };
 
     this.reviews.push(review);
@@ -602,7 +602,7 @@ class AxyraSalesEcommerceSystem {
   }
 
   addToCart(productId, quantity = 1) {
-    const product = this.products.find(p => p.id === productId);
+    const product = this.products.find((p) => p.id === productId);
     if (!product) {
       throw new Error('Producto no encontrado');
     }
@@ -611,7 +611,7 @@ class AxyraSalesEcommerceSystem {
       throw new Error('Stock insuficiente');
     }
 
-    const existingItem = this.cart.find(item => item.productId === productId);
+    const existingItem = this.cart.find((item) => item.productId === productId);
     if (existingItem) {
       existingItem.quantity += quantity;
     } else {
@@ -620,7 +620,7 @@ class AxyraSalesEcommerceSystem {
         productId,
         quantity,
         price: product.price,
-        total: product.price * quantity
+        total: product.price * quantity,
       });
     }
 
@@ -631,7 +631,7 @@ class AxyraSalesEcommerceSystem {
   }
 
   removeFromCart(productId) {
-    this.cart = this.cart.filter(item => item.productId !== productId);
+    this.cart = this.cart.filter((item) => item.productId !== productId);
     this.saveCart();
 
     console.log('✅ Producto removido del carrito:', productId);
@@ -639,7 +639,7 @@ class AxyraSalesEcommerceSystem {
   }
 
   updateCartQuantity(productId, quantity) {
-    const item = this.cart.find(item => item.productId === productId);
+    const item = this.cart.find((item) => item.productId === productId);
     if (item) {
       item.quantity = quantity;
       item.total = item.price * quantity;
@@ -682,14 +682,14 @@ class AxyraSalesEcommerceSystem {
 
   getSalesStatistics() {
     const totalProducts = this.products.length;
-    const activeProducts = this.products.filter(p => p.isActive).length;
+    const activeProducts = this.products.filter((p) => p.isActive).length;
     const totalOrders = this.orders.length;
-    const completedOrders = this.orders.filter(o => o.status === 'delivered').length;
+    const completedOrders = this.orders.filter((o) => o.status === 'delivered').length;
     const totalRevenue = this.orders.reduce((sum, o) => sum + o.total, 0);
     const totalCustomers = this.customers.length;
     const totalReviews = this.reviews.length;
-    const averageRating = this.reviews.length > 0 ? 
-      this.reviews.reduce((sum, r) => sum + r.rating, 0) / this.reviews.length : 0;
+    const averageRating =
+      this.reviews.length > 0 ? this.reviews.reduce((sum, r) => sum + r.rating, 0) / this.reviews.length : 0;
 
     return {
       totalProducts,
@@ -699,7 +699,7 @@ class AxyraSalesEcommerceSystem {
       totalRevenue,
       totalCustomers,
       totalReviews,
-      averageRating: Math.round(averageRating * 10) / 10
+      averageRating: Math.round(averageRating * 10) / 10,
     };
   }
 
@@ -772,13 +772,13 @@ class AxyraSalesEcommerceSystem {
     const tabBtns = dashboard.querySelectorAll('.tab-btn');
     const tabContents = dashboard.querySelectorAll('.tab-content');
 
-    tabBtns.forEach(btn => {
+    tabBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
         const tabId = btn.dataset.tab;
-        
-        tabBtns.forEach(b => b.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-        
+
+        tabBtns.forEach((b) => b.classList.remove('active'));
+        tabContents.forEach((c) => c.classList.remove('active'));
+
         btn.classList.add('active');
         document.getElementById(`${tabId}-tab`).classList.add('active');
       });
@@ -787,7 +787,7 @@ class AxyraSalesEcommerceSystem {
 
   renderSalesStats() {
     const stats = this.getSalesStatistics();
-    
+
     return `
       <div class="stats-grid">
         <div class="stat-card">
@@ -828,7 +828,7 @@ class AxyraSalesEcommerceSystem {
 
   renderOverview() {
     const stats = this.getSalesStatistics();
-    
+
     return `
       <div class="overview-grid">
         <div class="overview-card">
@@ -871,8 +871,10 @@ class AxyraSalesEcommerceSystem {
 
   renderProductsList() {
     const products = this.products.slice(-20); // Últimos 20 productos
-    
-    return products.map(product => `
+
+    return products
+      .map(
+        (product) => `
       <div class="product-card">
         <div class="product-header">
           <h5>${product.name}</h5>
@@ -889,13 +891,17 @@ class AxyraSalesEcommerceSystem {
           <button onclick="axyraSalesEcommerceSystem.showProductDetails('${product.id}')">Ver</button>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderOrdersList() {
     const orders = this.orders.slice(-20); // Últimos 20 pedidos
-    
-    return orders.map(order => `
+
+    return orders
+      .map(
+        (order) => `
       <div class="order-card">
         <div class="order-header">
           <h5>${order.orderNumber}</h5>
@@ -908,17 +914,23 @@ class AxyraSalesEcommerceSystem {
           <p>Estado de Pago: ${order.paymentStatus}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderCustomersList() {
     const customers = this.customers.slice(-20); // Últimos 20 clientes
-    
-    return customers.map(customer => `
+
+    return customers
+      .map(
+        (customer) => `
       <div class="customer-card">
         <div class="customer-header">
           <h5>${customer.firstName} ${customer.lastName}</h5>
-          <span class="customer-status ${customer.isActive ? 'active' : 'inactive'}">${customer.isActive ? 'Activo' : 'Inactivo'}</span>
+          <span class="customer-status ${customer.isActive ? 'active' : 'inactive'}">${
+          customer.isActive ? 'Activo' : 'Inactivo'
+        }</span>
         </div>
         <div class="customer-info">
           <p>Email: ${customer.email}</p>
@@ -926,7 +938,9 @@ class AxyraSalesEcommerceSystem {
           <p>Ciudad: ${customer.city}</p>
         </div>
       </div>
-    `).join('');
+    `
+      )
+      .join('');
   }
 
   renderCart() {
@@ -936,9 +950,10 @@ class AxyraSalesEcommerceSystem {
 
     return `
       <div class="cart-items">
-        ${this.cart.map(item => {
-          const product = this.products.find(p => p.id === item.productId);
-          return `
+        ${this.cart
+          .map((item) => {
+            const product = this.products.find((p) => p.id === item.productId);
+            return `
             <div class="cart-item">
               <div class="cart-item-info">
                 <h6>${product ? product.name : 'Producto no encontrado'}</h6>
@@ -947,13 +962,18 @@ class AxyraSalesEcommerceSystem {
                 <p>Total: $${item.total.toLocaleString()}</p>
               </div>
               <div class="cart-item-actions">
-                <button onclick="axyraSalesEcommerceSystem.updateCartQuantity('${item.productId}', ${item.quantity + 1})">+</button>
-                <button onclick="axyraSalesEcommerceSystem.updateCartQuantity('${item.productId}', ${item.quantity - 1})">-</button>
+                <button onclick="axyraSalesEcommerceSystem.updateCartQuantity('${item.productId}', ${
+              item.quantity + 1
+            })">+</button>
+                <button onclick="axyraSalesEcommerceSystem.updateCartQuantity('${item.productId}', ${
+              item.quantity - 1
+            })">-</button>
                 <button onclick="axyraSalesEcommerceSystem.removeFromCart('${item.productId}')">Eliminar</button>
               </div>
             </div>
           `;
-        }).join('')}
+          })
+          .join('')}
       </div>
       <div class="cart-total">
         <h4>Total: $${this.getCartTotal().toLocaleString()}</h4>
@@ -981,9 +1001,13 @@ class AxyraSalesEcommerceSystem {
   }
 
   showProductDetails(productId) {
-    const product = this.products.find(p => p.id === productId);
+    const product = this.products.find((p) => p.id === productId);
     if (product) {
-      alert(`Producto: ${product.name}\nDescripción: ${product.description}\nPrecio: $${product.price.toLocaleString()}\nStock: ${product.stock}\nSKU: ${product.sku}`);
+      alert(
+        `Producto: ${product.name}\nDescripción: ${
+          product.description
+        }\nPrecio: $${product.price.toLocaleString()}\nStock: ${product.stock}\nSKU: ${product.sku}`
+      );
     }
   }
 
@@ -999,17 +1023,17 @@ class AxyraSalesEcommerceSystem {
     const order = this.createOrder({
       customerId,
       subtotal: this.getCartTotal(),
-      total: this.getCartTotal()
+      total: this.getCartTotal(),
     });
 
     // Crear items del pedido
-    this.cart.forEach(item => {
+    this.cart.forEach((item) => {
       this.createOrderItem({
         orderId: order.id,
         productId: item.productId,
         quantity: item.quantity,
         price: item.price,
-        total: item.total
+        total: item.total,
       });
     });
 

@@ -11,14 +11,14 @@ class AxyraDataRecoverySystem {
       maxBackups: 30,
       compressionEnabled: true,
       encryptionEnabled: false,
-      cloudSync: false
+      cloudSync: false,
     };
-    
+
     this.backups = [];
     this.recoveryPoints = [];
     this.isBackingUp = false;
     this.backupTimer = null;
-    
+
     this.init();
   }
 
@@ -79,11 +79,11 @@ class AxyraDataRecoverySystem {
     if (this.backupTimer) {
       clearInterval(this.backupTimer);
     }
-    
+
     this.backupTimer = setInterval(() => {
       this.createBackup('AUTOMATIC');
     }, this.backupConfig.backupInterval);
-    
+
     console.log('🔄 Backup automático iniciado');
   }
 
@@ -92,7 +92,7 @@ class AxyraDataRecoverySystem {
       clearInterval(this.backupTimer);
       this.backupTimer = null;
     }
-    
+
     console.log('⏹️ Backup automático detenido');
   }
 
@@ -132,17 +132,11 @@ class AxyraDataRecoverySystem {
   }
 
   validateDataIntegrity() {
-    const criticalData = [
-      'axyra_empleados',
-      'axyra_horas',
-      'axyra_nominas',
-      'axyra_inventario',
-      'axyra_cuadre_caja'
-    ];
-    
+    const criticalData = ['axyra_empleados', 'axyra_horas', 'axyra_nominas', 'axyra_inventario', 'axyra_cuadre_caja'];
+
     const issues = [];
-    
-    criticalData.forEach(key => {
+
+    criticalData.forEach((key) => {
       try {
         const data = localStorage.getItem(key);
         if (data) {
@@ -152,11 +146,11 @@ class AxyraDataRecoverySystem {
         issues.push({
           key: key,
           error: error.message,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
     });
-    
+
     if (issues.length > 0) {
       this.handleDataCorruption(issues);
     }
@@ -164,7 +158,7 @@ class AxyraDataRecoverySystem {
 
   handleDataCorruption(issues) {
     console.error('🚨 Corrupción de datos detectada:', issues);
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showError(
         'Corrupción de datos detectada. Se recomienda restaurar desde un backup.',
@@ -173,9 +167,9 @@ class AxyraDataRecoverySystem {
           actions: [
             {
               text: 'Restaurar Backup',
-              action: () => this.showRecoveryOptions()
-            }
-          ]
+              action: () => this.showRecoveryOptions(),
+            },
+          ],
         }
       );
     }
@@ -194,16 +188,16 @@ class AxyraDataRecoverySystem {
       timestamp: new Date().toISOString(),
       type: 'AUTOMATIC',
       data: this.exportAllData(),
-      size: this.calculateDataSize()
+      size: this.calculateDataSize(),
     };
-    
+
     this.recoveryPoints.push(recoveryPoint);
-    
+
     // Limitar número de puntos de recuperación
     if (this.recoveryPoints.length > 100) {
       this.recoveryPoints = this.recoveryPoints.slice(-50);
     }
-    
+
     this.saveRecoveryPoints();
   }
 
@@ -220,10 +214,10 @@ class AxyraDataRecoverySystem {
       console.warn('Backup ya en progreso');
       return;
     }
-    
+
     this.isBackingUp = true;
     console.log('💾 Creando backup...');
-    
+
     try {
       const backup = {
         id: 'backup_' + Date.now(),
@@ -233,47 +227,46 @@ class AxyraDataRecoverySystem {
         version: '1.0.0',
         data: await this.exportAllData(),
         size: 0,
-        checksum: ''
+        checksum: '',
       };
-      
+
       // Calcular tamaño y checksum
       backup.size = this.calculateDataSize();
       backup.checksum = this.calculateChecksum(backup.data);
-      
+
       // Comprimir si está habilitado
       if (this.backupConfig.compressionEnabled) {
         backup.data = await this.compressData(backup.data);
       }
-      
+
       // Encriptar si está habilitado
       if (this.backupConfig.encryptionEnabled) {
         backup.data = await this.encryptData(backup.data);
       }
-      
+
       this.backups.push(backup);
-      
+
       // Limitar número de backups
       if (this.backups.length > this.backupConfig.maxBackups) {
         this.backups = this.backups.slice(-this.backupConfig.maxBackups);
       }
-      
+
       this.saveBackups();
-      
+
       console.log('✅ Backup creado exitosamente');
-      
+
       if (window.axyraNotificationSystem) {
         window.axyraNotificationSystem.showSuccess('Backup creado exitosamente');
       }
-      
+
       return backup;
-      
     } catch (error) {
       console.error('Error creando backup:', error);
-      
+
       if (window.axyraNotificationSystem) {
         window.axyraNotificationSystem.showError('Error creando backup: ' + error.message);
       }
-      
+
       throw error;
     } finally {
       this.isBackingUp = false;
@@ -282,7 +275,7 @@ class AxyraDataRecoverySystem {
 
   async exportAllData() {
     const data = {};
-    
+
     // Exportar datos críticos
     const criticalKeys = [
       'axyra_empleados',
@@ -295,10 +288,10 @@ class AxyraDataRecoverySystem {
       'axyra_usuarios',
       'axyra_roles',
       'axyra_audit_log',
-      'axyra_security_log'
+      'axyra_security_log',
     ];
-    
-    criticalKeys.forEach(key => {
+
+    criticalKeys.forEach((key) => {
       const value = localStorage.getItem(key);
       if (value) {
         try {
@@ -308,7 +301,7 @@ class AxyraDataRecoverySystem {
         }
       }
     });
-    
+
     return data;
   }
 
@@ -323,7 +316,7 @@ class AxyraDataRecoverySystem {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convertir a 32-bit integer
     }
     return hash.toString(16);
@@ -350,60 +343,59 @@ class AxyraDataRecoverySystem {
   }
 
   async restoreBackup(backupId) {
-    const backup = this.backups.find(b => b.id === backupId);
+    const backup = this.backups.find((b) => b.id === backupId);
     if (!backup) {
       throw new Error('Backup no encontrado');
     }
-    
+
     console.log('🔄 Restaurando backup:', backup.id);
-    
+
     try {
       let data = backup.data;
-      
+
       // Desencriptar si está encriptado
       if (this.backupConfig.encryptionEnabled) {
         data = await this.decryptData(data);
       }
-      
+
       // Descomprimir si está comprimido
       if (this.backupConfig.compressionEnabled) {
         data = await this.decompressData(data);
       }
-      
+
       // Verificar integridad
       const currentChecksum = this.calculateChecksum(data);
       if (currentChecksum !== backup.checksum) {
         throw new Error('Checksum no coincide. El backup puede estar corrupto.');
       }
-      
+
       // Crear backup de seguridad antes de restaurar
       await this.createBackup('RESTORE_BACKUP', 'Backup antes de restaurar');
-      
+
       // Restaurar datos
-      Object.keys(data).forEach(key => {
+      Object.keys(data).forEach((key) => {
         localStorage.setItem(key, JSON.stringify(data[key]));
       });
-      
+
       console.log('✅ Backup restaurado exitosamente');
-      
+
       if (window.axyraNotificationSystem) {
         window.axyraNotificationSystem.showSuccess('Backup restaurado exitosamente');
       }
-      
+
       // Recargar página para aplicar cambios
       setTimeout(() => {
         if (confirm('El backup se ha restaurado. ¿Desea recargar la página para aplicar los cambios?')) {
           window.location.reload();
         }
       }, 2000);
-      
     } catch (error) {
       console.error('Error restaurando backup:', error);
-      
+
       if (window.axyraNotificationSystem) {
         window.axyraNotificationSystem.showError('Error restaurando backup: ' + error.message);
       }
-      
+
       throw error;
     }
   }
@@ -421,7 +413,10 @@ class AxyraDataRecoverySystem {
           <div class="recovery-options">
             <h4>Backups Disponibles</h4>
             <div class="backup-list">
-              ${this.backups.slice(-10).map(backup => `
+              ${this.backups
+                .slice(-10)
+                .map(
+                  (backup) => `
                 <div class="backup-item">
                   <div class="backup-info">
                     <h5>${backup.type} - ${new Date(backup.timestamp).toLocaleString()}</h5>
@@ -439,12 +434,17 @@ class AxyraDataRecoverySystem {
                     </button>
                   </div>
                 </div>
-              `).join('')}
+              `
+                )
+                .join('')}
             </div>
             
             <h4>Puntos de Recuperación</h4>
             <div class="recovery-points">
-              ${this.recoveryPoints.slice(-5).map(point => `
+              ${this.recoveryPoints
+                .slice(-5)
+                .map(
+                  (point) => `
                 <div class="recovery-point-item">
                   <div class="point-info">
                     <h5>${point.type} - ${new Date(point.timestamp).toLocaleString()}</h5>
@@ -457,7 +457,9 @@ class AxyraDataRecoverySystem {
                     </button>
                   </div>
                 </div>
-              `).join('')}
+              `
+                )
+                .join('')}
             </div>
           </div>
         </div>
@@ -472,36 +474,35 @@ class AxyraDataRecoverySystem {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(modal);
   }
 
   async restoreFromPoint(pointId) {
-    const point = this.recoveryPoints.find(p => p.id === pointId);
+    const point = this.recoveryPoints.find((p) => p.id === pointId);
     if (!point) {
       throw new Error('Punto de recuperación no encontrado');
     }
-    
+
     try {
       // Crear backup de seguridad antes de restaurar
       await this.createBackup('RESTORE_BACKUP', 'Backup antes de restaurar desde punto de recuperación');
-      
+
       // Restaurar datos
-      Object.keys(point.data).forEach(key => {
+      Object.keys(point.data).forEach((key) => {
         localStorage.setItem(key, JSON.stringify(point.data[key]));
       });
-      
+
       console.log('✅ Restaurado desde punto de recuperación');
-      
+
       if (window.axyraNotificationSystem) {
         window.axyraNotificationSystem.showSuccess('Restaurado desde punto de recuperación');
       }
-      
+
       // Recargar página
       setTimeout(() => {
         window.location.reload();
       }, 2000);
-      
     } catch (error) {
       console.error('Error restaurando desde punto de recuperación:', error);
       throw error;
@@ -509,27 +510,27 @@ class AxyraDataRecoverySystem {
   }
 
   async downloadBackup(backupId) {
-    const backup = this.backups.find(b => b.id === backupId);
+    const backup = this.backups.find((b) => b.id === backupId);
     if (!backup) {
       throw new Error('Backup no encontrado');
     }
-    
+
     try {
       let data = backup.data;
-      
+
       // Desencriptar si está encriptado
       if (this.backupConfig.encryptionEnabled) {
         data = await this.decryptData(data);
       }
-      
+
       // Descomprimir si está comprimido
       if (this.backupConfig.compressionEnabled) {
         data = await this.decompressData(data);
       }
-      
+
       const dataStr = JSON.stringify(data, null, 2);
       const dataBlob = new Blob([dataStr], { type: 'application/json' });
-      
+
       const url = URL.createObjectURL(dataBlob);
       const link = document.createElement('a');
       link.href = url;
@@ -537,15 +538,14 @@ class AxyraDataRecoverySystem {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
       URL.revokeObjectURL(url);
-      
+
       console.log('📥 Backup descargado');
-      
+
       if (window.axyraNotificationSystem) {
         window.axyraNotificationSystem.showSuccess('Backup descargado');
       }
-      
     } catch (error) {
       console.error('Error descargando backup:', error);
       throw error;
@@ -555,16 +555,16 @@ class AxyraDataRecoverySystem {
   async uploadBackup(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      
+
       reader.onload = async (event) => {
         try {
           const data = JSON.parse(event.target.result);
-          
+
           // Validar estructura del backup
           if (!this.validateBackupStructure(data)) {
             throw new Error('Estructura de backup inválida');
           }
-          
+
           // Crear backup desde archivo
           const backup = {
             id: 'backup_' + Date.now(),
@@ -574,43 +574,38 @@ class AxyraDataRecoverySystem {
             version: '1.0.0',
             data: data,
             size: file.size,
-            checksum: this.calculateChecksum(data)
+            checksum: this.calculateChecksum(data),
           };
-          
+
           this.backups.push(backup);
           this.saveBackups();
-          
+
           console.log('✅ Backup subido exitosamente');
-          
+
           if (window.axyraNotificationSystem) {
             window.axyraNotificationSystem.showSuccess('Backup subido exitosamente');
           }
-          
+
           resolve(backup);
-          
         } catch (error) {
           console.error('Error procesando backup:', error);
           reject(error);
         }
       };
-      
+
       reader.onerror = () => {
         reject(new Error('Error leyendo archivo'));
       };
-      
+
       reader.readAsText(file);
     });
   }
 
   validateBackupStructure(data) {
     // Validar que el backup tenga la estructura esperada
-    const requiredKeys = [
-      'axyra_empleados',
-      'axyra_horas',
-      'axyra_nominas'
-    ];
-    
-    return requiredKeys.some(key => data.hasOwnProperty(key));
+    const requiredKeys = ['axyra_empleados', 'axyra_horas', 'axyra_nominas'];
+
+    return requiredKeys.some((key) => data.hasOwnProperty(key));
   }
 
   formatBytes(bytes) {
@@ -627,14 +622,14 @@ class AxyraDataRecoverySystem {
       lastBackup: this.backups.length > 0 ? this.backups[this.backups.length - 1].timestamp : null,
       autoBackupEnabled: this.backupConfig.autoBackup,
       nextBackup: this.backupTimer ? new Date(Date.now() + this.backupConfig.backupInterval).toISOString() : null,
-      totalSize: this.backups.reduce((total, backup) => total + backup.size, 0)
+      totalSize: this.backups.reduce((total, backup) => total + backup.size, 0),
     };
   }
 
   updateBackupConfig(newConfig) {
     this.backupConfig = { ...this.backupConfig, ...newConfig };
     this.saveBackupConfig();
-    
+
     // Reiniciar backup automático si cambió la configuración
     if (newConfig.autoBackup !== undefined) {
       if (newConfig.autoBackup) {
@@ -643,17 +638,17 @@ class AxyraDataRecoverySystem {
         this.stopAutoBackup();
       }
     }
-    
+
     console.log('⚙️ Configuración de backup actualizada');
   }
 
   deleteBackup(backupId) {
-    const index = this.backups.findIndex(b => b.id === backupId);
+    const index = this.backups.findIndex((b) => b.id === backupId);
     if (index !== -1) {
       this.backups.splice(index, 1);
       this.saveBackups();
       console.log('🗑️ Backup eliminado');
-      
+
       if (window.axyraNotificationSystem) {
         window.axyraNotificationSystem.showSuccess('Backup eliminado');
       }
@@ -664,7 +659,7 @@ class AxyraDataRecoverySystem {
     this.backups = [];
     this.saveBackups();
     console.log('🧹 Todos los backups eliminados');
-    
+
     if (window.axyraNotificationSystem) {
       window.axyraNotificationSystem.showSuccess('Todos los backups eliminados');
     }

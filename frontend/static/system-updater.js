@@ -11,7 +11,7 @@ class AxyraSystemUpdater {
     this.migrations = [];
     this.isUpdating = false;
     this.updateCheckInterval = null;
-    
+
     this.init();
   }
 
@@ -44,23 +44,15 @@ class AxyraSystemUpdater {
       {
         version: '1.1.0',
         description: 'Migración a versión 1.1.0',
-        changes: [
-          'Nuevo sistema de notificaciones',
-          'Mejoras en el dashboard',
-          'Optimizaciones de rendimiento'
-        ],
-        migration: this.migrateTo110.bind(this)
+        changes: ['Nuevo sistema de notificaciones', 'Mejoras en el dashboard', 'Optimizaciones de rendimiento'],
+        migration: this.migrateTo110.bind(this),
       },
       {
         version: '1.2.0',
         description: 'Migración a versión 1.2.0',
-        changes: [
-          'Sistema de roles avanzado',
-          'Nuevas métricas de negocio',
-          'Integración con APIs externas'
-        ],
-        migration: this.migrateTo120.bind(this)
-      }
+        changes: ['Sistema de roles avanzado', 'Nuevas métricas de negocio', 'Integración con APIs externas'],
+        migration: this.migrateTo120.bind(this),
+      },
     ];
   }
 
@@ -74,17 +66,16 @@ class AxyraSystemUpdater {
   async checkForUpdates() {
     try {
       console.log('🔍 Verificando actualizaciones...');
-      
+
       // Simular verificación de actualizaciones
       const updateInfo = await this.fetchUpdateInfo();
-      
+
       if (updateInfo && this.isNewerVersion(updateInfo.version, this.currentVersion)) {
         this.updateInfo = updateInfo;
         this.notifyUpdateAvailable(updateInfo);
       } else {
         this.updateInfo = null;
       }
-      
     } catch (error) {
       console.error('Error verificando actualizaciones:', error);
     }
@@ -96,7 +87,7 @@ class AxyraSystemUpdater {
       setTimeout(() => {
         // Simular que hay una nueva versión disponible
         const hasUpdate = Math.random() > 0.7; // 30% de probabilidad
-        
+
         if (hasUpdate) {
           resolve({
             version: '1.2.0',
@@ -105,15 +96,15 @@ class AxyraSystemUpdater {
               'Nuevo sistema de gestión de archivos',
               'Mejoras en el sistema de reportes',
               'Optimizaciones de seguridad',
-              'Nuevas integraciones'
+              'Nuevas integraciones',
             ],
             downloadUrl: 'https://github.com/JuanFerUran/axyra-sistema-gestion/releases/latest',
             changelogUrl: 'https://github.com/JuanFerUran/axyra-sistema-gestion/blob/main/CHANGELOG.md',
             size: '2.5MB',
             requirements: {
               minVersion: '1.0.0',
-              browser: 'Chrome 80+, Firefox 75+, Safari 13+'
-            }
+              browser: 'Chrome 80+, Firefox 75+, Safari 13+',
+            },
           });
         } else {
           resolve(null);
@@ -125,41 +116,38 @@ class AxyraSystemUpdater {
   isNewerVersion(newVersion, currentVersion) {
     const newParts = newVersion.split('.').map(Number);
     const currentParts = currentVersion.split('.').map(Number);
-    
+
     for (let i = 0; i < Math.max(newParts.length, currentParts.length); i++) {
       const newPart = newParts[i] || 0;
       const currentPart = currentParts[i] || 0;
-      
+
       if (newPart > currentPart) {
         return true;
       } else if (newPart < currentPart) {
         return false;
       }
     }
-    
+
     return false;
   }
 
   notifyUpdateAvailable(updateInfo) {
     console.log('🆕 Nueva versión disponible:', updateInfo.version);
-    
+
     if (window.axyraNotificationSystem) {
-      window.axyraNotificationSystem.showInfo(
-        `Nueva versión disponible: ${updateInfo.version}`,
-        {
-          duration: 10000,
-          actions: [
-            {
-              text: 'Ver Detalles',
-              action: () => this.showUpdateDetails(updateInfo)
-            },
-            {
-              text: 'Actualizar Ahora',
-              action: () => this.performUpdate(updateInfo)
-            }
-          ]
-        }
-      );
+      window.axyraNotificationSystem.showInfo(`Nueva versión disponible: ${updateInfo.version}`, {
+        duration: 10000,
+        actions: [
+          {
+            text: 'Ver Detalles',
+            action: () => this.showUpdateDetails(updateInfo),
+          },
+          {
+            text: 'Actualizar Ahora',
+            action: () => this.performUpdate(updateInfo),
+          },
+        ],
+      });
     }
   }
 
@@ -181,7 +169,7 @@ class AxyraSystemUpdater {
             <div class="changes">
               <h5>Cambios en esta versión:</h5>
               <ul>
-                ${updateInfo.changes.map(change => `<li>${change}</li>`).join('')}
+                ${updateInfo.changes.map((change) => `<li>${change}</li>`).join('')}
               </ul>
             </div>
             
@@ -211,7 +199,7 @@ class AxyraSystemUpdater {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(modal);
   }
 
@@ -241,7 +229,7 @@ class AxyraSystemUpdater {
         version: update.version,
         date: new Date().toISOString(),
         changes: update.changes,
-        status: 'completed'
+        status: 'completed',
       });
 
       this.saveUpdateHistory();
@@ -250,11 +238,9 @@ class AxyraSystemUpdater {
       this.hideUpdateProgress();
 
       console.log('✅ Actualización completada');
-      
+
       if (window.axyraNotificationSystem) {
-        window.axyraNotificationSystem.showSuccess(
-          `Sistema actualizado a la versión ${update.version}`
-        );
+        window.axyraNotificationSystem.showSuccess(`Sistema actualizado a la versión ${update.version}`);
       }
 
       // Recargar página para aplicar cambios
@@ -263,15 +249,12 @@ class AxyraSystemUpdater {
           window.location.reload();
         }
       }, 2000);
-
     } catch (error) {
       console.error('Error durante la actualización:', error);
       this.hideUpdateProgress();
-      
+
       if (window.axyraNotificationSystem) {
-        window.axyraNotificationSystem.showError(
-          `Error durante la actualización: ${error.message}`
-        );
+        window.axyraNotificationSystem.showError(`Error durante la actualización: ${error.message}`);
       }
     } finally {
       this.isUpdating = false;
@@ -290,7 +273,7 @@ class AxyraSystemUpdater {
         <p id="progress-text">Preparando actualización...</p>
       </div>
     `;
-    
+
     progress.style.cssText = `
       position: fixed;
       top: 0;
@@ -305,9 +288,9 @@ class AxyraSystemUpdater {
       z-index: 10000;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     `;
-    
+
     document.body.appendChild(progress);
-    
+
     // Animar progreso
     this.animateProgress();
   }
@@ -315,18 +298,18 @@ class AxyraSystemUpdater {
   animateProgress() {
     const progressFill = document.getElementById('progress-fill');
     const progressText = document.getElementById('progress-text');
-    
+
     let progress = 0;
     const steps = [
       { progress: 20, text: 'Descargando actualización...' },
       { progress: 40, text: 'Verificando integridad...' },
       { progress: 60, text: 'Aplicando cambios...' },
       { progress: 80, text: 'Ejecutando migraciones...' },
-      { progress: 100, text: 'Finalizando actualización...' }
+      { progress: 100, text: 'Finalizando actualización...' },
     ];
-    
+
     let currentStep = 0;
-    
+
     const interval = setInterval(() => {
       if (currentStep < steps.length) {
         const step = steps[currentStep];
@@ -348,9 +331,8 @@ class AxyraSystemUpdater {
   }
 
   async runMigrations(targetVersion) {
-    const migrationsToRun = this.migrations.filter(m => 
-      this.isNewerVersion(targetVersion, m.version) || 
-      this.isNewerVersion(m.version, this.currentVersion)
+    const migrationsToRun = this.migrations.filter(
+      (m) => this.isNewerVersion(targetVersion, m.version) || this.isNewerVersion(m.version, this.currentVersion)
     );
 
     for (const migration of migrationsToRun) {
@@ -362,44 +344,50 @@ class AxyraSystemUpdater {
   async migrateTo110() {
     // Migración a versión 1.1.0
     console.log('🔄 Migrando a versión 1.1.0...');
-    
+
     // Crear nuevas configuraciones
     if (!localStorage.getItem('axyra_notification_config')) {
-      localStorage.setItem('axyra_notification_config', JSON.stringify({
-        enabled: true,
-        sound: true,
-        desktop: true
-      }));
+      localStorage.setItem(
+        'axyra_notification_config',
+        JSON.stringify({
+          enabled: true,
+          sound: true,
+          desktop: true,
+        })
+      );
     }
-    
+
     // Actualizar configuraciones existentes
     const systemConfig = JSON.parse(localStorage.getItem('axyra_system_config') || '{}');
     systemConfig.version = '1.1.0';
     localStorage.setItem('axyra_system_config', JSON.stringify(systemConfig));
-    
+
     console.log('✅ Migración a 1.1.0 completada');
   }
 
   async migrateTo120() {
     // Migración a versión 1.2.0
     console.log('🔄 Migrando a versión 1.2.0...');
-    
+
     // Crear nuevas configuraciones
     if (!localStorage.getItem('axyra_roles_config')) {
-      localStorage.setItem('axyra_roles_config', JSON.stringify({
-        roles: [
-          { id: 'admin', name: 'Administrador', permissions: ['*'] },
-          { id: 'manager', name: 'Gerente', permissions: ['view', 'edit'] },
-          { id: 'employee', name: 'Empleado', permissions: ['view'] }
-        ]
-      }));
+      localStorage.setItem(
+        'axyra_roles_config',
+        JSON.stringify({
+          roles: [
+            { id: 'admin', name: 'Administrador', permissions: ['*'] },
+            { id: 'manager', name: 'Gerente', permissions: ['view', 'edit'] },
+            { id: 'employee', name: 'Empleado', permissions: ['view'] },
+          ],
+        })
+      );
     }
-    
+
     // Actualizar configuraciones existentes
     const systemConfig = JSON.parse(localStorage.getItem('axyra_system_config') || '{}');
     systemConfig.version = '1.2.0';
     localStorage.setItem('axyra_system_config', JSON.stringify(systemConfig));
-    
+
     console.log('✅ Migración a 1.2.0 completada');
   }
 
@@ -409,7 +397,7 @@ class AxyraSystemUpdater {
       updateAvailable: !!this.updateInfo,
       updateInfo: this.updateInfo,
       isUpdating: this.isUpdating,
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     };
   }
 
@@ -431,7 +419,7 @@ class AxyraSystemUpdater {
       clearInterval(this.updateCheckInterval);
       this.updateCheckInterval = null;
     }
-    
+
     console.log('⏸️ Actualizaciones automáticas deshabilitadas');
   }
 
@@ -441,30 +429,28 @@ class AxyraSystemUpdater {
   }
 
   rollbackToVersion(version) {
-    const targetUpdate = this.updateHistory.find(u => u.version === version);
+    const targetUpdate = this.updateHistory.find((u) => u.version === version);
     if (!targetUpdate) {
       throw new Error('Versión no encontrada en el historial');
     }
 
     console.log(`🔄 Revirtiendo a versión ${version}...`);
-    
+
     // Simular rollback
     this.currentVersion = version;
     this.updateHistory.push({
       version: version,
       date: new Date().toISOString(),
       changes: ['Rollback realizado'],
-      status: 'rollback'
+      status: 'rollback',
     });
 
     this.saveUpdateHistory();
 
     console.log(`✅ Rollback a versión ${version} completado`);
-    
+
     if (window.axyraNotificationSystem) {
-      window.axyraNotificationSystem.showSuccess(
-        `Sistema revertido a la versión ${version}`
-      );
+      window.axyraNotificationSystem.showSuccess(`Sistema revertido a la versión ${version}`);
     }
   }
 
@@ -473,12 +459,12 @@ class AxyraSystemUpdater {
       currentVersion: this.currentVersion,
       updateHistory: this.updateHistory,
       migrations: this.migrations,
-      exportDate: new Date().toISOString()
+      exportDate: new Date().toISOString(),
     };
 
     const dataStr = JSON.stringify(data, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    
+
     const url = URL.createObjectURL(dataBlob);
     const link = document.createElement('a');
     link.href = url;
@@ -486,9 +472,9 @@ class AxyraSystemUpdater {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+
     URL.revokeObjectURL(url);
-    
+
     console.log('📊 Historial de actualizaciones exportado');
   }
 
@@ -500,7 +486,7 @@ class AxyraSystemUpdater {
       language: navigator.language,
       cookieEnabled: navigator.cookieEnabled,
       onLine: navigator.onLine,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -510,24 +496,18 @@ class AxyraSystemUpdater {
         chrome: 80,
         firefox: 75,
         safari: 13,
-        edge: 80
+        edge: 80,
       },
-      features: [
-        'localStorage',
-        'sessionStorage',
-        'fetch',
-        'Promise',
-        'async/await'
-      ]
+      features: ['localStorage', 'sessionStorage', 'fetch', 'Promise', 'async/await'],
     };
 
     const compatibility = {
       browser: this.checkBrowserCompatibility(requirements.browser),
       features: this.checkFeatureCompatibility(requirements.features),
-      overall: true
+      overall: true,
     };
 
-    compatibility.overall = compatibility.browser && compatibility.features.every(f => f.supported);
+    compatibility.overall = compatibility.browser && compatibility.features.every((f) => f.supported);
 
     return compatibility;
   }
@@ -535,11 +515,11 @@ class AxyraSystemUpdater {
   checkBrowserCompatibility(requirements) {
     const userAgent = navigator.userAgent.toLowerCase();
     const browser = this.getBrowserInfo(userAgent);
-    
+
     return {
       name: browser.name,
       version: browser.version,
-      supported: browser.version >= requirements[browser.name.toLowerCase()] || 0
+      supported: browser.version >= requirements[browser.name.toLowerCase()] || 0,
     };
   }
 
@@ -563,9 +543,9 @@ class AxyraSystemUpdater {
   }
 
   checkFeatureCompatibility(features) {
-    return features.map(feature => ({
+    return features.map((feature) => ({
       name: feature,
-      supported: this.isFeatureSupported(feature)
+      supported: this.isFeatureSupported(feature),
     }));
   }
 

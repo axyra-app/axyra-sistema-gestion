@@ -10,7 +10,7 @@ class AxyraPushNotificationsSystem {
     this.subscription = null;
     this.vapidPublicKey = 'BEl62iUYgUivxIkv69yViEuiBIa40HI8Uyf0V8pRZ3g';
     this.serverUrl = 'https://api.axyra.com/push';
-    
+
     this.init();
   }
 
@@ -22,19 +22,19 @@ class AxyraPushNotificationsSystem {
 
     try {
       console.log('🔔 Inicializando sistema de notificaciones push...');
-      
+
       // Registrar service worker
       await this.registerServiceWorker();
-      
+
       // Solicitar permisos
       await this.requestPermission();
-      
+
       // Configurar suscripción
       await this.setupSubscription();
-      
+
       // Configurar listeners
       this.setupEventListeners();
-      
+
       console.log('✅ Sistema de notificaciones push inicializado');
     } catch (error) {
       console.error('❌ Error inicializando notificaciones push:', error);
@@ -67,17 +67,17 @@ class AxyraPushNotificationsSystem {
   async setupSubscription() {
     try {
       this.subscription = await this.registration.pushManager.getSubscription();
-      
+
       if (!this.subscription) {
         this.subscription = await this.registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey)
+          applicationServerKey: this.urlBase64ToUint8Array(this.vapidPublicKey),
         });
       }
-      
+
       // Enviar suscripción al servidor
       await this.sendSubscriptionToServer();
-      
+
       console.log('Suscripción push configurada:', this.subscription);
     } catch (error) {
       console.error('Error configurando suscripción:', error);
@@ -95,14 +95,14 @@ class AxyraPushNotificationsSystem {
         body: JSON.stringify({
           subscription: this.subscription,
           userId: this.getCurrentUserId(),
-          timestamp: new Date().toISOString()
-        })
+          timestamp: new Date().toISOString(),
+        }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Error enviando suscripción al servidor');
       }
-      
+
       console.log('Suscripción enviada al servidor');
     } catch (error) {
       console.error('Error enviando suscripción:', error);
@@ -120,7 +120,7 @@ class AxyraPushNotificationsSystem {
         data: options.data || {},
         actions: options.actions || [],
         requireInteraction: options.requireInteraction || false,
-        silent: options.silent || false
+        silent: options.silent || false,
       };
 
       const response = await fetch(`${this.serverUrl}/send`, {
@@ -131,8 +131,8 @@ class AxyraPushNotificationsSystem {
         body: JSON.stringify({
           subscription: this.subscription,
           notification: notification,
-          userId: this.getCurrentUserId()
-        })
+          userId: this.getCurrentUserId(),
+        }),
       });
 
       if (!response.ok) {
@@ -177,34 +177,34 @@ class AxyraPushNotificationsSystem {
 
   handleNotificationReceived(notification) {
     console.log('Notificación recibida:', notification);
-    
+
     // Registrar en auditoría
     if (window.axyraAuditSystem) {
       window.axyraAuditSystem.logSystemEvent('PUSH_NOTIFICATION_RECEIVED', 'Notificación push recibida', {
         title: notification.title,
-        tag: notification.tag
+        tag: notification.tag,
       });
     }
   }
 
   handleNotificationClicked(notification) {
     console.log('Notificación clickeada:', notification);
-    
+
     // Registrar en auditoría
     if (window.axyraAuditSystem) {
       window.axyraAuditSystem.logSystemEvent('PUSH_NOTIFICATION_CLICKED', 'Notificación push clickeada', {
         title: notification.title,
-        tag: notification.tag
+        tag: notification.tag,
       });
     }
   }
 
   handleNotificationClick(event) {
     event.notification.close();
-    
+
     // Abrir ventana o foco en la aplicación
     event.waitUntil(
-      clients.matchAll({ type: 'window' }).then(clientList => {
+      clients.matchAll({ type: 'window' }).then((clientList) => {
         for (const client of clientList) {
           if (client.url === '/' && 'focus' in client) {
             return client.focus();
@@ -223,10 +223,8 @@ class AxyraPushNotificationsSystem {
 
   // Métodos de utilidad
   urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
 
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);
