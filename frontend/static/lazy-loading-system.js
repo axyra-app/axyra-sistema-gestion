@@ -114,10 +114,31 @@ class AxyraLazyLoadingSystem {
       
       script.onload = () => {
         clearTimeout(timeout);
-        const module = window[this.getModuleGlobalName(moduleName)];
+        // Buscar tanto la clase como la instancia
+        const className = this.getModuleGlobalName(moduleName);
+        const instanceName = this.getModuleInstanceName(moduleName);
+        
+        let module = window[className] || window[instanceName];
+        
         if (module) {
           resolve(module);
         } else {
+          // Intentar buscar en diferentes formatos
+          const altNames = [
+            `Axyra${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}Module`,
+            `axyra${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}Module`,
+            `Axyra${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}`,
+            `axyra${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}`
+          ];
+          
+          for (const altName of altNames) {
+            if (window[altName]) {
+              module = window[altName];
+              resolve(module);
+              return;
+            }
+          }
+          
           reject(new Error(`Módulo no encontrado en global: ${moduleName}`));
         }
       };
@@ -195,6 +216,23 @@ class AxyraLazyLoadingSystem {
     };
     
     return globalMap[moduleName] || `Axyra${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}`;
+  }
+
+  getModuleInstanceName(moduleName) {
+    const instanceMap = {
+      'dashboard': 'axyraDashboardModule',
+      'empleados': 'axyraEmpleadosModule',
+      'nomina': 'axyraNominaModule',
+      'horas': 'axyraGestionHoras',
+      'inventario': 'axyraInventarioModule',
+      'reportes': 'axyraReportesModule',
+      'configuracion': 'axyraConfiguracionModule',
+      'cuadre-caja': 'axyraCuadreCajaModule',
+      'gestion-personal': 'axyraGestionPersonalModule',
+      'membresias': 'axyraMembresiasModule',
+    };
+    
+    return instanceMap[moduleName] || `axyra${moduleName.charAt(0).toUpperCase() + moduleName.slice(1)}Module`;
   }
 
   handleModuleError(filename) {

@@ -11,12 +11,10 @@ service cloud.firestore {
       return request.auth != null;
     }
     
-    // Verificar si el usuario es admin
+    // Verificar si el usuario es admin (solo axyra.app@gmail.com)
     function isAdmin() {
       return isAuthenticated() && 
-        (request.auth.token.admin == true || 
-         request.auth.token.role == 'admin' ||
-         request.auth.token.role == 'super_admin');
+        request.auth.token.email == 'axyra.app@gmail.com';
     }
     
     // Verificar si el usuario es el propietario del documento

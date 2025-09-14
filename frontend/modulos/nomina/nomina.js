@@ -289,6 +289,7 @@ class AxyraNominaModule {
 
 // Registrar en el objeto global
 window.AxyraNomina = AxyraNominaModule;
+window.axyraNomina = AxyraNominaModule;
 
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof window.axyraNominaModule === 'undefined') {

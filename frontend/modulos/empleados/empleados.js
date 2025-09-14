@@ -120,6 +120,7 @@ class AxyraEmpleadosModule {
 
 // Registrar en el objeto global
 window.AxyraEmpleados = AxyraEmpleadosModule;
+window.axyraEmpleados = AxyraEmpleadosModule;
 
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof window.axyraEmpleadosModule === 'undefined') {

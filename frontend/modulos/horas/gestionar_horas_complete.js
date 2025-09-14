@@ -684,6 +684,7 @@ class AxyraGestionHoras {
 
 // Registrar en el objeto global
 window.AxyraHoras = AxyraGestionHoras;
+window.axyraHoras = AxyraGestionHoras;
 
 function cerrarModalAgregarHoras() {
   if (window.axyraGestionHoras) {
