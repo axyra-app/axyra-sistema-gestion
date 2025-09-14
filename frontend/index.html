@@ -560,19 +560,39 @@
 
       // Funciones de manejo de acceso
       function handleDashboardAccess() {
+        console.log('🔍 handleDashboardAccess llamada');
         const user = localStorage.getItem('axyra_isolated_user');
+        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
+        
         if (user) {
-          window.location.href = 'modulos/dashboard/dashboard.html';
+          console.log('🚀 Redirigiendo a dashboard...');
+          try {
+            window.location.href = 'modulos/dashboard/dashboard.html';
+          } catch (error) {
+            console.error('❌ Error al redirigir:', error);
+            alert('Error al acceder al dashboard. Por favor, inténtalo de nuevo.');
+          }
         } else {
+          console.log('🔐 Mostrando modal de autenticación...');
           showAuthModal();
         }
       }
 
       function handleEmpleadosAccess() {
+        console.log('🔍 handleEmpleadosAccess llamada');
         const user = localStorage.getItem('axyra_isolated_user');
+        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
+        
         if (user) {
-          window.location.href = 'modulos/empleados/empleados.html';
+          console.log('🚀 Redirigiendo a empleados...');
+          try {
+            window.location.href = 'modulos/empleados/empleados.html';
+          } catch (error) {
+            console.error('❌ Error al redirigir:', error);
+            alert('Error al acceder a empleados. Por favor, inténtalo de nuevo.');
+          }
         } else {
+          console.log('🔐 Mostrando modal de autenticación...');
           showAuthModal();
         }
       }
@@ -623,7 +643,20 @@
 
       // Funciones del modal de autenticación
       function showAuthModal() {
-        document.getElementById('authModal').style.display = 'flex';
+        console.log('🔐 showAuthModal llamada');
+        try {
+          const modal = document.getElementById('authModal');
+          if (modal) {
+            console.log('✅ Modal encontrado, mostrando...');
+            modal.style.display = 'flex';
+          } else {
+            console.error('❌ Modal no encontrado');
+            alert('Error: Modal de autenticación no encontrado. Por favor, recarga la página.');
+          }
+        } catch (error) {
+          console.error('❌ Error al mostrar modal:', error);
+          alert('Error al mostrar el modal de autenticación. Por favor, recarga la página.');
+        }
       }
 
       function closeAuthModal() {
