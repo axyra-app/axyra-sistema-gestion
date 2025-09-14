@@ -151,45 +151,45 @@
         opacity: 0.3;
       }
 
-       .header-content {
-         display: flex;
-         justify-content: space-between;
-         align-items: center;
-         position: relative;
-         z-index: 2;
-       }
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      }
 
-       .header-left {
-         display: flex;
-         align-items: center;
-         gap: 20px;
-       }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
 
-       .sidebar-toggle {
-         display: none;
-         background: rgba(255, 255, 255, 0.1);
-         border: 2px solid rgba(255, 255, 255, 0.3);
-         border-radius: 8px;
-         color: white;
-         padding: 10px 12px;
-         cursor: pointer;
-         transition: all 0.3s ease;
-         font-size: 16px;
-       }
+      .sidebar-toggle {
+        display: none;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        color: white;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+      }
 
-       .sidebar-toggle:hover {
-         background: rgba(255, 255, 255, 0.2);
-         border-color: rgba(255, 255, 255, 0.5);
-         transform: scale(1.05);
-       }
+      .sidebar-toggle:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: scale(1.05);
+      }
 
-       .sidebar.collapsed {
-         transform: translateX(-100%);
-       }
+      .sidebar.collapsed {
+        transform: translateX(-100%);
+      }
 
-       .main-content.sidebar-collapsed {
-         margin-left: 0;
-       }
+      .main-content.sidebar-collapsed {
+        margin-left: 0;
+      }
 
       .header-title {
         display: flex;
@@ -360,18 +360,34 @@
       .chart-container {
         background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
         border-radius: 20px;
-        padding: 30px;
+        padding: 20px;
         border: 2px solid #2d3748;
         margin-bottom: 30px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        height: 300px;
+        overflow: hidden;
+        position: relative;
       }
 
       .chart-title {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: 800;
         color: #ffffff;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         text-align: center;
+      }
+
+      #usersChart {
+        width: 100% !important;
+        height: 200px !important;
+        max-height: 200px !important;
+        max-width: 100% !important;
+      }
+
+      .chart-wrapper {
+        height: 200px;
+        width: 100%;
+        position: relative;
       }
 
       /* TABLES */
@@ -417,35 +433,35 @@
         background: rgba(102, 126, 234, 0.1);
       }
 
-       /* RESPONSIVE */
-       @media (max-width: 768px) {
-         .sidebar {
-           transform: translateX(-100%);
-         }
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
 
-         .sidebar-toggle {
-           display: block;
-         }
+        .sidebar-toggle {
+          display: block;
+        }
 
-         .main-content {
-           margin-left: 0;
-         }
+        .main-content {
+          margin-left: 0;
+        }
 
-         .dashboard-grid {
-           grid-template-columns: 1fr;
-           padding: 20px;
-         }
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+          padding: 20px;
+        }
 
-         .header-content {
-           flex-direction: row;
-           gap: 20px;
-         }
+        .header-content {
+          flex-direction: row;
+          gap: 20px;
+        }
 
-         .header-left {
-           flex-direction: row;
-           align-items: center;
-         }
-       }
+        .header-left {
+          flex-direction: row;
+          align-items: center;
+        }
+      }
 
       /* ANIMATIONS */
       @keyframes fadeInUp {
@@ -522,20 +538,20 @@
     <!-- MAIN CONTENT -->
     <div class="main-content">
       <!-- HEADER -->
-       <header class="admin-header">
-         <div class="header-content">
-           <div class="header-left">
-             <button id="sidebarToggle" class="sidebar-toggle" onclick="toggleSidebar()">
-               <i class="fas fa-bars"></i>
-             </button>
-             <div class="header-title">
-               <img src="logo.png" alt="AXYRA" class="header-logo" />
-               <div class="header-text">
-                 <h1>Panel de Administración</h1>
-                 <p>Control total del sistema AXYRA</p>
-               </div>
-             </div>
-           </div>
+      <header class="admin-header">
+        <div class="header-content">
+          <div class="header-left">
+            <button id="sidebarToggle" class="sidebar-toggle" onclick="toggleSidebar()">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-title">
+              <img src="logo.png" alt="AXYRA" class="header-logo" />
+              <div class="header-text">
+                <h1>Panel de Administración</h1>
+                <p>Control total del sistema AXYRA</p>
+              </div>
+            </div>
+          </div>
 
           <div class="header-actions">
             <button class="btn-brutal btn-primary" onclick="refreshData()">
@@ -603,7 +619,9 @@
         <!-- CHARTS -->
         <div class="chart-container fade-in-up">
           <h2 class="chart-title">Crecimiento de Usuarios</h2>
-          <canvas id="usersChart" width="400" height="200"></canvas>
+          <div class="chart-wrapper">
+            <canvas id="usersChart"></canvas>
+          </div>
         </div>
 
         <!-- RECENT USERS TABLE -->
@@ -682,17 +700,17 @@
         console.log('✅ Usuario administrador autenticado:', userData.email);
       }
 
-       async function loadDashboardData() {
-         try {
-           // Cargar datos reales o consistentes
-           loadRealData();
-           
-           // Load recent users
-           loadRecentUsers();
-         } catch (error) {
-           console.error('❌ Error cargando datos:', error);
-         }
-       }
+      async function loadDashboardData() {
+        try {
+          // Cargar datos reales o consistentes
+          loadRealData();
+
+          // Load recent users
+          loadRecentUsers();
+        } catch (error) {
+          console.error('❌ Error cargando datos:', error);
+        }
+      }
 
       function loadRecentUsers() {
         const users = [
@@ -790,7 +808,12 @@
        function initializeCharts() {
          const ctx = document.getElementById('usersChart');
          if (!ctx) return;
-         
+
+         // Destruir gráfico existente si existe
+         if (usersChart) {
+           usersChart.destroy();
+         }
+
          const chartCtx = ctx.getContext('2d');
          usersChart = new Chart(chartCtx, {
            type: 'line',
@@ -802,38 +825,72 @@
                  data: [120, 190, 300, 500, 200, 300, 450, 600, 750, 900, 1100, 1247],
                  borderColor: '#667eea',
                  backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                 borderWidth: 3,
+                 borderWidth: 2,
                  fill: true,
                  tension: 0.4,
+                 pointRadius: 3,
+                 pointHoverRadius: 5,
                },
              ],
            },
            options: {
              responsive: true,
              maintainAspectRatio: false,
+             aspectRatio: 2,
+             animation: {
+               duration: 1000,
+               easing: 'easeInOutQuart',
+             },
              plugins: {
                legend: {
+                 display: true,
+                 position: 'top',
                  labels: {
                    color: '#ffffff',
+                   font: {
+                     size: 12,
+                   },
                  },
+               },
+               tooltip: {
+                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                 titleColor: '#ffffff',
+                 bodyColor: '#ffffff',
+                 borderColor: '#667eea',
+                 borderWidth: 1,
                },
              },
              scales: {
                x: {
+                 display: true,
                  ticks: {
                    color: '#a0aec0',
+                   font: {
+                     size: 10,
+                   },
                  },
                  grid: {
                    color: '#2d3748',
+                   drawBorder: false,
                  },
                },
                y: {
+                 display: true,
                  ticks: {
                    color: '#a0aec0',
+                   font: {
+                     size: 10,
+                   },
                  },
                  grid: {
                    color: '#2d3748',
+                   drawBorder: false,
                  },
+               },
+             },
+             elements: {
+               line: {
+                 tension: 0.4,
                },
              },
            },
@@ -859,15 +916,29 @@
         });
       }
 
-      function switchSection(section) {
-        console.log('Cambiando a sección:', section);
-        // Here you would implement section switching logic
-      }
+       function switchSection(section) {
+         console.log('Cambiando a sección:', section);
+         
+         // Limpiar gráfico al cambiar de sección para ahorrar memoria
+         if (usersChart && section !== 'dashboard') {
+           usersChart.destroy();
+           usersChart = null;
+         }
+         
+         // Here you would implement section switching logic
+       }
 
-      function refreshData() {
-        console.log('🔄 Actualizando datos...');
-        loadDashboardData();
-      }
+       function refreshData() {
+         console.log('🔄 Actualizando datos...');
+         
+         // Limpiar gráfico existente
+         if (usersChart) {
+           usersChart.destroy();
+           usersChart = null;
+         }
+         
+         loadDashboardData();
+       }
 
       function exportData() {
         console.log('📊 Exportando datos...');
@@ -886,153 +957,159 @@
         // Implement user management
       }
 
-       function showError(message) {
-         console.error('❌ Error:', message);
-         // Implement error display
-       }
+      function showError(message) {
+        console.error('❌ Error:', message);
+        // Implement error display
+      }
 
-       // FUNCIONES DEL MODO DIOS
-       function manageAllUsers() {
-         console.log('👥 Gestionando todos los usuarios...');
-         alert('Funcionalidad de gestión masiva de usuarios activada');
-       }
+      // FUNCIONES DEL MODO DIOS
+      function manageAllUsers() {
+        console.log('👥 Gestionando todos los usuarios...');
+        alert('Funcionalidad de gestión masiva de usuarios activada');
+      }
 
-       function systemControl() {
-         console.log('⚙️ Accediendo al control del sistema...');
-         alert('Panel de control del sistema abierto');
-       }
+      function systemControl() {
+        console.log('⚙️ Accediendo al control del sistema...');
+        alert('Panel de control del sistema abierto');
+      }
 
-       function viewAllLogs() {
-         console.log('📋 Viendo todos los logs...');
-         alert('Vista completa de logs del sistema');
-       }
+      function viewAllLogs() {
+        console.log('📋 Viendo todos los logs...');
+        alert('Vista completa de logs del sistema');
+      }
 
-       function impersonateUser() {
-         console.log('🕵️ Suplantando usuario...');
-         const email = prompt('Ingresa el email del usuario a suplantar:');
-         if (email) {
-           alert(`Suplantando usuario: ${email}`);
-         }
-       }
+      function impersonateUser() {
+        console.log('🕵️ Suplantando usuario...');
+        const email = prompt('Ingresa el email del usuario a suplantar:');
+        if (email) {
+          alert(`Suplantando usuario: ${email}`);
+        }
+      }
 
-       // SIDEBAR TOGGLE FUNCTION
-       function toggleSidebar() {
-         const sidebar = document.querySelector('.sidebar');
-         const mainContent = document.querySelector('.main-content');
-         const toggleBtn = document.getElementById('sidebarToggle');
-         
-         sidebar.classList.toggle('collapsed');
-         mainContent.classList.toggle('sidebar-collapsed');
-         
-         // Cambiar icono
-         const icon = toggleBtn.querySelector('i');
-         if (sidebar.classList.contains('collapsed')) {
-           icon.className = 'fas fa-bars';
-         } else {
-           icon.className = 'fas fa-times';
-         }
-       }
+      // SIDEBAR TOGGLE FUNCTION
+      function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleBtn = document.getElementById('sidebarToggle');
 
-       // ARREGLAR DATOS REALES
-       function loadRealData() {
-         // Cargar datos reales de Firebase
-         if (typeof firebase !== 'undefined' && firebase.firestore) {
-           loadRealUsers();
-           loadRealSubscriptions();
-           loadRealAnalytics();
-         } else {
-           // Datos simulados consistentes
-           loadConsistentMockData();
-         }
-       }
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('sidebar-collapsed');
 
-       function loadConsistentMockData() {
-         // Datos consistentes que no cambien
-         const consistentData = {
-           totalUsers: 1247,
-           activeSubscriptions: 892,
-           freeTrials: 23,
-           monthlyRevenue: 45230,
-           usersChange: 127,
-           subscriptionsChange: 45,
-           trialsChange: 5,
-           revenueChange: 12
-         };
+        // Cambiar icono
+        const icon = toggleBtn.querySelector('i');
+        if (sidebar.classList.contains('collapsed')) {
+          icon.className = 'fas fa-bars';
+        } else {
+          icon.className = 'fas fa-times';
+        }
+      }
 
-         document.getElementById('totalUsers').textContent = consistentData.totalUsers.toLocaleString();
-         document.getElementById('usersChange').textContent = `+${consistentData.usersChange} este mes`;
-         
-         document.getElementById('activeSubscriptions').textContent = consistentData.activeSubscriptions;
-         document.getElementById('subscriptionsChange').textContent = `+${consistentData.subscriptionsChange} este mes`;
-         
-         document.getElementById('freeTrials').textContent = consistentData.freeTrials;
-         document.getElementById('trialsChange').textContent = `${consistentData.trialsChange} por vencer`;
-         
-         document.getElementById('monthlyRevenue').textContent = `$${consistentData.monthlyRevenue.toLocaleString()}`;
-         document.getElementById('revenueChange').textContent = `+${consistentData.revenueChange}% vs mes anterior`;
-       }
+      // ARREGLAR DATOS REALES
+      function loadRealData() {
+        // Cargar datos reales de Firebase
+        if (typeof firebase !== 'undefined' && firebase.firestore) {
+          loadRealUsers();
+          loadRealSubscriptions();
+          loadRealAnalytics();
+        } else {
+          // Datos simulados consistentes
+          loadConsistentMockData();
+        }
+      }
 
-       function loadRealUsers() {
-         // Cargar usuarios reales de Firebase
-         firebase.firestore().collection('users').get()
-           .then(snapshot => {
-             const users = [];
-             snapshot.forEach(doc => {
-               users.push({ id: doc.id, ...doc.data() });
-             });
-             
-             // Actualizar estadísticas reales
-             document.getElementById('totalUsers').textContent = users.length.toLocaleString();
-             
-             // Actualizar tabla con usuarios reales
-             updateUsersTable(users);
-           })
-           .catch(error => {
-             console.error('Error cargando usuarios:', error);
-             loadConsistentMockData();
-           });
-       }
+      function loadConsistentMockData() {
+        // Datos consistentes que no cambien
+        const consistentData = {
+          totalUsers: 1247,
+          activeSubscriptions: 892,
+          freeTrials: 23,
+          monthlyRevenue: 45230,
+          usersChange: 127,
+          subscriptionsChange: 45,
+          trialsChange: 5,
+          revenueChange: 12,
+        };
 
-       function loadRealSubscriptions() {
-         // Cargar suscripciones reales de Firebase
-         firebase.firestore().collection('subscriptions').get()
-           .then(snapshot => {
-             const subscriptions = [];
-             snapshot.forEach(doc => {
-               subscriptions.push({ id: doc.id, ...doc.data() });
-             });
-             
-             const activeSubs = subscriptions.filter(sub => sub.status === 'active').length;
-             const trials = subscriptions.filter(sub => sub.status === 'trial').length;
-             
-             document.getElementById('activeSubscriptions').textContent = activeSubs;
-             document.getElementById('freeTrials').textContent = trials;
-           })
-           .catch(error => {
-             console.error('Error cargando suscripciones:', error);
-           });
-       }
+        document.getElementById('totalUsers').textContent = consistentData.totalUsers.toLocaleString();
+        document.getElementById('usersChange').textContent = `+${consistentData.usersChange} este mes`;
 
-       function loadRealAnalytics() {
-         // Cargar analíticas reales
-         // Implementar lógica de analíticas reales
-       }
+        document.getElementById('activeSubscriptions').textContent = consistentData.activeSubscriptions;
+        document.getElementById('subscriptionsChange').textContent = `+${consistentData.subscriptionsChange} este mes`;
 
-       function updateUsersTable(users) {
-         const tbody = document.getElementById('recentUsersTable');
-         if (!tbody) return;
+        document.getElementById('freeTrials').textContent = consistentData.freeTrials;
+        document.getElementById('trialsChange').textContent = `${consistentData.trialsChange} por vencer`;
 
-         tbody.innerHTML = '';
+        document.getElementById('monthlyRevenue').textContent = `$${consistentData.monthlyRevenue.toLocaleString()}`;
+        document.getElementById('revenueChange').textContent = `+${consistentData.revenueChange}% vs mes anterior`;
+      }
 
-         users.slice(0, 10).forEach(user => {
-           const row = document.createElement('tr');
-           row.innerHTML = createUserRow(user);
-           tbody.appendChild(row);
-         });
-       }
+      function loadRealUsers() {
+        // Cargar usuarios reales de Firebase
+        firebase
+          .firestore()
+          .collection('users')
+          .get()
+          .then((snapshot) => {
+            const users = [];
+            snapshot.forEach((doc) => {
+              users.push({ id: doc.id, ...doc.data() });
+            });
 
-       function createUserRow(user) {
-         return `
+            // Actualizar estadísticas reales
+            document.getElementById('totalUsers').textContent = users.length.toLocaleString();
+
+            // Actualizar tabla con usuarios reales
+            updateUsersTable(users);
+          })
+          .catch((error) => {
+            console.error('Error cargando usuarios:', error);
+            loadConsistentMockData();
+          });
+      }
+
+      function loadRealSubscriptions() {
+        // Cargar suscripciones reales de Firebase
+        firebase
+          .firestore()
+          .collection('subscriptions')
+          .get()
+          .then((snapshot) => {
+            const subscriptions = [];
+            snapshot.forEach((doc) => {
+              subscriptions.push({ id: doc.id, ...doc.data() });
+            });
+
+            const activeSubs = subscriptions.filter((sub) => sub.status === 'active').length;
+            const trials = subscriptions.filter((sub) => sub.status === 'trial').length;
+
+            document.getElementById('activeSubscriptions').textContent = activeSubs;
+            document.getElementById('freeTrials').textContent = trials;
+          })
+          .catch((error) => {
+            console.error('Error cargando suscripciones:', error);
+          });
+      }
+
+      function loadRealAnalytics() {
+        // Cargar analíticas reales
+        // Implementar lógica de analíticas reales
+      }
+
+      function updateUsersTable(users) {
+        const tbody = document.getElementById('recentUsersTable');
+        if (!tbody) return;
+
+        tbody.innerHTML = '';
+
+        users.slice(0, 10).forEach((user) => {
+          const row = document.createElement('tr');
+          row.innerHTML = createUserRow(user);
+          tbody.appendChild(row);
+        });
+      }
+
+      function createUserRow(user) {
+        return `
            <td>
              <div style="display: flex; align-items: center; gap: 10px;">
                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
@@ -1054,12 +1131,14 @@
            </td>
            <td>${new Date(user.createdAt?.toDate?.() || user.createdAt || new Date()).toLocaleDateString()}</td>
            <td>
-             <button class="btn-brutal btn-secondary" style="padding: 8px 16px; font-size: 12px;" onclick="manageUser('${user.email}')">
+             <button class="btn-brutal btn-secondary" style="padding: 8px 16px; font-size: 12px;" onclick="manageUser('${
+               user.email
+             }')">
                <i class="fas fa-cog"></i>
              </button>
            </td>
          `;
-       }
+      }
     </script>
   </body>
 </html>
