@@ -864,7 +864,7 @@
 
             // Verificar si el usuario ya existe en Firestore
             try {
-              const userDoc = await firebase.firestore().collection('users').doc(result.user.uid).get();
+              const userDoc = await firebase.firestore().collection('usuarios').doc(result.user.uid).get();
 
               if (userDoc.exists) {
                 const userData = userDoc.data();
@@ -874,7 +874,7 @@
                   console.log('✅ Usuario existente con contraseña');
 
                   // Actualizar último login
-                  await firebase.firestore().collection('users').doc(result.user.uid).update({
+                  await firebase.firestore().collection('usuarios').doc(result.user.uid).update({
                     lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
                   });
 
@@ -1052,8 +1052,18 @@
             // Crear credenciales de email/password
             const emailCredential = firebase.auth.EmailAuthProvider.credential(googleUser.email, password);
 
-            // Vincular credenciales con la cuenta de Google
-            await googleUser.linkWithCredential(emailCredential);
+            // Verificar si el usuario ya tiene credenciales de email/password
+            try {
+              // Intentar vincular credenciales con la cuenta de Google
+              await googleUser.linkWithCredential(emailCredential);
+            } catch (linkError) {
+              if (linkError.code === 'auth/provider-already-linked') {
+                console.log('⚠️ Usuario ya tiene credenciales de email/password vinculadas');
+                // Continuar sin error, el usuario ya tiene las credenciales
+              } else {
+                throw linkError;
+              }
+            }
 
             // Crear/actualizar usuario en Firestore
             const userData = {
@@ -1070,7 +1080,7 @@
               isAuthenticated: true,
             };
 
-            await firebase.firestore().collection('users').doc(googleUser.uid).set(userData, { merge: true });
+            await firebase.firestore().collection('usuarios').doc(googleUser.uid).set(userData, { merge: true });
 
             // Cerrar modal
             closeGoogleSetupModal();
@@ -1286,36 +1296,61 @@
         const confirmPassword = document.getElementById('setupConfirmPassword')?.value || '';
 
         const steps = document.querySelectorAll('.progress-step');
+        
+        if (steps.length === 0) {
+          console.warn('Pasos del formulario no encontrados');
+          return;
+        }
 
         // Step 1: Username
         if (username.length >= 3 && /^[a-zA-Z0-9\s\-_]+$/.test(username)) {
-          steps[0].classList.remove('active');
-          steps[0].classList.add('completed');
-          steps[1].classList.add('active');
+          if (steps[0]) {
+            steps[0].classList.remove('active');
+            steps[0].classList.add('completed');
+          }
+          if (steps[1]) {
+            steps[1].classList.add('active');
+          }
         } else {
-          steps[0].classList.add('active');
-          steps[0].classList.remove('completed');
-          steps[1].classList.remove('active');
+          if (steps[0]) {
+            steps[0].classList.add('active');
+            steps[0].classList.remove('completed');
+          }
+          if (steps[1]) {
+            steps[1].classList.remove('active');
+          }
         }
 
         // Step 2: Password
         if (password.length >= 6) {
-          steps[1].classList.remove('active');
-          steps[1].classList.add('completed');
-          steps[2].classList.add('active');
+          if (steps[1]) {
+            steps[1].classList.remove('active');
+            steps[1].classList.add('completed');
+          }
+          if (steps[2]) {
+            steps[2].classList.add('active');
+          }
         } else {
-          steps[1].classList.add('active');
-          steps[1].classList.remove('completed');
-          steps[2].classList.remove('active');
+          if (steps[1]) {
+            steps[1].classList.add('active');
+            steps[1].classList.remove('completed');
+          }
+          if (steps[2]) {
+            steps[2].classList.remove('active');
+          }
         }
 
         // Step 3: Confirm Password
         if (password === confirmPassword && password.length >= 6) {
-          steps[2].classList.remove('active');
-          steps[2].classList.add('completed');
+          if (steps[2]) {
+            steps[2].classList.remove('active');
+            steps[2].classList.add('completed');
+          }
         } else {
-          steps[2].classList.add('active');
-          steps[2].classList.remove('completed');
+          if (steps[2]) {
+            steps[2].classList.add('active');
+            steps[2].classList.remove('completed');
+          }
         }
       }
 

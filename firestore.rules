@@ -58,6 +58,9 @@ service cloud.firestore {
     // ========================================
     
     match /usuarios/{userId} {
+      // Cualquier usuario autenticado puede crear su perfil
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+      
       // Solo el propio usuario puede leer/escribir su perfil
       allow read, write: if isOwner(userId);
       
@@ -70,6 +73,18 @@ service cloud.firestore {
       
       // Solo admins pueden eliminar usuarios
       allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA VERIFICACIÓN DE USUARIOS
+    // ========================================
+    
+    match /usuarios_verificacion/{userId} {
+      // Cualquier usuario autenticado puede crear/leer su verificación
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Los admins pueden leer todas las verificaciones
+      allow read: if isAdmin();
     }
     
     // ========================================
