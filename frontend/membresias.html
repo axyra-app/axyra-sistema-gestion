@@ -284,9 +284,12 @@
 
         .axyra-memberships-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 30px;
             margin-top: 50px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .axyra-membership-card-brutal {
@@ -482,6 +485,21 @@
            RESPONSIVE DESIGN
            ======================================== */
         
+        @media (max-width: 1200px) {
+            .axyra-memberships-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .axyra-plan-profesional {
+                transform: none;
+            }
+            
+            .axyra-plan-profesional:hover {
+                transform: translateY(-15px);
+            }
+        }
+
         @media (max-width: 768px) {
             .axyra-membership-hero-title {
                 font-size: 2.5rem;
@@ -574,53 +592,26 @@
     <section class="axyra-memberships-section" id="plans">
         <div class="axyra-container">
             <div class="axyra-memberships-grid">
-                <!-- Plan Gratuito -->
-                <div class="axyra-membership-card-brutal axyra-plan-gratuito" data-plan="free">
-                    <div class="axyra-membership-header-brutal">
-                        <h3 class="axyra-membership-title">Starter</h3>
-                        <div class="axyra-membership-price-brutal">
-                            <span class="axyra-price-currency">$</span>
-                            <span class="axyra-price-amount">0</span>
-                            <span class="axyra-price-period">/mes</span>
-                        </div>
-                        <p class="axyra-membership-description">Perfecto para empresas pequeñas que están comenzando</p>
-                    </div>
-                    <div class="axyra-membership-features">
-                        <h4 class="axyra-features-title">¿Qué incluye?</h4>
-                        <ul class="axyra-features-list">
-                            <li><i class="fas fa-check"></i> Hasta 5 empleados</li>
-                            <li><i class="fas fa-check"></i> Reportes básicos</li>
-                            <li><i class="fas fa-check"></i> Soporte por email</li>
-                            <li><i class="fas fa-check"></i> Acceso básico al dashboard</li>
-                            <li><i class="fas fa-check"></i> Gestión básica de empleados</li>
-                        </ul>
-                    </div>
-                    <button class="axyra-membership-btn-brutal" onclick="selectPlan('free')">
-                        Comenzar Gratis
-                    </button>
-                </div>
-
                 <!-- Plan Básico -->
                 <div class="axyra-membership-card-brutal axyra-plan-basico" data-plan="basic">
-                    <div class="axyra-membership-badge-brutal">POPULAR</div>
                     <div class="axyra-membership-header-brutal">
                         <h3 class="axyra-membership-title">Básico</h3>
                         <div class="axyra-membership-price-brutal">
                             <span class="axyra-price-currency">$</span>
-                            <span class="axyra-price-amount">29</span>
+                            <span class="axyra-price-amount">49.900</span>
                             <span class="axyra-price-period">/mes</span>
                         </div>
-                        <p class="axyra-membership-description">Ideal para empresas en crecimiento</p>
+                        <p class="axyra-membership-description">Perfecto para pequeñas empresas que están comenzando</p>
                     </div>
                     <div class="axyra-membership-features">
                         <h4 class="axyra-features-title">¿Qué incluye?</h4>
                         <ul class="axyra-features-list">
-                            <li><i class="fas fa-check"></i> Hasta 25 empleados</li>
-                            <li><i class="fas fa-check"></i> Reportes avanzados</li>
-                            <li><i class="fas fa-check"></i> Soporte prioritario</li>
+                            <li><i class="fas fa-check"></i> Hasta 10 empleados</li>
+                            <li><i class="fas fa-check"></i> Reportes básicos</li>
+                            <li><i class="fas fa-check"></i> Soporte por email</li>
                             <li><i class="fas fa-check"></i> Dashboard completo</li>
-                            <li><i class="fas fa-check"></i> Gestión de nóminas</li>
-                            <li><i class="fas fa-check"></i> Inventario básico</li>
+                            <li><i class="fas fa-check"></i> Gestión de empleados</li>
+                            <li><i class="fas fa-check"></i> Cálculo de nóminas</li>
                         </ul>
                     </div>
                     <button class="axyra-membership-btn-brutal" onclick="selectPlan('basic')">
@@ -635,20 +626,20 @@
                         <h3 class="axyra-membership-title">Profesional</h3>
                         <div class="axyra-membership-price-brutal">
                             <span class="axyra-price-currency">$</span>
-                            <span class="axyra-price-amount">79</span>
+                            <span class="axyra-price-amount">129.900</span>
                             <span class="axyra-price-period">/mes</span>
                         </div>
-                        <p class="axyra-membership-description">Para empresas establecidas que buscan eficiencia</p>
+                        <p class="axyra-membership-description">Ideal para empresas en crecimiento y establecidas</p>
                     </div>
                     <div class="axyra-membership-features">
                         <h4 class="axyra-features-title">¿Qué incluye?</h4>
                         <ul class="axyra-features-list">
-                            <li><i class="fas fa-check"></i> Hasta 100 empleados</li>
-                            <li><i class="fas fa-check"></i> Reportes personalizados</li>
-                            <li><i class="fas fa-check"></i> Soporte 24/7</li>
+                            <li><i class="fas fa-check"></i> Hasta 50 empleados</li>
+                            <li><i class="fas fa-check"></i> Reportes avanzados</li>
+                            <li><i class="fas fa-check"></i> Soporte prioritario</li>
                             <li><i class="fas fa-check"></i> Dashboard avanzado</li>
                             <li><i class="fas fa-check"></i> Gestión completa de nóminas</li>
-                            <li><i class="fas fa-check"></i> Inventario avanzado</li>
+                            <li><i class="fas fa-check"></i> Inventario básico</li>
                             <li><i class="fas fa-check"></i> Integración con bancos</li>
                             <li><i class="fas fa-check"></i> Chat de IA profesional</li>
                         </ul>
@@ -660,11 +651,12 @@
 
                 <!-- Plan Empresarial -->
                 <div class="axyra-membership-card-brutal axyra-plan-empresarial" data-plan="enterprise">
+                    <div class="axyra-membership-badge-brutal">PREMIUM</div>
                     <div class="axyra-membership-header-brutal">
                         <h3 class="axyra-membership-title">Empresarial</h3>
                         <div class="axyra-membership-price-brutal">
                             <span class="axyra-price-currency">$</span>
-                            <span class="axyra-price-amount">199</span>
+                            <span class="axyra-price-amount">259.900</span>
                             <span class="axyra-price-period">/mes</span>
                         </div>
                         <p class="axyra-membership-description">Para grandes empresas con necesidades complejas</p>
@@ -674,47 +666,18 @@
                         <ul class="axyra-features-list">
                             <li><i class="fas fa-check"></i> Empleados ilimitados</li>
                             <li><i class="fas fa-check"></i> Reportes ejecutivos</li>
-                            <li><i class="fas fa-check"></i> Soporte dedicado</li>
+                            <li><i class="fas fa-check"></i> Soporte 24/7</li>
                             <li><i class="fas fa-check"></i> Dashboard personalizado</li>
                             <li><i class="fas fa-check"></i> Gestión multi-sucursal</li>
                             <li><i class="fas fa-check"></i> Inventario completo</li>
                             <li><i class="fas fa-check"></i> Integraciones avanzadas</li>
                             <li><i class="fas fa-check"></i> IA avanzada</li>
                             <li><i class="fas fa-check"></i> API personalizada</li>
+                            <li><i class="fas fa-check"></i> Consultoría incluida</li>
                         </ul>
                     </div>
                     <button class="axyra-membership-btn-brutal" onclick="selectPlan('enterprise')">
                         Elegir Empresarial
-                    </button>
-                </div>
-
-                <!-- Plan Ultimate -->
-                <div class="axyra-membership-card-brutal axyra-plan-ultimate" data-plan="ultimate">
-                    <div class="axyra-membership-badge-brutal">ULTIMATE</div>
-                    <div class="axyra-membership-header-brutal">
-                        <h3 class="axyra-membership-title">Ultimate</h3>
-                        <div class="axyra-membership-price-brutal">
-                            <span class="axyra-price-currency">$</span>
-                            <span class="axyra-price-amount">399</span>
-                            <span class="axyra-price-period">/mes</span>
-                        </div>
-                        <p class="axyra-membership-description">El plan más completo para empresas líderes</p>
-                    </div>
-                    <div class="axyra-membership-features">
-                        <h4 class="axyra-features-title">¿Qué incluye?</h4>
-                        <ul class="axyra-features-list">
-                            <li><i class="fas fa-check"></i> Todo lo anterior</li>
-                            <li><i class="fas fa-check"></i> Consultoría personalizada</li>
-                            <li><i class="fas fa-check"></i> Soporte VIP</li>
-                            <li><i class="fas fa-check"></i> Desarrollo a medida</li>
-                            <li><i class="fas fa-check"></i> Migración de datos</li>
-                            <li><i class="fas fa-check"></i> Capacitación del equipo</li>
-                            <li><i class="fas fa-check"></i> SLA garantizado</li>
-                            <li><i class="fas fa-check"></i> Acceso anticipado a nuevas funciones</li>
-                        </ul>
-                    </div>
-                    <button class="axyra-membership-btn-brutal" onclick="selectPlan('ultimate')">
-                        Elegir Ultimate
                     </button>
                 </div>
             </div>
@@ -741,11 +704,9 @@
             
             // Mostrar confirmación
             const planNames = {
-                'free': 'Starter (Gratuito)',
-                'basic': 'Básico',
-                'professional': 'Profesional',
-                'enterprise': 'Empresarial',
-                'ultimate': 'Ultimate'
+                'basic': 'Básico - $49.900/mes',
+                'professional': 'Profesional - $129.900/mes',
+                'enterprise': 'Empresarial - $259.900/mes'
             };
             
             alert(`🎉 ¡Plan ${planNames[planType]} seleccionado!\n\nRedirigiendo al proceso de pago...`);
