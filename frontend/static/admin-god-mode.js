@@ -91,7 +91,7 @@ class AxyraAdminGodMode {
   setupAccessControl() {
     this.checkUserRole();
     this.setupRoleBasedUI();
-    this.setupFeatureRestrictions();
+    this.setupGodModeFeatures();
   }
 
   checkUserRole() {
@@ -272,7 +272,7 @@ class AxyraAdminGodMode {
         <div style="position: relative;">
           <input type="text" id="godSearchInput" placeholder="Búsqueda DIOS..." 
                  style="padding: 10px 40px 10px 15px; border: 2px solid #ff6b6b; border-radius: 25px; background: #1a1a2e; color: white; width: 300px; font-size: 14px;"
-                 onkeyup="godMode.performGodSearch(this.value)">
+                 onkeyup="window.axyraAdminGodMode.performGodSearch(this.value)">
           <i class="fas fa-search" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #ff6b6b;"></i>
         </div>
       `;
@@ -496,9 +496,94 @@ class AxyraAdminGodMode {
   redirectToLogin() {
     window.location.href = '/login.html';
   }
+
+  // GESTIÓN DE USUARIOS INDIVIDUALES
+  manageUser(email) {
+    console.log(`🔧 Gestionando usuario: ${email}`);
+    
+    // Crear modal de gestión de usuario
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    `;
+    
+    modal.innerHTML = `
+      <div style="
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        padding: 2rem;
+        border-radius: 15px;
+        border: 2px solid #667eea;
+        max-width: 500px;
+        width: 90%;
+        color: white;
+      ">
+        <h3 style="margin-bottom: 1rem; color: #667eea;">🔧 Gestión de Usuario</h3>
+        <p><strong>Email:</strong> ${email}</p>
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+          <button onclick="window.axyraAdminGodMode.suspendUser('${email}')" 
+                  style="background: #f56565; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+            🚫 Suspender
+          </button>
+          <button onclick="window.axyraAdminGodMode.changeUserPlan('${email}')" 
+                  style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+            💳 Cambiar Plan
+          </button>
+          <button onclick="window.axyraAdminGodMode.viewUserDetails('${email}')" 
+                  style="background: #48bb78; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+            👁️ Ver Detalles
+          </button>
+          <button onclick="this.closest('.modal').remove()" 
+                  style="background: #718096; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+            ❌ Cerrar
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Cerrar modal al hacer click fuera
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
+  }
+
+  suspendUser(email) {
+    console.log(`🚫 Suspendiendo usuario: ${email}`);
+    alert(`Usuario ${email} suspendido`);
+    document.querySelector('.modal')?.remove();
+  }
+
+  changeUserPlan(email) {
+    console.log(`💳 Cambiando plan de usuario: ${email}`);
+    const newPlan = prompt('Ingresa el nuevo plan (Básico, Profesional, Empresarial):');
+    if (newPlan) {
+      alert(`Plan de ${email} cambiado a: ${newPlan}`);
+    }
+    document.querySelector('.modal')?.remove();
+  }
+
+  viewUserDetails(email) {
+    console.log(`👁️ Viendo detalles de usuario: ${email}`);
+    alert(`Detalles de ${email}:\n\n- Plan: Profesional\n- Estado: Activo\n- Registro: 14/1/2024\n- Última actividad: Hoy`);
+    document.querySelector('.modal')?.remove();
+  }
 }
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  window.godMode = new AxyraAdminGodMode();
+  window.axyraAdminGodMode = new AxyraAdminGodMode();
+  window.godMode = window.axyraAdminGodMode; // Compatibilidad
 });

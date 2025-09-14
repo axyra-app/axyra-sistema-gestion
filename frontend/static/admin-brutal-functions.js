@@ -334,6 +334,11 @@ class AxyraAdminBrutal {
   }
 
   updateUsersChart() {
+    if (!window.usersChart || !window.usersChart.data || !window.usersChart.data.datasets) {
+      console.warn('⚠️ Chart no inicializado, saltando actualización');
+      return;
+    }
+
     const monthlyData = this.getMonthlyUsersData();
 
     window.usersChart.data.datasets[0].data = monthlyData;

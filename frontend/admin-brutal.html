@@ -1041,6 +1041,14 @@
           alert(`Suplantando usuario: ${email}`);
         }
       }
+      
+      function manageUser(email) {
+        if (window.axyraAdminGodMode) {
+          window.axyraAdminGodMode.manageUser(email);
+        } else {
+          alert(`🔧 Gestionando usuario: ${email}`);
+        }
+      }
 
       // SIDEBAR TOGGLE FUNCTION
       function toggleSidebar() {

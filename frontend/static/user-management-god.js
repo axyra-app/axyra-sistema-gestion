@@ -481,17 +481,34 @@ class AxyraUserManagementGod {
   bulkSuspend() {
     if (this.selectedUsers.size === 0) return;
 
-    if (confirm(`¿Estás seguro de suspender ${this.selectedUsers.size} usuarios?`)) {
-      console.log('🚫 Suspendiendo usuarios masivamente:', Array.from(this.selectedUsers));
-      // Implementar suspensión masiva
-    }
+    this.showConfirmationModal(
+      'Suspender Usuarios Masivamente',
+      `¿Estás seguro de suspender ${this.selectedUsers.size} usuarios?`,
+      () => {
+        console.log('🚫 Suspendiendo usuarios masivamente:', Array.from(this.selectedUsers));
+        // Implementar suspensión masiva
+        this.selectedUsers.clear();
+        this.updateUsersTable();
+      }
+    );
   }
 
   bulkChangePlan() {
     if (this.selectedUsers.size === 0) return;
 
-    console.log('💳 Cambiando plan masivamente:', Array.from(this.selectedUsers));
-    // Implementar cambio de plan masivo
+    const newPlan = prompt('Ingresa el nuevo plan (Básico, Profesional, Empresarial):');
+    if (newPlan) {
+      this.showConfirmationModal(
+        'Cambiar Plan Masivamente',
+        `¿Estás seguro de cambiar el plan a "${newPlan}" para ${this.selectedUsers.size} usuarios?`,
+        () => {
+          console.log('💳 Cambiando plan masivamente:', Array.from(this.selectedUsers), 'a', newPlan);
+          // Implementar cambio de plan masivo
+          this.selectedUsers.clear();
+          this.updateUsersTable();
+        }
+      );
+    }
   }
 
   bulkExport() {
@@ -504,12 +521,16 @@ class AxyraUserManagementGod {
   bulkDelete() {
     if (this.selectedUsers.size === 0) return;
 
-    if (
-      confirm(`⚠️ PELIGRO: ¿Estás seguro de eliminar ${this.selectedUsers.size} usuarios? Esta acción es IRREVERSIBLE.`)
-    ) {
-      console.log('🗑️ Eliminando usuarios masivamente:', Array.from(this.selectedUsers));
-      // Implementar eliminación masiva
-    }
+    this.showConfirmationModal(
+      'Eliminar Usuarios Masivamente',
+      `⚠️ PELIGRO: ¿Estás seguro de eliminar ${this.selectedUsers.size} usuarios? Esta acción es IRREVERSIBLE.`,
+      () => {
+        console.log('🗑️ Eliminando usuarios masivamente:', Array.from(this.selectedUsers));
+        // Implementar eliminación masiva
+        this.selectedUsers.clear();
+        this.updateUsersTable();
+      }
+    );
   }
 
   bulkSendEmail() {
@@ -534,10 +555,75 @@ class AxyraUserManagementGod {
 
   suspendUser(userId) {
     const user = this.users.find((u) => u.id === userId);
-    if (confirm(`¿Estás seguro de suspender a ${user.displayName}?`)) {
-      console.log('🚫 Suspendiendo usuario:', user);
-      // Implementar suspensión de usuario
-    }
+    this.showConfirmationModal(
+      'Suspender Usuario',
+      `¿Estás seguro de suspender a ${user.displayName}?`,
+      () => {
+        console.log('🚫 Suspendiendo usuario:', user);
+        // Implementar suspensión de usuario
+        this.updateUsersTable();
+      }
+    );
+  }
+
+  // MODAL DE CONFIRMACIÓN
+  showConfirmationModal(title, message, onConfirm) {
+    const modal = document.createElement('div');
+    modal.className = 'confirmation-modal';
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    `;
+    
+    modal.innerHTML = `
+      <div style="
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        padding: 2rem;
+        border-radius: 15px;
+        border: 2px solid #667eea;
+        max-width: 400px;
+        width: 90%;
+        color: white;
+        text-align: center;
+      ">
+        <h3 style="margin-bottom: 1rem; color: #667eea;">${title}</h3>
+        <p style="margin-bottom: 1.5rem; font-size: 14px;">${message}</p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+          <button onclick="this.closest('.confirmation-modal').remove()" 
+                  style="background: #718096; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+            Cancelar
+          </button>
+          <button id="confirmBtn" 
+                  style="background: #f56565; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">
+            Confirmar
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Configurar botón de confirmación
+    const confirmBtn = modal.querySelector('#confirmBtn');
+    confirmBtn.addEventListener('click', () => {
+      onConfirm();
+      modal.remove();
+    });
+    
+    // Cerrar modal al hacer click fuera
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
   }
 
   // UTILIDADES
