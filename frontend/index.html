@@ -6,6 +6,7 @@
     <title>AXYRA - Sistema de Gestión</title>
     <link rel="stylesheet" href="static/axyra-styles.css" />
     <link rel="stylesheet" href="static/modal-fixes.css" />
+    <link rel="stylesheet" href="static/membership-styles.css" />
     <link rel="icon" href="nomina.ico" type="image/x-icon" />
   </head>
   <body>
@@ -280,6 +281,170 @@
               <button type="submit" class="axyra-btn axyra-btn-primary">📧 Enviar Mensaje</button>
             </form>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de Membresías Brutal -->
+    <section class="axyra-memberships-brutal">
+      <div class="axyra-container">
+        <div class="axyra-memberships-header">
+          <h2 class="axyra-memberships-title">
+            <span class="axyra-title-main">💎 ELIGE TU PLAN</span>
+            <span class="axyra-title-sub">Y TRANSFORMA TU EMPRESA</span>
+          </h2>
+          <p class="axyra-memberships-subtitle">
+            Desbloquea el poder completo de AXYRA con nuestros planes profesionales
+          </p>
+        </div>
+
+        <div class="axyra-memberships-grid">
+          <!-- Plan Gratis -->
+          <div class="axyra-membership-card axyra-membership-free" data-plan="free">
+            <div class="axyra-membership-badge">GRATIS</div>
+            <div class="axyra-membership-header">
+              <h3>Starter</h3>
+              <div class="axyra-membership-price">
+                <span class="axyra-price-currency">$</span>
+                <span class="axyra-price-amount">0</span>
+                <span class="axyra-price-period">/mes</span>
+              </div>
+            </div>
+            <div class="axyra-membership-features">
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Hasta 5 empleados</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Reportes básicos</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Soporte por email</span>
+              </div>
+            </div>
+            <button class="axyra-btn axyra-btn-outline axyra-membership-btn" onclick="selectMembershipPlan('free')">
+              Comenzar Gratis
+            </button>
+          </div>
+
+          <!-- Plan Básico -->
+          <div class="axyra-membership-card axyra-membership-basic" data-plan="basic">
+            <div class="axyra-membership-badge">POPULAR</div>
+            <div class="axyra-membership-header">
+              <h3>Básico</h3>
+              <div class="axyra-membership-price">
+                <span class="axyra-price-currency">$</span>
+                <span class="axyra-price-amount">29</span>
+                <span class="axyra-price-period">/mes</span>
+              </div>
+            </div>
+            <div class="axyra-membership-features">
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Hasta 25 empleados</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Dashboard completo</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Gestión de horas</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Soporte prioritario</span>
+              </div>
+            </div>
+            <button class="axyra-btn axyra-btn-primary axyra-membership-btn" onclick="selectMembershipPlan('basic')">
+              Seleccionar Plan
+            </button>
+          </div>
+
+          <!-- Plan Profesional -->
+          <div class="axyra-membership-card axyra-membership-professional axyra-membership-featured" data-plan="professional">
+            <div class="axyra-membership-badge axyra-badge-featured">MÁS POPULAR</div>
+            <div class="axyra-membership-header">
+              <h3>Profesional</h3>
+              <div class="axyra-membership-price">
+                <span class="axyra-price-currency">$</span>
+                <span class="axyra-price-amount">59</span>
+                <span class="axyra-price-period">/mes</span>
+              </div>
+            </div>
+            <div class="axyra-membership-features">
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Empleados ilimitados</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Todas las funcionalidades</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Nómina avanzada</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Reportes personalizados</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Soporte 24/7</span>
+              </div>
+            </div>
+            <button class="axyra-btn axyra-btn-gradient axyra-membership-btn" onclick="selectMembershipPlan('professional')">
+              ¡Elegir Profesional!
+            </button>
+          </div>
+
+          <!-- Plan Empresarial -->
+          <div class="axyra-membership-card axyra-membership-enterprise" data-plan="enterprise">
+            <div class="axyra-membership-badge axyra-badge-enterprise">EMPRESARIAL</div>
+            <div class="axyra-membership-header">
+              <h3>Empresarial</h3>
+              <div class="axyra-membership-price">
+                <span class="axyra-price-currency">$</span>
+                <span class="axyra-price-amount">99</span>
+                <span class="axyra-price-period">/mes</span>
+              </div>
+            </div>
+            <div class="axyra-membership-features">
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Todo lo anterior</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Múltiples sucursales</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Integración personalizada</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Soporte dedicado</span>
+              </div>
+              <div class="axyra-feature-item">
+                <span class="axyra-feature-icon">✅</span>
+                <span>Capacitación incluida</span>
+              </div>
+            </div>
+            <button class="axyra-btn axyra-btn-secondary axyra-membership-btn" onclick="selectMembershipPlan('enterprise')">
+              Contactar Ventas
+            </button>
+          </div>
+        </div>
+
+        <div class="axyra-memberships-footer">
+          <p class="axyra-memberships-guarantee">
+            <span class="axyra-guarantee-icon">🛡️</span>
+            <strong>Garantía de 30 días</strong> - Si no estás satisfecho, te devolvemos tu dinero
+          </p>
         </div>
       </div>
     </section>
@@ -564,17 +729,24 @@
         const user = localStorage.getItem('axyra_isolated_user');
         console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
         
-        if (user) {
-          console.log('🚀 Redirigiendo a dashboard...');
-          try {
-            window.location.href = 'modulos/dashboard/dashboard.html';
-          } catch (error) {
-            console.error('❌ Error al redirigir:', error);
-            alert('Error al acceder al dashboard. Por favor, inténtalo de nuevo.');
-          }
-        } else {
+        if (!user) {
           console.log('🔐 Mostrando modal de autenticación...');
           showAuthModal();
+          return;
+        }
+
+        // Verificar acceso con sistema de membresías
+        if (window.axyraMembership && !window.axyraMembership.canAccessFeature('dashboard')) {
+          console.log('💎 Acceso denegado - Plan insuficiente');
+          return;
+        }
+
+        console.log('🚀 Redirigiendo a dashboard...');
+        try {
+          window.location.href = 'modulos/dashboard/dashboard.html';
+        } catch (error) {
+          console.error('❌ Error al redirigir:', error);
+          alert('Error al acceder al dashboard. Por favor, inténtalo de nuevo.');
         }
       }
 
@@ -739,6 +911,66 @@
 
       // Verificar estado cuando cambie el localStorage
       window.addEventListener('storage', checkAuthStatus);
+
+      // ========================================
+      // FUNCIONES DE MEMBRESÍAS
+      // ========================================
+
+      function selectMembershipPlan(planType) {
+        console.log('💎 Seleccionando plan:', planType);
+        
+        if (window.axyraMembership) {
+          window.axyraMembership.setMembership(planType);
+          
+          // Mostrar mensaje de éxito
+          showMembershipSuccess(planType);
+          
+          // Si es plan gratuito, redirigir al dashboard
+          if (planType === 'free') {
+            setTimeout(() => {
+              handleDashboardAccess();
+            }, 2000);
+          }
+        } else {
+          console.error('❌ Sistema de membresías no disponible');
+          alert('Error: Sistema de membresías no disponible. Por favor, recarga la página.');
+        }
+      }
+
+      function showMembershipSuccess(planType) {
+        const plans = {
+          free: 'Gratis',
+          basic: 'Básico',
+          professional: 'Profesional',
+          enterprise: 'Empresarial'
+        };
+        
+        const notification = document.createElement('div');
+        notification.className = 'axyra-membership-success';
+        notification.innerHTML = `
+          <div class="axyra-success-content">
+            <div class="axyra-success-icon">🎉</div>
+            <div class="axyra-success-text">
+              <h3>¡Plan ${plans[planType]} Activado!</h3>
+              <p>Ya puedes acceder a todas las funcionalidades de tu plan</p>
+            </div>
+            <button class="axyra-success-close" onclick="this.parentElement.parentElement.remove()">×</button>
+          </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animación de entrada
+        setTimeout(() => {
+          notification.classList.add('show');
+        }, 100);
+        
+        // Auto-remover después de 5 segundos
+        setTimeout(() => {
+          notification.classList.remove('show');
+          setTimeout(() => notification.remove(), 300);
+        }, 5000);
+      }
 
       // ========================================
       // FUNCIONES DEL FOOTER PROFESIONAL
@@ -1227,6 +1459,9 @@
 
     <!-- Sistema de Chat con IA AXYRA -->
     <script src="static/ai-chat-system.js"></script>
+
+    <!-- Sistema de Membresías AXYRA -->
+    <script src="static/membership-system.js"></script>
 
     <!-- Vercel Config -->
     <script src="static/vercel-config.js"></script>
