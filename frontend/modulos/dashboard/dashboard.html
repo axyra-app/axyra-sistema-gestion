@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="../../static/modal-positioning-fix.css" />
     <link rel="stylesheet" href="../../static/modal-emergency-fix.css" />
     <link rel="stylesheet" href="../../static/header-fixes.css" />
+    <link rel="stylesheet" href="../../static/dashboard-blur-fix.css" />
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -347,6 +348,39 @@
     <!-- Inicializador del Dashboard AXYRA -->
     <script src="../../static/dashboard-initializer.js"></script>
     
+    <!-- Script inmediato para corregir blur -->
+    <script>
+      // Script que se ejecuta inmediatamente para corregir el blur
+      (function() {
+        console.log('🔧 Aplicando corrección inmediata de blur...');
+        
+        // Crear estilos inmediatos
+        const immediateStyle = document.createElement('style');
+        immediateStyle.textContent = `
+          .axyra-main-content,
+          .axyra-dashboard-container,
+          .axyra-dashboard-header,
+          .axyra-stats-grid,
+          .axyra-quick-actions,
+          .axyra-charts-section {
+            filter: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+          }
+          #dashboard-loader {
+            display: none !important;
+            opacity: 0 !important;
+            visibility: hidden !important;
+            z-index: -1 !important;
+          }
+        `;
+        document.head.appendChild(immediateStyle);
+        console.log('🔧 Estilos inmediatos aplicados');
+      })();
+    </script>
+
     <!-- Script de emergencia para forzar visibilidad -->
     <script>
       // Script de emergencia para asegurar que el dashboard sea visible
@@ -358,6 +392,9 @@
           
           if (loader) {
             loader.style.display = 'none';
+            loader.style.opacity = '0';
+            loader.style.visibility = 'hidden';
+            loader.style.zIndex = '-1';
             console.log('🔧 Loader ocultado por script de emergencia');
           }
           
@@ -365,14 +402,33 @@
             mainContent.style.display = 'block';
             mainContent.style.opacity = '1';
             mainContent.style.visibility = 'visible';
+            mainContent.style.filter = 'none';
+            mainContent.style.backdropFilter = 'none';
+            mainContent.style.blur = 'none';
             console.log('🔧 Contenido principal mostrado por script de emergencia');
           }
           
           if (dashboardContainer) {
             dashboardContainer.style.opacity = '1';
             dashboardContainer.style.visibility = 'visible';
+            dashboardContainer.style.filter = 'none';
+            dashboardContainer.style.backdropFilter = 'none';
+            dashboardContainer.style.blur = 'none';
             console.log('🔧 Contenedor del dashboard visible por script de emergencia');
           }
+          
+          // Remover cualquier blur de todos los elementos
+          const allElements = document.querySelectorAll('*');
+          allElements.forEach(element => {
+            if (element.style.filter && element.style.filter.includes('blur')) {
+              element.style.filter = 'none';
+              console.log('🔧 Blur removido de elemento:', element.tagName);
+            }
+            if (element.style.backdropFilter && element.style.backdropFilter.includes('blur')) {
+              element.style.backdropFilter = 'none';
+              console.log('🔧 Backdrop blur removido de elemento:', element.tagName);
+            }
+          });
           
           // Verificar plan de membresía y ocultar chat de IA si es gratuito
           const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
@@ -384,6 +440,42 @@
             }
           }
         }, 2000);
+        
+        // Script adicional más agresivo después de 3 segundos
+        setTimeout(() => {
+          console.log('🔧 Aplicando corrección de blur agresiva...');
+          
+          // Forzar remoción de todos los efectos de blur
+          const style = document.createElement('style');
+          style.textContent = `
+            * {
+              filter: none !important;
+              backdrop-filter: none !important;
+              -webkit-backdrop-filter: none !important;
+              blur: none !important;
+            }
+            .axyra-main-content,
+            .axyra-dashboard-container,
+            .axyra-dashboard-header,
+            .axyra-stats-grid,
+            .axyra-quick-actions,
+            .axyra-charts-section {
+              filter: none !important;
+              backdrop-filter: none !important;
+              -webkit-backdrop-filter: none !important;
+              opacity: 1 !important;
+              visibility: visible !important;
+            }
+            #dashboard-loader {
+              display: none !important;
+              opacity: 0 !important;
+              visibility: hidden !important;
+              z-index: -1 !important;
+            }
+          `;
+          document.head.appendChild(style);
+          console.log('🔧 Estilos de corrección de blur aplicados');
+        }, 3000);
       });
     </script>
     
