@@ -222,11 +222,8 @@ class AxyraMembershipSystem {
   }
 
   selectPlan(planType) {
-    this.setMembership(planType);
-    document.querySelector('.axyra-membership-modal').remove();
-    
-    // Mostrar mensaje de éxito
-    this.showSuccessMessage(`¡Plan ${this.memberships[planType].name} activado!`);
+    // Redirigir a la página de membresías detallada
+    window.location.href = 'membresias.html';
   }
 
   showSuccessMessage(message) {

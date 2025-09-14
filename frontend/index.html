@@ -919,22 +919,8 @@
       function selectMembershipPlan(planType) {
         console.log('💎 Seleccionando plan:', planType);
         
-        if (window.axyraMembership) {
-          window.axyraMembership.setMembership(planType);
-          
-          // Mostrar mensaje de éxito
-          showMembershipSuccess(planType);
-          
-          // Si es plan gratuito, redirigir al dashboard
-          if (planType === 'free') {
-            setTimeout(() => {
-              handleDashboardAccess();
-            }, 2000);
-          }
-        } else {
-          console.error('❌ Sistema de membresías no disponible');
-          alert('Error: Sistema de membresías no disponible. Por favor, recarga la página.');
-        }
+        // Redirigir a la página de membresías detallada
+        window.location.href = 'membresias.html';
       }
 
       function showMembershipSuccess(planType) {
