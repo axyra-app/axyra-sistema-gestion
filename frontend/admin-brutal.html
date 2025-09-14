@@ -54,6 +54,8 @@
         z-index: 1000;
         transition: all 0.3s ease;
         box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+        overflow-y: auto;
+        overflow-x: hidden;
       }
 
       .sidebar-header {
@@ -86,6 +88,46 @@
 
       .sidebar-nav {
         padding: 20px 0;
+        height: calc(100vh - 120px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: #667eea #1a1a2e;
+      }
+
+      .sidebar-nav::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .sidebar-nav::-webkit-scrollbar-track {
+        background: #1a1a2e;
+      }
+
+      .sidebar-nav::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 3px;
+      }
+
+      .sidebar-nav::-webkit-scrollbar-thumb:hover {
+        background: #764ba2;
+      }
+
+      /* SCROLL DEL SIDEBAR COMPLETO */
+      .sidebar::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .sidebar::-webkit-scrollbar-track {
+        background: #1a1a2e;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 3px;
+      }
+
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: #764ba2;
       }
 
       .nav-item {
@@ -165,17 +207,18 @@
         gap: 20px;
       }
 
-      .sidebar-toggle {
-        display: none;
-        background: rgba(255, 255, 255, 0.1);
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        border-radius: 8px;
-        color: white;
-        padding: 10px 12px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 16px;
-      }
+       .sidebar-toggle {
+         display: block;
+         background: rgba(255, 255, 255, 0.1);
+         border: 2px solid rgba(255, 255, 255, 0.3);
+         border-radius: 8px;
+         color: white;
+         padding: 10px 12px;
+         cursor: pointer;
+         transition: all 0.3s ease;
+         font-size: 16px;
+         z-index: 1000;
+       }
 
       .sidebar-toggle:hover {
         background: rgba(255, 255, 255, 0.2);
@@ -667,6 +710,9 @@
           // Check authentication
           await checkAdminAuth();
 
+          // Load sidebar state
+          loadSidebarState();
+
           // Load dashboard data
           await loadDashboardData();
 
@@ -805,97 +851,97 @@
         }
       }
 
-       function initializeCharts() {
-         const ctx = document.getElementById('usersChart');
-         if (!ctx) return;
+      function initializeCharts() {
+        const ctx = document.getElementById('usersChart');
+        if (!ctx) return;
 
-         // Destruir gráfico existente si existe
-         if (usersChart) {
-           usersChart.destroy();
-         }
+        // Destruir gráfico existente si existe
+        if (usersChart) {
+          usersChart.destroy();
+        }
 
-         const chartCtx = ctx.getContext('2d');
-         usersChart = new Chart(chartCtx, {
-           type: 'line',
-           data: {
-             labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-             datasets: [
-               {
-                 label: 'Usuarios',
-                 data: [120, 190, 300, 500, 200, 300, 450, 600, 750, 900, 1100, 1247],
-                 borderColor: '#667eea',
-                 backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                 borderWidth: 2,
-                 fill: true,
-                 tension: 0.4,
-                 pointRadius: 3,
-                 pointHoverRadius: 5,
-               },
-             ],
-           },
-           options: {
-             responsive: true,
-             maintainAspectRatio: false,
-             aspectRatio: 2,
-             animation: {
-               duration: 1000,
-               easing: 'easeInOutQuart',
-             },
-             plugins: {
-               legend: {
-                 display: true,
-                 position: 'top',
-                 labels: {
-                   color: '#ffffff',
-                   font: {
-                     size: 12,
-                   },
-                 },
-               },
-               tooltip: {
-                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                 titleColor: '#ffffff',
-                 bodyColor: '#ffffff',
-                 borderColor: '#667eea',
-                 borderWidth: 1,
-               },
-             },
-             scales: {
-               x: {
-                 display: true,
-                 ticks: {
-                   color: '#a0aec0',
-                   font: {
-                     size: 10,
-                   },
-                 },
-                 grid: {
-                   color: '#2d3748',
-                   drawBorder: false,
-                 },
-               },
-               y: {
-                 display: true,
-                 ticks: {
-                   color: '#a0aec0',
-                   font: {
-                     size: 10,
-                   },
-                 },
-                 grid: {
-                   color: '#2d3748',
-                   drawBorder: false,
-                 },
-               },
-             },
-             elements: {
-               line: {
-                 tension: 0.4,
-               },
-             },
-           },
-         });
-       }
+        const chartCtx = ctx.getContext('2d');
+        usersChart = new Chart(chartCtx, {
+          type: 'line',
+          data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            datasets: [
+              {
+                label: 'Usuarios',
+                data: [120, 190, 300, 500, 200, 300, 450, 600, 750, 900, 1100, 1247],
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            aspectRatio: 2,
+            animation: {
+              duration: 1000,
+              easing: 'easeInOutQuart',
+            },
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                  color: '#ffffff',
+                  font: {
+                    size: 12,
+                  },
+                },
+              },
+              tooltip: {
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                titleColor: '#ffffff',
+                bodyColor: '#ffffff',
+                borderColor: '#667eea',
+                borderWidth: 1,
+              },
+            },
+            scales: {
+              x: {
+                display: true,
+                ticks: {
+                  color: '#a0aec0',
+                  font: {
+                    size: 10,
+                  },
+                },
+                grid: {
+                  color: '#2d3748',
+                  drawBorder: false,
+                },
+              },
+              y: {
+                display: true,
+                ticks: {
+                  color: '#a0aec0',
+                  font: {
+                    size: 10,
+                  },
+                },
+                grid: {
+                  color: '#2d3748',
+                  drawBorder: false,
+                },
+              },
+            },
+            elements: {
+              line: {
+                tension: 0.4,
+              },
+            },
+          },
+        });
+      }
 
       function setupEventListeners() {
         // Sidebar navigation
@@ -916,29 +962,29 @@
         });
       }
 
-       function switchSection(section) {
-         console.log('Cambiando a sección:', section);
-         
-         // Limpiar gráfico al cambiar de sección para ahorrar memoria
-         if (usersChart && section !== 'dashboard') {
-           usersChart.destroy();
-           usersChart = null;
-         }
-         
-         // Here you would implement section switching logic
-       }
+      function switchSection(section) {
+        console.log('Cambiando a sección:', section);
 
-       function refreshData() {
-         console.log('🔄 Actualizando datos...');
-         
-         // Limpiar gráfico existente
-         if (usersChart) {
-           usersChart.destroy();
-           usersChart = null;
-         }
-         
-         loadDashboardData();
-       }
+        // Limpiar gráfico al cambiar de sección para ahorrar memoria
+        if (usersChart && section !== 'dashboard') {
+          usersChart.destroy();
+          usersChart = null;
+        }
+
+        // Here you would implement section switching logic
+      }
+
+      function refreshData() {
+        console.log('🔄 Actualizando datos...');
+
+        // Limpiar gráfico existente
+        if (usersChart) {
+          usersChart.destroy();
+          usersChart = null;
+        }
+
+        loadDashboardData();
+      }
 
       function exportData() {
         console.log('📊 Exportando datos...');
@@ -986,23 +1032,44 @@
         }
       }
 
-      // SIDEBAR TOGGLE FUNCTION
-      function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        const mainContent = document.querySelector('.main-content');
-        const toggleBtn = document.getElementById('sidebarToggle');
+       // SIDEBAR TOGGLE FUNCTION
+       function toggleSidebar() {
+         const sidebar = document.querySelector('.sidebar');
+         const mainContent = document.querySelector('.main-content');
+         const toggleBtn = document.getElementById('sidebarToggle');
 
-        sidebar.classList.toggle('collapsed');
-        mainContent.classList.toggle('sidebar-collapsed');
+         sidebar.classList.toggle('collapsed');
+         mainContent.classList.toggle('sidebar-collapsed');
 
-        // Cambiar icono
-        const icon = toggleBtn.querySelector('i');
-        if (sidebar.classList.contains('collapsed')) {
-          icon.className = 'fas fa-bars';
-        } else {
-          icon.className = 'fas fa-times';
-        }
-      }
+         // Cambiar icono
+         const icon = toggleBtn.querySelector('i');
+         if (sidebar.classList.contains('collapsed')) {
+           icon.className = 'fas fa-bars';
+           toggleBtn.title = 'Mostrar menú';
+         } else {
+           icon.className = 'fas fa-times';
+           toggleBtn.title = 'Ocultar menú';
+         }
+
+         // Guardar estado en localStorage
+         localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+       }
+
+       // CARGAR ESTADO DEL SIDEBAR
+       function loadSidebarState() {
+         const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+         const sidebar = document.querySelector('.sidebar');
+         const mainContent = document.querySelector('.main-content');
+         const toggleBtn = document.getElementById('sidebarToggle');
+
+         if (isCollapsed) {
+           sidebar.classList.add('collapsed');
+           mainContent.classList.add('sidebar-collapsed');
+           const icon = toggleBtn.querySelector('i');
+           icon.className = 'fas fa-bars';
+           toggleBtn.title = 'Mostrar menú';
+         }
+       }
 
       // ARREGLAR DATOS REALES
       function loadRealData() {
