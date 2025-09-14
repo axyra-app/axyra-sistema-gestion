@@ -1,691 +1,697 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AXYRA - Panel de Administración BRUTAL</title>
-    <link rel="icon" href="nomina.ico" type="image/x-icon">
-    
+    <link rel="icon" href="nomina.ico" type="image/x-icon" />
+
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
+
     <!-- Firebase Config -->
     <script src="static/firebase-config.js"></script>
     <!-- Admin Brutal Functions -->
     <script src="static/admin-brutal-functions.js"></script>
-    
+    <!-- God Mode Styles -->
+    <link rel="stylesheet" href="static/god-mode-styles.css">
+    <!-- Admin God Mode -->
+    <script src="static/admin-god-mode.js"></script>
+    <!-- User Management God -->
+    <script src="static/user-management-god.js"></script>
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f0f23;
-            color: #ffffff;
-            overflow-x: hidden;
-        }
-        
-        /* SIDEBAR BRUTAL */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #0f0f23;
+        color: #ffffff;
+        overflow-x: hidden;
+      }
+
+      /* SIDEBAR BRUTAL */
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 280px;
+        height: 100vh;
+        background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+        border-right: 2px solid #667eea;
+        z-index: 1000;
+        transition: all 0.3s ease;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+      }
+
+      .sidebar-header {
+        padding: 30px 20px;
+        border-bottom: 2px solid #667eea;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .sidebar-logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .sidebar-logo img {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        object-fit: contain;
+      }
+
+      .sidebar-logo-text {
+        font-size: 28px;
+        font-weight: 800;
+        background: linear-gradient(45deg, #ffffff, #e0e7ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .sidebar-nav {
+        padding: 20px 0;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 25px;
+        color: #a0aec0;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+        position: relative;
+      }
+
+      .nav-item:hover {
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), transparent);
+        color: #667eea;
+        border-left-color: #667eea;
+        transform: translateX(5px);
+      }
+
+      .nav-item.active {
+        background: linear-gradient(90deg, rgba(102, 126, 234, 0.2), transparent);
+        color: #667eea;
+        border-left-color: #667eea;
+      }
+
+      .nav-item i {
+        font-size: 18px;
+        width: 20px;
+        text-align: center;
+      }
+
+      .nav-item span {
+        font-weight: 600;
+        font-size: 16px;
+      }
+
+      /* MAIN CONTENT */
+      .main-content {
+        margin-left: 280px;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+      }
+
+      /* HEADER BRUTAL */
+      .admin-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px 40px;
+        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .admin-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+      }
+
+      .header-title {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .header-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        object-fit: contain;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .header-text h1 {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 5px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .header-text p {
+        font-size: 16px;
+        opacity: 0.9;
+        font-weight: 500;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .btn-brutal {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(72, 187, 120, 0.6);
+      }
+
+      .btn-secondary {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
+      }
+
+      .btn-secondary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(66, 153, 225, 0.6);
+      }
+
+      .btn-danger {
+        background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(245, 101, 101, 0.4);
+      }
+
+      .btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 101, 101, 0.6);
+      }
+
+      /* DASHBOARD GRID */
+      .dashboard-grid {
+        padding: 40px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+      }
+
+      .stat-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 20px;
+        padding: 30px;
+        border: 2px solid #2d3748;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+        border-color: #667eea;
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+      }
+
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #667eea, #764ba2);
+      }
+
+      .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .stat-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #e2e8f0;
+      }
+
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: white;
+      }
+
+      .stat-value {
+        font-size: 48px;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .stat-change {
+        font-size: 14px;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 20px;
+        display: inline-block;
+      }
+
+      .stat-change.positive {
+        background: rgba(72, 187, 120, 0.2);
+        color: #48bb78;
+      }
+
+      .stat-change.negative {
+        background: rgba(245, 101, 101, 0.2);
+        color: #f56565;
+      }
+
+      /* CHARTS */
+      .chart-container {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 20px;
+        padding: 30px;
+        border: 2px solid #2d3748;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .chart-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      /* TABLES */
+      .table-container {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 20px;
+        padding: 30px;
+        border: 2px solid #2d3748;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .table-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 20px;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .table td {
+        padding: 15px;
+        border-bottom: 1px solid #2d3748;
+        color: #e2e8f0;
+      }
+
+      .table tr:hover {
+        background: rgba(102, 126, 234, 0.1);
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
         .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 280px;
-            height: 100vh;
-            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
-            border-right: 2px solid #667eea;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+          transform: translateX(-100%);
         }
-        
-        .sidebar-header {
-            padding: 30px 20px;
-            border-bottom: 2px solid #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .sidebar-logo img {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            object-fit: contain;
-        }
-        
-        .sidebar-logo-text {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(45deg, #ffffff, #e0e7ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .sidebar-nav {
-            padding: 20px 0;
-        }
-        
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px 25px;
-            color: #a0aec0;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border-left: 3px solid transparent;
-            position: relative;
-        }
-        
-        .nav-item:hover {
-            background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), transparent);
-            color: #667eea;
-            border-left-color: #667eea;
-            transform: translateX(5px);
-        }
-        
-        .nav-item.active {
-            background: linear-gradient(90deg, rgba(102, 126, 234, 0.2), transparent);
-            color: #667eea;
-            border-left-color: #667eea;
-        }
-        
-        .nav-item i {
-            font-size: 18px;
-            width: 20px;
-            text-align: center;
-        }
-        
-        .nav-item span {
-            font-weight: 600;
-            font-size: 16px;
-        }
-        
-        /* MAIN CONTENT */
+
         .main-content {
-            margin-left: 280px;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+          margin-left: 0;
         }
-        
-        /* HEADER BRUTAL */
-        .admin-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px 40px;
-            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .admin-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .header-title {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-        
-        .header-logo {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            object-fit: contain;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-        
-        .header-text h1 {
-            font-size: 36px;
-            font-weight: 800;
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .header-text p {
-            font-size: 16px;
-            opacity: 0.9;
-            font-weight: 500;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .btn-brutal {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(72, 187, 120, 0.6);
-        }
-        
-        .btn-secondary {
-            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(66, 153, 225, 0.4);
-        }
-        
-        .btn-secondary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(66, 153, 225, 0.6);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(245, 101, 101, 0.4);
-        }
-        
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(245, 101, 101, 0.6);
-        }
-        
-        /* DASHBOARD GRID */
+
         .dashboard-grid {
-            padding: 40px;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
+          grid-template-columns: 1fr;
+          padding: 20px;
         }
-        
-        .stat-card {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 20px;
-            padding: 30px;
-            border: 2px solid #2d3748;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+        .header-content {
+          flex-direction: column;
+          gap: 20px;
         }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            border-color: #667eea;
-            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+      }
+
+      /* ANIMATIONS */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
         }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-        
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+      }
+
+      .fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      /* LOADING STATES */
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #667eea;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
-        
-        .stat-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #e2e8f0;
-        }
-        
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            color: white;
-        }
-        
-        .stat-value {
-            font-size: 48px;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .stat-change {
-            font-size: 14px;
-            font-weight: 600;
-            padding: 5px 12px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-        
-        .stat-change.positive {
-            background: rgba(72, 187, 120, 0.2);
-            color: #48bb78;
-        }
-        
-        .stat-change.negative {
-            background: rgba(245, 101, 101, 0.2);
-            color: #f56565;
-        }
-        
-        /* CHARTS */
-        .chart-container {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 20px;
-            padding: 30px;
-            border: 2px solid #2d3748;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .chart-title {
-            font-size: 24px;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        /* TABLES */
-        .table-container {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 20px;
-            padding: 30px;
-            border: 2px solid #2d3748;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .table-title {
-            font-size: 24px;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 20px;
-        }
-        
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        .table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .table td {
-            padding: 15px;
-            border-bottom: 1px solid #2d3748;
-            color: #e2e8f0;
-        }
-        
-        .table tr:hover {
-            background: rgba(102, 126, 234, 0.1);
-        }
-        
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-                padding: 20px;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                gap: 20px;
-            }
-        }
-        
-        /* ANIMATIONS */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .fade-in-up {
-            animation: fadeInUp 0.6s ease-out;
-        }
-        
-        /* LOADING STATES */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: #667eea;
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-logo">
-                <img src="logo.png" alt="AXYRA">
-                <div class="sidebar-logo-text">AXYRA</div>
-            </div>
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <img src="logo.png" alt="AXYRA" />
+          <div class="sidebar-logo-text">AXYRA</div>
         </div>
-        
-        <nav class="sidebar-nav">
-            <a href="#" class="nav-item active" data-section="dashboard">
-                <i class="fas fa-tachometer-alt"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="#" class="nav-item" data-section="users">
-                <i class="fas fa-users"></i>
-                <span>Usuarios</span>
-            </a>
-            <a href="#" class="nav-item" data-section="subscriptions">
-                <i class="fas fa-crown"></i>
-                <span>Suscripciones</span>
-            </a>
-            <a href="#" class="nav-item" data-section="analytics">
-                <i class="fas fa-chart-line"></i>
-                <span>Analíticas</span>
-            </a>
-            <a href="#" class="nav-item" data-section="settings">
-                <i class="fas fa-cog"></i>
-                <span>Configuración</span>
-            </a>
-            <a href="#" class="nav-item" data-section="logs">
-                <i class="fas fa-file-alt"></i>
-                <span>Logs</span>
-            </a>
-        </nav>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-section="dashboard">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item" data-section="users">
+          <i class="fas fa-users"></i>
+          <span>Usuarios</span>
+        </a>
+        <a href="#" class="nav-item" data-section="subscriptions">
+          <i class="fas fa-crown"></i>
+          <span>Suscripciones</span>
+        </a>
+        <a href="#" class="nav-item" data-section="analytics">
+          <i class="fas fa-chart-line"></i>
+          <span>Analíticas</span>
+        </a>
+        <a href="#" class="nav-item" data-section="settings">
+          <i class="fas fa-cog"></i>
+          <span>Configuración</span>
+        </a>
+        <a href="#" class="nav-item" data-section="logs">
+          <i class="fas fa-file-alt"></i>
+          <span>Logs</span>
+        </a>
+      </nav>
     </div>
-    
+
     <!-- MAIN CONTENT -->
     <div class="main-content">
-        <!-- HEADER -->
-        <header class="admin-header">
-            <div class="header-content">
-                <div class="header-title">
-                    <img src="logo.png" alt="AXYRA" class="header-logo">
-                    <div class="header-text">
-                        <h1>Panel de Administración</h1>
-                        <p>Control total del sistema AXYRA</p>
-                    </div>
-                </div>
-                
-                <div class="header-actions">
-                    <button class="btn-brutal btn-primary" onclick="refreshData()">
-                        <i class="fas fa-sync-alt"></i> Actualizar
-                    </button>
-                    <button class="btn-brutal btn-secondary" onclick="exportData()">
-                        <i class="fas fa-download"></i> Exportar
-                    </button>
-                    <button class="btn-brutal btn-danger" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                    </button>
-                </div>
+      <!-- HEADER -->
+      <header class="admin-header">
+        <div class="header-content">
+          <div class="header-title">
+            <img src="logo.png" alt="AXYRA" class="header-logo" />
+            <div class="header-text">
+              <h1>Panel de Administración</h1>
+              <p>Control total del sistema AXYRA</p>
             </div>
-        </header>
-        
-        <!-- DASHBOARD CONTENT -->
-        <div class="dashboard-content">
-            <!-- STATS CARDS -->
-            <div class="dashboard-grid">
-                <div class="stat-card fade-in-up">
-                    <div class="stat-header">
-                        <div class="stat-title">Usuarios Totales</div>
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-                            <i class="fas fa-users"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="totalUsers">0</div>
-                    <div class="stat-change positive" id="usersChange">+0 este mes</div>
-                </div>
-                
-                <div class="stat-card fade-in-up">
-                    <div class="stat-header">
-                        <div class="stat-title">Suscripciones Activas</div>
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #48bb78, #38a169);">
-                            <i class="fas fa-crown"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="activeSubscriptions">0</div>
-                    <div class="stat-change positive" id="subscriptionsChange">+0 este mes</div>
-                </div>
-                
-                <div class="stat-card fade-in-up">
-                    <div class="stat-header">
-                        <div class="stat-title">Pruebas Gratuitas</div>
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #ed8936, #dd6b20);">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="freeTrials">0</div>
-                    <div class="stat-change" id="trialsChange">0 por vencer</div>
-                </div>
-                
-                <div class="stat-card fade-in-up">
-                    <div class="stat-header">
-                        <div class="stat-title">Ingresos Mensuales</div>
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #4299e1, #3182ce);">
-                            <i class="fas fa-dollar-sign"></i>
-                        </div>
-                    </div>
-                    <div class="stat-value" id="monthlyRevenue">$0</div>
-                    <div class="stat-change positive" id="revenueChange">+0% vs mes anterior</div>
-                </div>
-            </div>
-            
-            <!-- CHARTS -->
-            <div class="chart-container fade-in-up">
-                <h2 class="chart-title">Crecimiento de Usuarios</h2>
-                <canvas id="usersChart" width="400" height="200"></canvas>
-            </div>
-            
-            <!-- RECENT USERS TABLE -->
-            <div class="table-container fade-in-up">
-                <h2 class="table-title">Usuarios Recientes</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Email</th>
-                            <th>Plan</th>
-                            <th>Estado</th>
-                            <th>Fecha de Registro</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="recentUsersTable">
-                        <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px;">
-                                <div class="loading"></div>
-                                <p style="margin-top: 15px;">Cargando usuarios...</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+          </div>
+
+          <div class="header-actions">
+            <button class="btn-brutal btn-primary" onclick="refreshData()">
+              <i class="fas fa-sync-alt"></i> Actualizar
+            </button>
+            <button class="btn-brutal btn-secondary" onclick="exportData()">
+              <i class="fas fa-download"></i> Exportar
+            </button>
+            <button class="btn-brutal btn-danger" onclick="logout()">
+              <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+          </div>
         </div>
+      </header>
+
+      <!-- DASHBOARD CONTENT -->
+      <div class="dashboard-content">
+        <!-- STATS CARDS -->
+        <div class="dashboard-grid">
+          <div class="stat-card fade-in-up">
+            <div class="stat-header">
+              <div class="stat-title">Usuarios Totales</div>
+              <div class="stat-icon" style="background: linear-gradient(135deg, #667eea, #764ba2)">
+                <i class="fas fa-users"></i>
+              </div>
+            </div>
+            <div class="stat-value" id="totalUsers">0</div>
+            <div class="stat-change positive" id="usersChange">+0 este mes</div>
+          </div>
+
+          <div class="stat-card fade-in-up">
+            <div class="stat-header">
+              <div class="stat-title">Suscripciones Activas</div>
+              <div class="stat-icon" style="background: linear-gradient(135deg, #48bb78, #38a169)">
+                <i class="fas fa-crown"></i>
+              </div>
+            </div>
+            <div class="stat-value" id="activeSubscriptions">0</div>
+            <div class="stat-change positive" id="subscriptionsChange">+0 este mes</div>
+          </div>
+
+          <div class="stat-card fade-in-up">
+            <div class="stat-header">
+              <div class="stat-title">Pruebas Gratuitas</div>
+              <div class="stat-icon" style="background: linear-gradient(135deg, #ed8936, #dd6b20)">
+                <i class="fas fa-clock"></i>
+              </div>
+            </div>
+            <div class="stat-value" id="freeTrials">0</div>
+            <div class="stat-change" id="trialsChange">0 por vencer</div>
+          </div>
+
+          <div class="stat-card fade-in-up">
+            <div class="stat-header">
+              <div class="stat-title">Ingresos Mensuales</div>
+              <div class="stat-icon" style="background: linear-gradient(135deg, #4299e1, #3182ce)">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+            </div>
+            <div class="stat-value" id="monthlyRevenue">$0</div>
+            <div class="stat-change positive" id="revenueChange">+0% vs mes anterior</div>
+          </div>
+        </div>
+
+        <!-- CHARTS -->
+        <div class="chart-container fade-in-up">
+          <h2 class="chart-title">Crecimiento de Usuarios</h2>
+          <canvas id="usersChart" width="400" height="200"></canvas>
+        </div>
+
+        <!-- RECENT USERS TABLE -->
+        <div class="table-container fade-in-up">
+          <h2 class="table-title">Usuarios Recientes</h2>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Plan</th>
+                <th>Estado</th>
+                <th>Fecha de Registro</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="recentUsersTable">
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 40px">
+                  <div class="loading"></div>
+                  <p style="margin-top: 15px">Cargando usuarios...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    
+
     <script>
-        // Global variables
-        let usersChart;
-        let currentUser = null;
-        
-        // Initialize admin panel
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Inicializando Panel de Administración BRUTAL...');
-            initializeAdminPanel();
-        });
-        
-        async function initializeAdminPanel() {
-            try {
-                // Check authentication
-                await checkAdminAuth();
-                
-                // Load dashboard data
-                await loadDashboardData();
-                
-                // Initialize charts
-                initializeCharts();
-                
-                // Setup event listeners
-                setupEventListeners();
-                
-                console.log('✅ Panel de Administración inicializado correctamente');
-                
-            } catch (error) {
-                console.error('❌ Error inicializando panel:', error);
-                showError('Error cargando el panel de administración');
-            }
+      // Global variables
+      let usersChart;
+      let currentUser = null;
+
+      // Initialize admin panel
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('🚀 Inicializando Panel de Administración BRUTAL...');
+        initializeAdminPanel();
+      });
+
+      async function initializeAdminPanel() {
+        try {
+          // Check authentication
+          await checkAdminAuth();
+
+          // Load dashboard data
+          await loadDashboardData();
+
+          // Initialize charts
+          initializeCharts();
+
+          // Setup event listeners
+          setupEventListeners();
+
+          console.log('✅ Panel de Administración inicializado correctamente');
+        } catch (error) {
+          console.error('❌ Error inicializando panel:', error);
+          showError('Error cargando el panel de administración');
         }
-        
-        async function checkAdminAuth() {
-            const user = localStorage.getItem('axyra_isolated_user');
-            if (!user) {
-                window.location.href = '/login.html';
-                return;
-            }
-            
-            const userData = JSON.parse(user);
-            if (userData.email !== 'axyra.app@gmail.com') {
-                window.location.href = '/login.html';
-                return;
-            }
-            
-            currentUser = userData;
-            console.log('✅ Usuario administrador autenticado:', userData.email);
+      }
+
+      async function checkAdminAuth() {
+        const user = localStorage.getItem('axyra_isolated_user');
+        if (!user) {
+          window.location.href = '/login.html';
+          return;
         }
-        
-        async function loadDashboardData() {
-            try {
-                // Simulate loading data
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                // Update stats
-                document.getElementById('totalUsers').textContent = '1,247';
-                document.getElementById('usersChange').textContent = '+127 este mes';
-                
-                document.getElementById('activeSubscriptions').textContent = '892';
-                document.getElementById('subscriptionsChange').textContent = '+45 este mes';
-                
-                document.getElementById('freeTrials').textContent = '23';
-                document.getElementById('trialsChange').textContent = '5 por vencer';
-                
-                document.getElementById('monthlyRevenue').textContent = '$45,230';
-                document.getElementById('revenueChange').textContent = '+12% vs mes anterior';
-                
-                // Load recent users
-                loadRecentUsers();
-                
-            } catch (error) {
-                console.error('❌ Error cargando datos:', error);
-            }
+
+        const userData = JSON.parse(user);
+        if (userData.email !== 'axyra.app@gmail.com') {
+          window.location.href = '/login.html';
+          return;
         }
-        
-        function loadRecentUsers() {
-            const users = [
-                {
-                    name: 'Juan Pérez',
-                    email: 'juan@empresa.com',
-                    plan: 'Profesional',
-                    status: 'Activo',
-                    date: '2024-01-15'
-                },
-                {
-                    name: 'María García',
-                    email: 'maria@startup.com',
-                    plan: 'Básico',
-                    status: 'Prueba',
-                    date: '2024-01-14'
-                },
-                {
-                    name: 'Carlos López',
-                    email: 'carlos@corporacion.com',
-                    plan: 'Empresarial',
-                    status: 'Activo',
-                    date: '2024-01-13'
-                }
-            ];
-            
-            const tbody = document.getElementById('recentUsersTable');
-            tbody.innerHTML = '';
-            
-            users.forEach(user => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
+
+        currentUser = userData;
+        console.log('✅ Usuario administrador autenticado:', userData.email);
+      }
+
+      async function loadDashboardData() {
+        try {
+          // Simulate loading data
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+
+          // Update stats
+          document.getElementById('totalUsers').textContent = '1,247';
+          document.getElementById('usersChange').textContent = '+127 este mes';
+
+          document.getElementById('activeSubscriptions').textContent = '892';
+          document.getElementById('subscriptionsChange').textContent = '+45 este mes';
+
+          document.getElementById('freeTrials').textContent = '23';
+          document.getElementById('trialsChange').textContent = '5 por vencer';
+
+          document.getElementById('monthlyRevenue').textContent = '$45,230';
+          document.getElementById('revenueChange').textContent = '+12% vs mes anterior';
+
+          // Load recent users
+          loadRecentUsers();
+        } catch (error) {
+          console.error('❌ Error cargando datos:', error);
+        }
+      }
+
+      function loadRecentUsers() {
+        const users = [
+          {
+            name: 'Juan Pérez',
+            email: 'juan@empresa.com',
+            plan: 'Profesional',
+            status: 'Activo',
+            date: '2024-01-15',
+          },
+          {
+            name: 'María García',
+            email: 'maria@startup.com',
+            plan: 'Básico',
+            status: 'Prueba',
+            date: '2024-01-14',
+          },
+          {
+            name: 'Carlos López',
+            email: 'carlos@corporacion.com',
+            plan: 'Empresarial',
+            status: 'Activo',
+            date: '2024-01-13',
+          },
+        ];
+
+        const tbody = document.getElementById('recentUsersTable');
+        tbody.innerHTML = '';
+
+        users.forEach((user) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
                     <td>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
@@ -696,141 +702,157 @@
                     </td>
                     <td>${user.email}</td>
                     <td>
-                        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${getPlanColor(user.plan)}; color: white;">
+                        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${getPlanColor(
+                          user.plan
+                        )}; color: white;">
                             ${user.plan}
                         </span>
                     </td>
                     <td>
-                        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${getStatusColor(user.status)}; color: white;">
+                        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${getStatusColor(
+                          user.status
+                        )}; color: white;">
                             ${user.status}
                         </span>
                     </td>
                     <td>${user.date}</td>
                     <td>
-                        <button class="btn-brutal btn-secondary" style="padding: 8px 16px; font-size: 12px;" onclick="manageUser('${user.email}')">
+                        <button class="btn-brutal btn-secondary" style="padding: 8px 16px; font-size: 12px;" onclick="manageUser('${
+                          user.email
+                        }')">
                             <i class="fas fa-cog"></i>
                         </button>
                     </td>
                 `;
-                tbody.appendChild(row);
-            });
+          tbody.appendChild(row);
+        });
+      }
+
+      function getPlanColor(plan) {
+        switch (plan) {
+          case 'Básico':
+            return 'linear-gradient(135deg, #4299e1, #3182ce)';
+          case 'Profesional':
+            return 'linear-gradient(135deg, #48bb78, #38a169)';
+          case 'Empresarial':
+            return 'linear-gradient(135deg, #ed8936, #dd6b20)';
+          default:
+            return 'linear-gradient(135deg, #a0aec0, #718096)';
         }
-        
-        function getPlanColor(plan) {
-            switch(plan) {
-                case 'Básico': return 'linear-gradient(135deg, #4299e1, #3182ce)';
-                case 'Profesional': return 'linear-gradient(135deg, #48bb78, #38a169)';
-                case 'Empresarial': return 'linear-gradient(135deg, #ed8936, #dd6b20)';
-                default: return 'linear-gradient(135deg, #a0aec0, #718096)';
-            }
+      }
+
+      function getStatusColor(status) {
+        switch (status) {
+          case 'Activo':
+            return 'linear-gradient(135deg, #48bb78, #38a169)';
+          case 'Prueba':
+            return 'linear-gradient(135deg, #ed8936, #dd6b20)';
+          case 'Inactivo':
+            return 'linear-gradient(135deg, #f56565, #e53e3e)';
+          default:
+            return 'linear-gradient(135deg, #a0aec0, #718096)';
         }
-        
-        function getStatusColor(status) {
-            switch(status) {
-                case 'Activo': return 'linear-gradient(135deg, #48bb78, #38a169)';
-                case 'Prueba': return 'linear-gradient(135deg, #ed8936, #dd6b20)';
-                case 'Inactivo': return 'linear-gradient(135deg, #f56565, #e53e3e)';
-                default: return 'linear-gradient(135deg, #a0aec0, #718096)';
-            }
-        }
-        
-        function initializeCharts() {
-            const ctx = document.getElementById('usersChart').getContext('2d');
-            usersChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-                    datasets: [{
-                        label: 'Usuarios',
-                        data: [120, 190, 300, 500, 200, 300, 450, 600, 750, 900, 1100, 1247],
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4
-                    }]
+      }
+
+      function initializeCharts() {
+        const ctx = document.getElementById('usersChart').getContext('2d');
+        usersChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            datasets: [
+              {
+                label: 'Usuarios',
+                data: [120, 190, 300, 500, 200, 300, 450, 600, 750, 900, 1100, 1247],
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                labels: {
+                  color: '#ffffff',
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#ffffff'
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: {
-                                color: '#a0aec0'
-                            },
-                            grid: {
-                                color: '#2d3748'
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                color: '#a0aec0'
-                            },
-                            grid: {
-                                color: '#2d3748'
-                            }
-                        }
-                    }
-                }
-            });
+              },
+            },
+            scales: {
+              x: {
+                ticks: {
+                  color: '#a0aec0',
+                },
+                grid: {
+                  color: '#2d3748',
+                },
+              },
+              y: {
+                ticks: {
+                  color: '#a0aec0',
+                },
+                grid: {
+                  color: '#2d3748',
+                },
+              },
+            },
+          },
+        });
+      }
+
+      function setupEventListeners() {
+        // Sidebar navigation
+        document.querySelectorAll('.nav-item').forEach((item) => {
+          item.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Remove active class from all items
+            document.querySelectorAll('.nav-item').forEach((nav) => nav.classList.remove('active'));
+
+            // Add active class to clicked item
+            this.classList.add('active');
+
+            // Handle section switching
+            const section = this.dataset.section;
+            switchSection(section);
+          });
+        });
+      }
+
+      function switchSection(section) {
+        console.log('Cambiando a sección:', section);
+        // Here you would implement section switching logic
+      }
+
+      function refreshData() {
+        console.log('🔄 Actualizando datos...');
+        loadDashboardData();
+      }
+
+      function exportData() {
+        console.log('📊 Exportando datos...');
+        // Implement export functionality
+      }
+
+      function logout() {
+        if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+          localStorage.clear();
+          window.location.href = '/login.html';
         }
-        
-        function setupEventListeners() {
-            // Sidebar navigation
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // Remove active class from all items
-                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-                    
-                    // Add active class to clicked item
-                    this.classList.add('active');
-                    
-                    // Handle section switching
-                    const section = this.dataset.section;
-                    switchSection(section);
-                });
-            });
-        }
-        
-        function switchSection(section) {
-            console.log('Cambiando a sección:', section);
-            // Here you would implement section switching logic
-        }
-        
-        function refreshData() {
-            console.log('🔄 Actualizando datos...');
-            loadDashboardData();
-        }
-        
-        function exportData() {
-            console.log('📊 Exportando datos...');
-            // Implement export functionality
-        }
-        
-        function logout() {
-            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-                localStorage.clear();
-                window.location.href = '/login.html';
-            }
-        }
-        
-        function manageUser(email) {
-            console.log('Gestionando usuario:', email);
-            // Implement user management
-        }
-        
-        function showError(message) {
-            console.error('❌ Error:', message);
-            // Implement error display
-        }
+      }
+
+      function manageUser(email) {
+        console.log('Gestionando usuario:', email);
+        // Implement user management
+      }
+
+      function showError(message) {
+        console.error('❌ Error:', message);
+        // Implement error display
+      }
     </script>
-</body>
+  </body>
 </html>
