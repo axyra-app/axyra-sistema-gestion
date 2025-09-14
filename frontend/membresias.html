@@ -482,6 +482,192 @@
         }
 
         /* ========================================
+           MODAL DE PAGOS ELEGANTE
+           ======================================== */
+        
+        .axyra-payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .axyra-payment-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .axyra-payment-modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 0;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from { 
+                transform: translateY(-50px) scale(0.9);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .axyra-payment-modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+            position: relative;
+        }
+
+        .axyra-payment-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .axyra-payment-modal-header h3 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .axyra-payment-modal-body {
+            padding: 30px;
+        }
+
+        .axyra-payment-modal-body p {
+            color: #d0d0d0;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .axyra-payment-plan-info {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .axyra-payment-plan-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .axyra-payment-plan-price {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #ffffff;
+        }
+
+        .axyra-payment-features h4 {
+            color: #ffffff;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .axyra-payment-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .axyra-payment-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            color: #d0d0d0;
+            font-size: 0.95rem;
+        }
+
+        .axyra-payment-features li i {
+            color: #10b981;
+            font-size: 1rem;
+        }
+
+        .axyra-payment-modal-footer {
+            padding: 20px 30px 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .axyra-payment-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .axyra-payment-btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .axyra-payment-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .axyra-payment-btn-secondary {
+            background: transparent;
+            color: #a0a0a0;
+            border: 2px solid #4b5563;
+        }
+
+        .axyra-payment-btn-secondary:hover {
+            background: #4b5563;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* ========================================
            RESPONSIVE DESIGN
            ======================================== */
         
@@ -684,6 +870,43 @@
         </div>
     </section>
 
+    <!-- Modal de Redirección de Pagos -->
+    <div id="paymentModal" class="axyra-payment-modal">
+        <div class="axyra-payment-modal-content">
+            <div class="axyra-payment-modal-header">
+                <div class="axyra-payment-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <h3>¡Redirigiendo al Proceso de Pago!</h3>
+            </div>
+            <div class="axyra-payment-modal-body">
+                <p id="paymentModalText">Serás redirigido a la sección de pagos para completar tu suscripción.</p>
+                <div class="axyra-payment-plan-info">
+                    <div class="axyra-payment-plan-name" id="paymentPlanName">Plan Profesional</div>
+                    <div class="axyra-payment-plan-price" id="paymentPlanPrice">$129.900/mes</div>
+                </div>
+                <div class="axyra-payment-features">
+                    <h4>¿Qué incluye tu plan?</h4>
+                    <ul id="paymentPlanFeatures">
+                        <li><i class="fas fa-check"></i> Hasta 50 empleados</li>
+                        <li><i class="fas fa-check"></i> Chat de IA profesional</li>
+                        <li><i class="fas fa-check"></i> Soporte prioritario</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="axyra-payment-modal-footer">
+                <button class="axyra-payment-btn axyra-payment-btn-secondary" onclick="closePaymentModal()">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+                <button class="axyra-payment-btn axyra-payment-btn-primary" onclick="proceedToPayment()">
+                    <i class="fas fa-arrow-right"></i>
+                    Continuar al Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Función para hacer scroll suave a los planes
         function scrollToPlans() {
@@ -697,25 +920,105 @@
             alert('🚀 ¡Demo en desarrollo! Próximamente podrás ver una demostración completa de AXYRA.');
         }
 
+        // Variable global para el plan seleccionado
+        let selectedPlan = null;
+
         // Función para seleccionar plan
         function selectPlan(planType) {
-            // Guardar plan seleccionado
-            localStorage.setItem('axyra_membership_plan', planType);
+            selectedPlan = planType;
             
-            // Mostrar confirmación
-            const planNames = {
-                'basic': 'Básico - $49.900/mes',
-                'professional': 'Profesional - $129.900/mes',
-                'enterprise': 'Empresarial - $259.900/mes'
+            // Datos de los planes
+            const planData = {
+                'basic': {
+                    name: 'Básico',
+                    price: '$49.900/mes',
+                    features: [
+                        'Hasta 10 empleados',
+                        'Reportes básicos',
+                        'Soporte por email',
+                        'Dashboard completo',
+                        'Gestión de empleados',
+                        'Cálculo de nóminas'
+                    ]
+                },
+                'professional': {
+                    name: 'Profesional',
+                    price: '$129.900/mes',
+                    features: [
+                        'Hasta 50 empleados',
+                        'Reportes avanzados',
+                        'Soporte prioritario',
+                        'Dashboard avanzado',
+                        'Gestión completa de nóminas',
+                        'Inventario básico',
+                        'Integración con bancos',
+                        'Chat de IA profesional'
+                    ]
+                },
+                'enterprise': {
+                    name: 'Empresarial',
+                    price: '$259.900/mes',
+                    features: [
+                        'Empleados ilimitados',
+                        'Reportes ejecutivos',
+                        'Soporte 24/7',
+                        'Dashboard personalizado',
+                        'Gestión multi-sucursal',
+                        'Inventario completo',
+                        'Integraciones avanzadas',
+                        'IA avanzada',
+                        'API personalizada',
+                        'Consultoría incluida'
+                    ]
+                }
             };
+
+            const plan = planData[planType];
+            if (!plan) return;
+
+            // Actualizar contenido del modal
+            document.getElementById('paymentPlanName').textContent = plan.name;
+            document.getElementById('paymentPlanPrice').textContent = plan.price;
             
-            alert(`🎉 ¡Plan ${planNames[planType]} seleccionado!\n\nRedirigiendo al proceso de pago...`);
-            
-            // Redirigir a proceso de pago
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
+            // Actualizar lista de características
+            const featuresList = document.getElementById('paymentPlanFeatures');
+            featuresList.innerHTML = '';
+            plan.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-check"></i> ${feature}`;
+                featuresList.appendChild(li);
+            });
+
+            // Mostrar modal
+            document.getElementById('paymentModal').classList.add('show');
         }
+
+        // Función para cerrar modal
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('show');
+            selectedPlan = null;
+        }
+
+        // Función para proceder al pago
+        function proceedToPayment() {
+            if (!selectedPlan) return;
+            
+            // Guardar plan seleccionado
+            localStorage.setItem('axyra_membership_plan', selectedPlan);
+            
+            // Cerrar modal
+            closePaymentModal();
+            
+            // Redirigir al dashboard
+            window.location.href = 'index.html';
+        }
+
+        // Cerrar modal al hacer click fuera de él
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentModal();
+            }
+        });
 
         // Animaciones adicionales al cargar
         document.addEventListener('DOMContentLoaded', function() {
