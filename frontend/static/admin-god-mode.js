@@ -8,11 +8,11 @@ class AxyraAdminGodMode {
     this.currentUser = null;
     this.permissions = new Map();
     this.roleHierarchy = {
-      'god': 100,
-      'admin': 80,
-      'moderator': 60,
-      'support': 40,
-      'viewer': 20
+      god: 100,
+      admin: 80,
+      moderator: 60,
+      support: 40,
+      viewer: 20,
     };
     this.init();
   }
@@ -43,8 +43,8 @@ class AxyraAdminGodMode {
         'modify_anything',
         'view_logs',
         'export_data',
-        'bulk_operations'
-      ]
+        'bulk_operations',
+      ],
     });
 
     this.permissions.set('admin', {
@@ -58,8 +58,8 @@ class AxyraAdminGodMode {
         'analytics_access',
         'view_logs',
         'export_data',
-        'bulk_operations'
-      ]
+        'bulk_operations',
+      ],
     });
 
     this.permissions.set('moderator', {
@@ -67,11 +67,7 @@ class AxyraAdminGodMode {
       name: 'Moderador',
       color: '#45b7d1',
       icon: 'fas fa-user-check',
-      permissions: [
-        'user_management',
-        'view_logs',
-        'export_data'
-      ]
+      permissions: ['user_management', 'view_logs', 'export_data'],
     });
 
     this.permissions.set('support', {
@@ -79,10 +75,7 @@ class AxyraAdminGodMode {
       name: 'Soporte',
       color: '#96ceb4',
       icon: 'fas fa-headset',
-      permissions: [
-        'view_users',
-        'view_logs'
-      ]
+      permissions: ['view_users', 'view_logs'],
     });
 
     this.permissions.set('viewer', {
@@ -90,9 +83,7 @@ class AxyraAdminGodMode {
       name: 'Visualizador',
       color: '#feca57',
       icon: 'fas fa-eye',
-      permissions: [
-        'view_analytics'
-      ]
+      permissions: ['view_analytics'],
     });
   }
 
@@ -112,7 +103,7 @@ class AxyraAdminGodMode {
 
     const userData = JSON.parse(user);
     this.currentUser = userData;
-    
+
     // Verificar si es dios
     if (userData.email === 'axyra.app@gmail.com') {
       userData.role = 'god';
@@ -126,7 +117,7 @@ class AxyraAdminGodMode {
   setupRoleBasedUI() {
     const role = this.currentUser?.role || 'user';
     const roleInfo = this.permissions.get(role);
-    
+
     if (!roleInfo) {
       this.redirectToLogin();
       return;
@@ -156,10 +147,10 @@ class AxyraAdminGodMode {
 
   hideRestrictedFeatures(role) {
     const restrictedFeatures = this.getRestrictedFeatures(role);
-    
-    restrictedFeatures.forEach(feature => {
+
+    restrictedFeatures.forEach((feature) => {
       const elements = document.querySelectorAll(`[data-feature="${feature}"]`);
-      elements.forEach(el => {
+      elements.forEach((el) => {
         el.style.display = 'none';
       });
     });
@@ -168,7 +159,7 @@ class AxyraAdminGodMode {
   showGodModeFeatures(role) {
     if (role === 'god') {
       this.addGodModeUI();
-      this.enableGodModeFeatures();
+      this.setupGodModeFeatures();
     }
   }
 
@@ -448,7 +439,7 @@ class AxyraAdminGodMode {
   // BÚSQUEDA AVANZADA
   performGodSearch(query) {
     if (query.length < 3) return;
-    
+
     console.log('🔍 Búsqueda DIOS:', query);
     // Implementar búsqueda avanzada
   }
@@ -490,10 +481,10 @@ class AxyraAdminGodMode {
       'impersonation',
       'god_mode',
       'delete_anything',
-      'modify_anything'
+      'modify_anything',
     ];
 
-    return allFeatures.filter(feature => !roleInfo.permissions.includes(feature));
+    return allFeatures.filter((feature) => !roleInfo.permissions.includes(feature));
   }
 
   hasPermission(permission) {
