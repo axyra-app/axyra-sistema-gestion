@@ -445,6 +445,15 @@
         setTimeout(() => {
           console.log('🔧 Aplicando corrección de blur agresiva...');
           
+          // Remover cualquier elemento del chat de IA
+          const aiElements = document.querySelectorAll('[id*="chat"], [class*="chat"], [id*="ai"], [class*="ai"]');
+          aiElements.forEach(element => {
+            if (element.id.includes('chat') || element.className.includes('chat')) {
+              element.style.display = 'none';
+              console.log('🚫 Elemento de chat removido:', element.id || element.className);
+            }
+          });
+          
           // Forzar remoción de todos los efectos de blur
           const style = document.createElement('style');
           style.textContent = `
@@ -472,6 +481,10 @@
               visibility: hidden !important;
               z-index: -1 !important;
             }
+            /* Ocultar cualquier elemento de chat de IA */
+            [id*="chat"], [class*="chat"], [id*="ai"], [class*="ai"] {
+              display: none !important;
+            }
           `;
           document.head.appendChild(style);
           console.log('🔧 Estilos de corrección de blur aplicados');
@@ -479,58 +492,13 @@
       });
     </script>
     
-    <!-- Chat de IA AXYRA - Cargar al final -->
-    <!-- Chat de IA AXYRA Profesional -->
+    <!-- Chat de IA AXYRA - DESHABILITADO TEMPORALMENTE -->
+    <!-- 
     <script src="../../static/axyra-ai-chat-professional.js"></script>
     <script>
-      // Inicialización robusta del chat de IA (solo para planes de pago)
-      document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚀 DOM cargado, verificando plan de membresía para chat de IA...');
-        
-        const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
-        console.log('💎 Plan de membresía:', membershipPlan);
-        
-        if (membershipPlan !== 'free' && !window.axyraAIChat) {
-          try {
-            window.axyraAIChat = new AxyraAIChatProfessional();
-            console.log('✅ Chat de IA inicializado en dashboard para plan:', membershipPlan);
-          } catch (error) {
-            console.error('❌ Error inicializando chat de IA:', error);
-          }
-        } else if (membershipPlan === 'free') {
-          console.log('🚫 Chat de IA no disponible para plan gratuito');
-          // Asegurar que el chat esté oculto
-          const chatContainer = document.getElementById('axyra-chat-container');
-          if (chatContainer) {
-            chatContainer.style.display = 'none';
-          }
-        }
-      });
-
-      // Fallback si el DOM ya está listo
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-          const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
-          if (membershipPlan !== 'free' && !window.axyraAIChat) {
-            try {
-              window.axyraAIChat = new AxyraAIChatProfessional();
-              console.log('✅ Chat de IA inicializado en dashboard (fallback)');
-            } catch (error) {
-              console.error('❌ Error inicializando chat de IA (fallback):', error);
-            }
-          }
-        });
-      } else {
-        const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
-        if (membershipPlan !== 'free' && !window.axyraAIChat) {
-          try {
-            window.axyraAIChat = new AxyraAIChatProfessional();
-            console.log('✅ Chat de IA inicializado en dashboard (inmediato)');
-          } catch (error) {
-            console.error('❌ Error inicializando chat de IA (inmediato):', error);
-          }
-        }
-      }
+      // Chat de IA deshabilitado temporalmente para debugging
+      console.log('🚫 Chat de IA deshabilitado temporalmente');
     </script>
+    -->
   </body>
 </html>
