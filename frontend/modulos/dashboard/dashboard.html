@@ -4,12 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AXYRA - Dashboard</title>
-    
-    <!-- Redirección temporal a versión limpia -->
-    <script>
-      console.log('🔄 Redirigiendo a versión limpia del dashboard...');
-      window.location.href = 'dashboard-clean.html';
-    </script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../../nomina.ico" />
@@ -333,36 +327,35 @@
       </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Scripts esenciales -->
     <script src="../../static/firebase-config.js"></script>
-    <script src="../../static/firebase-sync-manager.js"></script>
-    <script src="../../static/notifications-system.js"></script>
-    <script src="../../static/session-timeout.js"></script>
-    <script src="../../static/advanced-reports.js"></script>
-    <script src="../../static/global-search-system.js"></script>
-    <script src="../../static/custom-reports-system.js"></script>
     <script src="../../static/auth-manager.js"></script>
-    <!-- Sistema de Modales AXYRA Profesional -->
-    <script src="../../static/axyra-modal-system.js"></script>
-    <script src="professional-modals.js"></script>
     <script src="dashboard.js"></script>
-    <script src="dashboard-modals.js"></script>
-
-    <!-- Sistema de Administración AXYRA -->
-    <script src="../../static/admin-auth.js"></script>
     
-    <!-- Inicializador del Dashboard AXYRA -->
-    <script src="../../static/dashboard-initializer.js"></script>
-    
-    <!-- Script inmediato para corregir blur -->
+    <!-- Script simplificado para dashboard -->
     <script>
-      // Script que se ejecuta inmediatamente para corregir el blur
-      (function() {
-        console.log('🔧 Aplicando corrección inmediata de blur...');
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('🚀 Inicializando dashboard AXYRA...');
         
-        // Crear estilos inmediatos
-        const immediateStyle = document.createElement('style');
-        immediateStyle.textContent = `
+        // Ocultar loader inmediatamente
+        const loader = document.getElementById('dashboard-loader');
+        if (loader) {
+          loader.style.display = 'none';
+          console.log('✅ Loader ocultado');
+        }
+        
+        // Mostrar contenido principal
+        const mainContent = document.querySelector('.axyra-main-content');
+        if (mainContent) {
+          mainContent.style.display = 'block';
+          mainContent.style.opacity = '1';
+          mainContent.style.visibility = 'visible';
+          console.log('✅ Contenido principal mostrado');
+        }
+        
+        // Aplicar estilos de corrección
+        const style = document.createElement('style');
+        style.textContent = `
           .axyra-main-content,
           .axyra-dashboard-container,
           .axyra-dashboard-header,
@@ -382,129 +375,11 @@
             z-index: -1 !important;
           }
         `;
-        document.head.appendChild(immediateStyle);
-        console.log('🔧 Estilos inmediatos aplicados');
-      })();
-    </script>
-
-    <!-- Script de emergencia para forzar visibilidad -->
-    <script>
-      // Script de emergencia para asegurar que el dashboard sea visible
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(() => {
-          const loader = document.getElementById('dashboard-loader');
-          const mainContent = document.querySelector('.axyra-main-content');
-          const dashboardContainer = document.querySelector('.axyra-dashboard-container');
-          
-          if (loader) {
-            loader.style.display = 'none';
-            loader.style.opacity = '0';
-            loader.style.visibility = 'hidden';
-            loader.style.zIndex = '-1';
-            console.log('🔧 Loader ocultado por script de emergencia');
-          }
-          
-          if (mainContent) {
-            mainContent.style.display = 'block';
-            mainContent.style.opacity = '1';
-            mainContent.style.visibility = 'visible';
-            mainContent.style.filter = 'none';
-            mainContent.style.backdropFilter = 'none';
-            mainContent.style.blur = 'none';
-            console.log('🔧 Contenido principal mostrado por script de emergencia');
-          }
-          
-          if (dashboardContainer) {
-            dashboardContainer.style.opacity = '1';
-            dashboardContainer.style.visibility = 'visible';
-            dashboardContainer.style.filter = 'none';
-            dashboardContainer.style.backdropFilter = 'none';
-            dashboardContainer.style.blur = 'none';
-            console.log('🔧 Contenedor del dashboard visible por script de emergencia');
-          }
-          
-          // Remover cualquier blur de todos los elementos
-          const allElements = document.querySelectorAll('*');
-          allElements.forEach(element => {
-            if (element.style.filter && element.style.filter.includes('blur')) {
-              element.style.filter = 'none';
-              console.log('🔧 Blur removido de elemento:', element.tagName);
-            }
-            if (element.style.backdropFilter && element.style.backdropFilter.includes('blur')) {
-              element.style.backdropFilter = 'none';
-              console.log('🔧 Backdrop blur removido de elemento:', element.tagName);
-            }
-          });
-          
-          // Verificar plan de membresía y ocultar chat de IA si es gratuito
-          const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
-          if (membershipPlan === 'free') {
-            const chatContainer = document.getElementById('axyra-chat-container');
-            if (chatContainer) {
-              chatContainer.style.display = 'none';
-              console.log('🚫 Chat de IA oculto para plan gratuito');
-            }
-          }
-        }, 2000);
+        document.head.appendChild(style);
         
-        // Script adicional más agresivo después de 3 segundos
-        setTimeout(() => {
-          console.log('🔧 Aplicando corrección de blur agresiva...');
-          
-          // Remover cualquier elemento del chat de IA
-          const aiElements = document.querySelectorAll('[id*="chat"], [class*="chat"], [id*="ai"], [class*="ai"]');
-          aiElements.forEach(element => {
-            if (element.id.includes('chat') || element.className.includes('chat')) {
-              element.style.display = 'none';
-              console.log('🚫 Elemento de chat removido:', element.id || element.className);
-            }
-          });
-          
-          // Forzar remoción de todos los efectos de blur
-          const style = document.createElement('style');
-          style.textContent = `
-            * {
-              filter: none !important;
-              backdrop-filter: none !important;
-              -webkit-backdrop-filter: none !important;
-              blur: none !important;
-            }
-            .axyra-main-content,
-            .axyra-dashboard-container,
-            .axyra-dashboard-header,
-            .axyra-stats-grid,
-            .axyra-quick-actions,
-            .axyra-charts-section {
-              filter: none !important;
-              backdrop-filter: none !important;
-              -webkit-backdrop-filter: none !important;
-              opacity: 1 !important;
-              visibility: visible !important;
-            }
-            #dashboard-loader {
-              display: none !important;
-              opacity: 0 !important;
-              visibility: hidden !important;
-              z-index: -1 !important;
-            }
-            /* Ocultar cualquier elemento de chat de IA */
-            [id*="chat"], [class*="chat"], [id*="ai"], [class*="ai"] {
-              display: none !important;
-            }
-          `;
-          document.head.appendChild(style);
-          console.log('🔧 Estilos de corrección de blur aplicados');
-        }, 3000);
+        console.log('✅ Dashboard AXYRA inicializado correctamente');
       });
     </script>
     
-    <!-- Chat de IA AXYRA - DESHABILITADO TEMPORALMENTE -->
-    <!-- 
-    <script src="../../static/axyra-ai-chat-professional.js"></script>
-    <script>
-      // Chat de IA deshabilitado temporalmente para debugging
-      console.log('🚫 Chat de IA deshabilitado temporalmente');
-    </script>
-    -->
   </body>
 </html>
