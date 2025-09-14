@@ -1,226 +1,382 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Función para verificar si el usuario está autenticado
+    
+    // ========================================
+    // FUNCIONES AUXILIARES
+    // ========================================
+    
+    // Verificar si el usuario está autenticado
     function isAuthenticated() {
       return request.auth != null;
     }
     
-    // Función para verificar si el usuario es el propietario del recurso
+    // Verificar si el usuario es admin
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.admin == true || 
+         request.auth.token.role == 'admin' ||
+         request.auth.token.role == 'super_admin');
+    }
+    
+    // Verificar si el usuario es el propietario del documento
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
     
-    // Función para verificar si el usuario es admin
-    function isAdmin() {
+    // Verificar si el usuario pertenece a la misma empresa
+    function isSameCompany(companyId) {
       return isAuthenticated() && 
-        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+        request.auth.token.companyId == companyId;
     }
     
-    // Función para validar datos de transacción
-    function isValidTransaction() {
-      return request.resource.data.keys().hasAll(['amount', 'currency', 'status', 'userId']) &&
-        request.resource.data.amount is number &&
-        request.resource.data.amount > 0 &&
-        request.resource.data.currency is string &&
-        request.resource.data.status in ['PENDING', 'APPROVED', 'DECLINED', 'VOIDED'];
+    // Verificar si el usuario tiene rol específico
+    function hasRole(role) {
+      return isAuthenticated() && request.auth.token.role == role;
     }
     
-    // Función para validar datos de empleado
-    function isValidEmployee() {
-      return request.resource.data.keys().hasAll(['name', 'email', 'userId']) &&
-        request.resource.data.name is string &&
-        request.resource.data.email is string &&
-        request.resource.data.email.matches('.*@.*\\..*');
+    // Verificar si el usuario puede gestionar empleados
+    function canManageEmployees() {
+      return isAdmin() || hasRole('rrhh') || hasRole('gerente');
     }
     
-    // Reglas para usuarios (perfil)
-    match /users/{userId} {
-      // Permitir lectura y escritura si el usuario está autenticado y es el propietario
-      allow read, write: if isAuthenticated() && request.auth.uid == userId;
-      // Permitir creación si el usuario está autenticado (para nuevos registros)
-      allow create: if isAuthenticated() && request.auth.uid == userId;
-      // Permitir lectura si es admin
-      allow read: if isAdmin();
+    // Verificar si el usuario puede gestionar nóminas
+    function canManagePayroll() {
+      return isAdmin() || hasRole('contador') || hasRole('gerente');
     }
     
-    // Reglas para empresas
-    match /companies/{companyId} {
-      allow read, write: if isOwner(resource.data.userId);
+    // Verificar si el usuario puede gestionar inventario
+    function canManageInventory() {
+      return isAdmin() || hasRole('almacen') || hasRole('gerente');
+    }
+    
+    // Verificar si el usuario puede gestionar finanzas
+    function canManageFinance() {
+      return isAdmin() || hasRole('contador') || hasRole('gerente');
+    }
+    
+    // ========================================
+    // REGLAS PARA USUARIOS
+    // ========================================
+    
+    match /usuarios/{userId} {
+      // Solo el propio usuario puede leer/escribir su perfil
+      allow read, write: if isOwner(userId);
+      
+      // Los admins pueden leer todos los usuarios
       allow read: if isAdmin();
       
-      // Validar datos al crear/actualizar
-      allow create: if isOwner(request.resource.data.userId) &&
-        request.resource.data.keys().hasAll(['name', 'nit', 'userId']) &&
-        request.resource.data.name is string &&
-        request.resource.data.nit is string;
+      // Los admins pueden crear/actualizar usuarios
+      allow create: if isAdmin();
+      allow update: if isAdmin() || isOwner(userId);
+      
+      // Solo admins pueden eliminar usuarios
+      allow delete: if isAdmin();
     }
     
-    // Reglas para empleados
-    match /employees/{employeeId} {
-      allow read, write: if isOwner(resource.data.userId);
+    // ========================================
+    // REGLAS PARA EMPLEADOS
+    // ========================================
+    
+    match /empleados/{empleadoId} {
+      // Lectura: usuarios autenticados de la misma empresa
+      allow read: if isAuthenticated() && 
+        (isSameCompany(resource.data.companyId) || isAdmin());
+      
+      // Escritura: solo quienes pueden gestionar empleados
+      allow create: if canManageEmployees() && 
+        isSameCompany(request.resource.data.companyId);
+      
+      allow update: if canManageEmployees() && 
+        isSameCompany(resource.data.companyId);
+      
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA HORAS TRABAJADAS
+    // ========================================
+    
+    match /horas_trabajadas/{horaId} {
+      // Lectura: empleado propietario, RRHH, admins
+      allow read: if isAuthenticated() && (
+        isOwner(resource.data.empleado_id) ||
+        canManageEmployees() ||
+        isAdmin()
+      );
+      
+      // Escritura: empleado propietario, RRHH, admins
+      allow create: if isAuthenticated() && (
+        isOwner(request.resource.data.empleado_id) ||
+        canManageEmployees()
+      );
+      
+      allow update: if isAuthenticated() && (
+        isOwner(resource.data.empleado_id) ||
+        canManageEmployees()
+      );
+      
+      allow delete: if canManageEmployees() || isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA NÓMINAS
+    // ========================================
+    
+    match /nominas/{nominaId} {
+      // Lectura: empleado propietario, contadores, admins
+      allow read: if isAuthenticated() && (
+        isOwner(resource.data.empleado_id) ||
+        canManagePayroll() ||
+        isAdmin()
+      );
+      
+      // Escritura: solo contadores y admins
+      allow create, update: if canManagePayroll();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA CUADRE DE CAJA
+    // ========================================
+    
+    match /cuadre_caja/{cuadreId} {
+      // Lectura: usuarios con acceso financiero
+      allow read: if isAuthenticated() && (
+        canManageFinance() ||
+        isAdmin()
+      );
+      
+      // Escritura: solo contadores y admins
+      allow create, update: if canManageFinance();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA INVENTARIO
+    // ========================================
+    
+    match /inventario/{productoId} {
+      // Lectura: usuarios autenticados de la misma empresa
+      allow read: if isAuthenticated() && 
+        (isSameCompany(resource.data.companyId) || isAdmin());
+      
+      // Escritura: solo quienes pueden gestionar inventario
+      allow create: if canManageInventory() && 
+        isSameCompany(request.resource.data.companyId);
+      
+      allow update: if canManageInventory() && 
+        isSameCompany(resource.data.companyId);
+      
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA FACTURAS
+    // ========================================
+    
+    match /facturas/{facturaId} {
+      // Lectura: usuarios con acceso financiero
+      allow read: if isAuthenticated() && (
+        canManageFinance() ||
+        isAdmin()
+      );
+      
+      // Escritura: solo contadores y admins
+      allow create, update: if canManageFinance();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA MEMBRESÍAS
+    // ========================================
+    
+    match /membresias/{membresiaId} {
+      // Lectura: usuarios autenticados de la misma empresa
+      allow read: if isAuthenticated() && 
+        (isSameCompany(resource.data.companyId) || isAdmin());
+      
+      // Escritura: admins y gerentes
+      allow create, update: if isAdmin() || hasRole('gerente');
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA REPORTES
+    // ========================================
+    
+    match /reportes/{reporteId} {
+      // Lectura: usuarios autenticados de la misma empresa
+      allow read: if isAuthenticated() && 
+        (isSameCompany(resource.data.companyId) || isAdmin());
+      
+      // Escritura: admins y gerentes
+      allow create, update: if isAdmin() || hasRole('gerente');
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA CONFIGURACIÓN
+    // ========================================
+    
+    match /configuracion/{configId} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Escritura: solo admins
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA EMPRESAS
+    // ========================================
+    
+    match /empresas/{empresaId} {
+      // Lectura: usuarios de la misma empresa o admins
+      allow read: if isAuthenticated() && (
+        isSameCompany(empresaId) ||
+        isAdmin()
+      );
+      
+      // Escritura: solo admins
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA NOTIFICACIONES
+    // ========================================
+    
+    match /notificaciones/{notificacionId} {
+      // Lectura: usuario propietario de la notificación
+      allow read: if isAuthenticated() && 
+        isOwner(resource.data.userId);
+      
+      // Escritura: sistema y admins
+      allow create: if isAdmin() || 
+        request.resource.data.userId == request.auth.uid;
+      
+      // Actualización: solo el propietario
+      allow update: if isAuthenticated() && 
+        isOwner(resource.data.userId);
+      
+      // Eliminación: propietario y admins
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA AUDITORÍA
+    // ========================================
+    
+    match /auditoria/{auditId} {
+      // Solo lectura para admins
       allow read: if isAdmin();
       
-      // Validar datos al crear/actualizar
-      allow create: if isOwner(request.resource.data.userId) && isValidEmployee();
-      allow update: if isOwner(resource.data.userId) && isValidEmployee();
-    }
-    
-    // Reglas para horas
-    match /hours/{hourId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
+      // Solo el sistema puede escribir
+      allow create: if isAdmin();
       
-      // Validar datos al crear/actualizar
-      allow create: if isOwner(request.resource.data.userId) &&
-        request.resource.data.keys().hasAll(['employeeId', 'date', 'hours', 'userId']) &&
-        request.resource.data.hours is number &&
-        request.resource.data.hours > 0 &&
-        request.resource.data.hours <= 24;
+      // No se permite modificar registros de auditoría
+      allow update, delete: if false;
     }
     
-    // Reglas para nóminas
-    match /payrolls/{payrollId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
-      
-      // Validar datos al crear
-      allow create: if isOwner(request.resource.data.userId) &&
-        request.resource.data.keys().hasAll(['period', 'employees', 'userId']) &&
-        request.resource.data.period is string &&
-        request.resource.data.employees is list;
-    }
+    // ========================================
+    // REGLAS PARA BACKUPS
+    // ========================================
     
-    // Reglas para transacciones
-    match /transactions/{transactionId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
-      
-      // Validar datos al crear
-      allow create: if isOwner(request.resource.data.userId) && isValidTransaction();
-    }
-    
-    // Reglas para suscripciones
-    match /subscriptions/{subscriptionId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
-      
-      // Validar datos al crear
-      allow create: if isOwner(request.resource.data.userId) &&
-        request.resource.data.keys().hasAll(['planId', 'status', 'userId']) &&
-        request.resource.data.planId in ['basic', 'professional', 'enterprise'] &&
-        request.resource.data.status in ['active', 'cancelled', 'expired', 'pending'];
-    }
-    
-    // Reglas para métodos de pago
-    match /payment_methods/{methodId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
-    }
-    
-    // Reglas para reportes
-    match /reports/{reportId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
-    }
-    
-    // Reglas para auditoría (solo lectura para admins)
-    match /audit_logs/{logId} {
-      allow read: if isAdmin();
-      allow write: if false; // Solo el sistema puede escribir logs
-    }
-    
-    // Reglas para configuraciones del sistema (solo admins)
-    match /system_config/{configId} {
+    match /backups/{backupId} {
+      // Solo admins pueden acceder a backups
       allow read, write: if isAdmin();
     }
     
-    // Reglas para notificaciones
-    match /notifications/{notificationId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
+    // ========================================
+    // REGLAS PARA INTEGRACIONES
+    // ========================================
+    
+    match /integraciones/{integracionId} {
+      // Solo admins pueden gestionar integraciones
+      allow read, write: if isAdmin();
     }
     
-    // Reglas para archivos/documents
-    match /documents/{documentId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
-    }
+    // ========================================
+    // REGLAS PARA TEMPLATES
+    // ========================================
     
-    // Reglas para cuadre de caja
-    match /cuadre_caja/{cuadreId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
+    match /templates/{templateId} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
       
-      // Validar datos al crear/actualizar
-      allow create: if isOwner(request.resource.data.userId) &&
-        request.resource.data.keys().hasAll(['fecha', 'monto', 'userId']) &&
-        request.resource.data.monto is number &&
-        request.resource.data.monto >= 0;
+      // Escritura: admins y gerentes
+      allow create, update: if isAdmin() || hasRole('gerente');
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
     }
     
-    // Reglas para facturas
-    match /facturas/{facturaId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
+    // ========================================
+    // REGLAS PARA EXPORTACIONES
+    // ========================================
+    
+    match /exportaciones/{exportacionId} {
+      // Lectura: usuario que creó la exportación o admins
+      allow read: if isAuthenticated() && (
+        isOwner(resource.data.createdBy) ||
+        isAdmin()
+      );
       
-      // Validar datos al crear/actualizar
-      allow create: if isOwner(request.resource.data.userId) &&
-        request.resource.data.keys().hasAll(['numero', 'fecha', 'monto', 'userId']) &&
-        request.resource.data.monto is number &&
-        request.resource.data.monto > 0;
+      // Escritura: usuarios autenticados
+      allow create: if isAuthenticated();
+      
+      // Actualización: solo el creador
+      allow update: if isAuthenticated() && 
+        isOwner(resource.data.createdBy);
+      
+      // Eliminación: creador y admins
+      allow delete: if isOwner(resource.data.createdBy) || isAdmin();
     }
     
-    // Reglas para inventario
-    match /inventario/{itemId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
+    // ========================================
+    // REGLAS PARA CHAT IA
+    // ========================================
+    
+    match /chat_historial/{chatId} {
+      // Lectura: usuario propietario del chat
+      allow read: if isAuthenticated() && 
+        isOwner(resource.data.userId);
       
-      // Validar datos al crear/actualizar
-      allow create: if isOwner(request.resource.data.userId) &&
-        request.resource.data.keys().hasAll(['nombre', 'cantidad', 'precio', 'userId']) &&
-        request.resource.data.cantidad is number &&
-        request.resource.data.cantidad >= 0 &&
-        request.resource.data.precio is number &&
-        request.resource.data.precio >= 0;
+      // Escritura: usuario propietario
+      allow create, update: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      
+      // Eliminación: propietario y admins
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
     }
     
-    // Reglas para categorías
-    match /categorias/{categoriaId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
-      
-      // Validar datos al crear/actualizar
-      allow create: if isOwner(request.resource.data.userId) &&
-        request.resource.data.keys().hasAll(['nombre', 'descripcion', 'userId']) &&
-        request.resource.data.nombre is string &&
-        request.resource.data.nombre.size() > 0;
+    // ========================================
+    // REGLAS PARA SISTEMA
+    // ========================================
+    
+    match /sistema/{sistemaId} {
+      // Solo admins pueden acceder a configuraciones del sistema
+      allow read, write: if isAdmin();
     }
     
-    // Reglas para movimientos de inventario
-    match /movimientos_inventario/{movimientoId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
-      
-      // Validar datos al crear/actualizar
-      allow create: if isOwner(request.resource.data.userId) &&
-        request.resource.data.keys().hasAll(['itemId', 'tipo', 'cantidad', 'fecha', 'userId']) &&
-        request.resource.data.cantidad is number &&
-        request.resource.data.cantidad > 0 &&
-        request.resource.data.tipo in ['entrada', 'salida', 'ajuste'];
-    }
+    // ========================================
+    // REGLAS POR DEFECTO
+    // ========================================
     
-    // Reglas para departamentos
-    match /departamentos/{departamentoId} {
-      allow read, write: if isOwner(resource.data.userId);
-      allow read: if isAdmin();
-      
-      // Validar datos al crear/actualizar
-      allow create: if isOwner(request.resource.data.userId) &&
-        request.resource.data.keys().hasAll(['nombre', 'descripcion', 'userId']) &&
-        request.resource.data.nombre is string &&
-        request.resource.data.nombre.size() > 0;
+    // Cualquier otra colección no especificada
+    match /{document=**} {
+      // Denegar por defecto
+      allow read, write: if false;
     }
   }
 }

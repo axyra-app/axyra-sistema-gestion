@@ -1,87 +1,74 @@
-# Archivos de configuración sensibles
-config.json
-firebase-config.js
+# ========================================
+# GITIGNORE PARA AXYRA - VERCEL + FIREBASE
+# ========================================
+
+# Dependencias
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vercel
+.vercel/
+vercel.json
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
+# Variables de entorno
 .env
 .env.local
-.env.production
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Archivos de base de datos
-*.db
-*.sqlite
-*.sqlite3
-
-# Archivos de backup
-backup/
-backups/
-*.backup
-
-# Archivos de logs
+# Logs
 logs/
 *.log
 
 # Archivos temporales
-temp/
-tmp/
 *.tmp
-
-# Archivos de sistema
+*.temp
 .DS_Store
 Thumbs.db
-desktop.ini
 
-# Archivos de IDE
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Archivos de dependencias
-node_modules/
+# Backend (no necesario en Vercel)
+backend/
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
-# Archivos de build
-dist/
-build/
-*.min.js
-*.min.css
+# Archivos de exportación
+exports/
+uploads/
 
-# Archivos de PDFs generados
-backend/pdfs/
-*.pdf
+# Base de datos local
+*.db
+*.sqlite
+*.sqlite3
 
-# Archivos de Excel generados
-plantillas/
-*.xlsx
-*.xls
-
-# Archivos de configuración específicos del entorno
-vercel.json
-firebase.json
-firestore.indexes.json
-firestore.rules
-storage.rules
-
-# Archivos de credenciales
+# Archivos de configuración local
 credentials.json
-service-account.json
-key.json
+token.json
 
-# Archivos de cache
-.cache/
-*.cache
+# Archivos de backup
+backup/
+*.backup
 
-# Archivos de test
-test/
-tests/
-__tests__/
-
-# Archivos de documentación interna
-docs/
-documentation/
-internal/
-
-# Archivos de configuración de producción
-production/
-prod/
+# Archivos de documentación temporal
+*.md.bak

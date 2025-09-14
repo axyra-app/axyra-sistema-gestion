@@ -1101,18 +1101,25 @@ def descargar_nomina(filename: str):
         raise HTTPException(status_code=500, detail=f"Error al descargar nómina: {str(e)}")
 
 @app.post("/subir-nomina-drive")
-def subir_nomina_drive():
+def subir_nomina_drive(payload: dict):
     """Subir archivo de nómina a Google Drive."""
     try:
         try:
             from .google_drive import upload_nomina_to_drive
+            from .export_functions import exportar_nomina_excel
         except ImportError:
             from google_drive import upload_nomina_to_drive
+            from export_functions import exportar_nomina_excel
         
-        # === FUNCIÓN ELIMINADA: exportar_excel ===
-        # Esta función ha sido reemplazada por exportar_nomina_plantilla
-        # que usa archivos de plantilla existentes para mayor eficiencia
-        raise HTTPException(status_code=501, detail="Función no implementada. Use /exportar-nomina-plantilla en su lugar.")
+        # Obtener parámetros del payload
+        quincena = payload.get("quincena")
+        tipo_nomina = payload.get("tipo_nomina", "general")
+        
+        if not quincena:
+            raise HTTPException(status_code=400, detail="Quincena es requerida")
+        
+        # Exportar nómina a Excel
+        filepath = exportar_nomina_excel(quincena, tipo_nomina)
         
         if not filepath or not os.path.exists(filepath):
             raise HTTPException(status_code=404, detail="Archivo de nómina no encontrado")
@@ -1142,13 +1149,16 @@ def subir_cuadre_drive(fecha: str = Form(None)):
     try:
         try:
             from .google_drive import upload_cuadre_to_drive
+            from .export_functions import exportar_cuadre_caja_excel
         except ImportError:
             from google_drive import upload_cuadre_to_drive
+            from export_functions import exportar_cuadre_caja_excel
         
-        # === FUNCIÓN ELIMINADA: exportar_cuadre_caja ===
-        # Esta función ha sido reemplazada por exportar_cuadre_caja_plantilla
-        # que usa archivos de plantilla existentes para mayor eficiencia
-        raise HTTPException(status_code=501, detail="Función no implementada. Use /exportar-cuadre-plantilla en su lugar.")
+        if not fecha:
+            raise HTTPException(status_code=400, detail="Fecha es requerida")
+        
+        # Exportar cuadre de caja a Excel
+        filepath = exportar_cuadre_caja_excel(fecha)
         
         if not filepath or not os.path.exists(filepath):
             raise HTTPException(status_code=404, detail="Archivo de cuadre no encontrado")
@@ -1171,6 +1181,119 @@ def subir_cuadre_drive(fecha: str = Form(None)):
         # Error al subir cuadre
         raise HTTPException(status_code=500, detail=f"Error al subir cuadre: {str(e)}")
 
+
+# ========================================
+# RUTAS DE EXPORTACIÓN ADICIONALES
+# ========================================
+
+@app.post("/exportar-empleados")
+def exportar_empleados_route(filtros: dict = None):
+    """Exportar empleados a Excel con filtros opcionales."""
+    try:
+        try:
+            from .export_functions import exportar_empleados_excel
+        except ImportError:
+            from export_functions import exportar_empleados_excel
+        
+        filepath = exportar_empleados_excel(filtros)
+        
+        if not filepath or not os.path.exists(filepath):
+            raise HTTPException(status_code=404, detail="No se encontraron empleados para exportar")
+        
+        filename = os.path.basename(filepath)
+        return FileResponse(filepath, filename=filename)
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al exportar empleados: {str(e)}")
+
+@app.post("/exportar-horas")
+def exportar_horas_route(periodo: str, empleado_id: int = None):
+    """Exportar horas trabajadas a Excel."""
+    try:
+        try:
+            from .export_functions import exportar_horas_excel
+        except ImportError:
+            from export_functions import exportar_horas_excel
+        
+        filepath = exportar_horas_excel(periodo, empleado_id)
+        
+        if not filepath or not os.path.exists(filepath):
+            raise HTTPException(status_code=404, detail="No se encontraron horas para exportar")
+        
+        filename = os.path.basename(filepath)
+        return FileResponse(filepath, filename=filename)
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al exportar horas: {str(e)}")
+
+@app.post("/exportar-inventario")
+def exportar_inventario_route(filtros: dict = None):
+    """Exportar inventario a Excel con filtros opcionales."""
+    try:
+        try:
+            from .export_functions import exportar_inventario_excel
+        except ImportError:
+            from export_functions import exportar_inventario_excel
+        
+        filepath = exportar_inventario_excel(filtros)
+        
+        if not filepath or not os.path.exists(filepath):
+            raise HTTPException(status_code=404, detail="No se encontraron productos para exportar")
+        
+        filename = os.path.basename(filepath)
+        return FileResponse(filepath, filename=filename)
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al exportar inventario: {str(e)}")
+
+@app.get("/google-drive-status")
+def google_drive_status():
+    """Verificar estado de configuración de Google Drive."""
+    try:
+        try:
+            from .google_drive import check_google_drive_setup
+        except ImportError:
+            from google_drive import check_google_drive_setup
+        
+        status = check_google_drive_setup()
+        return status
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error verificando Google Drive: {str(e)}")
+
+@app.get("/google-drive-files")
+def google_drive_files(folder_name: str = None):
+    """Obtener lista de archivos de Google Drive."""
+    try:
+        try:
+            from .google_drive import get_drive_files
+        except ImportError:
+            from google_drive import get_drive_files
+        
+        files = get_drive_files(folder_name)
+        return {"files": files}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error obteniendo archivos de Drive: {str(e)}")
+
+@app.delete("/google-drive-file/{file_id}")
+def delete_google_drive_file(file_id: str):
+    """Eliminar archivo de Google Drive."""
+    try:
+        try:
+            from .google_drive import delete_drive_file
+        except ImportError:
+            from google_drive import delete_drive_file
+        
+        success = delete_drive_file(file_id)
+        
+        if success:
+            return {"success": True, "message": "Archivo eliminado exitosamente"}
+        else:
+            raise HTTPException(status_code=500, detail="Error al eliminar archivo")
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error eliminando archivo: {str(e)}")
 
 @app.delete("/eliminar-factura/{factura_id}")
 async def eliminar_factura(factura_id: int):

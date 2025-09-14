@@ -1,30 +1,31 @@
 {
-  "name": "axyra-enterprise-frontend",
+  "name": "axyra-sistema-gestion",
   "version": "1.0.0",
-  "description": "Frontend para AXYRA - Sistema de Gestión Empresarial",
-  "main": "index.html",
+  "description": "Sistema de Gestión Empresarial AXYRA",
+  "main": "frontend/index.html",
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'No build step required for static site'",
-    "deploy": "vercel --prod",
-    "preview": "vercel"
+    "build": "echo 'Build completed'",
+    "start": "vercel start",
+    "deploy": "vercel --prod"
   },
-  "dependencies": {
-    "firebase": "^10.7.1"
-  },
+  "keywords": [
+    "sistema-gestion",
+    "empresarial",
+    "nomina",
+    "empleados",
+    "firebase",
+    "vercel"
+  ],
+  "author": "AXYRA Team",
+  "license": "MIT",
   "devDependencies": {
     "vercel": "^32.0.0"
   },
-  "keywords": [
-    "vercel",
-    "firebase",
-    "frontend",
-    "enterprise",
-    "management",
-    "payments",
-    "wompi"
-  ],
-  "author": "AXYRA Team",
-  "license": "MIT"
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.5.0"
+  }
 }
-

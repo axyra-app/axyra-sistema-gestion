@@ -1,111 +1,314 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Función para verificar si el usuario está autenticado
+    
+    // ========================================
+    // FUNCIONES AUXILIARES
+    // ========================================
+    
+    // Verificar si el usuario está autenticado
     function isAuthenticated() {
       return request.auth != null;
     }
     
-    // Función para verificar si el usuario es el propietario del archivo
+    // Verificar si el usuario es admin
+    function isAdmin() {
+      return isAuthenticated() && 
+        (request.auth.token.admin == true || 
+         request.auth.token.role == 'admin' ||
+         request.auth.token.role == 'super_admin');
+    }
+    
+    // Verificar si el usuario es el propietario del archivo
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
     
-    // Función para verificar si el usuario es admin
-    function isAdmin() {
+    // Verificar si el usuario pertenece a la misma empresa
+    function isSameCompany(companyId) {
       return isAuthenticated() && 
-        exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
-        get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+        request.auth.token.companyId == companyId;
     }
     
-    // Función para validar tipo de archivo
+    // Verificar si el usuario tiene rol específico
+    function hasRole(role) {
+      return isAuthenticated() && request.auth.token.role == role;
+    }
+    
+    // Verificar si el archivo es de un tipo permitido
     function isValidFileType() {
       return resource.contentType.matches('image/.*') ||
-        resource.contentType.matches('application/pdf') ||
-        resource.contentType.matches('application/vnd.openxmlformats-officedocument.*') ||
-        resource.contentType.matches('text/.*');
+             resource.contentType.matches('application/pdf') ||
+             resource.contentType.matches('application/vnd.openxmlformats-officedocument.*') ||
+             resource.contentType.matches('application/vnd.ms-excel') ||
+             resource.contentType.matches('text/.*') ||
+             resource.contentType.matches('application/json');
     }
     
-    // Función para validar tamaño de archivo (10MB máximo)
+    // Verificar si el archivo no excede el tamaño máximo (10MB)
     function isValidFileSize() {
-      return resource.size < 10 * 1024 * 1024;
+      return resource.size < 10 * 1024 * 1024; // 10MB
     }
     
-    // Reglas para documentos de usuarios
-    match /users/{userId}/documents/{documentId} {
-      allow read, write: if isOwner(userId);
-      allow read: if isAdmin();
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE USUARIOS
+    // ========================================
+    
+    match /users/{userId}/{allPaths=**} {
+      // Lectura: solo el propietario
+      allow read: if isOwner(userId);
       
-      // Validar al subir archivos
-      allow create: if isOwner(userId) && 
+      // Escritura: solo el propietario con validaciones
+      allow write: if isOwner(userId) && 
         isValidFileType() && 
         isValidFileSize();
+      
+      // Eliminación: solo el propietario
+      allow delete: if isOwner(userId);
     }
     
-    // Reglas para documentos de empresas
-    match /companies/{companyId}/documents/{documentId} {
-      allow read, write: if isOwner(resource.metadata.userId);
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE EMPLEADOS
+    // ========================================
+    
+    match /empleados/{empleadoId}/{allPaths=**} {
+      // Lectura: empleado propietario, RRHH, admins
+      allow read: if isAuthenticated() && (
+        isOwner(empleadoId) ||
+        hasRole('rrhh') ||
+        hasRole('gerente') ||
+        isAdmin()
+      );
+      
+      // Escritura: empleado propietario, RRHH, admins
+      allow write: if isAuthenticated() && (
+        isOwner(empleadoId) ||
+        hasRole('rrhh') ||
+        hasRole('gerente') ||
+        isAdmin()
+      ) && isValidFileType() && isValidFileSize();
+      
+      // Eliminación: RRHH, gerentes, admins
+      allow delete: if hasRole('rrhh') || hasRole('gerente') || isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA DOCUMENTOS DE NÓMINA
+    // ========================================
+    
+    match /nominas/{nominaId}/{allPaths=**} {
+      // Lectura: empleado propietario, contadores, admins
+      allow read: if isAuthenticated() && (
+        isOwner(resource.metadata.empleadoId) ||
+        hasRole('contador') ||
+        hasRole('gerente') ||
+        isAdmin()
+      );
+      
+      // Escritura: solo contadores y admins
+      allow write: if (hasRole('contador') || hasRole('gerente') || isAdmin()) &&
+        isValidFileType() && isValidFileSize();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS FINANCIEROS
+    // ========================================
+    
+    match /finanzas/{allPaths=**} {
+      // Lectura: usuarios con acceso financiero
+      allow read: if isAuthenticated() && (
+        hasRole('contador') ||
+        hasRole('gerente') ||
+        isAdmin()
+      );
+      
+      // Escritura: solo contadores y admins
+      allow write: if (hasRole('contador') || hasRole('gerente') || isAdmin()) &&
+        isValidFileType() && isValidFileSize();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA INVENTARIO
+    // ========================================
+    
+    match /inventario/{productoId}/{allPaths=**} {
+      // Lectura: usuarios autenticados de la misma empresa
+      allow read: if isAuthenticated() && 
+        (isSameCompany(resource.metadata.companyId) || isAdmin());
+      
+      // Escritura: personal de almacén, gerentes, admins
+      allow write: if isAuthenticated() && (
+        hasRole('almacen') ||
+        hasRole('gerente') ||
+        isAdmin()
+      ) && isValidFileType() && isValidFileSize();
+      
+      // Eliminación: personal de almacén, gerentes, admins
+      allow delete: if hasRole('almacen') || hasRole('gerente') || isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA EXPORTACIONES
+    // ========================================
+    
+    match /exports/{userId}/{allPaths=**} {
+      // Lectura: usuario que creó la exportación o admins
+      allow read: if isAuthenticated() && (
+        isOwner(userId) ||
+        isAdmin()
+      );
+      
+      // Escritura: usuarios autenticados
+      allow write: if isAuthenticated() && 
+        isValidFileType() && isValidFileSize();
+      
+      // Eliminación: creador y admins
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA BACKUPS
+    // ========================================
+    
+    match /backups/{allPaths=**} {
+      // Solo admins pueden acceder a backups
+      allow read, write, delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA TEMPLATES
+    // ========================================
+    
+    match /templates/{allPaths=**} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Escritura: gerentes y admins
+      allow write: if (hasRole('gerente') || isAdmin()) &&
+        isValidFileType() && isValidFileSize();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA NOTIFICACIONES
+    // ========================================
+    
+    match /notificaciones/{userId}/{allPaths=**} {
+      // Lectura: usuario propietario
+      allow read: if isOwner(userId);
+      
+      // Escritura: sistema y admins
+      allow write: if isAdmin() || 
+        (isAuthenticated() && request.resource.metadata.userId == request.auth.uid);
+      
+      // Eliminación: propietario y admins
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA AUDITORÍA
+    // ========================================
+    
+    match /auditoria/{allPaths=**} {
+      // Solo lectura para admins
       allow read: if isAdmin();
       
-      // Validar al subir archivos
-      allow create: if isOwner(request.resource.metadata.userId) && 
-        isValidFileType() && 
-        isValidFileSize();
-    }
-    
-    // Reglas para avatares de empleados
-    match /employees/{employeeId}/avatar/{avatarId} {
-      allow read, write: if isOwner(resource.metadata.userId);
-      allow read: if isAdmin();
+      // Solo el sistema puede escribir
+      allow write: if isAdmin();
       
-      // Solo imágenes para avatares
-      allow create: if isOwner(request.resource.metadata.userId) && 
-        request.resource.contentType.matches('image/.*') && 
-        isValidFileSize();
+      // No se permite eliminar registros de auditoría
+      allow delete: if false;
     }
     
-    // Reglas para documentos de nómina
-    match /payrolls/{payrollId}/documents/{documentId} {
-      allow read, write: if isOwner(resource.metadata.userId);
-      allow read: if isAdmin();
+    // ========================================
+    // REGLAS PARA SISTEMA
+    // ========================================
+    
+    match /system/{allPaths=**} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
       
-      // Validar al subir archivos
-      allow create: if isOwner(request.resource.metadata.userId) && 
-        isValidFileType() && 
-        isValidFileSize();
-    }
-    
-    // Reglas para reportes
-    match /reports/{reportId}/files/{fileId} {
-      allow read, write: if isOwner(resource.metadata.userId);
-      allow read: if isAdmin();
+      // Escritura: solo admins
+      allow write: if isAdmin() && 
+        isValidFileType() && isValidFileSize();
       
-      // Validar al subir archivos
-      allow create: if isOwner(request.resource.metadata.userId) && 
-        isValidFileType() && 
-        isValidFileSize();
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
     }
     
-    // Reglas para backups del sistema (solo admins)
-    match /system/backups/{backupId} {
-      allow read, write: if isAdmin();
-    }
+    // ========================================
+    // REGLAS PARA ARCHIVOS PÚBLICOS
+    // ========================================
     
-    // Reglas para logs del sistema (solo admins)
-    match /system/logs/{logId} {
-      allow read: if isAdmin();
-      allow write: if false; // Solo el sistema puede escribir logs
-    }
-    
-    // Reglas para archivos temporales
-    match /temp/{userId}/{fileId} {
-      allow read, write: if isOwner(userId);
+    match /public/{allPaths=**} {
+      // Lectura: todos los usuarios autenticados
+      allow read: if isAuthenticated();
       
-      // Los archivos temporales se eliminan automáticamente después de 24 horas
-      allow create: if isOwner(userId) && 
-        isValidFileType() && 
-        isValidFileSize();
+      // Escritura: solo admins
+      allow write: if isAdmin() && 
+        isValidFileType() && isValidFileSize();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS TEMPORALES
+    // ========================================
+    
+    match /temp/{userId}/{allPaths=**} {
+      // Lectura: usuario propietario
+      allow read: if isOwner(userId);
+      
+      // Escritura: usuario propietario
+      allow write: if isOwner(userId) && 
+        isValidFileType() && isValidFileSize();
+      
+      // Eliminación: usuario propietario y admins
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA INTEGRACIONES
+    // ========================================
+    
+    match /integraciones/{allPaths=**} {
+      // Solo admins pueden gestionar archivos de integraciones
+      allow read, write, delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA CHAT IA
+    // ========================================
+    
+    match /chat/{userId}/{allPaths=**} {
+      // Lectura: usuario propietario del chat
+      allow read: if isOwner(userId);
+      
+      // Escritura: usuario propietario
+      allow write: if isOwner(userId) && 
+        isValidFileType() && isValidFileSize();
+      
+      // Eliminación: propietario y admins
+      allow delete: if isOwner(userId) || isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS POR DEFECTO
+    // ========================================
+    
+    // Cualquier otra ruta no especificada
+    match /{allPaths=**} {
+      // Denegar por defecto
+      allow read, write, delete: if false;
     }
   }
 }
-

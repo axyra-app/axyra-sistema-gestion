@@ -1,89 +1,79 @@
 // ========================================
-// SERVICE WORKER AXYRA - CACHE OPTIMIZATION
+// SERVICE WORKER AXYRA - VERCEL
 // ========================================
 
-const CACHE_NAME = 'axyra-cache-v1';
-const STATIC_CACHE = 'axyra-static-v1';
-const DYNAMIC_CACHE = 'axyra-dynamic-v1';
+const CACHE_NAME = 'axyra-v1.0.0';
+const STATIC_CACHE = 'axyra-static-v1.0.0';
+const DYNAMIC_CACHE = 'axyra-dynamic-v1.0.0';
 
-// Recursos críticos para cache
+// Recursos críticos para cachear
 const CRITICAL_RESOURCES = [
   '/',
-  '/admin-brutal.html',
-  '/static/firebase-config-secure.js',
-  '/static/admin-brutal-functions.js',
-  '/static/admin-god-mode.js',
-  '/static/user-management-god.js',
-  '/static/form-validation-system.js',
+  '/index.html',
+  '/static/axyra-styles.css',
+  '/static/firebase-config.js',
   '/static/lazy-loading-system.js',
-  '/static/cleanup-system.js',
-  '/static/optimization-system.js',
-  '/nomina.ico',
-  '/logo.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
-  'https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js',
-  'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js',
-  'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js',
-  'https://cdn.jsdelivr.net/npm/chart.js'
+  '/static/vercel-config.js',
+  '/static/ai-chat-system.js',
+  '/manifest.json',
 ];
 
-// Recursos estáticos para cache
+// Recursos estáticos para cachear
 const STATIC_RESOURCES = [
-  '/static/',
-  '/modulos/',
-  '/plantillas/',
-  '.css',
-  '.js',
-  '.png',
-  '.jpg',
-  '.jpeg',
-  '.gif',
-  '.svg',
-  '.ico',
-  '.woff',
-  '.woff2',
-  '.ttf',
-  '.eot'
+  '/static/axyra-design-system.css',
+  '/static/form-validation-system.js',
+  '/static/cleanup-system.js',
+  '/static/modal-fixes.css',
+  '/modulos/dashboard/dashboard.html',
+  '/modulos/empleados/empleados.html',
+  '/modulos/nomina/gestionar_nomina.html',
+  '/modulos/horas/gestionar_horas.html',
+  '/modulos/inventario/inventario.html',
+  '/modulos/membresias/membresias.html',
 ];
 
 // Instalar Service Worker
 self.addEventListener('install', (event) => {
   console.log('🔧 Service Worker instalando...');
-  
+
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
+    Promise.all([
+      // Cachear recursos críticos
+      caches.open(STATIC_CACHE).then((cache) => {
         console.log('📦 Cacheando recursos críticos...');
         return cache.addAll(CRITICAL_RESOURCES);
-      })
-      .then(() => {
-        console.log('✅ Service Worker instalado correctamente');
-        return self.skipWaiting();
-      })
-      .catch((error) => {
-        console.error('❌ Error instalando Service Worker:', error);
-      })
+      }),
+      // Cachear recursos estáticos
+      caches.open(STATIC_CACHE).then((cache) => {
+        console.log('📦 Cacheando recursos estáticos...');
+        return cache.addAll(STATIC_RESOURCES);
+      }),
+    ]).then(() => {
+      console.log('✅ Service Worker instalado correctamente');
+      return self.skipWaiting();
+    })
   );
 });
 
 // Activar Service Worker
 self.addEventListener('activate', (event) => {
   console.log('🚀 Service Worker activando...');
-  
+
   event.waitUntil(
-    caches.keys()
+    caches
+      .keys()
       .then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
             if (cacheName !== CACHE_NAME && cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-              console.log('🧹 Eliminando cache antiguo:', cacheName);
+              console.log('🗑️ Eliminando cache antiguo:', cacheName);
               return caches.delete(cacheName);
             }
           })
         );
       })
       .then(() => {
-        console.log('✅ Service Worker activado correctamente');
+        console.log('✅ Service Worker activado');
         return self.clients.claim();
       })
   );
@@ -93,42 +83,54 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
-  
-  // Estrategia de cache según el tipo de recurso
-  if (isStaticResource(request)) {
-    event.respondWith(cacheFirst(request));
-  } else if (isAPIRequest(request)) {
-    event.respondWith(networkFirst(request));
-  } else if (isHTMLRequest(request)) {
-    event.respondWith(staleWhileRevalidate(request));
-  } else {
-    event.respondWith(networkFirst(request));
+
+  // Solo procesar requests HTTP/HTTPS
+  if (!request.url.startsWith('http')) {
+    return;
+  }
+
+  // Estrategia de cache para diferentes tipos de recursos
+  if (request.method === 'GET') {
+    // Recursos estáticos (CSS, JS, imágenes)
+    if (url.pathname.match(/\.(css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf)$/)) {
+      event.respondWith(cacheFirst(request));
+    }
+    // Páginas HTML
+    else if (url.pathname.endsWith('.html') || url.pathname === '/') {
+      event.respondWith(networkFirst(request));
+    }
+    // API calls (Firebase)
+    else if (url.hostname.includes('firebase') || url.hostname.includes('googleapis')) {
+      event.respondWith(networkFirst(request));
+    }
+    // Otros recursos
+    else {
+      event.respondWith(staleWhileRevalidate(request));
+    }
   }
 });
 
-// ESTRATEGIA: Cache First (para recursos estáticos)
+// Estrategia: Cache First
 async function cacheFirst(request) {
+  const cachedResponse = await caches.match(request);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
   try {
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-      console.log('📦 Sirviendo desde cache:', request.url);
-      return cachedResponse;
-    }
-    
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
       const cache = await caches.open(STATIC_CACHE);
       cache.put(request, networkResponse.clone());
     }
-    
     return networkResponse;
   } catch (error) {
-    console.error('❌ Error en cacheFirst:', error);
+    console.warn('⚠️ Error en cacheFirst:', error);
     return new Response('Recurso no disponible', { status: 404 });
   }
 }
 
-// ESTRATEGIA: Network First (para APIs)
+// Estrategia: Network First
 async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);
@@ -138,140 +140,95 @@ async function networkFirst(request) {
     }
     return networkResponse;
   } catch (error) {
-    console.log('🌐 Red no disponible, sirviendo desde cache:', request.url);
+    console.warn('⚠️ Error de red, buscando en cache:', error);
     const cachedResponse = await caches.match(request);
-    return cachedResponse || new Response('Recurso no disponible', { status: 404 });
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    return new Response('Contenido no disponible', { status: 404 });
   }
 }
 
-// ESTRATEGIA: Stale While Revalidate (para HTML)
+// Estrategia: Stale While Revalidate
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(DYNAMIC_CACHE);
   const cachedResponse = await cache.match(request);
-  
-  const fetchPromise = fetch(request).then((networkResponse) => {
-    if (networkResponse.ok) {
-      cache.put(request, networkResponse.clone());
-    }
-    return networkResponse;
-  }).catch(() => cachedResponse);
-  
+
+  const fetchPromise = fetch(request)
+    .then((networkResponse) => {
+      if (networkResponse.ok) {
+        cache.put(request, networkResponse.clone());
+      }
+      return networkResponse;
+    })
+    .catch((error) => {
+      console.warn('⚠️ Error en staleWhileRevalidate:', error);
+      return cachedResponse;
+    });
+
   return cachedResponse || fetchPromise;
 }
 
-// VERIFICAR SI ES RECURSO ESTÁTICO
-function isStaticResource(request) {
-  const url = new URL(request.url);
-  return STATIC_RESOURCES.some(resource => 
-    url.pathname.includes(resource) || 
-    url.pathname.endsWith(resource)
-  );
-}
-
-// VERIFICAR SI ES REQUEST DE API
-function isAPIRequest(request) {
-  const url = new URL(request.url);
-  return url.pathname.startsWith('/api/') || 
-         url.hostname.includes('firebase') ||
-         url.hostname.includes('googleapis');
-}
-
-// VERIFICAR SI ES REQUEST DE HTML
-function isHTMLRequest(request) {
-  return request.headers.get('accept')?.includes('text/html');
-}
-
-// LIMPIAR CACHE PERIÓDICAMENTE
-setInterval(() => {
-  cleanOldCache();
-}, 24 * 60 * 60 * 1000); // Cada 24 horas
-
-// LIMPIAR CACHE ANTIGUO
-async function cleanOldCache() {
-  try {
-    const cacheNames = await caches.keys();
-    const oldCaches = cacheNames.filter(name => 
-      name !== CACHE_NAME && 
-      name !== STATIC_CACHE && 
-      name !== DYNAMIC_CACHE
-    );
-    
-    await Promise.all(
-      oldCaches.map(cacheName => caches.delete(cacheName))
-    );
-    
-    console.log('🧹 Cache limpiado:', oldCaches);
-  } catch (error) {
-    console.error('❌ Error limpiando cache:', error);
-  }
-}
-
-// MANEJO DE MENSAJES
+// Manejar mensajes del cliente
 self.addEventListener('message', (event) => {
-  const { action, data } = event.data;
-  
-  switch (action) {
-    case 'SKIP_WAITING':
-      self.skipWaiting();
-      break;
-      
-    case 'CLEAR_CACHE':
-      clearAllCaches();
-      break;
-      
-    case 'GET_CACHE_STATUS':
-      getCacheStatus().then(status => {
-        event.ports[0].postMessage(status);
-      });
-      break;
-      
-    default:
-      console.log('📨 Mensaje no reconocido:', action);
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
   }
-});
 
-// LIMPIAR TODOS LOS CACHES
-async function clearAllCaches() {
-  try {
-    const cacheNames = await caches.keys();
-    await Promise.all(
-      cacheNames.map(cacheName => caches.delete(cacheName))
+  if (event.data && event.data.type === 'CACHE_URLS') {
+    const urlsToCache = event.data.urls;
+    event.waitUntil(
+      caches.open(DYNAMIC_CACHE).then((cache) => {
+        return cache.addAll(urlsToCache);
+      })
     );
-    console.log('🧹 Todos los caches limpiados');
-  } catch (error) {
-    console.error('❌ Error limpiando todos los caches:', error);
   }
-}
-
-// OBTENER ESTADO DEL CACHE
-async function getCacheStatus() {
-  try {
-    const cacheNames = await caches.keys();
-    const status = {};
-    
-    for (const cacheName of cacheNames) {
-      const cache = await caches.open(cacheName);
-      const keys = await cache.keys();
-      status[cacheName] = {
-        size: keys.length,
-        urls: keys.map(request => request.url)
-      };
-    }
-    
-    return status;
-  } catch (error) {
-    console.error('❌ Error obteniendo estado del cache:', error);
-    return {};
-  }
-}
-
-// MANEJO DE ERRORES
-self.addEventListener('error', (event) => {
-  console.error('❌ Error en Service Worker:', event.error);
 });
 
-self.addEventListener('unhandledrejection', (event) => {
-  console.error('❌ Promesa rechazada en Service Worker:', event.reason);
+// Limpiar cache periódicamente
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'cleanup-cache') {
+    event.waitUntil(cleanupCache());
+  }
 });
 
-console.log('🔧 Service Worker AXYRA cargado correctamente');
+async function cleanupCache() {
+  console.log('🧹 Limpiando cache...');
+
+  const cacheNames = await caches.keys();
+  const oldCaches = cacheNames.filter(
+    (name) => name.startsWith('axyra-') && name !== CACHE_NAME && name !== STATIC_CACHE && name !== DYNAMIC_CACHE
+  );
+
+  await Promise.all(oldCaches.map((cacheName) => caches.delete(cacheName)));
+
+  console.log('✅ Cache limpiado');
+}
+
+// Manejar notificaciones push (futuro)
+self.addEventListener('push', (event) => {
+  if (event.data) {
+    const data = event.data.json();
+    const options = {
+      body: data.body,
+      icon: '/static/icons/icon-192x192.png',
+      badge: '/static/icons/badge-72x72.png',
+      vibrate: [100, 50, 100],
+      data: data.data,
+      actions: data.actions || [],
+    };
+
+    event.waitUntil(self.registration.showNotification(data.title, options));
+  }
+});
+
+// Manejar clics en notificaciones
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'open') {
+    event.waitUntil(clients.openWindow(event.notification.data.url || '/'));
+  }
+});
+
+console.log('✅ Service Worker AXYRA cargado');
