@@ -347,19 +347,70 @@
     <!-- Inicializador del Dashboard AXYRA -->
     <script src="../../static/dashboard-initializer.js"></script>
     
+    <!-- Script de emergencia para forzar visibilidad -->
+    <script>
+      // Script de emergencia para asegurar que el dashboard sea visible
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+          const loader = document.getElementById('dashboard-loader');
+          const mainContent = document.querySelector('.axyra-main-content');
+          const dashboardContainer = document.querySelector('.axyra-dashboard-container');
+          
+          if (loader) {
+            loader.style.display = 'none';
+            console.log('🔧 Loader ocultado por script de emergencia');
+          }
+          
+          if (mainContent) {
+            mainContent.style.display = 'block';
+            mainContent.style.opacity = '1';
+            mainContent.style.visibility = 'visible';
+            console.log('🔧 Contenido principal mostrado por script de emergencia');
+          }
+          
+          if (dashboardContainer) {
+            dashboardContainer.style.opacity = '1';
+            dashboardContainer.style.visibility = 'visible';
+            console.log('🔧 Contenedor del dashboard visible por script de emergencia');
+          }
+          
+          // Verificar plan de membresía y ocultar chat de IA si es gratuito
+          const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
+          if (membershipPlan === 'free') {
+            const chatContainer = document.getElementById('axyra-chat-container');
+            if (chatContainer) {
+              chatContainer.style.display = 'none';
+              console.log('🚫 Chat de IA oculto para plan gratuito');
+            }
+          }
+        }, 2000);
+      });
+    </script>
+    
     <!-- Chat de IA AXYRA - Cargar al final -->
     <!-- Chat de IA AXYRA Profesional -->
     <script src="../../static/axyra-ai-chat-professional.js"></script>
     <script>
-      // Inicialización robusta del chat de IA
+      // Inicialización robusta del chat de IA (solo para planes de pago)
       document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚀 DOM cargado, inicializando chat de IA en dashboard...');
-        if (!window.axyraAIChat) {
+        console.log('🚀 DOM cargado, verificando plan de membresía para chat de IA...');
+        
+        const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
+        console.log('💎 Plan de membresía:', membershipPlan);
+        
+        if (membershipPlan !== 'free' && !window.axyraAIChat) {
           try {
             window.axyraAIChat = new AxyraAIChatProfessional();
-            console.log('✅ Chat de IA inicializado en dashboard');
+            console.log('✅ Chat de IA inicializado en dashboard para plan:', membershipPlan);
           } catch (error) {
             console.error('❌ Error inicializando chat de IA:', error);
+          }
+        } else if (membershipPlan === 'free') {
+          console.log('🚫 Chat de IA no disponible para plan gratuito');
+          // Asegurar que el chat esté oculto
+          const chatContainer = document.getElementById('axyra-chat-container');
+          if (chatContainer) {
+            chatContainer.style.display = 'none';
           }
         }
       });
@@ -367,7 +418,8 @@
       // Fallback si el DOM ya está listo
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-          if (!window.axyraAIChat) {
+          const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
+          if (membershipPlan !== 'free' && !window.axyraAIChat) {
             try {
               window.axyraAIChat = new AxyraAIChatProfessional();
               console.log('✅ Chat de IA inicializado en dashboard (fallback)');
@@ -377,7 +429,8 @@
           }
         });
       } else {
-        if (!window.axyraAIChat) {
+        const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
+        if (membershipPlan !== 'free' && !window.axyraAIChat) {
           try {
             window.axyraAIChat = new AxyraAIChatProfessional();
             console.log('✅ Chat de IA inicializado en dashboard (inmediato)');
