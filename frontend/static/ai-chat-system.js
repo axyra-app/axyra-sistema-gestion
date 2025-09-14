@@ -57,7 +57,9 @@ class AxyraAIChat {
             <div class="axyra-chat-widget">
                 <div class="axyra-chat-header" onclick="axyraAIChat.toggleChat()">
                     <div class="axyra-chat-header-content">
-                        <div class="axyra-chat-avatar">🤖</div>
+                        <div class="axyra-chat-avatar">
+                            <img src="logo.png" alt="AXYRA" style="width: 24px; height: 24px; object-fit: contain;">
+                        </div>
                         <div class="axyra-chat-info">
                             <h4>AXYRA Assistant</h4>
                             <p>¿En qué puedo ayudarte?</p>
@@ -71,7 +73,9 @@ class AxyraAIChat {
                 <div class="axyra-chat-body" id="axyra-chat-body">
                     <div class="axyra-chat-messages" id="axyra-chat-messages">
                         <div class="axyra-chat-welcome">
-                            <div class="axyra-chat-welcome-avatar">🤖</div>
+                            <div class="axyra-chat-welcome-avatar">
+                                <img src="logo.png" alt="AXYRA" style="width: 20px; height: 20px; object-fit: contain;">
+                            </div>
                             <div class="axyra-chat-welcome-content">
                                 <h4>¡Hola! Soy AXYRA Assistant</h4>
                                 <p>Estoy aquí para ayudarte con cualquier consulta sobre el sistema. ¿En qué puedo asistirte hoy?</p>
@@ -165,6 +169,13 @@ class AxyraAIChat {
                 align-items: center;
                 justify-content: center;
                 font-size: 20px;
+                padding: 8px;
+            }
+
+            .axyra-chat-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
             }
 
             .axyra-chat-info h4 {
@@ -199,9 +210,30 @@ class AxyraAIChat {
                 flex: 1;
                 padding: 16px;
                 overflow-y: auto;
+                overflow-x: hidden;
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
+                max-height: calc(100% - 120px);
+                scroll-behavior: smooth;
+            }
+
+            .axyra-chat-messages::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .axyra-chat-messages::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 3px;
+            }
+
+            .axyra-chat-messages::-webkit-scrollbar-thumb {
+                background: #c1c1c1;
+                border-radius: 3px;
+            }
+
+            .axyra-chat-messages::-webkit-scrollbar-thumb:hover {
+                background: #a8a8a8;
             }
 
             .axyra-chat-welcome {
@@ -220,6 +252,13 @@ class AxyraAIChat {
                 justify-content: center;
                 font-size: 16px;
                 flex-shrink: 0;
+                padding: 6px;
+            }
+
+            .axyra-chat-welcome-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
             }
 
             .axyra-chat-welcome-content h4 {
@@ -277,6 +316,13 @@ class AxyraAIChat {
                 justify-content: center;
                 font-size: 14px;
                 flex-shrink: 0;
+                padding: 4px;
+            }
+
+            .axyra-chat-message-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
             }
 
             .axyra-chat-message.user .axyra-chat-message-avatar {
@@ -456,7 +502,9 @@ class AxyraAIChat {
     const header = document.querySelector('.axyra-chat-header-content');
     if (header) {
       header.innerHTML = `
-            <div class="axyra-chat-avatar">${personalityData.icon}</div>
+            <div class="axyra-chat-avatar">
+                <img src="logo.png" alt="AXYRA" style="width: 24px; height: 24px; object-fit: contain;">
+            </div>
             <div class="axyra-chat-info">
                 <h4>${personalityData.name}</h4>
                 <p>${personalityData.description}</p>
@@ -574,7 +622,7 @@ class AxyraAIChat {
     const messageDiv = document.createElement('div');
     messageDiv.className = `axyra-chat-message ${sender}`;
 
-    const avatar = sender === 'user' ? '👤' : personalityData.icon;
+    const avatar = sender === 'user' ? '👤' : '<img src="logo.png" alt="AXYRA" style="width: 16px; height: 16px; object-fit: contain;">';
 
     messageDiv.innerHTML = `
             <div class="axyra-chat-message-avatar">${avatar}</div>
@@ -605,7 +653,9 @@ class AxyraAIChat {
     typingDiv.id = 'axyra-chat-typing-indicator';
     typingDiv.className = 'axyra-chat-typing';
     typingDiv.innerHTML = `
-            <div class="axyra-chat-message-avatar">${this.personalities[this.currentPersonality].icon}</div>
+            <div class="axyra-chat-message-avatar">
+                <img src="logo.png" alt="AXYRA" style="width: 16px; height: 16px; object-fit: contain;">
+            </div>
             <div class="axyra-chat-typing-dots">
                 <div class="axyra-chat-typing-dot"></div>
                 <div class="axyra-chat-typing-dot"></div>
