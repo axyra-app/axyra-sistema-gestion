@@ -5,10 +5,10 @@
 class AxyraEmailJSSystem {
   constructor() {
     this.config = {
-      serviceId: process.env.EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID',
-      templateId: process.env.EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID',
-      publicKey: process.env.EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY',
-      userId: process.env.EMAILJS_USER_ID || 'YOUR_USER_ID',
+      serviceId: 'service_dvqt6fd',
+      templateId: 'template_welcome',
+      publicKey: '1heyO_r8WJOhBOBYs',
+      userId: 'not_required',
     };
 
     this.templates = {
@@ -83,7 +83,7 @@ class AxyraEmailJSSystem {
       user_role: userRole,
       app_name: 'AXYRA Sistema de Gestión',
       app_url: 'https://axyra-sistema-gestion.vercel.app',
-      support_email: 'admin@axyra.com',
+      support_email: 'jfuran.va@gmail.com',
       current_date: new Date().toLocaleDateString('es-CO'),
     };
 
@@ -97,7 +97,7 @@ class AxyraEmailJSSystem {
       to_name: userName,
       reset_link: resetLink,
       app_name: 'AXYRA Sistema de Gestión',
-      support_email: 'admin@axyra.com',
+      support_email: 'jfuran.va@gmail.com',
       current_date: new Date().toLocaleDateString('es-CO'),
     };
 
@@ -131,7 +131,7 @@ class AxyraEmailJSSystem {
       invoice_due_date: invoiceData.dueDate,
       invoice_items: invoiceData.items,
       app_name: 'AXYRA Sistema de Gestión',
-      support_email: 'admin@axyra.com',
+      support_email: 'jfuran.va@gmail.com',
     };
 
     return await this.sendEmail(this.templates.invoice, templateParams);
@@ -163,7 +163,7 @@ class AxyraEmailJSSystem {
       alert_level: alertData.level,
       alert_timestamp: new Date().toLocaleString('es-CO'),
       app_name: 'AXYRA Sistema de Gestión',
-      support_email: 'admin@axyra.com',
+      support_email: 'jfuran.va@gmail.com',
     };
 
     return await this.sendEmail(this.templates.alert, templateParams);
