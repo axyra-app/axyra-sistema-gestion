@@ -150,32 +150,77 @@ service cloud.firestore {
     
     // Reglas para cuadre de caja
     match /cuadre_caja/{cuadreId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear/actualizar
+      allow create: if isOwner(request.resource.data.userId) &&
+        request.resource.data.keys().hasAll(['fecha', 'monto', 'userId']) &&
+        request.resource.data.monto is number &&
+        request.resource.data.monto >= 0;
     }
     
     // Reglas para facturas
     match /facturas/{facturaId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear/actualizar
+      allow create: if isOwner(request.resource.data.userId) &&
+        request.resource.data.keys().hasAll(['numero', 'fecha', 'monto', 'userId']) &&
+        request.resource.data.monto is number &&
+        request.resource.data.monto > 0;
     }
     
     // Reglas para inventario
     match /inventario/{itemId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear/actualizar
+      allow create: if isOwner(request.resource.data.userId) &&
+        request.resource.data.keys().hasAll(['nombre', 'cantidad', 'precio', 'userId']) &&
+        request.resource.data.cantidad is number &&
+        request.resource.data.cantidad >= 0 &&
+        request.resource.data.precio is number &&
+        request.resource.data.precio >= 0;
     }
     
     // Reglas para categorías
     match /categorias/{categoriaId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear/actualizar
+      allow create: if isOwner(request.resource.data.userId) &&
+        request.resource.data.keys().hasAll(['nombre', 'descripcion', 'userId']) &&
+        request.resource.data.nombre is string &&
+        request.resource.data.nombre.size() > 0;
     }
     
     // Reglas para movimientos de inventario
     match /movimientos_inventario/{movimientoId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear/actualizar
+      allow create: if isOwner(request.resource.data.userId) &&
+        request.resource.data.keys().hasAll(['itemId', 'tipo', 'cantidad', 'fecha', 'userId']) &&
+        request.resource.data.cantidad is number &&
+        request.resource.data.cantidad > 0 &&
+        request.resource.data.tipo in ['entrada', 'salida', 'ajuste'];
     }
     
     // Reglas para departamentos
     match /departamentos/{departamentoId} {
-      allow read, write: if isAuthenticated();
+      allow read, write: if isOwner(resource.data.userId);
+      allow read: if isAdmin();
+      
+      // Validar datos al crear/actualizar
+      allow create: if isOwner(request.resource.data.userId) &&
+        request.resource.data.keys().hasAll(['nombre', 'descripcion', 'userId']) &&
+        request.resource.data.nombre is string &&
+        request.resource.data.nombre.size() > 0;
     }
   }
 }

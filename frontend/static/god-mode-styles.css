@@ -16,12 +16,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, 
-    rgba(255, 107, 107, 0.1) 0%, 
-    rgba(255, 142, 142, 0.1) 25%, 
-    rgba(255, 107, 107, 0.1) 50%, 
-    rgba(255, 142, 142, 0.1) 75%, 
-    rgba(255, 107, 107, 0.1) 100%);
+  background: linear-gradient(
+    45deg,
+    rgba(255, 107, 107, 0.1) 0%,
+    rgba(255, 142, 142, 0.1) 25%,
+    rgba(255, 107, 107, 0.1) 50%,
+    rgba(255, 142, 142, 0.1) 75%,
+    rgba(255, 107, 107, 0.1) 100%
+  );
   background-size: 20px 20px;
   animation: godModePulse 2s ease-in-out infinite;
   pointer-events: none;
@@ -29,8 +31,13 @@
 }
 
 @keyframes godModePulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* BOTÓN MODO DIOS */
@@ -184,8 +191,13 @@
 }
 
 @keyframes godModeFlow {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 #systemControlCard .stat-icon {
@@ -269,8 +281,13 @@
 }
 
 @keyframes godModeGlow {
-  0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.5); }
-  50% { box-shadow: 0 0 30px rgba(255, 107, 107, 0.8); }
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 107, 107, 0.8);
+  }
 }
 
 .god-mode-shake {
@@ -278,9 +295,16 @@
 }
 
 @keyframes godModeShake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
 }
 
 /* RESPONSIVE */
@@ -288,16 +312,16 @@
   #godSearchInput {
     width: 250px;
   }
-  
+
   #bulkOperations {
     padding: 15px;
   }
-  
+
   #bulkOperations .btn-brutal {
     font-size: 10px;
     padding: 6px 12px;
   }
-  
+
   #systemControlCard .btn-brutal {
     font-size: 10px;
     padding: 6px 8px;

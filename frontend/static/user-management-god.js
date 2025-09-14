@@ -11,7 +11,7 @@ class AxyraUserManagementGod {
       role: 'all',
       status: 'all',
       plan: 'all',
-      dateRange: 'all'
+      dateRange: 'all',
     };
     this.init();
   }
@@ -193,7 +193,7 @@ class AxyraUserManagementGod {
         status: 'active',
         createdAt: new Date('2024-01-15'),
         lastLogin: new Date('2024-01-20'),
-        subscription: { status: 'active', plan: 'Profesional' }
+        subscription: { status: 'active', plan: 'Profesional' },
       },
       {
         id: '2',
@@ -204,7 +204,7 @@ class AxyraUserManagementGod {
         status: 'trial',
         createdAt: new Date('2024-01-14'),
         lastLogin: new Date('2024-01-19'),
-        subscription: { status: 'trial', plan: 'Básico' }
+        subscription: { status: 'trial', plan: 'Básico' },
       },
       {
         id: '3',
@@ -215,7 +215,7 @@ class AxyraUserManagementGod {
         status: 'active',
         createdAt: new Date('2024-01-13'),
         lastLogin: new Date('2024-01-20'),
-        subscription: { status: 'active', plan: 'Empresarial' }
+        subscription: { status: 'active', plan: 'Empresarial' },
       },
       {
         id: '4',
@@ -226,7 +226,7 @@ class AxyraUserManagementGod {
         status: 'active',
         createdAt: new Date('2024-01-12'),
         lastLogin: new Date('2024-01-18'),
-        subscription: { status: 'active', plan: 'Profesional' }
+        subscription: { status: 'active', plan: 'Profesional' },
       },
       {
         id: '5',
@@ -237,8 +237,8 @@ class AxyraUserManagementGod {
         status: 'suspended',
         createdAt: new Date('2024-01-10'),
         lastLogin: new Date('2024-01-15'),
-        subscription: { status: 'suspended', plan: 'Básico' }
-      }
+        subscription: { status: 'suspended', plan: 'Básico' },
+      },
     ];
   }
 
@@ -249,7 +249,7 @@ class AxyraUserManagementGod {
 
     tbody.innerHTML = '';
 
-    this.users.forEach(user => {
+    this.users.forEach((user) => {
       const row = document.createElement('tr');
       row.innerHTML = this.createUserRow(user);
       tbody.appendChild(row);
@@ -258,7 +258,7 @@ class AxyraUserManagementGod {
 
   createUserRow(user) {
     const isSelected = this.selectedUsers.has(user.id);
-    
+
     return `
       <td class="select-column">
         <input type="checkbox" ${isSelected ? 'checked' : ''} 
@@ -277,30 +277,42 @@ class AxyraUserManagementGod {
         </div>
       </td>
       <td>
-        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${this.getPlanColor(user.plan)}; color: white;">
+        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${this.getPlanColor(
+          user.plan
+        )}; color: white;">
           ${this.getPlanName(user.plan)}
         </span>
       </td>
       <td>
-        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${this.getStatusColor(user.status)}; color: white;">
+        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${this.getStatusColor(
+          user.status
+        )}; color: white;">
           ${this.getStatusName(user.status)}
         </span>
       </td>
       <td>
-        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${this.getRoleColor(user.role)}; color: white;">
+        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${this.getRoleColor(
+          user.role
+        )}; color: white;">
           ${this.getRoleName(user.role)}
         </span>
       </td>
       <td>${new Date(user.createdAt).toLocaleDateString()}</td>
       <td>
         <div style="display: flex; gap: 5px;">
-          <button class="btn-brutal btn-secondary" onclick="userManagementGod.editUser('${user.id}')" style="padding: 6px 12px; font-size: 11px;" title="Editar">
+          <button class="btn-brutal btn-secondary" onclick="userManagementGod.editUser('${
+            user.id
+          }')" style="padding: 6px 12px; font-size: 11px;" title="Editar">
             <i class="fas fa-edit"></i>
           </button>
-          <button class="btn-brutal btn-primary" onclick="userManagementGod.viewUser('${user.id}')" style="padding: 6px 12px; font-size: 11px;" title="Ver">
+          <button class="btn-brutal btn-primary" onclick="userManagementGod.viewUser('${
+            user.id
+          }')" style="padding: 6px 12px; font-size: 11px;" title="Ver">
             <i class="fas fa-eye"></i>
           </button>
-          <button class="btn-brutal btn-danger" onclick="userManagementGod.suspendUser('${user.id}')" style="padding: 6px 12px; font-size: 11px;" title="Suspender">
+          <button class="btn-brutal btn-danger" onclick="userManagementGod.suspendUser('${
+            user.id
+          }')" style="padding: 6px 12px; font-size: 11px;" title="Suspender">
             <i class="fas fa-ban"></i>
           </button>
         </div>
@@ -310,75 +322,105 @@ class AxyraUserManagementGod {
 
   // UTILIDADES DE COLORES
   getPlanColor(plan) {
-    switch(plan) {
-      case 'basico': return 'linear-gradient(135deg, #4299e1, #3182ce)';
-      case 'profesional': return 'linear-gradient(135deg, #48bb78, #38a169)';
-      case 'empresarial': return 'linear-gradient(135deg, #ed8936, #dd6b20)';
-      default: return 'linear-gradient(135deg, #a0aec0, #718096)';
+    switch (plan) {
+      case 'basico':
+        return 'linear-gradient(135deg, #4299e1, #3182ce)';
+      case 'profesional':
+        return 'linear-gradient(135deg, #48bb78, #38a169)';
+      case 'empresarial':
+        return 'linear-gradient(135deg, #ed8936, #dd6b20)';
+      default:
+        return 'linear-gradient(135deg, #a0aec0, #718096)';
     }
   }
 
   getStatusColor(status) {
-    switch(status) {
-      case 'active': return 'linear-gradient(135deg, #48bb78, #38a169)';
-      case 'trial': return 'linear-gradient(135deg, #ed8936, #dd6b20)';
-      case 'suspended': return 'linear-gradient(135deg, #f56565, #e53e3e)';
-      case 'inactive': return 'linear-gradient(135deg, #a0aec0, #718096)';
-      default: return 'linear-gradient(135deg, #a0aec0, #718096)';
+    switch (status) {
+      case 'active':
+        return 'linear-gradient(135deg, #48bb78, #38a169)';
+      case 'trial':
+        return 'linear-gradient(135deg, #ed8936, #dd6b20)';
+      case 'suspended':
+        return 'linear-gradient(135deg, #f56565, #e53e3e)';
+      case 'inactive':
+        return 'linear-gradient(135deg, #a0aec0, #718096)';
+      default:
+        return 'linear-gradient(135deg, #a0aec0, #718096)';
     }
   }
 
   getRoleColor(role) {
-    switch(role) {
-      case 'god': return 'linear-gradient(135deg, #ff6b6b, #e74c3c)';
-      case 'admin': return 'linear-gradient(135deg, #4ecdc4, #44a08d)';
-      case 'moderator': return 'linear-gradient(135deg, #45b7d1, #96c93d)';
-      case 'support': return 'linear-gradient(135deg, #96ceb4, #feca57)';
-      case 'user': return 'linear-gradient(135deg, #a0aec0, #718096)';
-      default: return 'linear-gradient(135deg, #a0aec0, #718096)';
+    switch (role) {
+      case 'god':
+        return 'linear-gradient(135deg, #ff6b6b, #e74c3c)';
+      case 'admin':
+        return 'linear-gradient(135deg, #4ecdc4, #44a08d)';
+      case 'moderator':
+        return 'linear-gradient(135deg, #45b7d1, #96c93d)';
+      case 'support':
+        return 'linear-gradient(135deg, #96ceb4, #feca57)';
+      case 'user':
+        return 'linear-gradient(135deg, #a0aec0, #718096)';
+      default:
+        return 'linear-gradient(135deg, #a0aec0, #718096)';
     }
   }
 
   getPlanName(plan) {
-    switch(plan) {
-      case 'basico': return 'Básico';
-      case 'profesional': return 'Profesional';
-      case 'empresarial': return 'Empresarial';
-      default: return 'N/A';
+    switch (plan) {
+      case 'basico':
+        return 'Básico';
+      case 'profesional':
+        return 'Profesional';
+      case 'empresarial':
+        return 'Empresarial';
+      default:
+        return 'N/A';
     }
   }
 
   getStatusName(status) {
-    switch(status) {
-      case 'active': return 'Activo';
-      case 'trial': return 'Prueba';
-      case 'suspended': return 'Suspendido';
-      case 'inactive': return 'Inactivo';
-      default: return 'N/A';
+    switch (status) {
+      case 'active':
+        return 'Activo';
+      case 'trial':
+        return 'Prueba';
+      case 'suspended':
+        return 'Suspendido';
+      case 'inactive':
+        return 'Inactivo';
+      default:
+        return 'N/A';
     }
   }
 
   getRoleName(role) {
-    switch(role) {
-      case 'god': return 'Dios';
-      case 'admin': return 'Admin';
-      case 'moderator': return 'Moderador';
-      case 'support': return 'Soporte';
-      case 'user': return 'Usuario';
-      default: return 'N/A';
+    switch (role) {
+      case 'god':
+        return 'Dios';
+      case 'admin':
+        return 'Admin';
+      case 'moderator':
+        return 'Moderador';
+      case 'support':
+        return 'Soporte';
+      case 'user':
+        return 'Usuario';
+      default:
+        return 'N/A';
     }
   }
 
   // GESTIÓN DE SELECCIÓN
   toggleSelectAll(checked) {
     this.selectedUsers.clear();
-    
+
     if (checked) {
-      this.users.forEach(user => {
+      this.users.forEach((user) => {
         this.selectedUsers.add(user.id);
       });
     }
-    
+
     this.updateSelectionUI();
     this.renderUsers();
   }
@@ -389,7 +431,7 @@ class AxyraUserManagementGod {
     } else {
       this.selectedUsers.delete(userId);
     }
-    
+
     this.updateSelectionUI();
   }
 
@@ -397,15 +439,15 @@ class AxyraUserManagementGod {
     const selectedCount = document.getElementById('selectedCount');
     const bulkActions = document.getElementById('bulkActions');
     const bulkCount = document.getElementById('bulkCount');
-    
+
     if (selectedCount) {
       selectedCount.textContent = `${this.selectedUsers.size} seleccionados`;
     }
-    
+
     if (bulkActions) {
       bulkActions.style.display = this.selectedUsers.size > 0 ? 'block' : 'none';
     }
-    
+
     if (bulkCount) {
       bulkCount.textContent = this.selectedUsers.size;
     }
@@ -417,9 +459,9 @@ class AxyraUserManagementGod {
     const statusFilter = document.getElementById('statusFilter')?.value || 'all';
     const planFilter = document.getElementById('planFilter')?.value || 'all';
     const dateFilter = document.getElementById('dateFilter')?.value || 'all';
-    
+
     this.filters = { role: roleFilter, status: statusFilter, plan: planFilter, dateRange: dateFilter };
-    
+
     // Aplicar filtros (en producción se haría en el backend)
     console.log('🔍 Aplicando filtros:', this.filters);
     this.renderUsers();
@@ -430,7 +472,7 @@ class AxyraUserManagementGod {
     document.getElementById('statusFilter').value = 'all';
     document.getElementById('planFilter').value = 'all';
     document.getElementById('dateFilter').value = 'all';
-    
+
     this.filters = { role: 'all', status: 'all', plan: 'all', dateRange: 'all' };
     this.renderUsers();
   }
@@ -438,7 +480,7 @@ class AxyraUserManagementGod {
   // ACCIONES MASIVAS
   bulkSuspend() {
     if (this.selectedUsers.size === 0) return;
-    
+
     if (confirm(`¿Estás seguro de suspender ${this.selectedUsers.size} usuarios?`)) {
       console.log('🚫 Suspendiendo usuarios masivamente:', Array.from(this.selectedUsers));
       // Implementar suspensión masiva
@@ -447,22 +489,24 @@ class AxyraUserManagementGod {
 
   bulkChangePlan() {
     if (this.selectedUsers.size === 0) return;
-    
+
     console.log('💳 Cambiando plan masivamente:', Array.from(this.selectedUsers));
     // Implementar cambio de plan masivo
   }
 
   bulkExport() {
     if (this.selectedUsers.size === 0) return;
-    
+
     console.log('📊 Exportando usuarios:', Array.from(this.selectedUsers));
     // Implementar exportación masiva
   }
 
   bulkDelete() {
     if (this.selectedUsers.size === 0) return;
-    
-    if (confirm(`⚠️ PELIGRO: ¿Estás seguro de eliminar ${this.selectedUsers.size} usuarios? Esta acción es IRREVERSIBLE.`)) {
+
+    if (
+      confirm(`⚠️ PELIGRO: ¿Estás seguro de eliminar ${this.selectedUsers.size} usuarios? Esta acción es IRREVERSIBLE.`)
+    ) {
       console.log('🗑️ Eliminando usuarios masivamente:', Array.from(this.selectedUsers));
       // Implementar eliminación masiva
     }
@@ -470,26 +514,26 @@ class AxyraUserManagementGod {
 
   bulkSendEmail() {
     if (this.selectedUsers.size === 0) return;
-    
+
     console.log('📧 Enviando email masivo:', Array.from(this.selectedUsers));
     // Implementar envío de email masivo
   }
 
   // ACCIONES INDIVIDUALES
   editUser(userId) {
-    const user = this.users.find(u => u.id === userId);
+    const user = this.users.find((u) => u.id === userId);
     console.log('✏️ Editando usuario:', user);
     // Implementar edición de usuario
   }
 
   viewUser(userId) {
-    const user = this.users.find(u => u.id === userId);
+    const user = this.users.find((u) => u.id === userId);
     console.log('👁️ Viendo usuario:', user);
     // Implementar vista de usuario
   }
 
   suspendUser(userId) {
-    const user = this.users.find(u => u.id === userId);
+    const user = this.users.find((u) => u.id === userId);
     if (confirm(`¿Estás seguro de suspender a ${user.displayName}?`)) {
       console.log('🚫 Suspendiendo usuario:', user);
       // Implementar suspensión de usuario

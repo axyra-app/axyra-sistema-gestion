@@ -17,8 +17,18 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-    <!-- Firebase Config -->
-    <script src="static/firebase-config.js"></script>
+    <!-- Firebase Config (Secure) -->
+    <script src="static/firebase-config-secure.js"></script>
+    
+    <!-- Form Validation System -->
+    <script src="static/form-validation-system.js"></script>
+    
+    <!-- Lazy Loading System -->
+    <script src="static/lazy-loading-system.js"></script>
+    
+    <!-- Cleanup System -->
+    <script src="static/cleanup-system.js"></script>
+    
     <!-- Admin Brutal Functions -->
     <script src="static/admin-brutal-functions.js"></script>
     <!-- God Mode Styles -->
@@ -207,18 +217,18 @@
         gap: 20px;
       }
 
-       .sidebar-toggle {
-         display: block;
-         background: rgba(255, 255, 255, 0.1);
-         border: 2px solid rgba(255, 255, 255, 0.3);
-         border-radius: 8px;
-         color: white;
-         padding: 10px 12px;
-         cursor: pointer;
-         transition: all 0.3s ease;
-         font-size: 16px;
-         z-index: 1000;
-       }
+      .sidebar-toggle {
+        display: block;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        color: white;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        z-index: 1000;
+      }
 
       .sidebar-toggle:hover {
         background: rgba(255, 255, 255, 0.2);
@@ -1032,44 +1042,44 @@
         }
       }
 
-       // SIDEBAR TOGGLE FUNCTION
-       function toggleSidebar() {
-         const sidebar = document.querySelector('.sidebar');
-         const mainContent = document.querySelector('.main-content');
-         const toggleBtn = document.getElementById('sidebarToggle');
+      // SIDEBAR TOGGLE FUNCTION
+      function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleBtn = document.getElementById('sidebarToggle');
 
-         sidebar.classList.toggle('collapsed');
-         mainContent.classList.toggle('sidebar-collapsed');
+        sidebar.classList.toggle('collapsed');
+        mainContent.classList.toggle('sidebar-collapsed');
 
-         // Cambiar icono
-         const icon = toggleBtn.querySelector('i');
-         if (sidebar.classList.contains('collapsed')) {
-           icon.className = 'fas fa-bars';
-           toggleBtn.title = 'Mostrar menú';
-         } else {
-           icon.className = 'fas fa-times';
-           toggleBtn.title = 'Ocultar menú';
-         }
+        // Cambiar icono
+        const icon = toggleBtn.querySelector('i');
+        if (sidebar.classList.contains('collapsed')) {
+          icon.className = 'fas fa-bars';
+          toggleBtn.title = 'Mostrar menú';
+        } else {
+          icon.className = 'fas fa-times';
+          toggleBtn.title = 'Ocultar menú';
+        }
 
-         // Guardar estado en localStorage
-         localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-       }
+        // Guardar estado en localStorage
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+      }
 
-       // CARGAR ESTADO DEL SIDEBAR
-       function loadSidebarState() {
-         const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-         const sidebar = document.querySelector('.sidebar');
-         const mainContent = document.querySelector('.main-content');
-         const toggleBtn = document.getElementById('sidebarToggle');
+      // CARGAR ESTADO DEL SIDEBAR
+      function loadSidebarState() {
+        const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleBtn = document.getElementById('sidebarToggle');
 
-         if (isCollapsed) {
-           sidebar.classList.add('collapsed');
-           mainContent.classList.add('sidebar-collapsed');
-           const icon = toggleBtn.querySelector('i');
-           icon.className = 'fas fa-bars';
-           toggleBtn.title = 'Mostrar menú';
-         }
-       }
+        if (isCollapsed) {
+          sidebar.classList.add('collapsed');
+          mainContent.classList.add('sidebar-collapsed');
+          const icon = toggleBtn.querySelector('i');
+          icon.className = 'fas fa-bars';
+          toggleBtn.title = 'Mostrar menú';
+        }
+      }
 
       // ARREGLAR DATOS REALES
       function loadRealData() {

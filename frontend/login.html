@@ -11,10 +11,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-<!-- Firebase Config -->
-<script src="static/firebase-config.js"></script>
-<!-- Admin Setup (solo para desarrollo) -->
-<script src="static/admin-setup.js"></script>
+    <!-- Firebase Config -->
+    <script src="static/firebase-config.js"></script>
+    <!-- Admin Setup (solo para desarrollo) -->
+    <script src="static/admin-setup.js"></script>
 
     <style>
       * {
@@ -516,9 +516,16 @@
       }
 
       @keyframes errorShake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
       }
 
       /* Responsive adjustments */
@@ -527,12 +534,12 @@
           max-width: 95vw;
           margin: 10px;
         }
-        
+
         .modal-header,
         .modal-body {
           padding: 20px;
         }
-        
+
         .modal-actions .btn {
           min-width: 100%;
           padding: 14px 20px;
@@ -630,325 +637,320 @@
       let currentUser = null;
 
       // Verificar sesión guardada al cargar la página
-      document.addEventListener('DOMContentLoaded', function() {
-          checkSavedSession();
+      document.addEventListener('DOMContentLoaded', function () {
+        checkSavedSession();
       });
 
       // Función para verificar sesión guardada
       function checkSavedSession() {
-          const savedUser = localStorage.getItem('axyra_firebase_user');
-          const rememberMe = localStorage.getItem('axyra_remember_me');
-          
-          if (savedUser && rememberMe === 'true') {
-              try {
-                  const userData = JSON.parse(savedUser);
-                  
-                  // Verificar si la sesión no ha expirado (7 días)
-                  const sessionTimestamp = localStorage.getItem('axyra_session_timestamp');
-                  if (sessionTimestamp) {
-                      const sessionAge = Date.now() - parseInt(sessionTimestamp);
-                      const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 días
-                      
-                      if (sessionAge > maxAge) {
-                          // Sesión expirada, limpiar
-                          clearSavedSession();
-                          return;
-                      }
-                  }
-                  
-                  // Verificar si Firebase está disponible
-                  if (typeof firebase !== 'undefined' && firebase.auth) {
-                      // Intentar restaurar sesión
-                      firebase.auth().onAuthStateChanged(function(user) {
-                          if (user) {
-                              // Verificar si es el mismo usuario
-                              const currentUserId = localStorage.getItem('axyra_isolated_user_id');
-                              if (currentUserId && currentUserId !== user.uid) {
-                                  // Usuario diferente, limpiar datos
-                                  console.log('🔄 Usuario diferente detectado, limpiando datos...');
-                                  if (window.axyraFirebaseUtils && window.axyraFirebaseUtils.clearCompanyData) {
-                                      window.axyraFirebaseUtils.clearCompanyData();
-                                  }
-                                  // Generar nuevo ID de empresa
-                                  if (window.axyraFirebaseUtils && window.axyraFirebaseUtils.getCompanyId) {
-                                      window.axyraFirebaseUtils.getCompanyId();
-                                  }
-                              }
-                              
-                              console.log('✅ Sesión restaurada automáticamente');
-                              // Redirigir al dashboard
-                              window.location.href = 'modulos/dashboard/dashboard.html';
-                          } else {
-                              // No hay sesión activa, limpiar datos guardados
-                              clearSavedSession();
-                          }
-                      });
-                  }
-                  
-              } catch (error) {
-                  console.error('❌ Error verificando sesión guardada:', error);
-                  clearSavedSession();
+        const savedUser = localStorage.getItem('axyra_firebase_user');
+        const rememberMe = localStorage.getItem('axyra_remember_me');
+
+        if (savedUser && rememberMe === 'true') {
+          try {
+            const userData = JSON.parse(savedUser);
+
+            // Verificar si la sesión no ha expirado (7 días)
+            const sessionTimestamp = localStorage.getItem('axyra_session_timestamp');
+            if (sessionTimestamp) {
+              const sessionAge = Date.now() - parseInt(sessionTimestamp);
+              const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 días
+
+              if (sessionAge > maxAge) {
+                // Sesión expirada, limpiar
+                clearSavedSession();
+                return;
               }
+            }
+
+            // Verificar si Firebase está disponible
+            if (typeof firebase !== 'undefined' && firebase.auth) {
+              // Intentar restaurar sesión
+              firebase.auth().onAuthStateChanged(function (user) {
+                if (user) {
+                  // Verificar si es el mismo usuario
+                  const currentUserId = localStorage.getItem('axyra_isolated_user_id');
+                  if (currentUserId && currentUserId !== user.uid) {
+                    // Usuario diferente, limpiar datos
+                    console.log('🔄 Usuario diferente detectado, limpiando datos...');
+                    if (window.axyraFirebaseUtils && window.axyraFirebaseUtils.clearCompanyData) {
+                      window.axyraFirebaseUtils.clearCompanyData();
+                    }
+                    // Generar nuevo ID de empresa
+                    if (window.axyraFirebaseUtils && window.axyraFirebaseUtils.getCompanyId) {
+                      window.axyraFirebaseUtils.getCompanyId();
+                    }
+                  }
+
+                  console.log('✅ Sesión restaurada automáticamente');
+                  // Redirigir al dashboard
+                  window.location.href = 'modulos/dashboard/dashboard.html';
+                } else {
+                  // No hay sesión activa, limpiar datos guardados
+                  clearSavedSession();
+                }
+              });
+            }
+          } catch (error) {
+            console.error('❌ Error verificando sesión guardada:', error);
+            clearSavedSession();
           }
+        }
       }
 
       // Función para limpiar sesión guardada
       function clearSavedSession() {
-          localStorage.removeItem('axyra_firebase_user');
-          localStorage.removeItem('axyra_isolated_user_id');
-          localStorage.removeItem('axyra_remember_me');
-          localStorage.removeItem('axyra_session_timestamp');
+        localStorage.removeItem('axyra_firebase_user');
+        localStorage.removeItem('axyra_isolated_user_id');
+        localStorage.removeItem('axyra_remember_me');
+        localStorage.removeItem('axyra_session_timestamp');
       }
 
       // Función para guardar sesión
       function saveSession(user, rememberMe) {
-          // Crear objeto de usuario para el dashboard
-          const userInfo = {
-              uid: user.uid,
-              email: user.email,
-              displayName: user.displayName || user.email.split('@')[0],
-              username: user.email.split('@')[0],
-              photoURL: user.photoURL || null,
-              provider: 'email',
-              hasPassword: true,
-              emailVerified: user.emailVerified,
-              id: user.uid,
-              isAuthenticated: true
-          };
+        // Crear objeto de usuario para el dashboard
+        const userInfo = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || user.email.split('@')[0],
+          username: user.email.split('@')[0],
+          photoURL: user.photoURL || null,
+          provider: 'email',
+          hasPassword: true,
+          emailVerified: user.emailVerified,
+          id: user.uid,
+          isAuthenticated: true,
+        };
 
-          if (rememberMe) {
-              localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
-              localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
-              localStorage.setItem('axyra_isolated_user_id', user.uid);
-              localStorage.setItem('axyra_remember_me', 'true');
-              localStorage.setItem('axyra_session_timestamp', Date.now().toString());
-              console.log('✅ Sesión guardada para recordar');
-          } else {
-              // Solo guardar temporalmente para la sesión actual
-              sessionStorage.setItem('axyra_firebase_user', JSON.stringify(user));
-              localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
-              localStorage.setItem('axyra_isolated_user_id', user.uid);
-          }
-          
-          console.log('✅ Usuario guardado en formato dashboard:', userInfo);
+        if (rememberMe) {
+          localStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+          localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
+          localStorage.setItem('axyra_isolated_user_id', user.uid);
+          localStorage.setItem('axyra_remember_me', 'true');
+          localStorage.setItem('axyra_session_timestamp', Date.now().toString());
+          console.log('✅ Sesión guardada para recordar');
+        } else {
+          // Solo guardar temporalmente para la sesión actual
+          sessionStorage.setItem('axyra_firebase_user', JSON.stringify(user));
+          localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
+          localStorage.setItem('axyra_isolated_user_id', user.uid);
+        }
+
+        console.log('✅ Usuario guardado en formato dashboard:', userInfo);
       }
 
       // Función para mostrar error
       function showError(message) {
-          const errorDiv = document.getElementById('errorMessage');
-          errorDiv.textContent = message;
-          errorDiv.style.display = 'block';
-          document.getElementById('successMessage').style.display = 'none';
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        document.getElementById('successMessage').style.display = 'none';
       }
 
       // Función para mostrar éxito
       function showSuccess(message) {
-          const successDiv = document.getElementById('successMessage');
-          successDiv.textContent = message;
-          successDiv.style.display = 'block';
-          document.getElementById('errorMessage').style.display = 'none';
+        const successDiv = document.getElementById('successMessage');
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
       }
 
       // Ocultar mensajes
       function hideMessages() {
-          document.getElementById('errorMessage').style.display = 'none';
-          document.getElementById('successMessage').style.display = 'none';
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
       }
 
       // Función para mostrar/ocultar contraseña
       function togglePassword() {
-          const passwordInput = document.getElementById('password');
-          const passwordIcon = document.querySelector('.password-toggle i');
+        const passwordInput = document.getElementById('password');
+        const passwordIcon = document.querySelector('.password-toggle i');
 
-          if (passwordInput.type === 'password') {
-              passwordInput.type = 'text';
-              passwordIcon.className = 'fas fa-eye-slash';
-          } else {
-              passwordInput.type = 'password';
-              passwordIcon.className = 'fas fa-eye';
-          }
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          passwordIcon.className = 'fas fa-eye-slash';
+        } else {
+          passwordInput.type = 'password';
+          passwordIcon.className = 'fas fa-eye';
+        }
       }
 
       // Manejar envío del formulario
-      document.getElementById('loginForm').addEventListener('submit', async function(e) {
-          e.preventDefault();
+      document.getElementById('loginForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-          hideMessages();
+        hideMessages();
 
-          const email = document.getElementById('email').value.trim();
-          const password = document.getElementById('password').value;
-          const rememberMe = document.getElementById('rememberMe').checked;
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const rememberMe = document.getElementById('rememberMe').checked;
 
-          try {
-              // Mostrar loading
-              document.getElementById('btnText').style.display = 'none';
-              document.getElementById('btnLoading').style.display = 'inline-block';
-              document.getElementById('loginBtn').disabled = true;
+        try {
+          // Mostrar loading
+          document.getElementById('btnText').style.display = 'none';
+          document.getElementById('btnLoading').style.display = 'inline-block';
+          document.getElementById('loginBtn').disabled = true;
 
-              // Iniciar sesión con Firebase
-              const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+          // Iniciar sesión con Firebase
+          const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
 
-              if (userCredential.user) {
-                  console.log('✅ Login exitoso:', userCredential.user.email);
+          if (userCredential.user) {
+            console.log('✅ Login exitoso:', userCredential.user.email);
 
-                  // Actualizar último login en Firestore
-                  try {
-                      await firebase.firestore().collection('users').doc(userCredential.user.uid).update({
-                          lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                      });
-                  } catch (error) {
-                      console.log('Info: No se pudo actualizar último login');
-                  }
+            // Actualizar último login en Firestore
+            try {
+              await firebase.firestore().collection('users').doc(userCredential.user.uid).update({
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+              });
+            } catch (error) {
+              console.log('Info: No se pudo actualizar último login');
+            }
 
-                  // Guardar en localStorage
-                  saveSession(userCredential.user, rememberMe);
+            // Guardar en localStorage
+            saveSession(userCredential.user, rememberMe);
 
-                  // Mostrar mensaje de éxito
-                  showSuccess('¡Login exitoso! Redirigiendo al dashboard...');
+            // Mostrar mensaje de éxito
+            showSuccess('¡Login exitoso! Redirigiendo al dashboard...');
 
-                  // Redirigir al dashboard
-                  setTimeout(() => {
-                      window.location.href = 'modulos/dashboard/dashboard.html';
-                  }, 2000);
-
-              } else {
-                  showError('Error al obtener información del usuario');
-              }
-
-          } catch (firebaseError) {
-              console.error('❌ Error de Firebase:', firebaseError);
-              
-              // Manejar errores específicos de Firebase
-              if (firebaseError.code === 'auth/user-not-found') {
-                  showError('No existe una cuenta con este email. Verifica tu email o regístrate.');
-              } else if (firebaseError.code === 'auth/wrong-password') {
-                  showError('Contraseña incorrecta. Verifica tu contraseña.');
-              } else if (firebaseError.code === 'auth/invalid-email') {
-                  showError('El formato del email no es válido.');
-              } else if (firebaseError.code === 'auth/too-many-requests') {
-                  showError('Demasiados intentos fallidos. Intenta más tarde.');
-              } else if (firebaseError.code === 'auth/user-disabled') {
-                  showError('Tu cuenta ha sido deshabilitada. Contacta al administrador.');
-              } else {
-                  showError(`Error de autenticación: ${firebaseError.message}`);
-              }
-          } finally {
-              // Restaurar botón
-              document.getElementById('btnText').style.display = 'inline-block';
-              document.getElementById('btnLoading').style.display = 'none';
-              document.getElementById('loginBtn').disabled = false;
+            // Redirigir al dashboard
+            setTimeout(() => {
+              window.location.href = 'modulos/dashboard/dashboard.html';
+            }, 2000);
+          } else {
+            showError('Error al obtener información del usuario');
           }
+        } catch (firebaseError) {
+          console.error('❌ Error de Firebase:', firebaseError);
+
+          // Manejar errores específicos de Firebase
+          if (firebaseError.code === 'auth/user-not-found') {
+            showError('No existe una cuenta con este email. Verifica tu email o regístrate.');
+          } else if (firebaseError.code === 'auth/wrong-password') {
+            showError('Contraseña incorrecta. Verifica tu contraseña.');
+          } else if (firebaseError.code === 'auth/invalid-email') {
+            showError('El formato del email no es válido.');
+          } else if (firebaseError.code === 'auth/too-many-requests') {
+            showError('Demasiados intentos fallidos. Intenta más tarde.');
+          } else if (firebaseError.code === 'auth/user-disabled') {
+            showError('Tu cuenta ha sido deshabilitada. Contacta al administrador.');
+          } else {
+            showError(`Error de autenticación: ${firebaseError.message}`);
+          }
+        } finally {
+          // Restaurar botón
+          document.getElementById('btnText').style.display = 'inline-block';
+          document.getElementById('btnLoading').style.display = 'none';
+          document.getElementById('loginBtn').disabled = false;
+        }
       });
 
       // Función para login con Google
       async function loginWithGoogle() {
-          try {
-              showSuccess('Iniciando sesión con Google...');
+        try {
+          showSuccess('Iniciando sesión con Google...');
 
-              // Crear proveedor de Google
-              const provider = new firebase.auth.GoogleAuthProvider();
-              provider.addScope('email');
-              provider.addScope('profile');
+          // Crear proveedor de Google
+          const provider = new firebase.auth.GoogleAuthProvider();
+          provider.addScope('email');
+          provider.addScope('profile');
 
-              console.log('✅ Iniciando popup de Google...');
+          console.log('✅ Iniciando popup de Google...');
 
-              // Iniciar login con popup
-              const result = await firebase.auth().signInWithPopup(provider);
+          // Iniciar login con popup
+          const result = await firebase.auth().signInWithPopup(provider);
 
-              if (result.user) {
-                  console.log('✅ Login con Google exitoso:', result.user.email);
+          if (result.user) {
+            console.log('✅ Login con Google exitoso:', result.user.email);
 
-                  // Verificar si el usuario ya existe en Firestore
-                  try {
-                      const userDoc = await firebase.firestore().collection('users').doc(result.user.uid).get();
-                      
-                      if (userDoc.exists) {
-                          const userData = userDoc.data();
-                          
-                          // Si el usuario ya tiene contraseña, proceder normalmente
-                          if (userData.hasPassword) {
-                              console.log('✅ Usuario existente con contraseña');
-                              
-                              // Actualizar último login
-                              await firebase.firestore().collection('users').doc(result.user.uid).update({
-                                  lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-                              });
+            // Verificar si el usuario ya existe en Firestore
+            try {
+              const userDoc = await firebase.firestore().collection('users').doc(result.user.uid).get();
 
-                              // Establecer información del usuario para el dashboard
-                              const userInfo = {
-                                  uid: result.user.uid,
-                                  email: result.user.email,
-                                  displayName: result.user.displayName || result.user.email.split('@')[0],
-                                  username: userData.username || result.user.email.split('@')[0],
-                                  photoURL: result.user.photoURL,
-                                  provider: 'google',
-                                  hasPassword: true,
-                                  emailVerified: result.user.emailVerified,
-                                  id: result.user.uid,
-                                  isAuthenticated: true
-                              };
+              if (userDoc.exists) {
+                const userData = userDoc.data();
 
-                              // Guardar en localStorage en el formato que espera el dashboard
-                              localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
-                              localStorage.setItem('axyra_firebase_user', JSON.stringify(result.user));
-                              localStorage.setItem('axyra_isolated_user_id', result.user.uid);
-                              localStorage.setItem('axyra_session', JSON.stringify(userInfo));
-                              
-                              // Establecer variable global para compatibilidad
-                              if (window.axyraIsolatedAuth) {
-                                  window.axyraIsolatedAuth.currentUser = userInfo;
-                              }
+                // Si el usuario ya tiene contraseña, proceder normalmente
+                if (userData.hasPassword) {
+                  console.log('✅ Usuario existente con contraseña');
 
-                              console.log('✅ Sesión establecida correctamente para usuario existente:', userInfo);
+                  // Actualizar último login
+                  await firebase.firestore().collection('users').doc(result.user.uid).update({
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                  });
 
-                              // Mostrar mensaje de éxito
-                              showSuccess('¡Login con Google exitoso! Redirigiendo al dashboard...');
+                  // Establecer información del usuario para el dashboard
+                  const userInfo = {
+                    uid: result.user.uid,
+                    email: result.user.email,
+                    displayName: result.user.displayName || result.user.email.split('@')[0],
+                    username: userData.username || result.user.email.split('@')[0],
+                    photoURL: result.user.photoURL,
+                    provider: 'google',
+                    hasPassword: true,
+                    emailVerified: result.user.emailVerified,
+                    id: result.user.uid,
+                    isAuthenticated: true,
+                  };
 
-                              // Redirigir al dashboard
-                              setTimeout(() => {
-                                  window.location.href = 'modulos/dashboard/dashboard.html';
-                              }, 2000);
-                          } else {
-                              // Usuario existe pero no tiene contraseña, mostrar modal
-                              console.log('⚠️ Usuario sin contraseña, mostrando modal de configuración');
-                              showGoogleUserSetupModal(result.user);
-                          }
-                      } else {
-                          // Usuario nuevo, mostrar modal de configuración
-                          console.log('🆕 Usuario nuevo, mostrando modal de configuración');
-                          showGoogleUserSetupModal(result.user);
-                      }
-                  } catch (firestoreError) {
-                      console.error('❌ Error verificando usuario en Firestore:', firestoreError);
-                      // En caso de error, mostrar modal de configuración
-                      showGoogleUserSetupModal(result.user);
+                  // Guardar en localStorage en el formato que espera el dashboard
+                  localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
+                  localStorage.setItem('axyra_firebase_user', JSON.stringify(result.user));
+                  localStorage.setItem('axyra_isolated_user_id', result.user.uid);
+                  localStorage.setItem('axyra_session', JSON.stringify(userInfo));
+
+                  // Establecer variable global para compatibilidad
+                  if (window.axyraIsolatedAuth) {
+                    window.axyraIsolatedAuth.currentUser = userInfo;
                   }
 
-              } else {
-                  throw new Error('No se pudo obtener información del usuario');
-              }
+                  console.log('✅ Sesión establecida correctamente para usuario existente:', userInfo);
 
-          } catch (error) {
-              console.error('❌ Error en login con Google:', error);
+                  // Mostrar mensaje de éxito
+                  showSuccess('¡Login con Google exitoso! Redirigiendo al dashboard...');
 
-              if (error.code === 'auth/popup-closed-by-user') {
-                  showError('Login cancelado por el usuario');
-              } else if (error.code === 'auth/popup-blocked') {
-                  showError('Popup bloqueado. Permite popups para este sitio');
-              } else if (error.code === 'auth/unauthorized-domain') {
-                  showError('Dominio no autorizado. Contacta al administrador para agregar este dominio.');
-              } else if (error.code === 'auth/network-request-failed') {
-                  showError('Error de conexión. Verifica tu internet');
+                  // Redirigir al dashboard
+                  setTimeout(() => {
+                    window.location.href = 'modulos/dashboard/dashboard.html';
+                  }, 2000);
+                } else {
+                  // Usuario existe pero no tiene contraseña, mostrar modal
+                  console.log('⚠️ Usuario sin contraseña, mostrando modal de configuración');
+                  showGoogleUserSetupModal(result.user);
+                }
               } else {
-                  showError('Error en login con Google: ' + error.message);
+                // Usuario nuevo, mostrar modal de configuración
+                console.log('🆕 Usuario nuevo, mostrando modal de configuración');
+                showGoogleUserSetupModal(result.user);
               }
+            } catch (firestoreError) {
+              console.error('❌ Error verificando usuario en Firestore:', firestoreError);
+              // En caso de error, mostrar modal de configuración
+              showGoogleUserSetupModal(result.user);
+            }
+          } else {
+            throw new Error('No se pudo obtener información del usuario');
           }
+        } catch (error) {
+          console.error('❌ Error en login con Google:', error);
+
+          if (error.code === 'auth/popup-closed-by-user') {
+            showError('Login cancelado por el usuario');
+          } else if (error.code === 'auth/popup-blocked') {
+            showError('Popup bloqueado. Permite popups para este sitio');
+          } else if (error.code === 'auth/unauthorized-domain') {
+            showError('Dominio no autorizado. Contacta al administrador para agregar este dominio.');
+          } else if (error.code === 'auth/network-request-failed') {
+            showError('Error de conexión. Verifica tu internet');
+          } else {
+            showError('Error en login con Google: ' + error.message);
+          }
+        }
       }
 
       // Función para mostrar modal de configuración de usuario de Google
       function showGoogleUserSetupModal(googleUser) {
-          // Crear modal HTML
-          const modalHTML = `
+        // Crear modal HTML
+        const modalHTML = `
               <div id="googleSetupModal" class="modal-overlay" style="display: flex;">
                   <div class="modal-content">
                       <div class="modal-header">
@@ -1011,335 +1013,336 @@
               </div>
           `;
 
-          // Agregar modal al DOM
-          document.body.insertAdjacentHTML('beforeend', modalHTML);
+        // Agregar modal al DOM
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-          // Manejar envío del formulario
-          document.getElementById('googleSetupForm').addEventListener('submit', async function(e) {
-              e.preventDefault();
-              
-              const username = document.getElementById('setupUsername').value.trim();
-              const password = document.getElementById('setupPassword').value;
-              const confirmPassword = document.getElementById('setupConfirmPassword').value;
+        // Manejar envío del formulario
+        document.getElementById('googleSetupForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
 
-              // Validaciones
-              if (password !== confirmPassword) {
-                  showModalError('Las contraseñas no coinciden');
-                  return;
-              }
+          const username = document.getElementById('setupUsername').value.trim();
+          const password = document.getElementById('setupPassword').value;
+          const confirmPassword = document.getElementById('setupConfirmPassword').value;
 
-              if (password.length < 6) {
-                  showModalError('La contraseña debe tener al menos 6 caracteres');
-                  return;
-              }
+          // Validaciones
+          if (password !== confirmPassword) {
+            showModalError('Las contraseñas no coinciden');
+            return;
+          }
 
-              if (!/^[a-zA-Z0-9\s\-_]+$/.test(username)) {
-                  showModalError('El nombre de usuario solo puede contener letras, números, espacios, guiones y guiones bajos');
-                  return;
-              }
+          if (password.length < 6) {
+            showModalError('La contraseña debe tener al menos 6 caracteres');
+            return;
+          }
 
-              try {
-                  // Mostrar loading
-                  const btnText = document.querySelector('#googleSetupForm .btn-text');
-                  const btnLoading = document.querySelector('#googleSetupForm .btn-loading');
-                  btnText.style.display = 'none';
-                  btnLoading.style.display = 'inline-block';
+          if (!/^[a-zA-Z0-9\s\-_]+$/.test(username)) {
+            showModalError(
+              'El nombre de usuario solo puede contener letras, números, espacios, guiones y guiones bajos'
+            );
+            return;
+          }
 
-                  // Crear credenciales de email/password
-                  const emailCredential = firebase.auth.EmailAuthProvider.credential(googleUser.email, password);
+          try {
+            // Mostrar loading
+            const btnText = document.querySelector('#googleSetupForm .btn-text');
+            const btnLoading = document.querySelector('#googleSetupForm .btn-loading');
+            btnText.style.display = 'none';
+            btnLoading.style.display = 'inline-block';
 
-                  // Vincular credenciales con la cuenta de Google
-                  await googleUser.linkWithCredential(emailCredential);
+            // Crear credenciales de email/password
+            const emailCredential = firebase.auth.EmailAuthProvider.credential(googleUser.email, password);
 
-                  // Crear/actualizar usuario en Firestore
-                  const userData = {
-                      uid: googleUser.uid,
-                      email: googleUser.email,
-                      displayName: googleUser.displayName || googleUser.email.split('@')[0],
-                      username: username,
-                      photoURL: googleUser.photoURL,
-                      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                      lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                      hasPassword: true,
-                      emailVerified: googleUser.emailVerified,
-                      provider: 'google',
-                      isAuthenticated: true
-                  };
+            // Vincular credenciales con la cuenta de Google
+            await googleUser.linkWithCredential(emailCredential);
 
-                  await firebase.firestore().collection('users').doc(googleUser.uid).set(userData, { merge: true });
+            // Crear/actualizar usuario en Firestore
+            const userData = {
+              uid: googleUser.uid,
+              email: googleUser.email,
+              displayName: googleUser.displayName || googleUser.email.split('@')[0],
+              username: username,
+              photoURL: googleUser.photoURL,
+              createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+              lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+              hasPassword: true,
+              emailVerified: googleUser.emailVerified,
+              provider: 'google',
+              isAuthenticated: true,
+            };
 
-                  // Cerrar modal
-                  closeGoogleSetupModal();
+            await firebase.firestore().collection('users').doc(googleUser.uid).set(userData, { merge: true });
 
-                  // Mostrar mensaje de éxito
-                  showSuccess('¡Perfil completado exitosamente! Redirigiendo al dashboard...');
+            // Cerrar modal
+            closeGoogleSetupModal();
 
-                  // Establecer información adicional necesaria para el dashboard
-                  const userInfo = {
-                      uid: googleUser.uid,
-                      email: googleUser.email,
-                      displayName: googleUser.displayName || googleUser.email.split('@')[0],
-                      username: username,
-                      photoURL: googleUser.photoURL,
-                      provider: 'google',
-                      hasPassword: true,
-                      emailVerified: googleUser.emailVerified,
-                      id: googleUser.uid, // Importante: establecer id para compatibilidad con el dashboard
-                      isAuthenticated: true
-                  };
+            // Mostrar mensaje de éxito
+            showSuccess('¡Perfil completado exitosamente! Redirigiendo al dashboard...');
 
-                  // Guardar en localStorage en el formato que espera el dashboard
-                  localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
-                  localStorage.setItem('axyra_firebase_user', JSON.stringify(googleUser));
-                  localStorage.setItem('axyra_isolated_user_id', googleUser.uid);
-                  localStorage.setItem('axyra_session', JSON.stringify(userInfo));
-                  
-                  // Establecer variable global para compatibilidad
-                  if (window.axyraIsolatedAuth) {
-                      window.axyraIsolatedAuth.currentUser = userInfo;
-                  }
+            // Establecer información adicional necesaria para el dashboard
+            const userInfo = {
+              uid: googleUser.uid,
+              email: googleUser.email,
+              displayName: googleUser.displayName || googleUser.email.split('@')[0],
+              username: username,
+              photoURL: googleUser.photoURL,
+              provider: 'google',
+              hasPassword: true,
+              emailVerified: googleUser.emailVerified,
+              id: googleUser.uid, // Importante: establecer id para compatibilidad con el dashboard
+              isAuthenticated: true,
+            };
 
-                  console.log('✅ Sesión establecida correctamente para Google user:', userInfo);
+            // Guardar en localStorage en el formato que espera el dashboard
+            localStorage.setItem('axyra_isolated_user', JSON.stringify(userInfo));
+            localStorage.setItem('axyra_firebase_user', JSON.stringify(googleUser));
+            localStorage.setItem('axyra_isolated_user_id', googleUser.uid);
+            localStorage.setItem('axyra_session', JSON.stringify(userInfo));
 
-                  // Redirigir al dashboard
-                  setTimeout(() => {
-                      window.location.href = 'modulos/dashboard/dashboard.html';
-                  }, 2000);
+            // Establecer variable global para compatibilidad
+            if (window.axyraIsolatedAuth) {
+              window.axyraIsolatedAuth.currentUser = userInfo;
+            }
 
-              } catch (error) {
-                  console.error('❌ Error completando perfil:', error);
-                  
-                  if (error.code === 'auth/weak-password') {
-                      showModalError('La contraseña es muy débil. Usa al menos 6 caracteres');
-                  } else if (error.code === 'auth/email-already-in-use') {
-                      showModalError('Este email ya está en uso con otra cuenta');
-                  } else {
-                      showModalError('Error al completar el perfil: ' + error.message);
-                  }
-              } finally {
-                  // Restaurar botón
-                  const btnText = document.querySelector('#googleSetupForm .btn-text');
-                  const btnLoading = document.querySelector('#googleSetupForm .btn-loading');
-                  btnText.style.display = 'inline-block';
-                  btnLoading.style.display = 'none';
-              }
-          });
+            console.log('✅ Sesión establecida correctamente para Google user:', userInfo);
+
+            // Redirigir al dashboard
+            setTimeout(() => {
+              window.location.href = 'modulos/dashboard/dashboard.html';
+            }, 2000);
+          } catch (error) {
+            console.error('❌ Error completando perfil:', error);
+
+            if (error.code === 'auth/weak-password') {
+              showModalError('La contraseña es muy débil. Usa al menos 6 caracteres');
+            } else if (error.code === 'auth/email-already-in-use') {
+              showModalError('Este email ya está en uso con otra cuenta');
+            } else {
+              showModalError('Error al completar el perfil: ' + error.message);
+            }
+          } finally {
+            // Restaurar botón
+            const btnText = document.querySelector('#googleSetupForm .btn-text');
+            const btnLoading = document.querySelector('#googleSetupForm .btn-loading');
+            btnText.style.display = 'inline-block';
+            btnLoading.style.display = 'none';
+          }
+        });
       }
 
       // Función para cerrar modal de configuración de Google
       function closeGoogleSetupModal() {
-          const modal = document.getElementById('googleSetupModal');
-          if (modal) {
-              modal.remove();
-          }
+        const modal = document.getElementById('googleSetupModal');
+        if (modal) {
+          modal.remove();
+        }
       }
 
       // Función para mostrar error en modal
       function showModalError(message) {
-          // Crear o actualizar mensaje de error en el modal
-          let errorDiv = document.querySelector('#googleSetupModal .modal-error');
-          if (!errorDiv) {
-              errorDiv = document.createElement('div');
-              errorDiv.className = 'modal-error';
-              const form = document.getElementById('googleSetupForm');
-              form.insertBefore(errorDiv, form.firstChild);
-          }
-          errorDiv.textContent = message;
-          errorDiv.style.display = 'block';
-          
-          // Auto-hide error after 5 seconds
-          setTimeout(() => {
-              errorDiv.style.display = 'none';
-          }, 5000);
+        // Crear o actualizar mensaje de error en el modal
+        let errorDiv = document.querySelector('#googleSetupModal .modal-error');
+        if (!errorDiv) {
+          errorDiv = document.createElement('div');
+          errorDiv.className = 'modal-error';
+          const form = document.getElementById('googleSetupForm');
+          form.insertBefore(errorDiv, form.firstChild);
+        }
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+
+        // Auto-hide error after 5 seconds
+        setTimeout(() => {
+          errorDiv.style.display = 'none';
+        }, 5000);
       }
 
       // Función para mostrar/ocultar contraseña en modal
       function toggleSetupPassword() {
-          const passwordInput = document.getElementById('setupPassword');
-          const icon = document.querySelector('#setupPassword + .password-toggle i');
-          
-          if (passwordInput.type === 'password') {
-              passwordInput.type = 'text';
-              icon.className = 'fas fa-eye-slash';
-          } else {
-              passwordInput.type = 'password';
-              icon.className = 'fas fa-eye';
-          }
+        const passwordInput = document.getElementById('setupPassword');
+        const icon = document.querySelector('#setupPassword + .password-toggle i');
+
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.className = 'fas fa-eye-slash';
+        } else {
+          passwordInput.type = 'password';
+          icon.className = 'fas fa-eye';
+        }
       }
 
       // Función para mostrar/ocultar confirmar contraseña en modal
       function toggleSetupConfirmPassword() {
-          const passwordInput = document.getElementById('setupConfirmPassword');
-          const icon = document.querySelector('#setupConfirmPassword + .password-toggle i');
-          
-          if (passwordInput.type === 'password') {
-              passwordInput.type = 'text';
-              icon.className = 'fas fa-eye-slash';
-          } else {
-              passwordInput.type = 'password';
-              icon.className = 'fas fa-eye';
-          }
+        const passwordInput = document.getElementById('setupConfirmPassword');
+        const icon = document.querySelector('#setupConfirmPassword + .password-toggle i');
+
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.className = 'fas fa-eye-slash';
+        } else {
+          passwordInput.type = 'password';
+          icon.className = 'fas fa-eye';
+        }
       }
 
       // Función para validar contraseña en tiempo real
       function validatePasswordStrength(password) {
-          let strength = 0;
-          let feedback = '';
-          
-          if (password.length >= 6) strength++;
-          if (password.length >= 8) strength++;
-          if (/[a-z]/.test(password)) strength++;
-          if (/[A-Z]/.test(password)) strength++;
-          if (/[0-9]/.test(password)) strength++;
-          if (/[^A-Za-z0-9]/.test(password)) strength++;
-          
-          if (strength <= 2) {
-              return { level: 'weak', text: 'Débil - Agrega más caracteres y variedad' };
-          } else if (strength <= 4) {
-              return { level: 'medium', text: 'Media - Buena, pero puede mejorar' };
-          } else {
-              return { level: 'strong', text: 'Fuerte - Excelente contraseña' };
-          }
+        let strength = 0;
+        let feedback = '';
+
+        if (password.length >= 6) strength++;
+        if (password.length >= 8) strength++;
+        if (/[a-z]/.test(password)) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+        if (strength <= 2) {
+          return { level: 'weak', text: 'Débil - Agrega más caracteres y variedad' };
+        } else if (strength <= 4) {
+          return { level: 'medium', text: 'Media - Buena, pero puede mejorar' };
+        } else {
+          return { level: 'strong', text: 'Fuerte - Excelente contraseña' };
         }
+      }
 
       // Función para validar nombre de usuario en tiempo real
       function validateUsername(username) {
-          if (username.length < 3) {
-              return { valid: false, message: 'El nombre de usuario debe tener al menos 3 caracteres' };
-          }
-          if (!/^[a-zA-Z0-9\s\-_]+$/.test(username)) {
-              return { valid: false, message: 'Solo se permiten letras, números, espacios, guiones y guiones bajos' };
-          }
-          return { valid: true, message: 'Nombre de usuario válido' };
+        if (username.length < 3) {
+          return { valid: false, message: 'El nombre de usuario debe tener al menos 3 caracteres' };
+        }
+        if (!/^[a-zA-Z0-9\s\-_]+$/.test(username)) {
+          return { valid: false, message: 'Solo se permiten letras, números, espacios, guiones y guiones bajos' };
+        }
+        return { valid: true, message: 'Nombre de usuario válido' };
       }
 
       // Función para mostrar indicador de fortaleza de contraseña
       function showPasswordStrength(password) {
-          const strengthIndicator = document.getElementById('passwordStrength');
-          if (!strengthIndicator) return;
-          
-          if (password.length === 0) {
-              strengthIndicator.style.display = 'none';
-              return;
-          }
-          
-          const strength = validatePasswordStrength(password);
-          strengthIndicator.className = `password-strength ${strength.level}`;
-          strengthIndicator.textContent = strength.text;
-          strengthIndicator.style.display = 'block';
+        const strengthIndicator = document.getElementById('passwordStrength');
+        if (!strengthIndicator) return;
+
+        if (password.length === 0) {
+          strengthIndicator.style.display = 'none';
+          return;
+        }
+
+        const strength = validatePasswordStrength(password);
+        strengthIndicator.className = `password-strength ${strength.level}`;
+        strengthIndicator.textContent = strength.text;
+        strengthIndicator.style.display = 'block';
       }
 
       // Función para validar confirmación de contraseña en tiempo real
       function validatePasswordConfirmation(password, confirmPassword) {
-          const confirmIndicator = document.getElementById('passwordConfirmIndicator');
-          if (!confirmIndicator) return;
-          
-          if (confirmPassword.length === 0) {
-              confirmIndicator.style.display = 'none';
-              return;
-          }
-          
-          if (password === confirmPassword) {
-              confirmIndicator.className = 'password-strength strong';
-              confirmIndicator.textContent = '✓ Las contraseñas coinciden';
-              confirmIndicator.style.display = 'block';
-          } else {
-              confirmIndicator.className = 'password-strength weak';
-              confirmIndicator.textContent = '✗ Las contraseñas no coinciden';
-              confirmIndicator.style.display = 'block';
-          }
+        const confirmIndicator = document.getElementById('passwordConfirmIndicator');
+        if (!confirmIndicator) return;
+
+        if (confirmPassword.length === 0) {
+          confirmIndicator.style.display = 'none';
+          return;
+        }
+
+        if (password === confirmPassword) {
+          confirmIndicator.className = 'password-strength strong';
+          confirmIndicator.textContent = '✓ Las contraseñas coinciden';
+          confirmIndicator.style.display = 'block';
+        } else {
+          confirmIndicator.className = 'password-strength weak';
+          confirmIndicator.textContent = '✗ Las contraseñas no coinciden';
+          confirmIndicator.style.display = 'block';
+        }
       }
 
       // Función para validar nombre de usuario en tiempo real
       function validateUsernameRealTime(username) {
-          const validationIndicator = document.getElementById('usernameValidation');
-          if (!validationIndicator) return;
-          
-          if (username.length === 0) {
-              validationIndicator.style.display = 'none';
-              return;
-          }
-          
-          const validation = validateUsername(username);
-          if (validation.valid) {
-              validationIndicator.className = 'password-strength strong';
-              validationIndicator.textContent = '✓ ' + validation.message;
-              validationIndicator.style.display = 'block';
-          } else {
-              validationIndicator.className = 'password-strength weak';
-              validationIndicator.textContent = '✗ ' + validation.message;
-              validationIndicator.style.display = 'block';
-          }
-          
-          // Update progress and check form completion
-          updateFormProgress();
-          checkFormCompletion();
+        const validationIndicator = document.getElementById('usernameValidation');
+        if (!validationIndicator) return;
+
+        if (username.length === 0) {
+          validationIndicator.style.display = 'none';
+          return;
+        }
+
+        const validation = validateUsername(username);
+        if (validation.valid) {
+          validationIndicator.className = 'password-strength strong';
+          validationIndicator.textContent = '✓ ' + validation.message;
+          validationIndicator.style.display = 'block';
+        } else {
+          validationIndicator.className = 'password-strength weak';
+          validationIndicator.textContent = '✗ ' + validation.message;
+          validationIndicator.style.display = 'block';
+        }
+
+        // Update progress and check form completion
+        updateFormProgress();
+        checkFormCompletion();
       }
 
       // Función para actualizar el progreso del formulario
       function updateFormProgress() {
-          const username = document.getElementById('setupUsername')?.value.trim() || '';
-          const password = document.getElementById('setupPassword')?.value || '';
-          const confirmPassword = document.getElementById('setupConfirmPassword')?.value || '';
-          
-          const steps = document.querySelectorAll('.progress-step');
-          
-          // Step 1: Username
-          if (username.length >= 3 && /^[a-zA-Z0-9\s\-_]+$/.test(username)) {
-              steps[0].classList.remove('active');
-              steps[0].classList.add('completed');
-              steps[1].classList.add('active');
-          } else {
-              steps[0].classList.add('active');
-              steps[0].classList.remove('completed');
-              steps[1].classList.remove('active');
-          }
-          
-          // Step 2: Password
-          if (password.length >= 6) {
-              steps[1].classList.remove('active');
-              steps[1].classList.add('completed');
-              steps[2].classList.add('active');
-          } else {
-              steps[1].classList.add('active');
-              steps[1].classList.remove('completed');
-              steps[2].classList.remove('active');
-          }
-          
-          // Step 3: Confirm Password
-          if (password === confirmPassword && password.length >= 6) {
-              steps[2].classList.remove('active');
-              steps[2].classList.add('completed');
-          } else {
-              steps[2].classList.add('active');
-              steps[2].classList.remove('completed');
-          }
+        const username = document.getElementById('setupUsername')?.value.trim() || '';
+        const password = document.getElementById('setupPassword')?.value || '';
+        const confirmPassword = document.getElementById('setupConfirmPassword')?.value || '';
+
+        const steps = document.querySelectorAll('.progress-step');
+
+        // Step 1: Username
+        if (username.length >= 3 && /^[a-zA-Z0-9\s\-_]+$/.test(username)) {
+          steps[0].classList.remove('active');
+          steps[0].classList.add('completed');
+          steps[1].classList.add('active');
+        } else {
+          steps[0].classList.add('active');
+          steps[0].classList.remove('completed');
+          steps[1].classList.remove('active');
+        }
+
+        // Step 2: Password
+        if (password.length >= 6) {
+          steps[1].classList.remove('active');
+          steps[1].classList.add('completed');
+          steps[2].classList.add('active');
+        } else {
+          steps[1].classList.add('active');
+          steps[1].classList.remove('completed');
+          steps[2].classList.remove('active');
+        }
+
+        // Step 3: Confirm Password
+        if (password === confirmPassword && password.length >= 6) {
+          steps[2].classList.remove('active');
+          steps[2].classList.add('completed');
+        } else {
+          steps[2].classList.add('active');
+          steps[2].classList.remove('completed');
+        }
       }
 
       // Función para verificar si el formulario está completo
       function checkFormCompletion() {
-          const username = document.getElementById('setupUsername')?.value.trim() || '';
-          const password = document.getElementById('setupPassword')?.value || '';
-          const confirmPassword = document.getElementById('setupConfirmPassword')?.value || '';
-          
-          const usernameValid = username.length >= 3 && /^[a-zA-Z0-9\s\-_]+$/.test(username);
-          const passwordValid = password.length >= 6;
-          const confirmValid = password === confirmPassword && password.length >= 6;
-          
-          const formCompletion = document.getElementById('formCompletion');
-          if (!formCompletion) return;
-          
-          if (usernameValid && passwordValid && confirmValid) {
-              formCompletion.classList.add('show');
-          } else {
-              formCompletion.classList.remove('show');
-          }
+        const username = document.getElementById('setupUsername')?.value.trim() || '';
+        const password = document.getElementById('setupPassword')?.value || '';
+        const confirmPassword = document.getElementById('setupConfirmPassword')?.value || '';
+
+        const usernameValid = username.length >= 3 && /^[a-zA-Z0-9\s\-_]+$/.test(username);
+        const passwordValid = password.length >= 6;
+        const confirmValid = password === confirmPassword && password.length >= 6;
+
+        const formCompletion = document.getElementById('formCompletion');
+        if (!formCompletion) return;
+
+        if (usernameValid && passwordValid && confirmValid) {
+          formCompletion.classList.add('show');
+        } else {
+          formCompletion.classList.remove('show');
+        }
       }
 
       // Función para actualizar progreso cuando cambia la contraseña
       function updatePasswordProgress() {
-          updateFormProgress();
-          checkFormCompletion();
+        updateFormProgress();
+        checkFormCompletion();
       }
     </script>
   </body>

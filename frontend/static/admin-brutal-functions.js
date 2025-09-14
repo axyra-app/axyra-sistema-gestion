@@ -32,14 +32,18 @@ class AxyraAdminBrutal {
 
   setupFirestoreListeners() {
     // Escuchar cambios en usuarios
-    firebase.firestore().collection('users')
+    firebase
+      .firestore()
+      .collection('users')
       .onSnapshot((snapshot) => {
         console.log('📊 Usuarios actualizados en tiempo real');
         this.processUsersUpdate(snapshot);
       });
 
     // Escuchar cambios en suscripciones
-    firebase.firestore().collection('subscriptions')
+    firebase
+      .firestore()
+      .collection('subscriptions')
       .onSnapshot((snapshot) => {
         console.log('💳 Suscripciones actualizadas en tiempo real');
         this.processSubscriptionsUpdate(snapshot);
@@ -48,20 +52,20 @@ class AxyraAdminBrutal {
 
   processUsersUpdate(snapshot) {
     this.users = [];
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc) => {
       this.users.push({ id: doc.id, ...doc.data() });
     });
-    
+
     this.updateUsersStats();
     this.updateRecentUsersTable();
   }
 
   processSubscriptionsUpdate(snapshot) {
     this.subscriptions = [];
-    snapshot.forEach(doc => {
+    snapshot.forEach((doc) => {
       this.subscriptions.push({ id: doc.id, ...doc.data() });
     });
-    
+
     this.updateSubscriptionsStats();
   }
 
@@ -71,10 +75,9 @@ class AxyraAdminBrutal {
       await this.loadUsersData();
       await this.loadSubscriptionsData();
       await this.loadAnalyticsData();
-      
+
       this.updateAllStats();
       this.updateCharts();
-      
     } catch (error) {
       console.error('❌ Error actualizando datos:', error);
     }
@@ -90,7 +93,7 @@ class AxyraAdminBrutal {
     try {
       const snapshot = await firebase.firestore().collection('users').get();
       this.users = [];
-      snapshot.forEach(doc => {
+      snapshot.forEach((doc) => {
         this.users.push({ id: doc.id, ...doc.data() });
       });
     } catch (error) {
@@ -108,7 +111,7 @@ class AxyraAdminBrutal {
     try {
       const snapshot = await firebase.firestore().collection('subscriptions').get();
       this.subscriptions = [];
-      snapshot.forEach(doc => {
+      snapshot.forEach((doc) => {
         this.subscriptions.push({ id: doc.id, ...doc.data() });
       });
     } catch (error) {
@@ -121,9 +124,9 @@ class AxyraAdminBrutal {
     // Cargar datos de analíticas
     this.analytics = {
       totalUsers: this.users.length,
-      activeSubscriptions: this.subscriptions.filter(sub => sub.status === 'active').length,
-      freeTrials: this.subscriptions.filter(sub => sub.status === 'trial').length,
-      monthlyRevenue: this.calculateMonthlyRevenue()
+      activeSubscriptions: this.subscriptions.filter((sub) => sub.status === 'active').length,
+      freeTrials: this.subscriptions.filter((sub) => sub.status === 'trial').length,
+      monthlyRevenue: this.calculateMonthlyRevenue(),
     };
   }
 
@@ -138,8 +141,8 @@ class AxyraAdminBrutal {
     const totalUsers = this.users.length;
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
-    
-    const thisMonthUsers = this.users.filter(user => {
+
+    const thisMonthUsers = this.users.filter((user) => {
       const userDate = new Date(user.createdAt?.toDate?.() || user.createdAt);
       return userDate.getMonth() === thisMonth && userDate.getFullYear() === thisYear;
     }).length;
@@ -150,11 +153,11 @@ class AxyraAdminBrutal {
   }
 
   updateSubscriptionsStats() {
-    const activeSubscriptions = this.subscriptions.filter(sub => sub.status === 'active').length;
+    const activeSubscriptions = this.subscriptions.filter((sub) => sub.status === 'active').length;
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
-    
-    const thisMonthSubs = this.subscriptions.filter(sub => {
+
+    const thisMonthSubs = this.subscriptions.filter((sub) => {
       const subDate = new Date(sub.createdAt?.toDate?.() || sub.createdAt);
       return subDate.getMonth() === thisMonth && subDate.getFullYear() === thisYear;
     }).length;
@@ -167,23 +170,24 @@ class AxyraAdminBrutal {
   updateRevenueStats() {
     const monthlyRevenue = this.calculateMonthlyRevenue();
     const previousMonthRevenue = this.calculatePreviousMonthRevenue();
-    const growth = previousMonthRevenue > 0 ? ((monthlyRevenue - previousMonthRevenue) / previousMonthRevenue * 100) : 0;
+    const growth =
+      previousMonthRevenue > 0 ? ((monthlyRevenue - previousMonthRevenue) / previousMonthRevenue) * 100 : 0;
 
     document.getElementById('monthlyRevenue').textContent = `$${monthlyRevenue.toLocaleString()}`;
-    document.getElementById('revenueChange').textContent = `${growth >= 0 ? '+' : ''}${growth.toFixed(1)}% vs mes anterior`;
+    document.getElementById('revenueChange').textContent = `${growth >= 0 ? '+' : ''}${growth.toFixed(
+      1
+    )}% vs mes anterior`;
     document.getElementById('revenueChange').className = `stat-change ${growth >= 0 ? 'positive' : 'negative'}`;
   }
 
   calculateMonthlyRevenue() {
     const thisMonth = new Date().getMonth();
     const thisYear = new Date().getFullYear();
-    
+
     return this.subscriptions
-      .filter(sub => {
+      .filter((sub) => {
         const subDate = new Date(sub.createdAt?.toDate?.() || sub.createdAt);
-        return sub.status === 'active' && 
-               subDate.getMonth() === thisMonth && 
-               subDate.getFullYear() === thisYear;
+        return sub.status === 'active' && subDate.getMonth() === thisMonth && subDate.getFullYear() === thisYear;
       })
       .reduce((total, sub) => total + (sub.amount || 0), 0);
   }
@@ -191,13 +195,11 @@ class AxyraAdminBrutal {
   calculatePreviousMonthRevenue() {
     const lastMonth = new Date().getMonth() - 1;
     const thisYear = new Date().getFullYear();
-    
+
     return this.subscriptions
-      .filter(sub => {
+      .filter((sub) => {
         const subDate = new Date(sub.createdAt?.toDate?.() || sub.createdAt);
-        return sub.status === 'active' && 
-               subDate.getMonth() === lastMonth && 
-               subDate.getFullYear() === thisYear;
+        return sub.status === 'active' && subDate.getMonth() === lastMonth && subDate.getFullYear() === thisYear;
       })
       .reduce((total, sub) => total + (sub.amount || 0), 0);
   }
@@ -205,7 +207,9 @@ class AxyraAdminBrutal {
   // TABLE UPDATES
   updateRecentUsersTable() {
     const recentUsers = this.users
-      .sort((a, b) => new Date(b.createdAt?.toDate?.() || b.createdAt) - new Date(a.createdAt?.toDate?.() || a.createdAt))
+      .sort(
+        (a, b) => new Date(b.createdAt?.toDate?.() || b.createdAt) - new Date(a.createdAt?.toDate?.() || a.createdAt)
+      )
       .slice(0, 10);
 
     const tbody = document.getElementById('recentUsersTable');
@@ -224,7 +228,7 @@ class AxyraAdminBrutal {
       return;
     }
 
-    recentUsers.forEach(user => {
+    recentUsers.forEach((user) => {
       const row = document.createElement('tr');
       row.innerHTML = this.createUserRow(user);
       tbody.appendChild(row);
@@ -235,7 +239,7 @@ class AxyraAdminBrutal {
     const plan = this.getUserPlan(user);
     const status = this.getUserStatus(user);
     const date = new Date(user.createdAt?.toDate?.() || user.createdAt).toLocaleDateString();
-    
+
     return `
       <td>
         <div style="display: flex; align-items: center; gap: 10px;">
@@ -247,22 +251,30 @@ class AxyraAdminBrutal {
       </td>
       <td>${user.email}</td>
       <td>
-        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${this.getPlanColor(plan)}; color: white;">
+        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${this.getPlanColor(
+          plan
+        )}; color: white;">
           ${plan}
         </span>
       </td>
       <td>
-        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${this.getStatusColor(status)}; color: white;">
+        <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${this.getStatusColor(
+          status
+        )}; color: white;">
           ${status}
         </span>
       </td>
       <td>${date}</td>
       <td>
         <div style="display: flex; gap: 5px;">
-          <button class="btn-brutal btn-secondary" style="padding: 6px 12px; font-size: 11px;" onclick="adminBrutal.manageUser('${user.email}')" title="Gestionar">
+          <button class="btn-brutal btn-secondary" style="padding: 6px 12px; font-size: 11px;" onclick="adminBrutal.manageUser('${
+            user.email
+          }')" title="Gestionar">
             <i class="fas fa-cog"></i>
           </button>
-          <button class="btn-brutal btn-primary" style="padding: 6px 12px; font-size: 11px;" onclick="adminBrutal.viewUser('${user.email}')" title="Ver">
+          <button class="btn-brutal btn-primary" style="padding: 6px 12px; font-size: 11px;" onclick="adminBrutal.viewUser('${
+            user.email
+          }')" title="Ver">
             <i class="fas fa-eye"></i>
           </button>
         </div>
@@ -285,22 +297,32 @@ class AxyraAdminBrutal {
   }
 
   getPlanColor(plan) {
-    switch(plan) {
-      case 'Básico': return 'linear-gradient(135deg, #4299e1, #3182ce)';
-      case 'Profesional': return 'linear-gradient(135deg, #48bb78, #38a169)';
-      case 'Empresarial': return 'linear-gradient(135deg, #ed8936, #dd6b20)';
-      case 'Admin': return 'linear-gradient(135deg, #667eea, #764ba2)';
-      default: return 'linear-gradient(135deg, #a0aec0, #718096)';
+    switch (plan) {
+      case 'Básico':
+        return 'linear-gradient(135deg, #4299e1, #3182ce)';
+      case 'Profesional':
+        return 'linear-gradient(135deg, #48bb78, #38a169)';
+      case 'Empresarial':
+        return 'linear-gradient(135deg, #ed8936, #dd6b20)';
+      case 'Admin':
+        return 'linear-gradient(135deg, #667eea, #764ba2)';
+      default:
+        return 'linear-gradient(135deg, #a0aec0, #718096)';
     }
   }
 
   getStatusColor(status) {
-    switch(status) {
-      case 'Activo': return 'linear-gradient(135deg, #48bb78, #38a169)';
-      case 'Prueba': return 'linear-gradient(135deg, #ed8936, #dd6b20)';
-      case 'Inactivo': return 'linear-gradient(135deg, #f56565, #e53e3e)';
-      case 'Admin': return 'linear-gradient(135deg, #667eea, #764ba2)';
-      default: return 'linear-gradient(135deg, #a0aec0, #718096)';
+    switch (status) {
+      case 'Activo':
+        return 'linear-gradient(135deg, #48bb78, #38a169)';
+      case 'Prueba':
+        return 'linear-gradient(135deg, #ed8936, #dd6b20)';
+      case 'Inactivo':
+        return 'linear-gradient(135deg, #f56565, #e53e3e)';
+      case 'Admin':
+        return 'linear-gradient(135deg, #667eea, #764ba2)';
+      default:
+        return 'linear-gradient(135deg, #a0aec0, #718096)';
     }
   }
 
@@ -313,7 +335,7 @@ class AxyraAdminBrutal {
 
   updateUsersChart() {
     const monthlyData = this.getMonthlyUsersData();
-    
+
     window.usersChart.data.datasets[0].data = monthlyData;
     window.usersChart.update();
   }
@@ -321,9 +343,9 @@ class AxyraAdminBrutal {
   getMonthlyUsersData() {
     const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
     const currentYear = new Date().getFullYear();
-    
+
     return months.map((_, index) => {
-      return this.users.filter(user => {
+      return this.users.filter((user) => {
         const userDate = new Date(user.createdAt?.toDate?.() || user.createdAt);
         return userDate.getMonth() === index && userDate.getFullYear() === currentYear;
       }).length;
@@ -364,7 +386,7 @@ class AxyraAdminBrutal {
   }
 
   showUserModal(email) {
-    const user = this.users.find(u => u.email === email);
+    const user = this.users.find((u) => u.email === email);
     if (!user) return;
 
     // Crear modal de gestión de usuario
@@ -383,7 +405,9 @@ class AxyraAdminBrutal {
             <p><strong>Email:</strong> ${user.email}</p>
             <p><strong>Plan:</strong> ${this.getUserPlan(user)}</p>
             <p><strong>Estado:</strong> ${this.getUserStatus(user)}</p>
-            <p><strong>Registro:</strong> ${new Date(user.createdAt?.toDate?.() || user.createdAt).toLocaleDateString()}</p>
+            <p><strong>Registro:</strong> ${new Date(
+              user.createdAt?.toDate?.() || user.createdAt
+            ).toLocaleDateString()}</p>
           </div>
           <div class="user-actions">
             <button class="btn-brutal btn-primary" onclick="adminBrutal.changeUserPlan('${email}')">
@@ -399,12 +423,12 @@ class AxyraAdminBrutal {
         </div>
       </div>
     `;
-    
+
     document.body.appendChild(modal);
   }
 
   showUserDetails(email) {
-    const user = this.users.find(u => u.email === email);
+    const user = this.users.find((u) => u.email === email);
     if (!user) return;
 
     console.log('📊 Detalles del usuario:', user);
@@ -437,7 +461,7 @@ class AxyraAdminBrutal {
         displayName: 'Juan Pérez',
         createdAt: new Date('2024-01-15'),
         plan: 'Profesional',
-        subscription: { status: 'active', plan: 'Profesional' }
+        subscription: { status: 'active', plan: 'Profesional' },
       },
       {
         id: '2',
@@ -445,7 +469,7 @@ class AxyraAdminBrutal {
         displayName: 'María García',
         createdAt: new Date('2024-01-14'),
         plan: 'Básico',
-        subscription: { status: 'trial', plan: 'Básico' }
+        subscription: { status: 'trial', plan: 'Básico' },
       },
       {
         id: '3',
@@ -453,8 +477,8 @@ class AxyraAdminBrutal {
         displayName: 'Carlos López',
         createdAt: new Date('2024-01-13'),
         plan: 'Empresarial',
-        subscription: { status: 'active', plan: 'Empresarial' }
-      }
+        subscription: { status: 'active', plan: 'Empresarial' },
+      },
     ];
   }
 
@@ -466,7 +490,7 @@ class AxyraAdminBrutal {
         plan: 'Profesional',
         status: 'active',
         amount: 99900,
-        createdAt: new Date('2024-01-15')
+        createdAt: new Date('2024-01-15'),
       },
       {
         id: '2',
@@ -474,7 +498,7 @@ class AxyraAdminBrutal {
         plan: 'Básico',
         status: 'trial',
         amount: 0,
-        createdAt: new Date('2024-01-14')
+        createdAt: new Date('2024-01-14'),
       },
       {
         id: '3',
@@ -482,8 +506,8 @@ class AxyraAdminBrutal {
         plan: 'Empresarial',
         status: 'active',
         amount: 159900,
-        createdAt: new Date('2024-01-13')
-      }
+        createdAt: new Date('2024-01-13'),
+      },
     ];
   }
 }
