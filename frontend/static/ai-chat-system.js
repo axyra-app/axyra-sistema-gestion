@@ -6,7 +6,7 @@ console.log('🤖 Inicializando sistema de chat con IA...');
 
 class AxyraAIChat {
   constructor() {
-    this.isOpen = false;
+    this.isOpen = true;
     this.messages = [];
     this.personalities = {
       axyra: {
@@ -54,7 +54,7 @@ class AxyraAIChat {
     const chatContainer = document.createElement('div');
     chatContainer.id = 'axyra-chat-container';
     chatContainer.innerHTML = `
-            <div class="axyra-chat-widget">
+            <div class="axyra-chat-widget open">
                 <div class="axyra-chat-header" onclick="axyraAIChat.toggleChat()">
                     <div class="axyra-chat-header-content">
                         <div class="axyra-chat-avatar">
@@ -136,7 +136,7 @@ class AxyraAIChat {
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
-                transform: translateY(420px);
+                transform: translateY(0);
                 transition: transform 0.3s ease;
             }
 
