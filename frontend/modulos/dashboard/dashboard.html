@@ -226,6 +226,99 @@
         font-weight: 500;
       }
       
+      /* ========================================
+         INDICADOR DE MEMBRESÍA
+         ======================================== */
+      
+      .axyra-membership-indicator {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 8px 16px;
+        border-radius: 25px;
+        margin-right: 16px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+      }
+      
+      .axyra-membership-indicator:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+      
+      .axyra-membership-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: white;
+      }
+      
+      .axyra-membership-info i {
+        font-size: 16px;
+        color: #ffd700;
+      }
+      
+      .axyra-membership-info span {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      
+      .axyra-upgrade-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 15px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      
+      .axyra-upgrade-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: scale(1.05);
+      }
+      
+      .axyra-upgrade-btn i {
+        font-size: 10px;
+      }
+      
+      /* Estados del indicador según el plan */
+      .axyra-membership-indicator.plan-gratuito {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+      }
+      
+      .axyra-membership-indicator.plan-basico {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      }
+      
+      .axyra-membership-indicator.plan-profesional {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      }
+      
+      .axyra-membership-indicator.plan-empresarial {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+      }
+      
+      .axyra-membership-indicator.plan-ultimo {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      }
+      
+      .axyra-membership-indicator.plan-ultimo .axyra-upgrade-btn {
+        display: none;
+      }
+      
       /* Responsive Design */
       @media (max-width: 1200px) {
         .axyra-stats-grid-4 {
@@ -263,6 +356,16 @@
             </p>
           </div>
           <div class="axyra-dashboard-controls">
+            <div class="axyra-membership-indicator" id="membershipIndicator">
+              <div class="axyra-membership-info">
+                <i class="fas fa-crown" id="membershipIcon"></i>
+                <span id="membershipText">Plan Gratuito</span>
+              </div>
+              <button class="axyra-upgrade-btn" id="upgradeBtn" onclick="window.location.href='../../membresias.html'">
+                <i class="fas fa-arrow-up"></i>
+                Actualizar
+              </button>
+            </div>
             <button
               id="btnPersonalizarDashboard"
               class="axyra-dashboard-btn axyra-dashboard-btn-primary"
@@ -287,10 +390,6 @@
               <div class="axyra-stat-icon-modern blue">
                 <i class="fas fa-users"></i>
               </div>
-              <div class="axyra-stat-trend">
-                <i class="fas fa-arrow-up"></i>
-                <span>+12%</span>
-              </div>
             </div>
             <div class="axyra-stat-content">
               <div class="axyra-stat-number-modern" id="empleadosActivos">0</div>
@@ -303,10 +402,6 @@
             <div class="axyra-stat-header">
               <div class="axyra-stat-icon-modern green">
                 <i class="fas fa-clock"></i>
-              </div>
-              <div class="axyra-stat-trend">
-                <i class="fas fa-arrow-up"></i>
-                <span>+8%</span>
               </div>
             </div>
             <div class="axyra-stat-content">
@@ -321,10 +416,6 @@
               <div class="axyra-stat-icon-modern orange">
                 <i class="fas fa-file-invoice-dollar"></i>
               </div>
-              <div class="axyra-stat-trend">
-                <i class="fas fa-arrow-up"></i>
-                <span>+15%</span>
-              </div>
             </div>
             <div class="axyra-stat-content">
               <div class="axyra-stat-number-modern" id="nominasGeneradas">0</div>
@@ -337,10 +428,6 @@
             <div class="axyra-stat-header">
               <div class="axyra-stat-icon-modern purple">
                 <i class="fas fa-dollar-sign"></i>
-              </div>
-              <div class="axyra-stat-trend">
-                <i class="fas fa-arrow-up"></i>
-                <span>+5%</span>
               </div>
             </div>
             <div class="axyra-stat-content">
@@ -358,10 +445,6 @@
               <div class="axyra-stat-icon-modern teal">
                 <i class="fas fa-calculator"></i>
               </div>
-              <div class="axyra-stat-trend">
-                <i class="fas fa-arrow-up"></i>
-                <span>+3%</span>
-              </div>
             </div>
             <div class="axyra-stat-content">
               <div class="axyra-stat-number-modern" id="cuadresCaja">0</div>
@@ -374,10 +457,6 @@
             <div class="axyra-stat-header">
               <div class="axyra-stat-icon-modern indigo">
                 <i class="fas fa-boxes"></i>
-              </div>
-              <div class="axyra-stat-trend">
-                <i class="fas fa-arrow-up"></i>
-                <span>+7%</span>
               </div>
             </div>
             <div class="axyra-stat-content">
@@ -599,9 +678,71 @@
         `;
         document.head.appendChild(style);
         
-        console.log('✅ Dashboard AXYRA inicializado correctamente');
-      });
-    </script>
+               console.log('✅ Dashboard AXYRA inicializado correctamente');
+               
+               // Actualizar indicador de membresía
+               updateMembershipIndicator();
+             });
+             
+             // Función para actualizar el indicador de membresía
+             function updateMembershipIndicator() {
+               const membershipPlan = localStorage.getItem('axyra_membership_plan') || 'free';
+               const membershipIndicator = document.getElementById('membershipIndicator');
+               const membershipText = document.getElementById('membershipText');
+               const membershipIcon = document.getElementById('membershipIcon');
+               const upgradeBtn = document.getElementById('upgradeBtn');
+               
+               if (!membershipIndicator) return;
+               
+               // Remover clases anteriores
+               membershipIndicator.className = 'axyra-membership-indicator';
+               
+               switch(membershipPlan) {
+                 case 'free':
+                   membershipIndicator.classList.add('plan-gratuito');
+                   membershipText.textContent = 'Plan Gratuito';
+                   membershipIcon.className = 'fas fa-gift';
+                   upgradeBtn.style.display = 'flex';
+                   break;
+                   
+                 case 'basic':
+                   membershipIndicator.classList.add('plan-basico');
+                   membershipText.textContent = 'Plan Básico';
+                   membershipIcon.className = 'fas fa-star';
+                   upgradeBtn.style.display = 'flex';
+                   break;
+                   
+                 case 'professional':
+                   membershipIndicator.classList.add('plan-profesional');
+                   membershipText.textContent = 'Plan Profesional';
+                   membershipIcon.className = 'fas fa-crown';
+                   upgradeBtn.style.display = 'flex';
+                   break;
+                   
+                 case 'enterprise':
+                   membershipIndicator.classList.add('plan-empresarial');
+                   membershipText.textContent = 'Plan Empresarial';
+                   membershipIcon.className = 'fas fa-building';
+                   upgradeBtn.style.display = 'flex';
+                   break;
+                   
+                 case 'ultimate':
+                   membershipIndicator.classList.add('plan-ultimo');
+                   membershipText.textContent = 'Plan Ultimate';
+                   membershipIcon.className = 'fas fa-gem';
+                   upgradeBtn.style.display = 'none';
+                   break;
+                   
+                 default:
+                   membershipIndicator.classList.add('plan-gratuito');
+                   membershipText.textContent = 'Plan Gratuito';
+                   membershipIcon.className = 'fas fa-gift';
+                   upgradeBtn.style.display = 'flex';
+               }
+               
+               console.log('💎 Indicador de membresía actualizado:', membershipPlan);
+             }
+           </script>
     
   </body>
 </html>
