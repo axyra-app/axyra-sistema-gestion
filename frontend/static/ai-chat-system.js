@@ -307,6 +307,10 @@ class AxyraAIChat {
                 padding: 16px;
                 background: white;
                 border-top: 1px solid #e0e0e0;
+                position: sticky;
+                bottom: 0;
+                z-index: 10;
+                flex-shrink: 0;
             }
 
             .axyra-chat-personality-selector {
@@ -427,7 +431,17 @@ class AxyraAIChat {
     if (this.isOpen) {
       widget.classList.add('open');
       body.style.display = 'flex';
-      document.getElementById('axyra-chat-input').focus();
+      
+      // Asegurar que el input esté presente y funcional
+      this.ensureInputVisibility();
+      
+      // Focus en el input después de un pequeño delay
+      setTimeout(() => {
+        const input = document.getElementById('axyra-chat-input');
+        if (input) {
+          input.focus();
+        }
+      }, 300);
     } else {
       widget.classList.remove('open');
       body.style.display = 'none';
@@ -440,19 +454,81 @@ class AxyraAIChat {
 
     // Actualizar header
     const header = document.querySelector('.axyra-chat-header-content');
-    header.innerHTML = `
+    if (header) {
+      header.innerHTML = `
             <div class="axyra-chat-avatar">${personalityData.icon}</div>
             <div class="axyra-chat-info">
                 <h4>${personalityData.name}</h4>
                 <p>${personalityData.description}</p>
             </div>
         `;
+    }
 
     // Agregar mensaje de cambio de personalidad
     this.addMessage(
       'assistant',
       `¡Hola! Ahora soy ${personalityData.name}. ${personalityData.description}. ¿En qué puedo ayudarte?`
     );
+
+    // Asegurar que el input esté visible y funcional
+    this.ensureInputVisibility();
+  }
+
+  ensureInputVisibility() {
+    // Verificar que el input container esté presente
+    const inputContainer = document.querySelector('.axyra-chat-input-container');
+    if (!inputContainer) {
+      console.warn('⚠️ Input container no encontrado, recreando...');
+      this.recreateInputContainer();
+    }
+
+    // Verificar que el input esté presente
+    const input = document.getElementById('axyra-chat-input');
+    if (!input) {
+      console.warn('⚠️ Input no encontrado, recreando...');
+      this.recreateInputContainer();
+    }
+
+    // Asegurar que el chat esté abierto para mostrar el input
+    if (this.isOpen) {
+      this.toggleChat();
+      setTimeout(() => this.toggleChat(), 100);
+    }
+  }
+
+  recreateInputContainer() {
+    const chatBody = document.getElementById('axyra-chat-body');
+    if (chatBody) {
+      // Buscar si ya existe el input container
+      let inputContainer = chatBody.querySelector('.axyra-chat-input-container');
+      
+      if (!inputContainer) {
+        // Crear el input container si no existe
+        inputContainer = document.createElement('div');
+        inputContainer.className = 'axyra-chat-input-container';
+        inputContainer.innerHTML = `
+          <div class="axyra-chat-personality-selector">
+            <select id="axyra-chat-personality" onchange="axyraAIChat.changePersonality(this.value)">
+              <option value="axyra" ${this.currentPersonality === 'axyra' ? 'selected' : ''}>🤖 AXYRA Assistant</option>
+              <option value="hr" ${this.currentPersonality === 'hr' ? 'selected' : ''}>👥 Especialista RRHH</option>
+              <option value="finance" ${this.currentPersonality === 'finance' ? 'selected' : ''}>💰 Analista Financiero</option>
+              <option value="tech" ${this.currentPersonality === 'tech' ? 'selected' : ''}>⚙️ Soporte Técnico</option>
+            </select>
+          </div>
+          
+          <div class="axyra-chat-input-wrapper">
+            <input type="text" id="axyra-chat-input" placeholder="Escribe tu mensaje..." 
+                   onkeypress="axyraAIChat.handleKeyPress(event)">
+            <button class="axyra-chat-send-btn" onclick="axyraAIChat.sendMessage()">
+              📤
+            </button>
+          </div>
+        `;
+        
+        chatBody.appendChild(inputContainer);
+        console.log('✅ Input container recreado');
+      }
+    }
   }
 
   handleKeyPress(event) {
@@ -488,6 +564,11 @@ class AxyraAIChat {
 
   addMessage(sender, content) {
     const messagesContainer = document.getElementById('axyra-chat-messages');
+    if (!messagesContainer) {
+      console.error('❌ Contenedor de mensajes no encontrado');
+      return;
+    }
+
     const personalityData = this.personalities[this.currentPersonality];
 
     const messageDiv = document.createElement('div');
@@ -501,11 +582,21 @@ class AxyraAIChat {
         `;
 
     messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Scroll suave al final
+    setTimeout(() => {
+      messagesContainer.scrollTo({
+        top: messagesContainer.scrollHeight,
+        behavior: 'smooth'
+      });
+    }, 100);
 
     // Guardar en historial
     this.messages.push({ sender, content, timestamp: Date.now() });
     this.saveChatHistory();
+
+    // Asegurar que el input esté visible después de agregar mensaje
+    this.ensureInputVisibility();
   }
 
   showTypingIndicator() {
