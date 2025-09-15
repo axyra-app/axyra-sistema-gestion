@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <html lang="es" data-version="v10">
+    <html lang="es" data-version="v11">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1139,15 +1139,35 @@
         const modal = document.getElementById('authModal');
         if (modal) {
           modal.style.setProperty('display', 'flex', 'important');
+          modal.style.setProperty('visibility', 'visible', 'important');
+          modal.style.setProperty('opacity', '1', 'important');
           modal.style.setProperty('z-index', '999999', 'important');
           modal.style.setProperty('background-color', 'rgba(0,0,0,0.8)', 'important');
           modal.style.setProperty('position', 'fixed', 'important');
           modal.style.setProperty('top', '0', 'important');
           modal.style.setProperty('left', '0', 'important');
-          modal.style.setProperty('width', '100%', 'important');
-          modal.style.setProperty('height', '100%', 'important');
+          modal.style.setProperty('right', '0', 'important');
+          modal.style.setProperty('bottom', '0', 'important');
+          modal.style.setProperty('width', '100vw', 'important');
+          modal.style.setProperty('height', '100vh', 'important');
+          modal.style.setProperty('min-width', '100vw', 'important');
+          modal.style.setProperty('min-height', '100vh', 'important');
           modal.style.setProperty('align-items', 'center', 'important');
           modal.style.setProperty('justify-content', 'center', 'important');
+          modal.style.setProperty('margin', '0', 'important');
+          modal.style.setProperty('padding', '0', 'important');
+          modal.style.setProperty('border', 'none', 'important');
+          modal.style.setProperty('outline', 'none', 'important');
+          
+          // Forzar también el contenido del modal
+          const modalContent = modal.querySelector('.axyra-modal-content');
+          if (modalContent) {
+            modalContent.style.setProperty('display', 'block', 'important');
+            modalContent.style.setProperty('visibility', 'visible', 'important');
+            modalContent.style.setProperty('opacity', '1', 'important');
+            modalContent.style.setProperty('z-index', '1000000', 'important');
+          }
+          
           console.log('✅ Modal forzado a mostrar con !important');
         }
       };
@@ -1992,16 +2012,35 @@
             
             // Forzar el modal a mostrarse con !important
             modal.style.setProperty('display', 'flex', 'important');
+            modal.style.setProperty('visibility', 'visible', 'important');
+            modal.style.setProperty('opacity', '1', 'important');
             modal.style.setProperty('z-index', '999999', 'important');
             modal.style.setProperty('background-color', 'rgba(0,0,0,0.8)', 'important');
             modal.style.setProperty('position', 'fixed', 'important');
             modal.style.setProperty('top', '0', 'important');
             modal.style.setProperty('left', '0', 'important');
-            modal.style.setProperty('width', '100%', 'important');
-            modal.style.setProperty('height', '100%', 'important');
+            modal.style.setProperty('right', '0', 'important');
+            modal.style.setProperty('bottom', '0', 'important');
+            modal.style.setProperty('width', '100vw', 'important');
+            modal.style.setProperty('height', '100vh', 'important');
+            modal.style.setProperty('min-width', '100vw', 'important');
+            modal.style.setProperty('min-height', '100vh', 'important');
             modal.style.setProperty('align-items', 'center', 'important');
             modal.style.setProperty('justify-content', 'center', 'important');
+            modal.style.setProperty('margin', '0', 'important');
+            modal.style.setProperty('padding', '0', 'important');
+            modal.style.setProperty('border', 'none', 'important');
+            modal.style.setProperty('outline', 'none', 'important');
             modal.classList.add('show');
+            
+            // Forzar también el contenido del modal
+            const modalContent = modal.querySelector('.axyra-modal-content');
+            if (modalContent) {
+              modalContent.style.setProperty('display', 'block', 'important');
+              modalContent.style.setProperty('visibility', 'visible', 'important');
+              modalContent.style.setProperty('opacity', '1', 'important');
+              modalContent.style.setProperty('z-index', '1000000', 'important');
+            }
             
             console.log('📋 Estado después:', {
               display: modal.style.display,
@@ -2686,8 +2725,8 @@
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
       // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v10') {
-          localStorage.setItem('axyra_version', 'v10');
+        if (localStorage.getItem('axyra_version') !== 'v11') {
+          localStorage.setItem('axyra_version', 'v11');
         if (performance.navigation.type === 1) {
           // Solo recargar si no es la primera carga
           window.location.reload(true);
