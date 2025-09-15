@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <html lang="es" data-version="v8">
+    <html lang="es" data-version="v9">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1977,9 +1977,25 @@
           const modal = document.getElementById('authModal');
           if (modal) {
             console.log('✅ Modal encontrado, mostrando...');
+            console.log('📋 Estado antes:', {
+              display: modal.style.display,
+              computedDisplay: window.getComputedStyle(modal).display,
+              classes: modal.className
+            });
+            
+            // Forzar el modal a mostrarse
             modal.style.display = 'flex';
+            modal.style.zIndex = '999999';
+            modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
             modal.classList.add('show');
-            console.log('✅ Modal mostrado con display flex y clase show');
+            
+            console.log('📋 Estado después:', {
+              display: modal.style.display,
+              computedDisplay: window.getComputedStyle(modal).display,
+              classes: modal.className
+            });
+            
+            console.log('✅ Modal forzado a mostrar');
           } else {
             console.error('❌ Modal no encontrado');
             alert('Error: Modal de autenticación no encontrado. Por favor, recarga la página.');
@@ -2656,8 +2672,8 @@
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
       // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v8') {
-          localStorage.setItem('axyra_version', 'v8');
+        if (localStorage.getItem('axyra_version') !== 'v9') {
+          localStorage.setItem('axyra_version', 'v9');
         if (performance.navigation.type === 1) {
           // Solo recargar si no es la primera carga
           window.location.reload(true);
