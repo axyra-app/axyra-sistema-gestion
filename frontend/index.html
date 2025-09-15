@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-version="v3">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>AXYRA - Sistema de Gestión</title>
     <link rel="stylesheet" href="static/axyra-styles.css" />
     <link rel="stylesheet" href="static/modal-fixes.css" />
@@ -2220,6 +2223,18 @@
     <!-- Live Chat AI -->
     <script src="static/live-chat-ai.js?v=3"></script>
     <link rel="stylesheet" href="static/live-chat-styles.css?v=3">
+
+    <!-- Script para forzar recarga y limpiar caché -->
+    <script>
+      // Forzar recarga si es versión antigua
+      if (localStorage.getItem('axyra_version') !== 'v3') {
+        localStorage.setItem('axyra_version', 'v3');
+        if (performance.navigation.type === 1) {
+          // Solo recargar si no es la primera carga
+          window.location.reload(true);
+        }
+      }
+    </script>
 
     <!-- Script BRUTAL para efectos espectaculares -->
     <script>
