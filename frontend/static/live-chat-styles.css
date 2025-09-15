@@ -236,6 +236,7 @@
   scroll-behavior: smooth;
   min-height: 0;
   position: relative;
+  max-height: calc(100% - 140px);
 }
 
 /* Scrollbar personalizado */
@@ -365,6 +366,11 @@
 .axyra-chat-input-container {
   background: white;
   border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .axyra-chat-input-wrapper {
@@ -372,6 +378,8 @@
   padding: 16px 20px;
   gap: 12px;
   align-items: center;
+  min-height: 60px;
+  flex-shrink: 0;
 }
 
 #chatInput {
@@ -383,6 +391,8 @@
   outline: none;
   transition: all 0.3s ease;
   background: #f8fafc;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 #chatInput:focus {
@@ -392,8 +402,8 @@
 }
 
 .axyra-chat-send {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
@@ -405,6 +415,7 @@
   font-size: 16px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+  flex-shrink: 0;
 }
 
 .axyra-chat-send:hover {
