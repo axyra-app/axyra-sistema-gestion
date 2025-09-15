@@ -24,6 +24,29 @@
         padding: 0 !important;
       }
       
+      /* Forzar el fondo en todos los elementos */
+      * {
+        box-sizing: border-box !important;
+      }
+      
+      /* Asegurar que el body tenga el fondo */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+        background-image: 
+          linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+        background-position: 0 0, 0 0;
+        z-index: -1;
+        pointer-events: none;
+      }
+      
       /* Asegurar que las secciones tengan fondo blanco */
       .axyra-section {
         background: rgba(255, 255, 255, 0.95) !important;
@@ -35,6 +58,19 @@
       
       .axyra-hero {
         background: transparent !important;
+        background-color: transparent !important;
+        background-image: none !important;
+      }
+      
+      .axyra-hero-content {
+        background: transparent !important;
+        background-color: transparent !important;
+      }
+      
+      .axyra-hero-content h1,
+      .axyra-hero-content p {
+        color: #ffffff !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) !important;
       }
       
       .axyra-memberships-brutal {
@@ -1478,14 +1514,47 @@
         console.log('🎨 Fondo azul cuadriculado aplicado por JavaScript');
       }
       
+      // Función para eliminar fondos blancos
+      function removeWhiteBackgrounds() {
+        // Eliminar fondos blancos de elementos principales
+        const elementsToFix = [
+          '.axyra-hero',
+          '.axyra-hero-content',
+          '.axyra-section',
+          '.axyra-container'
+        ];
+        
+        elementsToFix.forEach(selector => {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach(el => {
+            if (selector === '.axyra-hero' || selector === '.axyra-hero-content') {
+              el.style.setProperty('background', 'transparent', 'important');
+              el.style.setProperty('background-color', 'transparent', 'important');
+              el.style.setProperty('background-image', 'none', 'important');
+            } else if (selector === '.axyra-section') {
+              el.style.setProperty('background', 'rgba(255, 255, 255, 0.95)', 'important');
+            }
+          });
+        });
+        
+        console.log('🎨 Fondos blancos removidos');
+      }
+      
       // Aplicar inmediatamente
       applyGridBackground();
+      removeWhiteBackgrounds();
       
       // Aplicar cuando se carga el DOM
-      document.addEventListener('DOMContentLoaded', applyGridBackground);
+      document.addEventListener('DOMContentLoaded', function() {
+        applyGridBackground();
+        removeWhiteBackgrounds();
+      });
       
       // Aplicar cuando se carga la ventana
-      window.addEventListener('load', applyGridBackground);
+      window.addEventListener('load', function() {
+        applyGridBackground();
+        removeWhiteBackgrounds();
+      });
     </script>
   </body>
 </html>
