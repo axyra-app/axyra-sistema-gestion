@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../../static/header-fixes.css" />
     <link rel="stylesheet" href="config-styles.css" />
     <link rel="stylesheet" href="configuracion-avanzada-styles.css" />
+    <link rel="stylesheet" href="configuracion-modern-styles.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module">
@@ -457,37 +458,96 @@
           </div>
         </div>
 
-        <!-- Sistemas Avanzados -->
+        <!-- Sistemas Avanzados Reorganizados -->
         <div class="axyra-advanced-systems-section">
           <div class="axyra-section-header">
             <h2 class="axyra-section-title">🔧 Sistemas Avanzados</h2>
-            <p>Acceso a sistemas avanzados de gestión</p>
+            <p>Acceso a sistemas avanzados de gestión empresarial</p>
           </div>
-          <div class="axyra-dashboard-controls">
-            <button class="axyra-btn axyra-btn-primary" onclick="window.axyraSystemIntegrator?.showSystemDashboard()">
-              <i class="fas fa-cogs"></i> Dashboard de Sistemas
-            </button>
-            <button class="axyra-btn axyra-btn-secondary" onclick="window.axyraIntegrationAPISystem?.showIntegrationDashboard()">
-              <i class="fas fa-plug"></i> Integraciones y APIs
-            </button>
-            <button class="axyra-btn axyra-btn-info" onclick="window.axyraAdvancedSecuritySystem?.showSecurityDashboard()">
-              <i class="fas fa-shield-alt"></i> Seguridad Avanzada
-            </button>
-            <button class="axyra-btn axyra-btn-warning" onclick="window.axyraDataAnalyticsSystem?.showDataAnalyticsDashboard()">
-              <i class="fas fa-chart-bar"></i> Datos y Análisis
-            </button>
-            <button class="axyra-btn axyra-btn-success" onclick="window.axyraAdvancedConfigurationSystem?.showConfigurationDashboard()">
-              <i class="fas fa-sliders-h"></i> Configuración Avanzada
-            </button>
-            <button class="axyra-btn axyra-btn-dark" onclick="window.axyraAdvancedUserManagementSystem?.showUserManagementDashboard()">
-              <i class="fas fa-users-cog"></i> Gestión de Usuarios
-            </button>
-            <button class="axyra-btn axyra-btn-light" onclick="window.axyraFileDocumentManagementSystem?.showFileManagementDashboard()">
-              <i class="fas fa-folder-open"></i> Gestión de Archivos
-            </button>
-            <button class="axyra-btn axyra-btn-outline-primary" onclick="window.axyraProjectTaskManagementSystem?.showProjectManagementDashboard()">
-              <i class="fas fa-tasks"></i> Gestión de Proyectos
-            </button>
+          <div class="axyra-systems-grid">
+            <div class="axyra-system-card axyra-system-primary" onclick="mostrarModalSistema('dashboard')">
+              <div class="axyra-system-icon">
+                <i class="fas fa-cogs"></i>
+              </div>
+              <div class="axyra-system-content">
+                <h3>Dashboard de Sistemas</h3>
+                <p>Panel de control centralizado para todos los sistemas</p>
+                <div class="axyra-system-status">
+                  <span class="axyra-status-indicator axyra-status-active"></span>
+                  <span>Activo</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="axyra-system-card axyra-system-secondary" onclick="mostrarModalSistema('integraciones')">
+              <div class="axyra-system-icon">
+                <i class="fas fa-plug"></i>
+              </div>
+              <div class="axyra-system-content">
+                <h3>Integraciones y APIs</h3>
+                <p>Conecta con servicios externos y APIs</p>
+                <div class="axyra-system-status">
+                  <span class="axyra-status-indicator axyra-status-active"></span>
+                  <span>Activo</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="axyra-system-card axyra-system-info" onclick="mostrarModalSistema('seguridad')">
+              <div class="axyra-system-icon">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <div class="axyra-system-content">
+                <h3>Seguridad Avanzada</h3>
+                <p>Configuración de seguridad y permisos</p>
+                <div class="axyra-system-status">
+                  <span class="axyra-status-indicator axyra-status-active"></span>
+                  <span>Activo</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="axyra-system-card axyra-system-warning" onclick="mostrarModalSistema('analytics')">
+              <div class="axyra-system-icon">
+                <i class="fas fa-chart-bar"></i>
+              </div>
+              <div class="axyra-system-content">
+                <h3>Datos y Análisis</h3>
+                <p>Reportes avanzados y análisis de datos</p>
+                <div class="axyra-system-status">
+                  <span class="axyra-status-indicator axyra-status-active"></span>
+                  <span>Activo</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="axyra-system-card axyra-system-success" onclick="mostrarModalSistema('configuracion')">
+              <div class="axyra-system-icon">
+                <i class="fas fa-sliders-h"></i>
+              </div>
+              <div class="axyra-system-content">
+                <h3>Configuración Avanzada</h3>
+                <p>Configuraciones del sistema y preferencias</p>
+                <div class="axyra-system-status">
+                  <span class="axyra-status-indicator axyra-status-active"></span>
+                  <span>Activo</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="axyra-system-card axyra-system-dark" onclick="mostrarModalSistema('usuarios')">
+              <div class="axyra-system-icon">
+                <i class="fas fa-users-cog"></i>
+              </div>
+              <div class="axyra-system-content">
+                <h3>Gestión de Usuarios</h3>
+                <p>Administración de usuarios y roles</p>
+                <div class="axyra-system-status">
+                  <span class="axyra-status-indicator axyra-status-active"></span>
+                  <span>Activo</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1499,5 +1559,232 @@
         }
       }
     </style>
+    
+    <!-- Funciones para modals profesionales -->
+    <script>
+      // Función para mostrar modals de sistemas
+      function mostrarModalSistema(tipo) {
+        const modales = {
+          dashboard: {
+            titulo: '🔧 Dashboard de Sistemas',
+            icono: 'fas fa-cogs',
+            contenido: `
+              <div class="axyra-modal-section">
+                <h4>Panel de Control Centralizado</h4>
+                <p>Gestiona todos los sistemas desde un solo lugar</p>
+                <div class="axyra-feature-list">
+                  <div class="axyra-feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Monitoreo en tiempo real</span>
+                  </div>
+                  <div class="axyra-feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Métricas de rendimiento</span>
+                  </div>
+                  <div class="axyra-feature-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Alertas automáticas</span>
+                  </div>
+                </div>
+              </div>
+            `
+          },
+          integraciones: {
+            titulo: '🔌 Integraciones y APIs',
+            icono: 'fas fa-plug',
+            contenido: `
+              <div class="axyra-modal-section">
+                <h4>Conecta con Servicios Externos</h4>
+                <p>Integra tu sistema con las mejores herramientas del mercado</p>
+                <div class="axyra-integration-grid">
+                  <div class="axyra-integration-item">
+                    <i class="fab fa-google"></i>
+                    <span>Google Workspace</span>
+                  </div>
+                  <div class="axyra-integration-item">
+                    <i class="fab fa-microsoft"></i>
+                    <span>Microsoft 365</span>
+                  </div>
+                  <div class="axyra-integration-item">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Wompi</span>
+                  </div>
+                  <div class="axyra-integration-item">
+                    <i class="fas fa-shipping-fast"></i>
+                    <span>Envío Express</span>
+                  </div>
+                </div>
+              </div>
+            `
+          },
+          seguridad: {
+            titulo: '🛡️ Seguridad Avanzada',
+            icono: 'fas fa-shield-alt',
+            contenido: `
+              <div class="axyra-modal-section">
+                <h4>Configuración de Seguridad</h4>
+                <p>Protege tu sistema con las mejores prácticas de seguridad</p>
+                <div class="axyra-security-features">
+                  <div class="axyra-security-item">
+                    <i class="fas fa-lock"></i>
+                    <div>
+                      <h5>Autenticación de Dos Factores</h5>
+                      <p>Protección adicional para tu cuenta</p>
+                    </div>
+                  </div>
+                  <div class="axyra-security-item">
+                    <i class="fas fa-key"></i>
+                    <div>
+                      <h5>Gestión de Contraseñas</h5>
+                      <p>Políticas de contraseñas seguras</p>
+                    </div>
+                  </div>
+                  <div class="axyra-security-item">
+                    <i class="fas fa-eye"></i>
+                    <div>
+                      <h5>Auditoría de Accesos</h5>
+                      <p>Registro de todas las actividades</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `
+          },
+          analytics: {
+            titulo: '📊 Datos y Análisis',
+            icono: 'fas fa-chart-bar',
+            contenido: `
+              <div class="axyra-modal-section">
+                <h4>Análisis Avanzado de Datos</h4>
+                <p>Obtén insights valiosos de tu negocio</p>
+                <div class="axyra-analytics-features">
+                  <div class="axyra-analytics-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reportes en Tiempo Real</span>
+                  </div>
+                  <div class="axyra-analytics-item">
+                    <i class="fas fa-database"></i>
+                    <span>Análisis Predictivo</span>
+                  </div>
+                  <div class="axyra-analytics-item">
+                    <i class="fas fa-download"></i>
+                    <span>Exportación de Datos</span>
+                  </div>
+                </div>
+              </div>
+            `
+          },
+          configuracion: {
+            titulo: '⚙️ Configuración Avanzada',
+            icono: 'fas fa-sliders-h',
+            contenido: `
+              <div class="axyra-modal-section">
+                <h4>Configuraciones del Sistema</h4>
+                <p>Personaliza tu experiencia con AXYRA</p>
+                <div class="axyra-config-options">
+                  <div class="axyra-config-item">
+                    <label>Notificaciones por Email</label>
+                    <input type="checkbox" checked>
+                  </div>
+                  <div class="axyra-config-item">
+                    <label>Modo Oscuro</label>
+                    <input type="checkbox">
+                  </div>
+                  <div class="axyra-config-item">
+                    <label>Idioma</label>
+                    <select>
+                      <option value="es">Español</option>
+                      <option value="en">English</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            `
+          },
+          usuarios: {
+            titulo: '👥 Gestión de Usuarios',
+            icono: 'fas fa-users-cog',
+            contenido: `
+              <div class="axyra-modal-section">
+                <h4>Administración de Usuarios</h4>
+                <p>Gestiona usuarios, roles y permisos</p>
+                <div class="axyra-user-management">
+                  <div class="axyra-user-stats">
+                    <div class="axyra-stat">
+                      <span class="axyra-stat-number">12</span>
+                      <span class="axyra-stat-label">Usuarios Activos</span>
+                    </div>
+                    <div class="axyra-stat">
+                      <span class="axyra-stat-number">3</span>
+                      <span class="axyra-stat-label">Administradores</span>
+                    </div>
+                  </div>
+                  <div class="axyra-user-actions">
+                    <button class="axyra-btn-modal axyra-btn-modal-primary">
+                      <i class="fas fa-user-plus"></i>
+                      Agregar Usuario
+                    </button>
+                    <button class="axyra-btn-modal axyra-btn-modal-secondary">
+                      <i class="fas fa-cog"></i>
+                      Configurar Roles
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `
+          }
+        };
+        
+        const modal = modales[tipo];
+        if (!modal) return;
+        
+        const modalHTML = `
+          <div class="axyra-modal-professional" onclick="cerrarModalSistema(event)">
+            <div class="axyra-modal-professional-content" onclick="event.stopPropagation()">
+              <div class="axyra-modal-professional-header">
+                <h3 class="axyra-modal-professional-title">
+                  <i class="${modal.icono}"></i>
+                  ${modal.titulo}
+                </h3>
+                <button class="axyra-modal-professional-close" onclick="cerrarModalSistema()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="axyra-modal-professional-body">
+                ${modal.contenido}
+              </div>
+              <div class="axyra-modal-professional-footer">
+                <button class="axyra-btn-modal axyra-btn-modal-secondary" onclick="cerrarModalSistema()">
+                  <i class="fas fa-times"></i>
+                  Cerrar
+                </button>
+                <button class="axyra-btn-modal axyra-btn-modal-primary" onclick="abrirSistema('${tipo}')">
+                  <i class="fas fa-external-link-alt"></i>
+                  Abrir Sistema
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+      
+      // Función para cerrar modals
+      function cerrarModalSistema(event) {
+        if (event && event.target !== event.currentTarget) return;
+        const modal = document.querySelector('.axyra-modal-professional');
+        if (modal) {
+          modal.remove();
+        }
+      }
+      
+      // Función para abrir sistemas
+      function abrirSistema(tipo) {
+        console.log(`Abriendo sistema: ${tipo}`);
+        // Aquí se implementaría la lógica para abrir cada sistema
+        cerrarModalSistema();
+      }
+    </script>
   </body>
 </html>

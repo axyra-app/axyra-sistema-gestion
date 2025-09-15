@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="../../static/modal-positioning-fix.css" />
     <link rel="stylesheet" href="../../static/modal-emergency-fix.css" />
     <link rel="stylesheet" href="../../static/header-fixes.css" />
+    <link rel="stylesheet" href="inventario-styles.css" />
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
@@ -763,36 +764,72 @@
           <p class="axyra-page-subtitle">Control total de productos, stock y movimientos en tiempo real</p>
         </div>
 
-        <!-- Overview del Inventario -->
+        <!-- Overview del Inventario Mejorado -->
         <div class="inventario-overview">
+          <div class="inventario-overview-header">
+            <h2>📊 Resumen del Inventario</h2>
+            <p>Métricas clave de tu inventario en tiempo real</p>
+          </div>
           <div class="inventario-overview-grid">
-            <div class="inventario-stat-card">
+            <div class="inventario-stat-card inventario-stat-primary">
               <div class="inventario-stat-icon">
                 <i class="fas fa-box"></i>
               </div>
-              <div class="inventario-stat-number" id="totalProductos">0</div>
-              <div class="inventario-stat-label">Total Productos</div>
+              <div class="inventario-stat-content">
+                <div class="inventario-stat-number" id="totalProductos">0</div>
+                <div class="inventario-stat-label">Total Productos</div>
+                <div class="inventario-stat-subtitle">En el sistema</div>
+              </div>
             </div>
-            <div class="inventario-stat-card">
+            <div class="inventario-stat-card inventario-stat-success">
               <div class="inventario-stat-icon">
                 <i class="fas fa-warehouse"></i>
               </div>
-              <div class="inventario-stat-number" id="stockTotal">0</div>
-              <div class="inventario-stat-label">Stock Total</div>
+              <div class="inventario-stat-content">
+                <div class="inventario-stat-number" id="stockTotal">0</div>
+                <div class="inventario-stat-label">Stock Total</div>
+                <div class="inventario-stat-subtitle">Unidades disponibles</div>
+              </div>
             </div>
-            <div class="inventario-stat-card">
+            <div class="inventario-stat-card inventario-stat-warning">
+              <div class="inventario-stat-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div class="inventario-stat-content">
+                <div class="inventario-stat-number" id="productosStockBajo">0</div>
+                <div class="inventario-stat-label">Stock Bajo</div>
+                <div class="inventario-stat-subtitle">Necesitan reposición</div>
+              </div>
+            </div>
+            <div class="inventario-stat-card inventario-stat-info">
+              <div class="inventario-stat-icon">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div class="inventario-stat-content">
+                <div class="inventario-stat-number" id="valorTotalInventario">$0</div>
+                <div class="inventario-stat-label">Valor Total</div>
+                <div class="inventario-stat-subtitle">Inventario actual</div>
+              </div>
+            </div>
+            <div class="inventario-stat-card inventario-stat-secondary">
               <div class="inventario-stat-icon">
                 <i class="fas fa-arrow-up"></i>
               </div>
-              <div class="inventario-stat-number" id="entradasHoy">0</div>
-              <div class="inventario-stat-label">Entradas Hoy</div>
+              <div class="inventario-stat-content">
+                <div class="inventario-stat-number" id="entradasHoy">0</div>
+                <div class="inventario-stat-label">Entradas Hoy</div>
+                <div class="inventario-stat-subtitle">Movimientos de entrada</div>
+              </div>
             </div>
-            <div class="inventario-stat-card">
+            <div class="inventario-stat-card inventario-stat-danger">
               <div class="inventario-stat-icon">
                 <i class="fas fa-arrow-down"></i>
               </div>
-              <div class="inventario-stat-number" id="salidasHoy">0</div>
-              <div class="inventario-stat-label">Salidas Hoy</div>
+              <div class="inventario-stat-content">
+                <div class="inventario-stat-number" id="salidasHoy">0</div>
+                <div class="inventario-stat-label">Salidas Hoy</div>
+                <div class="inventario-stat-subtitle">Movimientos de salida</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1066,6 +1103,52 @@
     <script src="inventario.js"></script>
 
     <!-- FUNCIONES AVANZADAS DE INVENTARIO - IMPLEMENTACIÓN COMPLETA -->
+    <script>
+      // Función para actualizar las estadísticas del inventario
+      function actualizarEstadisticasInventario() {
+        try {
+          const productos = JSON.parse(localStorage.getItem('axyra_productos') || '[]');
+          const movimientos = JSON.parse(localStorage.getItem('axyra_movimientos_inventario') || '[]');
+          
+          // Calcular estadísticas
+          const totalProductos = productos.length;
+          const stockTotal = productos.reduce((total, p) => total + (p.stock || 0), 0);
+          const productosStockBajo = productos.filter(p => (p.stock || 0) <= (p.stockMinimo || 5)).length;
+          const valorTotalInventario = productos.reduce((total, p) => total + (p.precioCompra || 0) * (p.stock || 0), 0);
+          
+          // Calcular movimientos de hoy
+          const hoy = new Date().toISOString().split('T')[0];
+          const entradasHoy = movimientos.filter(m => m.tipo === 'entrada' && m.fecha.startsWith(hoy)).length;
+          const salidasHoy = movimientos.filter(m => m.tipo === 'salida' && m.fecha.startsWith(hoy)).length;
+          
+          // Actualizar elementos del DOM
+          const elementos = {
+            totalProductos: totalProductos,
+            stockTotal: stockTotal,
+            productosStockBajo: productosStockBajo,
+            valorTotalInventario: '$' + valorTotalInventario.toLocaleString(),
+            entradasHoy: entradasHoy,
+            salidasHoy: salidasHoy
+          };
+          
+          Object.entries(elementos).forEach(([id, valor]) => {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+              elemento.textContent = valor;
+            }
+          });
+          
+          console.log('✅ Estadísticas del inventario actualizadas:', elementos);
+        } catch (error) {
+          console.error('❌ Error actualizando estadísticas del inventario:', error);
+        }
+      }
+      
+      // Actualizar estadísticas al cargar la página
+      document.addEventListener('DOMContentLoaded', function() {
+        actualizarEstadisticasInventario();
+      });
+    </script>
     <script>
       // Función para generar reporte completo de inventario
       function generarReporteInventario() {
@@ -1549,7 +1632,7 @@
 
     <!-- Sistema Completo de Inventario AXYRA -->
     <script src="inventario-complete.js"></script>
-    
+
     <!-- Chat de IA AXYRA - Cargar al final -->
     <script src="../../static/axyra-ai-global.js"></script>
   </body>
