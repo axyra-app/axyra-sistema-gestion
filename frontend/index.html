@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <html lang="es" data-version="v6">
+    <html lang="es" data-version="v7">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1074,8 +1074,51 @@
           padding-right: 16px !important;
         }
       }
-    </style>
+      </style>
   </head>
+  
+  <!-- Script de debug para modales - DEBE EJECUTARSE PRIMERO -->
+  <script>
+    console.log('🔍 SCRIPT DE DEBUG CARGADO');
+    
+    // Función global para probar modal
+    window.testModal = function() {
+      console.log('🧪 Probando modal...');
+      const modal = document.getElementById('authModal');
+      if (modal) {
+        console.log('✅ Modal encontrado');
+        modal.style.display = 'flex';
+        modal.classList.add('show');
+        console.log('✅ Modal mostrado');
+        
+        setTimeout(() => {
+          modal.style.display = 'none';
+          modal.classList.remove('show');
+          console.log('✅ Modal ocultado');
+        }, 3000);
+      } else {
+        console.error('❌ Modal NO encontrado');
+      }
+    };
+    
+    // Ejecutar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🔍 DOM cargado, verificando modal...');
+      const modal = document.getElementById('authModal');
+      if (modal) {
+        console.log('✅ Modal encontrado en DOM');
+        console.log('📋 Modal info:', {
+          id: modal.id,
+          className: modal.className,
+          style: modal.style.cssText,
+          computedDisplay: window.getComputedStyle(modal).display
+        });
+      } else {
+        console.error('❌ Modal NO encontrado en DOM');
+      }
+    });
+  </script>
+  
   <body>
     <!-- Header -->
     <header class="axyra-header">
@@ -2587,42 +2630,14 @@
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
       // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v6') {
-          localStorage.setItem('axyra_version', 'v6');
+        if (localStorage.getItem('axyra_version') !== 'v7') {
+          localStorage.setItem('axyra_version', 'v7');
         if (performance.navigation.type === 1) {
           // Solo recargar si no es la primera carga
           window.location.reload(true);
         }
       }
 
-      // Script de prueba para modales
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log('🔍 Verificando modal de autenticación...');
-        const modal = document.getElementById('authModal');
-        if (modal) {
-          console.log('✅ Modal encontrado en DOM');
-          console.log('📋 Estilos del modal:', {
-            display: modal.style.display,
-            classes: modal.className,
-            computedDisplay: window.getComputedStyle(modal).display
-          });
-          
-          // Prueba directa del modal
-          console.log('🧪 Probando mostrar modal directamente...');
-          modal.style.display = 'flex';
-          modal.classList.add('show');
-          console.log('✅ Modal forzado a mostrar');
-          
-          // Ocultar después de 3 segundos para prueba
-          setTimeout(() => {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-            console.log('✅ Modal ocultado después de prueba');
-          }, 3000);
-        } else {
-          console.error('❌ Modal NO encontrado en DOM');
-        }
-      });
     </script>
 
     <!-- Script BRUTAL para efectos espectaculares -->
