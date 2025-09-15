@@ -2096,6 +2096,120 @@
         document.body.appendChild(modal);
       }
 
+      // Funciones adicionales que faltaban
+      function contactarSoporte() {
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>✉️ Contactar Soporte</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>¿Necesitas Ayuda?</h4>
+              <p>Nuestro equipo de soporte está aquí para ayudarte con cualquier consulta sobre AXYRA.</p>
+              
+              <h5>📧 Email de Soporte</h5>
+              <p><strong>axyra.app@gmail.com</strong></p>
+              
+              <h5>📱 WhatsApp Business</h5>
+              <p><strong>+57 318 724 9579</strong></p>
+              
+              <h5>🕒 Horario de Atención</h5>
+              <p>Lunes a Viernes: 9:00 AM - 6:00 PM (Hora Colombia)</p>
+              
+              <div class="axyra-modal-actions">
+                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank')">
+                  📧 Enviar Email
+                </button>
+                <button class="axyra-btn axyra-btn-secondary" onclick="window.open('https://wa.me/573187249579?text=Hola, necesito soporte con AXYRA', '_blank')">
+                  📱 WhatsApp
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
+      function enviarFeedback() {
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>📡 Enviar Feedback</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>Tu Opinión es Importante</h4>
+              <p>Ayúdanos a mejorar AXYRA compartiendo tus sugerencias y comentarios.</p>
+              
+              <h5>💡 ¿Qué te gustaría mejorar?</h5>
+              <ul>
+                <li>Nuevas funcionalidades</li>
+                <li>Mejoras en la interfaz</li>
+                <li>Optimización de rendimiento</li>
+                <li>Integraciones adicionales</li>
+              </ul>
+              
+              <h5>📝 Envía tu Feedback</h5>
+              <p>Escríbenos a: <strong>feedback@axyra.app</strong></p>
+              
+              <div class="axyra-modal-actions">
+                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:feedback@axyra.app?subject=Feedback AXYRA', '_blank')">
+                  📧 Enviar Feedback
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
+      function quienesSomos() {
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>👥 Quiénes Somos</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>AXYRA - Transformando la Gestión Empresarial</h4>
+              
+              <h5>🎯 Nuestra Misión</h5>
+              <p>Simplificar y optimizar la gestión empresarial a través de tecnología innovadora, brindando herramientas que permitan a las empresas crecer de manera eficiente y sostenible.</p>
+              
+              <h5>💡 Nuestra Visión</h5>
+              <p>Ser la plataforma líder en gestión empresarial en Colombia, reconocida por su facilidad de uso, confiabilidad y capacidad de adaptación a las necesidades de cada empresa.</p>
+              
+              <h5>🏆 Nuestros Valores</h5>
+              <ul>
+                <li><strong>Innovación:</strong> Siempre buscamos nuevas formas de mejorar</li>
+                <li><strong>Confianza:</strong> La seguridad de tus datos es nuestra prioridad</li>
+                <li><strong>Simplicidad:</strong> Hacemos lo complejo simple</li>
+                <li><strong>Compromiso:</strong> Estamos contigo en cada paso</li>
+              </ul>
+              
+              <h5>📊 Nuestro Impacto</h5>
+              <ul>
+                <li>+500 empresas confían en AXYRA</li>
+                <li>+10,000 empleados gestionados</li>
+                <li>99.9% de tiempo de actividad</li>
+                <li>Respuesta de soporte en menos de 2 horas</li>
+              </ul>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
       // Sección NUESTROS SERVICIOS
       function servicioEmpleados() {
         handleEmpleadosAccess();
