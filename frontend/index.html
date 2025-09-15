@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="static/grid-background.css" />
     <link rel="icon" href="nomina.ico" type="image/x-icon" />
   </head>
-  <body>
+  <body style="background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%); background-image: linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px); background-size: 20px 20px; background-position: 0 0, 0 0; min-height: 100vh;">
     <!-- Header -->
     <header class="axyra-header">
       <div class="axyra-container">
@@ -1417,5 +1417,26 @@
 
     <!-- Vercel Config -->
     <script src="static/vercel-config.js"></script>
+
+    <!-- Script para forzar el fondo cuadriculado -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Forzar el fondo azul cuadriculado
+        document.body.style.background = 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)';
+        document.body.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)';
+        document.body.style.backgroundSize = '20px 20px';
+        document.body.style.backgroundPosition = '0 0, 0 0';
+        document.body.style.minHeight = '100vh';
+        
+        // También aplicar al html
+        document.documentElement.style.background = 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)';
+        document.documentElement.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)';
+        document.documentElement.style.backgroundSize = '20px 20px';
+        document.documentElement.style.backgroundPosition = '0 0, 0 0';
+        document.documentElement.style.minHeight = '100vh';
+        
+        console.log('🎨 Fondo azul cuadriculado aplicado');
+      });
+    </script>
   </body>
 </html>

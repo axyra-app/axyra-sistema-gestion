@@ -1,12 +1,23 @@
 /* Fondo azul cuadriculado para toda la página */
 body {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+  background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
   background-image: 
     linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-  background-size: 20px 20px;
-  background-position: 0 0, 0 0;
-  min-height: 100vh;
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px) !important;
+  background-size: 20px 20px !important;
+  background-position: 0 0, 0 0 !important;
+  min-height: 100vh !important;
+}
+
+/* Forzar el fondo en el html también */
+html {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px) !important;
+  background-size: 20px 20px !important;
+  background-position: 0 0, 0 0 !important;
+  min-height: 100vh !important;
 }
 
 /* Ajustes para secciones específicas */
