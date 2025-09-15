@@ -373,15 +373,6 @@
           </div>
         </div>
 
-        <!-- Botón para cargar datos de ejemplo -->
-        <div style="text-align: center; margin-bottom: 20px">
-          <button
-            class="gestion-personal-btn gestion-personal-btn-info"
-            onclick="cargarDatosEjemplo(); location.reload();"
-          >
-            <i class="fas fa-database"></i> Cargar Datos de Ejemplo
-          </button>
-        </div>
 
         <!-- Tabs de Navegación -->
         <div class="gestion-personal-tabs">
@@ -808,12 +799,12 @@
             <div id="camposSalarioFijo" class="form-row" style="display: none;">
               <div class="form-group">
                 <label>Salario Base Mensual *</label>
-                <input type="text" id="salarioFijoEmpleado" required placeholder="Ingrese el salario mensual" pattern="[0-9]*" inputmode="numeric">
+                <input type="text" id="salarioFijoEmpleado" required placeholder="Ingrese el salario mensual" inputmode="numeric">
                 <small class="form-help">Ingrese el salario en pesos colombianos (COP)</small>
               </div>
               <div class="form-group">
                 <label>Bonificaciones Mensuales</label>
-                <input type="text" id="bonificacionesEmpleado" placeholder="Bonificaciones adicionales" pattern="[0-9]*" inputmode="numeric">
+                <input type="text" id="bonificacionesEmpleado" placeholder="Bonificaciones adicionales" inputmode="numeric">
                 <small class="form-help">Opcional: Bonificaciones adicionales en pesos colombianos</small>
               </div>
             </div>
@@ -822,7 +813,7 @@
             <div id="camposSalarioHoras" class="form-row" style="display: none;">
               <div class="form-group">
                 <label>Salario Base Mensual (Referencia)</label>
-                <input type="text" id="salarioReferenciaEmpleado" required placeholder="Salario base de referencia" pattern="[0-9]*" inputmode="numeric">
+                <input type="text" id="salarioReferenciaEmpleado" required placeholder="Salario base de referencia" inputmode="numeric">
                 <small class="form-help">Este valor se usará como referencia para cálculos. Los valores por hora se configuran en el gestor de horas.</small>
               </div>
             </div>
@@ -1299,6 +1290,7 @@
     <script src="../../static/colombian-labor-law.js"></script>
     <script src="../../static/comprobante-pdf-generator.js"></script>
     <script src="../../static/notifications-system.js"></script>
+    <script src="salary-formatting.js"></script>
     <script src="datos-ejemplo.js"></script>
     <script src="gestion_personal.js"></script>
 
