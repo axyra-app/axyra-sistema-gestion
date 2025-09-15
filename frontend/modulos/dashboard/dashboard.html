@@ -478,7 +478,7 @@
             Acciones Rápidas
           </h2>
           <div class="axyra-actions-grid">
-            <a href="../empleados/empleados.html" class="axyra-action-btn">
+            <a href="../gestion_personal/gestion_personal.html" class="axyra-action-btn">
               <i class="fas fa-user-plus"></i>
               <span>Registrar Empleado</span>
             </a>
@@ -745,6 +745,14 @@
                }
                
                console.log('💎 Indicador de membresía actualizado:', membershipPlan);
+             }
+
+             // Script para forzar recarga y limpiar caché
+             if (localStorage.getItem('axyra_version') !== 'v19') {
+               localStorage.setItem('axyra_version', 'v19');
+               if (performance.navigation.type === 1) {
+                 window.location.reload(true);
+               }
              }
            </script>
     
