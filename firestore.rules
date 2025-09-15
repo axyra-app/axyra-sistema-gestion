@@ -189,6 +189,81 @@ service cloud.firestore {
     }
     
     // ========================================
+    // REGLAS PARA CATEGORÍAS DE INVENTARIO
+    // ========================================
+    
+    match /categorias_inventario/{categoriaId} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Escritura: usuarios que pueden gestionar inventario
+      allow create, update: if canManageInventory();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA PRODUCTOS DE INVENTARIO
+    // ========================================
+    
+    match /productos_inventario/{productoId} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Escritura: usuarios que pueden gestionar inventario
+      allow create, update: if canManageInventory();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA MOVIMIENTOS DE INVENTARIO
+    // ========================================
+    
+    match /movimientos_inventario/{movimientoId} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Escritura: usuarios que pueden gestionar inventario
+      allow create, update: if canManageInventory();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA STOCK DE INVENTARIO
+    // ========================================
+    
+    match /stock_inventario/{stockId} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Escritura: usuarios que pueden gestionar inventario
+      allow create, update: if canManageInventory();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA AJUSTES DE INVENTARIO
+    // ========================================
+    
+    match /ajustes_inventario/{ajusteId} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Escritura: usuarios que pueden gestionar inventario
+      allow create, update: if canManageInventory();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
     // REGLAS PARA FACTURAS
     // ========================================
     
