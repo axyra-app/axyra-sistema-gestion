@@ -91,14 +91,18 @@ class AxyraLiveChatAI {
     chatContainer.id = 'axyra-live-chat';
     chatContainer.innerHTML = `
       <div class="axyra-chat-toggle" id="chatToggle">
-        <div class="axyra-chat-icon">💬</div>
+        <div class="axyra-chat-icon">
+          <img src="logo.png" alt="AXYRA" class="axyra-chat-logo" />
+        </div>
         <div class="axyra-chat-badge">1</div>
       </div>
       
       <div class="axyra-chat-window" id="chatWindow">
         <div class="axyra-chat-header">
           <div class="axyra-chat-title">
-            <div class="axyra-chat-avatar">🤖</div>
+            <div class="axyra-chat-avatar">
+              <img src="logo.png" alt="AXYRA" class="axyra-chat-avatar-logo" />
+            </div>
             <div class="axyra-chat-info">
               <h3>Asistente AXYRA</h3>
               <span class="axyra-chat-status">En línea</span>
