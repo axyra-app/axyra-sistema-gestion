@@ -26,6 +26,8 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  z-index: 10001;
+  border: 3px solid rgba(255, 255, 255, 0.2);
 }
 
 .axyra-chat-toggle::before {
@@ -44,8 +46,9 @@
 }
 
 .axyra-chat-toggle:hover {
-  transform: scale(1.1);
-  box-shadow: 0 12px 35px rgba(37, 99, 235, 0.6);
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 15px 40px rgba(37, 99, 235, 0.6);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .axyra-chat-icon {
@@ -97,9 +100,11 @@
   display: none;
   flex-direction: column;
   overflow: hidden;
-  border: 2px solid rgba(37, 99, 235, 0.1);
+  border: 2px solid rgba(37, 99, 235, 0.2);
   backdrop-filter: blur(20px);
   animation: chatSlideIn 0.3s ease-out;
+  z-index: 10002;
+  position: relative;
 }
 
 @keyframes chatSlideIn {

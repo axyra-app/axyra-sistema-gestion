@@ -181,9 +181,15 @@ class AxyraLiveChatAI {
       chatWindow.style.display = 'block';
       toggle.style.display = 'none';
       this.isMinimized = false;
+      // Enfocar el input cuando se abre
+      setTimeout(() => {
+        const input = document.getElementById('chatInput');
+        if (input) input.focus();
+      }, 300);
     } else {
       chatWindow.style.display = 'none';
       toggle.style.display = 'flex';
+      this.isMinimized = false;
     }
   }
 
@@ -197,21 +203,8 @@ class AxyraLiveChatAI {
   }
 
   minimizeChat() {
-    const chatWindow = document.getElementById('chatWindow');
-    const messages = document.getElementById('chatMessages');
-    const inputContainer = document.querySelector('.axyra-chat-input-container');
-    
-    this.isMinimized = !this.isMinimized;
-    
-    if (this.isMinimized) {
-      messages.style.display = 'none';
-      inputContainer.style.display = 'none';
-      chatWindow.style.height = '60px';
-    } else {
-      messages.style.display = 'block';
-      inputContainer.style.display = 'block';
-      chatWindow.style.height = '500px';
-    }
+    // Al minimizar, cerrar completamente y volver a la burbuja
+    this.closeChat();
   }
 
   async sendMessage() {
