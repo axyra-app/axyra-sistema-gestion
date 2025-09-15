@@ -22,7 +22,8 @@ FIREBASE_MEASUREMENT_ID=G-R8W2MP15B7
 # Pero el usuario ve axyra.app@gmail.com como contacto
 EMAILJS_SERVICE_ID=service_axyra
 EMAILJS_TEMPLATE_ID=template_axyra_contact
-EMAILJS_PUBLIC_KEY=your_emailjs_public_key_here
+EMAILJS_PUBLIC_KEY=1heyO_r8WJOhBOBYs
+EMAILJS_PRIVATE_KEY=PIDaqIV51chWY6lVzPSGj
 
 # ========================================
 # CONTACT INFORMATION
@@ -31,6 +32,8 @@ EMAILJS_PUBLIC_KEY=your_emailjs_public_key_here
 CONTACT_EMAIL=axyra.app@gmail.com
 # Email real para envío (privado)
 SENDER_EMAIL=jfuran.va@gmail.com
+# Email de notificaciones (EmailJS)
+NOTIFICATION_EMAIL=axyra.app@gmail.com
 
 # ========================================
 # SYSTEM CONFIGURATION
@@ -39,6 +42,8 @@ NODE_ENV=production
 APP_NAME=AXYRA Sistema de Gestión
 APP_VERSION=2.0.0
 APP_DESCRIPTION=Sistema integral de gestión empresarial
+APP_URL=https://axyra-sistema-gestion.vercel.app
+APP_DOMAIN=axyra-sistema-gestion.vercel.app
 
 # ========================================
 # SECURITY CONFIGURATION
@@ -76,6 +81,11 @@ ENABLE_REAL_TIME_SYNC=true
 ENABLE_OFFLINE_MODE=true
 ENABLE_ANALYTICS=true
 ENABLE_BACKUP=true
+ENABLE_INVENTORY_MANAGEMENT=true
+ENABLE_PAYROLL_SYSTEM=true
+ENABLE_EMPLOYEE_MANAGEMENT=true
+ENABLE_FINANCIAL_REPORTS=true
+ENABLE_EMAIL_NOTIFICATIONS=true
 
 # ========================================
 # RATE LIMITING
@@ -187,6 +197,33 @@ DEFAULT_LANGUAGE=es
 DEFAULT_TIMEZONE=America/Bogota
 DATE_FORMAT=DD/MM/YYYY
 TIME_FORMAT=HH:mm
+
+# ========================================
+# AXYRA MODULE CONFIGURATION
+# ========================================
+# Inventario
+INVENTORY_LOW_STOCK_THRESHOLD=10
+INVENTORY_MAX_PRODUCTS=10000
+INVENTORY_CATEGORIES=tecnologia,oficina,hogar,otros
+
+# Empleados
+EMPLOYEE_MAX_COUNT=1000
+EMPLOYEE_DEPARTMENTS=administracion,ventas,produccion,contabilidad,recursos_humanos
+
+# Nóminas
+PAYROLL_CALCULATION_METHOD=colombian
+PAYROLL_MINIMUM_WAGE=1160000
+PAYROLL_SOCIAL_SECURITY_RATE=0.04
+PAYROLL_PENSION_RATE=0.04
+
+# Facturación
+INVOICE_PREFIX=AXY
+INVOICE_START_NUMBER=1
+INVOICE_TAX_RATE=0.19
+
+# Caja
+CASH_REGISTER_OPENING_AMOUNT=0
+CASH_REGISTER_CURRENCY=COP
 
 # ========================================
 # FEATURE CONFIGURATION
