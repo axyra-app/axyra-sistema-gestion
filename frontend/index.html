@@ -1063,14 +1063,6 @@
                 </div>
               </div>
 
-              <div class="axyra-contact-method">
-                <div class="axyra-contact-icon">💬</div>
-                <div class="axyra-contact-details">
-                  <h4>Chat en Vivo</h4>
-                  <p>Disponible en horario laboral</p>
-                  <button class="axyra-btn axyra-btn-secondary" onclick="iniciarChat()">Iniciar Chat</button>
-                </div>
-              </div>
 
               <div class="axyra-contact-method">
                 <div class="axyra-contact-icon">📱</div>
@@ -2162,40 +2154,6 @@
         window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank');
       }
 
-      function iniciarChat() {
-        const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>💬 Chat en Vivo</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>Chat en Vivo - Próximamente</h4>
-              <p>Estamos implementando un sistema de chat en vivo para brindarte soporte inmediato.</p>
-              
-              <h5>📧 Mientras tanto, contáctanos por:</h5>
-              <ul>
-                <li><strong>Email:</strong> axyra.app@gmail.com</li>
-                <li><strong>WhatsApp:</strong> +57 3187249579</li>
-                <li><strong>Horario:</strong> Lunes a Viernes 9:00 AM - 6:00 PM</li>
-              </ul>
-              
-              <div class="axyra-modal-actions">
-                <button class="axyra-btn axyra-btn-primary" onclick="enviarEmailSoporte()">
-                  📧 Enviar Email
-                </button>
-                <button class="axyra-btn axyra-btn-secondary" onclick="contactarWhatsApp()">
-                  📱 WhatsApp
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
 
       function contactarWhatsApp() {
         const mensaje = encodeURIComponent('Hola, necesito información sobre AXYRA');
@@ -2260,8 +2218,8 @@
     <script src="static/vercel-config.js"></script>
 
     <!-- Live Chat AI -->
-    <script src="static/live-chat-ai.js?v=2"></script>
-    <link rel="stylesheet" href="static/live-chat-styles.css?v=2">
+    <script src="static/live-chat-ai.js?v=3"></script>
+    <link rel="stylesheet" href="static/live-chat-styles.css?v=3">
 
     <!-- Script BRUTAL para efectos espectaculares -->
     <script>
