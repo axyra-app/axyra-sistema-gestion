@@ -810,12 +810,23 @@
             saveSession(userCredential.user, rememberMe);
 
             // Mostrar mensaje de éxito
-            showSuccess('¡Login exitoso! Redirigiendo al dashboard...');
-
-            // Redirigir al dashboard
-            setTimeout(() => {
-              window.location.href = 'modulos/dashboard/dashboard.html';
-            }, 2000);
+            showSuccess('¡Login exitoso! Redirigiendo...');
+            
+            // Verificar si hay una URL de retorno
+            const returnUrl = localStorage.getItem('axyra_return_url');
+            if (returnUrl) {
+              // Limpiar la URL de retorno
+              localStorage.removeItem('axyra_return_url');
+              // Redirigir a la página original
+              setTimeout(() => {
+                window.location.href = returnUrl;
+              }, 2000);
+            } else {
+              // Redirigir al dashboard por defecto
+              setTimeout(() => {
+                window.location.href = 'modulos/dashboard/dashboard.html';
+              }, 2000);
+            }
           } else {
             showError('Error al obtener información del usuario');
           }
@@ -906,12 +917,23 @@
                   console.log('✅ Sesión establecida correctamente para usuario existente:', userInfo);
 
                   // Mostrar mensaje de éxito
-                  showSuccess('¡Login con Google exitoso! Redirigiendo al dashboard...');
-
-                  // Redirigir al dashboard
-                  setTimeout(() => {
-                    window.location.href = 'modulos/dashboard/dashboard.html';
-                  }, 2000);
+                  showSuccess('¡Login con Google exitoso! Redirigiendo...');
+                  
+                  // Verificar si hay una URL de retorno
+                  const returnUrl = localStorage.getItem('axyra_return_url');
+                  if (returnUrl) {
+                    // Limpiar la URL de retorno
+                    localStorage.removeItem('axyra_return_url');
+                    // Redirigir a la página original
+                    setTimeout(() => {
+                      window.location.href = returnUrl;
+                    }, 2000);
+                  } else {
+                    // Redirigir al dashboard por defecto
+                    setTimeout(() => {
+                      window.location.href = 'modulos/dashboard/dashboard.html';
+                    }, 2000);
+                  }
                 } else {
                   // Usuario existe pero no tiene contraseña, mostrar modal
                   console.log('⚠️ Usuario sin contraseña, mostrando modal de configuración');
@@ -1086,7 +1108,7 @@
             closeGoogleSetupModal();
 
             // Mostrar mensaje de éxito
-            showSuccess('¡Perfil completado exitosamente! Redirigiendo al dashboard...');
+            showSuccess('¡Perfil completado exitosamente! Redirigiendo...');
 
             // Establecer información adicional necesaria para el dashboard
             const userInfo = {
@@ -1115,10 +1137,21 @@
 
             console.log('✅ Sesión establecida correctamente para Google user:', userInfo);
 
-            // Redirigir al dashboard
-            setTimeout(() => {
-              window.location.href = 'modulos/dashboard/dashboard.html';
-            }, 2000);
+            // Verificar si hay una URL de retorno
+            const returnUrl = localStorage.getItem('axyra_return_url');
+            if (returnUrl) {
+              // Limpiar la URL de retorno
+              localStorage.removeItem('axyra_return_url');
+              // Redirigir a la página original
+              setTimeout(() => {
+                window.location.href = returnUrl;
+              }, 2000);
+            } else {
+              // Redirigir al dashboard por defecto
+              setTimeout(() => {
+                window.location.href = 'modulos/dashboard/dashboard.html';
+              }, 2000);
+            }
           } catch (error) {
             console.error('❌ Error completando perfil:', error);
 

@@ -870,6 +870,46 @@
         </div>
     </section>
 
+    <!-- Modal de Login Requerido -->
+    <div id="loginRequiredModal" class="axyra-payment-modal">
+        <div class="axyra-payment-modal-content">
+            <div class="axyra-payment-modal-header" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+                <div class="axyra-payment-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3>¡Inicia Sesión Requerido!</h3>
+            </div>
+            <div class="axyra-payment-modal-body">
+                <p>Para adquirir una suscripción, necesitas iniciar sesión en tu cuenta de AXYRA.</p>
+                <div class="axyra-payment-plan-info" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3);">
+                    <div class="axyra-payment-plan-name" style="color: #f59e0b;">¿Por qué necesito iniciar sesión?</div>
+                    <div class="axyra-payment-plan-price" style="font-size: 1.2rem; color: #d0d0d0;">
+                        Para personalizar tu experiencia y gestionar tu suscripción
+                    </div>
+                </div>
+                <div class="axyra-payment-features">
+                    <h4>Beneficios de tener una cuenta:</h4>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Acceso personalizado al dashboard</li>
+                        <li><i class="fas fa-check"></i> Gestión de tu suscripción</li>
+                        <li><i class="fas fa-check"></i> Historial de pagos</li>
+                        <li><i class="fas fa-check"></i> Soporte prioritario</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="axyra-payment-modal-footer">
+                <button class="axyra-payment-btn axyra-payment-btn-secondary" onclick="closeLoginRequiredModal()">
+                    <i class="fas fa-times"></i>
+                    Cancelar
+                </button>
+                <button class="axyra-payment-btn axyra-payment-btn-primary" onclick="goToLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Ir a Iniciar Sesión
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Redirección de Pagos -->
     <div id="paymentModal" class="axyra-payment-modal">
         <div class="axyra-payment-modal-content">
@@ -920,11 +960,41 @@
             alert('🚀 ¡Demo en desarrollo! Próximamente podrás ver una demostración completa de AXYRA.');
         }
 
+        // Función para mostrar modal de login requerido
+        function showLoginRequiredModal() {
+            document.getElementById('loginRequiredModal').classList.add('show');
+        }
+
+        // Función para cerrar modal de login requerido
+        function closeLoginRequiredModal() {
+            document.getElementById('loginRequiredModal').classList.remove('show');
+        }
+
+        // Función para ir al login
+        function goToLogin() {
+            // Guardar la página actual para regresar después del login
+            localStorage.setItem('axyra_return_url', window.location.href);
+            // Redirigir al login
+            window.location.href = 'login.html';
+        }
+
         // Variable global para el plan seleccionado
         let selectedPlan = null;
 
+        // Función para verificar si el usuario está logueado
+        function isUserLoggedIn() {
+            const user = localStorage.getItem('axyra_isolated_user');
+            return user && user !== 'null' && user !== 'undefined';
+        }
+
         // Función para seleccionar plan
         function selectPlan(planType) {
+            // Verificar si el usuario está logueado
+            if (!isUserLoggedIn()) {
+                showLoginRequiredModal();
+                return;
+            }
+            
             selectedPlan = planType;
             
             // Datos de los planes
