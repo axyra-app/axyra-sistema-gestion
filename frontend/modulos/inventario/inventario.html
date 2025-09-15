@@ -1148,6 +1148,167 @@
       document.addEventListener('DOMContentLoaded', function() {
         actualizarEstadisticasInventario();
       });
+      
+      // Funciones globales para los botones del HTML
+      window.mostrarModalProducto = function() {
+        console.log('🔧 Abriendo modal de nuevo producto');
+        if (window.axyraInventario) {
+          window.axyraInventario.mostrarModalAgregarProducto();
+        } else {
+          console.error('❌ Sistema de inventario no inicializado');
+          alert('Sistema de inventario no disponible. Recarga la página.');
+        }
+      };
+
+      window.mostrarModalEntrada = function() {
+        console.log('🔧 Abriendo modal de entrada');
+        if (window.axyraInventario) {
+          // Crear modal de entrada
+          const modalHTML = `
+            <div class="axyra-modal" id="modalEntrada">
+              <div class="axyra-modal-content">
+                <div class="axyra-modal-header">
+                  <h3><i class="fas fa-arrow-up"></i> Registrar Entrada de Producto</h3>
+                  <button class="axyra-modal-close" onclick="cerrarModalEntrada()">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                <div class="axyra-modal-body">
+                  <div class="axyra-form-group">
+                    <label>Producto</label>
+                    <select id="productoEntrada" required>
+                      <option value="">Seleccionar producto...</option>
+                    </select>
+                  </div>
+                  <div class="axyra-form-group">
+                    <label>Cantidad</label>
+                    <input type="number" id="cantidadEntrada" min="1" required>
+                  </div>
+                  <div class="axyra-form-group">
+                    <label>Motivo</label>
+                    <input type="text" id="motivoEntrada" placeholder="Ej: Compra, Devolución, Ajuste">
+                  </div>
+                </div>
+                <div class="axyra-modal-footer">
+                  <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalEntrada()">
+                    <i class="fas fa-times"></i> Cancelar
+                  </button>
+                  <button class="axyra-btn axyra-btn-primary" onclick="procesarEntrada()">
+                    <i class="fas fa-check"></i> Registrar Entrada
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          document.body.insertAdjacentHTML('beforeend', modalHTML);
+        } else {
+          console.error('❌ Sistema de inventario no inicializado');
+          alert('Sistema de inventario no disponible. Recarga la página.');
+        }
+      };
+
+      window.mostrarModalSalida = function() {
+        console.log('🔧 Abriendo modal de salida');
+        if (window.axyraInventario) {
+          // Crear modal de salida
+          const modalHTML = `
+            <div class="axyra-modal" id="modalSalida">
+              <div class="axyra-modal-content">
+                <div class="axyra-modal-header">
+                  <h3><i class="fas fa-arrow-down"></i> Registrar Salida de Producto</h3>
+                  <button class="axyra-modal-close" onclick="cerrarModalSalida()">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                <div class="axyra-modal-body">
+                  <div class="axyra-form-group">
+                    <label>Producto</label>
+                    <select id="productoSalida" required>
+                      <option value="">Seleccionar producto...</option>
+                    </select>
+                  </div>
+                  <div class="axyra-form-group">
+                    <label>Cantidad</label>
+                    <input type="number" id="cantidadSalida" min="1" required>
+                  </div>
+                  <div class="axyra-form-group">
+                    <label>Motivo</label>
+                    <input type="text" id="motivoSalida" placeholder="Ej: Venta, Desperdicio, Ajuste">
+                  </div>
+                </div>
+                <div class="axyra-modal-footer">
+                  <button class="axyra-btn axyra-btn-secondary" onclick="cerrarModalSalida()">
+                    <i class="fas fa-times"></i> Cancelar
+                  </button>
+                  <button class="axyra-btn axyra-btn-primary" onclick="procesarSalida()">
+                    <i class="fas fa-check"></i> Registrar Salida
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          document.body.insertAdjacentHTML('beforeend', modalHTML);
+        } else {
+          console.error('❌ Sistema de inventario no inicializado');
+          alert('Sistema de inventario no disponible. Recarga la página.');
+        }
+      };
+
+      window.exportarInventarioExcel = function() {
+        console.log('🔧 Exportando inventario a Excel');
+        if (window.axyraInventario) {
+          window.axyraInventario.exportarInventario();
+        } else {
+          console.error('❌ Sistema de inventario no inicializado');
+          alert('Sistema de inventario no disponible. Recarga la página.');
+        }
+      };
+
+      // Funciones para cerrar modals
+      window.cerrarModalEntrada = function() {
+        const modal = document.getElementById('modalEntrada');
+        if (modal) modal.remove();
+      };
+
+      window.cerrarModalSalida = function() {
+        const modal = document.getElementById('modalSalida');
+        if (modal) modal.remove();
+      };
+
+      // Funciones para procesar entradas y salidas
+      window.procesarEntrada = function() {
+        const productoId = document.getElementById('productoEntrada').value;
+        const cantidad = parseInt(document.getElementById('cantidadEntrada').value);
+        const motivo = document.getElementById('motivoEntrada').value;
+        
+        if (!productoId || !cantidad || !motivo) {
+          alert('Por favor completa todos los campos');
+          return;
+        }
+        
+        if (window.axyraInventario) {
+          window.axyraInventario.ajustarStock(productoId, cantidad, motivo);
+          window.cerrarModalEntrada();
+          alert('✅ Entrada registrada correctamente');
+        }
+      };
+
+      window.procesarSalida = function() {
+        const productoId = document.getElementById('productoSalida').value;
+        const cantidad = parseInt(document.getElementById('cantidadSalida').value);
+        const motivo = document.getElementById('motivoSalida').value;
+        
+        if (!productoId || !cantidad || !motivo) {
+          alert('Por favor completa todos los campos');
+          return;
+        }
+        
+        if (window.axyraInventario) {
+          window.axyraInventario.ajustarStock(productoId, -cantidad, motivo);
+          window.cerrarModalSalida();
+          alert('✅ Salida registrada correctamente');
+        }
+      };
     </script>
     <script>
       // Función para generar reporte completo de inventario
