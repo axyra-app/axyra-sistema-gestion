@@ -12,83 +12,22 @@
     
     <!-- Estilo BRUTAL para el fondo azul cuadriculado -->
     <style>
-      /* Reset completo y fondo azul cuadriculado */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      
+      /* Fondo original restaurado con mejoras */
       html, body {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%) !important;
-        background-image: 
-          linear-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.15) 2px, transparent 2px) !important;
-        background-size: 30px 30px !important;
-        background-position: 0 0, 0 0 !important;
+        background: #f8fafc !important;
         min-height: 100vh !important;
         margin: 0 !important;
         padding: 0 !important;
         font-family: 'Poppins', sans-serif !important;
-        overflow-x: hidden;
       }
       
-      /* Fondo fijo con animación */
-      body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
-        background-image: 
-          linear-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.15) 2px, transparent 2px);
-        background-size: 30px 30px;
-        background-position: 0 0, 0 0;
-        z-index: -2;
-        pointer-events: none;
-        animation: gridMove 20s linear infinite;
-      }
-      
-      /* Animación del fondo cuadriculado */
-      @keyframes gridMove {
-        0% { background-position: 0 0, 0 0; }
-        100% { background-position: 30px 30px, 30px 30px; }
-      }
-      
-      /* Partículas flotantes */
-      body::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: 
-          radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.3) 1px, transparent 1px),
-          radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.3) 1px, transparent 1px),
-          radial-gradient(circle at 40% 60%, rgba(236, 72, 153, 0.3) 1px, transparent 1px);
-        background-size: 100px 100px, 150px 150px, 200px 200px;
-        z-index: -1;
-        pointer-events: none;
-        animation: particlesFloat 15s ease-in-out infinite;
-      }
-      
-      @keyframes particlesFloat {
-        0%, 100% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-20px) rotate(180deg); }
-      }
-      
-      /* Hero section BRUTAL */
+      /* Hero section original con mejoras */
       .axyra-hero {
-        background: transparent !important;
-        background-color: transparent !important;
-        background-image: none !important;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
+        padding: 200px 0 100px !important;
+        color: #ffffff !important;
         position: relative;
         overflow: hidden;
-        padding: 120px 0 80px !important;
       }
       
       .axyra-hero::before {
@@ -98,62 +37,40 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(45deg, 
-          rgba(59, 130, 246, 0.1) 0%, 
-          transparent 25%, 
-          rgba(147, 51, 234, 0.1) 50%, 
-          transparent 75%, 
-          rgba(236, 72, 153, 0.1) 100%);
-        animation: heroShimmer 3s ease-in-out infinite;
-        z-index: -1;
-      }
-      
-      @keyframes heroShimmer {
-        0%, 100% { opacity: 0.3; transform: translateX(-100%); }
-        50% { opacity: 0.8; transform: translateX(100%); }
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+        z-index: 1;
       }
       
       .axyra-hero-content {
-        background: transparent !important;
-        background-color: transparent !important;
         position: relative;
         z-index: 2;
         text-align: center;
+        max-width: 800px;
+        margin: 0 auto;
       }
       
       .axyra-hero-content h1 {
         color: #ffffff !important;
-        text-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 40px rgba(147, 51, 234, 0.6) !important;
-        font-size: 4rem !important;
-        font-weight: 900 !important;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6) !important;
+        font-size: 3.5rem !important;
+        font-weight: 800 !important;
         margin-bottom: 1.5rem !important;
-        animation: titlePulse 2s ease-in-out infinite;
-        background: linear-gradient(45deg, #ffffff, #3b82f6, #8b5cf6, #ec4899, #ffffff);
-        background-size: 400% 400%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: titleGradient 3s ease infinite;
+        animation: titleFadeIn 1s ease-out;
       }
       
-      @keyframes titlePulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-      }
-      
-      @keyframes titleGradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+      @keyframes titleFadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
       }
       
       .axyra-hero-content p {
-        color: #e2e8f0 !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
-        font-size: 1.3rem !important;
+        color: #ffffff !important;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6) !important;
+        font-size: 1.5rem !important;
         font-weight: 500 !important;
         margin-bottom: 2rem !important;
-        animation: textFadeIn 1s ease-out 0.5s both;
+        animation: textFadeIn 1s ease-out 0.3s both;
       }
       
       @keyframes textFadeIn {
@@ -161,39 +78,33 @@
         to { opacity: 1; transform: translateY(0); }
       }
       
-      /* Botones BRUTALES */
+      /* Botones con animaciones mejoradas */
       .axyra-hero-actions {
         display: flex;
-        gap: 2rem;
+        gap: 24px;
         justify-content: center;
         flex-wrap: wrap;
-        margin-top: 3rem;
-        animation: buttonsSlideIn 1s ease-out 1s both;
+        margin-top: 48px;
+        animation: buttonsSlideIn 1s ease-out 0.5s both;
       }
       
       @keyframes buttonsSlideIn {
-        from { opacity: 0; transform: translateY(50px); }
+        from { opacity: 0; transform: translateY(30px); }
         to { opacity: 1; transform: translateY(0); }
       }
       
       .axyra-btn {
         position: relative;
         overflow: hidden;
-        border-radius: 15px !important;
-        font-weight: 700 !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
         text-transform: uppercase !important;
         letter-spacing: 1px !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
-        animation: buttonFloat 3s ease-in-out infinite;
-      }
-      
-      .axyra-btn:nth-child(1) { animation-delay: 0s; }
-      .axyra-btn:nth-child(2) { animation-delay: 0.5s; }
-      
-      @keyframes buttonFloat {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+        min-width: 180px;
+        padding: 16px 32px !important;
+        font-size: 1rem !important;
       }
       
       .axyra-btn::before {
@@ -203,7 +114,7 @@
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
         transition: left 0.5s;
       }
       
@@ -212,33 +123,20 @@
       }
       
       .axyra-btn:hover {
-        transform: translateY(-5px) scale(1.05) !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+        transform: translateY(-3px) !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
       }
       
       .axyra-btn-primary {
-        background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) !important;
-        background-size: 200% 200% !important;
-        animation: buttonGradient 2s ease infinite !important;
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
         color: white !important;
         border: none !important;
-        padding: 18px 36px !important;
-        font-size: 1.1rem !important;
-      }
-      
-      @keyframes buttonGradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
       }
       
       .axyra-btn-secondary {
-        background: rgba(255, 255, 255, 0.1) !important;
-        backdrop-filter: blur(10px) !important;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
-        color: white !important;
-        padding: 18px 36px !important;
-        font-size: 1.1rem !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: #1f2937 !important;
+        border: 2px solid rgba(255, 255, 255, 0.8) !important;
       }
       
       /* Secciones con fondo blanco semitransparente */
@@ -1727,44 +1625,10 @@
     <!-- Vercel Config -->
     <script src="static/vercel-config.js"></script>
 
-    <!-- Script BRUTAL para animaciones y efectos -->
+    <!-- Script para animaciones mejoradas -->
     <script>
-      // Aplicar efectos inmediatamente
-      function applyBrutalEffects() {
-        // Forzar el fondo azul cuadriculado
-        document.body.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)';
-        document.body.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px), linear-gradient(90deg, rgba(255, 255, 255, 0.15) 2px, transparent 2px)';
-        document.body.style.backgroundSize = '30px 30px';
-        document.body.style.backgroundPosition = '0 0, 0 0';
-        document.body.style.minHeight = '100vh';
-        
-        // Aplicar al html también
-        document.documentElement.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)';
-        document.documentElement.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px), linear-gradient(90deg, rgba(255, 255, 255, 0.15) 2px, transparent 2px)';
-        document.documentElement.style.backgroundSize = '30px 30px';
-        document.documentElement.style.backgroundPosition = '0 0, 0 0';
-        document.documentElement.style.minHeight = '100vh';
-        
-        // Hacer hero section transparente
-        const heroSection = document.querySelector('.axyra-hero');
-        if (heroSection) {
-          heroSection.style.background = 'transparent';
-          heroSection.style.backgroundColor = 'transparent';
-          heroSection.style.backgroundImage = 'none';
-        }
-        
-        // Hacer hero content transparente
-        const heroContent = document.querySelector('.axyra-hero-content');
-        if (heroContent) {
-          heroContent.style.background = 'transparent';
-          heroContent.style.backgroundColor = 'transparent';
-        }
-        
-        console.log('🔥 Efectos BRUTALES aplicados');
-      }
-      
       // Función para agregar animaciones a elementos
-      function addBrutalAnimations() {
+      function addSmoothAnimations() {
         // Agregar animaciones a las tarjetas
         const cards = document.querySelectorAll('.axyra-feature-card, .axyra-quick-card, .axyra-membership-card');
         cards.forEach((card, index) => {
@@ -1772,35 +1636,35 @@
           card.style.animation = 'cardSlideIn 0.6s ease-out both';
         });
         
-        // Agregar efecto de parallax al scroll
-        window.addEventListener('scroll', () => {
-          const scrolled = window.pageYOffset;
-          const parallax = document.querySelector('body::before');
-          if (parallax) {
-            parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
-          }
-        });
+        // Agregar efecto de scroll suave
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        };
         
-        console.log('⚡ Animaciones BRUTALES agregadas');
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.style.animation = 'cardSlideIn 0.6s ease-out both';
+            }
+          });
+        }, observerOptions);
+        
+        // Observar todas las tarjetas
+        cards.forEach(card => observer.observe(card));
+        
+        console.log('✨ Animaciones suaves aplicadas');
       }
-      
-      // Aplicar efectos inmediatamente
-      applyBrutalEffects();
       
       // Aplicar cuando se carga el DOM
       document.addEventListener('DOMContentLoaded', function() {
-        applyBrutalEffects();
-        addBrutalAnimations();
+        addSmoothAnimations();
       });
       
       // Aplicar cuando se carga la ventana
       window.addEventListener('load', function() {
-        applyBrutalEffects();
-        addBrutalAnimations();
+        addSmoothAnimations();
       });
-      
-      // Re-aplicar cada 2 segundos para asegurar
-      setInterval(applyBrutalEffects, 2000);
     </script>
   </body>
 </html>
