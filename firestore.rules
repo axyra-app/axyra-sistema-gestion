@@ -458,6 +458,114 @@ service cloud.firestore {
     }
     
     // ========================================
+    // REGLAS PARA SUSCRIPCIONES
+    // ========================================
+    
+    match /subscriptions/{subscriptionId} {
+      // Lectura: usuario propietario y admins
+      allow read: if isAuthenticated() && (
+        isOwner(resource.data.userId) ||
+        isAdmin()
+      );
+      
+      // Escritura: usuario propietario y admins
+      allow create, update: if isAuthenticated() && (
+        request.resource.data.userId == request.auth.uid ||
+        isAdmin()
+      );
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA CHAT HISTORIAL
+    // ========================================
+    
+    match /chat_historial/{chatId} {
+      // Lectura: usuario propietario del chat
+      allow read: if isAuthenticated() && 
+        isOwner(resource.data.userId);
+      
+      // Escritura: usuario propietario
+      allow create, update: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      
+      // Eliminación: propietario y admins
+      allow delete: if isOwner(resource.data.userId) || isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA INTEGRACIONES
+    // ========================================
+    
+    match /integraciones/{integracionId} {
+      // Solo admins pueden gestionar integraciones
+      allow read, write: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA BACKUPS
+    // ========================================
+    
+    match /backups/{backupId} {
+      // Solo admins pueden acceder a backups
+      allow read, write: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA TEMPLATES
+    // ========================================
+    
+    match /templates/{templateId} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Escritura: admins y gerentes
+      allow create, update: if isAdmin() || hasRole('gerente');
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA EXPORTACIONES
+    // ========================================
+    
+    match /exportaciones/{exportacionId} {
+      // Lectura: usuario que creó la exportación o admins
+      allow read: if isAuthenticated() && (
+        isOwner(resource.data.createdBy) ||
+        isAdmin()
+      );
+      
+      // Escritura: usuarios autenticados
+      allow create: if isAuthenticated();
+      
+      // Actualización: solo el creador
+      allow update: if isAuthenticated() && 
+        isOwner(resource.data.createdBy);
+      
+      // Eliminación: creador y admins
+      allow delete: if isOwner(resource.data.createdBy) || isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA AUDITORÍA
+    // ========================================
+    
+    match /auditoria/{auditId} {
+      // Solo lectura para admins
+      allow read: if isAdmin();
+      
+      // Solo el sistema puede escribir
+      allow create: if isAdmin();
+      
+      // No se permite modificar registros de auditoría
+      allow update, delete: if false;
+    }
+    
+    // ========================================
     // REGLAS POR DEFECTO
     // ========================================
     
