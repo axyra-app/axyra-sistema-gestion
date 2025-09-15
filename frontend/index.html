@@ -12,18 +12,19 @@
     <link rel="stylesheet" href="static/membership-styles.css" />
     <link rel="stylesheet" href="static/grid-background.css" />
     <link rel="icon" href="nomina.ico" type="image/x-icon" />
-    
+
     <!-- Estilo BRUTAL para el fondo azul cuadriculado -->
     <style>
       /* Fondo original restaurado con mejoras */
-      html, body {
+      html,
+      body {
         background: #f8fafc !important;
         min-height: 100vh !important;
         margin: 0 !important;
         padding: 0 !important;
         font-family: 'Poppins', sans-serif !important;
       }
-      
+
       /* Hero section original con mejoras */
       .axyra-hero {
         background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
@@ -32,7 +33,7 @@
         position: relative;
         overflow: hidden;
       }
-      
+
       .axyra-hero::before {
         content: '';
         position: absolute;
@@ -44,7 +45,7 @@
         opacity: 0.3;
         z-index: 1;
       }
-      
+
       .axyra-hero-content {
         position: relative;
         z-index: 2;
@@ -52,7 +53,7 @@
         max-width: 800px;
         margin: 0 auto;
       }
-      
+
       .axyra-hero-content h1 {
         color: #ffffff !important;
         text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6) !important;
@@ -61,12 +62,18 @@
         margin-bottom: 1.5rem !important;
         animation: titleFadeIn 1s ease-out;
       }
-      
+
       @keyframes titleFadeIn {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-      
+
       .axyra-hero-content p {
         color: #ffffff !important;
         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6) !important;
@@ -75,12 +82,18 @@
         margin-bottom: 2rem !important;
         animation: textFadeIn 1s ease-out 0.3s both;
       }
-      
+
       @keyframes textFadeIn {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-      
+
       /* Botones con animaciones mejoradas */
       .axyra-hero-actions {
         display: flex;
@@ -91,12 +104,18 @@
         animation: buttonsSlideIn 1s ease-out 0.5s both;
         align-items: center;
       }
-      
+
       @keyframes buttonsSlideIn {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-      
+
       .axyra-btn {
         position: relative;
         overflow: hidden;
@@ -117,7 +136,7 @@
         line-height: 1.2 !important;
         border: 2px solid transparent !important;
       }
-      
+
       /* Responsive para botones del hero */
       @media (max-width: 768px) {
         .axyra-hero-actions {
@@ -125,14 +144,14 @@
           gap: 16px !important;
           align-items: center !important;
         }
-        
+
         .axyra-btn {
           min-width: 250px !important;
           padding: 16px 32px !important;
           font-size: 0.9rem !important;
         }
       }
-      
+
       @media (max-width: 480px) {
         .axyra-btn {
           min-width: 200px !important;
@@ -140,7 +159,7 @@
           font-size: 0.85rem !important;
         }
       }
-      
+
       .axyra-btn::before {
         content: '';
         position: absolute;
@@ -151,50 +170,42 @@
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
         transition: left 0.5s;
       }
-      
+
       .axyra-btn:hover::before {
         left: 100%;
       }
-      
+
       .axyra-btn:hover {
         transform: translateY(-3px) !important;
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
       }
-      
+
       .axyra-btn-primary {
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%) !important;
         color: white !important;
         border: 2px solid rgba(255, 255, 255, 0.2) !important;
-        box-shadow: 
-          0 6px 20px rgba(37, 99, 235, 0.4),
-          0 0 15px rgba(37, 99, 235, 0.2) !important;
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4), 0 0 15px rgba(37, 99, 235, 0.2) !important;
       }
-      
+
       .axyra-btn-primary:hover {
         background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 50%, #1e3a8a 100%) !important;
         border-color: rgba(255, 255, 255, 0.4) !important;
-        box-shadow: 
-          0 8px 25px rgba(37, 99, 235, 0.5),
-          0 0 20px rgba(37, 99, 235, 0.3) !important;
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5), 0 0 20px rgba(37, 99, 235, 0.3) !important;
       }
-      
+
       .axyra-btn-secondary {
         background: rgba(255, 255, 255, 0.95) !important;
         color: #1f2937 !important;
         border: 2px solid rgba(255, 255, 255, 0.8) !important;
-        box-shadow: 
-          0 6px 20px rgba(0, 0, 0, 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
       }
-      
+
       .axyra-btn-secondary:hover {
         background: rgba(255, 255, 255, 1) !important;
         border-color: rgba(255, 255, 255, 1) !important;
-        box-shadow: 
-          0 8px 25px rgba(0, 0, 0, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
       }
-      
+
       /* Secciones con fondo blanco semitransparente */
       .axyra-section {
         background: rgba(255, 255, 255, 0.95) !important;
@@ -206,12 +217,18 @@
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         animation: sectionSlideUp 0.8s ease-out both;
       }
-      
+
       @keyframes sectionSlideUp {
-        from { opacity: 0; transform: translateY(50px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
-      
+
       .axyra-memberships-brutal {
         background: rgba(255, 255, 255, 0.98) !important;
         backdrop-filter: blur(25px) !important;
@@ -222,15 +239,13 @@
         border: 2px solid rgba(255, 255, 255, 0.3) !important;
         animation: sectionSlideUp 1s ease-out 0.5s both;
       }
-      
+
       /* HEADER BRUTAL MEJORADO */
       .axyra-header {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%) !important;
         backdrop-filter: blur(20px) !important;
         border-bottom: 2px solid rgba(59, 130, 246, 0.3) !important;
-        box-shadow: 
-          0 10px 40px rgba(0, 0, 0, 0.4),
-          0 0 20px rgba(59, 130, 246, 0.2),
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.2),
           inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
         position: relative !important;
         overflow: hidden !important;
@@ -239,7 +254,7 @@
         margin: 0 !important;
         padding: 0 !important;
       }
-      
+
       /* Efecto de partículas en el header */
       .axyra-header::before {
         content: '';
@@ -248,8 +263,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-image: 
-          radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+        background-image: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
           radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.1) 1px, transparent 1px),
           radial-gradient(circle at 40% 60%, rgba(236, 72, 153, 0.1) 1px, transparent 1px);
         background-size: 30px 30px, 50px 50px, 40px 40px;
@@ -257,15 +271,25 @@
         pointer-events: none;
         z-index: 1;
       }
-      
+
       @keyframes headerParticles {
-        0% { transform: translateY(0px) rotate(0deg); }
-        25% { transform: translateY(-5px) rotate(90deg); }
-        50% { transform: translateY(-10px) rotate(180deg); }
-        75% { transform: translateY(-5px) rotate(270deg); }
-        100% { transform: translateY(0px) rotate(360deg); }
+        0% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-5px) rotate(90deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(180deg);
+        }
+        75% {
+          transform: translateY(-5px) rotate(270deg);
+        }
+        100% {
+          transform: translateY(0px) rotate(360deg);
+        }
       }
-      
+
       /* Efecto de brillo en el header */
       .axyra-header::after {
         content: '';
@@ -278,13 +302,19 @@
         animation: headerShimmer 3s ease-in-out infinite;
         z-index: 2;
       }
-      
+
       @keyframes headerShimmer {
-        0% { left: -100%; }
-        50% { left: 100%; }
-        100% { left: 100%; }
+        0% {
+          left: -100%;
+        }
+        50% {
+          left: 100%;
+        }
+        100% {
+          left: 100%;
+        }
       }
-      
+
       /* Contenedor del header */
       .axyra-header .axyra-container {
         max-width: 1200px !important;
@@ -293,7 +323,7 @@
         position: relative !important;
         z-index: 3 !important;
       }
-      
+
       /* Layout del header */
       .axyra-header-content {
         display: flex !important;
@@ -302,7 +332,7 @@
         padding: 16px 0 !important;
         min-height: 80px !important;
       }
-      
+
       /* Logo del header */
       .axyra-logo {
         display: flex !important;
@@ -310,14 +340,14 @@
         gap: 12px !important;
         flex-shrink: 0 !important;
       }
-      
+
       .axyra-logo-img {
         width: 48px !important;
         height: 48px !important;
         object-fit: contain !important;
         border-radius: 8px !important;
       }
-      
+
       .axyra-logo-text h1 {
         margin: 0 !important;
         font-size: 1.8rem !important;
@@ -325,14 +355,14 @@
         color: white !important;
         line-height: 1.2 !important;
       }
-      
+
       .axyra-logo-text p {
         margin: 0 !important;
         font-size: 0.9rem !important;
         color: rgba(255, 255, 255, 0.8) !important;
         line-height: 1.2 !important;
       }
-      
+
       /* Navegación del header */
       .axyra-nav {
         display: flex !important;
@@ -341,7 +371,7 @@
         flex: 1 !important;
         justify-content: center !important;
       }
-      
+
       .axyra-nav-link {
         color: white !important;
         text-decoration: none !important;
@@ -351,48 +381,48 @@
         padding: 8px 16px !important;
         border-radius: 6px !important;
       }
-      
+
       .axyra-nav-link:hover {
         color: #60a5fa !important;
         background: rgba(255, 255, 255, 0.1) !important;
       }
-      
+
       /* Responsive para el header */
       @media (max-width: 1024px) {
         .axyra-nav {
           gap: 16px !important;
         }
-        
+
         .axyra-nav-link {
           font-size: 0.9rem !important;
           padding: 6px 12px !important;
         }
       }
-      
+
       @media (max-width: 768px) {
         .axyra-header-content {
           flex-direction: column !important;
           gap: 16px !important;
           padding: 12px 0 !important;
         }
-        
+
         .axyra-nav {
           order: 3 !important;
           width: 100% !important;
           justify-content: center !important;
         }
-        
+
         .axyra-header-actions {
           order: 2 !important;
         }
       }
-      
+
       /* Logo con efectos brutales */
       .axyra-logo {
         position: relative !important;
         overflow: hidden !important;
       }
-      
+
       .axyra-logo::before {
         content: '';
         position: absolute;
@@ -404,22 +434,22 @@
         transition: left 0.6s ease;
         z-index: 1;
       }
-      
+
       .axyra-logo:hover::before {
         left: 100%;
       }
-      
+
       .axyra-logo:hover {
         transform: scale(1.05) !important;
         transition: transform 0.3s ease !important;
       }
-      
+
       /* Navegación con efectos */
       .axyra-nav {
         position: relative !important;
         z-index: 3 !important;
       }
-      
+
       .axyra-nav a {
         position: relative !important;
         overflow: hidden !important;
@@ -428,7 +458,7 @@
         padding: 10px 20px !important;
         margin: 0 5px !important;
       }
-      
+
       .axyra-nav a::before {
         content: '';
         position: absolute;
@@ -440,17 +470,17 @@
         transition: left 0.5s ease;
         z-index: 1;
       }
-      
+
       .axyra-nav a:hover::before {
         left: 100%;
       }
-      
+
       .axyra-nav a:hover {
         transform: translateY(-2px) scale(1.05) !important;
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
         background: rgba(255, 255, 255, 0.1) !important;
       }
-      
+
       /* Botones del header con efectos brutales */
       .axyra-header .axyra-btn {
         position: relative !important;
@@ -471,7 +501,7 @@
         font-size: 0.9rem !important;
         line-height: 1.2 !important;
       }
-      
+
       /* Contenedor de botones del header */
       .axyra-header .axyra-header-actions {
         display: flex !important;
@@ -479,20 +509,20 @@
         align-items: center !important;
         flex-wrap: wrap !important;
       }
-      
+
       /* Responsive para botones del header */
       @media (max-width: 768px) {
         .axyra-header .axyra-header-actions {
           gap: 8px !important;
         }
-        
+
         .axyra-header .axyra-btn {
           min-width: 120px !important;
           padding: 10px 20px !important;
           font-size: 0.8rem !important;
         }
       }
-      
+
       .axyra-header .axyra-btn::before {
         content: '';
         position: absolute;
@@ -504,30 +534,28 @@
         transition: left 0.6s ease;
         z-index: 1;
       }
-      
+
       .axyra-header .axyra-btn:hover::before {
         left: 100%;
       }
-      
+
       .axyra-header .axyra-btn:hover {
         transform: translateY(-3px) scale(1.05) !important;
-        box-shadow: 
-          0 8px 25px rgba(0, 0, 0, 0.3),
-          0 0 20px rgba(59, 130, 246, 0.4) !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(59, 130, 246, 0.4) !important;
       }
-      
+
       /* Botón primario del header */
       .axyra-header .axyra-btn-primary {
         background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%) !important;
         color: white !important;
         border: 2px solid rgba(255, 255, 255, 0.2) !important;
       }
-      
+
       .axyra-header .axyra-btn-primary:hover {
         background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 50%, #1e3a8a 100%) !important;
         border-color: rgba(255, 255, 255, 0.4) !important;
       }
-      
+
       /* Botón secundario del header */
       .axyra-header .axyra-btn-secondary {
         background: rgba(255, 255, 255, 0.1) !important;
@@ -535,12 +563,12 @@
         border: 2px solid rgba(255, 255, 255, 0.3) !important;
         backdrop-filter: blur(10px) !important;
       }
-      
+
       .axyra-header .axyra-btn-secondary:hover {
         background: rgba(255, 255, 255, 0.2) !important;
         border-color: rgba(255, 255, 255, 0.5) !important;
       }
-      
+
       /* Footer mejorado */
       .axyra-footer-professional {
         background: rgba(15, 23, 42, 0.95) !important;
@@ -548,7 +576,7 @@
         border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
         box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3) !important;
       }
-      
+
       /* ANIMACIONES BRUTALES PARA ELEMENTOS */
       .axyra-feature-card,
       .axyra-quick-card,
@@ -558,23 +586,45 @@
         position: relative;
         overflow: hidden;
       }
-      
-      .axyra-feature-card:nth-child(1) { animation-delay: 0.1s; }
-      .axyra-feature-card:nth-child(2) { animation-delay: 0.2s; }
-      .axyra-feature-card:nth-child(3) { animation-delay: 0.3s; }
-      .axyra-feature-card:nth-child(4) { animation-delay: 0.4s; }
-      .axyra-quick-card:nth-child(1) { animation-delay: 0.1s; }
-      .axyra-quick-card:nth-child(2) { animation-delay: 0.2s; }
-      .axyra-quick-card:nth-child(3) { animation-delay: 0.3s; }
-      .axyra-quick-card:nth-child(4) { animation-delay: 0.4s; }
-      .axyra-membership-card:nth-child(1) { animation-delay: 0.1s; }
-      .axyra-membership-card:nth-child(2) { animation-delay: 0.2s; }
-      .axyra-membership-card:nth-child(3) { animation-delay: 0.3s; }
-      
+
+      .axyra-feature-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .axyra-feature-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .axyra-feature-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .axyra-feature-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .axyra-quick-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .axyra-quick-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .axyra-quick-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .axyra-quick-card:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .axyra-membership-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .axyra-membership-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .axyra-membership-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
       @keyframes cardSlideInBrutal {
-        0% { 
-          opacity: 0; 
-          transform: translateY(50px) scale(0.8) rotateX(15deg); 
+        0% {
+          opacity: 0;
+          transform: translateY(50px) scale(0.8) rotateX(15deg);
           filter: blur(5px);
         }
         50% {
@@ -582,13 +632,13 @@
           transform: translateY(-10px) scale(1.05) rotateX(-5deg);
           filter: blur(1px);
         }
-        100% { 
-          opacity: 1; 
-          transform: translateY(0) scale(1) rotateX(0deg); 
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1) rotateX(0deg);
           filter: blur(0px);
         }
       }
-      
+
       /* Efectos de brillo en las tarjetas */
       .axyra-feature-card::before,
       .axyra-quick-card::before,
@@ -603,51 +653,60 @@
         transition: left 0.6s ease;
         z-index: 1;
       }
-      
+
       /* Efectos de hover FLUIDOS */
       .axyra-feature-card:hover,
       .axyra-quick-card:hover,
       .axyra-membership-card:hover {
         transform: translateY(-8px) scale(1.02) !important;
-        box-shadow: 
-          0 20px 40px rgba(0, 0, 0, 0.15),
-          0 0 20px rgba(59, 130, 246, 0.2) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 20px rgba(59, 130, 246, 0.2) !important;
         border: 2px solid rgba(59, 130, 246, 0.3) !important;
         transition: all 0.2s ease-out !important;
       }
-      
+
       .axyra-feature-card:hover::before,
       .axyra-quick-card:hover::before,
       .axyra-membership-card:hover::before {
         left: 100%;
       }
-      
+
       /* Animación de hover simplificada - removida para mejor performance */
-      
+
       /* Animaciones de pulso para iconos */
       .axyra-feature-icon,
       .axyra-quick-icon {
         animation: iconPulse 2s ease-in-out infinite;
         transition: all 0.3s ease;
       }
-      
+
       .axyra-feature-card:hover .axyra-feature-icon,
       .axyra-quick-card:hover .axyra-quick-icon {
         animation: iconSpin 0.6s ease-in-out;
         transform: scale(1.2);
       }
-      
+
       @keyframes iconPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.1); }
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.1);
+        }
       }
-      
+
       @keyframes iconSpin {
-        0% { transform: scale(1) rotate(0deg); }
-        50% { transform: scale(1.3) rotate(180deg); }
-        100% { transform: scale(1.2) rotate(360deg); }
+        0% {
+          transform: scale(1) rotate(0deg);
+        }
+        50% {
+          transform: scale(1.3) rotate(180deg);
+        }
+        100% {
+          transform: scale(1.2) rotate(360deg);
+        }
       }
-      
+
       /* Efectos de gradiente animado en títulos */
       .axyra-section-title {
         background: linear-gradient(45deg, #1e293b, #3b82f6, #8b5cf6, #ec4899, #1e293b);
@@ -660,13 +719,19 @@
         text-align: center;
         margin-bottom: 2rem;
       }
-      
+
       @keyframes titleGradientBrutal {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
       }
-      
+
       /* Efectos de partículas flotantes */
       .axyra-section::before {
         content: '';
@@ -675,8 +740,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-image: 
-          radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 2px, transparent 2px),
+        background-image: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 2px, transparent 2px),
           radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.1) 2px, transparent 2px),
           radial-gradient(circle at 40% 60%, rgba(236, 72, 153, 0.1) 2px, transparent 2px);
         background-size: 50px 50px, 80px 80px, 60px 60px;
@@ -684,21 +748,31 @@
         pointer-events: none;
         z-index: 1;
       }
-      
+
       @keyframes particlesFloatBrutal {
-        0% { transform: translateY(0px) rotate(0deg); }
-        25% { transform: translateY(-10px) rotate(90deg); }
-        50% { transform: translateY(-20px) rotate(180deg); }
-        75% { transform: translateY(-10px) rotate(270deg); }
-        100% { transform: translateY(0px) rotate(360deg); }
+        0% {
+          transform: translateY(0px) rotate(0deg);
+        }
+        25% {
+          transform: translateY(-10px) rotate(90deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(180deg);
+        }
+        75% {
+          transform: translateY(-10px) rotate(270deg);
+        }
+        100% {
+          transform: translateY(0px) rotate(360deg);
+        }
       }
-      
+
       /* Efectos de scroll reveal */
       .axyra-section {
         position: relative;
         overflow: hidden;
       }
-      
+
       .axyra-section::after {
         content: '';
         position: absolute;
@@ -710,13 +784,19 @@
         animation: sectionShimmer 3s ease-in-out infinite;
         z-index: 2;
       }
-      
+
       @keyframes sectionShimmer {
-        0% { left: -100%; }
-        50% { left: 100%; }
-        100% { left: 100%; }
+        0% {
+          left: -100%;
+        }
+        50% {
+          left: 100%;
+        }
+        100% {
+          left: 100%;
+        }
       }
-      
+
       /* Iconos de membresía con logo AXYRA */
       .axyra-membership-icon {
         width: 60px;
@@ -732,7 +812,7 @@
         overflow: hidden;
         transition: all 0.3s ease;
       }
-      
+
       .axyra-membership-icon::before {
         content: '';
         position: absolute;
@@ -743,16 +823,16 @@
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
         transition: left 0.6s ease;
       }
-      
+
       .axyra-membership-card:hover .axyra-membership-icon::before {
         left: 100%;
       }
-      
+
       .axyra-membership-card:hover .axyra-membership-icon {
         transform: scale(1.1) rotateY(10deg);
         box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
       }
-      
+
       .axyra-membership-logo {
         width: 36px;
         height: 36px;
@@ -761,35 +841,35 @@
         z-index: 2;
         position: relative;
       }
-      
+
       /* Iconos específicos por plan */
       .axyra-membership-basic .axyra-membership-icon {
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
       }
-      
+
       .axyra-membership-basic:hover .axyra-membership-icon {
         box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
       }
-      
+
       .axyra-membership-professional .axyra-membership-icon {
         background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
       }
-      
+
       .axyra-membership-professional:hover .axyra-membership-icon {
         box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
       }
-      
+
       .axyra-membership-enterprise .axyra-membership-icon {
         background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
         box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
       }
-      
+
       .axyra-membership-enterprise:hover .axyra-membership-icon {
         box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
       }
-      
+
       /* Iconos de features más profesionales */
       .axyra-feature-item .axyra-feature-icon {
         color: #3b82f6 !important;
@@ -800,7 +880,7 @@
         width: 16px !important;
         text-align: center !important;
       }
-      
+
       /* Badges mejorados para mejor visibilidad */
       .axyra-membership-badge {
         position: absolute !important;
@@ -819,26 +899,26 @@
         transform: translateY(0) !important;
         transition: all 0.3s ease !important;
       }
-      
+
       .axyra-badge-featured {
         background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
         box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4) !important;
       }
-      
+
       .axyra-badge-enterprise {
         background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
         box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4) !important;
       }
-      
+
       .axyra-membership-card:hover .axyra-membership-badge {
         transform: translateY(-2px) !important;
         box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5) !important;
       }
-      
+
       .axyra-membership-card:hover .axyra-badge-featured {
         box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5) !important;
       }
-      
+
       .axyra-membership-card:hover .axyra-badge-enterprise {
         box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5) !important;
       }
@@ -1066,7 +1146,6 @@
                 </div>
               </div>
 
-
               <div class="axyra-contact-method">
                 <div class="axyra-contact-icon">📱</div>
                 <div class="axyra-contact-details">
@@ -1162,7 +1241,10 @@
           </div>
 
           <!-- Plan Profesional -->
-          <div class="axyra-membership-card axyra-membership-professional axyra-membership-featured" data-plan="professional">
+          <div
+            class="axyra-membership-card axyra-membership-professional axyra-membership-featured"
+            data-plan="professional"
+          >
             <div class="axyra-membership-badge axyra-badge-featured">MÁS POPULAR</div>
             <div class="axyra-membership-header">
               <div class="axyra-membership-icon">
@@ -1197,7 +1279,10 @@
                 <span>Soporte prioritario</span>
               </div>
             </div>
-            <button class="axyra-btn axyra-btn-gradient axyra-membership-btn" onclick="selectMembershipPlan('professional')">
+            <button
+              class="axyra-btn axyra-btn-gradient axyra-membership-btn"
+              onclick="selectMembershipPlan('professional')"
+            >
               ¡Elegir Profesional!
             </button>
           </div>
@@ -1238,7 +1323,10 @@
                 <span>API personalizada</span>
               </div>
             </div>
-            <button class="axyra-btn axyra-btn-secondary axyra-membership-btn" onclick="selectMembershipPlan('enterprise')">
+            <button
+              class="axyra-btn axyra-btn-secondary axyra-membership-btn"
+              onclick="selectMembershipPlan('enterprise')"
+            >
               ¡Elegir Empresarial!
             </button>
           </div>
@@ -1532,7 +1620,7 @@
         console.log('🔍 handleDashboardAccess llamada');
         const user = localStorage.getItem('axyra_isolated_user');
         console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
-        
+
         if (!user) {
           console.log('🔐 Mostrando modal de autenticación...');
           showAuthModal();
@@ -1558,7 +1646,7 @@
         console.log('🔍 handleEmpleadosAccess llamada');
         const user = localStorage.getItem('axyra_isolated_user');
         console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
-        
+
         if (user) {
           console.log('🚀 Redirigiendo a empleados...');
           try {
@@ -1574,38 +1662,82 @@
       }
 
       function handleHorasAccess() {
+        console.log('🔍 handleHorasAccess llamada');
         const user = localStorage.getItem('axyra_isolated_user');
-        if (user) {
-          window.location.href = 'modulos/horas/gestionar_horas.html';
-        } else {
+        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
+
+        if (!user) {
+          console.log('🔐 Mostrando modal de autenticación...');
           showAuthModal();
+          return;
+        }
+
+        console.log('🚀 Redirigiendo a horas...');
+        try {
+          window.location.href = 'modulos/horas/gestionar_horas.html';
+        } catch (error) {
+          console.error('❌ Error al redirigir:', error);
+          alert('Error al acceder a horas. Por favor, inténtalo de nuevo.');
         }
       }
 
       function handleNominaAccess() {
+        console.log('🔍 handleNominaAccess llamada');
         const user = localStorage.getItem('axyra_isolated_user');
-        if (user) {
-          window.location.href = 'modulos/nomina/gestionar_nomina.html';
-        } else {
+        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
+
+        if (!user) {
+          console.log('🔐 Mostrando modal de autenticación...');
           showAuthModal();
+          return;
+        }
+
+        console.log('🚀 Redirigiendo a nómina...');
+        try {
+          window.location.href = 'modulos/nomina/gestionar_nomina.html';
+        } catch (error) {
+          console.error('❌ Error al redirigir:', error);
+          alert('Error al acceder a nómina. Por favor, inténtalo de nuevo.');
         }
       }
 
       function handleCuadreAccess() {
+        console.log('🔍 handleCuadreAccess llamada');
         const user = localStorage.getItem('axyra_isolated_user');
-        if (user) {
-          window.location.href = 'modulos/cuadre_caja/cuadre_caja.html';
-        } else {
+        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
+
+        if (!user) {
+          console.log('🔐 Mostrando modal de autenticación...');
           showAuthModal();
+          return;
+        }
+
+        console.log('🚀 Redirigiendo a cuadre de caja...');
+        try {
+          window.location.href = 'modulos/cuadre_caja/cuadre_caja.html';
+        } catch (error) {
+          console.error('❌ Error al redirigir:', error);
+          alert('Error al acceder a cuadre de caja. Por favor, inténtalo de nuevo.');
         }
       }
 
       function handleConfigAccess() {
+        console.log('🔍 handleConfigAccess llamada');
         const user = localStorage.getItem('axyra_isolated_user');
-        if (user) {
-          window.location.href = 'modulos/configuracion/configuracion.html';
-        } else {
+        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
+
+        if (!user) {
+          console.log('🔐 Mostrando modal de autenticación...');
           showAuthModal();
+          return;
+        }
+
+        console.log('🚀 Redirigiendo a configuración...');
+        try {
+          window.location.href = 'modulos/configuracion/configuracion.html';
+        } catch (error) {
+          console.error('❌ Error al redirigir:', error);
+          alert('Error al acceder a configuración. Por favor, inténtalo de nuevo.');
         }
       }
 
@@ -1722,7 +1854,7 @@
 
       function selectMembershipPlan(planType) {
         console.log('💎 Seleccionando plan:', planType);
-        
+
         // Redirigir a la página de membresías detallada
         window.location.href = 'membresias.html';
       }
@@ -1732,9 +1864,9 @@
           free: 'Gratis',
           basic: 'Básico',
           professional: 'Profesional',
-          enterprise: 'Empresarial'
+          enterprise: 'Empresarial',
         };
-        
+
         const notification = document.createElement('div');
         notification.className = 'axyra-membership-success';
         notification.innerHTML = `
@@ -1747,14 +1879,14 @@
             <button class="axyra-success-close" onclick="this.parentElement.parentElement.remove()">×</button>
           </div>
         `;
-        
+
         document.body.appendChild(notification);
-        
+
         // Animación de entrada
         setTimeout(() => {
           notification.classList.add('show');
         }, 100);
-        
+
         // Auto-remover después de 5 segundos
         setTimeout(() => {
           notification.classList.remove('show');
@@ -1869,45 +2001,6 @@
         document.body.appendChild(modal);
       }
 
-      // Sección NOSOTROS
-      function quienesSomos() {
-        const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>🚀 Quiénes Somos</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>AXYRA - Sistema de Gestión Empresarial</h4>
-              <p><strong>AXYRA</strong> es una plataforma integral de gestión empresarial diseñada para optimizar todos los procesos de tu empresa.</p>
-              
-              <h5>🎯 Nuestra Misión</h5>
-              <p>Simplificar la gestión empresarial mediante tecnología innovadora que conecte empleados, procesos y datos en una sola plataforma.</p>
-              
-              <h5>💡 Nuestros Valores</h5>
-              <ul>
-                <li><strong>Innovación:</strong> Tecnología de vanguardia para tu empresa</li>
-                <li><strong>Simplicidad:</strong> Interfaz intuitiva y fácil de usar</li>
-                <li><strong>Confiabilidad:</strong> Sistema estable y seguro</li>
-                <li><strong>Eficiencia:</strong> Optimización de todos los procesos</li>
-              </ul>
-              
-              <h5>📈 Beneficios</h5>
-              <ul>
-                <li>Gestión centralizada de empleados</li>
-                <li>Control preciso de horas trabajadas</li>
-                <li>Liquidación automática de nóminas</li>
-                <li>Análisis financiero en tiempo real</li>
-                <li>Reportes detallados y personalizables</li>
-              </ul>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
 
       function centroAyuda() {
         const modal = document.createElement('div');
@@ -2271,7 +2364,6 @@
         window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank');
       }
 
-
       function contactarWhatsApp() {
         const mensaje = encodeURIComponent('Hola, necesito información sobre AXYRA');
         window.open(`https://wa.me/573187249579?text=${mensaje}`, '_blank');
@@ -2327,7 +2419,6 @@
       }
     </script>
 
-
     <!-- Sistema de Membresías AXYRA -->
     <script src="static/membership-system.js"></script>
 
@@ -2336,7 +2427,7 @@
 
     <!-- Live Chat AI -->
     <script src="static/live-chat-ai.js?v=5"></script>
-    <link rel="stylesheet" href="static/live-chat-styles.css?v=5">
+    <link rel="stylesheet" href="static/live-chat-styles.css?v=5" />
 
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
@@ -2360,42 +2451,42 @@
           card.style.animationDelay = `${index * 0.1}s`;
           card.style.animation = 'cardSlideInBrutal 0.8s cubic-bezier(0.4, 0, 0.2, 1) both';
         });
-        
+
         // Efecto de scroll reveal brutal
         const observerOptions = {
           threshold: 0.1,
-          rootMargin: '0px 0px -100px 0px'
+          rootMargin: '0px 0px -100px 0px',
         };
-        
+
         const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
+          entries.forEach((entry) => {
             if (entry.isIntersecting) {
               entry.target.style.animation = 'cardSlideInBrutal 0.8s cubic-bezier(0.4, 0, 0.2, 1) both';
-              
+
               // Efecto de partículas al aparecer
               createParticleEffect(entry.target);
             }
           });
         }, observerOptions);
-        
+
         // Observar todas las tarjetas
-        cards.forEach(card => observer.observe(card));
-        
+        cards.forEach((card) => observer.observe(card));
+
         // Efectos de mouse tracking
         addMouseTrackingEffects();
-        
+
         // Efectos de parallax
         addParallaxEffects();
-        
+
         console.log('🔥 Efectos BRUTALES aplicados');
       }
-      
+
       // Función para crear efecto de partículas
       function createParticleEffect(element) {
         const rect = element.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
-        
+
         for (let i = 0; i < 8; i++) {
           const particle = document.createElement('div');
           particle.style.position = 'fixed';
@@ -2408,23 +2499,23 @@
           particle.style.pointerEvents = 'none';
           particle.style.zIndex = '9999';
           particle.style.animation = `particleExplode 1s ease-out forwards`;
-          
+
           const angle = (i / 8) * Math.PI * 2;
           const distance = 50 + Math.random() * 50;
           const endX = centerX + Math.cos(angle) * distance;
           const endY = centerY + Math.sin(angle) * distance;
-          
+
           particle.style.setProperty('--end-x', endX + 'px');
           particle.style.setProperty('--end-y', endY + 'px');
-          
+
           document.body.appendChild(particle);
-          
+
           setTimeout(() => {
             particle.remove();
           }, 1000);
         }
       }
-      
+
       // Agregar CSS para partículas
       const particleStyle = document.createElement('style');
       particleStyle.textContent = `
@@ -2440,20 +2531,20 @@
         }
       `;
       document.head.appendChild(particleStyle);
-      
+
       // Efectos de seguimiento del mouse
       function addMouseTrackingEffects() {
         document.addEventListener('mousemove', (e) => {
           const cards = document.querySelectorAll('.axyra-feature-card, .axyra-quick-card, .axyra-membership-card');
-          
-          cards.forEach(card => {
+
+          cards.forEach((card) => {
             const rect = card.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
-            
+
             const deltaX = (e.clientX - centerX) / 20;
             const deltaY = (e.clientY - centerY) / 20;
-            
+
             if (Math.abs(deltaX) < 50 && Math.abs(deltaY) < 50) {
               card.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1.02)`;
               card.style.transition = 'transform 0.1s ease-out';
@@ -2463,26 +2554,26 @@
           });
         });
       }
-      
+
       // Efectos de parallax
       function addParallaxEffects() {
         window.addEventListener('scroll', () => {
           const scrolled = window.pageYOffset;
           const sections = document.querySelectorAll('.axyra-section');
-          
+
           sections.forEach((section, index) => {
-            const speed = 0.5 + (index * 0.1);
+            const speed = 0.5 + index * 0.1;
             const yPos = -(scrolled * speed);
             section.style.transform = `translateY(${yPos}px)`;
           });
         });
       }
-      
+
       // Efectos de click brutal
       function addClickEffects() {
         const buttons = document.querySelectorAll('.axyra-btn');
-        
-        buttons.forEach(button => {
+
+        buttons.forEach((button) => {
           button.addEventListener('click', (e) => {
             // Efecto de ripple
             const ripple = document.createElement('span');
@@ -2490,7 +2581,7 @@
             const size = Math.max(rect.width, rect.height);
             const x = e.clientX - rect.left - size / 2;
             const y = e.clientY - rect.top - size / 2;
-            
+
             ripple.style.position = 'absolute';
             ripple.style.left = x + 'px';
             ripple.style.top = y + 'px';
@@ -2501,18 +2592,18 @@
             ripple.style.transform = 'scale(0)';
             ripple.style.animation = 'ripple 0.6s ease-out';
             ripple.style.pointerEvents = 'none';
-            
+
             button.style.position = 'relative';
             button.style.overflow = 'hidden';
             button.appendChild(ripple);
-            
+
             setTimeout(() => {
               ripple.remove();
             }, 600);
           });
         });
       }
-      
+
       // Agregar CSS para ripple
       const rippleStyle = document.createElement('style');
       rippleStyle.textContent = `
@@ -2524,17 +2615,17 @@
         }
       `;
       document.head.appendChild(rippleStyle);
-      
+
       // Efectos brutales específicos para el header
       function addHeaderBrutalEffects() {
         const header = document.querySelector('.axyra-header');
         if (!header) return;
-        
+
         // Efecto de partículas dinámicas en el header
         setInterval(() => {
           createHeaderParticle(header);
         }, 2000);
-        
+
         // Efecto de brillo al hacer scroll
         window.addEventListener('scroll', () => {
           const scrolled = window.pageYOffset;
@@ -2552,10 +2643,10 @@
             `;
           }
         });
-        
+
         console.log('🔥 Efectos brutales del header aplicados');
       }
-      
+
       // Crear partículas en el header
       function createHeaderParticle(header) {
         const particle = document.createElement('div');
@@ -2569,14 +2660,14 @@
         particle.style.pointerEvents = 'none';
         particle.style.zIndex = '1';
         particle.style.animation = 'headerParticleFloat 3s ease-out forwards';
-        
+
         header.appendChild(particle);
-        
+
         setTimeout(() => {
           particle.remove();
         }, 3000);
       }
-      
+
       // Agregar CSS para partículas del header
       const headerParticleStyle = document.createElement('style');
       headerParticleStyle.textContent = `
@@ -2596,16 +2687,16 @@
         }
       `;
       document.head.appendChild(headerParticleStyle);
-      
+
       // Aplicar cuando se carga el DOM
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         addBrutalEffects();
         addClickEffects();
         addHeaderBrutalEffects();
       });
-      
+
       // Aplicar cuando se carga la ventana
-      window.addEventListener('load', function() {
+      window.addEventListener('load', function () {
         addBrutalEffects();
         addClickEffects();
         addHeaderBrutalEffects();
