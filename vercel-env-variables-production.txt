@@ -1,0 +1,206 @@
+# ========================================
+# VARIABLES DE ENTORNO VERCEL - AXYRA
+# ========================================
+# Versión de Producción - Solo variables necesarias
+# Actualizado: 15 de Septiembre de 2025
+
+# ========================================
+# FIREBASE CONFIGURATION (OBLIGATORIAS)
+# ========================================
+FIREBASE_API_KEY=AIzaSyAW3ejokcsWAP5G1yJT63jLBpFmdTiTUwc
+FIREBASE_AUTH_DOMAIN=axyra-48238.firebaseapp.com
+FIREBASE_PROJECT_ID=axyra-48238
+FIREBASE_STORAGE_BUCKET=axyra-48238.firebasestorage.app
+FIREBASE_MESSAGING_SENDER_ID=796334517286
+FIREBASE_APP_ID=1:796334517286:web:95947cf0f773dc11378ae7
+FIREBASE_MEASUREMENT_ID=G-R8W2MP15B7
+
+# ========================================
+# EMAILJS CONFIGURATION (OBLIGATORIAS)
+# ========================================
+EMAILJS_SERVICE_ID=service_axyra
+EMAILJS_TEMPLATE_ID=template_axyra_contact
+EMAILJS_PUBLIC_KEY=1heyO_r8WJOhBOBYs
+EMAILJS_PRIVATE_KEY=PIDaqIV51chWY6lVzPSGj
+
+# ========================================
+# CONTACT INFORMATION (OBLIGATORIAS)
+# ========================================
+CONTACT_EMAIL=axyra.app@gmail.com
+SENDER_EMAIL=jfuran.va@gmail.com
+NOTIFICATION_EMAIL=axyra.app@gmail.com
+
+# ========================================
+# SYSTEM CONFIGURATION (OBLIGATORIAS)
+# ========================================
+NODE_ENV=production
+APP_NAME=AXYRA Sistema de Gestión
+APP_VERSION=2.0.0
+APP_DESCRIPTION=Sistema integral de gestión empresarial
+APP_URL=https://axyra-sistema-gestion.vercel.app
+APP_DOMAIN=axyra-sistema-gestion.vercel.app
+
+# ========================================
+# FEATURE FLAGS (OBLIGATORIAS)
+# ========================================
+ENABLE_AI_CHAT=true
+ENABLE_REAL_TIME_SYNC=true
+ENABLE_OFFLINE_MODE=true
+ENABLE_ANALYTICS=true
+ENABLE_BACKUP=true
+ENABLE_INVENTORY_MANAGEMENT=true
+ENABLE_PAYROLL_SYSTEM=true
+ENABLE_EMPLOYEE_MANAGEMENT=true
+ENABLE_FINANCIAL_REPORTS=true
+ENABLE_EMAIL_NOTIFICATIONS=true
+
+# ========================================
+# ANALYTICS & MONITORING (OBLIGATORIAS)
+# ========================================
+GOOGLE_ANALYTICS_ID=G-R8W2MP15B7
+LOG_LEVEL=info
+
+# ========================================
+# BUSINESS LOGIC (OBLIGATORIAS)
+# ========================================
+DEFAULT_CURRENCY=COP
+DEFAULT_LANGUAGE=es
+DEFAULT_TIMEZONE=America/Bogota
+DATE_FORMAT=DD/MM/YYYY
+TIME_FORMAT=HH:mm
+
+# ========================================
+# AXYRA MODULE CONFIGURATION (OBLIGATORIAS)
+# ========================================
+# Inventario
+INVENTORY_LOW_STOCK_THRESHOLD=10
+INVENTORY_MAX_PRODUCTS=10000
+INVENTORY_CATEGORIES=tecnologia,oficina,hogar,otros
+
+# Empleados
+EMPLOYEE_MAX_COUNT=1000
+EMPLOYEE_DEPARTMENTS=administracion,ventas,produccion,contabilidad,recursos_humanos
+
+# Nóminas
+PAYROLL_CALCULATION_METHOD=colombian
+PAYROLL_MINIMUM_WAGE=1160000
+PAYROLL_SOCIAL_SECURITY_RATE=0.04
+PAYROLL_PENSION_RATE=0.04
+
+# Facturación
+INVOICE_PREFIX=AXY
+INVOICE_START_NUMBER=1
+INVOICE_TAX_RATE=0.19
+
+# Caja
+CASH_REGISTER_OPENING_AMOUNT=0
+CASH_REGISTER_CURRENCY=COP
+
+# ========================================
+# FEATURE CONFIGURATION (OBLIGATORIAS)
+# ========================================
+MAX_EMPLOYEES_PER_COMPANY=1000
+MAX_PRODUCTS_PER_INVENTORY=10000
+MAX_INVOICES_PER_MONTH=50000
+MAX_BACKUP_SIZE_MB=1000
+
+# ========================================
+# NOTIFICATION SETTINGS (OBLIGATORIAS)
+# ========================================
+PUSH_NOTIFICATIONS_ENABLED=true
+EMAIL_NOTIFICATIONS_ENABLED=true
+SMS_NOTIFICATIONS_ENABLED=false
+
+# ========================================
+# BACKUP CONFIGURATION (OBLIGATORIAS)
+# ========================================
+BACKUP_FREQUENCY=daily
+BACKUP_RETENTION_DAYS=30
+BACKUP_STORAGE=firebase
+
+# ========================================
+# AUDIT CONFIGURATION (OBLIGATORIAS)
+# ========================================
+AUDIT_LOG_ENABLED=true
+AUDIT_LOG_LEVEL=info
+AUDIT_RETENTION_DAYS=90
+
+# ========================================
+# DEPLOYMENT SETTINGS (OBLIGATORIAS)
+# ========================================
+BUILD_COMMAND=npm run build
+OUTPUT_DIRECTORY=frontend
+INSTALL_COMMAND=npm install
+
+# ========================================
+# CUSTOM DOMAINS (OBLIGATORIAS)
+# ========================================
+PRIMARY_DOMAIN=axyra-sistema-gestion.vercel.app
+CUSTOM_DOMAIN=axyra.app
+STAGING_DOMAIN=axyra-staging.vercel.app
+
+# ========================================
+# PERFORMANCE SETTINGS (OBLIGATORIAS)
+# ========================================
+ENABLE_COMPRESSION=true
+ENABLE_MINIFICATION=true
+ENABLE_TREE_SHAKING=true
+ENABLE_LAZY_LOADING=true
+
+# ========================================
+# SECURITY HEADERS (OBLIGATORIAS)
+# ========================================
+CSP_POLICY=default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.firebase.com https://*.googleapis.com https://*.gstatic.com
+HSTS_ENABLED=true
+X_FRAME_OPTIONS=DENY
+X_CONTENT_TYPE_OPTIONS=nosniff
+
+# ========================================
+# MONITORING & ALERTS (OBLIGATORIAS)
+# ========================================
+HEALTH_CHECK_ENDPOINT=/health
+UPTIME_MONITORING=true
+ERROR_ALERTING=true
+PERFORMANCE_MONITORING=true
+
+# ========================================
+# SUPPORT & DOCUMENTATION (OBLIGATORIAS)
+# ========================================
+SUPPORT_EMAIL=axyra.app@gmail.com
+DOCUMENTATION_URL=https://docs.axyra.app
+API_DOCUMENTATION_URL=https://api.axyra.app/docs
+STATUS_PAGE_URL=https://status.axyra.app
+
+# ========================================
+# LEGAL & COMPLIANCE (OBLIGATORIAS)
+# ========================================
+PRIVACY_POLICY_URL=https://axyra.app/privacy
+TERMS_OF_SERVICE_URL=https://axyra.app/terms
+GDPR_COMPLIANCE=true
+COOKIE_CONSENT_REQUIRED=true
+
+# ========================================
+# CUSTOMIZATION (OBLIGATORIAS)
+# ========================================
+THEME_PRIMARY_COLOR=#3b82f6
+THEME_SECONDARY_COLOR=#1d4ed8
+THEME_ACCENT_COLOR=#10b981
+LOGO_URL=https://axyra.app/logo.png
+FAVICON_URL=https://axyra.app/favicon.ico
+
+# ========================================
+# MAINTENANCE MODE (OBLIGATORIAS)
+# ========================================
+MAINTENANCE_MODE=false
+MAINTENANCE_MESSAGE=Sistema en mantenimiento. Volveremos pronto.
+
+# ========================================
+# VERSION CONTROL (OBLIGATORIAS)
+# ========================================
+GIT_COMMIT_SHA=latest
+BUILD_TIMESTAMP=2025-09-15T10:22:00Z
+DEPLOYMENT_ID=deployment_2025_09_15
+
+# ========================================
+# END OF CONFIGURATION
+# ========================================
