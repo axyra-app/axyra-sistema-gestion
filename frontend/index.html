@@ -2255,7 +2255,7 @@
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>✉️ Escribenos</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>¿Tienes Dudas o Necesitas Ayuda?</h4>
@@ -2301,13 +2301,26 @@
       function contactarSoporte() {
         console.log('✉️ Contactar soporte');
         const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
+        modal.id = 'contactarSoporteModal';
+        modal.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          background-color: rgba(0, 0, 0, 0.8) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
         modal.innerHTML = `
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>✉️ Contactar Soporte</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="document.getElementById('contactarSoporteModal').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>¿Necesitas Ayuda? Estamos Aquí para Ti</h4>
@@ -2339,13 +2352,26 @@
 
       function enviarFeedback() {
         const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
+        modal.id = 'enviarFeedbackModal';
+        modal.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          background-color: rgba(0, 0, 0, 0.8) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
         modal.innerHTML = `
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>📡 Enviar Feedback</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>Tu Opinión es Valiosa para Nosotros</h4>
@@ -2391,13 +2417,26 @@
 
       function centroAyuda() {
         const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
+        modal.id = 'centroAyudaModal';
+        modal.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          background-color: rgba(0, 0, 0, 0.8) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
         modal.innerHTML = `
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>🆘 Centro de Ayuda</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>¿Necesitas Ayuda con AXYRA?</h4>
@@ -2434,13 +2473,26 @@
 
       function comoFunciona() {
         const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
+        modal.id = 'comoFuncionaModal';
+        modal.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          background-color: rgba(0, 0, 0, 0.8) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
         modal.innerHTML = `
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>⚙️ Cómo Funciona AXYRA</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>Ecosistema Integrado de Gestión Empresarial</h4>
@@ -2479,18 +2531,27 @@
       }
 
       function terminosCondiciones() {
-        showTermsOfService();
-      }
-
-      function garantiaSatisfaccion() {
         const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
+        modal.id = 'terminosCondicionesModal';
+        modal.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          background-color: rgba(0, 0, 0, 0.8) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
         modal.innerHTML = `
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>✅ Garantía de Satisfacción</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>Tu Satisfacción es Nuestra Prioridad</h4>
@@ -2532,13 +2593,26 @@
 
       function blogAxyra() {
         const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
+        modal.id = 'blogAxyraModal';
+        modal.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          background-color: rgba(0, 0, 0, 0.8) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
         modal.innerHTML = `
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>📝 AXYRA Blog</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>Próximamente: Blog de AXYRA</h4>
@@ -2585,7 +2659,7 @@
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>✉️ Contactar Soporte</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>¿Necesitas Ayuda?</h4>
@@ -2616,13 +2690,26 @@
 
       function enviarFeedback() {
         const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
+        modal.id = 'enviarFeedbackModal';
+        modal.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          background-color: rgba(0, 0, 0, 0.8) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
         modal.innerHTML = `
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>📡 Enviar Feedback</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>Tu Opinión es Importante</h4>
@@ -2652,13 +2739,26 @@
 
       function quienesSomos() {
         const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
+        modal.id = 'quienesSomosModal';
+        modal.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          background-color: rgba(0, 0, 0, 0.8) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
         modal.innerHTML = `
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>👥 Quiénes Somos</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>AXYRA - Transformando la Gestión Empresarial</h4>
@@ -2775,7 +2875,7 @@
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
               <h3>✅ Mensaje Enviado</h3>
-              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
               <h4>¡Gracias por tu mensaje!</h4>
@@ -2792,7 +2892,7 @@
               <p><strong>📧 Email de confirmación enviado a:</strong> ${data.email}</p>
               
               <div class="axyra-modal-actions">
-                <button class="axyra-btn axyra-btn-primary" onclick="this.closest('.axyra-modal').remove()">
+                <button class="axyra-btn axyra-btn-primary" onclick="this.closest('[id$=Modal]').remove()">
                   ✅ Entendido
                 </button>
               </div>
@@ -2819,8 +2919,8 @@
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
       // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v14') {
-          localStorage.setItem('axyra_version', 'v14');
+        if (localStorage.getItem('axyra_version') !== 'v15') {
+          localStorage.setItem('axyra_version', 'v15');
         if (performance.navigation.type === 1) {
           // Solo recargar si no es la primera carga
           window.location.reload(true);
