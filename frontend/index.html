@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <html lang="es" data-version="v7">
+    <html lang="es" data-version="v8">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1120,6 +1120,32 @@
   </script>
   
   <body>
+    <!-- SCRIPT DE PRUEBA INMEDIATA -->
+    <script>
+      console.log('🚨 SCRIPT DE PRUEBA EJECUTÁNDOSE INMEDIATAMENTE');
+      console.log('🔍 Buscando modal...');
+      const modal = document.getElementById('authModal');
+      if (modal) {
+        console.log('✅ Modal encontrado:', modal);
+        console.log('📋 Modal display:', modal.style.display);
+        console.log('📋 Modal classes:', modal.className);
+      } else {
+        console.error('❌ Modal NO encontrado');
+      }
+      
+      // Función global para probar
+      window.testModal = function() {
+        console.log('🧪 testModal() ejecutada');
+        const modal = document.getElementById('authModal');
+        if (modal) {
+          modal.style.display = 'flex';
+          modal.style.zIndex = '999999';
+          modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+          console.log('✅ Modal forzado a mostrar');
+        }
+      };
+    </script>
+    
     <!-- Header -->
     <header class="axyra-header">
       <div class="axyra-container">
@@ -2630,8 +2656,8 @@
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
       // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v7') {
-          localStorage.setItem('axyra_version', 'v7');
+        if (localStorage.getItem('axyra_version') !== 'v8') {
+          localStorage.setItem('axyra_version', 'v8');
         if (performance.navigation.type === 1) {
           // Solo recargar si no es la primera carga
           window.location.reload(true);
