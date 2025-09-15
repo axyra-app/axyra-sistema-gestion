@@ -207,6 +207,8 @@
   gap: 16px;
   scroll-behavior: smooth;
   max-height: 400px;
+  height: 400px;
+  position: relative;
 }
 
 /* Scrollbar personalizado */

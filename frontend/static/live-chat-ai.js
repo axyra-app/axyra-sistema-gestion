@@ -181,6 +181,12 @@ class AxyraLiveChatAI {
       chatWindow.style.display = 'block';
       toggle.style.display = 'none';
       this.isMinimized = false;
+      
+      // Forzar scroll al final cuando se abre
+      setTimeout(() => {
+        this.scrollToBottom();
+      }, 100);
+      
       // Enfocar el input cuando se abre
       setTimeout(() => {
         const input = document.getElementById('chatInput');
@@ -336,18 +342,30 @@ class AxyraLiveChatAI {
   scrollToBottom() {
     const messagesContainer = document.getElementById('chatMessages');
     if (messagesContainer) {
-      // Múltiples intentos para asegurar que el scroll funcione
+      // Forzar scroll inmediatamente y con múltiples intentos
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      
+      // Usar requestAnimationFrame para asegurar que el DOM esté actualizado
+      requestAnimationFrame(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      });
+      
+      // Múltiples timeouts para asegurar que funcione
+      setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }, 10);
+      
       setTimeout(() => {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
       }, 50);
       
       setTimeout(() => {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }, 150);
+      }, 100);
       
       setTimeout(() => {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }, 300);
+      }, 200);
     }
   }
 }
