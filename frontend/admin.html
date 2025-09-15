@@ -873,7 +873,7 @@
         async function loadAdminData() {
             try {
                 // Cargar usuarios
-                const usersSnapshot = await db.collection('users').get();
+                const usersSnapshot = await db.collection('usuarios').get();
                 allUsers = usersSnapshot.docs.map(doc => ({
                     id: doc.id,
                     ...doc.data()
@@ -1274,7 +1274,7 @@
             };
             
             try {
-                await db.collection('users').doc(userId).update(userData);
+                await db.collection('usuarios').doc(userId).update(userData);
                 
                 // Actualizar suscripción si cambió el plan
                 const newPlan = document.getElementById('edit-user-plan').value;

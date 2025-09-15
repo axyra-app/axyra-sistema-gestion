@@ -604,7 +604,7 @@
           }
 
           // Verificar username en Firestore
-          const usernameQuery = await firebase.firestore().collection('users').where('username', '==', username).get();
+          const usernameQuery = await firebase.firestore().collection('usuarios').where('username', '==', username).get();
 
           if (!usernameQuery.empty) {
             return { exists: true, field: 'username', message: 'Este nombre de usuario ya está en uso.' };
@@ -726,7 +726,7 @@
             };
 
             // Guardar en Firestore
-            await firebase.firestore().collection('users').doc(userCredential.user.uid).set(userData);
+            await firebase.firestore().collection('usuarios').doc(userCredential.user.uid).set(userData);
             console.log('✅ Usuario guardado en Firestore');
 
             // Enviar email de verificación
@@ -819,7 +819,7 @@
             console.log('✅ Login con Google exitoso:', result.user.email);
 
             // Verificar si el usuario ya existe en Firestore
-            const userDoc = await firebase.firestore().collection('users').doc(result.user.uid).get();
+            const userDoc = await firebase.firestore().collection('usuarios').doc(result.user.uid).get();
 
             if (userDoc.exists && userDoc.data().hasPassword) {
               // Usuario ya existe y tiene contraseña, redirigir al dashboard
@@ -997,7 +997,7 @@
 
         try {
           // Verificar si el username ya existe
-          const usernameQuery = await firebase.firestore().collection('users').where('username', '==', username).get();
+          const usernameQuery = await firebase.firestore().collection('usuarios').where('username', '==', username).get();
 
           if (!usernameQuery.empty) {
             showError('Este nombre de usuario ya está en uso');
@@ -1033,7 +1033,7 @@
           };
 
           // Guardar en Firestore
-          await firebase.firestore().collection('users').doc(currentUser.uid).set(userData, { merge: true });
+          await firebase.firestore().collection('usuarios').doc(currentUser.uid).set(userData, { merge: true });
           console.log('✅ Usuario Google completado en Firestore');
 
           // Cerrar modal
@@ -1070,6 +1070,18 @@
           } else {
             showError('Error completando registro: ' + error.message);
           }
+        }
+      }
+    </script>
+
+    <!-- Script para forzar recarga y limpiar caché -->
+    <script>
+      // Forzar recarga si es versión antigua
+      if (localStorage.getItem('axyra_version') !== 'v6') {
+        localStorage.setItem('axyra_version', 'v6');
+        if (performance.navigation.type === 1) {
+          // Solo recargar si no es la primera carga
+          window.location.reload(true);
         }
       }
     </script>

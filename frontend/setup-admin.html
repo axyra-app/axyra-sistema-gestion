@@ -219,7 +219,7 @@
           console.log('✅ Usuario administrador creado:', userCredential.user.email);
 
           // Crear perfil en Firestore
-          await firebase.firestore().collection('users').doc(userCredential.user.uid).set({
+          await firebase.firestore().collection('usuarios').doc(userCredential.user.uid).set({
             uid: userCredential.user.uid,
             email: 'axyra.app@gmail.com',
             displayName: 'Administrador AXYRA',

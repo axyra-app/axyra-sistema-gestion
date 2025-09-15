@@ -1146,7 +1146,7 @@
         // Cargar usuarios reales de Firebase
         firebase
           .firestore()
-          .collection('users')
+          .collection('usuarios')
           .get()
           .then((snapshot) => {
             const users = [];
