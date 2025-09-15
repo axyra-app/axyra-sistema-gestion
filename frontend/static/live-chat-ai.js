@@ -341,8 +341,9 @@ class AxyraLiveChatAI {
 
 // Inicializar cuando se carga la página
 document.addEventListener('DOMContentLoaded', function() {
-  // Solo inicializar en páginas que no sean el dashboard
-  if (!window.location.pathname.includes('dashboard')) {
+  // Inicializar en todas las páginas
+  if (!window.axyraLiveChat) {
     window.axyraLiveChat = new AxyraLiveChatAI();
+    console.log('🤖 Chat en vivo inicializado en:', window.location.pathname);
   }
 });

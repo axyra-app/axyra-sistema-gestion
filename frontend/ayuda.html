@@ -412,14 +412,22 @@
   <script>
     // Función para abrir el chat en vivo
     function openLiveChat() {
+      console.log('🔍 Intentando abrir chat en vivo...');
       if (window.axyraLiveChat) {
+        console.log('✅ Chat encontrado, abriendo...');
         window.axyraLiveChat.toggleChat();
       } else {
+        console.log('⚠️ Chat no encontrado, inicializando...');
         // Si no está inicializado, inicializarlo
         window.axyraLiveChat = new AxyraLiveChatAI();
         setTimeout(() => {
-          window.axyraLiveChat.toggleChat();
-        }, 100);
+          if (window.axyraLiveChat) {
+            console.log('✅ Chat inicializado, abriendo...');
+            window.axyraLiveChat.toggleChat();
+          } else {
+            console.error('❌ Error: No se pudo inicializar el chat');
+          }
+        }, 500);
       }
     }
 
