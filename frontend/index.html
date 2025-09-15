@@ -1589,7 +1589,6 @@
               <li><button onclick="comoFunciona()">Cómo Funciona</button></li>
               <li><button onclick="terminosCondiciones()">Términos y Condiciones</button></li>
               <li><button onclick="garantiaSatisfaccion()">Garantía de Satisfacción</button></li>
-              <li><button onclick="blogAxyra()">AXYRA Blog</button></li>
             </ul>
             <div class="axyra-copyright">
               <p>&copy; 2025 AXYRA</p>
@@ -2591,9 +2590,9 @@
         document.body.appendChild(modal);
       }
 
-      function blogAxyra() {
+      function garantiaSatisfaccion() {
         const modal = document.createElement('div');
-        modal.id = 'blogAxyraModal';
+        modal.id = 'garantiaSatisfaccionModal';
         modal.style.cssText = `
           position: fixed !important;
           top: 0 !important;
@@ -2611,37 +2610,46 @@
         modal.innerHTML = `
           <div class="axyra-modal-content">
             <div class="axyra-modal-header">
-              <h3>📝 AXYRA Blog</h3>
-              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
+              <h3>🛡️ Garantía de Satisfacción</h3>
+              <button class="axyra-modal-close" onclick="document.getElementById('garantiaSatisfaccionModal').remove()">&times;</button>
             </div>
             <div class="axyra-modal-body">
-              <h4>Próximamente: Blog de AXYRA</h4>
+              <h4>Tu Satisfacción es Nuestra Prioridad</h4>
               
-              <h5>🚀 Contenido que Estamos Preparando</h5>
+              <h5>✅ Garantía de 30 Días</h5>
+              <p>Ofrecemos una garantía completa de satisfacción de 30 días. Si no estás completamente satisfecho con nuestro servicio, te devolvemos tu dinero sin preguntas.</p>
+              
+              <h5>🔒 Términos de la Garantía</h5>
               <ul>
-                <li><strong>Tips de Gestión Empresarial:</strong> Mejores prácticas para optimizar tu empresa</li>
-                <li><strong>Novedades del Sistema:</strong> Actualizaciones y nuevas funcionalidades</li>
-                <li><strong>Casos de Éxito:</strong> Historias reales de empresas que usan AXYRA</li>
-                <li><strong>Tutoriales Avanzados:</strong> Guías paso a paso para usuarios expertos</li>
-                <li><strong>Noticias del Sector:</strong> Tendencias en gestión empresarial</li>
+                <li><strong>Período:</strong> 30 días desde la activación de tu suscripción</li>
+                <li><strong>Cobertura:</strong> Reembolso completo del pago realizado</li>
+                <li><strong>Proceso:</strong> Contacta a soporte y procesamos el reembolso en 24-48 horas</li>
+                <li><strong>Sin Preguntas:</strong> No necesitas justificar tu decisión</li>
               </ul>
               
-              <h5>📧 Suscríbete para Notificaciones</h5>
-              <p>Recibe notificaciones cuando publiquemos nuevo contenido en nuestro blog. Envía un email a <strong>axyra.app@gmail.com</strong> con el asunto "Suscripción Blog".</p>
+              <h5>📞 Cómo Solicitar el Reembolso</h5>
+              <ol>
+                <li>Envía un email a <strong>soporte@axyra.com</strong></li>
+                <li>Incluye tu número de suscripción</li>
+                <li>Especifica que deseas activar la garantía de satisfacción</li>
+                <li>Recibirás confirmación en menos de 24 horas</li>
+              </ol>
               
-              <h5>🎯 Temas que Cubriremos</h5>
+              <h5>💡 ¿Por Qué Confiamos en Nuestro Servicio?</h5>
               <ul>
-                <li>Gestión eficiente de empleados</li>
-                <li>Optimización de procesos de nómina</li>
-                <li>Control de costos laborales</li>
-                <li>Análisis financiero empresarial</li>
-                <li>Automatización de procesos</li>
-                <li>Compliance y normativas laborales</li>
+                <li>Sistema probado por cientos de empresas</li>
+                <li>Soporte técnico especializado</li>
+                <li>Actualizaciones constantes y mejoras</li>
+                <li>Interfaz intuitiva y fácil de usar</li>
+                <li>Resultados medibles en productividad</li>
               </ul>
               
               <div class="axyra-modal-actions">
-                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Suscripción Blog AXYRA', '_blank')">
-                  📧 Suscribirse al Blog
+                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:soporte@axyra.com?subject=Garantía de Satisfacción - Consulta', '_blank')">
+                  📧 Contactar Soporte
+                </button>
+                <button class="axyra-btn axyra-btn-secondary" onclick="document.getElementById('garantiaSatisfaccionModal').remove()">
+                  ✅ Entendido
                 </button>
               </div>
             </div>
@@ -2919,8 +2927,8 @@
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
       // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v15') {
-          localStorage.setItem('axyra_version', 'v15');
+        if (localStorage.getItem('axyra_version') !== 'v16') {
+          localStorage.setItem('axyra_version', 'v16');
         if (performance.navigation.type === 1) {
           // Solo recargar si no es la primera carga
           window.location.reload(true);
