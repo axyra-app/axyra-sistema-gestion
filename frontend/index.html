@@ -1859,7 +1859,7 @@
         if (user) {
           console.log('🚀 Redirigiendo a empleados...');
           try {
-            window.location.href = 'modulos/empleados/empleados.html';
+            window.location.href = 'modulos/gestion_personal/gestion_personal.html';
           } catch (error) {
             console.error('❌ Error al redirigir:', error);
             alert('Error al acceder a empleados. Por favor, inténtalo de nuevo.');
@@ -1883,7 +1883,7 @@
 
         console.log('🚀 Redirigiendo a horas...');
         try {
-          window.location.href = 'modulos/horas/gestionar_horas.html';
+          window.location.href = 'modulos/gestion_personal/gestion_personal.html';
         } catch (error) {
           console.error('❌ Error al redirigir:', error);
           alert('Error al acceder a horas. Por favor, inténtalo de nuevo.');
@@ -1903,7 +1903,7 @@
 
         console.log('🚀 Redirigiendo a nómina...');
         try {
-          window.location.href = 'modulos/nomina/gestionar_nomina.html';
+          window.location.href = 'modulos/gestion_personal/gestion_personal.html';
         } catch (error) {
           console.error('❌ Error al redirigir:', error);
           alert('Error al acceder a nómina. Por favor, inténtalo de nuevo.');
@@ -2928,8 +2928,8 @@
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
       // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v18') {
-          localStorage.setItem('axyra_version', 'v18');
+        if (localStorage.getItem('axyra_version') !== 'v20') {
+          localStorage.setItem('axyra_version', 'v20');
         if (performance.navigation.type === 1) {
           // Solo recargar si no es la primera carga
           window.location.reload(true);

@@ -187,9 +187,9 @@ class AxyraLazyLoadingSystem {
   getModulePath(moduleName) {
     const moduleMap = {
       'dashboard': 'modulos/dashboard/dashboard.js',
-      'empleados': 'modulos/empleados/empleados.js',
-      'nomina': 'modulos/nomina/nomina.js',
-      'horas': 'modulos/horas/gestionar_horas_complete.js',
+      'empleados': 'modulos/gestion_personal/gestion_personal.js',
+      'nomina': 'modulos/gestion_personal/gestion_personal.js',
+      'horas': 'modulos/gestion_personal/gestion_personal.js',
       'inventario': 'modulos/inventario/inventario.js',
       'reportes': 'modulos/reportes/reportes-avanzados.js',
       'configuracion': 'modulos/configuracion/configuracion-avanzada.js',

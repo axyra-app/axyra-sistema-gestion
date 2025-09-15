@@ -94,7 +94,7 @@
       "name": "Empleados",
       "short_name": "Empleados",
       "description": "Gestión de empleados",
-      "url": "/modulos/empleados/empleados.html",
+      "url": "/modulos/gestion_personal/gestion_personal.html",
       "icons": [
         {
           "src": "/static/icons/shortcut-empleados.png",

@@ -25,9 +25,7 @@ const STATIC_RESOURCES = [
   '/static/cleanup-system.js',
   '/static/modal-fixes.css',
   '/modulos/dashboard/dashboard.html',
-  '/modulos/empleados/empleados.html',
-  '/modulos/nomina/gestionar_nomina.html',
-  '/modulos/horas/gestionar_horas.html',
+  '/modulos/gestion_personal/gestion_personal.html',
   '/modulos/inventario/inventario.html',
   '/modulos/membresias/membresias.html',
 ];

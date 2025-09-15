@@ -482,11 +482,11 @@
               <i class="fas fa-user-plus"></i>
               <span>Registrar Empleado</span>
             </a>
-            <a href="../horas/gestionar_horas.html" class="axyra-action-btn">
+            <a href="../gestion_personal/gestion_personal.html" class="axyra-action-btn">
               <i class="fas fa-clock"></i>
               <span>Registrar Horas</span>
             </a>
-            <a href="../nomina/gestionar_nomina.html" class="axyra-action-btn">
+            <a href="../gestion_personal/gestion_personal.html" class="axyra-action-btn">
               <i class="fas fa-file-invoice"></i>
               <span>Generar Nómina</span>
             </a>
@@ -748,8 +748,8 @@
              }
 
              // Script para forzar recarga y limpiar caché
-             if (localStorage.getItem('axyra_version') !== 'v19') {
-               localStorage.setItem('axyra_version', 'v19');
+        if (localStorage.getItem('axyra_version') !== 'v20') {
+          localStorage.setItem('axyra_version', 'v20');
                if (performance.navigation.type === 1) {
                  window.location.reload(true);
                }
