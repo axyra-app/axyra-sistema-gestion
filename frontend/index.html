@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <html lang="es" data-version="v12">
+    <html lang="es" data-version="v13">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1962,62 +1962,161 @@
       // Funciones del modal de autenticación
       function showAuthModal() {
         console.log('🔐 showAuthModal llamada');
-        try {
-          const modal = document.getElementById('authModal');
-          if (modal) {
-            console.log('✅ Modal encontrado, mostrando...');
-            
-            // Crear un overlay completo
-            modal.style.cssText = `
-              display: flex !important;
-              position: fixed !important;
-              top: 0 !important;
-              left: 0 !important;
-              width: 100vw !important;
-              height: 100vh !important;
-              background-color: rgba(0, 0, 0, 0.8) !important;
-              z-index: 999999 !important;
-              align-items: center !important;
-              justify-content: center !important;
-              margin: 0 !important;
-              padding: 0 !important;
-              border: none !important;
-              outline: none !important;
-            `;
-            
-            // Asegurar que el contenido del modal sea visible
-            const modalContent = modal.querySelector('.axyra-modal-content');
-            if (modalContent) {
-              modalContent.style.cssText = `
-                display: block !important;
-                position: relative !important;
-                background: white !important;
-                border-radius: 12px !important;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
-                max-width: 500px !important;
-                width: 90% !important;
-                max-height: 80vh !important;
-                overflow-y: auto !important;
-                z-index: 1000000 !important;
-              `;
-            }
-            
-            console.log('✅ Modal mostrado correctamente');
-          } else {
-            console.error('❌ Modal no encontrado');
-            alert('Error: Modal de autenticación no encontrado. Por favor, recarga la página.');
-          }
-        } catch (error) {
-          console.error('❌ Error al mostrar modal:', error);
-          alert('Error al mostrar el modal de autenticación. Por favor, recarga la página.');
+        
+        // Crear modal completamente nuevo
+        const existingModal = document.getElementById('authModal');
+        if (existingModal) {
+          existingModal.remove();
         }
+        
+        // Crear el overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'authModalOverlay';
+        overlay.style.cssText = `
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          width: 100vw !important;
+          height: 100vh !important;
+          background-color: rgba(0, 0, 0, 0.8) !important;
+          z-index: 999999 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        `;
+        
+        // Crear el contenido del modal
+        const modalContent = document.createElement('div');
+        modalContent.style.cssText = `
+          background: white !important;
+          border-radius: 12px !important;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
+          max-width: 500px !important;
+          width: 90% !important;
+          max-height: 80vh !important;
+          overflow-y: auto !important;
+          position: relative !important;
+        `;
+        
+        // Crear el header
+        const header = document.createElement('div');
+        header.style.cssText = `
+          padding: 20px 24px 16px !important;
+          border-bottom: 1px solid #e5e7eb !important;
+          display: flex !important;
+          justify-content: space-between !important;
+          align-items: center !important;
+          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+          border-radius: 12px 12px 0 0 !important;
+        `;
+        
+        const title = document.createElement('h3');
+        title.textContent = '🔐 Acceso Requerido';
+        title.style.cssText = `
+          margin: 0 !important;
+          color: #1f2937 !important;
+          font-size: 1.25rem !important;
+          font-weight: 600 !important;
+        `;
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '&times;';
+        closeBtn.style.cssText = `
+          background: none !important;
+          border: none !important;
+          font-size: 24px !important;
+          color: #6b7280 !important;
+          cursor: pointer !important;
+          padding: 4px !important;
+          border-radius: 4px !important;
+        `;
+        closeBtn.onclick = closeAuthModal;
+        
+        header.appendChild(title);
+        header.appendChild(closeBtn);
+        
+        // Crear el body
+        const body = document.createElement('div');
+        body.style.cssText = `
+          padding: 24px !important;
+          color: #374151 !important;
+          line-height: 1.6 !important;
+        `;
+        
+        const message = document.createElement('p');
+        message.textContent = 'Para acceder a esta funcionalidad, necesitas iniciar sesión o crear una cuenta.';
+        message.style.cssText = `
+          margin: 0 0 12px 0 !important;
+        `;
+        
+        body.appendChild(message);
+        
+        // Crear las acciones
+        const actions = document.createElement('div');
+        actions.style.cssText = `
+          padding: 16px 24px 24px !important;
+          border-top: 1px solid #e5e7eb !important;
+          display: flex !important;
+          gap: 12px !important;
+          justify-content: flex-end !important;
+          background: #f9fafb !important;
+          border-radius: 0 0 12px 12px !important;
+        `;
+        
+        const loginBtn = document.createElement('button');
+        loginBtn.textContent = '🔐 Iniciar Sesión';
+        loginBtn.style.cssText = `
+          background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+          color: white !important;
+          border: none !important;
+          padding: 12px 24px !important;
+          border-radius: 8px !important;
+          cursor: pointer !important;
+          font-weight: 600 !important;
+          min-width: 120px !important;
+        `;
+        loginBtn.onclick = redirectToLogin;
+        
+        const registerBtn = document.createElement('button');
+        registerBtn.textContent = '📝 Registrarse';
+        registerBtn.style.cssText = `
+          background: white !important;
+          color: #374151 !important;
+          border: 2px solid #e5e7eb !important;
+          padding: 12px 24px !important;
+          border-radius: 8px !important;
+          cursor: pointer !important;
+          font-weight: 600 !important;
+          min-width: 120px !important;
+        `;
+        registerBtn.onclick = redirectToRegister;
+        
+        actions.appendChild(loginBtn);
+        actions.appendChild(registerBtn);
+        
+        // Ensamblar el modal
+        modalContent.appendChild(header);
+        modalContent.appendChild(body);
+        modalContent.appendChild(actions);
+        overlay.appendChild(modalContent);
+        
+        // Agregar al body
+        document.body.appendChild(overlay);
+        
+        console.log('✅ Modal nuevo creado y mostrado');
       }
 
       function closeAuthModal() {
-        const modal = document.getElementById('authModal');
-        modal.style.display = 'none';
-        modal.style.cssText = '';
-        modal.classList.remove('show');
+        const overlay = document.getElementById('authModalOverlay');
+        if (overlay) {
+          overlay.remove();
+        }
+        const oldModal = document.getElementById('authModal');
+        if (oldModal) {
+          oldModal.style.display = 'none';
+        }
       }
 
       function redirectToLogin() {
@@ -2680,8 +2779,8 @@
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
       // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v12') {
-          localStorage.setItem('axyra_version', 'v12');
+        if (localStorage.getItem('axyra_version') !== 'v13') {
+          localStorage.setItem('axyra_version', 'v13');
         if (performance.navigation.type === 1) {
           // Solo recargar si no es la primera carga
           window.location.reload(true);
