@@ -1,0 +1,232 @@
+# ========================================
+# VARIABLES DE ENTORNO VERCEL - AXYRA
+# ========================================
+# Actualizado: 15 de Septiembre de 2025
+# Email de contacto: axyra.app@gmail.com
+
+# ========================================
+# FIREBASE CONFIGURATION
+# ========================================
+FIREBASE_API_KEY=AIzaSyAW3ejokcsWAP5G1yJT63jLBpFmdTiTUwc
+FIREBASE_AUTH_DOMAIN=axyra-48238.firebaseapp.com
+FIREBASE_PROJECT_ID=axyra-48238
+FIREBASE_STORAGE_BUCKET=axyra-48238.firebasestorage.app
+FIREBASE_MESSAGING_SENDER_ID=796334517286
+FIREBASE_APP_ID=1:796334517286:web:95947cf0f773dc11378ae7
+FIREBASE_MEASUREMENT_ID=G-R8W2MP15B7
+
+# ========================================
+# EMAILJS CONFIGURATION
+# ========================================
+# EmailJS usa jfuran.va@gmail.com para envío
+# Pero el usuario ve axyra.app@gmail.com como contacto
+EMAILJS_SERVICE_ID=service_axyra
+EMAILJS_TEMPLATE_ID=template_axyra_contact
+EMAILJS_PUBLIC_KEY=your_emailjs_public_key_here
+
+# ========================================
+# CONTACT INFORMATION
+# ========================================
+# Email que ve el usuario (público)
+CONTACT_EMAIL=axyra.app@gmail.com
+# Email real para envío (privado)
+SENDER_EMAIL=jfuran.va@gmail.com
+
+# ========================================
+# SYSTEM CONFIGURATION
+# ========================================
+NODE_ENV=production
+APP_NAME=AXYRA Sistema de Gestión
+APP_VERSION=2.0.0
+APP_DESCRIPTION=Sistema integral de gestión empresarial
+
+# ========================================
+# SECURITY CONFIGURATION
+# ========================================
+JWT_SECRET=your_jwt_secret_here
+ENCRYPTION_KEY=your_encryption_key_here
+SESSION_SECRET=your_session_secret_here
+
+# ========================================
+# DATABASE CONFIGURATION
+# ========================================
+DATABASE_URL=your_database_url_here
+REDIS_URL=your_redis_url_here
+
+# ========================================
+# EXTERNAL SERVICES
+# ========================================
+# Para integraciones futuras
+STRIPE_PUBLIC_KEY=your_stripe_public_key_here
+STRIPE_SECRET_KEY=your_stripe_secret_key_here
+PAYPAL_CLIENT_ID=your_paypal_client_id_here
+
+# ========================================
+# ANALYTICS & MONITORING
+# ========================================
+GOOGLE_ANALYTICS_ID=G-R8W2MP15B7
+SENTRY_DSN=your_sentry_dsn_here
+LOG_LEVEL=info
+
+# ========================================
+# FEATURE FLAGS
+# ========================================
+ENABLE_AI_CHAT=true
+ENABLE_REAL_TIME_SYNC=true
+ENABLE_OFFLINE_MODE=true
+ENABLE_ANALYTICS=true
+ENABLE_BACKUP=true
+
+# ========================================
+# RATE LIMITING
+# ========================================
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+
+# ========================================
+# CACHE CONFIGURATION
+# ========================================
+CACHE_TTL=3600
+CACHE_MAX_SIZE=1000
+
+# ========================================
+# NOTIFICATION SETTINGS
+# ========================================
+PUSH_NOTIFICATIONS_ENABLED=true
+EMAIL_NOTIFICATIONS_ENABLED=true
+SMS_NOTIFICATIONS_ENABLED=false
+
+# ========================================
+# BACKUP CONFIGURATION
+# ========================================
+BACKUP_FREQUENCY=daily
+BACKUP_RETENTION_DAYS=30
+BACKUP_STORAGE=firebase
+
+# ========================================
+# AUDIT CONFIGURATION
+# ========================================
+AUDIT_LOG_ENABLED=true
+AUDIT_LOG_LEVEL=info
+AUDIT_RETENTION_DAYS=90
+
+# ========================================
+# DEVELOPMENT SETTINGS
+# ========================================
+DEBUG_MODE=false
+VERBOSE_LOGGING=false
+MOCK_EXTERNAL_SERVICES=false
+
+# ========================================
+# DEPLOYMENT SETTINGS
+# ========================================
+BUILD_COMMAND=npm run build
+OUTPUT_DIRECTORY=frontend
+INSTALL_COMMAND=npm install
+
+# ========================================
+# CUSTOM DOMAINS
+# ========================================
+PRIMARY_DOMAIN=axyra-sistema-gestion.vercel.app
+CUSTOM_DOMAIN=axyra.app
+STAGING_DOMAIN=axyra-staging.vercel.app
+
+# ========================================
+# PERFORMANCE SETTINGS
+# ========================================
+ENABLE_COMPRESSION=true
+ENABLE_MINIFICATION=true
+ENABLE_TREE_SHAKING=true
+ENABLE_LAZY_LOADING=true
+
+# ========================================
+# SECURITY HEADERS
+# ========================================
+CSP_POLICY=default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.firebase.com https://*.googleapis.com https://*.gstatic.com
+HSTS_ENABLED=true
+X_FRAME_OPTIONS=DENY
+X_CONTENT_TYPE_OPTIONS=nosniff
+
+# ========================================
+# MONITORING & ALERTS
+# ========================================
+HEALTH_CHECK_ENDPOINT=/health
+UPTIME_MONITORING=true
+ERROR_ALERTING=true
+PERFORMANCE_MONITORING=true
+
+# ========================================
+# INTEGRATION SETTINGS
+# ========================================
+# Para futuras integraciones
+SLACK_WEBHOOK_URL=your_slack_webhook_url_here
+DISCORD_WEBHOOK_URL=your_discord_webhook_url_here
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
+
+# ========================================
+# LEGAL & COMPLIANCE
+# ========================================
+PRIVACY_POLICY_URL=https://axyra.app/privacy
+TERMS_OF_SERVICE_URL=https://axyra.app/terms
+GDPR_COMPLIANCE=true
+COOKIE_CONSENT_REQUIRED=true
+
+# ========================================
+# SUPPORT & DOCUMENTATION
+# ========================================
+SUPPORT_EMAIL=axyra.app@gmail.com
+DOCUMENTATION_URL=https://docs.axyra.app
+API_DOCUMENTATION_URL=https://api.axyra.app/docs
+STATUS_PAGE_URL=https://status.axyra.app
+
+# ========================================
+# BUSINESS LOGIC
+# ========================================
+DEFAULT_CURRENCY=COP
+DEFAULT_LANGUAGE=es
+DEFAULT_TIMEZONE=America/Bogota
+DATE_FORMAT=DD/MM/YYYY
+TIME_FORMAT=HH:mm
+
+# ========================================
+# FEATURE CONFIGURATION
+# ========================================
+MAX_EMPLOYEES_PER_COMPANY=1000
+MAX_PRODUCTS_PER_INVENTORY=10000
+MAX_INVOICES_PER_MONTH=50000
+MAX_BACKUP_SIZE_MB=1000
+
+# ========================================
+# NOTIFICATION TEMPLATES
+# ========================================
+WELCOME_EMAIL_TEMPLATE=welcome_template_id
+PASSWORD_RESET_TEMPLATE=password_reset_template_id
+INVOICE_TEMPLATE=invoice_template_id
+PAYROLL_TEMPLATE=payroll_template_id
+
+# ========================================
+# CUSTOMIZATION
+# ========================================
+THEME_PRIMARY_COLOR=#3b82f6
+THEME_SECONDARY_COLOR=#1d4ed8
+THEME_ACCENT_COLOR=#10b981
+LOGO_URL=https://axyra.app/logo.png
+FAVICON_URL=https://axyra.app/favicon.ico
+
+# ========================================
+# MAINTENANCE MODE
+# ========================================
+MAINTENANCE_MODE=false
+MAINTENANCE_MESSAGE=Sistema en mantenimiento. Volveremos pronto.
+MAINTENANCE_END_TIME=2025-09-15T12:00:00Z
+
+# ========================================
+# VERSION CONTROL
+# ========================================
+GIT_COMMIT_SHA=latest
+BUILD_TIMESTAMP=2025-09-15T10:22:00Z
+DEPLOYMENT_ID=deployment_2025_09_15
+
+# ========================================
+# END OF CONFIGURATION
+# ========================================
