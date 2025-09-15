@@ -183,37 +183,179 @@
         box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3) !important;
       }
       
-      /* Animaciones de entrada para elementos */
+      /* ANIMACIONES BRUTALES PARA ELEMENTOS */
       .axyra-feature-card,
       .axyra-quick-card,
       .axyra-membership-card {
-        animation: cardSlideIn 0.6s ease-out both;
+        animation: cardSlideInBrutal 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
         transform-origin: center;
+        position: relative;
+        overflow: hidden;
       }
       
       .axyra-feature-card:nth-child(1) { animation-delay: 0.1s; }
       .axyra-feature-card:nth-child(2) { animation-delay: 0.2s; }
       .axyra-feature-card:nth-child(3) { animation-delay: 0.3s; }
       .axyra-feature-card:nth-child(4) { animation-delay: 0.4s; }
+      .axyra-quick-card:nth-child(1) { animation-delay: 0.1s; }
+      .axyra-quick-card:nth-child(2) { animation-delay: 0.2s; }
+      .axyra-quick-card:nth-child(3) { animation-delay: 0.3s; }
+      .axyra-quick-card:nth-child(4) { animation-delay: 0.4s; }
+      .axyra-membership-card:nth-child(1) { animation-delay: 0.1s; }
+      .axyra-membership-card:nth-child(2) { animation-delay: 0.2s; }
+      .axyra-membership-card:nth-child(3) { animation-delay: 0.3s; }
       
-      @keyframes cardSlideIn {
-        from { opacity: 0; transform: translateY(30px) scale(0.9); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
+      @keyframes cardSlideInBrutal {
+        0% { 
+          opacity: 0; 
+          transform: translateY(50px) scale(0.8) rotateX(15deg); 
+          filter: blur(5px);
+        }
+        50% {
+          opacity: 0.8;
+          transform: translateY(-10px) scale(1.05) rotateX(-5deg);
+          filter: blur(1px);
+        }
+        100% { 
+          opacity: 1; 
+          transform: translateY(0) scale(1) rotateX(0deg); 
+          filter: blur(0px);
+        }
       }
       
-      /* Efectos de hover mejorados */
+      /* Efectos de brillo en las tarjetas */
+      .axyra-feature-card::before,
+      .axyra-quick-card::before,
+      .axyra-membership-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: left 0.6s ease;
+        z-index: 1;
+      }
+      
+      /* Efectos de hover BRUTALES */
       .axyra-feature-card:hover,
       .axyra-quick-card:hover,
       .axyra-membership-card:hover {
-        transform: translateY(-10px) scale(1.02) !important;
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2) !important;
-        animation: cardHover 0.3s ease-out !important;
+        transform: translateY(-15px) scale(1.05) rotateY(5deg) !important;
+        box-shadow: 
+          0 30px 60px rgba(0, 0, 0, 0.3),
+          0 0 30px rgba(59, 130, 246, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+        animation: cardHoverBrutal 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        border: 2px solid rgba(59, 130, 246, 0.5) !important;
       }
       
-      @keyframes cardHover {
-        0% { transform: translateY(-5px) scale(1.01); }
-        50% { transform: translateY(-15px) scale(1.03); }
-        100% { transform: translateY(-10px) scale(1.02); }
+      .axyra-feature-card:hover::before,
+      .axyra-quick-card:hover::before,
+      .axyra-membership-card:hover::before {
+        left: 100%;
+      }
+      
+      @keyframes cardHoverBrutal {
+        0% { transform: translateY(-5px) scale(1.02) rotateY(2deg); }
+        25% { transform: translateY(-20px) scale(1.08) rotateY(-3deg); }
+        50% { transform: translateY(-12px) scale(1.06) rotateY(4deg); }
+        75% { transform: translateY(-18px) scale(1.07) rotateY(-2deg); }
+        100% { transform: translateY(-15px) scale(1.05) rotateY(5deg); }
+      }
+      
+      /* Animaciones de pulso para iconos */
+      .axyra-feature-icon,
+      .axyra-quick-icon {
+        animation: iconPulse 2s ease-in-out infinite;
+        transition: all 0.3s ease;
+      }
+      
+      .axyra-feature-card:hover .axyra-feature-icon,
+      .axyra-quick-card:hover .axyra-quick-icon {
+        animation: iconSpin 0.6s ease-in-out;
+        transform: scale(1.2);
+      }
+      
+      @keyframes iconPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+      }
+      
+      @keyframes iconSpin {
+        0% { transform: scale(1) rotate(0deg); }
+        50% { transform: scale(1.3) rotate(180deg); }
+        100% { transform: scale(1.2) rotate(360deg); }
+      }
+      
+      /* Efectos de gradiente animado en títulos */
+      .axyra-section-title {
+        background: linear-gradient(45deg, #1e293b, #3b82f6, #8b5cf6, #ec4899, #1e293b);
+        background-size: 400% 400%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: titleGradientBrutal 3s ease infinite;
+        font-weight: 800 !important;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      
+      @keyframes titleGradientBrutal {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      
+      /* Efectos de partículas flotantes */
+      .axyra-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+          radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 2px, transparent 2px),
+          radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.1) 2px, transparent 2px),
+          radial-gradient(circle at 40% 60%, rgba(236, 72, 153, 0.1) 2px, transparent 2px);
+        background-size: 50px 50px, 80px 80px, 60px 60px;
+        animation: particlesFloatBrutal 20s linear infinite;
+        pointer-events: none;
+        z-index: 1;
+      }
+      
+      @keyframes particlesFloatBrutal {
+        0% { transform: translateY(0px) rotate(0deg); }
+        25% { transform: translateY(-10px) rotate(90deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+        75% { transform: translateY(-10px) rotate(270deg); }
+        100% { transform: translateY(0px) rotate(360deg); }
+      }
+      
+      /* Efectos de scroll reveal */
+      .axyra-section {
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .axyra-section::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        animation: sectionShimmer 3s ease-in-out infinite;
+        z-index: 2;
+      }
+      
+      @keyframes sectionShimmer {
+        0% { left: -100%; }
+        50% { left: 100%; }
+        100% { left: 100%; }
       }
     </style>
   </head>
@@ -1625,27 +1767,30 @@
     <!-- Vercel Config -->
     <script src="static/vercel-config.js"></script>
 
-    <!-- Script para animaciones mejoradas -->
+    <!-- Script BRUTAL para efectos espectaculares -->
     <script>
-      // Función para agregar animaciones a elementos
-      function addSmoothAnimations() {
+      // Función para agregar efectos brutales
+      function addBrutalEffects() {
         // Agregar animaciones a las tarjetas
         const cards = document.querySelectorAll('.axyra-feature-card, .axyra-quick-card, .axyra-membership-card');
         cards.forEach((card, index) => {
           card.style.animationDelay = `${index * 0.1}s`;
-          card.style.animation = 'cardSlideIn 0.6s ease-out both';
+          card.style.animation = 'cardSlideInBrutal 0.8s cubic-bezier(0.4, 0, 0.2, 1) both';
         });
         
-        // Agregar efecto de scroll suave
+        // Efecto de scroll reveal brutal
         const observerOptions = {
           threshold: 0.1,
-          rootMargin: '0px 0px -50px 0px'
+          rootMargin: '0px 0px -100px 0px'
         };
         
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
-              entry.target.style.animation = 'cardSlideIn 0.6s ease-out both';
+              entry.target.style.animation = 'cardSlideInBrutal 0.8s cubic-bezier(0.4, 0, 0.2, 1) both';
+              
+              // Efecto de partículas al aparecer
+              createParticleEffect(entry.target);
             }
           });
         }, observerOptions);
@@ -1653,17 +1798,160 @@
         // Observar todas las tarjetas
         cards.forEach(card => observer.observe(card));
         
-        console.log('✨ Animaciones suaves aplicadas');
+        // Efectos de mouse tracking
+        addMouseTrackingEffects();
+        
+        // Efectos de parallax
+        addParallaxEffects();
+        
+        console.log('🔥 Efectos BRUTALES aplicados');
       }
+      
+      // Función para crear efecto de partículas
+      function createParticleEffect(element) {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        for (let i = 0; i < 8; i++) {
+          const particle = document.createElement('div');
+          particle.style.position = 'fixed';
+          particle.style.left = centerX + 'px';
+          particle.style.top = centerY + 'px';
+          particle.style.width = '4px';
+          particle.style.height = '4px';
+          particle.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
+          particle.style.borderRadius = '50%';
+          particle.style.pointerEvents = 'none';
+          particle.style.zIndex = '9999';
+          particle.style.animation = `particleExplode 1s ease-out forwards`;
+          
+          const angle = (i / 8) * Math.PI * 2;
+          const distance = 50 + Math.random() * 50;
+          const endX = centerX + Math.cos(angle) * distance;
+          const endY = centerY + Math.sin(angle) * distance;
+          
+          particle.style.setProperty('--end-x', endX + 'px');
+          particle.style.setProperty('--end-y', endY + 'px');
+          
+          document.body.appendChild(particle);
+          
+          setTimeout(() => {
+            particle.remove();
+          }, 1000);
+        }
+      }
+      
+      // Agregar CSS para partículas
+      const particleStyle = document.createElement('style');
+      particleStyle.textContent = `
+        @keyframes particleExplode {
+          0% {
+            transform: scale(0) translate(0, 0);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(1) translate(calc(var(--end-x) - 50%), calc(var(--end-y) - 50%));
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(particleStyle);
+      
+      // Efectos de seguimiento del mouse
+      function addMouseTrackingEffects() {
+        document.addEventListener('mousemove', (e) => {
+          const cards = document.querySelectorAll('.axyra-feature-card, .axyra-quick-card, .axyra-membership-card');
+          
+          cards.forEach(card => {
+            const rect = card.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const deltaX = (e.clientX - centerX) / 20;
+            const deltaY = (e.clientY - centerY) / 20;
+            
+            if (Math.abs(deltaX) < 50 && Math.abs(deltaY) < 50) {
+              card.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1.02)`;
+              card.style.transition = 'transform 0.1s ease-out';
+            } else {
+              card.style.transform = 'translate(0, 0) scale(1)';
+            }
+          });
+        });
+      }
+      
+      // Efectos de parallax
+      function addParallaxEffects() {
+        window.addEventListener('scroll', () => {
+          const scrolled = window.pageYOffset;
+          const sections = document.querySelectorAll('.axyra-section');
+          
+          sections.forEach((section, index) => {
+            const speed = 0.5 + (index * 0.1);
+            const yPos = -(scrolled * speed);
+            section.style.transform = `translateY(${yPos}px)`;
+          });
+        });
+      }
+      
+      // Efectos de click brutal
+      function addClickEffects() {
+        const buttons = document.querySelectorAll('.axyra-btn');
+        
+        buttons.forEach(button => {
+          button.addEventListener('click', (e) => {
+            // Efecto de ripple
+            const ripple = document.createElement('span');
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.position = 'absolute';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.style.width = size + 'px';
+            ripple.style.height = size + 'px';
+            ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+            ripple.style.borderRadius = '50%';
+            ripple.style.transform = 'scale(0)';
+            ripple.style.animation = 'ripple 0.6s ease-out';
+            ripple.style.pointerEvents = 'none';
+            
+            button.style.position = 'relative';
+            button.style.overflow = 'hidden';
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+              ripple.remove();
+            }, 600);
+          });
+        });
+      }
+      
+      // Agregar CSS para ripple
+      const rippleStyle = document.createElement('style');
+      rippleStyle.textContent = `
+        @keyframes ripple {
+          to {
+            transform: scale(2);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(rippleStyle);
       
       // Aplicar cuando se carga el DOM
       document.addEventListener('DOMContentLoaded', function() {
-        addSmoothAnimations();
+        addBrutalEffects();
+        addClickEffects();
       });
       
       // Aplicar cuando se carga la ventana
       window.addEventListener('load', function() {
-        addSmoothAnimations();
+        addBrutalEffects();
+        addClickEffects();
       });
     </script>
   </body>
