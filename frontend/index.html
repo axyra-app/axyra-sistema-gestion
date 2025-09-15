@@ -86,6 +86,7 @@
         flex-wrap: wrap;
         margin-top: 48px;
         animation: buttonsSlideIn 1s ease-out 0.5s both;
+        align-items: center;
       }
       
       @keyframes buttonsSlideIn {
@@ -96,15 +97,45 @@
       .axyra-btn {
         position: relative;
         overflow: hidden;
-        border-radius: 8px !important;
-        font-weight: 600 !important;
+        border-radius: 12px !important;
+        font-weight: 700 !important;
         text-transform: uppercase !important;
         letter-spacing: 1px !important;
         transition: all 0.3s ease !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
-        min-width: 180px;
-        padding: 16px 32px !important;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+        min-width: 200px !important;
+        padding: 18px 36px !important;
         font-size: 1rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 12px !important;
+        text-align: center !important;
+        line-height: 1.2 !important;
+        border: 2px solid transparent !important;
+      }
+      
+      /* Responsive para botones del hero */
+      @media (max-width: 768px) {
+        .axyra-hero-actions {
+          flex-direction: column !important;
+          gap: 16px !important;
+          align-items: center !important;
+        }
+        
+        .axyra-btn {
+          min-width: 250px !important;
+          padding: 16px 32px !important;
+          font-size: 0.9rem !important;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .axyra-btn {
+          min-width: 200px !important;
+          padding: 14px 28px !important;
+          font-size: 0.85rem !important;
+        }
       }
       
       .axyra-btn::before {
@@ -128,15 +159,37 @@
       }
       
       .axyra-btn-primary {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%) !important;
         color: white !important;
-        border: none !important;
+        border: 2px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 
+          0 6px 20px rgba(37, 99, 235, 0.4),
+          0 0 15px rgba(37, 99, 235, 0.2) !important;
+      }
+      
+      .axyra-btn-primary:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 50%, #1e3a8a 100%) !important;
+        border-color: rgba(255, 255, 255, 0.4) !important;
+        box-shadow: 
+          0 8px 25px rgba(37, 99, 235, 0.5),
+          0 0 20px rgba(37, 99, 235, 0.3) !important;
       }
       
       .axyra-btn-secondary {
         background: rgba(255, 255, 255, 0.95) !important;
         color: #1f2937 !important;
         border: 2px solid rgba(255, 255, 255, 0.8) !important;
+        box-shadow: 
+          0 6px 20px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+      }
+      
+      .axyra-btn-secondary:hover {
+        background: rgba(255, 255, 255, 1) !important;
+        border-color: rgba(255, 255, 255, 1) !important;
+        box-shadow: 
+          0 8px 25px rgba(0, 0, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 1) !important;
       }
       
       /* Secciones con fondo blanco semitransparente */
@@ -238,6 +291,99 @@
         z-index: 3 !important;
       }
       
+      /* Layout del header */
+      .axyra-header-content {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 16px 0 !important;
+        min-height: 80px !important;
+      }
+      
+      /* Logo del header */
+      .axyra-logo {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+        flex-shrink: 0 !important;
+      }
+      
+      .axyra-logo-img {
+        width: 48px !important;
+        height: 48px !important;
+        object-fit: contain !important;
+        border-radius: 8px !important;
+      }
+      
+      .axyra-logo-text h1 {
+        margin: 0 !important;
+        font-size: 1.8rem !important;
+        font-weight: 800 !important;
+        color: white !important;
+        line-height: 1.2 !important;
+      }
+      
+      .axyra-logo-text p {
+        margin: 0 !important;
+        font-size: 0.9rem !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+        line-height: 1.2 !important;
+      }
+      
+      /* Navegación del header */
+      .axyra-nav {
+        display: flex !important;
+        align-items: center !important;
+        gap: 24px !important;
+        flex: 1 !important;
+        justify-content: center !important;
+      }
+      
+      .axyra-nav-link {
+        color: white !important;
+        text-decoration: none !important;
+        font-weight: 500 !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease !important;
+        padding: 8px 16px !important;
+        border-radius: 6px !important;
+      }
+      
+      .axyra-nav-link:hover {
+        color: #60a5fa !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+      }
+      
+      /* Responsive para el header */
+      @media (max-width: 1024px) {
+        .axyra-nav {
+          gap: 16px !important;
+        }
+        
+        .axyra-nav-link {
+          font-size: 0.9rem !important;
+          padding: 6px 12px !important;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .axyra-header-content {
+          flex-direction: column !important;
+          gap: 16px !important;
+          padding: 12px 0 !important;
+        }
+        
+        .axyra-nav {
+          order: 3 !important;
+          width: 100% !important;
+          justify-content: center !important;
+        }
+        
+        .axyra-header-actions {
+          order: 2 !important;
+        }
+      }
+      
       /* Logo con efectos brutales */
       .axyra-logo {
         position: relative !important;
@@ -313,6 +459,35 @@
         text-transform: uppercase !important;
         letter-spacing: 1px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+        min-width: 140px !important;
+        text-align: center !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        font-size: 0.9rem !important;
+        line-height: 1.2 !important;
+      }
+      
+      /* Contenedor de botones del header */
+      .axyra-header .axyra-header-actions {
+        display: flex !important;
+        gap: 12px !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+      }
+      
+      /* Responsive para botones del header */
+      @media (max-width: 768px) {
+        .axyra-header .axyra-header-actions {
+          gap: 8px !important;
+        }
+        
+        .axyra-header .axyra-btn {
+          min-width: 120px !important;
+          padding: 10px 20px !important;
+          font-size: 0.8rem !important;
+        }
       }
       
       .axyra-header .axyra-btn::before {
