@@ -200,10 +200,13 @@
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  overflow-x: hidden;
   background: #f8fafc;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  scroll-behavior: smooth;
+  max-height: 400px;
 }
 
 /* Scrollbar personalizado */

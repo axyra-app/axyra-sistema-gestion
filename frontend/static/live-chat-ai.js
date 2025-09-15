@@ -328,7 +328,27 @@ class AxyraLiveChatAI {
     `;
     
     messagesContainer.appendChild(messageElement);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Forzar scroll al final con múltiples intentos para asegurar visibilidad
+    this.scrollToBottom();
+  }
+
+  scrollToBottom() {
+    const messagesContainer = document.getElementById('chatMessages');
+    if (messagesContainer) {
+      // Múltiples intentos para asegurar que el scroll funcione
+      setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }, 50);
+      
+      setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }, 150);
+      
+      setTimeout(() => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }, 300);
+    }
   }
 }
 

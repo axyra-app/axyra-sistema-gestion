@@ -356,12 +356,6 @@
             <a href="mailto:axyra.app@gmail.com" class="axyra-contact-btn">ENVIAR EMAIL</a>
           </div>
 
-          <div class="axyra-contact-card">
-            <div class="axyra-contact-icon">💬</div>
-            <h3>Chat en Vivo</h3>
-            <p>Disponible en horario laboral</p>
-            <button class="axyra-contact-btn" onclick="openLiveChat()">INICIAR CHAT</button>
-          </div>
 
           <div class="axyra-contact-card">
             <div class="axyra-contact-icon">📱</div>
@@ -410,26 +404,7 @@
   <!-- Live Chat AI Scripts -->
   <script src="static/live-chat-ai.js"></script>
   <script>
-    // Función para abrir el chat en vivo
-    function openLiveChat() {
-      console.log('🔍 Intentando abrir chat en vivo...');
-      if (window.axyraLiveChat) {
-        console.log('✅ Chat encontrado, abriendo...');
-        window.axyraLiveChat.toggleChat();
-      } else {
-        console.log('⚠️ Chat no encontrado, inicializando...');
-        // Si no está inicializado, inicializarlo
-        window.axyraLiveChat = new AxyraLiveChatAI();
-        setTimeout(() => {
-          if (window.axyraLiveChat) {
-            console.log('✅ Chat inicializado, abriendo...');
-            window.axyraLiveChat.toggleChat();
-          } else {
-            console.error('❌ Error: No se pudo inicializar el chat');
-          }
-        }, 500);
-      }
-    }
+    // El chat en vivo está disponible como burbuja flotante en todas las páginas
 
     // Manejar el formulario de contacto
     document.getElementById('contactForm').addEventListener('submit', function(e) {
