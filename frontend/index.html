@@ -167,12 +167,200 @@
         animation: sectionSlideUp 1s ease-out 0.5s both;
       }
       
-      /* Header mejorado */
+      /* HEADER BRUTAL MEJORADO */
       .axyra-header {
-        background: rgba(15, 23, 42, 0.95) !important;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%) !important;
         backdrop-filter: blur(20px) !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+        border-bottom: 2px solid rgba(59, 130, 246, 0.3) !important;
+        box-shadow: 
+          0 10px 40px rgba(0, 0, 0, 0.4),
+          0 0 20px rgba(59, 130, 246, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+        position: relative !important;
+        overflow: hidden !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      /* Efecto de partículas en el header */
+      .axyra-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+          radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+          radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.1) 1px, transparent 1px),
+          radial-gradient(circle at 40% 60%, rgba(236, 72, 153, 0.1) 1px, transparent 1px);
+        background-size: 30px 30px, 50px 50px, 40px 40px;
+        animation: headerParticles 15s linear infinite;
+        pointer-events: none;
+        z-index: 1;
+      }
+      
+      @keyframes headerParticles {
+        0% { transform: translateY(0px) rotate(0deg); }
+        25% { transform: translateY(-5px) rotate(90deg); }
+        50% { transform: translateY(-10px) rotate(180deg); }
+        75% { transform: translateY(-5px) rotate(270deg); }
+        100% { transform: translateY(0px) rotate(360deg); }
+      }
+      
+      /* Efecto de brillo en el header */
+      .axyra-header::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        animation: headerShimmer 3s ease-in-out infinite;
+        z-index: 2;
+      }
+      
+      @keyframes headerShimmer {
+        0% { left: -100%; }
+        50% { left: 100%; }
+        100% { left: 100%; }
+      }
+      
+      /* Contenedor del header */
+      .axyra-header .axyra-container {
+        max-width: 1200px !important;
+        margin: 0 auto !important;
+        padding: 0 20px !important;
+        position: relative !important;
+        z-index: 3 !important;
+      }
+      
+      /* Logo con efectos brutales */
+      .axyra-logo {
+        position: relative !important;
+        overflow: hidden !important;
+      }
+      
+      .axyra-logo::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s ease;
+        z-index: 1;
+      }
+      
+      .axyra-logo:hover::before {
+        left: 100%;
+      }
+      
+      .axyra-logo:hover {
+        transform: scale(1.05) !important;
+        transition: transform 0.3s ease !important;
+      }
+      
+      /* Navegación con efectos */
+      .axyra-nav {
+        position: relative !important;
+        z-index: 3 !important;
+      }
+      
+      .axyra-nav a {
+        position: relative !important;
+        overflow: hidden !important;
+        transition: all 0.3s ease !important;
+        border-radius: 8px !important;
+        padding: 10px 20px !important;
+        margin: 0 5px !important;
+      }
+      
+      .axyra-nav a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s ease;
+        z-index: 1;
+      }
+      
+      .axyra-nav a:hover::before {
+        left: 100%;
+      }
+      
+      .axyra-nav a:hover {
+        transform: translateY(-2px) scale(1.05) !important;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+      }
+      
+      /* Botones del header con efectos brutales */
+      .axyra-header .axyra-btn {
+        position: relative !important;
+        overflow: hidden !important;
+        transition: all 0.3s ease !important;
+        border-radius: 25px !important;
+        padding: 12px 24px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+      }
+      
+      .axyra-header .axyra-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.6s ease;
+        z-index: 1;
+      }
+      
+      .axyra-header .axyra-btn:hover::before {
+        left: 100%;
+      }
+      
+      .axyra-header .axyra-btn:hover {
+        transform: translateY(-3px) scale(1.05) !important;
+        box-shadow: 
+          0 8px 25px rgba(0, 0, 0, 0.3),
+          0 0 20px rgba(59, 130, 246, 0.4) !important;
+      }
+      
+      /* Botón primario del header */
+      .axyra-header .axyra-btn-primary {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%) !important;
+        color: white !important;
+        border: 2px solid rgba(255, 255, 255, 0.2) !important;
+      }
+      
+      .axyra-header .axyra-btn-primary:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 50%, #1e3a8a 100%) !important;
+        border-color: rgba(255, 255, 255, 0.4) !important;
+      }
+      
+      /* Botón secundario del header */
+      .axyra-header .axyra-btn-secondary {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        backdrop-filter: blur(10px) !important;
+      }
+      
+      .axyra-header .axyra-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border-color: rgba(255, 255, 255, 0.5) !important;
       }
       
       /* Footer mejorado */
@@ -1942,16 +2130,90 @@
       `;
       document.head.appendChild(rippleStyle);
       
+      // Efectos brutales específicos para el header
+      function addHeaderBrutalEffects() {
+        const header = document.querySelector('.axyra-header');
+        if (!header) return;
+        
+        // Efecto de partículas dinámicas en el header
+        setInterval(() => {
+          createHeaderParticle(header);
+        }, 2000);
+        
+        // Efecto de brillo al hacer scroll
+        window.addEventListener('scroll', () => {
+          const scrolled = window.pageYOffset;
+          if (scrolled > 50) {
+            header.style.boxShadow = `
+              0 15px 50px rgba(0, 0, 0, 0.5),
+              0 0 30px rgba(59, 130, 246, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.2)
+            `;
+          } else {
+            header.style.boxShadow = `
+              0 10px 40px rgba(0, 0, 0, 0.4),
+              0 0 20px rgba(59, 130, 246, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.1)
+            `;
+          }
+        });
+        
+        console.log('🔥 Efectos brutales del header aplicados');
+      }
+      
+      // Crear partículas en el header
+      function createHeaderParticle(header) {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = '100%';
+        particle.style.width = '2px';
+        particle.style.height = '2px';
+        particle.style.background = `hsl(${Math.random() * 60 + 200}, 70%, 60%)`;
+        particle.style.borderRadius = '50%';
+        particle.style.pointerEvents = 'none';
+        particle.style.zIndex = '1';
+        particle.style.animation = 'headerParticleFloat 3s ease-out forwards';
+        
+        header.appendChild(particle);
+        
+        setTimeout(() => {
+          particle.remove();
+        }, 3000);
+      }
+      
+      // Agregar CSS para partículas del header
+      const headerParticleStyle = document.createElement('style');
+      headerParticleStyle.textContent = `
+        @keyframes headerParticleFloat {
+          0% {
+            transform: translateY(0) scale(0);
+            opacity: 1;
+          }
+          50% {
+            transform: translateY(-50px) scale(1);
+            opacity: 0.8;
+          }
+          100% {
+            transform: translateY(-100px) scale(0);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(headerParticleStyle);
+      
       // Aplicar cuando se carga el DOM
       document.addEventListener('DOMContentLoaded', function() {
         addBrutalEffects();
         addClickEffects();
+        addHeaderBrutalEffects();
       });
       
       // Aplicar cuando se carga la ventana
       window.addEventListener('load', function() {
         addBrutalEffects();
         addClickEffects();
+        addHeaderBrutalEffects();
       });
     </script>
   </body>
