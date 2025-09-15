@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <html lang="es" data-version="v9">
+    <html lang="es" data-version="v10">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -1138,10 +1138,17 @@
         console.log('🧪 testModal() ejecutada');
         const modal = document.getElementById('authModal');
         if (modal) {
-          modal.style.display = 'flex';
-          modal.style.zIndex = '999999';
-          modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
-          console.log('✅ Modal forzado a mostrar');
+          modal.style.setProperty('display', 'flex', 'important');
+          modal.style.setProperty('z-index', '999999', 'important');
+          modal.style.setProperty('background-color', 'rgba(0,0,0,0.8)', 'important');
+          modal.style.setProperty('position', 'fixed', 'important');
+          modal.style.setProperty('top', '0', 'important');
+          modal.style.setProperty('left', '0', 'important');
+          modal.style.setProperty('width', '100%', 'important');
+          modal.style.setProperty('height', '100%', 'important');
+          modal.style.setProperty('align-items', 'center', 'important');
+          modal.style.setProperty('justify-content', 'center', 'important');
+          console.log('✅ Modal forzado a mostrar con !important');
         }
       };
     </script>
@@ -1983,10 +1990,17 @@
               classes: modal.className
             });
             
-            // Forzar el modal a mostrarse
-            modal.style.display = 'flex';
-            modal.style.zIndex = '999999';
-            modal.style.backgroundColor = 'rgba(0,0,0,0.8)';
+            // Forzar el modal a mostrarse con !important
+            modal.style.setProperty('display', 'flex', 'important');
+            modal.style.setProperty('z-index', '999999', 'important');
+            modal.style.setProperty('background-color', 'rgba(0,0,0,0.8)', 'important');
+            modal.style.setProperty('position', 'fixed', 'important');
+            modal.style.setProperty('top', '0', 'important');
+            modal.style.setProperty('left', '0', 'important');
+            modal.style.setProperty('width', '100%', 'important');
+            modal.style.setProperty('height', '100%', 'important');
+            modal.style.setProperty('align-items', 'center', 'important');
+            modal.style.setProperty('justify-content', 'center', 'important');
             modal.classList.add('show');
             
             console.log('📋 Estado después:', {
@@ -2672,8 +2686,8 @@
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
       // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v9') {
-          localStorage.setItem('axyra_version', 'v9');
+        if (localStorage.getItem('axyra_version') !== 'v10') {
+          localStorage.setItem('axyra_version', 'v10');
         if (performance.navigation.type === 1) {
           // Solo recargar si no es la primera carga
           window.location.reload(true);
