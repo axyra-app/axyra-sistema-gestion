@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-    <html lang="es" data-version="v13">
+    <html lang="es" data-version="v14">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -2297,6 +2297,46 @@
         document.body.appendChild(modal);
       }
 
+      // Función para contactar soporte
+      function contactarSoporte() {
+        console.log('✉️ Contactar soporte');
+        const modal = document.createElement('div');
+        modal.className = 'axyra-modal';
+        modal.style.display = 'flex';
+        modal.innerHTML = `
+          <div class="axyra-modal-content">
+            <div class="axyra-modal-header">
+              <h3>✉️ Contactar Soporte</h3>
+              <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+            </div>
+            <div class="axyra-modal-body">
+              <h4>¿Necesitas Ayuda? Estamos Aquí para Ti</h4>
+              
+              <h5>📞 Canales de Contacto</h5>
+              <ul>
+                <li><strong>📧 Email:</strong> soporte@axyra.com</li>
+                <li><strong>💬 Chat en Vivo:</strong> Usa el botón de chat en la esquina inferior derecha</li>
+                <li><strong>📱 WhatsApp:</strong> +57 300 123 4567</li>
+                <li><strong>🕒 Horario:</strong> Lunes a Viernes 8:00 AM - 6:00 PM</li>
+              </ul>
+              
+              <h5>⚡ Respuesta Rápida</h5>
+              <p>Nuestro equipo de soporte técnico responde en menos de 2 horas durante horario laboral.</p>
+              
+              <div class="axyra-modal-actions">
+                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:soporte@axyra.com?subject=Soporte AXYRA - Consulta', '_blank')">
+                  📧 Enviar Email
+                </button>
+                <button class="axyra-btn axyra-btn-secondary" onclick="document.querySelector('.axyra-chat-bubble').click()">
+                  💬 Abrir Chat
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
       function enviarFeedback() {
         const modal = document.createElement('div');
         modal.className = 'axyra-modal';
@@ -2779,8 +2819,8 @@
     <!-- Script para forzar recarga y limpiar caché -->
     <script>
       // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v13') {
-          localStorage.setItem('axyra_version', 'v13');
+        if (localStorage.getItem('axyra_version') !== 'v14') {
+          localStorage.setItem('axyra_version', 'v14');
         if (performance.navigation.type === 1) {
           // Solo recargar si no es la primera carga
           window.location.reload(true);
