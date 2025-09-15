@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Necesitas Ayuda? - AXYRA</title>
+  <link rel="stylesheet" href="static/live-chat-styles.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+      color: #1e293b;
+    }
+
+    .axyra-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .axyra-header {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: white;
+      padding: 20px 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .axyra-header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .axyra-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .axyra-logo h1 {
+      font-size: 2rem;
+      font-weight: 800;
+    }
+
+    .axyra-nav {
+      display: flex;
+      gap: 24px;
+    }
+
+    .axyra-nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .axyra-nav a:hover {
+      color: #60a5fa;
+    }
+
+    .axyra-main {
+      padding: 60px 0;
+    }
+
+    .axyra-help-hero {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .axyra-help-hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .axyra-help-hero p {
+      font-size: 1.2rem;
+      color: #64748b;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .axyra-help-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .axyra-contact-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .axyra-contact-card {
+      background: white;
+      padding: 32px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .axyra-contact-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .axyra-contact-card:hover::before {
+      left: 100%;
+    }
+
+    .axyra-contact-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border-color: #3b82f6;
+    }
+
+    .axyra-contact-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .axyra-contact-card:nth-child(1) .axyra-contact-icon {
+      background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+    }
+
+    .axyra-contact-card:nth-child(2) .axyra-contact-icon {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+
+    .axyra-contact-card:nth-child(3) .axyra-contact-icon {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .axyra-contact-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #1e293b;
+    }
+
+    .axyra-contact-card p {
+      color: #64748b;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .axyra-contact-btn {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .axyra-contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .axyra-contact-card:nth-child(2) .axyra-contact-btn {
+      background: white;
+      color: #1e293b;
+      border: 2px solid #e2e8f0;
+    }
+
+    .axyra-contact-card:nth-child(2) .axyra-contact-btn:hover {
+      background: #f8fafc;
+      border-color: #3b82f6;
+    }
+
+    .axyra-contact-card:nth-child(3) .axyra-contact-btn {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .axyra-contact-card:nth-child(3) .axyra-contact-btn:hover {
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+
+    .axyra-contact-form {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .axyra-contact-form:hover {
+      border-color: #3b82f6;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .axyra-contact-form h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: #1e293b;
+      text-align: center;
+    }
+
+    .axyra-form-group {
+      margin-bottom: 24px;
+    }
+
+    .axyra-form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .axyra-form-group input,
+    .axyra-form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #f8fafc;
+    }
+
+    .axyra-form-group input:focus,
+    .axyra-form-group textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .axyra-form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .axyra-form-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .axyra-form-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+
+    .axyra-footer {
+      background: #1e293b;
+      color: white;
+      padding: 40px 0;
+      text-align: center;
+      margin-top: 80px;
+    }
+
+    .axyra-footer p {
+      opacity: 0.8;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .axyra-help-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .axyra-help-hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .axyra-contact-form {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="axyra-header">
+    <div class="axyra-container">
+      <div class="axyra-header-content">
+        <div class="axyra-logo">
+          <h1>AXYRA</h1>
+        </div>
+        <nav class="axyra-nav">
+          <a href="index.html">Inicio</a>
+          <a href="membresias.html">Planes</a>
+          <a href="#contacto">Contacto</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="axyra-main">
+    <div class="axyra-container">
+      <!-- Hero Section -->
+      <section class="axyra-help-hero">
+        <h1>¿Necesitas Ayuda?</h1>
+        <p>Nuestro equipo está aquí para ayudarte con cualquier pregunta o consulta sobre AXYRA.</p>
+      </section>
+
+      <!-- Help Content -->
+      <section class="axyra-help-content">
+        <!-- Contact Cards -->
+        <div class="axyra-contact-cards">
+          <div class="axyra-contact-card">
+            <div class="axyra-contact-icon">📧</div>
+            <h3>Email de Soporte</h3>
+            <p>axyra.app@gmail.com</p>
+            <a href="mailto:axyra.app@gmail.com" class="axyra-contact-btn">ENVIAR EMAIL</a>
+          </div>
+
+          <div class="axyra-contact-card">
+            <div class="axyra-contact-icon">💬</div>
+            <h3>Chat en Vivo</h3>
+            <p>Disponible en horario laboral</p>
+            <button class="axyra-contact-btn" onclick="openLiveChat()">INICIAR CHAT</button>
+          </div>
+
+          <div class="axyra-contact-card">
+            <div class="axyra-contact-icon">📱</div>
+            <h3>WhatsApp Business</h3>
+            <p>Respuesta rápida en WhatsApp</p>
+            <a href="https://wa.me/573001234567" class="axyra-contact-btn" target="_blank">CONTACTAR POR WHATSAPP</a>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="axyra-contact-form">
+          <h2>Envíanos un Mensaje</h2>
+          <form id="contactForm">
+            <div class="axyra-form-group">
+              <label for="name">Nombre Completo *</label>
+              <input type="text" id="name" name="name" required>
+            </div>
+            <div class="axyra-form-group">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" required>
+            </div>
+            <div class="axyra-form-group">
+              <label for="subject">Asunto *</label>
+              <input type="text" id="subject" name="subject" required>
+            </div>
+            <div class="axyra-form-group">
+              <label for="message">Mensaje *</label>
+              <textarea id="message" name="message" required></textarea>
+            </div>
+            <button type="submit" class="axyra-form-submit">
+              📤 ENVIAR MENSAJE
+            </button>
+          </form>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="axyra-footer">
+    <div class="axyra-container">
+      <p>&copy; 2024 AXYRA. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Live Chat AI Scripts -->
+  <script src="static/live-chat-ai.js"></script>
+  <script>
+    // Función para abrir el chat en vivo
+    function openLiveChat() {
+      if (window.axyraLiveChat) {
+        window.axyraLiveChat.toggleChat();
+      } else {
+        // Si no está inicializado, inicializarlo
+        window.axyraLiveChat = new AxyraLiveChatAI();
+        setTimeout(() => {
+          window.axyraLiveChat.toggleChat();
+        }, 100);
+      }
+    }
+
+    // Manejar el formulario de contacto
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Aquí puedes agregar la lógica para enviar el formulario
+      alert('¡Mensaje enviado! Te responderemos pronto.');
+      
+      // Limpiar el formulario
+      this.reset();
+    });
+
+    // Inicializar el chat automáticamente
+    document.addEventListener('DOMContentLoaded', function() {
+      // El chat se inicializa automáticamente desde live-chat-ai.js
+      console.log('🤖 Página de ayuda cargada con chat en vivo');
+    });
+  </script>
+</body>
+</html>
