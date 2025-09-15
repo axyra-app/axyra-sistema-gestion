@@ -10,26 +10,30 @@
     <link rel="stylesheet" href="static/grid-background.css" />
     <link rel="icon" href="nomina.ico" type="image/x-icon" />
     
-    <!-- Estilo directo para el fondo azul cuadriculado -->
+    <!-- Estilo BRUTAL para el fondo azul cuadriculado -->
     <style>
+      /* Reset completo y fondo azul cuadriculado */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
       html, body {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%) !important;
         background-image: 
-          linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px) !important;
-        background-size: 20px 20px !important;
+          linear-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.15) 2px, transparent 2px) !important;
+        background-size: 30px 30px !important;
         background-position: 0 0, 0 0 !important;
         min-height: 100vh !important;
         margin: 0 !important;
         padding: 0 !important;
+        font-family: 'Poppins', sans-serif !important;
+        overflow-x: hidden;
       }
       
-      /* Forzar el fondo en todos los elementos */
-      * {
-        box-sizing: border-box !important;
-      }
-      
-      /* Asegurar que el body tenga el fondo */
+      /* Fondo fijo con animación */
       body::before {
         content: '';
         position: fixed;
@@ -37,48 +41,281 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%);
         background-image: 
-          linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-        background-size: 20px 20px;
+          linear-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.15) 2px, transparent 2px);
+        background-size: 30px 30px;
         background-position: 0 0, 0 0;
+        z-index: -2;
+        pointer-events: none;
+        animation: gridMove 20s linear infinite;
+      }
+      
+      /* Animación del fondo cuadriculado */
+      @keyframes gridMove {
+        0% { background-position: 0 0, 0 0; }
+        100% { background-position: 30px 30px, 30px 30px; }
+      }
+      
+      /* Partículas flotantes */
+      body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: 
+          radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.3) 1px, transparent 1px),
+          radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.3) 1px, transparent 1px),
+          radial-gradient(circle at 40% 60%, rgba(236, 72, 153, 0.3) 1px, transparent 1px);
+        background-size: 100px 100px, 150px 150px, 200px 200px;
         z-index: -1;
         pointer-events: none;
+        animation: particlesFloat 15s ease-in-out infinite;
       }
       
-      /* Asegurar que las secciones tengan fondo blanco */
-      .axyra-section {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border-radius: 20px !important;
-        margin: 20px 0 !important;
-        padding: 40px 0 !important;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+      @keyframes particlesFloat {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
       }
       
+      /* Hero section BRUTAL */
       .axyra-hero {
         background: transparent !important;
         background-color: transparent !important;
         background-image: none !important;
+        position: relative;
+        overflow: hidden;
+        padding: 120px 0 80px !important;
+      }
+      
+      .axyra-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, 
+          rgba(59, 130, 246, 0.1) 0%, 
+          transparent 25%, 
+          rgba(147, 51, 234, 0.1) 50%, 
+          transparent 75%, 
+          rgba(236, 72, 153, 0.1) 100%);
+        animation: heroShimmer 3s ease-in-out infinite;
+        z-index: -1;
+      }
+      
+      @keyframes heroShimmer {
+        0%, 100% { opacity: 0.3; transform: translateX(-100%); }
+        50% { opacity: 0.8; transform: translateX(100%); }
       }
       
       .axyra-hero-content {
         background: transparent !important;
         background-color: transparent !important;
+        position: relative;
+        z-index: 2;
+        text-align: center;
       }
       
-      .axyra-hero-content h1,
-      .axyra-hero-content p {
+      .axyra-hero-content h1 {
         color: #ffffff !important;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8) !important;
+        text-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 40px rgba(147, 51, 234, 0.6) !important;
+        font-size: 4rem !important;
+        font-weight: 900 !important;
+        margin-bottom: 1.5rem !important;
+        animation: titlePulse 2s ease-in-out infinite;
+        background: linear-gradient(45deg, #ffffff, #3b82f6, #8b5cf6, #ec4899, #ffffff);
+        background-size: 400% 400%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: titleGradient 3s ease infinite;
+      }
+      
+      @keyframes titlePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+      
+      @keyframes titleGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      
+      .axyra-hero-content p {
+        color: #e2e8f0 !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
+        font-size: 1.3rem !important;
+        font-weight: 500 !important;
+        margin-bottom: 2rem !important;
+        animation: textFadeIn 1s ease-out 0.5s both;
+      }
+      
+      @keyframes textFadeIn {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      /* Botones BRUTALES */
+      .axyra-hero-actions {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 3rem;
+        animation: buttonsSlideIn 1s ease-out 1s both;
+      }
+      
+      @keyframes buttonsSlideIn {
+        from { opacity: 0; transform: translateY(50px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      .axyra-btn {
+        position: relative;
+        overflow: hidden;
+        border-radius: 15px !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+        animation: buttonFloat 3s ease-in-out infinite;
+      }
+      
+      .axyra-btn:nth-child(1) { animation-delay: 0s; }
+      .axyra-btn:nth-child(2) { animation-delay: 0.5s; }
+      
+      @keyframes buttonFloat {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+      }
+      
+      .axyra-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: left 0.5s;
+      }
+      
+      .axyra-btn:hover::before {
+        left: 100%;
+      }
+      
+      .axyra-btn:hover {
+        transform: translateY(-5px) scale(1.05) !important;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+      }
+      
+      .axyra-btn-primary {
+        background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899) !important;
+        background-size: 200% 200% !important;
+        animation: buttonGradient 2s ease infinite !important;
+        color: white !important;
+        border: none !important;
+        padding: 18px 36px !important;
+        font-size: 1.1rem !important;
+      }
+      
+      @keyframes buttonGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      
+      .axyra-btn-secondary {
+        background: rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(10px) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        color: white !important;
+        padding: 18px 36px !important;
+        font-size: 1.1rem !important;
+      }
+      
+      /* Secciones con fondo blanco semitransparente */
+      .axyra-section {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(20px) !important;
+        border-radius: 25px !important;
+        margin: 30px 0 !important;
+        padding: 50px 0 !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        animation: sectionSlideUp 0.8s ease-out both;
+      }
+      
+      @keyframes sectionSlideUp {
+        from { opacity: 0; transform: translateY(50px); }
+        to { opacity: 1; transform: translateY(0); }
       }
       
       .axyra-memberships-brutal {
         background: rgba(255, 255, 255, 0.98) !important;
-        border-radius: 24px !important;
-        margin: 30px 0 !important;
-        padding: 60px 0 !important;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+        backdrop-filter: blur(25px) !important;
+        border-radius: 30px !important;
+        margin: 40px 0 !important;
+        padding: 80px 0 !important;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3) !important;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        animation: sectionSlideUp 1s ease-out 0.5s both;
+      }
+      
+      /* Header mejorado */
+      .axyra-header {
+        background: rgba(15, 23, 42, 0.95) !important;
+        backdrop-filter: blur(20px) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+      }
+      
+      /* Footer mejorado */
+      .axyra-footer-professional {
+        background: rgba(15, 23, 42, 0.95) !important;
+        backdrop-filter: blur(20px) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3) !important;
+      }
+      
+      /* Animaciones de entrada para elementos */
+      .axyra-feature-card,
+      .axyra-quick-card,
+      .axyra-membership-card {
+        animation: cardSlideIn 0.6s ease-out both;
+        transform-origin: center;
+      }
+      
+      .axyra-feature-card:nth-child(1) { animation-delay: 0.1s; }
+      .axyra-feature-card:nth-child(2) { animation-delay: 0.2s; }
+      .axyra-feature-card:nth-child(3) { animation-delay: 0.3s; }
+      .axyra-feature-card:nth-child(4) { animation-delay: 0.4s; }
+      
+      @keyframes cardSlideIn {
+        from { opacity: 0; transform: translateY(30px) scale(0.9); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      
+      /* Efectos de hover mejorados */
+      .axyra-feature-card:hover,
+      .axyra-quick-card:hover,
+      .axyra-membership-card:hover {
+        transform: translateY(-10px) scale(1.02) !important;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2) !important;
+        animation: cardHover 0.3s ease-out !important;
+      }
+      
+      @keyframes cardHover {
+        0% { transform: translateY(-5px) scale(1.01); }
+        50% { transform: translateY(-15px) scale(1.03); }
+        100% { transform: translateY(-10px) scale(1.02); }
       }
     </style>
   </head>
@@ -1490,71 +1727,80 @@
     <!-- Vercel Config -->
     <script src="static/vercel-config.js"></script>
 
-    <!-- Script para forzar el fondo cuadriculado -->
+    <!-- Script BRUTAL para animaciones y efectos -->
     <script>
-      // Aplicar inmediatamente
-      function applyGridBackground() {
-        const body = document.body;
-        const html = document.documentElement;
+      // Aplicar efectos inmediatamente
+      function applyBrutalEffects() {
+        // Forzar el fondo azul cuadriculado
+        document.body.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)';
+        document.body.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px), linear-gradient(90deg, rgba(255, 255, 255, 0.15) 2px, transparent 2px)';
+        document.body.style.backgroundSize = '30px 30px';
+        document.body.style.backgroundPosition = '0 0, 0 0';
+        document.body.style.minHeight = '100vh';
         
-        // Aplicar al body
-        body.style.setProperty('background', 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)', 'important');
-        body.style.setProperty('background-image', 'linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)', 'important');
-        body.style.setProperty('background-size', '20px 20px', 'important');
-        body.style.setProperty('background-position', '0 0, 0 0', 'important');
-        body.style.setProperty('min-height', '100vh', 'important');
+        // Aplicar al html también
+        document.documentElement.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%)';
+        document.documentElement.style.backgroundImage = 'linear-gradient(rgba(255, 255, 255, 0.15) 2px, transparent 2px), linear-gradient(90deg, rgba(255, 255, 255, 0.15) 2px, transparent 2px)';
+        document.documentElement.style.backgroundSize = '30px 30px';
+        document.documentElement.style.backgroundPosition = '0 0, 0 0';
+        document.documentElement.style.minHeight = '100vh';
         
-        // Aplicar al html
-        html.style.setProperty('background', 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)', 'important');
-        html.style.setProperty('background-image', 'linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)', 'important');
-        html.style.setProperty('background-size', '20px 20px', 'important');
-        html.style.setProperty('background-position', '0 0, 0 0', 'important');
-        html.style.setProperty('min-height', '100vh', 'important');
+        // Hacer hero section transparente
+        const heroSection = document.querySelector('.axyra-hero');
+        if (heroSection) {
+          heroSection.style.background = 'transparent';
+          heroSection.style.backgroundColor = 'transparent';
+          heroSection.style.backgroundImage = 'none';
+        }
         
-        console.log('🎨 Fondo azul cuadriculado aplicado por JavaScript');
+        // Hacer hero content transparente
+        const heroContent = document.querySelector('.axyra-hero-content');
+        if (heroContent) {
+          heroContent.style.background = 'transparent';
+          heroContent.style.backgroundColor = 'transparent';
+        }
+        
+        console.log('🔥 Efectos BRUTALES aplicados');
       }
       
-      // Función para eliminar fondos blancos
-      function removeWhiteBackgrounds() {
-        // Eliminar fondos blancos de elementos principales
-        const elementsToFix = [
-          '.axyra-hero',
-          '.axyra-hero-content',
-          '.axyra-section',
-          '.axyra-container'
-        ];
-        
-        elementsToFix.forEach(selector => {
-          const elements = document.querySelectorAll(selector);
-          elements.forEach(el => {
-            if (selector === '.axyra-hero' || selector === '.axyra-hero-content') {
-              el.style.setProperty('background', 'transparent', 'important');
-              el.style.setProperty('background-color', 'transparent', 'important');
-              el.style.setProperty('background-image', 'none', 'important');
-            } else if (selector === '.axyra-section') {
-              el.style.setProperty('background', 'rgba(255, 255, 255, 0.95)', 'important');
-            }
-          });
+      // Función para agregar animaciones a elementos
+      function addBrutalAnimations() {
+        // Agregar animaciones a las tarjetas
+        const cards = document.querySelectorAll('.axyra-feature-card, .axyra-quick-card, .axyra-membership-card');
+        cards.forEach((card, index) => {
+          card.style.animationDelay = `${index * 0.1}s`;
+          card.style.animation = 'cardSlideIn 0.6s ease-out both';
         });
         
-        console.log('🎨 Fondos blancos removidos');
+        // Agregar efecto de parallax al scroll
+        window.addEventListener('scroll', () => {
+          const scrolled = window.pageYOffset;
+          const parallax = document.querySelector('body::before');
+          if (parallax) {
+            parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+          }
+        });
+        
+        console.log('⚡ Animaciones BRUTALES agregadas');
       }
       
-      // Aplicar inmediatamente
-      applyGridBackground();
-      removeWhiteBackgrounds();
+      // Aplicar efectos inmediatamente
+      applyBrutalEffects();
       
       // Aplicar cuando se carga el DOM
       document.addEventListener('DOMContentLoaded', function() {
-        applyGridBackground();
-        removeWhiteBackgrounds();
+        applyBrutalEffects();
+        addBrutalAnimations();
       });
       
       // Aplicar cuando se carga la ventana
       window.addEventListener('load', function() {
-        applyGridBackground();
-        removeWhiteBackgrounds();
+        applyBrutalEffects();
+        addBrutalAnimations();
       });
+      
+      // Re-aplicar cada 2 segundos para asegurar
+      setInterval(applyBrutalEffects, 2000);
     </script>
   </body>
 </html>
