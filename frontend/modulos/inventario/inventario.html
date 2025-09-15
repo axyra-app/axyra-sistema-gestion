@@ -1155,7 +1155,7 @@
         
         // Crear modal de nuevo producto
         const modalHTML = `
-          <div class="axyra-modal" id="modalProducto" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 999999; align-items: center; justify-content: center;">
+          <div class="axyra-modal" id="modalProducto" style="display: flex !important; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(0,0,0,0.8) !important; z-index: 999999 !important; align-items: center !important; justify-content: center !important; visibility: visible !important; opacity: 1 !important;">
             <div class="axyra-modal-content" style="background: white; border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
               <div class="axyra-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb;">
                 <h3 style="margin: 0; color: #1f2937; font-size: 24px;">
@@ -1209,6 +1209,17 @@
         // Agregar nuevo modal
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         console.log('✅ Modal de nuevo producto creado');
+        
+        // Debug: verificar que el modal se creó
+        setTimeout(() => {
+          const modal = document.getElementById('modalProducto');
+          if (modal) {
+            console.log('🔍 Modal encontrado en DOM:', modal);
+            console.log('🔍 Estilos del modal:', window.getComputedStyle(modal));
+          } else {
+            console.error('❌ Modal no encontrado en DOM');
+          }
+        }, 100);
       };
 
       window.mostrarModalEntrada = function() {
@@ -1216,7 +1227,7 @@
         
         // Crear modal de entrada
         const modalHTML = `
-          <div class="axyra-modal" id="modalEntrada" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 999999; align-items: center; justify-content: center;">
+          <div class="axyra-modal" id="modalEntrada" style="display: flex !important; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(0,0,0,0.8) !important; z-index: 999999 !important; align-items: center !important; justify-content: center !important; visibility: visible !important; opacity: 1 !important;">
             <div class="axyra-modal-content" style="background: white; border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
               <div class="axyra-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb;">
                 <h3 style="margin: 0; color: #1f2937; font-size: 24px;">
@@ -1272,7 +1283,7 @@
         
         // Crear modal de salida
         const modalHTML = `
-          <div class="axyra-modal" id="modalSalida" style="display: flex; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 999999; align-items: center; justify-content: center;">
+          <div class="axyra-modal" id="modalSalida" style="display: flex !important; position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; background: rgba(0,0,0,0.8) !important; z-index: 999999 !important; align-items: center !important; justify-content: center !important; visibility: visible !important; opacity: 1 !important;">
             <div class="axyra-modal-content" style="background: white; border-radius: 20px; padding: 30px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
               <div class="axyra-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e5e7eb;">
                 <h3 style="margin: 0; color: #1f2937; font-size: 24px;">
@@ -1325,12 +1336,68 @@
 
       window.exportarInventarioExcel = function() {
         console.log('🔧 Exportando inventario a Excel');
-        if (window.axyraInventario) {
-          window.axyraInventario.exportarInventario();
-        } else {
-          console.error('❌ Sistema de inventario no inicializado');
-          alert('Sistema de inventario no disponible. Recarga la página.');
+        
+        // Obtener datos del localStorage
+        const productos = JSON.parse(localStorage.getItem('axyra_productos') || '[]');
+        const movimientos = JSON.parse(localStorage.getItem('axyra_movimientos_inventario') || '[]');
+        
+        if (productos.length === 0) {
+          alert('⚠️ No hay productos para exportar. Agrega algunos productos primero.');
+          return;
         }
+        
+        // Crear datos para Excel
+        const datosExcel = productos.map(producto => ({
+          'Nombre': producto.nombre || 'N/A',
+          'Categoría': producto.categoria || 'N/A',
+          'Precio': producto.precio || 0,
+          'Stock': producto.stock || 0,
+          'Fecha Creación': new Date(producto.fechaCreacion || Date.now()).toLocaleDateString()
+        }));
+        
+        // Crear archivo Excel simple
+        const csvContent = [
+          'Nombre,Categoría,Precio,Stock,Fecha Creación',
+          ...datosExcel.map(row => Object.values(row).join(','))
+        ].join('\n');
+        
+        // Descargar archivo
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `inventario_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Mostrar notificación más visible
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: linear-gradient(135deg, #10b981, #059669);
+          color: white;
+          padding: 15px 25px;
+          border-radius: 10px;
+          box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+          z-index: 1000000;
+          font-weight: 600;
+          font-size: 16px;
+        `;
+        notification.innerHTML = '✅ Inventario exportado correctamente';
+        document.body.appendChild(notification);
+        
+        // Remover notificación después de 3 segundos
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 3000);
+        
+        console.log('✅ Inventario exportado:', datosExcel.length, 'productos');
       };
 
       // Funciones para cerrar modals
