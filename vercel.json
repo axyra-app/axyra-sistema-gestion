@@ -12,6 +12,10 @@
     {
       "src": "api/check-user-plan.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "api/process-wompi-payment.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -22,6 +26,10 @@
     {
       "src": "/api/checkUserPlan",
       "dest": "/api/check-user-plan.js"
+    },
+    {
+      "src": "/api/processWompiPayment",
+      "dest": "/api/process-wompi-payment.js"
     },
     {
       "src": "/(.*)",

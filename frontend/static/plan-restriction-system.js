@@ -637,8 +637,8 @@ class AxyraPlanRestrictionSystem {
       // Mostrar loading
       this.showLoading('Procesando actualización...');
 
-      // Crear botón de pago PayPal
-      const payButton = this.createPayPalPaymentButton(planType);
+      // Crear botón de pago dual
+      const payButton = this.createDualPaymentButton(planType);
 
       // Mostrar modal de pago
       this.showPaymentModal(payButton, planType);
@@ -649,9 +649,9 @@ class AxyraPlanRestrictionSystem {
   }
 
   /**
-   * Crea botón de pago PayPal
+   * Crea botón de pago dual (PayPal + Wompi)
    */
-  createPayPalPaymentButton(planType) {
+  createDualPaymentButton(planType) {
     const planPrices = {
       basic: 49900,
       professional: 129900,
@@ -665,16 +665,15 @@ class AxyraPlanRestrictionSystem {
     };
 
     const button = document.createElement('button');
-    button.className = 'btn btn-paypal';
-    button.dataset.paypalPayment = 'true';
+    button.className = 'btn btn-dual-payment';
+    button.dataset.dualPayment = 'true';
     button.dataset.amount = planPrices[planType];
     button.dataset.description = planNames[planType];
-    button.dataset.currency = 'COP';
     button.dataset.planType = planType;
     button.dataset.userId = this.currentUser.uid;
 
     button.innerHTML = `
-      <i class="fab fa-paypal"></i>
+      <i class="fas fa-credit-card"></i>
       Pagar $${planPrices[planType].toLocaleString()} COP
     `;
 
@@ -682,13 +681,27 @@ class AxyraPlanRestrictionSystem {
   }
 
   /**
-   * Muestra modal de pago
+   * Muestra modal de pago dual
    */
   showPaymentModal(payButton, planType) {
-    // Simular clic en el botón de PayPal
-    setTimeout(() => {
-      payButton.click();
-    }, 100);
+    // Usar el sistema dual de pagos
+    if (window.axyraDualPaymentSystem) {
+      const amount = parseFloat(payButton.dataset.amount);
+      const description = payButton.dataset.description;
+      const userId = payButton.dataset.userId;
+      
+      window.axyraDualPaymentSystem.showPaymentMethodModal(
+        planType, 
+        amount, 
+        description, 
+        userId
+      );
+    } else {
+      // Fallback: simular clic en el botón
+      setTimeout(() => {
+        payButton.click();
+      }, 100);
+    }
   }
 
   /**

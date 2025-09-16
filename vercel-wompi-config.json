@@ -1,0 +1,9 @@
+{
+  "env": {
+    "WOMPI_PUBLIC_KEY": "pub_prod_DMd1RNFhiA3813HZ3YZFsNjSg2beSS00",
+    "WOMPI_PRIVATE_KEY": "prv_prod_aka7VAtItpCAF3qhVuD8zvt7FUWXduPY",
+    "WOMPI_INTEGRITY_SECRET": "prod_integrity_****************************",
+    "WOMPI_EVENTS_SECRET": "prod_events_4ob12JL0RXAolocztVa9GThpUrGfy8Dn",
+    "WOMPI_ENVIRONMENT": "production"
+  }
+}
