@@ -50,6 +50,14 @@ class AxyraPayPalIntegration {
    */
   async init() {
     try {
+      // Verificar si PayPal está desactivado temporalmente
+      if (localStorage.getItem('paypal-disabled') === 'true') {
+        console.log('⚠️ PayPal desactivado temporalmente');
+        this.setupEventListeners();
+        this.createPaymentUI();
+        return;
+      }
+
       // Verificar si ya existe PayPal en el contexto global
       if (window.paypal) {
         this.isLoaded = true;
@@ -62,6 +70,15 @@ class AxyraPayPalIntegration {
       console.log('✅ Sistema PayPal inicializado correctamente');
     } catch (error) {
       console.error('❌ Error inicializando PayPal:', error);
+      // Desactivar PayPal temporalmente después de 3 errores
+      const errorCount = parseInt(localStorage.getItem('paypal-error-count') || '0') + 1;
+      localStorage.setItem('paypal-error-count', errorCount.toString());
+      
+      if (errorCount >= 3) {
+        localStorage.setItem('paypal-disabled', 'true');
+        console.log('⚠️ PayPal desactivado después de múltiples errores');
+      }
+      
       // No mostrar error al usuario si es un problema de extensión
       if (!error.message.includes('Cannot determine language')) {
         this.showError('Error inicializando el sistema de pagos');
@@ -81,8 +98,8 @@ class AxyraPayPalIntegration {
 
       console.log('🔧 Cargando PayPal SDK con configuración:', this.config);
       const script = document.createElement('script');
-      const baseUrl = this.config.environment === 'sandbox' ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
-      script.src = `${baseUrl}/sdk/js?client-id=${this.config.clientId}&currency=${this.config.currency}&locale=${this.config.locale}&intent=capture&v=${Date.now()}`;
+      // Usar solo lo esencial - sin parámetros adicionales que puedan causar problemas
+      script.src = `https://www.sandbox.paypal.com/sdk/js?client-id=${this.config.clientId}`;
       script.async = true;
       script.defer = true;
       
@@ -97,10 +114,9 @@ class AxyraPayPalIntegration {
         console.warn('⚠️ Error cargando PayPal SDK, intentando fallback...', error);
         // Esperar un poco antes del fallback
         setTimeout(() => {
-          // Fallback: intentar con URL más simple
+          // Fallback: intentar con URL de producción
           const fallbackScript = document.createElement('script');
-          const fallbackBaseUrl = this.config.environment === 'sandbox' ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
-          fallbackScript.src = `${fallbackBaseUrl}/sdk/js?client-id=${this.config.clientId}`;
+          fallbackScript.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}`;
           fallbackScript.async = true;
           fallbackScript.defer = true;
         
@@ -112,10 +128,9 @@ class AxyraPayPalIntegration {
         
         fallbackScript.onerror = (fallbackError) => {
           console.warn('⚠️ Fallback también falló, intentando sin parámetros...', fallbackError);
-          // Último intento: solo con client-id
+          // Último intento: con intent capture
           const lastScript = document.createElement('script');
-          const lastBaseUrl = this.config.environment === 'sandbox' ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
-          lastScript.src = `${lastBaseUrl}/sdk/js?client-id=${this.config.clientId}&intent=capture`;
+          lastScript.src = `https://www.sandbox.paypal.com/sdk/js?client-id=${this.config.clientId}&intent=capture`;
           lastScript.async = true;
           lastScript.defer = true;
           
