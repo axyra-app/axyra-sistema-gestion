@@ -26,6 +26,14 @@
     <!-- Header Compartido AXYRA -->
     <script src="../../static/include-header.js"></script>
     
+    <!-- Sistema de Logging Limpio -->
+    <script src="../../static/clean-logging-system.js"></script>
+    
+    <!-- Sistema de Integración PayPal -->
+    <script src="../../static/paypal-integration-clean.js"></script>
+    <script src="../../static/wompi-integration.js"></script>
+    <script src="../../static/dual-payment-system.js"></script>
+    
     <style>
         .membresias-container {
             max-width: 1200px;
@@ -636,18 +644,38 @@
         function seleccionarPlan(plan) {
             console.log('Plan seleccionado:', plan);
             
-            // Aquí se integraría con el sistema de pagos
-            if (window.axyraNotifications) {
-                window.axyraNotifications.show(
-                    `Redirigiendo al proceso de suscripción para el plan ${plan}...`,
-                    'info'
-                );
+            // Precios de los planes
+            const precios = {
+                basico: 49900,
+                profesional: 129900,
+                empresarial: 259900
+            };
+            
+            const nombres = {
+                basico: 'Plan Básico',
+                profesional: 'Plan Profesional',
+                empresarial: 'Plan Empresarial'
+            };
+            
+            // Obtener usuario actual
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert('Debes iniciar sesión para suscribirte a un plan');
+                return;
             }
             
-            // Simular redirección a proceso de pago
-            setTimeout(() => {
-                alert(`Proceso de suscripción para el plan ${plan} iniciado. Esta funcionalidad se integrará con el sistema de pagos.`);
-            }, 1000);
+            // Mostrar modal de selección de método de pago
+            if (window.axyraDualPaymentSystem) {
+                window.axyraDualPaymentSystem.showPaymentMethodModal(
+                    plan,
+                    precios[plan],
+                    nombres[plan],
+                    user.uid
+                );
+            } else {
+                // Fallback: redirigir al dashboard
+                window.location.href = '../dashboard/dashboard.html';
+            }
         }
     </script>
     
