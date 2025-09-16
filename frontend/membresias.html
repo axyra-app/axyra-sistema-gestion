@@ -1073,14 +1073,41 @@
         function proceedToPayment() {
             if (!selectedPlan) return;
             
-            // Guardar plan seleccionado
-            localStorage.setItem('axyra_membership_plan', selectedPlan);
+            // Precios de los planes
+            const precios = {
+                basico: 49900,
+                profesional: 129900,
+                empresarial: 259900
+            };
             
-            // Cerrar modal
+            const nombres = {
+                basico: 'Plan Básico',
+                profesional: 'Plan Profesional',
+                empresarial: 'Plan Empresarial'
+            };
+            
+            // Obtener usuario actual
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert('Debes iniciar sesión para suscribirte a un plan');
+                return;
+            }
+            
+            // Cerrar modal actual
             closePaymentModal();
             
-            // Redirigir al dashboard
-            window.location.href = 'index.html';
+            // Mostrar modal de selección de método de pago
+            if (window.axyraDualPaymentSystem) {
+                window.axyraDualPaymentSystem.showPaymentMethodModal(
+                    selectedPlan,
+                    precios[selectedPlan],
+                    nombres[selectedPlan],
+                    user.uid
+                );
+            } else {
+                // Fallback: redirigir al dashboard
+                window.location.href = 'modulos/dashboard/dashboard.html';
+            }
         }
 
         // Cerrar modal al hacer click fuera de él
@@ -1110,5 +1137,13 @@
             });
         });
     </script>
+    
+    <!-- Sistema de Logging Limpio -->
+    <script src="static/clean-logging-system.js"></script>
+    
+    <!-- Sistema de Integración PayPal -->
+    <script src="static/paypal-integration-clean.js"></script>
+    <script src="static/wompi-integration.js"></script>
+    <script src="static/dual-payment-system.js"></script>
 </body>
 </html>
