@@ -560,6 +560,28 @@
             font-weight: 700;
             margin: 0;
         }
+        
+        .close-modal-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
 
         .axyra-payment-modal-body {
             padding: 30px;
@@ -878,6 +900,9 @@
                     <i class="fas fa-lock"></i>
                 </div>
                 <h3>¡Inicia Sesión Requerido!</h3>
+                <button class="close-modal-btn" onclick="closeLoginRequiredModal()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
             <div class="axyra-payment-modal-body">
                 <p>Para adquirir una suscripción, necesitas iniciar sesión en tu cuenta de AXYRA.</p>
@@ -1086,12 +1111,41 @@
                 empresarial: 'Plan Empresarial'
             };
             
-            // Obtener usuario actual
-            const user = firebase.auth().currentUser;
+            // Verificar autenticación de múltiples formas
+            let user = null;
+            
+            console.log('🔍 Verificando autenticación...');
+            
+            // Intentar Firebase Auth primero
+            if (typeof firebase !== 'undefined' && firebase.auth) {
+                user = firebase.auth().currentUser;
+                console.log('🔥 Usuario Firebase:', user ? 'Sí' : 'No');
+            } else {
+                console.log('🔥 Firebase no disponible');
+            }
+            
+            // Si no hay usuario en Firebase, verificar localStorage
             if (!user) {
-                alert('Debes iniciar sesión para suscribirte a un plan');
+                const localUser = localStorage.getItem('axyra_isolated_user');
+                console.log('💾 Usuario localStorage:', localUser);
+                if (localUser && localUser !== 'null' && localUser !== 'undefined') {
+                    try {
+                        user = JSON.parse(localUser);
+                        console.log('✅ Usuario parseado:', user);
+                    } catch (e) {
+                        console.warn('Error parsing local user:', e);
+                    }
+                }
+            }
+            
+            // Si aún no hay usuario, mostrar modal de login
+            if (!user) {
+                console.log('❌ No hay usuario autenticado, mostrando modal de login');
+                showLoginRequiredModal();
                 return;
             }
+            
+            console.log('✅ Usuario autenticado:', user);
             
             // Cerrar modal actual
             closePaymentModal();
