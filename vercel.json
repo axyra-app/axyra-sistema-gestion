@@ -2,22 +2,33 @@
   "version": 2,
   "builds": [
     {
-      "src": "frontend/**/*",
-      "use": "@vercel/static"
+      "src": "api/paypal-payment.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "src": "/api/processPayPalPayment",
+      "dest": "/api/paypal-payment.js"
     },
     {
-      "src": "/static/(.*)",
-      "dest": "/frontend/static/$1"
+      "src": "/api/paypal/webhook",
+      "dest": "/api/paypal-payment.js"
     },
     {
-      "src": "/modulos/(.*)",
-      "dest": "/frontend/modulos/$1"
+      "src": "/api/checkUserPlan",
+      "dest": "/api/paypal-payment.js"
     }
-  ]
+  ],
+  "env": {
+    "PAYPAL_CLIENT_ID": "@paypal_client_id",
+    "PAYPAL_CLIENT_SECRET": "@paypal_client_secret",
+    "PAYPAL_ENVIRONMENT": "@paypal_environment",
+    "PAYPAL_BASE_URL": "@paypal_base_url"
+  },
+  "functions": {
+    "api/paypal-payment.js": {
+      "maxDuration": 30
+    }
+  }
 }
