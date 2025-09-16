@@ -96,14 +96,11 @@ class AxyraPayPalIntegration {
         return;
       }
 
-      console.log('🔧 Cargando PayPal SDK con configuración:', this.config);
+      // Cargar PayPal SDK silenciosamente
       const script = document.createElement('script');
-      // Usar solo lo esencial - sin parámetros adicionales que puedan causar problemas
       script.src = `https://www.sandbox.paypal.com/sdk/js?client-id=${this.config.clientId}`;
       script.async = true;
       script.defer = true;
-      
-      console.log('🌐 URL de PayPal SDK:', script.src);
 
       script.onload = () => {
         this.isLoaded = true;
@@ -111,10 +108,8 @@ class AxyraPayPalIntegration {
       };
 
       script.onerror = (error) => {
-        console.warn('⚠️ Error cargando PayPal SDK, intentando fallback...', error);
-        // Esperar un poco antes del fallback
+        // Fallback silencioso
         setTimeout(() => {
-          // Fallback: intentar con URL de producción
           const fallbackScript = document.createElement('script');
           fallbackScript.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}`;
           fallbackScript.async = true;
