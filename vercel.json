@@ -3,6 +3,9 @@
   "functions": {
     "api/paypal-payment.js": {
       "maxDuration": 30
+    },
+    "api/check-user-plan.js": {
+      "maxDuration": 10
     }
   }
 }
