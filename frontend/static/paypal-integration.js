@@ -79,10 +79,13 @@ class AxyraPayPalIntegration {
         return;
       }
 
+      console.log('🔧 Cargando PayPal SDK con configuración:', this.config);
       const script = document.createElement('script');
-      script.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}&currency=${this.config.currency}&locale=${this.config.locale}&intent=capture`;
+      script.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}&currency=${this.config.currency}&locale=${this.config.locale}&intent=capture&v=${Date.now()}`;
       script.async = true;
       script.defer = true;
+      
+      console.log('🌐 URL de PayPal SDK:', script.src);
 
       script.onload = () => {
         this.isLoaded = true;
