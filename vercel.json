@@ -1,25 +1,5 @@
 {
   "version": 2,
-  "routes": [
-    {
-      "src": "/api/processPayPalPayment",
-      "dest": "/api/paypal-payment.js"
-    },
-    {
-      "src": "/api/paypal/webhook",
-      "dest": "/api/paypal-payment.js"
-    },
-    {
-      "src": "/api/checkUserPlan",
-      "dest": "/api/paypal-payment.js"
-    }
-  ],
-  "env": {
-    "PAYPAL_CLIENT_ID": "@paypal_client_id",
-    "PAYPAL_CLIENT_SECRET": "@paypal_client_secret",
-    "PAYPAL_ENVIRONMENT": "@paypal_environment",
-    "PAYPAL_BASE_URL": "@paypal_base_url"
-  },
   "functions": {
     "api/paypal-payment.js": {
       "maxDuration": 30
