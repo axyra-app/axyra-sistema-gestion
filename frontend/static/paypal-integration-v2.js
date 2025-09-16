@@ -9,7 +9,7 @@ class AxyraPayPalIntegration {
       clientId: 'AfphhCNx415bpleyT1g5iPIN9IQLCGFGq4a21YpqZHO7zw', // Credenciales reales de PayPal
       currency: 'USD',
       locale: 'es_ES',
-      environment: 'production', // 'sandbox' para pruebas, 'production' para producción
+      environment: 'sandbox', // 'sandbox' para pruebas, 'production' para producción
     };
 
     this.isLoaded = false;
@@ -81,7 +81,8 @@ class AxyraPayPalIntegration {
 
       console.log('🔧 Cargando PayPal SDK con configuración:', this.config);
       const script = document.createElement('script');
-      script.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}&currency=${this.config.currency}&locale=${this.config.locale}&intent=capture&v=${Date.now()}`;
+      const baseUrl = this.config.environment === 'sandbox' ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
+      script.src = `${baseUrl}/sdk/js?client-id=${this.config.clientId}&currency=${this.config.currency}&locale=${this.config.locale}&intent=capture&v=${Date.now()}`;
       script.async = true;
       script.defer = true;
       
@@ -98,7 +99,8 @@ class AxyraPayPalIntegration {
         setTimeout(() => {
           // Fallback: intentar con URL más simple
           const fallbackScript = document.createElement('script');
-          fallbackScript.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}`;
+          const fallbackBaseUrl = this.config.environment === 'sandbox' ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
+          fallbackScript.src = `${fallbackBaseUrl}/sdk/js?client-id=${this.config.clientId}`;
           fallbackScript.async = true;
           fallbackScript.defer = true;
         
@@ -112,7 +114,8 @@ class AxyraPayPalIntegration {
           console.warn('⚠️ Fallback también falló, intentando sin parámetros...', fallbackError);
           // Último intento: solo con client-id
           const lastScript = document.createElement('script');
-          lastScript.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}&intent=capture`;
+          const lastBaseUrl = this.config.environment === 'sandbox' ? 'https://www.sandbox.paypal.com' : 'https://www.paypal.com';
+          lastScript.src = `${lastBaseUrl}/sdk/js?client-id=${this.config.clientId}&intent=capture`;
           lastScript.async = true;
           lastScript.defer = true;
           
