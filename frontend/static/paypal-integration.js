@@ -16,7 +16,33 @@ class AxyraPayPalIntegration {
     this.isProcessing = false;
     this.currentOrder = null;
 
+    // Capturar errores de extensiones del navegador
+    this.setupErrorHandling();
     this.init();
+  }
+
+  /**
+   * Configura el manejo de errores para evitar conflictos con extensiones
+   */
+  setupErrorHandling() {
+    // Capturar errores de content scripts
+    window.addEventListener('error', (event) => {
+      if (event.message && event.message.includes('Cannot determine language')) {
+        console.warn('⚠️ Error de extensión del navegador ignorado:', event.message);
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+      }
+    });
+
+    // Capturar errores no manejados
+    window.addEventListener('unhandledrejection', (event) => {
+      if (event.reason && event.reason.message && event.reason.message.includes('Cannot determine language')) {
+        console.warn('⚠️ Promise rejection de extensión ignorada:', event.reason.message);
+        event.preventDefault();
+        return false;
+      }
+    });
   }
 
   /**
@@ -24,13 +50,22 @@ class AxyraPayPalIntegration {
    */
   async init() {
     try {
-      await this.loadPayPalSDK();
+      // Verificar si ya existe PayPal en el contexto global
+      if (window.paypal) {
+        this.isLoaded = true;
+        console.log('✅ PayPal SDK ya está disponible');
+      } else {
+        await this.loadPayPalSDK();
+      }
       this.setupEventListeners();
       this.createPaymentUI();
       console.log('✅ Sistema PayPal inicializado correctamente');
     } catch (error) {
       console.error('❌ Error inicializando PayPal:', error);
-      this.showError('Error inicializando el sistema de pagos');
+      // No mostrar error al usuario si es un problema de extensión
+      if (!error.message.includes('Cannot determine language')) {
+        this.showError('Error inicializando el sistema de pagos');
+      }
     }
   }
 
@@ -45,16 +80,33 @@ class AxyraPayPalIntegration {
       }
 
       const script = document.createElement('script');
-      script.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}&currency=${this.config.currency}&locale=${this.config.locale}`;
+      script.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}&currency=${this.config.currency}&locale=${this.config.locale}&intent=capture`;
       script.async = true;
+      script.defer = true;
 
       script.onload = () => {
         this.isLoaded = true;
         resolve();
       };
 
-      script.onerror = () => {
-        reject(new Error('Error cargando PayPal SDK'));
+      script.onerror = (error) => {
+        console.warn('⚠️ Error cargando PayPal SDK, intentando fallback...', error);
+        // Fallback: intentar con URL alternativa
+        const fallbackScript = document.createElement('script');
+        fallbackScript.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}&currency=USD&locale=es_ES&intent=capture`;
+        fallbackScript.async = true;
+        fallbackScript.defer = true;
+        
+        fallbackScript.onload = () => {
+          this.isLoaded = true;
+          resolve();
+        };
+        
+        fallbackScript.onerror = () => {
+          reject(new Error('Error cargando PayPal SDK - Fallback también falló'));
+        };
+        
+        document.head.appendChild(fallbackScript);
       };
 
       document.head.appendChild(script);
