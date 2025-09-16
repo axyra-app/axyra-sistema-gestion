@@ -173,76 +173,17 @@ class AxyraPlanRestrictionSystem {
 
     moduleElements.forEach((element) => {
       if (isRestricted) {
+        // Ocultar completamente el módulo
+        element.style.display = 'none';
         element.classList.add('restricted-module');
-        element.style.opacity = '0.5';
-        element.style.pointerEvents = 'none';
-
-        // Agregar overlay de restricción
-        this.addRestrictionOverlay(element, moduleName);
       } else {
+        // Mostrar el módulo
+        element.style.display = '';
         element.classList.remove('restricted-module');
-        element.style.opacity = '1';
-        element.style.pointerEvents = 'auto';
-
-        // Remover overlay de restricción
-        this.removeRestrictionOverlay(element);
       }
     });
   }
 
-  /**
-   * Agrega overlay de restricción
-   */
-  addRestrictionOverlay(element, moduleName) {
-    // Verificar si ya tiene overlay
-    if (element.querySelector('.restriction-overlay')) return;
-
-    const overlay = document.createElement('div');
-    overlay.className = 'restriction-overlay';
-    overlay.innerHTML = `
-      <div class="restriction-content">
-        <div class="restriction-icon">🔒</div>
-        <h3>Módulo Restringido</h3>
-        <p>Este módulo requiere un plan de pago</p>
-        <button class="btn-upgrade-plan" data-module="${moduleName}">
-          Actualizar Plan
-        </button>
-      </div>
-    `;
-
-    overlay.style.cssText = `
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      border-radius: 8px;
-    `;
-
-    element.style.position = 'relative';
-    element.appendChild(overlay);
-
-    // Event listener para botón de actualización
-    overlay.querySelector('.btn-upgrade-plan').addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.showUpgradeModal(moduleName);
-    });
-  }
-
-  /**
-   * Remueve overlay de restricción
-   */
-  removeRestrictionOverlay(element) {
-    const overlay = element.querySelector('.restriction-overlay');
-    if (overlay) {
-      overlay.remove();
-    }
-  }
 
   /**
    * Actualiza indicadores de plan
@@ -264,6 +205,102 @@ class AxyraPlanRestrictionSystem {
         button.style.display = 'none';
       }
     });
+
+    // Agregar botón de actualización en el dashboard si no existe
+    this.addUpgradeButtonToDashboard();
+  }
+
+  /**
+   * Agrega botón de actualización al dashboard
+   */
+  addUpgradeButtonToDashboard() {
+    // Solo mostrar si el plan es free o basic
+    if (this.userPlan !== 'free' && this.userPlan !== 'basic') return;
+
+    // Verificar si ya existe el botón
+    if (document.getElementById('dashboard-upgrade-btn')) return;
+
+    // Buscar el contenedor de acciones rápidas
+    const quickActionsSection = document.querySelector('.quick-actions-section, .acciones-rapidas-section');
+    if (!quickActionsSection) return;
+
+    // Crear botón de actualización
+    const upgradeButton = document.createElement('div');
+    upgradeButton.id = 'dashboard-upgrade-btn';
+    upgradeButton.className = 'upgrade-plan-card';
+    upgradeButton.innerHTML = `
+      <div class="upgrade-content">
+        <div class="upgrade-icon">🚀</div>
+        <h3>Desbloquea Más Funciones</h3>
+        <p>Actualiza tu plan para acceder a todas las funcionalidades</p>
+        <button class="btn-upgrade-now" onclick="window.axyraPlanRestriction.showUpgradeModal()">
+          Ver Planes
+        </button>
+      </div>
+    `;
+
+    // Estilos del botón
+    upgradeButton.style.cssText = `
+      background: linear-gradient(135deg, #0070ba, #005ea6);
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      color: white;
+      margin: 20px 0;
+      box-shadow: 0 8px 25px rgba(0, 112, 186, 0.3);
+      border: 2px solid #0070ba;
+      transition: all 0.3s ease;
+    `;
+
+    // Agregar al dashboard
+    quickActionsSection.appendChild(upgradeButton);
+
+    // Agregar estilos CSS
+    if (!document.getElementById('upgrade-button-styles')) {
+      const styles = document.createElement('style');
+      styles.id = 'upgrade-button-styles';
+      styles.textContent = `
+        .upgrade-plan-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 35px rgba(0, 112, 186, 0.4);
+        }
+        
+        .upgrade-content h3 {
+          margin: 15px 0 10px 0;
+          font-size: 20px;
+          font-weight: bold;
+        }
+        
+        .upgrade-content p {
+          margin: 10px 0 20px 0;
+          opacity: 0.9;
+          font-size: 14px;
+        }
+        
+        .btn-upgrade-now {
+          background: white;
+          color: #0070ba;
+          border: none;
+          padding: 12px 25px;
+          border-radius: 8px;
+          font-weight: bold;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          font-size: 16px;
+        }
+        
+        .btn-upgrade-now:hover {
+          background: #f0f0f0;
+          transform: translateY(-2px);
+        }
+        
+        .upgrade-icon {
+          font-size: 48px;
+          margin-bottom: 10px;
+        }
+      `;
+      document.head.appendChild(styles);
+    }
   }
 
   /**
@@ -540,42 +577,7 @@ class AxyraPlanRestrictionSystem {
        }
       
       .restricted-module {
-        position: relative;
-      }
-      
-      .restriction-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        border-radius: 8px;
-      }
-      
-      .restriction-content {
-        text-align: center;
-        color: white;
-        padding: 20px;
-      }
-      
-      .restriction-icon {
-        font-size: 48px;
-        margin-bottom: 15px;
-      }
-      
-      .btn-upgrade-plan {
-        background: #0070ba;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-top: 15px;
+        display: none !important;
       }
     `;
 
