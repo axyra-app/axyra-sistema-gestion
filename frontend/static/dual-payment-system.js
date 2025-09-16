@@ -188,17 +188,42 @@ class AxyraDualPaymentSystem {
    */
   async handlePayPalPayment(planType, amount, description, userId) {
     try {
-      if (!this.paypalIntegration) {
+      if (!window.axyraPayPalSimple) {
         throw new Error('Sistema PayPal no disponible');
       }
 
-      // Crear botón de PayPal
-      const paypalButton = this.paypalIntegration.createPayPalPaymentButton(planType, amount, description, userId);
+      // Cerrar modal actual
+      this.hideDualPaymentModal();
 
-      // Simular clic en el botón
-      setTimeout(() => {
-        paypalButton.click();
-      }, 100);
+      // Crear contenedor para el botón de PayPal
+      const container = document.createElement('div');
+      container.id = 'paypal-button-container';
+      container.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 10000;
+        min-width: 300px;
+        text-align: center;
+      `;
+
+      container.innerHTML = `
+        <h3>Procesando pago con PayPal</h3>
+        <p>Redirigiendo a PayPal...</p>
+        <div id="paypal-button-container"></div>
+        <button onclick="this.parentElement.remove()" style="margin-top: 15px; padding: 8px 16px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancelar</button>
+      `;
+
+      document.body.appendChild(container);
+
+      // Procesar pago con PayPal
+      await window.axyraPayPalSimple.processPayment(amount, description, planType, userId);
+
     } catch (error) {
       console.error('Error procesando pago PayPal:', error);
       this.showError('Error procesando pago con PayPal');
