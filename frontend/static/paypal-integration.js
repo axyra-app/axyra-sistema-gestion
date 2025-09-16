@@ -7,9 +7,9 @@ class AxyraPayPalIntegration {
   constructor() {
     this.config = {
       clientId: 'AfphhCNx415bpleyT1g5iPIN9IQLCGFGq4a21YpqZHO7zw', // Credenciales reales de PayPal
-      currency: 'COP',
-      locale: 'es_CO',
-      environment: 'sandbox', // 'sandbox' para pruebas, 'production' para producción
+      currency: 'USD',
+      locale: 'es_ES',
+      environment: 'production', // 'sandbox' para pruebas, 'production' para producción
     };
 
     this.isLoaded = false;
@@ -91,22 +91,43 @@ class AxyraPayPalIntegration {
 
       script.onerror = (error) => {
         console.warn('⚠️ Error cargando PayPal SDK, intentando fallback...', error);
-        // Fallback: intentar con URL alternativa
-        const fallbackScript = document.createElement('script');
-        fallbackScript.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}&currency=USD&locale=es_ES&intent=capture`;
-        fallbackScript.async = true;
-        fallbackScript.defer = true;
+        // Esperar un poco antes del fallback
+        setTimeout(() => {
+          // Fallback: intentar con URL más simple
+          const fallbackScript = document.createElement('script');
+          fallbackScript.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}`;
+          fallbackScript.async = true;
+          fallbackScript.defer = true;
         
         fallbackScript.onload = () => {
           this.isLoaded = true;
+          console.log('✅ PayPal SDK cargado con fallback');
           resolve();
         };
         
-        fallbackScript.onerror = () => {
-          reject(new Error('Error cargando PayPal SDK - Fallback también falló'));
+        fallbackScript.onerror = (fallbackError) => {
+          console.warn('⚠️ Fallback también falló, intentando sin parámetros...', fallbackError);
+          // Último intento: solo con client-id
+          const lastScript = document.createElement('script');
+          lastScript.src = `https://www.paypal.com/sdk/js?client-id=${this.config.clientId}&intent=capture`;
+          lastScript.async = true;
+          lastScript.defer = true;
+          
+          lastScript.onload = () => {
+            this.isLoaded = true;
+            console.log('✅ PayPal SDK cargado con último intento');
+            resolve();
+          };
+          
+          lastScript.onerror = () => {
+            reject(new Error('Error cargando PayPal SDK - Todos los intentos fallaron'));
+          };
+          
+          document.head.appendChild(lastScript);
         };
         
         document.head.appendChild(fallbackScript);
+        }, 1000); // Esperar 1 segundo antes del fallback
       };
 
       document.head.appendChild(script);
