@@ -256,6 +256,19 @@ class AxyraDualPaymentSystem {
    * Crea modal de selección de método de pago
    */
   showPaymentMethodModal(planType, amount, description, userId) {
+    // Usar solo Wompi si está disponible
+    if (window.axyraWompiOnlyPayment) {
+      window.axyraWompiOnlyPayment.showPaymentModal(planType, amount, description, userId);
+      return;
+    }
+
+    // Usar el sistema de fallback si está disponible
+    if (window.axyraPaymentSystemFallback) {
+      window.axyraPaymentSystemFallback.showPaymentMethodModal(planType, amount, description, userId);
+      return;
+    }
+
+    // Fallback al sistema original
     const modal = document.createElement('div');
     modal.id = 'dual-payment-modal';
     modal.className = 'dual-payment-modal';
