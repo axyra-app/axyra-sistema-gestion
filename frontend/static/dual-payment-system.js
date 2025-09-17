@@ -223,7 +223,6 @@ class AxyraDualPaymentSystem {
 
       // Procesar pago con PayPal
       await window.axyraPayPalSimple.processPayment(amount, description, planType, userId);
-
     } catch (error) {
       console.error('Error procesando pago PayPal:', error);
       this.showError('Error procesando pago con PayPal');
@@ -267,7 +266,7 @@ class AxyraDualPaymentSystem {
       window.axyraPaymentSystemFallback.showPaymentMethodModal(planType, amount, description, userId);
       return;
     }
-    
+
     // Si no hay sistemas disponibles, mostrar modal simple solo con Wompi
     console.log('🚀 Usando modal simple solo con Wompi');
     this.showSimpleWompiModal(planType, amount, description, userId);
@@ -434,7 +433,7 @@ class AxyraDualPaymentSystem {
         to { transform: translateY(0); opacity: 1; }
       }
     `;
-    
+
     document.head.appendChild(style);
     document.body.appendChild(modal);
 
