@@ -2,7 +2,7 @@
  * AXYRA - Service Worker para Notificaciones Push
  */
 
-const CACHE_NAME = 'axyra-v1';
+const CACHE_NAME = 'axyra-v2';
 const urlsToCache = ['/', '/static/axyra-styles.css', '/static/firebase-config.js', '/static/notifications-system.js'];
 
 // Instalar Service Worker
