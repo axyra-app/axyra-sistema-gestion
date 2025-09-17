@@ -20,18 +20,17 @@ class AxyraWelcomeNotification {
     const urlParams = new URLSearchParams(window.location.search);
     const paymentSuccess = urlParams.get('payment');
     const plan = urlParams.get('plan');
-    const testMode = urlParams.get('test');
 
     if (paymentSuccess === 'success' && plan) {
-      console.log('🎉 Pago exitoso detectado:', { plan, testMode });
-      this.showWelcomeNotification(plan, testMode === 'true');
+      console.log('🎉 Pago exitoso detectado:', { plan });
+      this.showWelcomeNotification(plan);
     }
   }
 
   /**
    * Muestra la notificación de bienvenida
    */
-  showWelcomeNotification(plan, isTestMode = false) {
+  showWelcomeNotification(plan) {
     const planNames = {
       basic: 'Plan Básico',
       professional: 'Plan Profesional',
@@ -100,7 +99,6 @@ class AxyraWelcomeNotification {
           </button>
         </div>
 
-        ${isTestMode ? '<div class="test-mode-notice">🧪 Modo de Prueba - Pago Simulado</div>' : ''}
       </div>
     `;
 
@@ -267,15 +265,6 @@ class AxyraWelcomeNotification {
         transform: translateY(-2px);
       }
       
-      .test-mode-notice {
-        text-align: center;
-        padding: 1rem;
-        background: #fff3cd;
-        color: #856404;
-        border-radius: 10px;
-        margin: 1rem 2rem;
-        font-weight: bold;
-      }
       
       @keyframes fadeIn {
         from { opacity: 0; }
@@ -381,7 +370,6 @@ class AxyraWelcomeNotification {
     const url = new URL(window.location);
     url.searchParams.delete('payment');
     url.searchParams.delete('plan');
-    url.searchParams.delete('test');
     
     window.history.replaceState({}, '', url);
   }
