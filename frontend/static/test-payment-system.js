@@ -24,10 +24,9 @@ class AxyraTestPaymentSystem {
    * Verifica si está en modo de prueba
    */
   checkTestMode() {
-    // Activar modo de prueba si hay parámetro ?test=true en la URL
+    // Solo activar modo de prueba si hay parámetro ?test=true en la URL
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('test') === 'true' || 
-           localStorage.getItem('axyra_test_mode') === 'true';
+    return urlParams.get('test') === 'true';
   }
 
   /**
@@ -516,15 +515,8 @@ class AxyraTestPaymentSystem {
   }
 }
 
-// Inicializar modo de prueba
+// Inicializar sistema de pruebas
 document.addEventListener('DOMContentLoaded', () => {
-  // Activar modo de prueba si hay ?test=true en la URL
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('test') === 'true') {
-    localStorage.setItem('axyra_test_mode', 'true');
-  }
-  
-  // Inicializar sistema de pruebas
   window.axyraTestPaymentSystem = new AxyraTestPaymentSystem();
 });
 
