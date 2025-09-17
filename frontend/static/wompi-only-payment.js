@@ -4,29 +4,36 @@
  */
 
 class AxyraWompiOnlyPayment {
-    constructor() {
-        this.init();
+  constructor() {
+    this.init();
+  }
+
+  async init() {
+    console.log('🚀 Inicializando Sistema Wompi AXYRA...');
+
+    if (window.axyraWompiIntegration) {
+      console.log('✅ Wompi disponible');
+    } else {
+      console.warn('⚠️ Wompi no disponible');
+    }
+  }
+
+  /**
+   * Muestra modal de pago con Wompi
+   */
+  showPaymentModal(planType, amount, description, userId) {
+    // Validar que amount sea un número válido
+    if (!amount || isNaN(amount) || amount <= 0) {
+      console.error('❌ Amount inválido:', amount);
+      this.showError('Error: Monto inválido para el pago');
+      return;
     }
 
-    async init() {
-        console.log('🚀 Inicializando Sistema Wompi AXYRA...');
-        
-        if (window.axyraWompiIntegration) {
-            console.log('✅ Wompi disponible');
-        } else {
-            console.warn('⚠️ Wompi no disponible');
-        }
-    }
+    const modal = document.createElement('div');
+    modal.id = 'wompi-payment-modal';
+    modal.className = 'wompi-payment-modal';
 
-    /**
-     * Muestra modal de pago con Wompi
-     */
-    showPaymentModal(planType, amount, description, userId) {
-        const modal = document.createElement('div');
-        modal.id = 'wompi-payment-modal';
-        modal.className = 'wompi-payment-modal';
-        
-        modal.innerHTML = `
+    modal.innerHTML = `
             <div class="wompi-modal-content">
                 <div class="wompi-modal-header">
                     <h2>💳 Pago con Wompi</h2>
@@ -58,9 +65,9 @@ class AxyraWompiOnlyPayment {
             </div>
         `;
 
-        // Estilos
-        const style = document.createElement('style');
-        style.textContent = `
+    // Estilos
+    const style = document.createElement('style');
+    style.textContent = `
             .wompi-payment-modal {
                 position: fixed;
                 top: 0;
@@ -196,57 +203,57 @@ class AxyraWompiOnlyPayment {
                 }
             }
         `;
-        document.head.appendChild(style);
+    document.head.appendChild(style);
 
-        document.body.appendChild(modal);
+    document.body.appendChild(modal);
 
-        // Event listeners
-        modal.querySelector('.close-wompi-modal').addEventListener('click', () => {
-            modal.remove();
-        });
+    // Event listeners
+    modal.querySelector('.close-wompi-modal').addEventListener('click', () => {
+      modal.remove();
+    });
 
-        modal.querySelector('.btn-cancel').addEventListener('click', () => {
-            modal.remove();
-        });
+    modal.querySelector('.btn-cancel').addEventListener('click', () => {
+      modal.remove();
+    });
 
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove();
-            }
-        });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
 
-        // Botón de pago Wompi
-        modal.querySelector('.btn-pay-wompi').addEventListener('click', async (e) => {
-            const planType = e.target.dataset.plan;
-            const amount = parseFloat(e.target.dataset.amount);
-            const description = e.target.dataset.description;
-            const userId = e.target.dataset.user;
+    // Botón de pago Wompi
+    modal.querySelector('.btn-pay-wompi').addEventListener('click', async (e) => {
+      const planType = e.target.dataset.plan;
+      const amount = parseFloat(e.target.dataset.amount);
+      const description = e.target.dataset.description;
+      const userId = e.target.dataset.user;
 
-            try {
-                if (window.axyraWompiIntegration) {
-                    await window.axyraWompiIntegration.processPayment(planType, amount, description, userId);
-                    modal.remove();
-                } else {
-                    throw new Error('Wompi no disponible');
-                }
-            } catch (error) {
-                console.error('Error procesando pago Wompi:', error);
-                this.showError('Error procesando pago con Wompi');
-            }
-        });
-    }
+      try {
+        if (window.axyraWompiIntegration) {
+          await window.axyraWompiIntegration.processPayment(planType, amount, description, userId);
+          modal.remove();
+        } else {
+          throw new Error('Wompi no disponible');
+        }
+      } catch (error) {
+        console.error('Error procesando pago Wompi:', error);
+        this.showError('Error procesando pago con Wompi');
+      }
+    });
+  }
 
-    showError(message) {
-        const notification = document.createElement('div');
-        notification.className = 'wompi-error-notification';
-        notification.innerHTML = `
+  showError(message) {
+    const notification = document.createElement('div');
+    notification.className = 'wompi-error-notification';
+    notification.innerHTML = `
             <div class="notification-content">
                 <i class="fas fa-exclamation-circle"></i>
                 <span>${message}</span>
             </div>
         `;
-        
-        notification.style.cssText = `
+
+    notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
@@ -258,16 +265,16 @@ class AxyraWompiOnlyPayment {
             z-index: 10001;
             animation: slideIn 0.3s ease;
         `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 5000);
-    }
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.remove();
+    }, 5000);
+  }
 }
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-    window.axyraWompiOnlyPayment = new AxyraWompiOnlyPayment();
+  window.axyraWompiOnlyPayment = new AxyraWompiOnlyPayment();
 });

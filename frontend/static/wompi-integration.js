@@ -8,7 +8,7 @@ class AxyraWompiIntegration {
     this.config = {
       publicKey: 'pub_prod_DMd1RNFhiA3813HZ3YZFsNjSg2beSS00',
       privateKey: 'prv_prod_aka7VAtItpCAF3qhVuD8zvt7FUWXduPY',
-      integritySecret: 'prod_integrity_****************************',
+      integritySecret: 'prod_integrity_qQz4LLXZep6Vs2OqAamNccOayPhi7NTV',
       eventsSecret: 'prod_events_4ob12JL0RXAolocztVa9GThpUrGfy8Dn',
       environment: 'production', // PRODUCCIÓN REAL
       baseUrl: 'https://production.wompi.co/v1',

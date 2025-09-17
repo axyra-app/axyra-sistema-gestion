@@ -8,7 +8,7 @@ const paypalSandboxConfig = {
   // CREDENCIALES DE SANDBOX
   // ========================================
   clientId: 'AfphhCNx415bpleyT1g5iPIN9IQLCGFGq4a21YpqZHO7zw', // Mismo Client ID para sandbox y live
-  clientSecret: 'EJnMmqSp2ahikoG2xlUwqd-dtYPtaan3LeuWyE0eF0fkhj;',
+  clientSecret: 'EJnMmqSp2ahikoG2xlUwqd-dtYPtaan3LeuWyE0eF0fkhj',
 
   // Credenciales específicas de sandbox
   sandbox: {

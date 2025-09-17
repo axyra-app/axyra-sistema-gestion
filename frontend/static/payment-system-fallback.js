@@ -121,7 +121,7 @@ class AxyraPaymentSystemFallback {
 
     // Estilos del modal
     const fallbackStyle = document.createElement('style');
-    style.textContent = `
+    fallbackStyle.textContent = `
             .payment-method-modal {
                 position: fixed;
                 top: 0;
@@ -277,7 +277,7 @@ class AxyraPaymentSystemFallback {
                 }
             }
         `;
-    document.head.appendChild(style);
+    document.head.appendChild(fallbackStyle);
 
     document.body.appendChild(modal);
 
@@ -452,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Agregar estilos CSS
 const fallbackStyle = document.createElement('style');
-style.textContent = `
+fallbackStyle.textContent = `
     @keyframes slideIn {
         from {
             transform: translateX(100%);
@@ -520,4 +520,4 @@ style.textContent = `
         font-size: 16px;
     }
 `;
-document.head.appendChild(style);
+document.head.appendChild(fallbackStyle);

@@ -461,10 +461,10 @@ class AxyraDualPaymentSystem {
    * Fallback al sistema original
    */
   showOriginalModal(planType, amount, description, userId) {
-    const modal = document.createElement('div');
-    modal.id = 'dual-payment-modal';
-    modal.className = 'dual-payment-modal';
-    modal.innerHTML = `
+    const originalModal = document.createElement('div');
+    originalModal.id = 'dual-payment-modal';
+    originalModal.className = 'dual-payment-modal';
+    originalModal.innerHTML = `
       <div class="dual-modal-content">
         <div class="dual-modal-header">
           <h2>💳 Seleccionar Método de Pago</h2>
@@ -692,26 +692,26 @@ class AxyraDualPaymentSystem {
     `;
 
     document.head.appendChild(styles);
-    document.body.appendChild(modal);
+    document.body.appendChild(originalModal);
 
     // Event listeners
-    modal.querySelector('.close-dual-modal').addEventListener('click', () => {
+    originalModal.querySelector('.close-dual-modal').addEventListener('click', () => {
       this.hideDualPaymentModal();
     });
 
-    modal.querySelector('.paypal-select').addEventListener('click', () => {
+    originalModal.querySelector('.paypal-select').addEventListener('click', () => {
       this.hideDualPaymentModal();
       this.handlePayPalPayment(planType, amount, description, userId);
     });
 
-    modal.querySelector('.wompi-select').addEventListener('click', () => {
+    originalModal.querySelector('.wompi-select').addEventListener('click', () => {
       this.hideDualPaymentModal();
       this.handleWompiPayment(planType, amount, description, userId);
     });
 
     // Cerrar al hacer clic fuera del modal
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
+    originalModal.addEventListener('click', (e) => {
+      if (e.target === originalModal) {
         this.hideDualPaymentModal();
       }
     });
