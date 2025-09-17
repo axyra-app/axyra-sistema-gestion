@@ -231,7 +231,13 @@ class AxyraWompiOnlyPayment {
 
       try {
         if (window.axyraWompiIntegration) {
-          await window.axyraWompiIntegration.processPayment(planType, amount, description, userId);
+          await window.axyraWompiIntegration.createWompiTransaction({
+            amount: amount * 100, // Wompi usa centavos
+            currency: 'COP',
+            description: description,
+            planType: planType,
+            userId: userId,
+          });
           modal.remove();
         } else {
           throw new Error('Wompi no disponible');
