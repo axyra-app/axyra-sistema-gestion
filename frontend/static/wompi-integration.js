@@ -347,6 +347,13 @@ class AxyraWompiIntegration {
         professional: 'https://checkout.wompi.co/l/Lk65dP', // Plan Profesional
         enterprise: 'https://checkout.wompi.co/l/Hg5RaQ'    // Plan Empresarial
       };
+
+      // URLs de redirección para cada plan
+      const redirectUrls = {
+        basic: `${window.location.origin}/membresias.html?payment=success&plan=basic`,
+        professional: `${window.location.origin}/membresias.html?payment=success&plan=professional`,
+        enterprise: `${window.location.origin}/membresias.html?payment=success&plan=enterprise`
+      };
       
       // Obtener el link específico del plan
       const wompiCheckoutUrl = planLinks[paymentData.planType];
