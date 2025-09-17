@@ -1,1014 +1,1091 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AXYRA - Planes de Membresía ÉPICOS</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="icon" href="nomina.ico" type="image/x-icon" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0a0a0a;
-            color: #ffffff;
-            overflow-x: hidden;
-        }
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: #0a0a0a;
+        color: #ffffff;
+        overflow-x: hidden;
+      }
 
-        /* ========================================
+      /* ========================================
            PARTÍCULAS ANIMADAS DE FONDO
            ======================================== */
-        
-        .particles-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
+
+      .particles-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+      }
+
+      .particle:nth-child(1) {
+        width: 4px;
+        height: 4px;
+        left: 10%;
+        animation-delay: 0s;
+      }
+      .particle:nth-child(2) {
+        width: 6px;
+        height: 6px;
+        left: 20%;
+        animation-delay: 1s;
+      }
+      .particle:nth-child(3) {
+        width: 3px;
+        height: 3px;
+        left: 30%;
+        animation-delay: 2s;
+      }
+      .particle:nth-child(4) {
+        width: 5px;
+        height: 5px;
+        left: 40%;
+        animation-delay: 3s;
+      }
+      .particle:nth-child(5) {
+        width: 4px;
+        height: 4px;
+        left: 50%;
+        animation-delay: 4s;
+      }
+      .particle:nth-child(6) {
+        width: 7px;
+        height: 7px;
+        left: 60%;
+        animation-delay: 5s;
+      }
+      .particle:nth-child(7) {
+        width: 3px;
+        height: 3px;
+        left: 70%;
+        animation-delay: 0.5s;
+      }
+      .particle:nth-child(8) {
+        width: 5px;
+        height: 5px;
+        left: 80%;
+        animation-delay: 1.5s;
+      }
+      .particle:nth-child(9) {
+        width: 4px;
+        height: 4px;
+        left: 90%;
+        animation-delay: 2.5s;
+      }
+      .particle:nth-child(10) {
+        width: 6px;
+        height: 6px;
+        left: 95%;
+        animation-delay: 3.5s;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(100vh) rotate(0deg);
+          opacity: 0;
         }
-
-        .particle {
-            position: absolute;
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
+        10% {
+          opacity: 1;
         }
-
-        .particle:nth-child(1) { width: 4px; height: 4px; left: 10%; animation-delay: 0s; }
-        .particle:nth-child(2) { width: 6px; height: 6px; left: 20%; animation-delay: 1s; }
-        .particle:nth-child(3) { width: 3px; height: 3px; left: 30%; animation-delay: 2s; }
-        .particle:nth-child(4) { width: 5px; height: 5px; left: 40%; animation-delay: 3s; }
-        .particle:nth-child(5) { width: 4px; height: 4px; left: 50%; animation-delay: 4s; }
-        .particle:nth-child(6) { width: 7px; height: 7px; left: 60%; animation-delay: 5s; }
-        .particle:nth-child(7) { width: 3px; height: 3px; left: 70%; animation-delay: 0.5s; }
-        .particle:nth-child(8) { width: 5px; height: 5px; left: 80%; animation-delay: 1.5s; }
-        .particle:nth-child(9) { width: 4px; height: 4px; left: 90%; animation-delay: 2.5s; }
-        .particle:nth-child(10) { width: 6px; height: 6px; left: 95%; animation-delay: 3.5s; }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        90% {
+          opacity: 1;
         }
+        100% {
+          transform: translateY(-100px) rotate(360deg);
+          opacity: 0;
+        }
+      }
 
-        /* ========================================
+      /* ========================================
            HEADER ÉPICO
            ======================================== */
-        
-        .axyra-header-brutal {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
-            padding: 20px 0;
-            position: relative;
-            overflow: hidden;
-        }
 
-        .axyra-header-brutal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent 30%, rgba(102, 126, 234, 0.1) 50%, transparent 70%);
-            animation: shimmer 3s ease-in-out infinite;
-        }
+      .axyra-header-brutal {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        padding: 20px 0;
+        position: relative;
+        overflow: hidden;
+      }
 
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
+      .axyra-header-brutal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, transparent 30%, rgba(102, 126, 234, 0.1) 50%, transparent 70%);
+        animation: shimmer 3s ease-in-out infinite;
+      }
 
-        .axyra-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            position: relative;
-            z-index: 2;
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
         }
-
-        .axyra-header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        100% {
+          transform: translateX(100%);
         }
+      }
 
-        .axyra-logo-brutal {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+      .axyra-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .axyra-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .axyra-logo-brutal {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .axyra-logo-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
         }
-
-        .axyra-logo-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
-            animation: pulse 2s ease-in-out infinite;
+        50% {
+          transform: scale(1.05);
         }
+      }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+      .axyra-logo-text h1 {
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 5px;
+      }
 
-        .axyra-logo-text h1 {
-            font-size: 2.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 5px;
-        }
+      .axyra-logo-text p {
+        color: #a0a0a0;
+        font-size: 1rem;
+        font-weight: 500;
+      }
 
-        .axyra-logo-text p {
-            color: #a0a0a0;
-            font-size: 1rem;
-            font-weight: 500;
-        }
+      .axyra-nav-brutal {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
 
-        .axyra-nav-brutal {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
+      .axyra-nav-link-brutal {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-        .axyra-nav-link-brutal {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+      .axyra-nav-link-brutal:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
+      }
 
-        .axyra-nav-link-brutal:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
-        }
-
-        /* ========================================
+      /* ========================================
            HERO SECTION BRUTAL
            ======================================== */
-        
-        .axyra-membership-hero-brutal {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 30%, #16213e 70%, #0a0a0a 100%);
-            padding: 100px 0;
-            position: relative;
-            overflow: hidden;
-        }
 
-        .axyra-membership-hero-brutal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
-        }
+      .axyra-membership-hero-brutal {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 30%, #16213e 70%, #0a0a0a 100%);
+        padding: 100px 0;
+        position: relative;
+        overflow: hidden;
+      }
 
-        .axyra-membership-hero-content {
-            text-align: center;
-            position: relative;
-            z-index: 2;
-        }
+      .axyra-membership-hero-brutal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 30% 20%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+          radial-gradient(circle at 70% 80%, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+      }
 
-        .axyra-membership-hero-title {
-            font-size: 4rem;
-            font-weight: 900;
-            margin-bottom: 30px;
-            line-height: 1.1;
-        }
+      .axyra-membership-hero-content {
+        text-align: center;
+        position: relative;
+        z-index: 2;
+      }
 
-        .axyra-hero-main {
-            display: block;
-            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: textGlow 3s ease-in-out infinite;
-        }
+      .axyra-membership-hero-title {
+        font-size: 4rem;
+        font-weight: 900;
+        margin-bottom: 30px;
+        line-height: 1.1;
+      }
 
-        .axyra-hero-sub {
-            display: block;
-            color: #ffffff;
-            font-size: 2.5rem;
-            margin-top: 10px;
-        }
+      .axyra-hero-main {
+        display: block;
+        background: linear-gradient(135deg, #667eea, #764ba2, #f093fb, #f5576c);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: textGlow 3s ease-in-out infinite;
+      }
 
-        @keyframes textGlow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.2); }
-        }
+      .axyra-hero-sub {
+        display: block;
+        color: #ffffff;
+        font-size: 2.5rem;
+        margin-top: 10px;
+      }
 
-        .axyra-membership-hero-description {
-            font-size: 1.3rem;
-            color: #b0b0b0;
-            max-width: 600px;
-            margin: 0 auto 50px;
-            line-height: 1.6;
+      @keyframes textGlow {
+        0%,
+        100% {
+          filter: brightness(1);
         }
-
-        .axyra-cta-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
+        50% {
+          filter: brightness(1.2);
         }
+      }
 
-        .axyra-cta-btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+      .axyra-membership-hero-description {
+        font-size: 1.3rem;
+        color: #b0b0b0;
+        max-width: 600px;
+        margin: 0 auto 50px;
+        line-height: 1.6;
+      }
 
-        .axyra-cta-btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
-        }
+      .axyra-cta-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
 
-        .axyra-cta-btn-primary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.7);
-        }
+      .axyra-cta-btn {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
 
-        .axyra-cta-btn-secondary {
-            background: transparent;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
+      .axyra-cta-btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+      }
 
-        .axyra-cta-btn-secondary:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-5px);
-        }
+      .axyra-cta-btn-primary:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.7);
+      }
 
-        /* ========================================
+      .axyra-cta-btn-secondary {
+        background: transparent;
+        color: #667eea;
+        border: 2px solid #667eea;
+      }
+
+      .axyra-cta-btn-secondary:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-5px);
+      }
+
+      /* ========================================
            MEMBRESÍAS GRID BRUTAL
            ======================================== */
-        
-        .axyra-memberships-section {
-            padding: 100px 0;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
-            position: relative;
-        }
 
-        .axyra-memberships-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-top: 50px;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+      .axyra-memberships-section {
+        padding: 100px 0;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+        position: relative;
+      }
 
-        .axyra-membership-card-brutal {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 25px;
-            padding: 40px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s ease;
-            border: 2px solid transparent;
-        }
+      .axyra-memberships-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-top: 50px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+      }
 
-        .axyra-membership-card-brutal::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            border-radius: 25px;
-        }
+      .axyra-membership-card-brutal {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 25px;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        border: 2px solid transparent;
+      }
 
-        .axyra-membership-card-brutal:hover::before {
-            opacity: 0.1;
-        }
+      .axyra-membership-card-brutal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 25px;
+      }
 
-        .axyra-membership-card-brutal:hover {
-            transform: translateY(-15px);
-            border-color: #667eea;
-            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.3);
-        }
+      .axyra-membership-card-brutal:hover::before {
+        opacity: 0.1;
+      }
 
-        .axyra-membership-badge-brutal {
-            position: absolute;
-            top: -10px;
-            right: 20px;
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.5);
-        }
+      .axyra-membership-card-brutal:hover {
+        transform: translateY(-15px);
+        border-color: #667eea;
+        box-shadow: 0 25px 50px rgba(102, 126, 234, 0.3);
+      }
 
-        .axyra-membership-header-brutal {
-            text-align: center;
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 2;
-        }
+      .axyra-membership-badge-brutal {
+        position: absolute;
+        top: -10px;
+        right: 20px;
+        background: linear-gradient(135deg, #f093fb, #f5576c);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 5px 15px rgba(240, 147, 251, 0.5);
+      }
 
-        .axyra-membership-title {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            color: #ffffff;
-        }
+      .axyra-membership-header-brutal {
+        text-align: center;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 2;
+      }
 
-        .axyra-membership-price-brutal {
-            margin-bottom: 20px;
-        }
+      .axyra-membership-title {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        color: #ffffff;
+      }
 
-        .axyra-price-currency {
-            font-size: 1.5rem;
-            color: #667eea;
-            font-weight: 600;
-        }
+      .axyra-membership-price-brutal {
+        margin-bottom: 20px;
+      }
 
-        .axyra-price-amount {
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: #ffffff;
-            margin: 0 5px;
-        }
+      .axyra-price-currency {
+        font-size: 1.5rem;
+        color: #667eea;
+        font-weight: 600;
+      }
 
-        .axyra-price-period {
-            font-size: 1.2rem;
-            color: #a0a0a0;
-        }
+      .axyra-price-amount {
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: #ffffff;
+        margin: 0 5px;
+      }
 
-        .axyra-membership-description {
-            color: #b0b0b0;
-            font-size: 1.1rem;
-            line-height: 1.5;
-        }
+      .axyra-price-period {
+        font-size: 1.2rem;
+        color: #a0a0a0;
+      }
 
-        .axyra-membership-features {
-            margin: 30px 0;
-            position: relative;
-            z-index: 2;
-        }
+      .axyra-membership-description {
+        color: #b0b0b0;
+        font-size: 1.1rem;
+        line-height: 1.5;
+      }
 
-        .axyra-features-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: #ffffff;
-        }
+      .axyra-membership-features {
+        margin: 30px 0;
+        position: relative;
+        z-index: 2;
+      }
 
-        .axyra-features-list {
-            list-style: none;
-        }
+      .axyra-features-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #ffffff;
+      }
 
-        .axyra-features-list li {
-            padding: 10px 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1rem;
-            color: #d0d0d0;
-        }
+      .axyra-features-list {
+        list-style: none;
+      }
 
-        .axyra-features-list li i {
-            color: #10b981;
-            font-size: 1.2rem;
-        }
+      .axyra-features-list li {
+        padding: 10px 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1rem;
+        color: #d0d0d0;
+      }
 
-        .axyra-membership-btn-brutal {
-            width: 100%;
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 2;
-        }
+      .axyra-features-list li i {
+        color: #10b981;
+        font-size: 1.2rem;
+      }
 
-        .axyra-membership-btn-brutal:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.5);
-        }
+      .axyra-membership-btn-brutal {
+        width: 100%;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        z-index: 2;
+      }
 
-        /* ========================================
+      .axyra-membership-btn-brutal:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(102, 126, 234, 0.5);
+      }
+
+      /* ========================================
            PLANES ESPECÍFICOS
            ======================================== */
-        
-        .axyra-plan-gratuito {
-            border: 2px solid #4b5563;
-        }
 
-        .axyra-plan-gratuito:hover {
-            border-color: #6b7280;
-        }
+      .axyra-plan-gratuito {
+        border: 2px solid #4b5563;
+      }
 
-        .axyra-plan-basico {
-            border: 2px solid #10b981;
-        }
+      .axyra-plan-gratuito:hover {
+        border-color: #6b7280;
+      }
 
-        .axyra-plan-basico:hover {
-            border-color: #059669;
+      .axyra-plan-basico {
+        border: 2px solid #10b981;
+      }
+
+      .axyra-plan-basico:hover {
+        border-color: #059669;
+      }
+
+      .axyra-plan-profesional {
+        border: 2px solid #3b82f6;
+        transform: scale(1.05);
+      }
+
+      .axyra-plan-profesional:hover {
+        transform: scale(1.05) translateY(-15px);
+      }
+
+      .axyra-plan-empresarial {
+        border: 2px solid #8b5cf6;
+      }
+
+      .axyra-plan-empresarial:hover {
+        border-color: #7c3aed;
+      }
+
+      .axyra-plan-ultimate {
+        border: 2px solid #f59e0b;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+      }
+
+      .axyra-plan-ultimate:hover {
+        border-color: #d97706;
+      }
+
+      /* ========================================
+           MODAL DE PAGOS ELEGANTE
+           ======================================== */
+
+      .axyra-payment-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .axyra-payment-modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .axyra-payment-modal-content {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border-radius: 20px;
+        padding: 0;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        border: 2px solid rgba(102, 126, 234, 0.3);
+        animation: slideIn 0.4s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateY(-50px) scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+      }
+
+      .axyra-payment-modal-header {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        padding: 30px;
+        text-align: center;
+        border-radius: 20px 20px 0 0;
+        position: relative;
+      }
+
+      .axyra-payment-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 24px;
+        color: white;
+      }
+
+      .axyra-payment-modal-header h3 {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .close-modal-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .close-modal-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+
+      .axyra-payment-modal-body {
+        padding: 30px;
+      }
+
+      .axyra-payment-modal-body p {
+        color: #d0d0d0;
+        font-size: 1.1rem;
+        text-align: center;
+        margin-bottom: 25px;
+        line-height: 1.6;
+      }
+
+      .axyra-payment-plan-info {
+        background: rgba(102, 126, 234, 0.1);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 25px;
+      }
+
+      .axyra-payment-plan-name {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 8px;
+      }
+
+      .axyra-payment-plan-price {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #ffffff;
+      }
+
+      .axyra-payment-features h4 {
+        color: #ffffff;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+      }
+
+      .axyra-payment-features ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .axyra-payment-features li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        color: #d0d0d0;
+        font-size: 0.95rem;
+      }
+
+      .axyra-payment-features li i {
+        color: #10b981;
+        font-size: 1rem;
+      }
+
+      .axyra-payment-modal-footer {
+        padding: 20px 30px 30px;
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+      }
+
+      .axyra-payment-btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 25px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 140px;
+        justify-content: center;
+      }
+
+      .axyra-payment-btn-primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .axyra-payment-btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+      }
+
+      .axyra-payment-btn-secondary {
+        background: transparent;
+        color: #a0a0a0;
+        border: 2px solid #4b5563;
+      }
+
+      .axyra-payment-btn-secondary:hover {
+        background: #4b5563;
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      /* ========================================
+           RESPONSIVE DESIGN
+           ======================================== */
+
+      @media (max-width: 1200px) {
+        .axyra-memberships-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
         }
 
         .axyra-plan-profesional {
-            border: 2px solid #3b82f6;
-            transform: scale(1.05);
+          transform: none;
         }
 
         .axyra-plan-profesional:hover {
-            transform: scale(1.05) translateY(-15px);
+          transform: translateY(-15px);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .axyra-membership-hero-title {
+          font-size: 2.5rem;
         }
 
-        .axyra-plan-empresarial {
-            border: 2px solid #8b5cf6;
+        .axyra-hero-sub {
+          font-size: 1.8rem;
         }
 
-        .axyra-plan-empresarial:hover {
-            border-color: #7c3aed;
+        .axyra-memberships-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
         }
 
-        .axyra-plan-ultimate {
-            border: 2px solid #f59e0b;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+        .axyra-plan-profesional {
+          transform: none;
         }
 
-        .axyra-plan-ultimate:hover {
-            border-color: #d97706;
+        .axyra-plan-profesional:hover {
+          transform: translateY(-15px);
         }
-
-        /* ========================================
-           MODAL DE PAGOS ELEGANTE
-           ======================================== */
-        
-        .axyra-payment-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .axyra-payment-modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .axyra-payment-modal-content {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border-radius: 20px;
-            padding: 0;
-            max-width: 500px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(102, 126, 234, 0.3);
-            animation: slideIn 0.4s ease;
-        }
-
-        @keyframes slideIn {
-            from { 
-                transform: translateY(-50px) scale(0.9);
-                opacity: 0;
-            }
-            to { 
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-        }
-
-        .axyra-payment-modal-header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 30px;
-            text-align: center;
-            border-radius: 20px 20px 0 0;
-            position: relative;
-        }
-
-        .axyra-payment-icon {
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 24px;
-            color: white;
-        }
-
-        .axyra-payment-modal-header h3 {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0;
-        }
-        
-        .close-modal-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-        
-        .close-modal-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-
-        .axyra-payment-modal-body {
-            padding: 30px;
-        }
-
-        .axyra-payment-modal-body p {
-            color: #d0d0d0;
-            font-size: 1.1rem;
-            text-align: center;
-            margin-bottom: 25px;
-            line-height: 1.6;
-        }
-
-        .axyra-payment-plan-info {
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            border-radius: 15px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 25px;
-        }
-
-        .axyra-payment-plan-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 8px;
-        }
-
-        .axyra-payment-plan-price {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #ffffff;
-        }
-
-        .axyra-payment-features h4 {
-            color: #ffffff;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .axyra-payment-features ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .axyra-payment-features li {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-            color: #d0d0d0;
-            font-size: 0.95rem;
-        }
-
-        .axyra-payment-features li i {
-            color: #10b981;
-            font-size: 1rem;
-        }
-
-        .axyra-payment-modal-footer {
-            padding: 20px 30px 30px;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-
-        .axyra-payment-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 140px;
-            justify-content: center;
-        }
-
-        .axyra-payment-btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .axyra-payment-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-        }
-
-        .axyra-payment-btn-secondary {
-            background: transparent;
-            color: #a0a0a0;
-            border: 2px solid #4b5563;
-        }
-
-        .axyra-payment-btn-secondary:hover {
-            background: #4b5563;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* ========================================
-           RESPONSIVE DESIGN
-           ======================================== */
-        
-        @media (max-width: 1200px) {
-            .axyra-memberships-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .axyra-plan-profesional {
-                transform: none;
-            }
-            
-            .axyra-plan-profesional:hover {
-                transform: translateY(-15px);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .axyra-membership-hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .axyra-hero-sub {
-                font-size: 1.8rem;
-            }
-            
-            .axyra-memberships-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            
-            .axyra-plan-profesional {
-                transform: none;
-            }
-            
-            .axyra-plan-profesional:hover {
-                transform: translateY(-15px);
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Partículas de Fondo -->
     <div class="particles-container">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
+      <div class="particle"></div>
     </div>
 
     <!-- Header Brutal -->
     <header class="axyra-header-brutal">
-        <div class="axyra-container">
-            <div class="axyra-header-content">
-                <div class="axyra-logo-brutal">
-                    <div class="axyra-logo-icon">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                    <div class="axyra-logo-text">
-                        <h1>AXYRA</h1>
-                        <p>Sistema de Gestión Integral</p>
-                    </div>
-                </div>
-                <nav class="axyra-nav-brutal">
-                    <a href="index.html" class="axyra-nav-link-brutal">
-                        <i class="fas fa-arrow-left"></i>
-                        Volver al Inicio
-                    </a>
-                </nav>
+      <div class="axyra-container">
+        <div class="axyra-header-content">
+          <div class="axyra-logo-brutal">
+            <div class="axyra-logo-icon">
+              <i class="fas fa-crown"></i>
             </div>
+            <div class="axyra-logo-text">
+              <h1>AXYRA</h1>
+              <p>Sistema de Gestión Integral</p>
+            </div>
+          </div>
+          <nav class="axyra-nav-brutal">
+            <a href="index.html" class="axyra-nav-link-brutal">
+              <i class="fas fa-arrow-left"></i>
+              Volver al Inicio
+            </a>
+          </nav>
         </div>
+      </div>
     </header>
 
     <!-- Hero Section Brutal -->
     <section class="axyra-membership-hero-brutal">
-        <div class="axyra-container">
-            <div class="axyra-membership-hero-content">
-                <h1 class="axyra-membership-hero-title">
-                    <span class="axyra-hero-main">💎 ELIGE TU PLAN</span>
-                    <span class="axyra-hero-sub">Y TRANSFORMA TU EMPRESA</span>
-                </h1>
-                <p class="axyra-membership-hero-description">
-                    Desbloquea el poder completo de AXYRA con nuestros planes profesionales diseñados para empresas de todos los tamaños. 
-                    <strong>¡Únete a miles de empresas que ya transformaron su gestión!</strong>
-                </p>
-                <div class="axyra-cta-buttons">
-                    <button class="axyra-cta-btn axyra-cta-btn-primary" onclick="scrollToPlans()">
-                        <i class="fas fa-rocket"></i>
-                        Ver Planes
-                    </button>
-                    <button class="axyra-cta-btn axyra-cta-btn-secondary" onclick="showDemo()">
-                        <i class="fas fa-play"></i>
-                        Ver Demo
-                    </button>
-                </div>
-            </div>
+      <div class="axyra-container">
+        <div class="axyra-membership-hero-content">
+          <h1 class="axyra-membership-hero-title">
+            <span class="axyra-hero-main">💎 ELIGE TU PLAN</span>
+            <span class="axyra-hero-sub">Y TRANSFORMA TU EMPRESA</span>
+          </h1>
+          <p class="axyra-membership-hero-description">
+            Desbloquea el poder completo de AXYRA con nuestros planes profesionales diseñados para empresas de todos los
+            tamaños.
+            <strong>¡Únete a miles de empresas que ya transformaron su gestión!</strong>
+          </p>
+          <div class="axyra-cta-buttons">
+            <button class="axyra-cta-btn axyra-cta-btn-primary" onclick="scrollToPlans()">
+              <i class="fas fa-rocket"></i>
+              Ver Planes
+            </button>
+            <button class="axyra-cta-btn axyra-cta-btn-secondary" onclick="showDemo()">
+              <i class="fas fa-play"></i>
+              Ver Demo
+            </button>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Membresías Section -->
     <section class="axyra-memberships-section" id="plans">
-        <div class="axyra-container">
-            <div class="axyra-memberships-grid">
-                <!-- Plan Básico -->
-                <div class="axyra-membership-card-brutal axyra-plan-basico" data-plan="basic">
-                    <div class="axyra-membership-header-brutal">
-                        <h3 class="axyra-membership-title">Básico</h3>
-                        <div class="axyra-membership-price-brutal">
-                            <span class="axyra-price-currency">$</span>
-                            <span class="axyra-price-amount">49.900</span>
-                            <span class="axyra-price-period">/mes</span>
-                        </div>
-                        <p class="axyra-membership-description">Perfecto para pequeñas empresas que están comenzando</p>
-                    </div>
-                    <div class="axyra-membership-features">
-                        <h4 class="axyra-features-title">¿Qué incluye?</h4>
-                        <ul class="axyra-features-list">
-                            <li><i class="fas fa-check"></i> Hasta 10 empleados</li>
-                            <li><i class="fas fa-check"></i> Reportes básicos</li>
-                            <li><i class="fas fa-check"></i> Soporte por email</li>
-                            <li><i class="fas fa-check"></i> Dashboard completo</li>
-                            <li><i class="fas fa-check"></i> Gestión de empleados</li>
-                            <li><i class="fas fa-check"></i> Cálculo de nóminas</li>
-                        </ul>
-                    </div>
-                    <button class="axyra-membership-btn-brutal" onclick="selectPlan('basic')">
-                        Elegir Básico
-                    </button>
-                </div>
-
-                <!-- Plan Profesional -->
-                <div class="axyra-membership-card-brutal axyra-plan-profesional" data-plan="professional">
-                    <div class="axyra-membership-badge-brutal">MÁS POPULAR</div>
-                    <div class="axyra-membership-header-brutal">
-                        <h3 class="axyra-membership-title">Profesional</h3>
-                        <div class="axyra-membership-price-brutal">
-                            <span class="axyra-price-currency">$</span>
-                            <span class="axyra-price-amount">129.900</span>
-                            <span class="axyra-price-period">/mes</span>
-                        </div>
-                        <p class="axyra-membership-description">Ideal para empresas en crecimiento y establecidas</p>
-                    </div>
-                    <div class="axyra-membership-features">
-                        <h4 class="axyra-features-title">¿Qué incluye?</h4>
-                        <ul class="axyra-features-list">
-                            <li><i class="fas fa-check"></i> Hasta 50 empleados</li>
-                            <li><i class="fas fa-check"></i> Reportes avanzados</li>
-                            <li><i class="fas fa-check"></i> Soporte prioritario</li>
-                            <li><i class="fas fa-check"></i> Dashboard avanzado</li>
-                            <li><i class="fas fa-check"></i> Gestión completa de nóminas</li>
-                            <li><i class="fas fa-check"></i> Inventario básico</li>
-                            <li><i class="fas fa-check"></i> Integración con bancos</li>
-                            <li><i class="fas fa-check"></i> Chat de IA profesional</li>
-                        </ul>
-                    </div>
-                    <button class="axyra-membership-btn-brutal" onclick="selectPlan('professional')">
-                        Elegir Profesional
-                    </button>
-                </div>
-
-                <!-- Plan Empresarial -->
-                <div class="axyra-membership-card-brutal axyra-plan-empresarial" data-plan="enterprise">
-                    <div class="axyra-membership-badge-brutal">PREMIUM</div>
-                    <div class="axyra-membership-header-brutal">
-                        <h3 class="axyra-membership-title">Empresarial</h3>
-                        <div class="axyra-membership-price-brutal">
-                            <span class="axyra-price-currency">$</span>
-                            <span class="axyra-price-amount">259.900</span>
-                            <span class="axyra-price-period">/mes</span>
-                        </div>
-                        <p class="axyra-membership-description">Para grandes empresas con necesidades complejas</p>
-                    </div>
-                    <div class="axyra-membership-features">
-                        <h4 class="axyra-features-title">¿Qué incluye?</h4>
-                        <ul class="axyra-features-list">
-                            <li><i class="fas fa-check"></i> Empleados ilimitados</li>
-                            <li><i class="fas fa-check"></i> Reportes ejecutivos</li>
-                            <li><i class="fas fa-check"></i> Soporte 24/7</li>
-                            <li><i class="fas fa-check"></i> Dashboard personalizado</li>
-                            <li><i class="fas fa-check"></i> Gestión multi-sucursal</li>
-                            <li><i class="fas fa-check"></i> Inventario completo</li>
-                            <li><i class="fas fa-check"></i> Integraciones avanzadas</li>
-                            <li><i class="fas fa-check"></i> IA avanzada</li>
-                            <li><i class="fas fa-check"></i> API personalizada</li>
-                            <li><i class="fas fa-check"></i> Consultoría incluida</li>
-                        </ul>
-                    </div>
-                    <button class="axyra-membership-btn-brutal" onclick="selectPlan('enterprise')">
-                        Elegir Empresarial
-                    </button>
-                </div>
+      <div class="axyra-container">
+        <div class="axyra-memberships-grid">
+          <!-- Plan Básico -->
+          <div class="axyra-membership-card-brutal axyra-plan-basico" data-plan="basic">
+            <div class="axyra-membership-header-brutal">
+              <h3 class="axyra-membership-title">Básico</h3>
+              <div class="axyra-membership-price-brutal">
+                <span class="axyra-price-currency">$</span>
+                <span class="axyra-price-amount">49.900</span>
+                <span class="axyra-price-period">/mes</span>
+              </div>
+              <p class="axyra-membership-description">Perfecto para pequeñas empresas que están comenzando</p>
             </div>
+            <div class="axyra-membership-features">
+              <h4 class="axyra-features-title">¿Qué incluye?</h4>
+              <ul class="axyra-features-list">
+                <li><i class="fas fa-check"></i> Hasta 10 empleados</li>
+                <li><i class="fas fa-check"></i> Reportes básicos</li>
+                <li><i class="fas fa-check"></i> Soporte por email</li>
+                <li><i class="fas fa-check"></i> Dashboard completo</li>
+                <li><i class="fas fa-check"></i> Gestión de empleados</li>
+                <li><i class="fas fa-check"></i> Cálculo de nóminas</li>
+              </ul>
+            </div>
+            <button class="axyra-membership-btn-brutal" onclick="selectPlan('basic')">Elegir Básico</button>
+          </div>
+
+          <!-- Plan Profesional -->
+          <div class="axyra-membership-card-brutal axyra-plan-profesional" data-plan="professional">
+            <div class="axyra-membership-badge-brutal">MÁS POPULAR</div>
+            <div class="axyra-membership-header-brutal">
+              <h3 class="axyra-membership-title">Profesional</h3>
+              <div class="axyra-membership-price-brutal">
+                <span class="axyra-price-currency">$</span>
+                <span class="axyra-price-amount">129.900</span>
+                <span class="axyra-price-period">/mes</span>
+              </div>
+              <p class="axyra-membership-description">Ideal para empresas en crecimiento y establecidas</p>
+            </div>
+            <div class="axyra-membership-features">
+              <h4 class="axyra-features-title">¿Qué incluye?</h4>
+              <ul class="axyra-features-list">
+                <li><i class="fas fa-check"></i> Hasta 50 empleados</li>
+                <li><i class="fas fa-check"></i> Reportes avanzados</li>
+                <li><i class="fas fa-check"></i> Soporte prioritario</li>
+                <li><i class="fas fa-check"></i> Dashboard avanzado</li>
+                <li><i class="fas fa-check"></i> Gestión completa de nóminas</li>
+                <li><i class="fas fa-check"></i> Inventario básico</li>
+                <li><i class="fas fa-check"></i> Integración con bancos</li>
+                <li><i class="fas fa-check"></i> Chat de IA profesional</li>
+              </ul>
+            </div>
+            <button class="axyra-membership-btn-brutal" onclick="selectPlan('professional')">Elegir Profesional</button>
+          </div>
+
+          <!-- Plan Empresarial -->
+          <div class="axyra-membership-card-brutal axyra-plan-empresarial" data-plan="enterprise">
+            <div class="axyra-membership-badge-brutal">PREMIUM</div>
+            <div class="axyra-membership-header-brutal">
+              <h3 class="axyra-membership-title">Empresarial</h3>
+              <div class="axyra-membership-price-brutal">
+                <span class="axyra-price-currency">$</span>
+                <span class="axyra-price-amount">259.900</span>
+                <span class="axyra-price-period">/mes</span>
+              </div>
+              <p class="axyra-membership-description">Para grandes empresas con necesidades complejas</p>
+            </div>
+            <div class="axyra-membership-features">
+              <h4 class="axyra-features-title">¿Qué incluye?</h4>
+              <ul class="axyra-features-list">
+                <li><i class="fas fa-check"></i> Empleados ilimitados</li>
+                <li><i class="fas fa-check"></i> Reportes ejecutivos</li>
+                <li><i class="fas fa-check"></i> Soporte 24/7</li>
+                <li><i class="fas fa-check"></i> Dashboard personalizado</li>
+                <li><i class="fas fa-check"></i> Gestión multi-sucursal</li>
+                <li><i class="fas fa-check"></i> Inventario completo</li>
+                <li><i class="fas fa-check"></i> Integraciones avanzadas</li>
+                <li><i class="fas fa-check"></i> IA avanzada</li>
+                <li><i class="fas fa-check"></i> API personalizada</li>
+                <li><i class="fas fa-check"></i> Consultoría incluida</li>
+              </ul>
+            </div>
+            <button class="axyra-membership-btn-brutal" onclick="selectPlan('enterprise')">Elegir Empresarial</button>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- Modal de Login Requerido -->
     <div id="loginRequiredModal" class="axyra-payment-modal">
-        <div class="axyra-payment-modal-content">
-            <div class="axyra-payment-modal-header" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
-                <div class="axyra-payment-icon">
-                    <i class="fas fa-lock"></i>
-                </div>
-                <h3>¡Inicia Sesión Requerido!</h3>
-                <button class="close-modal-btn" onclick="closeLoginRequiredModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="axyra-payment-modal-body">
-                <p>Para adquirir una suscripción, necesitas iniciar sesión en tu cuenta de AXYRA.</p>
-                <div class="axyra-payment-plan-info" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3);">
-                    <div class="axyra-payment-plan-name" style="color: #f59e0b;">¿Por qué necesito iniciar sesión?</div>
-                    <div class="axyra-payment-plan-price" style="font-size: 1.2rem; color: #d0d0d0;">
-                        Para personalizar tu experiencia y gestionar tu suscripción
-                    </div>
-                </div>
-                <div class="axyra-payment-features">
-                    <h4>Beneficios de tener una cuenta:</h4>
-                    <ul>
-                        <li><i class="fas fa-check"></i> Acceso personalizado al dashboard</li>
-                        <li><i class="fas fa-check"></i> Gestión de tu suscripción</li>
-                        <li><i class="fas fa-check"></i> Historial de pagos</li>
-                        <li><i class="fas fa-check"></i> Soporte prioritario</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="axyra-payment-modal-footer">
-                <button class="axyra-payment-btn axyra-payment-btn-secondary" onclick="closeLoginRequiredModal()">
-                    <i class="fas fa-times"></i>
-                    Cancelar
-                </button>
-                <button class="axyra-payment-btn axyra-payment-btn-primary" onclick="goToLogin()">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Ir a Iniciar Sesión
-                </button>
-            </div>
+      <div class="axyra-payment-modal-content">
+        <div class="axyra-payment-modal-header" style="background: linear-gradient(135deg, #f59e0b, #d97706)">
+          <div class="axyra-payment-icon">
+            <i class="fas fa-lock"></i>
+          </div>
+          <h3>¡Inicia Sesión Requerido!</h3>
+          <button class="close-modal-btn" onclick="closeLoginRequiredModal()">
+            <i class="fas fa-times"></i>
+          </button>
         </div>
+        <div class="axyra-payment-modal-body">
+          <p>Para adquirir una suscripción, necesitas iniciar sesión en tu cuenta de AXYRA.</p>
+          <div
+            class="axyra-payment-plan-info"
+            style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3)"
+          >
+            <div class="axyra-payment-plan-name" style="color: #f59e0b">¿Por qué necesito iniciar sesión?</div>
+            <div class="axyra-payment-plan-price" style="font-size: 1.2rem; color: #d0d0d0">
+              Para personalizar tu experiencia y gestionar tu suscripción
+            </div>
+          </div>
+          <div class="axyra-payment-features">
+            <h4>Beneficios de tener una cuenta:</h4>
+            <ul>
+              <li><i class="fas fa-check"></i> Acceso personalizado al dashboard</li>
+              <li><i class="fas fa-check"></i> Gestión de tu suscripción</li>
+              <li><i class="fas fa-check"></i> Historial de pagos</li>
+              <li><i class="fas fa-check"></i> Soporte prioritario</li>
+            </ul>
+          </div>
+        </div>
+        <div class="axyra-payment-modal-footer">
+          <button class="axyra-payment-btn axyra-payment-btn-secondary" onclick="closeLoginRequiredModal()">
+            <i class="fas fa-times"></i>
+            Cancelar
+          </button>
+          <button class="axyra-payment-btn axyra-payment-btn-primary" onclick="goToLogin()">
+            <i class="fas fa-sign-in-alt"></i>
+            Ir a Iniciar Sesión
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Modal de Redirección de Pagos -->
     <div id="paymentModal" class="axyra-payment-modal">
-        <div class="axyra-payment-modal-content">
-            <div class="axyra-payment-modal-header">
-                <div class="axyra-payment-icon">
-                    <i class="fas fa-credit-card"></i>
-                </div>
-                <h3>¡Redirigiendo al Proceso de Pago!</h3>
-            </div>
-            <div class="axyra-payment-modal-body">
-                <p id="paymentModalText">Serás redirigido a la sección de pagos para completar tu suscripción.</p>
-                <div class="axyra-payment-plan-info">
-                    <div class="axyra-payment-plan-name" id="paymentPlanName">Plan Profesional</div>
-                    <div class="axyra-payment-plan-price" id="paymentPlanPrice">$129.900/mes</div>
-                </div>
-                <div class="axyra-payment-features">
-                    <h4>¿Qué incluye tu plan?</h4>
-                    <ul id="paymentPlanFeatures">
-                        <li><i class="fas fa-check"></i> Hasta 50 empleados</li>
-                        <li><i class="fas fa-check"></i> Chat de IA profesional</li>
-                        <li><i class="fas fa-check"></i> Soporte prioritario</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="axyra-payment-modal-footer">
-                <button class="axyra-payment-btn axyra-payment-btn-secondary" onclick="closePaymentModal()">
-                    <i class="fas fa-times"></i>
-                    Cancelar
-                </button>
-                <button class="axyra-payment-btn axyra-payment-btn-primary" onclick="proceedToPayment(selectedPlan)">
-                    <i class="fas fa-arrow-right"></i>
-                    Continuar al Pago
-                </button>
-            </div>
+      <div class="axyra-payment-modal-content">
+        <div class="axyra-payment-modal-header">
+          <div class="axyra-payment-icon">
+            <i class="fas fa-credit-card"></i>
+          </div>
+          <h3>¡Redirigiendo al Proceso de Pago!</h3>
         </div>
+        <div class="axyra-payment-modal-body">
+          <p id="paymentModalText">Serás redirigido a la sección de pagos para completar tu suscripción.</p>
+          <div class="axyra-payment-plan-info">
+            <div class="axyra-payment-plan-name" id="paymentPlanName">Plan Profesional</div>
+            <div class="axyra-payment-plan-price" id="paymentPlanPrice">$129.900/mes</div>
+          </div>
+          <div class="axyra-payment-features">
+            <h4>¿Qué incluye tu plan?</h4>
+            <ul id="paymentPlanFeatures">
+              <li><i class="fas fa-check"></i> Hasta 50 empleados</li>
+              <li><i class="fas fa-check"></i> Chat de IA profesional</li>
+              <li><i class="fas fa-check"></i> Soporte prioritario</li>
+            </ul>
+          </div>
+        </div>
+        <div class="axyra-payment-modal-footer">
+          <button class="axyra-payment-btn axyra-payment-btn-secondary" onclick="closePaymentModal()">
+            <i class="fas fa-times"></i>
+            Cancelar
+          </button>
+          <button class="axyra-payment-btn axyra-payment-btn-primary" onclick="proceedToPayment(selectedPlan)">
+            <i class="fas fa-arrow-right"></i>
+            Continuar al Pago
+          </button>
+        </div>
+      </div>
     </div>
 
     <script>
-        // Función para hacer scroll suave a los planes
-        function scrollToPlans() {
-            document.getElementById('plans').scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
+      // Función para hacer scroll suave a los planes
+      function scrollToPlans() {
+        document.getElementById('plans').scrollIntoView({
+          behavior: 'smooth',
+        });
+      }
 
-        // Función para mostrar demo
-        function showDemo() {
-            alert('🚀 ¡Demo en desarrollo! Próximamente podrás ver una demostración completa de AXYRA.');
-        }
+      // Función para mostrar demo
+      function showDemo() {
+        alert('🚀 ¡Demo en desarrollo! Próximamente podrás ver una demostración completa de AXYRA.');
+      }
 
-        // Función para mostrar modal de login requerido
-        function showLoginRequiredModal() {
-            document.getElementById('loginRequiredModal').classList.add('show');
-        }
+      // Función para mostrar modal de login requerido
+      function showLoginRequiredModal() {
+        document.getElementById('loginRequiredModal').classList.add('show');
+      }
 
-        // Función para cerrar modal de login requerido
-        function closeLoginRequiredModal() {
-            document.getElementById('loginRequiredModal').classList.remove('show');
-        }
+      // Función para cerrar modal de login requerido
+      function closeLoginRequiredModal() {
+        document.getElementById('loginRequiredModal').classList.remove('show');
+      }
 
-        // Función para ir al login
-        function goToLogin() {
-            // Guardar la página actual para regresar después del login
-            localStorage.setItem('axyra_return_url', window.location.href);
-            // Redirigir al login
-            window.location.href = 'login.html';
-        }
+      // Función para ir al login
+      function goToLogin() {
+        // Guardar la página actual para regresar después del login
+        localStorage.setItem('axyra_return_url', window.location.href);
+        // Redirigir al login
+        window.location.href = 'login.html';
+      }
 
-        // Función de modal simple como último recurso
-        function showSimplePaymentModal(planType, amount, description, userId) {
-            const modal = document.createElement('div');
-            modal.id = 'simple-payment-modal';
-            modal.className = 'simple-payment-modal';
-            modal.innerHTML = `
+      // Función de modal simple como último recurso
+      function showSimplePaymentModal(planType, amount, description, userId) {
+        const modal = document.createElement('div');
+        modal.id = 'simple-payment-modal';
+        modal.className = 'simple-payment-modal';
+        modal.innerHTML = `
                 <div class="simple-payment-content">
                     <div class="simple-payment-header">
                         <h2>💳 Pago con Wompi</h2>
@@ -1036,9 +1113,9 @@
                 </div>
             `;
 
-            // Estilos
-            const style = document.createElement('style');
-            style.textContent = `
+        // Estilos
+        const style = document.createElement('style');
+        style.textContent = `
                 .simple-payment-modal {
                     position: fixed;
                     top: 0;
@@ -1162,294 +1239,279 @@
                     to { transform: translateY(0); opacity: 1; }
                 }
             `;
-            
-            document.head.appendChild(style);
-            document.body.appendChild(modal);
 
-            // Event listeners
-            modal.querySelector('.close-simple-payment').addEventListener('click', () => {
-                modal.remove();
-            });
+        document.head.appendChild(style);
+        document.body.appendChild(modal);
 
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-
-            // Botón de Wompi
-            modal.querySelector('#simple-wompi-pay-button').addEventListener('click', () => {
-                console.log('🚀 Iniciando pago con Wompi...');
-                alert('🚀 Pago con Wompi iniciado! (Funcionalidad en desarrollo)');
-                modal.remove();
-            });
-        }
-
-        // Variable global para el plan seleccionado
-        let selectedPlan = null;
-
-        // Función para verificar si el usuario está logueado
-        function isUserLoggedIn() {
-            const user = localStorage.getItem('axyra_isolated_user');
-            return user && user !== 'null' && user !== 'undefined';
-        }
-
-        // Función para seleccionar plan
-        function selectPlan(planType) {
-            console.log('🎯 selectPlan llamado con:', planType);
-            
-            // Verificar si el usuario está logueado
-            if (!isUserLoggedIn()) {
-                showLoginRequiredModal();
-                return;
-            }
-            
-            selectedPlan = planType;
-            console.log('✅ selectedPlan establecido a:', selectedPlan);
-            
-            // Datos de los planes
-            const planData = {
-                'basic': {
-                    name: 'Básico',
-                    price: '$49.900/mes',
-                    features: [
-                        'Hasta 10 empleados',
-                        'Reportes básicos',
-                        'Soporte por email',
-                        'Dashboard completo',
-                        'Gestión de empleados',
-                        'Cálculo de nóminas'
-                    ]
-                },
-                'professional': {
-                    name: 'Profesional',
-                    price: '$129.900/mes',
-                    features: [
-                        'Hasta 50 empleados',
-                        'Reportes avanzados',
-                        'Soporte prioritario',
-                        'Dashboard avanzado',
-                        'Gestión completa de nóminas',
-                        'Inventario básico',
-                        'Integración con bancos',
-                        'Chat de IA profesional'
-                    ]
-                },
-                'enterprise': {
-                    name: 'Empresarial',
-                    price: '$259.900/mes',
-                    features: [
-                        'Empleados ilimitados',
-                        'Reportes ejecutivos',
-                        'Soporte 24/7',
-                        'Dashboard personalizado',
-                        'Gestión multi-sucursal',
-                        'Inventario completo',
-                        'Integraciones avanzadas',
-                        'IA avanzada',
-                        'API personalizada',
-                        'Consultoría incluida'
-                    ]
-                }
-            };
-
-            const plan = planData[planType];
-            if (!plan) return;
-
-            // Actualizar contenido del modal
-            document.getElementById('paymentPlanName').textContent = plan.name;
-            document.getElementById('paymentPlanPrice').textContent = plan.price;
-            
-            // Actualizar lista de características
-            const featuresList = document.getElementById('paymentPlanFeatures');
-            featuresList.innerHTML = '';
-            plan.features.forEach(feature => {
-                const li = document.createElement('li');
-                li.innerHTML = `<i class="fas fa-check"></i> ${feature}`;
-                featuresList.appendChild(li);
-            });
-
-            // Mostrar modal
-            document.getElementById('paymentModal').classList.add('show');
-        }
-
-        // Función para cerrar modal
-        function closePaymentModal() {
-            document.getElementById('paymentModal').classList.remove('show');
-            selectedPlan = null;
-        }
-
-        // Función para proceder al pago
-        function proceedToPayment(planType) {
-            console.log('💳 proceedToPayment llamado con planType:', planType);
-            console.log('💳 selectedPlan global:', selectedPlan);
-            
-            // Usar el parámetro si está disponible, sino usar la variable global
-            const currentPlan = planType || selectedPlan;
-            
-            if (!currentPlan) {
-                console.error('❌ No se pudo determinar el plan seleccionado');
-                alert('Error: No se pudo determinar el plan seleccionado');
-                return;
-            }
-            
-            // Precios de los planes
-            const precios = {
-                basic: 49900,
-                professional: 129900,
-                enterprise: 259900
-            };
-            
-            const nombres = {
-                basic: 'Plan Básico',
-                professional: 'Plan Profesional',
-                enterprise: 'Plan Empresarial'
-            };
-            
-            // Verificar autenticación de múltiples formas
-            let user = null;
-            
-            console.log('🔍 Verificando autenticación...');
-            
-            // Intentar Firebase Auth primero
-            if (typeof firebase !== 'undefined' && firebase.auth) {
-                user = firebase.auth().currentUser;
-                console.log('🔥 Usuario Firebase:', user ? 'Sí' : 'No');
-            } else {
-                console.log('🔥 Firebase no disponible');
-            }
-            
-            // Si no hay usuario en Firebase, verificar localStorage
-            if (!user) {
-                const localUser = localStorage.getItem('axyra_isolated_user');
-                console.log('💾 Usuario localStorage:', localUser);
-                if (localUser && localUser !== 'null' && localUser !== 'undefined') {
-                    try {
-                        user = JSON.parse(localUser);
-                        console.log('✅ Usuario parseado:', user);
-                    } catch (e) {
-                        console.warn('Error parsing local user:', e);
-                    }
-                }
-            }
-            
-            // Si aún no hay usuario, mostrar modal de login
-            if (!user) {
-                console.log('❌ No hay usuario autenticado, mostrando modal de login');
-                showLoginRequiredModal();
-                return;
-            }
-            
-            console.log('✅ Usuario autenticado:', user);
-            
-            // Cerrar modal actual
-            closePaymentModal();
-            
-            // Mostrar modal de selección de método de pago
-            console.log('🔍 Verificando sistemas de pago disponibles...');
-            console.log('🔍 axyraDualPaymentSystem:', window.axyraDualPaymentSystem);
-            console.log('🔍 axyraWompiOnlyPayment:', window.axyraWompiOnlyPayment);
-            console.log('🔍 axyraPaymentSystemFallback:', window.axyraPaymentSystemFallback);
-            
-            // Esperar un poco para que los scripts se carguen
-            setTimeout(() => {
-                // Validar que currentPlan existe en precios
-                if (!currentPlan || !precios[currentPlan]) {
-                    console.error('❌ Plan seleccionado inválido:', currentPlan);
-                    alert('Error: Plan seleccionado no válido');
-                    return;
-                }
-                
-                const amount = precios[currentPlan];
-                const description = nombres[currentPlan];
-                
-                console.log('📊 Datos del pago:', { currentPlan, amount, description, userId: user.uid });
-                
-                if (window.axyraDualPaymentSystem) {
-                    console.log('✅ Usando axyraDualPaymentSystem');
-                    window.axyraDualPaymentSystem.showPaymentMethodModal(
-                        currentPlan,
-                        amount,
-                        description,
-                        user.uid
-                    );
-                } else if (window.axyraWompiOnlyPayment) {
-                    console.log('✅ Usando axyraWompiOnlyPayment');
-                    window.axyraWompiOnlyPayment.showPaymentModal(
-                        currentPlan,
-                        amount,
-                        description,
-                        user.uid
-                    );
-                } else if (window.axyraPaymentSystemFallback) {
-                    console.log('✅ Usando axyraPaymentSystemFallback');
-                    window.axyraPaymentSystemFallback.showPaymentMethodModal(
-                        currentPlan,
-                        amount,
-                        description,
-                        user.uid
-                    );
-                } else {
-                    console.log('❌ No hay sistemas de pago disponibles, mostrando modal simple');
-                    // Mostrar modal simple como último recurso
-                    showSimplePaymentModal(currentPlan, amount, description, user.uid);
-                }
-            }, 500);
-        }
-
-        // Cerrar modal al hacer click fuera de él
-        document.getElementById('paymentModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePaymentModal();
-            }
+        // Event listeners
+        modal.querySelector('.close-simple-payment').addEventListener('click', () => {
+          modal.remove();
         });
 
-        // Animaciones adicionales al cargar
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animar cards al hacer scroll
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            });
-
-            document.querySelectorAll('.axyra-membership-card-brutal').forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(50px)';
-                card.style.transition = 'all 0.6s ease';
-                observer.observe(card);
-            });
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) {
+            modal.remove();
+          }
         });
+
+        // Botón de Wompi
+        modal.querySelector('#simple-wompi-pay-button').addEventListener('click', () => {
+          console.log('🚀 Iniciando pago con Wompi...');
+          alert('🚀 Pago con Wompi iniciado! (Funcionalidad en desarrollo)');
+          modal.remove();
+        });
+      }
+
+      // Variable global para el plan seleccionado
+      let selectedPlan = null;
+
+      // Función para verificar si el usuario está logueado
+      function isUserLoggedIn() {
+        const user = localStorage.getItem('axyra_isolated_user');
+        return user && user !== 'null' && user !== 'undefined';
+      }
+
+      // Función para seleccionar plan
+      function selectPlan(planType) {
+        console.log('🎯 selectPlan llamado con:', planType);
+
+        // Verificar si el usuario está logueado
+        if (!isUserLoggedIn()) {
+          showLoginRequiredModal();
+          return;
+        }
+
+        selectedPlan = planType;
+        console.log('✅ selectedPlan establecido a:', selectedPlan);
+
+        // Datos de los planes
+        const planData = {
+          basic: {
+            name: 'Básico',
+            price: '$49.900/mes',
+            features: [
+              'Hasta 10 empleados',
+              'Reportes básicos',
+              'Soporte por email',
+              'Dashboard completo',
+              'Gestión de empleados',
+              'Cálculo de nóminas',
+            ],
+          },
+          professional: {
+            name: 'Profesional',
+            price: '$129.900/mes',
+            features: [
+              'Hasta 50 empleados',
+              'Reportes avanzados',
+              'Soporte prioritario',
+              'Dashboard avanzado',
+              'Gestión completa de nóminas',
+              'Inventario básico',
+              'Integración con bancos',
+              'Chat de IA profesional',
+            ],
+          },
+          enterprise: {
+            name: 'Empresarial',
+            price: '$259.900/mes',
+            features: [
+              'Empleados ilimitados',
+              'Reportes ejecutivos',
+              'Soporte 24/7',
+              'Dashboard personalizado',
+              'Gestión multi-sucursal',
+              'Inventario completo',
+              'Integraciones avanzadas',
+              'IA avanzada',
+              'API personalizada',
+              'Consultoría incluida',
+            ],
+          },
+        };
+
+        const plan = planData[planType];
+        if (!plan) return;
+
+        // Actualizar contenido del modal
+        document.getElementById('paymentPlanName').textContent = plan.name;
+        document.getElementById('paymentPlanPrice').textContent = plan.price;
+
+        // Actualizar lista de características
+        const featuresList = document.getElementById('paymentPlanFeatures');
+        featuresList.innerHTML = '';
+        plan.features.forEach((feature) => {
+          const li = document.createElement('li');
+          li.innerHTML = `<i class="fas fa-check"></i> ${feature}`;
+          featuresList.appendChild(li);
+        });
+
+        // Mostrar modal
+        document.getElementById('paymentModal').classList.add('show');
+      }
+
+      // Función para cerrar modal
+      function closePaymentModal() {
+        document.getElementById('paymentModal').classList.remove('show');
+        selectedPlan = null;
+      }
+
+      // Función para proceder al pago
+      function proceedToPayment(planType) {
+        console.log('💳 proceedToPayment llamado con planType:', planType);
+        console.log('💳 selectedPlan global:', selectedPlan);
+
+        // Usar el parámetro si está disponible, sino usar la variable global
+        const currentPlan = planType || selectedPlan;
+
+        if (!currentPlan) {
+          console.error('❌ No se pudo determinar el plan seleccionado');
+          alert('Error: No se pudo determinar el plan seleccionado');
+          return;
+        }
+
+        // Precios de los planes
+        const precios = {
+          basic: 49900,
+          professional: 129900,
+          enterprise: 259900,
+        };
+
+        const nombres = {
+          basic: 'Plan Básico',
+          professional: 'Plan Profesional',
+          enterprise: 'Plan Empresarial',
+        };
+
+        // Verificar autenticación de múltiples formas
+        let user = null;
+
+        console.log('🔍 Verificando autenticación...');
+
+        // Intentar Firebase Auth primero
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+          user = firebase.auth().currentUser;
+          console.log('🔥 Usuario Firebase:', user ? 'Sí' : 'No');
+        } else {
+          console.log('🔥 Firebase no disponible');
+        }
+
+        // Si no hay usuario en Firebase, verificar localStorage
+        if (!user) {
+          const localUser = localStorage.getItem('axyra_isolated_user');
+          console.log('💾 Usuario localStorage:', localUser);
+          if (localUser && localUser !== 'null' && localUser !== 'undefined') {
+            try {
+              user = JSON.parse(localUser);
+              console.log('✅ Usuario parseado:', user);
+            } catch (e) {
+              console.warn('Error parsing local user:', e);
+            }
+          }
+        }
+
+        // Si aún no hay usuario, mostrar modal de login
+        if (!user) {
+          console.log('❌ No hay usuario autenticado, mostrando modal de login');
+          showLoginRequiredModal();
+          return;
+        }
+
+        console.log('✅ Usuario autenticado:', user);
+
+        // Cerrar modal actual
+        closePaymentModal();
+
+        // Mostrar modal de selección de método de pago
+        console.log('🔍 Verificando sistemas de pago disponibles...');
+        console.log('🔍 axyraDualPaymentSystem:', window.axyraDualPaymentSystem);
+        console.log('🔍 axyraWompiOnlyPayment:', window.axyraWompiOnlyPayment);
+        console.log('🔍 axyraPaymentSystemFallback:', window.axyraPaymentSystemFallback);
+
+        // Esperar un poco para que los scripts se carguen
+        setTimeout(() => {
+          // Validar que currentPlan existe en precios
+          if (!currentPlan || !precios[currentPlan]) {
+            console.error('❌ Plan seleccionado inválido:', currentPlan);
+            alert('Error: Plan seleccionado no válido');
+            return;
+          }
+
+          const amount = precios[currentPlan];
+          const description = nombres[currentPlan];
+
+          console.log('📊 Datos del pago:', { currentPlan, amount, description, userId: user.uid });
+
+          if (window.axyraDualPaymentSystem) {
+            console.log('✅ Usando axyraDualPaymentSystem');
+            window.axyraDualPaymentSystem.showPaymentMethodModal(currentPlan, amount, description, user.uid);
+          } else if (window.axyraWompiOnlyPayment) {
+            console.log('✅ Usando axyraWompiOnlyPayment');
+            window.axyraWompiOnlyPayment.showPaymentModal(currentPlan, amount, description, user.uid);
+          } else if (window.axyraPaymentSystemFallback) {
+            console.log('✅ Usando axyraPaymentSystemFallback');
+            window.axyraPaymentSystemFallback.showPaymentMethodModal(currentPlan, amount, description, user.uid);
+          } else {
+            console.log('❌ No hay sistemas de pago disponibles, mostrando modal simple');
+            // Mostrar modal simple como último recurso
+            showSimplePaymentModal(currentPlan, amount, description, user.uid);
+          }
+        }, 500);
+      }
+
+      // Cerrar modal al hacer click fuera de él
+      document.getElementById('paymentModal').addEventListener('click', function (e) {
+        if (e.target === this) {
+          closePaymentModal();
+        }
+      });
+
+      // Animaciones adicionales al cargar
+      document.addEventListener('DOMContentLoaded', function () {
+        // Animar cards al hacer scroll
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+            }
+          });
+        });
+
+        document.querySelectorAll('.axyra-membership-card-brutal').forEach((card) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(50px)';
+          card.style.transition = 'all 0.6s ease';
+          observer.observe(card);
+        });
+      });
     </script>
-    
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="static/firebase-config.js"></script>
-    
+
     <!-- Sistema de Logging Limpio -->
     <script src="static/clean-logging-system.js?v=4"></script>
-    
+
     <!-- Sistema de Pruebas de Pagos (DEBE CARGARSE PRIMERO) -->
     <script src="static/test-payment-system.js?v=4"></script>
-    
+
     <!-- Sistema de Redirección Post-Pago -->
     <script src="static/payment-redirect.js?v=4"></script>
-    
+
     <!-- Sistema de Notificaciones de Bienvenida -->
     <script src="static/welcome-notification.js?v=4"></script>
-    
+
     <!-- Sistema de Verificación de Pagos -->
     <script src="static/payment-verification.js?v=4"></script>
-    
+
     <!-- Sistema de Pagos - Solo Wompi -->
     <script src="static/wompi-integration.js?v=4"></script>
     <script src="static/wompi-only-payment.js?v=4"></script>
     <script src="static/payment-system-fallback.js?v=4"></script>
     <script src="static/dual-payment-system.js?v=4"></script>
-</body>
+  </body>
 </html>

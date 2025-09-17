@@ -286,15 +286,101 @@ service cloud.firestore {
     // ========================================
     
     match /membresias/{membresiaId} {
-      // Lectura: usuarios autenticados de la misma empresa
-      allow read: if isAuthenticated() && 
-        (isSameCompany(resource.data.companyId) || isAdmin());
+      // Lectura: usuario propietario, usuarios de la misma empresa, admins
+      allow read: if isAuthenticated() && (
+        isOwner(resource.data.userId) ||
+        isSameCompany(resource.data.companyId) ||
+        isAdmin()
+      );
       
-      // Escritura: admins y gerentes
-      allow create, update: if isAdmin() || hasRole('gerente');
+      // Escritura: usuario propietario, admins y gerentes
+      allow create: if isAuthenticated() && (
+        request.resource.data.userId == request.auth.uid ||
+        isAdmin() ||
+        hasRole('gerente')
+      );
+      
+      allow update: if isAuthenticated() && (
+        isOwner(resource.data.userId) ||
+        isAdmin() ||
+        hasRole('gerente')
+      );
       
       // Eliminación: solo admins
       allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA PAGOS
+    // ========================================
+    
+    match /pagos/{pagoId} {
+      // Lectura: usuario propietario del pago, admins
+      allow read: if isAuthenticated() && (
+        isOwner(resource.data.userId) ||
+        isAdmin()
+      );
+      
+      // Escritura: usuario propietario, sistema, admins
+      allow create: if isAuthenticated() && (
+        request.resource.data.userId == request.auth.uid ||
+        isAdmin()
+      );
+      
+      // Actualización: solo sistema y admins (para actualizar estado de pago)
+      allow update: if isAdmin() || 
+        (isAuthenticated() && request.resource.data.userId == request.auth.uid);
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA TRANSACCIONES WOMPI
+    // ========================================
+    
+    match /wompi_transactions/{transactionId} {
+      // Lectura: usuario propietario, admins
+      allow read: if isAuthenticated() && (
+        isOwner(resource.data.userId) ||
+        isAdmin()
+      );
+      
+      // Escritura: sistema, usuario propietario, admins
+      allow create: if isAuthenticated() && (
+        request.resource.data.userId == request.auth.uid ||
+        isAdmin()
+      );
+      
+      // Actualización: solo sistema y admins
+      allow update: if isAdmin();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA PLANES DE MEMBRESÍA
+    // ========================================
+    
+    match /planes_membresia/{planId} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Escritura: solo admins
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // ========================================
+    // REGLAS PARA CONFIGURACIÓN DE PAGOS
+    // ========================================
+    
+    match /configuracion_pagos/{configId} {
+      // Lectura: usuarios autenticados
+      allow read: if isAuthenticated();
+      
+      // Escritura: solo admins
+      allow create, update, delete: if isAdmin();
     }
     
     // ========================================
