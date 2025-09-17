@@ -14,6 +14,9 @@ class AxyraTestPaymentSystem {
       console.log('🧪 Modo de prueba activado - Pagos simulados');
       this.addTestModeIndicator();
       this.overridePaymentMethods();
+    } else {
+      // Agregar botón para activar modo de prueba
+      this.addTestModeButton();
     }
   }
 
@@ -25,6 +28,37 @@ class AxyraTestPaymentSystem {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('test') === 'true' || 
            localStorage.getItem('axyra_test_mode') === 'true';
+  }
+
+  /**
+   * Agrega botón para activar modo de prueba
+   */
+  addTestModeButton() {
+    const button = document.createElement('button');
+    button.id = 'test-mode-button';
+    button.innerHTML = '🧪 Activar Modo de Prueba';
+    button.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      z-index: 9999;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    `;
+    
+    button.addEventListener('click', () => {
+      localStorage.setItem('axyra_test_mode', 'true');
+      location.reload();
+    });
+    
+    document.body.appendChild(button);
   }
 
   /**
@@ -54,19 +88,38 @@ class AxyraTestPaymentSystem {
    * Sobrescribe los métodos de pago para simular
    */
   overridePaymentMethods() {
-    // Interceptar cuando se llama a createWompiTransaction
-    const originalCreateWompiTransaction = window.axyraWompiIntegration?.createWompiTransaction;
+    console.log('🧪 Configurando interceptores de pago...');
     
-    if (window.axyraWompiIntegration) {
-      window.axyraWompiIntegration.createWompiTransaction = async (paymentData) => {
-        console.log('🧪 Simulando pago:', paymentData);
-        await this.simulatePayment(paymentData);
-      };
-    }
-
+    // Interceptar cuando se llame a createWompiTransaction
+    this.interceptWompiIntegration();
+    
     // Interceptar otros sistemas de pago
     this.overrideDualPaymentSystem();
     this.overrideWompiOnlyPayment();
+  }
+
+  /**
+   * Intercepta la integración de Wompi
+   */
+  interceptWompiIntegration() {
+    // Interceptar cuando se defina la clase AxyraWompiIntegration
+    const originalCreateWompiTransaction = window.axyraWompiIntegration?.createWompiTransaction;
+    
+    // Función para interceptar cuando se cree la instancia
+    const interceptWhenReady = () => {
+      if (window.axyraWompiIntegration && window.axyraWompiIntegration.createWompiTransaction) {
+        console.log('🧪 Interceptando createWompiTransaction...');
+        window.axyraWompiIntegration.createWompiTransaction = async (paymentData) => {
+          console.log('🧪 Simulando pago:', paymentData);
+          await this.simulatePayment(paymentData);
+        };
+      } else {
+        // Reintentar en 100ms
+        setTimeout(interceptWhenReady, 100);
+      }
+    };
+    
+    interceptWhenReady();
   }
 
   /**
