@@ -464,9 +464,6 @@ class AxyraDualPaymentSystem {
     const modal = document.createElement('div');
     modal.id = 'dual-payment-modal';
     modal.className = 'dual-payment-modal';
-    const modal = document.createElement('div');
-    modal.id = 'dual-payment-modal';
-    modal.className = 'dual-payment-modal';
     modal.innerHTML = `
       <div class="dual-modal-content">
         <div class="dual-modal-header">

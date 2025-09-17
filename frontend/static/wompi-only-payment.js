@@ -36,7 +36,7 @@ class AxyraWompiOnlyPayment {
                 <div class="wompi-modal-body">
                     <div class="plan-info">
                         <h3>${description}</h3>
-                        <p class="plan-price">$${amount.toLocaleString()} COP</p>
+                        <p class="plan-price">$${amount ? amount.toLocaleString() : '0'} COP</p>
                     </div>
                     
                     <div class="wompi-payment-section">
