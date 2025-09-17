@@ -1003,6 +1003,188 @@
             window.location.href = 'login.html';
         }
 
+        // Función de modal simple como último recurso
+        function showSimplePaymentModal(planType, amount, description, userId) {
+            const modal = document.createElement('div');
+            modal.id = 'simple-payment-modal';
+            modal.className = 'simple-payment-modal';
+            modal.innerHTML = `
+                <div class="simple-payment-content">
+                    <div class="simple-payment-header">
+                        <h2>💳 Pago con Wompi</h2>
+                        <button class="close-simple-payment">&times;</button>
+                    </div>
+                    
+                    <div class="simple-payment-body">
+                        <div class="plan-info">
+                            <h3>${description}</h3>
+                            <p class="plan-price">$${amount ? amount.toLocaleString() : '0'} COP</p>
+                        </div>
+                        
+                        <div class="wompi-payment-section">
+                            <div class="wompi-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <h4>Pagar con Wompi</h4>
+                            <p>Método de pago seguro para Colombia</p>
+                            <button class="wompi-pay-btn" id="simple-wompi-pay-button">
+                                <i class="fas fa-credit-card"></i>
+                                Pagar con Wompi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Estilos
+            const style = document.createElement('style');
+            style.textContent = `
+                .simple-payment-modal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.8);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 10000;
+                    animation: fadeIn 0.3s ease;
+                }
+                
+                .simple-payment-content {
+                    background: #1a1a1a;
+                    border-radius: 20px;
+                    max-width: 500px;
+                    width: 90%;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                    animation: slideUp 0.3s ease;
+                }
+                
+                .simple-payment-header {
+                    background: linear-gradient(135deg, #00D4AA, #00B894);
+                    padding: 20px;
+                    border-radius: 20px 20px 0 0;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    color: white;
+                }
+                
+                .simple-payment-header h2 {
+                    margin: 0;
+                    font-size: 1.5rem;
+                }
+                
+                .close-simple-payment {
+                    background: rgba(255, 255, 255, 0.2);
+                    border: none;
+                    color: white;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    font-size: 1.2rem;
+                }
+                
+                .simple-payment-body {
+                    padding: 30px;
+                }
+                
+                .plan-info {
+                    text-align: center;
+                    margin-bottom: 30px;
+                }
+                
+                .plan-info h3 {
+                    color: #00D4AA;
+                    margin: 0 0 10px 0;
+                    font-size: 1.3rem;
+                }
+                
+                .plan-price {
+                    color: #d0d0d0;
+                    font-size: 1.1rem;
+                    margin: 0;
+                }
+                
+                .wompi-payment-section {
+                    text-align: center;
+                }
+                
+                .wompi-icon {
+                    font-size: 3rem;
+                    color: #00D4AA;
+                    margin-bottom: 20px;
+                }
+                
+                .wompi-payment-section h4 {
+                    color: #00D4AA;
+                    margin: 0 0 10px 0;
+                    font-size: 1.2rem;
+                }
+                
+                .wompi-payment-section p {
+                    color: #888;
+                    margin: 0 0 20px 0;
+                }
+                
+                .wompi-pay-btn {
+                    background: linear-gradient(135deg, #00D4AA, #00B894);
+                    color: white;
+                    border: none;
+                    padding: 15px 30px;
+                    border-radius: 10px;
+                    font-size: 1.1rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin: 0 auto;
+                }
+                
+                .wompi-pay-btn:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 10px 20px rgba(0, 212, 170, 0.3);
+                }
+                
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                
+                @keyframes slideUp {
+                    from { transform: translateY(50px); opacity: 0; }
+                    to { transform: translateY(0); opacity: 1; }
+                }
+            `;
+            
+            document.head.appendChild(style);
+            document.body.appendChild(modal);
+
+            // Event listeners
+            modal.querySelector('.close-simple-payment').addEventListener('click', () => {
+                modal.remove();
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+
+            // Botón de Wompi
+            modal.querySelector('#simple-wompi-pay-button').addEventListener('click', () => {
+                console.log('🚀 Iniciando pago con Wompi...');
+                alert('🚀 Pago con Wompi iniciado! (Funcionalidad en desarrollo)');
+                modal.remove();
+            });
+        }
+
         // Variable global para el plan seleccionado
         let selectedPlan = null;
 
@@ -1151,17 +1333,43 @@
             closePaymentModal();
             
             // Mostrar modal de selección de método de pago
-            if (window.axyraDualPaymentSystem) {
-                window.axyraDualPaymentSystem.showPaymentMethodModal(
-                    selectedPlan,
-                    precios[selectedPlan],
-                    nombres[selectedPlan],
-                    user.uid
-                );
-            } else {
-                // Fallback: redirigir al dashboard
-                window.location.href = 'modulos/dashboard/dashboard.html';
-            }
+            console.log('🔍 Verificando sistemas de pago disponibles...');
+            console.log('🔍 axyraDualPaymentSystem:', window.axyraDualPaymentSystem);
+            console.log('🔍 axyraWompiOnlyPayment:', window.axyraWompiOnlyPayment);
+            console.log('🔍 axyraPaymentSystemFallback:', window.axyraPaymentSystemFallback);
+            
+            // Esperar un poco para que los scripts se carguen
+            setTimeout(() => {
+                if (window.axyraDualPaymentSystem) {
+                    console.log('✅ Usando axyraDualPaymentSystem');
+                    window.axyraDualPaymentSystem.showPaymentMethodModal(
+                        selectedPlan,
+                        precios[selectedPlan],
+                        nombres[selectedPlan],
+                        user.uid
+                    );
+                } else if (window.axyraWompiOnlyPayment) {
+                    console.log('✅ Usando axyraWompiOnlyPayment');
+                    window.axyraWompiOnlyPayment.showPaymentModal(
+                        selectedPlan,
+                        precios[selectedPlan],
+                        nombres[selectedPlan],
+                        user.uid
+                    );
+                } else if (window.axyraPaymentSystemFallback) {
+                    console.log('✅ Usando axyraPaymentSystemFallback');
+                    window.axyraPaymentSystemFallback.showPaymentMethodModal(
+                        selectedPlan,
+                        precios[selectedPlan],
+                        nombres[selectedPlan],
+                        user.uid
+                    );
+                } else {
+                    console.log('❌ No hay sistemas de pago disponibles, mostrando modal simple');
+                    // Mostrar modal simple como último recurso
+                    showSimplePaymentModal(selectedPlan, precios[selectedPlan], nombres[selectedPlan], user.uid);
+                }
+            }, 500);
         }
 
         // Cerrar modal al hacer click fuera de él
