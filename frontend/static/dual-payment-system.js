@@ -267,8 +267,204 @@ class AxyraDualPaymentSystem {
       window.axyraPaymentSystemFallback.showPaymentMethodModal(planType, amount, description, userId);
       return;
     }
+    
+    // Si no hay sistemas disponibles, mostrar modal simple solo con Wompi
+    console.log('🚀 Usando modal simple solo con Wompi');
+    this.showSimpleWompiModal(planType, amount, description, userId);
+  }
 
-    // Fallback al sistema original
+  /**
+   * Modal simple solo con Wompi
+   */
+  showSimpleWompiModal(planType, amount, description, userId) {
+    const modal = document.createElement('div');
+    modal.id = 'simple-wompi-modal';
+    modal.className = 'simple-wompi-modal';
+    modal.innerHTML = `
+      <div class="simple-modal-content">
+        <div class="simple-modal-header">
+          <h2>💳 Pago con Wompi</h2>
+          <button class="close-simple-modal">&times;</button>
+        </div>
+        
+        <div class="simple-modal-body">
+          <div class="plan-info">
+            <h3>${description}</h3>
+            <p class="plan-price">$${amount ? amount.toLocaleString() : '0'} COP</p>
+          </div>
+          
+          <div class="wompi-payment-section">
+            <div class="wompi-icon">
+              <i class="fas fa-credit-card"></i>
+            </div>
+            <h4>Pagar con Wompi</h4>
+            <p>Método de pago seguro para Colombia</p>
+            <button class="wompi-pay-btn" id="wompi-pay-button">
+              <i class="fas fa-credit-card"></i>
+              Pagar con Wompi
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Estilos
+    const style = document.createElement('style');
+    style.textContent = `
+      .simple-wompi-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        animation: fadeIn 0.3s ease;
+      }
+      
+      .simple-modal-content {
+        background: #1a1a1a;
+        border-radius: 20px;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease;
+      }
+      
+      .simple-modal-header {
+        background: linear-gradient(135deg, #00D4AA, #00B894);
+        padding: 20px;
+        border-radius: 20px 20px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+      }
+      
+      .simple-modal-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+      
+      .close-simple-modal {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+      
+      .simple-modal-body {
+        padding: 30px;
+      }
+      
+      .plan-info {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      
+      .plan-info h3 {
+        color: #00D4AA;
+        margin: 0 0 10px 0;
+        font-size: 1.3rem;
+      }
+      
+      .plan-price {
+        color: #d0d0d0;
+        font-size: 1.1rem;
+        margin: 0;
+      }
+      
+      .wompi-payment-section {
+        text-align: center;
+      }
+      
+      .wompi-icon {
+        font-size: 3rem;
+        color: #00D4AA;
+        margin-bottom: 20px;
+      }
+      
+      .wompi-payment-section h4 {
+        color: #00D4AA;
+        margin: 0 0 10px 0;
+        font-size: 1.2rem;
+      }
+      
+      .wompi-payment-section p {
+        color: #888;
+        margin: 0 0 20px 0;
+      }
+      
+      .wompi-pay-btn {
+        background: linear-gradient(135deg, #00D4AA, #00B894);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 auto;
+      }
+      
+      .wompi-pay-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 212, 170, 0.3);
+      }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      
+      @keyframes slideUp {
+        from { transform: translateY(50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+    `;
+    
+    document.head.appendChild(style);
+    document.body.appendChild(modal);
+
+    // Event listeners
+    modal.querySelector('.close-simple-modal').addEventListener('click', () => {
+      modal.remove();
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
+
+    // Botón de Wompi
+    modal.querySelector('#wompi-pay-button').addEventListener('click', () => {
+      console.log('🚀 Iniciando pago con Wompi...');
+      // Aquí iría la lógica de Wompi
+      alert('🚀 Pago con Wompi iniciado! (Funcionalidad en desarrollo)');
+      modal.remove();
+    });
+  }
+
+  /**
+   * Fallback al sistema original
+   */
+  showOriginalModal(planType, amount, description, userId) {
+    const modal = document.createElement('div');
+    modal.id = 'dual-payment-modal';
+    modal.className = 'dual-payment-modal';
     const modal = document.createElement('div');
     modal.id = 'dual-payment-modal';
     modal.className = 'dual-payment-modal';
@@ -282,7 +478,7 @@ class AxyraDualPaymentSystem {
         <div class="dual-modal-body">
           <div class="plan-info">
             <h3>${description}</h3>
-            <p class="plan-price">$${amount.toLocaleString()} COP</p>
+            <p class="plan-price">$${amount ? amount.toLocaleString() : '0'} COP</p>
           </div>
           
           <div class="payment-methods-grid">

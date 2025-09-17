@@ -4,88 +4,88 @@
  */
 
 class AxyraPaymentSystemFallback {
-    constructor() {
-        this.wompiAvailable = false;
-        this.paypalAvailable = false;
-        this.init();
+  constructor() {
+    this.wompiAvailable = false;
+    this.paypalAvailable = false;
+    this.init();
+  }
+
+  async init() {
+    console.log('🚀 Inicializando Sistema de Pagos AXYRA...');
+
+    // Inicializar Wompi primero (más confiable)
+    await this.initWompi();
+
+    // Intentar PayPal como fallback
+    await this.initPayPal();
+
+    console.log('✅ Sistema de Pagos AXYRA inicializado');
+  }
+
+  async initWompi() {
+    try {
+      if (window.axyraWompiIntegration) {
+        this.wompiAvailable = true;
+        console.log('✅ Wompi disponible');
+      } else {
+        console.warn('⚠️ Wompi no disponible');
+      }
+    } catch (error) {
+      console.warn('⚠️ Error inicializando Wompi:', error);
+    }
+  }
+
+  async initPayPal() {
+    try {
+      // Verificar si PayPal está disponible
+      if (window.axyraPayPalSimple && window.axyraPayPalSimple.isLoaded) {
+        this.paypalAvailable = true;
+        console.log('✅ PayPal disponible');
+      } else {
+        console.warn('⚠️ PayPal no disponible - usando solo Wompi');
+      }
+    } catch (error) {
+      console.warn('⚠️ Error verificando PayPal:', error);
+    }
+  }
+
+  /**
+   * Muestra modal de selección de método de pago
+   */
+  showPaymentMethodModal(planType, amount, description, userId) {
+    const modal = document.createElement('div');
+    modal.id = 'payment-method-modal';
+    modal.className = 'payment-method-modal';
+
+    // Determinar métodos disponibles
+    const availableMethods = [];
+    if (this.wompiAvailable) {
+      availableMethods.push({
+        id: 'wompi',
+        name: 'Wompi',
+        icon: 'fas fa-credit-card',
+        description: 'Pagos en Colombia',
+        color: '#00D4AA',
+      });
     }
 
-    async init() {
-        console.log('🚀 Inicializando Sistema de Pagos AXYRA...');
-        
-        // Inicializar Wompi primero (más confiable)
-        await this.initWompi();
-        
-        // Intentar PayPal como fallback
-        await this.initPayPal();
-        
-        console.log('✅ Sistema de Pagos AXYRA inicializado');
+    if (this.paypalAvailable) {
+      availableMethods.push({
+        id: 'paypal',
+        name: 'PayPal',
+        icon: 'fab fa-paypal',
+        description: 'Pagos Internacionales',
+        color: '#0070BA',
+      });
     }
 
-    async initWompi() {
-        try {
-            if (window.axyraWompiIntegration) {
-                this.wompiAvailable = true;
-                console.log('✅ Wompi disponible');
-            } else {
-                console.warn('⚠️ Wompi no disponible');
-            }
-        } catch (error) {
-            console.warn('⚠️ Error inicializando Wompi:', error);
-        }
+    // Si no hay métodos disponibles, mostrar mensaje
+    if (availableMethods.length === 0) {
+      this.showNoPaymentMethodsModal(planType, amount, description);
+      return;
     }
 
-    async initPayPal() {
-        try {
-            // Verificar si PayPal está disponible
-            if (window.axyraPayPalSimple && window.axyraPayPalSimple.isLoaded) {
-                this.paypalAvailable = true;
-                console.log('✅ PayPal disponible');
-            } else {
-                console.warn('⚠️ PayPal no disponible - usando solo Wompi');
-            }
-        } catch (error) {
-            console.warn('⚠️ Error verificando PayPal:', error);
-        }
-    }
-
-    /**
-     * Muestra modal de selección de método de pago
-     */
-    showPaymentMethodModal(planType, amount, description, userId) {
-        const modal = document.createElement('div');
-        modal.id = 'payment-method-modal';
-        modal.className = 'payment-method-modal';
-        
-        // Determinar métodos disponibles
-        const availableMethods = [];
-        if (this.wompiAvailable) {
-            availableMethods.push({
-                id: 'wompi',
-                name: 'Wompi',
-                icon: 'fas fa-credit-card',
-                description: 'Pagos en Colombia',
-                color: '#00D4AA'
-            });
-        }
-        
-        if (this.paypalAvailable) {
-            availableMethods.push({
-                id: 'paypal',
-                name: 'PayPal',
-                icon: 'fab fa-paypal',
-                description: 'Pagos Internacionales',
-                color: '#0070BA'
-            });
-        }
-
-        // Si no hay métodos disponibles, mostrar mensaje
-        if (availableMethods.length === 0) {
-            this.showNoPaymentMethodsModal(planType, amount, description);
-            return;
-        }
-
-        modal.innerHTML = `
+    modal.innerHTML = `
             <div class="payment-modal-content">
                 <div class="payment-modal-header">
                     <h2>💳 Seleccionar Método de Pago</h2>
@@ -99,13 +99,17 @@ class AxyraPaymentSystemFallback {
                     </div>
                     
                     <div class="payment-methods">
-                        ${availableMethods.map(method => `
+                        ${availableMethods
+                          .map(
+                            (method) => `
                             <button class="payment-method-btn" data-method="${method.id}" style="--method-color: ${method.color}">
                                 <i class="${method.icon}"></i>
                                 <span>${method.name}</span>
                                 <small>${method.description}</small>
                             </button>
-                        `).join('')}
+                        `
+                          )
+                          .join('')}
                     </div>
                 </div>
                 
@@ -115,9 +119,9 @@ class AxyraPaymentSystemFallback {
             </div>
         `;
 
-        // Estilos del modal
-        const style = document.createElement('style');
-        style.textContent = `
+    // Estilos del modal
+    const fallbackStyle = document.createElement('style');
+    style.textContent = `
             .payment-method-modal {
                 position: fixed;
                 top: 0;
@@ -273,88 +277,88 @@ class AxyraPaymentSystemFallback {
                 }
             }
         `;
-        document.head.appendChild(style);
+    document.head.appendChild(style);
 
-        document.body.appendChild(modal);
+    document.body.appendChild(modal);
 
-        // Event listeners
-        modal.querySelector('.close-payment-modal').addEventListener('click', () => {
-            this.hidePaymentModal();
-        });
+    // Event listeners
+    modal.querySelector('.close-payment-modal').addEventListener('click', () => {
+      this.hidePaymentModal();
+    });
 
-        modal.querySelector('.btn-cancel').addEventListener('click', () => {
-            this.hidePaymentModal();
-        });
+    modal.querySelector('.btn-cancel').addEventListener('click', () => {
+      this.hidePaymentModal();
+    });
 
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                this.hidePaymentModal();
-            }
-        });
-
-        // Botones de métodos de pago
-        modal.querySelectorAll('.payment-method-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const method = btn.dataset.method;
-                this.handlePaymentMethod(method, planType, amount, description, userId);
-            });
-        });
-    }
-
-    /**
-     * Maneja la selección del método de pago
-     */
-    async handlePaymentMethod(method, planType, amount, description, userId) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
         this.hidePaymentModal();
+      }
+    });
 
-        if (method === 'wompi' && this.wompiAvailable) {
-            await this.handleWompiPayment(planType, amount, description, userId);
-        } else if (method === 'paypal' && this.paypalAvailable) {
-            await this.handlePayPalPayment(planType, amount, description, userId);
-        } else {
-            this.showError('Método de pago no disponible');
-        }
+    // Botones de métodos de pago
+    modal.querySelectorAll('.payment-method-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const method = btn.dataset.method;
+        this.handlePaymentMethod(method, planType, amount, description, userId);
+      });
+    });
+  }
+
+  /**
+   * Maneja la selección del método de pago
+   */
+  async handlePaymentMethod(method, planType, amount, description, userId) {
+    this.hidePaymentModal();
+
+    if (method === 'wompi' && this.wompiAvailable) {
+      await this.handleWompiPayment(planType, amount, description, userId);
+    } else if (method === 'paypal' && this.paypalAvailable) {
+      await this.handlePayPalPayment(planType, amount, description, userId);
+    } else {
+      this.showError('Método de pago no disponible');
     }
+  }
 
-    /**
-     * Maneja pago con Wompi
-     */
-    async handleWompiPayment(planType, amount, description, userId) {
-        try {
-            if (window.axyraWompiIntegration) {
-                await window.axyraWompiIntegration.processPayment(planType, amount, description, userId);
-            } else {
-                throw new Error('Wompi no disponible');
-            }
-        } catch (error) {
-            console.error('Error procesando pago Wompi:', error);
-            this.showError('Error procesando pago con Wompi');
-        }
+  /**
+   * Maneja pago con Wompi
+   */
+  async handleWompiPayment(planType, amount, description, userId) {
+    try {
+      if (window.axyraWompiIntegration) {
+        await window.axyraWompiIntegration.processPayment(planType, amount, description, userId);
+      } else {
+        throw new Error('Wompi no disponible');
+      }
+    } catch (error) {
+      console.error('Error procesando pago Wompi:', error);
+      this.showError('Error procesando pago con Wompi');
     }
+  }
 
-    /**
-     * Maneja pago con PayPal
-     */
-    async handlePayPalPayment(planType, amount, description, userId) {
-        try {
-            if (window.axyraPayPalSimple && window.axyraPayPalSimple.isLoaded) {
-                await window.axyraPayPalSimple.processPayment(amount, description, planType, userId);
-            } else {
-                throw new Error('PayPal no disponible');
-            }
-        } catch (error) {
-            console.error('Error procesando pago PayPal:', error);
-            this.showError('Error procesando pago con PayPal');
-        }
+  /**
+   * Maneja pago con PayPal
+   */
+  async handlePayPalPayment(planType, amount, description, userId) {
+    try {
+      if (window.axyraPayPalSimple && window.axyraPayPalSimple.isLoaded) {
+        await window.axyraPayPalSimple.processPayment(amount, description, planType, userId);
+      } else {
+        throw new Error('PayPal no disponible');
+      }
+    } catch (error) {
+      console.error('Error procesando pago PayPal:', error);
+      this.showError('Error procesando pago con PayPal');
     }
+  }
 
-    /**
-     * Muestra modal cuando no hay métodos de pago disponibles
-     */
-    showNoPaymentMethodsModal(planType, amount, description) {
-        const modal = document.createElement('div');
-        modal.className = 'no-payment-modal';
-        modal.innerHTML = `
+  /**
+   * Muestra modal cuando no hay métodos de pago disponibles
+   */
+  showNoPaymentMethodsModal(planType, amount, description) {
+    const modal = document.createElement('div');
+    modal.className = 'no-payment-modal';
+    modal.innerHTML = `
             <div class="no-payment-content">
                 <div class="no-payment-icon">⚠️</div>
                 <h3>Métodos de Pago No Disponibles</h3>
@@ -371,7 +375,7 @@ class AxyraPaymentSystemFallback {
             </div>
         `;
 
-        modal.style.cssText = `
+    modal.style.cssText = `
             position: fixed;
             top: 0;
             left: 0;
@@ -384,43 +388,43 @@ class AxyraPaymentSystemFallback {
             z-index: 10000;
         `;
 
-        document.body.appendChild(modal);
+    document.body.appendChild(modal);
 
-        modal.querySelector('.btn-close-modal').addEventListener('click', () => {
-            modal.remove();
-        });
+    modal.querySelector('.btn-close-modal').addEventListener('click', () => {
+      modal.remove();
+    });
 
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.remove();
-            }
-        });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
+  }
+
+  /**
+   * Oculta el modal de métodos de pago
+   */
+  hidePaymentModal() {
+    const modal = document.getElementById('payment-method-modal');
+    if (modal) {
+      modal.remove();
     }
+  }
 
-    /**
-     * Oculta el modal de métodos de pago
-     */
-    hidePaymentModal() {
-        const modal = document.getElementById('payment-method-modal');
-        if (modal) {
-            modal.remove();
-        }
-    }
-
-    /**
-     * Muestra mensaje de error
-     */
-    showError(message) {
-        const notification = document.createElement('div');
-        notification.className = 'payment-error-notification';
-        notification.innerHTML = `
+  /**
+   * Muestra mensaje de error
+   */
+  showError(message) {
+    const notification = document.createElement('div');
+    notification.className = 'payment-error-notification';
+    notification.innerHTML = `
             <div class="notification-content">
                 <i class="fas fa-exclamation-circle"></i>
                 <span>${message}</span>
             </div>
         `;
-        
-        notification.style.cssText = `
+
+    notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
@@ -432,22 +436,22 @@ class AxyraPaymentSystemFallback {
             z-index: 10001;
             animation: slideIn 0.3s ease;
         `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.remove();
-        }, 5000);
-    }
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.remove();
+    }, 5000);
+  }
 }
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
-    window.axyraPaymentSystemFallback = new AxyraPaymentSystemFallback();
+  window.axyraPaymentSystemFallback = new AxyraPaymentSystemFallback();
 });
 
 // Agregar estilos CSS
-const style = document.createElement('style');
+const fallbackStyle = document.createElement('style');
 style.textContent = `
     @keyframes slideIn {
         from {
