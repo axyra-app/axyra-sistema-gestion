@@ -87,43 +87,9 @@ class AxyraWompiIntegration {
     try {
       console.log('🔄 Creando transacción Wompi:', paymentData);
 
-      // Crear referencia única
-      const reference = `AXYRA_${paymentData.planType}_${Date.now()}`;
-
-      // Datos de la transacción
-      const transactionData = {
-        amount_in_cents: paymentData.amount,
-        currency: paymentData.currency,
-        customer_email: this.getCurrentUserEmail(),
-        reference: reference,
-        public_key: this.config.publicKey,
-        redirect_url: `${window.location.origin}/modulos/dashboard/dashboard.html?payment=success`,
-        payment_method_types: ['CARD', 'NEQUI', 'BANCOLOMBIA_TRANSFER', 'BANCOLOMBIA_QR'],
-      };
-
-      // Crear la transacción
-      const response = await fetch(`${this.getBaseUrl()}/transactions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.config.privateKey}`,
-        },
-        body: JSON.stringify(transactionData),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error HTTP: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      if (result.data && result.data.id) {
-        this.currentTransaction = result.data;
-        // Redirigir directamente a Wompi para completar el pago
-        await this.processWompiPayment(result.data);
-      } else {
-        throw new Error('Error en la respuesta de Wompi');
-      }
+      // Redirigir directamente al checkout de Wompi
+      await this.processWompiPayment(paymentData);
+      
     } catch (error) {
       console.error('Error creando transacción Wompi:', error);
       throw error;
@@ -369,25 +335,47 @@ class AxyraWompiIntegration {
   }
 
   /**
-   * Procesa el pago de Wompi
+   * Procesa el pago de Wompi usando el link de checkout
    */
-  async processWompiPayment(transaction) {
+  async processWompiPayment(paymentData) {
     try {
-      // Redirigir a Wompi para completar el pago
-      const paymentUrl = `${this.getBaseUrl()}/transactions/${transaction.id}`;
+      console.log('🔄 Redirigiendo a Wompi checkout:', paymentData);
+      
+      // Usar el link de checkout de Wompi proporcionado
+      const wompiCheckoutUrl = 'https://checkout.wompi.co/l/VPOS_Y5WOyP';
+      
+      // Agregar parámetros de la transacción
+      const params = new URLSearchParams({
+        amount: paymentData.amount,
+        currency: paymentData.currency || 'COP',
+        description: paymentData.description,
+        reference: `AXYRA_${paymentData.planType}_${Date.now()}`,
+        customer_email: this.getCurrentUserEmail(),
+        plan_type: paymentData.planType,
+        user_id: paymentData.userId
+      });
+      
+      const fullPaymentUrl = `${wompiCheckoutUrl}?${params.toString()}`;
+      
+      console.log('🌐 URL de pago completa:', fullPaymentUrl);
 
       // Abrir en nueva ventana
       const paymentWindow = window.open(
-        paymentUrl,
+        fullPaymentUrl,
         'wompi-payment',
         'width=800,height=600,scrollbars=yes,resizable=yes'
       );
 
-      // Monitorear el pago
-      this.monitorPaymentStatus(transaction.id, paymentWindow);
+      if (!paymentWindow) {
+        throw new Error('No se pudo abrir la ventana de pago. Verifica que los popups estén permitidos.');
+      }
+
+      // Cerrar el modal actual
+      this.hideWompiPaymentModal();
+      
     } catch (error) {
       console.error('Error procesando pago Wompi:', error);
-      this.showError('Error procesando el pago');
+      this.showError('Error procesando el pago: ' + error.message);
     }
   }
 
