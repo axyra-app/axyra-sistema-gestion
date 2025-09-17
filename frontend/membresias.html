@@ -964,7 +964,7 @@
                     <i class="fas fa-times"></i>
                     Cancelar
                 </button>
-                <button class="axyra-payment-btn axyra-payment-btn-primary" onclick="proceedToPayment()">
+                <button class="axyra-payment-btn axyra-payment-btn-primary" onclick="proceedToPayment(selectedPlan)">
                     <i class="fas fa-arrow-right"></i>
                     Continuar al Pago
                 </button>
@@ -1196,6 +1196,8 @@
 
         // Función para seleccionar plan
         function selectPlan(planType) {
+            console.log('🎯 selectPlan llamado con:', planType);
+            
             // Verificar si el usuario está logueado
             if (!isUserLoggedIn()) {
                 showLoginRequiredModal();
@@ -1203,6 +1205,7 @@
             }
             
             selectedPlan = planType;
+            console.log('✅ selectedPlan establecido a:', selectedPlan);
             
             // Datos de los planes
             const planData = {
@@ -1277,20 +1280,30 @@
         }
 
         // Función para proceder al pago
-        function proceedToPayment() {
-            if (!selectedPlan) return;
+        function proceedToPayment(planType) {
+            console.log('💳 proceedToPayment llamado con planType:', planType);
+            console.log('💳 selectedPlan global:', selectedPlan);
+            
+            // Usar el parámetro si está disponible, sino usar la variable global
+            const currentPlan = planType || selectedPlan;
+            
+            if (!currentPlan) {
+                console.error('❌ No se pudo determinar el plan seleccionado');
+                alert('Error: No se pudo determinar el plan seleccionado');
+                return;
+            }
             
             // Precios de los planes
             const precios = {
-                basico: 49900,
-                profesional: 129900,
-                empresarial: 259900
+                basic: 49900,
+                professional: 129900,
+                enterprise: 259900
             };
             
             const nombres = {
-                basico: 'Plan Básico',
-                profesional: 'Plan Profesional',
-                empresarial: 'Plan Empresarial'
+                basic: 'Plan Básico',
+                professional: 'Plan Profesional',
+                enterprise: 'Plan Empresarial'
             };
             
             // Verificar autenticación de múltiples formas
@@ -1340,22 +1353,22 @@
             
             // Esperar un poco para que los scripts se carguen
             setTimeout(() => {
-                // Validar que selectedPlan existe en precios
-                if (!selectedPlan || !precios[selectedPlan]) {
-                    console.error('❌ Plan seleccionado inválido:', selectedPlan);
+                // Validar que currentPlan existe en precios
+                if (!currentPlan || !precios[currentPlan]) {
+                    console.error('❌ Plan seleccionado inválido:', currentPlan);
                     alert('Error: Plan seleccionado no válido');
                     return;
                 }
                 
-                const amount = precios[selectedPlan];
-                const description = nombres[selectedPlan];
+                const amount = precios[currentPlan];
+                const description = nombres[currentPlan];
                 
-                console.log('📊 Datos del pago:', { selectedPlan, amount, description, userId: user.uid });
+                console.log('📊 Datos del pago:', { currentPlan, amount, description, userId: user.uid });
                 
                 if (window.axyraDualPaymentSystem) {
                     console.log('✅ Usando axyraDualPaymentSystem');
                     window.axyraDualPaymentSystem.showPaymentMethodModal(
-                        selectedPlan,
+                        currentPlan,
                         amount,
                         description,
                         user.uid
@@ -1363,7 +1376,7 @@
                 } else if (window.axyraWompiOnlyPayment) {
                     console.log('✅ Usando axyraWompiOnlyPayment');
                     window.axyraWompiOnlyPayment.showPaymentModal(
-                        selectedPlan,
+                        currentPlan,
                         amount,
                         description,
                         user.uid
@@ -1371,7 +1384,7 @@
                 } else if (window.axyraPaymentSystemFallback) {
                     console.log('✅ Usando axyraPaymentSystemFallback');
                     window.axyraPaymentSystemFallback.showPaymentMethodModal(
-                        selectedPlan,
+                        currentPlan,
                         amount,
                         description,
                         user.uid
@@ -1379,7 +1392,7 @@
                 } else {
                     console.log('❌ No hay sistemas de pago disponibles, mostrando modal simple');
                     // Mostrar modal simple como último recurso
-                    showSimplePaymentModal(selectedPlan, precios[selectedPlan], nombres[selectedPlan], user.uid);
+                    showSimplePaymentModal(currentPlan, amount, description, user.uid);
                 }
             }, 500);
         }
