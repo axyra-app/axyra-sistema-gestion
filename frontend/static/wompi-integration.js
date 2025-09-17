@@ -119,7 +119,8 @@ class AxyraWompiIntegration {
 
       if (result.data && result.data.id) {
         this.currentTransaction = result.data;
-        this.showWompiPaymentModal(result.data);
+        // Redirigir directamente a Wompi para completar el pago
+        await this.processWompiPayment(result.data);
       } else {
         throw new Error('Error en la respuesta de Wompi');
       }
