@@ -335,33 +335,32 @@ class AxyraWompiIntegration {
   }
 
   /**
-   * Procesa el pago de Wompi usando el link de checkout
+   * Procesa el pago de Wompi usando el link de checkout específico del plan
    */
   async processWompiPayment(paymentData) {
     try {
       console.log('🔄 Redirigiendo a Wompi checkout:', paymentData);
       
-      // Usar el link de checkout de Wompi proporcionado
-      const wompiCheckoutUrl = 'https://checkout.wompi.co/l/VPOS_Y5WOyP';
+      // Mapeo de planes a sus links específicos de Wompi
+      const planLinks = {
+        basic: 'https://checkout.wompi.co/l/dJSIja',      // Plan Básico
+        professional: 'https://checkout.wompi.co/l/Lk65dP', // Plan Profesional
+        enterprise: 'https://checkout.wompi.co/l/Hg5RaQ'    // Plan Empresarial
+      };
       
-      // Agregar parámetros de la transacción
-      const params = new URLSearchParams({
-        amount: paymentData.amount,
-        currency: paymentData.currency || 'COP',
-        description: paymentData.description,
-        reference: `AXYRA_${paymentData.planType}_${Date.now()}`,
-        customer_email: this.getCurrentUserEmail(),
-        plan_type: paymentData.planType,
-        user_id: paymentData.userId
-      });
+      // Obtener el link específico del plan
+      const wompiCheckoutUrl = planLinks[paymentData.planType];
       
-      const fullPaymentUrl = `${wompiCheckoutUrl}?${params.toString()}`;
+      if (!wompiCheckoutUrl) {
+        throw new Error(`No se encontró link de checkout para el plan: ${paymentData.planType}`);
+      }
       
-      console.log('🌐 URL de pago completa:', fullPaymentUrl);
+      console.log('🌐 Link de checkout específico:', wompiCheckoutUrl);
+      console.log('📋 Plan seleccionado:', paymentData.planType);
 
       // Abrir en nueva ventana
       const paymentWindow = window.open(
-        fullPaymentUrl,
+        wompiCheckoutUrl,
         'wompi-payment',
         'width=800,height=600,scrollbars=yes,resizable=yes'
       );
