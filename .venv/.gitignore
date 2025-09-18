@@ -1,8 +1,0 @@
-# Created by venv; see https://docs.python.org/3/library/venv.html
-
-# Google Drive
-credentials.json
-token.json
-*.json
-!package.json
-!package-lock.json
