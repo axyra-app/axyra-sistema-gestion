@@ -1,9 +1,5 @@
 {
   "indexes": [
-    // ========================================
-    // ÍNDICES PARA GESTIÓN DE EMPLEADOS (PRIORIDAD)
-    // ========================================
-
     {
       "collectionGroup": "empleados",
       "queryScope": "COLLECTION",
@@ -76,11 +72,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA HORAS TRABAJADAS
-    // ========================================
-
     {
       "collectionGroup": "horas_trabajadas",
       "queryScope": "COLLECTION",
@@ -141,11 +132,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA NÓMINAS
-    // ========================================
-
     {
       "collectionGroup": "nominas",
       "queryScope": "COLLECTION",
@@ -192,11 +178,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA CUADRE DE CAJA (PRIORIDAD)
-    // ========================================
-
     {
       "collectionGroup": "cuadre_caja",
       "queryScope": "COLLECTION",
@@ -253,11 +234,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA MOVIMIENTOS DE CAJA
-    // ========================================
-
     {
       "collectionGroup": "movimientos_caja",
       "queryScope": "COLLECTION",
@@ -300,11 +276,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA CORTES DE CAJA
-    // ========================================
-
     {
       "collectionGroup": "cortes_caja",
       "queryScope": "COLLECTION",
@@ -333,11 +304,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA INVENTARIO
-    // ========================================
-
     {
       "collectionGroup": "inventario",
       "queryScope": "COLLECTION",
@@ -388,11 +354,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA FACTURAS
-    // ========================================
-
     {
       "collectionGroup": "facturas",
       "queryScope": "COLLECTION",
@@ -435,11 +396,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA CLIENTES
-    // ========================================
-
     {
       "collectionGroup": "clientes",
       "queryScope": "COLLECTION",
@@ -468,11 +424,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA MEMBRESÍAS
-    // ========================================
-
     {
       "collectionGroup": "membresias",
       "queryScope": "COLLECTION",
@@ -527,11 +478,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA PAGOS
-    // ========================================
-
     {
       "collectionGroup": "pagos",
       "queryScope": "COLLECTION",
@@ -582,11 +528,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA USUARIOS
-    // ========================================
-
     {
       "collectionGroup": "usuarios",
       "queryScope": "COLLECTION",
@@ -641,11 +582,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA REPORTES
-    // ========================================
-
     {
       "collectionGroup": "reportes",
       "queryScope": "COLLECTION",
@@ -682,11 +618,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA NOTIFICACIONES
-    // ========================================
-
     {
       "collectionGroup": "notificaciones",
       "queryScope": "COLLECTION",
@@ -723,11 +654,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA CHAT
-    // ========================================
-
     {
       "collectionGroup": "chat_historial",
       "queryScope": "COLLECTION",
@@ -760,11 +686,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA EXPORTACIONES
-    // ========================================
-
     {
       "collectionGroup": "exportaciones",
       "queryScope": "COLLECTION",
@@ -801,11 +722,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA AUDITORÍA
-    // ========================================
-
     {
       "collectionGroup": "auditoria",
       "queryScope": "COLLECTION",
@@ -838,11 +754,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA TEMPLATES
-    // ========================================
-
     {
       "collectionGroup": "templates",
       "queryScope": "COLLECTION",
@@ -875,11 +786,6 @@
         }
       ]
     },
-
-    // ========================================
-    // ÍNDICES PARA MÉTRICAS
-    // ========================================
-
     {
       "collectionGroup": "metricas",
       "queryScope": "COLLECTION",
@@ -914,10 +820,6 @@
     }
   ],
   "fieldOverrides": [
-    // ========================================
-    // OVERRIDES PARA CAMPOS ÚNICOS
-    // ========================================
-
     {
       "collectionGroup": "empleados",
       "fieldPath": "cedula",
@@ -1019,4 +921,4 @@
       ]
     }
   ]
-}
+}
