@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="static/modal-positioning-fix.css">
     <link rel="stylesheet" href="static/modal-emergency-fix.css">
     <link rel="stylesheet" href="static/header-fixes.css">
+    <link rel="stylesheet" href="static/advanced-header.css">
+    <link rel="stylesheet" href="static/ai-chat-styles.css">
+    <link rel="stylesheet" href="static/dashboard-styles.css">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -580,30 +583,90 @@
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <!-- Header -->
-        <div class="admin-header">
-            <div class="admin-header-content">
-                <div class="admin-logo">
-                    <img src="logo.png" alt="AXYRA" onerror="this.style.display='none'">
-                    <div>
-                        <h1 class="admin-title">Panel de Administración</h1>
-                        <p class="admin-subtitle">Control total del sistema AXYRA</p>
+    <!-- Header Avanzado -->
+    <header class="advanced-header">
+        <div class="header-left">
+            <div class="logo-container">
+                <img src="logo.png" alt="AXYRA" class="logo">
+                <span class="system-name">AXYRA</span>
+                <span class="system-version">v2.0</span>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="search-container">
+                <input type="text" id="global-search" placeholder="Buscar empleados, nóminas, movimientos..." class="search-input">
+                <button class="search-btn" id="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="search-results" id="search-results"></div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="connection-status" id="connection-status">
+                <i class="fas fa-wifi" id="connection-icon"></i>
+                <span id="connection-text">Online</span>
+            </div>
+            <div class="notifications-container">
+                <button class="notification-btn" id="notification-btn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notification-badge">0</span>
+                </button>
+                <div class="notifications-dropdown" id="notifications-dropdown">
+                    <div class="notifications-header">
+                        <h3>Notificaciones</h3>
+                        <button class="mark-all-read" id="mark-all-read">Marcar todas como leídas</button>
+                    </div>
+                    <div class="notifications-list" id="notifications-list">
+                        <div class="no-notifications">No hay notificaciones</div>
                     </div>
                 </div>
-                <div class="admin-actions">
-                    <button class="admin-btn admin-btn-primary" onclick="refreshData()">
-                        <i class="fas fa-sync-alt"></i> Actualizar
-                    </button>
-                    <button class="admin-btn admin-btn-primary" onclick="exportData()">
-                        <i class="fas fa-download"></i> Exportar
-                    </button>
-                    <button class="admin-btn admin-btn-danger" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                    </button>
+            </div>
+            <div class="ai-chat-container">
+                <button class="ai-chat-btn" id="ai-chat-btn">
+                    <i class="fas fa-robot"></i>
+                    <span class="ai-indicator" id="ai-indicator"></span>
+                </button>
+            </div>
+            <div class="user-profile-container">
+                <button class="user-profile-btn" id="user-profile-btn">
+                    <img src="https://via.placeholder.com/32x32/007bff/ffffff?text=A" alt="Admin" class="user-avatar" id="user-avatar">
+                    <span class="user-name" id="user-name">Administrador</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="user-dropdown" id="user-dropdown">
+                    <div class="user-info">
+                        <img src="https://via.placeholder.com/48x48/007bff/ffffff?text=A" alt="Admin" class="user-avatar-large">
+                        <div class="user-details">
+                            <div class="user-name-large" id="user-name-large">Administrador</div>
+                            <div class="user-email" id="user-email">admin@villa-venecia.com</div>
+                            <div class="user-role" id="user-role">Administrador</div>
+                        </div>
+                    </div>
+                    <div class="user-menu">
+                        <a href="#" class="menu-item" id="profile-settings">
+                            <i class="fas fa-user-cog"></i>
+                            Configuración de Perfil
+                        </a>
+                        <a href="#" class="menu-item" id="system-settings">
+                            <i class="fas fa-cog"></i>
+                            Configuración del Sistema
+                        </a>
+                        <a href="#" class="menu-item" id="help-support">
+                            <i class="fas fa-question-circle"></i>
+                            Ayuda y Soporte
+                        </a>
+                        <div class="menu-divider"></div>
+                        <a href="#" class="menu-item logout" id="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Cerrar Sesión
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
+    </header>
+
+    <div class="admin-container" style="padding-top: 70px;">
 
         <!-- Main Content -->
         <div class="admin-main">
@@ -1293,5 +1356,13 @@
             }
         });
     </script>
+
+    <!-- Scripts avanzados -->
+    <script src="static/advanced-header.js"></script>
+    <script src="static/ai-chat-system.js"></script>
+    <script src="static/notifications.js"></script>
+    <script src="static/global-search.js"></script>
+    <script src="static/dashboard-analytics.js"></script>
+    <script src="static/monitoring.js"></script>
 </body>
 </html>

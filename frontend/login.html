@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AXYRA - Iniciar Sesión</title>
+    <link rel="stylesheet" href="static/axyra-styles.css" />
+    <link rel="stylesheet" href="static/advanced-header.css" />
+    <link rel="stylesheet" href="static/ai-chat-styles.css" />
     <link rel="icon" href="nomina.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -576,6 +580,88 @@
     </style>
   </head>
   <body>
+    <!-- Header Avanzado -->
+    <header class="advanced-header">
+      <div class="header-left">
+        <div class="logo-container">
+          <img src="logo.png" alt="AXYRA" class="logo">
+          <span class="system-name">AXYRA</span>
+          <span class="system-version">v2.0</span>
+        </div>
+      </div>
+      <div class="header-center">
+        <div class="search-container">
+          <input type="text" id="global-search" placeholder="Buscar empleados, nóminas, movimientos..." class="search-input">
+          <button class="search-btn" id="search-btn">
+            <i class="fas fa-search"></i>
+          </button>
+          <div class="search-results" id="search-results"></div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="connection-status" id="connection-status">
+          <i class="fas fa-wifi" id="connection-icon"></i>
+          <span id="connection-text">Online</span>
+        </div>
+        <div class="notifications-container">
+          <button class="notification-btn" id="notification-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notification-badge">0</span>
+          </button>
+          <div class="notifications-dropdown" id="notifications-dropdown">
+            <div class="notifications-header">
+              <h3>Notificaciones</h3>
+              <button class="mark-all-read" id="mark-all-read">Marcar todas como leídas</button>
+            </div>
+            <div class="notifications-list" id="notifications-list">
+              <div class="no-notifications">No hay notificaciones</div>
+            </div>
+          </div>
+        </div>
+        <div class="ai-chat-container">
+          <button class="ai-chat-btn" id="ai-chat-btn">
+            <i class="fas fa-robot"></i>
+            <span class="ai-indicator" id="ai-indicator"></span>
+          </button>
+        </div>
+        <div class="user-profile-container">
+          <button class="user-profile-btn" id="user-profile-btn">
+            <img src="https://via.placeholder.com/32x32/007bff/ffffff?text=U" alt="Usuario" class="user-avatar" id="user-avatar">
+            <span class="user-name" id="user-name">Usuario</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="user-dropdown" id="user-dropdown">
+            <div class="user-info">
+              <img src="https://via.placeholder.com/48x48/007bff/ffffff?text=U" alt="Usuario" class="user-avatar-large">
+              <div class="user-details">
+                <div class="user-name-large" id="user-name-large">Usuario</div>
+                <div class="user-email" id="user-email">usuario@empresa.com</div>
+                <div class="user-role" id="user-role">Administrador</div>
+              </div>
+            </div>
+            <div class="user-menu">
+              <a href="#" class="menu-item" id="profile-settings">
+                <i class="fas fa-user-cog"></i>
+                Configuración de Perfil
+              </a>
+              <a href="#" class="menu-item" id="system-settings">
+                <i class="fas fa-cog"></i>
+                Configuración del Sistema
+              </a>
+              <a href="#" class="menu-item" id="help-support">
+                <i class="fas fa-question-circle"></i>
+                Ayuda y Soporte
+              </a>
+              <div class="menu-divider"></div>
+              <a href="#" class="menu-item logout" id="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                Cerrar Sesión
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
     <div class="login-container">
       <div class="logo-section">
         <div class="logo">
@@ -1413,5 +1499,12 @@
         checkFormCompletion();
       }
     </script>
+
+    <!-- Scripts avanzados -->
+    <script src="static/advanced-header.js"></script>
+    <script src="static/ai-chat-system.js"></script>
+    <script src="static/notifications.js"></script>
+    <script src="static/global-search.js"></script>
+    <script src="static/monitoring.js"></script>
   </body>
 </html>
