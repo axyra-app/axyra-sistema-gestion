@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pago Cancelado - AXYRA</title>
+    <link rel="stylesheet" href="../static/axyra-styles.css" />
+    <style>
+      .cancel-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      }
+      .cancel-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        max-width: 500px;
+        width: 90%;
+      }
+      .cancel-icon {
+        font-size: 4rem;
+        color: #ef4444;
+        margin-bottom: 1rem;
+      }
+      .cancel-title {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #1e293b;
+        margin-bottom: 1rem;
+      }
+      .cancel-message {
+        color: #64748b;
+        margin-bottom: 2rem;
+      }
+      .btn-primary {
+        background: #3b82f6;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 500;
+        transition: background 0.2s;
+        margin-right: 1rem;
+      }
+      .btn-secondary {
+        background: #6b7280;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+      .btn-primary:hover {
+        background: #2563eb;
+      }
+      .btn-secondary:hover {
+        background: #4b5563;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cancel-container">
+      <div class="cancel-card">
+        <div class="cancel-icon">❌</div>
+        <h1 class="cancel-title">Pago Cancelado</h1>
+        <p class="cancel-message">
+          Tu pago ha sido cancelado. No se ha realizado ningún cargo. Puedes intentar nuevamente cuando estés listo.
+        </p>
+        <div>
+          <a href="../index.html" class="btn-primary">Volver al Dashboard</a>
+          <a href="../membresias.html" class="btn-secondary">Ver Planes</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Obtener parámetros de la URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const reason = urlParams.get('reason');
+
+      if (reason) {
+        console.log('Razón de cancelación:', reason);
+      }
+    </script>
+  </body>
+</html>
+
+

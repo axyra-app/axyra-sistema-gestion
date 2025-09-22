@@ -3,7 +3,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     // ========================================
-    // FUNCIONES AUXILIARES
+    // FUNCIONES AUXILIARES DE SEGURIDAD
     // ========================================
     
     // Verificar si el usuario está autenticado
@@ -53,8 +53,13 @@ service cloud.firestore {
       return isAdmin() || hasRole('contador') || hasRole('gerente');
     }
     
+    // Verificar si el usuario puede gestionar cuadre de caja
+    function canManageCash() {
+      return isAdmin() || hasRole('contador') || hasRole('gerente') || hasRole('cajero');
+    }
+    
     // ========================================
-    // REGLAS PARA USUARIOS
+    // REGLAS PARA USUARIOS Y AUTENTICACIÓN
     // ========================================
     
     match /usuarios/{userId} {
@@ -75,10 +80,6 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
-    // ========================================
-    // REGLAS PARA VERIFICACIÓN DE USUARIOS
-    // ========================================
-    
     match /usuarios_verificacion/{userId} {
       // Cualquier usuario autenticado puede crear/leer su verificación
       allow read, write: if isAuthenticated() && request.auth.uid == userId;
@@ -88,7 +89,7 @@ service cloud.firestore {
     }
     
     // ========================================
-    // REGLAS PARA EMPLEADOS
+    // REGLAS PARA GESTIÓN DE EMPLEADOS (PRIORIDAD)
     // ========================================
     
     match /empleados/{empleadoId} {
@@ -105,10 +106,6 @@ service cloud.firestore {
       
       allow delete: if isAdmin();
     }
-    
-    // ========================================
-    // REGLAS PARA HORAS TRABAJADAS
-    // ========================================
     
     match /horas_trabajadas/{horaId} {
       // Lectura: empleado propietario, RRHH, admins
@@ -132,10 +129,6 @@ service cloud.firestore {
       allow delete: if canManageEmployees() || isAdmin();
     }
     
-    // ========================================
-    // REGLAS PARA NÓMINAS
-    // ========================================
-    
     match /nominas/{nominaId} {
       // Lectura: empleado propietario, contadores, admins
       allow read: if isAuthenticated() && (
@@ -151,19 +144,62 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
+    match /departamentos/{departamentoId} {
+      // Lectura: usuarios autenticados de la misma empresa
+      allow read: if isAuthenticated() && 
+        (isSameCompany(resource.data.companyId) || isAdmin());
+      
+      // Escritura: solo quienes pueden gestionar empleados
+      allow create: if canManageEmployees() && 
+        isSameCompany(request.resource.data.companyId);
+      
+      allow update: if canManageEmployees() && 
+        isSameCompany(resource.data.companyId);
+      
+      allow delete: if isAdmin();
+    }
+    
     // ========================================
-    // REGLAS PARA CUADRE DE CAJA
+    // REGLAS PARA CUADRE DE CAJA (PRIORIDAD)
     // ========================================
     
     match /cuadre_caja/{cuadreId} {
       // Lectura: usuarios con acceso financiero
       allow read: if isAuthenticated() && (
-        canManageFinance() ||
+        canManageCash() ||
         isAdmin()
       );
       
-      // Escritura: solo contadores y admins
-      allow create, update: if canManageFinance();
+      // Escritura: solo contadores, cajeros y admins
+      allow create, update: if canManageCash();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    match /movimientos_caja/{movimientoId} {
+      // Lectura: usuarios con acceso financiero
+      allow read: if isAuthenticated() && (
+        canManageCash() ||
+        isAdmin()
+      );
+      
+      // Escritura: solo contadores, cajeros y admins
+      allow create, update: if canManageCash();
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    match /cortes_caja/{corteId} {
+      // Lectura: usuarios con acceso financiero
+      allow read: if isAuthenticated() && (
+        canManageCash() ||
+        isAdmin()
+      );
+      
+      // Escritura: solo contadores, cajeros y admins
+      allow create, update: if canManageCash();
       
       // Eliminación: solo admins
       allow delete: if isAdmin();
@@ -188,10 +224,6 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
-    // ========================================
-    // REGLAS PARA CATEGORÍAS DE INVENTARIO
-    // ========================================
-    
     match /categorias_inventario/{categoriaId} {
       // Lectura: usuarios autenticados
       allow read: if isAuthenticated();
@@ -202,25 +234,6 @@ service cloud.firestore {
       // Eliminación: solo admins
       allow delete: if isAdmin();
     }
-    
-    // ========================================
-    // REGLAS PARA PRODUCTOS DE INVENTARIO
-    // ========================================
-    
-    match /productos_inventario/{productoId} {
-      // Lectura: usuarios autenticados
-      allow read: if isAuthenticated();
-      
-      // Escritura: usuarios que pueden gestionar inventario
-      allow create, update: if canManageInventory();
-      
-      // Eliminación: solo admins
-      allow delete: if isAdmin();
-    }
-    
-    // ========================================
-    // REGLAS PARA MOVIMIENTOS DE INVENTARIO
-    // ========================================
     
     match /movimientos_inventario/{movimientoId} {
       // Lectura: usuarios autenticados
@@ -234,37 +247,7 @@ service cloud.firestore {
     }
     
     // ========================================
-    // REGLAS PARA STOCK DE INVENTARIO
-    // ========================================
-    
-    match /stock_inventario/{stockId} {
-      // Lectura: usuarios autenticados
-      allow read: if isAuthenticated();
-      
-      // Escritura: usuarios que pueden gestionar inventario
-      allow create, update: if canManageInventory();
-      
-      // Eliminación: solo admins
-      allow delete: if isAdmin();
-    }
-    
-    // ========================================
-    // REGLAS PARA AJUSTES DE INVENTARIO
-    // ========================================
-    
-    match /ajustes_inventario/{ajusteId} {
-      // Lectura: usuarios autenticados
-      allow read: if isAuthenticated();
-      
-      // Escritura: usuarios que pueden gestionar inventario
-      allow create, update: if canManageInventory();
-      
-      // Eliminación: solo admins
-      allow delete: if isAdmin();
-    }
-    
-    // ========================================
-    // REGLAS PARA FACTURAS
+    // REGLAS PARA FACTURACIÓN Y FINANZAS
     // ========================================
     
     match /facturas/{facturaId} {
@@ -281,8 +264,20 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
+    match /clientes/{clienteId} {
+      // Lectura: usuarios autenticados de la misma empresa
+      allow read: if isAuthenticated() && 
+        (isSameCompany(resource.data.companyId) || isAdmin());
+      
+      // Escritura: usuarios con acceso financiero
+      allow create, update: if canManageFinance() && 
+        isSameCompany(request.resource.data.companyId);
+      
+      allow delete: if isAdmin();
+    }
+    
     // ========================================
-    // REGLAS PARA MEMBRESÍAS
+    // REGLAS PARA MEMBRESÍAS Y PAGOS
     // ========================================
     
     match /membresias/{membresiaId} {
@@ -310,10 +305,6 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
-    // ========================================
-    // REGLAS PARA PAGOS
-    // ========================================
-    
     match /pagos/{pagoId} {
       // Lectura: usuario propietario del pago, admins
       allow read: if isAuthenticated() && (
@@ -335,10 +326,6 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
-    // ========================================
-    // REGLAS PARA TRANSACCIONES WOMPI
-    // ========================================
-    
     match /wompi_transactions/{transactionId} {
       // Lectura: usuario propietario, admins
       allow read: if isAuthenticated() && (
@@ -359,10 +346,6 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
     
-    // ========================================
-    // REGLAS PARA PLANES DE MEMBRESÍA
-    // ========================================
-    
     match /planes_membresia/{planId} {
       // Lectura: usuarios autenticados
       allow read: if isAuthenticated();
@@ -372,19 +355,7 @@ service cloud.firestore {
     }
     
     // ========================================
-    // REGLAS PARA CONFIGURACIÓN DE PAGOS
-    // ========================================
-    
-    match /configuracion_pagos/{configId} {
-      // Lectura: usuarios autenticados
-      allow read: if isAuthenticated();
-      
-      // Escritura: solo admins
-      allow create, update, delete: if isAdmin();
-    }
-    
-    // ========================================
-    // REGLAS PARA REPORTES
+    // REGLAS PARA REPORTES Y ANALYTICS
     // ========================================
     
     match /reportes/{reporteId} {
@@ -394,6 +365,18 @@ service cloud.firestore {
       
       // Escritura: admins y gerentes
       allow create, update: if isAdmin() || hasRole('gerente');
+      
+      // Eliminación: solo admins
+      allow delete: if isAdmin();
+    }
+    
+    match /metricas/{metricaId} {
+      // Lectura: usuarios autenticados de la misma empresa
+      allow read: if isAuthenticated() && 
+        (isSameCompany(resource.data.companyId) || isAdmin());
+      
+      // Escritura: sistema y admins
+      allow create, update: if isAdmin();
       
       // Eliminación: solo admins
       allow delete: if isAdmin();
@@ -410,10 +393,6 @@ service cloud.firestore {
       // Escritura: solo admins
       allow create, update, delete: if isAdmin();
     }
-    
-    // ========================================
-    // REGLAS PARA EMPRESAS
-    // ========================================
     
     match /empresas/{empresaId} {
       // Lectura: usuarios de la misma empresa o admins
@@ -448,7 +427,7 @@ service cloud.firestore {
     }
     
     // ========================================
-    // REGLAS PARA AUDITORÍA
+    // REGLAS PARA AUDITORÍA Y SEGURIDAD
     // ========================================
     
     match /auditoria/{auditId} {
@@ -462,18 +441,10 @@ service cloud.firestore {
       allow update, delete: if false;
     }
     
-    // ========================================
-    // REGLAS PARA BACKUPS
-    // ========================================
-    
     match /backups/{backupId} {
       // Solo admins pueden acceder a backups
       allow read, write: if isAdmin();
     }
-    
-    // ========================================
-    // REGLAS PARA INTEGRACIONES
-    // ========================================
     
     match /integraciones/{integracionId} {
       // Solo admins pueden gestionar integraciones
@@ -481,7 +452,7 @@ service cloud.firestore {
     }
     
     // ========================================
-    // REGLAS PARA TEMPLATES
+    // REGLAS PARA TEMPLATES Y EXPORTACIONES
     // ========================================
     
     match /templates/{templateId} {
@@ -494,10 +465,6 @@ service cloud.firestore {
       // Eliminación: solo admins
       allow delete: if isAdmin();
     }
-    
-    // ========================================
-    // REGLAS PARA EXPORTACIONES
-    // ========================================
     
     match /exportaciones/{exportacionId} {
       // Lectura: usuario que creó la exportación o admins
@@ -518,7 +485,7 @@ service cloud.firestore {
     }
     
     // ========================================
-    // REGLAS PARA CHAT IA
+    // REGLAS PARA CHAT Y COMUNICACIÓN
     // ========================================
     
     match /chat_historial/{chatId} {
@@ -562,93 +529,6 @@ service cloud.firestore {
       
       // Eliminación: solo admins
       allow delete: if isAdmin();
-    }
-    
-    // ========================================
-    // REGLAS PARA CHAT HISTORIAL
-    // ========================================
-    
-    match /chat_historial/{chatId} {
-      // Lectura: usuario propietario del chat
-      allow read: if isAuthenticated() && 
-        isOwner(resource.data.userId);
-      
-      // Escritura: usuario propietario
-      allow create, update: if isAuthenticated() && 
-        request.resource.data.userId == request.auth.uid;
-      
-      // Eliminación: propietario y admins
-      allow delete: if isOwner(resource.data.userId) || isAdmin();
-    }
-    
-    // ========================================
-    // REGLAS PARA INTEGRACIONES
-    // ========================================
-    
-    match /integraciones/{integracionId} {
-      // Solo admins pueden gestionar integraciones
-      allow read, write: if isAdmin();
-    }
-    
-    // ========================================
-    // REGLAS PARA BACKUPS
-    // ========================================
-    
-    match /backups/{backupId} {
-      // Solo admins pueden acceder a backups
-      allow read, write: if isAdmin();
-    }
-    
-    // ========================================
-    // REGLAS PARA TEMPLATES
-    // ========================================
-    
-    match /templates/{templateId} {
-      // Lectura: usuarios autenticados
-      allow read: if isAuthenticated();
-      
-      // Escritura: admins y gerentes
-      allow create, update: if isAdmin() || hasRole('gerente');
-      
-      // Eliminación: solo admins
-      allow delete: if isAdmin();
-    }
-    
-    // ========================================
-    // REGLAS PARA EXPORTACIONES
-    // ========================================
-    
-    match /exportaciones/{exportacionId} {
-      // Lectura: usuario que creó la exportación o admins
-      allow read: if isAuthenticated() && (
-        isOwner(resource.data.createdBy) ||
-        isAdmin()
-      );
-      
-      // Escritura: usuarios autenticados
-      allow create: if isAuthenticated();
-      
-      // Actualización: solo el creador
-      allow update: if isAuthenticated() && 
-        isOwner(resource.data.createdBy);
-      
-      // Eliminación: creador y admins
-      allow delete: if isOwner(resource.data.createdBy) || isAdmin();
-    }
-    
-    // ========================================
-    // REGLAS PARA AUDITORÍA
-    // ========================================
-    
-    match /auditoria/{auditId} {
-      // Solo lectura para admins
-      allow read: if isAdmin();
-      
-      // Solo el sistema puede escribir
-      allow create: if isAdmin();
-      
-      // No se permite modificar registros de auditoría
-      allow update, delete: if false;
     }
     
     // ========================================

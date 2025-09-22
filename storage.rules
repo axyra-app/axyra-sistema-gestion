@@ -1,117 +1,153 @@
 rules_version = '2';
-
-// Reglas de Storage para AXYRA - Sistema de Gestión de Nóminas
 service firebase.storage {
   match /b/{bucket}/o {
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE USUARIOS
+    // ========================================
     
-    // Reglas para archivos de usuarios autenticados
-    match /users/{userId}/{allPaths=**} {
-      // Solo el usuario propietario puede acceder a sus archivos
+    match /usuarios/{userId}/{allPaths=**} {
+      // Solo el usuario propietario puede leer/escribir sus archivos
       allow read, write: if request.auth != null && request.auth.uid == userId;
       
-      // Validar que el archivo no exceda 10MB
-      allow write: if request.resource.size < 10 * 1024 * 1024;
-      
-      // Solo permitir tipos de archivo específicos
-      allow write: if request.resource.contentType.matches('image/.*') ||
-                      request.resource.contentType.matches('application/pdf') ||
-                      request.resource.contentType.matches('text/.*') ||
-                      request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.*') ||
-                      request.resource.contentType.matches('application/vnd.ms-excel') ||
-                      request.resource.contentType.matches('application/vnd.ms-office');
+      // Los admins pueden leer todos los archivos de usuarios
+      allow read: if request.auth != null && 
+        request.auth.token.email == 'axyra.app@gmail.com';
     }
     
-    // Reglas para archivos de la empresa (logos, documentos corporativos)
-    match /company/{allPaths=**} {
-      // Solo usuarios autenticados pueden leer
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE EMPLEADOS
+    // ========================================
+    
+    match /empleados/{empleadoId}/{allPaths=**} {
+      // Usuarios autenticados de la misma empresa pueden leer
+      allow read: if request.auth != null && 
+        (request.auth.token.companyId == resource.metadata.companyId ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+      
+      // Solo RRHH, gerentes y admins pueden escribir
+      allow write: if request.auth != null && 
+        (request.auth.token.role in ['rrhh', 'gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE NÓMINAS
+    // ========================================
+    
+    match /nominas/{nominaId}/{allPaths=**} {
+      // Solo contadores, gerentes y admins pueden acceder
+      allow read, write: if request.auth != null && 
+        (request.auth.token.role in ['contador', 'gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE CUADRE DE CAJA
+    // ========================================
+    
+    match /cuadre_caja/{cuadreId}/{allPaths=**} {
+      // Solo contadores, cajeros, gerentes y admins pueden acceder
+      allow read, write: if request.auth != null && 
+        (request.auth.token.role in ['contador', 'cajero', 'gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE INVENTARIO
+    // ========================================
+    
+    match /inventario/{productoId}/{allPaths=**} {
+      // Usuarios autenticados de la misma empresa pueden leer
+      allow read: if request.auth != null && 
+        (request.auth.token.companyId == resource.metadata.companyId ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+      
+      // Solo almacén, gerentes y admins pueden escribir
+      allow write: if request.auth != null && 
+        (request.auth.token.role in ['almacen', 'gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE FACTURAS
+    // ========================================
+    
+    match /facturas/{facturaId}/{allPaths=**} {
+      // Solo contadores, gerentes y admins pueden acceder
+      allow read, write: if request.auth != null && 
+        (request.auth.token.role in ['contador', 'gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE REPORTES
+    // ========================================
+    
+    match /reportes/{reporteId}/{allPaths=**} {
+      // Usuarios autenticados de la misma empresa pueden leer
+      allow read: if request.auth != null && 
+        (request.auth.token.companyId == resource.metadata.companyId ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+      
+      // Solo gerentes y admins pueden escribir
+      allow write: if request.auth != null && 
+        (request.auth.token.role in ['gerente'] ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE EXPORTACIONES
+    // ========================================
+    
+    match /exportaciones/{exportacionId}/{allPaths=**} {
+      // Solo el usuario que creó la exportación o admins pueden acceder
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == resource.metadata.createdBy ||
+         request.auth.token.email == 'axyra.app@gmail.com');
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS DE BACKUPS
+    // ========================================
+    
+    match /backups/{backupId}/{allPaths=**} {
+      // Solo admins pueden acceder a backups
+      allow read, write: if request.auth != null && 
+        request.auth.token.email == 'axyra.app@gmail.com';
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS TEMPORALES
+    // ========================================
+    
+    match /temp/{userId}/{allPaths=**} {
+      // Solo el usuario propietario puede acceder a sus archivos temporales
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Los archivos temporales se eliminan automáticamente después de 24 horas
+      // (esto se maneja en el código de la aplicación)
+    }
+    
+    // ========================================
+    // REGLAS PARA ARCHIVOS PÚBLICOS
+    // ========================================
+    
+    match /public/{allPaths=**} {
+      // Archivos públicos pueden ser leídos por cualquier usuario autenticado
       allow read: if request.auth != null;
       
-      // Solo administradores pueden escribir
+      // Solo admins pueden escribir archivos públicos
       allow write: if request.auth != null && 
-                      exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
-                      get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
-      
-      // Validar tamaño máximo de 5MB para archivos corporativos
-      allow write: if request.resource.size < 5 * 1024 * 1024;
+        request.auth.token.email == 'axyra.app@gmail.com';
     }
     
-    // Reglas para documentos de nómina
-    match /payroll/{companyId}/{allPaths=**} {
-      // Solo usuarios autenticados de la misma empresa
-      allow read, write: if request.auth != null && 
-                            exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
-                            get(/databases/(default)/documents/users/$(request.auth.uid)).data.companyId == companyId;
-      
-      // Validar que sea un archivo de nómina
-      allow write: if request.resource.contentType.matches('application/pdf') ||
-                      request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.*') ||
-                      request.resource.contentType.matches('application/vnd.ms-excel');
-      
-      // Tamaño máximo de 20MB para documentos de nómina
-      allow write: if request.resource.size < 20 * 1024 * 1024;
-    }
+    // ========================================
+    // REGLAS POR DEFECTO
+    // ========================================
     
-    // Reglas para reportes generados
-    match /reports/{userId}/{allPaths=**} {
-      // Solo el usuario propietario puede acceder
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
-      // Solo archivos de reporte
-      allow write: if request.resource.contentType.matches('application/pdf') ||
-                      request.resource.contentType.matches('application/vnd.openxmlformats-officedocument.*') ||
-                      request.resource.contentType.matches('text/csv');
-      
-      // Tamaño máximo de 50MB para reportes
-      allow write: if request.resource.size < 50 * 1024 * 1024;
-    }
-    
-    // Reglas para avatares de perfil
-    match /avatars/{userId} {
-      // Solo el usuario propietario puede acceder
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
-      // Solo imágenes
-      allow write: if request.resource.contentType.matches('image/.*');
-      
-      // Tamaño máximo de 2MB para avatares
-      allow write: if request.resource.size < 2 * 1024 * 1024;
-    }
-    
-    // Reglas para documentos de empleados
-    match /employees/{companyId}/{employeeId}/{allPaths=**} {
-      // Solo usuarios autenticados de la misma empresa
-      allow read, write: if request.auth != null && 
-                            exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
-                            get(/databases/(default)/documents/users/$(request.auth.uid)).data.companyId == companyId;
-      
-      // Solo documentos permitidos
-      allow write: if request.resource.contentType.matches('application/pdf') ||
-                      request.resource.contentType.matches('image/.*');
-      
-      // Tamaño máximo de 10MB
-      allow write: if request.resource.size < 10 * 1024 * 1024;
-    }
-    
-    // Reglas para backups y archivos del sistema
-    match /system/{allPaths=**} {
-      // Solo administradores del sistema
-      allow read, write: if request.auth != null && 
-                            exists(/databases/(default)/documents/users/$(request.auth.uid)) &&
-                            get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-    
-    // Reglas para archivos temporales
-    match /temp/{userId}/{allPaths=**} {
-      // Solo el usuario propietario puede acceder
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-      
-      // Archivos temporales se eliminan automáticamente después de 24 horas
-      // Tamaño máximo de 5MB
-      allow write: if request.resource.size < 5 * 1024 * 1024;
-    }
-    
-    // Denegar acceso a cualquier otra ruta
+    // Cualquier otro archivo no especificado
     match /{allPaths=**} {
+      // Denegar por defecto
       allow read, write: if false;
     }
   }

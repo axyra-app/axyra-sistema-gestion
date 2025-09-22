@@ -1,5 +1,9 @@
 {
   "indexes": [
+    // ========================================
+    // ÍNDICES PARA GESTIÓN DE EMPLEADOS (PRIORIDAD)
+    // ========================================
+
     {
       "collectionGroup": "empleados",
       "queryScope": "COLLECTION",
@@ -37,11 +41,66 @@
       ]
     },
     {
+      "collectionGroup": "empleados",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "departamento",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "estado",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "empleados",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "tipoContrato",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha_ingreso",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA HORAS TRABAJADAS
+    // ========================================
+
+    {
       "collectionGroup": "horas_trabajadas",
       "queryScope": "COLLECTION",
       "fields": [
         {
           "fieldPath": "empleado_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "horas_trabajadas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
           "order": "ASCENDING"
         },
         {
@@ -64,6 +123,29 @@
         }
       ]
     },
+    {
+      "collectionGroup": "horas_trabajadas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "empleado_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "periodo",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA NÓMINAS
+    // ========================================
+
     {
       "collectionGroup": "nominas",
       "queryScope": "COLLECTION",
@@ -93,6 +175,29 @@
       ]
     },
     {
+      "collectionGroup": "nominas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "estado",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha_calculo",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA CUADRE DE CAJA (PRIORIDAD)
+    // ========================================
+
+    {
       "collectionGroup": "cuadre_caja",
       "queryScope": "COLLECTION",
       "fields": [
@@ -120,6 +225,119 @@
         }
       ]
     },
+    {
+      "collectionGroup": "cuadre_caja",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "cuadre_caja",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "estado",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA MOVIMIENTOS DE CAJA
+    // ========================================
+
+    {
+      "collectionGroup": "movimientos_caja",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "tipo",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "movimientos_caja",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "movimientos_caja",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "concepto",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA CORTES DE CAJA
+    // ========================================
+
+    {
+      "collectionGroup": "cortes_caja",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "estado",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "cortes_caja",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA INVENTARIO
+    // ========================================
+
     {
       "collectionGroup": "inventario",
       "queryScope": "COLLECTION",
@@ -157,6 +375,25 @@
       ]
     },
     {
+      "collectionGroup": "inventario",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "nombre",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA FACTURAS
+    // ========================================
+
+    {
       "collectionGroup": "facturas",
       "queryScope": "COLLECTION",
       "fields": [
@@ -184,6 +421,58 @@
         }
       ]
     },
+    {
+      "collectionGroup": "facturas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha_emision",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA CLIENTES
+    // ========================================
+
+    {
+      "collectionGroup": "clientes",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "nombre",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "clientes",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "estado",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA MEMBRESÍAS
+    // ========================================
+
     {
       "collectionGroup": "membresias",
       "queryScope": "COLLECTION",
@@ -238,6 +527,11 @@
         }
       ]
     },
+
+    // ========================================
+    // ÍNDICES PARA PAGOS
+    // ========================================
+
     {
       "collectionGroup": "pagos",
       "queryScope": "COLLECTION",
@@ -288,6 +582,11 @@
         }
       ]
     },
+
+    // ========================================
+    // ÍNDICES PARA USUARIOS
+    // ========================================
+
     {
       "collectionGroup": "usuarios",
       "queryScope": "COLLECTION",
@@ -325,6 +624,29 @@
       ]
     },
     {
+      "collectionGroup": "usuarios",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "rol",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "activo",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA REPORTES
+    // ========================================
+
+    {
       "collectionGroup": "reportes",
       "queryScope": "COLLECTION",
       "fields": [
@@ -343,23 +665,28 @@
       ]
     },
     {
-      "collectionGroup": "usuarios",
+      "collectionGroup": "reportes",
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "rol",
+          "fieldPath": "createdBy",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "activo",
+          "fieldPath": "tipo",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "created_at",
+          "fieldPath": "fecha_creacion",
           "order": "DESCENDING"
         }
       ]
     },
+
+    // ========================================
+    // ÍNDICES PARA NOTIFICACIONES
+    // ========================================
+
     {
       "collectionGroup": "notificaciones",
       "queryScope": "COLLECTION",
@@ -379,6 +706,29 @@
       ]
     },
     {
+      "collectionGroup": "notificaciones",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "tipo",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha_creacion",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA CHAT
+    // ========================================
+
+    {
       "collectionGroup": "chat_historial",
       "queryScope": "COLLECTION",
       "fields": [
@@ -392,6 +742,29 @@
         }
       ]
     },
+    {
+      "collectionGroup": "chat_historial",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "userId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "tipo",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA EXPORTACIONES
+    // ========================================
+
     {
       "collectionGroup": "exportaciones",
       "queryScope": "COLLECTION",
@@ -411,6 +784,29 @@
       ]
     },
     {
+      "collectionGroup": "exportaciones",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "estado",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha_creacion",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA AUDITORÍA
+    // ========================================
+
+    {
       "collectionGroup": "auditoria",
       "queryScope": "COLLECTION",
       "fields": [
@@ -429,6 +825,25 @@
       ]
     },
     {
+      "collectionGroup": "auditoria",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA TEMPLATES
+    // ========================================
+
+    {
       "collectionGroup": "templates",
       "queryScope": "COLLECTION",
       "fields": [
@@ -445,9 +860,64 @@
           "order": "DESCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "templates",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "tipo",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+
+    // ========================================
+    // ÍNDICES PARA MÉTRICAS
+    // ========================================
+
+    {
+      "collectionGroup": "metricas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "tipo",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "metricas",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "companyId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "fecha",
+          "order": "DESCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": [
+    // ========================================
+    // OVERRIDES PARA CAMPOS ÚNICOS
+    // ========================================
+
     {
       "collectionGroup": "empleados",
       "fieldPath": "cedula",
@@ -521,6 +991,26 @@
     {
       "collectionGroup": "membresias",
       "fieldPath": "planType",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "clientes",
+      "fieldPath": "documento",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "clientes",
+      "fieldPath": "email",
       "indexes": [
         {
           "order": "ASCENDING",

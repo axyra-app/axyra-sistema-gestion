@@ -3,221 +3,102 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AXYRA - Gestión de Personal</title>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-    <!-- Estilos AXYRA -->
+    <title>Gestión de Personal - AXYRA</title>
     <link rel="stylesheet" href="../../static/axyra-styles.css" />
-    <link rel="stylesheet" href="../../static/modal-fixes.css" />
-    <link rel="stylesheet" href="../../static/modal-positioning-fix.css" />
-    <link rel="stylesheet" href="../../static/modal-emergency-fix.css" />
-    <link rel="stylesheet" href="../../static/header-fixes.css" />
-    <link rel="stylesheet" href="gestion_personal-styles.css" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-      /* Estilos específicos para Gestión de Personal */
       .gestion-personal-container {
         max-width: 1400px;
         margin: 0 auto;
         padding: 20px;
       }
 
-      .gestion-personal-header {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      .gestion-personal-title {
-        font-size: 2.5rem;
-        color: #4f81bd;
-        margin-bottom: 10px;
-        font-weight: 700;
-      }
-
-      .gestion-personal-subtitle {
-        font-size: 1.1rem;
-        color: #666;
-        margin-bottom: 20px;
-      }
-
       .gestion-personal-tabs {
         display: flex;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        margin-bottom: 30px;
-        overflow: hidden;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        overflow-x: auto;
       }
 
       .gestion-personal-tab {
         flex: 1;
-        padding: 20px;
+        padding: 15px 20px;
         text-align: center;
         cursor: pointer;
-        transition: all 0.3s ease;
         border: none;
-        background: #f8f9fa;
-        color: #666;
-        font-size: 1rem;
+        background: transparent;
+        color: #6c757d;
         font-weight: 500;
+        transition: all 0.3s ease;
+        white-space: nowrap;
       }
 
       .gestion-personal-tab.active {
-        background: #4f81bd;
+        background: #007bff;
         color: white;
+        border-radius: 8px;
+        margin: 2px;
       }
 
-      .gestion-personal-tab:hover:not(.active) {
+      .gestion-personal-tab:hover {
         background: #e9ecef;
       }
 
-      .gestion-personal-content {
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        padding: 30px;
-        min-height: 600px;
+      .gestion-personal-tab.active:hover {
+        background: #0056b3;
       }
 
       .tab-content {
         display: none;
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
 
       .tab-content.active {
         display: block;
       }
 
-      .gestion-personal-stats {
+      .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
         margin-bottom: 30px;
       }
 
       .stat-card {
-        background: linear-gradient(135deg, #4f81bd 0%, #2e5c8a 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        padding: 25px;
-        border-radius: 16px;
+        padding: 20px;
+        border-radius: 10px;
         text-align: center;
-        transition: all 0.3s ease;
-        border: 2px solid rgba(255, 255, 255, 0.15);
-        box-shadow: 0 8px 24px rgba(79, 129, 189, 0.3);
       }
 
-      .stat-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(79, 129, 189, 0.5);
-        border-color: rgba(255, 255, 255, 0.3);
+      .stat-card h3 {
+        margin: 0 0 10px 0;
+        font-size: 2em;
+        font-weight: bold;
       }
 
-      .stat-icon {
-        font-size: 2.5rem;
-        margin-bottom: 15px;
-        opacity: 1;
-        color: #ffffff;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      .stat-card p {
+        margin: 0;
+        opacity: 0.9;
       }
 
-      .stat-number {
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 8px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        color: #ffffff;
-      }
-
-      .stat-label {
-        font-size: 0.9rem;
-        opacity: 1;
-        font-weight: 600;
-        color: #ffffff;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-      }
-
-      .gestion-personal-actions {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 30px;
-        flex-wrap: wrap;
-      }
-
-      .gestion-personal-btn {
-        padding: 12px 24px;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        text-decoration: none;
-        color: white;
-      }
-
-      .gestion-personal-btn-primary {
-        background: linear-gradient(135deg, #4f81bd 0%, #2e5c8a 100%);
-        box-shadow: 0 4px 12px rgba(79, 129, 189, 0.3);
-      }
-
-      .gestion-personal-btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(79, 129, 189, 0.4);
-      }
-
-      .gestion-personal-btn-success {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-      }
-
-      .gestion-personal-btn-success:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-      }
-
-      .gestion-personal-btn-warning {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-      }
-
-      .gestion-personal-btn-warning:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
-      }
-
-      .gestion-personal-btn-info {
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-      }
-
-      .gestion-personal-btn-info:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
-      }
-
-      .gestion-personal-form {
+      .form-section {
         background: #f8f9fa;
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 30px;
-      }
-
-      .form-title {
-        font-size: 1.5rem;
-        color: #4f81bd;
+        padding: 20px;
+        border-radius: 8px;
         margin-bottom: 20px;
-        font-weight: 600;
       }
 
       .form-row {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        margin-bottom: 20px;
+        gap: 15px;
+        margin-bottom: 15px;
       }
 
       .form-group {
@@ -225,1091 +106,766 @@
         flex-direction: column;
       }
 
-      .form-label {
-        font-weight: 600;
-        margin-bottom: 8px;
-        color: #374151;
+      .form-group label {
+        margin-bottom: 5px;
+        font-weight: 500;
+        color: #495057;
       }
 
-      .form-input,
-      .form-select {
-        padding: 12px 16px;
-        border: 2px solid #e5e7eb;
-        border-radius: 8px;
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 10px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
         font-size: 14px;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
         transition: all 0.3s ease;
       }
 
-      .form-input:focus,
-      .form-select:focus {
-        outline: none;
-        border-color: #4f81bd;
-        box-shadow: 0 0 0 3px rgba(79, 129, 189, 0.1);
-      }
-
-      .form-actions {
-        display: flex;
-        gap: 16px;
-        justify-content: flex-end;
-        margin-top: 20px;
-      }
-
-      .gestion-personal-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      }
-
-      .gestion-personal-table th {
-        background: #4f81bd;
+      .btn-primary {
+        background: #007bff;
         color: white;
-        padding: 15px;
-        text-align: left;
-        font-weight: 600;
       }
 
-      .gestion-personal-table td {
-        padding: 15px;
-        border-bottom: 1px solid #e5e7eb;
+      .btn-primary:hover {
+        background: #0056b3;
       }
 
-      .gestion-personal-table tr:hover {
-        background: #f8f9fa;
+      .btn-success {
+        background: #28a745;
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #1e7e34;
+      }
+
+      .btn-danger {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
+      }
+
+      .btn-outline-primary {
+        background: transparent;
+        color: #007bff;
+        border: 1px solid #007bff;
+      }
+
+      .btn-outline-primary:hover {
+        background: #007bff;
+        color: white;
+      }
+
+      .btn-outline-danger {
+        background: transparent;
+        color: #dc3545;
+        border: 1px solid #dc3545;
+      }
+
+      .btn-outline-danger:hover {
+        background: #dc3545;
+        color: white;
+      }
+
+      .btn-outline-info {
+        background: transparent;
+        color: #17a2b8;
+        border: 1px solid #17a2b8;
+      }
+
+      .btn-outline-info:hover {
+        background: #17a2b8;
+        color: white;
       }
 
       .btn-sm {
-        padding: 6px 12px;
+        padding: 5px 10px;
         font-size: 12px;
-        border-radius: 6px;
+      }
+
+      .btn-small {
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        margin-top: 20px;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+      }
+
+      .table th,
+      .table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .table tbody tr:hover {
+        background: #f8f9fa;
+      }
+
+      .estado-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .estado-badge.activo {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .estado-badge.inactivo {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .departamento-item {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .departamento-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .departamento-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .departamento-nombre {
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .departamento-descripcion {
+        color: #6c757d;
+        margin-bottom: 10px;
+      }
+
+      .departamento-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .text-success {
+        color: #28a745 !important;
+      }
+
+      .text-danger {
+        color: #dc3545 !important;
+      }
+
+      .text-info {
+        color: #17a2b8 !important;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .modal-title {
+        margin: 0;
+        color: #495057;
+      }
+
+      .close {
+        background: none;
         border: none;
+        font-size: 24px;
         cursor: pointer;
-        transition: all 0.3s ease;
-        margin: 0 2px;
+        color: #6c757d;
       }
 
-      .btn-primary-sm {
-        background: #4f81bd;
-        color: white;
+      .close:hover {
+        color: #495057;
       }
 
-      .btn-success-sm {
-        background: #10b981;
-        color: white;
+      .modal-body {
+        margin-bottom: 20px;
       }
 
-      .btn-warning-sm {
-        background: #f59e0b;
-        color: white;
-      }
-
-      .btn-danger-sm {
-        background: #ef4444;
-        color: white;
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #dee2e6;
       }
 
       @media (max-width: 768px) {
+        .gestion-personal-container {
+          padding: 10px;
+        }
+
         .gestion-personal-tabs {
           flex-direction: column;
         }
 
-        .gestion-personal-actions {
-          flex-direction: column;
+        .gestion-personal-tab {
+          text-align: left;
         }
 
         .form-row {
+          grid-template-columns: 1fr;
+        }
+
+        .btn-group {
+          flex-direction: column;
+        }
+
+        .stats-grid {
           grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
   <body>
-    <!-- Header Compartido AXYRA - Se insertará automáticamente -->
-    <div id="axyra-header-container"></div>
+    <div class="gestion-personal-container">
+      <h1><i class="fas fa-users"></i> Gestión de Personal</h1>
 
-    <!-- Scripts del Header -->
-    <script src="../../static/include-header.js"></script>
+      <!-- Pestañas -->
+      <div class="gestion-personal-tabs">
+        <button class="gestion-personal-tab active" onclick="cambiarTab('horas')">
+          <i class="fas fa-clock"></i> Registro de Horas
+        </button>
+        <button class="gestion-personal-tab" onclick="cambiarTab('empleados')">
+          <i class="fas fa-users"></i> Empleados
+        </button>
+        <button class="gestion-personal-tab" onclick="cambiarTab('departamentos')">
+          <i class="fas fa-building"></i> Departamentos
+        </button>
+        <button class="gestion-personal-tab" onclick="cambiarTab('nomina')">
+          <i class="fas fa-file-invoice-dollar"></i> Nómina
+        </button>
+        <button class="gestion-personal-tab" onclick="cambiarTab('reportes')">
+          <i class="fas fa-chart-bar"></i> Reportes
+        </button>
+      </div>
 
-    <!-- Contenido Principal -->
-    <main class="axyra-section">
-      <div class="gestion-personal-container">
-        <div class="gestion-personal-header">
-          <h1 class="gestion-personal-title">Gestión de Personal</h1>
-          <p class="gestion-personal-subtitle">Sistema unificado para gestión de horas, nóminas y empleados</p>
+      <!-- Contenido de Pestañas -->
+
+      <!-- Pestaña de Horas -->
+      <div id="tab-horas" class="tab-content active">
+        <div class="form-section">
+          <h3><i class="fas fa-plus"></i> Registrar Horas</h3>
+          <form id="formRegistroHoras">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="empleadoHoras">Empleado *</label>
+                <select id="empleadoHoras" name="empleadoHoras" required>
+                  <option value="">Seleccionar empleado</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="fechaHoras">Fecha *</label>
+                <input type="date" id="fechaHoras" name="fechaHoras" required />
+              </div>
+            </div>
+
+            <h4>Tipos de Horas</h4>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="horas_ordinarias">Horas Ordinarias</label>
+                <input type="number" id="horas_ordinarias" name="horas_ordinarias" min="0" step="0.5" value="0" />
+              </div>
+              <div class="form-group">
+                <label for="horas_recargo_nocturno">Recargo Nocturno</label>
+                <input
+                  type="number"
+                  id="horas_recargo_nocturno"
+                  name="horas_recargo_nocturno"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_recargo_diurno_dominical">Recargo Diurno Dominical</label>
+                <input
+                  type="number"
+                  id="horas_recargo_diurno_dominical"
+                  name="horas_recargo_diurno_dominical"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_recargo_nocturno_dominical">Recargo Nocturno Dominical</label>
+                <input
+                  type="number"
+                  id="horas_recargo_nocturno_dominical"
+                  name="horas_recargo_nocturno_dominical"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="horas_hora_extra_diurna">Hora Extra Diurna</label>
+                <input
+                  type="number"
+                  id="horas_hora_extra_diurna"
+                  name="horas_hora_extra_diurna"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_hora_extra_nocturna">Hora Extra Nocturna</label>
+                <input
+                  type="number"
+                  id="horas_hora_extra_nocturna"
+                  name="horas_hora_extra_nocturna"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_hora_diurna_dominical_o_festivo">Hora Diurna Dominical/Festivo</label>
+                <input
+                  type="number"
+                  id="horas_hora_diurna_dominical_o_festivo"
+                  name="horas_hora_diurna_dominical_o_festivo"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_hora_extra_diurna_dominical_o_festivo">Hora Extra Diurna Dominical/Festivo</label>
+                <input
+                  type="number"
+                  id="horas_hora_extra_diurna_dominical_o_festivo"
+                  name="horas_hora_extra_diurna_dominical_o_festivo"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="horas_hora_nocturna_dominical_o_festivo">Hora Nocturna Dominical/Festivo</label>
+                <input
+                  type="number"
+                  id="horas_hora_nocturna_dominical_o_festivo"
+                  name="horas_hora_nocturna_dominical_o_festivo"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+              <div class="form-group">
+                <label for="horas_hora_extra_nocturna_dominical_o_festivo">Hora Extra Nocturna Dominical/Festivo</label>
+                <input
+                  type="number"
+                  id="horas_hora_extra_nocturna_dominical_o_festivo"
+                  name="horas_hora_extra_nocturna_dominical_o_festivo"
+                  min="0"
+                  step="0.5"
+                  value="0"
+                />
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Registrar Horas</button>
+              <button type="button" class="btn btn-outline-primary" onclick="calcularHoras()">
+                <i class="fas fa-calculator"></i> Calcular
+              </button>
+            </div>
+          </form>
         </div>
 
-        <!-- Estadísticas Principales -->
-        <div class="gestion-personal-stats">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-users"></i>
-            </div>
-            <div class="stat-number" id="totalEmpleados">0</div>
-            <div class="stat-label">Total Empleados</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-clock"></i>
-            </div>
-            <div class="stat-number" id="horasMes">0</div>
-            <div class="stat-label">Horas del Mes</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-dollar-sign"></i>
-            </div>
-            <div class="stat-number" id="totalPagos">$0</div>
-            <div class="stat-label">Total Pagos</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-file-invoice-dollar"></i>
-            </div>
-            <div class="stat-number" id="nominasGeneradas">0</div>
-            <div class="stat-label">Nóminas Generadas</div>
+        <div class="table-container">
+          <h3><i class="fas fa-history"></i> Historial de Horas</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Empleado</th>
+                <th>Ordinarias</th>
+                <th>Rec. Nocturno</th>
+                <th>Rec. Diurno Dom.</th>
+                <th>Rec. Nocturno Dom.</th>
+                <th>H.E. Diurna</th>
+                <th>H.E. Nocturna</th>
+                <th>H. Diurna Dom.</th>
+                <th>H.E. Diurna Dom.</th>
+                <th>H. Nocturna Dom.</th>
+                <th>H.E. Nocturna Dom.</th>
+                <th>Total Horas</th>
+                <th>Total Salario</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpoHistorialHoras">
+              <!-- Los datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pestaña de Empleados -->
+      <div id="tab-empleados" class="tab-content">
+        <div class="form-section">
+          <h3><i class="fas fa-plus"></i> Gestionar Empleados</h3>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="mostrarModalEmpleado()">
+              <i class="fas fa-plus"></i> Nuevo Empleado
+            </button>
           </div>
         </div>
 
+        <div class="table-container">
+          <h3><i class="fas fa-users"></i> Lista de Empleados</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Cédula</th>
+                <th>Cargo</th>
+                <th>Departamento</th>
+                <th>Salario</th>
+                <th>Tipo Contrato</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpoEmpleados">
+              <!-- Los datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-        <!-- Tabs de Navegación -->
-        <div class="gestion-personal-tabs">
-          <button class="gestion-personal-tab active" onclick="cambiarTab('horas')">
-            <i class="fas fa-clock"></i> Gestión de Horas
-          </button>
-          <button class="gestion-personal-tab" onclick="cambiarTab('nomina')">
-            <i class="fas fa-file-invoice-dollar"></i> Generación de Nóminas
-          </button>
-          <button class="gestion-personal-tab" onclick="cambiarTab('empleados')">
-            <i class="fas fa-users"></i> Gestión de Empleados
-          </button>
-          <button class="gestion-personal-tab" onclick="cambiarTab('reportes')">
-            <i class="fas fa-chart-bar"></i> Reportes y Estadísticas
-          </button>
+      <!-- Pestaña de Departamentos -->
+      <div id="tab-departamentos" class="tab-content">
+        <div class="form-section">
+          <h3><i class="fas fa-plus"></i> Gestionar Departamentos</h3>
+          <form id="formDepartamento">
+            <input type="hidden" name="departamentoId" value="" />
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombreDepartamento">Nombre *</label>
+                <input type="text" id="nombreDepartamento" name="nombre" required />
+              </div>
+              <div class="form-group">
+                <label for="colorDepartamento">Color</label>
+                <input type="color" id="colorDepartamento" name="color" value="#007bff" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="descripcionDepartamento">Descripción</label>
+              <textarea id="descripcionDepartamento" name="descripcion" rows="3"></textarea>
+            </div>
+            <div class="btn-group">
+              <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Guardar Departamento</button>
+            </div>
+          </form>
         </div>
 
-        <!-- Contenido de las Tabs -->
-        <div class="gestion-personal-content">
-          <!-- Tab: Gestión de Horas -->
-          <div id="tab-horas" class="tab-content active">
-            <div class="gestion-personal-actions">
-              <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalRegistroHoras()">
-                <i class="fas fa-plus"></i> Registrar Horas
-              </button>
-              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="mostrarModalCalculoHoras()">
-                <i class="fas fa-calculator"></i> Calcular Horas
-              </button>
-              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="mostrarModalExportarExcel()">
-                <i class="fas fa-file-excel"></i> Exportar Excel
-              </button>
-              <button class="gestion-personal-btn gestion-personal-btn-info" onclick="mostrarModalReporteHoras()">
-                <i class="fas fa-chart-line"></i> Reporte de Horas
-              </button>
+        <div id="listaDepartamentos">
+          <!-- Los departamentos se cargarán dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Pestaña de Nómina -->
+      <div id="tab-nomina" class="tab-content">
+        <div class="form-section">
+          <h3><i class="fas fa-file-invoice-dollar"></i> Generar Nómina</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="periodoNomina">Período</label>
+              <select id="periodoNomina" name="periodoNomina">
+                <option value="">Seleccionar período</option>
+                <option value="2024-01">Enero 2024</option>
+                <option value="2024-02">Febrero 2024</option>
+                <option value="2024-03">Marzo 2024</option>
+              </select>
             </div>
-
-            <div class="gestion-personal-form">
-              <h3 class="form-title">Registro de Horas Trabajadas</h3>
-              <form id="formRegistroHoras">
-                <div class="form-row">
-                  <div class="form-group">
-                    <label class="form-label">Empleado *</label>
-                    <select class="form-select" id="empleadoHoras" required>
-                      <option value="">Seleccionar empleado</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Fecha *</label>
-                    <input type="date" class="form-input" id="fechaHoras" required />
-                  </div>
-                </div>
-
-                <!-- 1. Horas Ordinarias -->
-                <div class="form-row">
-                  <div class="form-group">
-                    <label class="form-label">Horas Ordinarias</label>
-                    <input
-                      type="number"
-                      class="form-input"
-                      id="horas_ordinarias"
-                      name="horas_ordinarias"
-                      min="0"
-                      step="0.5"
-                      value="0"
-                    />
-                    <div class="valor-hora" data-tipo-hora="ordinarias">Valor: $0</div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Recargo Nocturno</label>
-                    <input
-                      type="number"
-                      class="form-input"
-                      id="horas_recargo_nocturno"
-                      name="horas_recargo_nocturno"
-                      min="0"
-                      step="0.5"
-                      value="0"
-                    />
-                    <div class="valor-hora" data-tipo-hora="recargo_nocturno">Valor: $0</div>
-                  </div>
-                </div>
-
-                <!-- 2. Recargos Dominicales -->
-                <div class="form-row">
-                  <div class="form-group">
-                    <label class="form-label">Recargo Diurno Dominical</label>
-                    <input
-                      type="number"
-                      class="form-input"
-                      id="horas_recargo_diurno_dominical"
-                      name="horas_recargo_diurno_dominical"
-                      min="0"
-                      step="0.5"
-                      value="0"
-                    />
-                    <div class="valor-hora" data-tipo-hora="recargo_diurno_dominical">Valor: $0</div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Recargo Nocturno Dominical</label>
-                    <input
-                      type="number"
-                      class="form-input"
-                      id="horas_recargo_nocturno_dominical"
-                      name="horas_recargo_nocturno_dominical"
-                      min="0"
-                      step="0.5"
-                      value="0"
-                    />
-                    <div class="valor-hora" data-tipo-hora="recargo_nocturno_dominical">Valor: $0</div>
-                  </div>
-                </div>
-
-                <!-- 3. Horas Extra -->
-                <div class="form-row">
-                  <div class="form-group">
-                    <label class="form-label">Hora Extra Diurna</label>
-                    <input
-                      type="number"
-                      class="form-input"
-                      id="horas_hora_extra_diurna"
-                      name="horas_hora_extra_diurna"
-                      min="0"
-                      step="0.5"
-                      value="0"
-                    />
-                    <div class="valor-hora" data-tipo-hora="hora_extra_diurna">Valor: $0</div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Hora Extra Nocturna</label>
-                    <input
-                      type="number"
-                      class="form-input"
-                      id="horas_hora_extra_nocturna"
-                      name="horas_hora_extra_nocturna"
-                      min="0"
-                      step="0.5"
-                      value="0"
-                    />
-                    <div class="valor-hora" data-tipo-hora="hora_extra_nocturna">Valor: $0</div>
-                  </div>
-                </div>
-
-                <!-- 4. Horas Dominicales/Festivos -->
-                <div class="form-row">
-                  <div class="form-group">
-                    <label class="form-label">Hora Diurna Dominical/Festivo</label>
-                    <input
-                      type="number"
-                      class="form-input"
-                      id="horas_hora_diurna_dominical_o_festivo"
-                      name="horas_hora_diurna_dominical_o_festivo"
-                      min="0"
-                      step="0.5"
-                      value="0"
-                    />
-                    <div class="valor-hora" data-tipo-hora="hora_diurna_dominical_o_festivo">Valor: $0</div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Hora Extra Diurna Dominical/Festivo</label>
-                    <input
-                      type="number"
-                      class="form-input"
-                      id="horas_hora_extra_diurna_dominical_o_festivo"
-                      name="horas_hora_extra_diurna_dominical_o_festivo"
-                      min="0"
-                      step="0.5"
-                      value="0"
-                    />
-                    <div class="valor-hora" data-tipo-hora="hora_extra_diurna_dominical_o_festivo">Valor: $0</div>
-                  </div>
-                </div>
-
-                <!-- 5. Horas Nocturnas Dominicales/Festivos -->
-                <div class="form-row">
-                  <div class="form-group">
-                    <label class="form-label">Hora Nocturna Dominical/Festivo</label>
-                    <input
-                      type="number"
-                      class="form-input"
-                      id="horas_hora_nocturna_dominical_o_festivo"
-                      name="horas_hora_nocturna_dominical_o_festivo"
-                      min="0"
-                      step="0.5"
-                      value="0"
-                    />
-                    <div class="valor-hora" data-tipo-hora="hora_nocturna_dominical_o_festivo">Valor: $0</div>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Hora Extra Nocturna Dominical/Festivo</label>
-                    <input
-                      type="number"
-                      class="form-input"
-                      id="horas_hora_extra_nocturna_dominical_o_festivo"
-                      name="horas_hora_extra_nocturna_dominical_o_festivo"
-                      min="0"
-                      step="0.5"
-                      value="0"
-                    />
-                    <div class="valor-hora" data-tipo-hora="hora_extra_nocturna_dominical_o_festivo">Valor: $0</div>
-                  </div>
-                </div>
-
-                <div class="form-actions">
-                  <button
-                    type="button"
-                    class="gestion-personal-btn gestion-personal-btn-warning"
-                    onclick="limpiarFormularioHoras()"
-                  >
-                    <i class="fas fa-eraser"></i> Limpiar
-                  </button>
-                  <button type="submit" class="gestion-personal-btn gestion-personal-btn-success">
-                    <i class="fas fa-save"></i> Registrar Horas
-                  </button>
-                </div>
-              </form>
+            <div class="form-group">
+              <label for="nominaDepartamento">Departamento</label>
+              <select id="nominaDepartamento" name="nominaDepartamento">
+                <option value="">Todos los Departamentos</option>
+              </select>
             </div>
-
-            <h3>Historial de Horas Registradas</h3>
-            <table class="gestion-personal-table" id="tablaHistorialHoras">
-              <thead>
-                <tr>
-                  <th>Fecha</th>
-                  <th>Empleado</th>
-                  <th>Ordinarias</th>
-                  <th>Rec. Nocturno</th>
-                  <th>Rec. Diurno Dom.</th>
-                  <th>Rec. Noct. Dom.</th>
-                  <th>Extra Diurna</th>
-                  <th>Extra Nocturna</th>
-                  <th>Dominical</th>
-                  <th>Extra Dominical</th>
-                  <th>Noct. Dominical</th>
-                  <th>Extra Noct. Dom.</th>
-                  <th>Total Horas</th>
-                  <th>Total Pago</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="cuerpoHistorialHoras">
-                <!-- Se llena dinámicamente -->
-              </tbody>
-            </table>
           </div>
-
-          <!-- Tab: Generación de Nóminas -->
-          <div id="tab-nomina" class="tab-content">
-            <div class="gestion-personal-actions">
-              <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalGenerarNomina()">
-                <i class="fas fa-plus"></i> Generar Nueva Nómina
-              </button>
-              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="exportarNominasExcel()">
-                <i class="fas fa-file-excel"></i> Exportar a Excel
-              </button>
-              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="generarReporteNominas()">
-                <i class="fas fa-chart-pie"></i> Reporte de Nóminas
-              </button>
-            </div>
-
-            <h3>Nóminas Generadas</h3>
-            <table class="gestion-personal-table" id="tablaNominas">
-              <thead>
-                <tr>
-                  <th>Período</th>
-                  <th>Empleado</th>
-                  <th>Total Horas</th>
-                  <th>Salario Base</th>
-                  <th>Total a Pagar</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="cuerpoNominas">
-                <!-- Se llena dinámicamente -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Tab: Gestión de Empleados -->
-          <div id="tab-empleados" class="tab-content">
-            <div class="gestion-personal-actions">
-              <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalEmpleado()">
-                <i class="fas fa-user-plus"></i> Nuevo Empleado
-              </button>
-              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="mostrarModalDepartamento()">
-                <i class="fas fa-sitemap"></i> Gestionar Departamentos
-              </button>
-              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="mostrarModalExportarEmpleados()">
-                <i class="fas fa-file-excel"></i> Exportar Empleados
-              </button>
-            </div>
-
-            <h3>Empleados Registrados</h3>
-            <table class="gestion-personal-table" id="tablaEmpleados">
-              <thead>
-                <tr>
-                  <th>Nombre</th>
-                  <th>Cédula</th>
-                  <th>Cargo</th>
-                  <th>Departamento</th>
-                  <th>Salario Base</th>
-                  <th>Tipo Contrato</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody id="cuerpoEmpleados">
-                <!-- Se llena dinámicamente -->
-              </tbody>
-            </table>
-          </div>
-
-          <!-- Tab: Reportes y Estadísticas -->
-          <div id="tab-reportes" class="tab-content">
-            <div class="gestion-personal-actions">
-              <button class="gestion-personal-btn gestion-personal-btn-primary" onclick="mostrarModalReporteGeneral()">
-                <i class="fas fa-chart-bar"></i> Reporte General
-              </button>
-              <button class="gestion-personal-btn gestion-personal-btn-success" onclick="mostrarModalReporteEmpleado()">
-                <i class="fas fa-user-chart"></i> Reporte por Empleado
-              </button>
-              <button class="gestion-personal-btn gestion-personal-btn-warning" onclick="mostrarModalReporteDepartamento()">
-                <i class="fas fa-sitemap"></i> Reporte por Departamento
-              </button>
-            </div>
-
-            <div class="gestion-personal-stats">
-              <div class="stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="stat-number" id="promedioHoras">0</div>
-                <div class="stat-label">Promedio Horas/Mes</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-dollar-sign"></i>
-                </div>
-                <div class="stat-number" id="promedioSalario">$0</div>
-                <div class="stat-label">Promedio Salario</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-number" id="empleadosActivos">0</div>
-                <div class="stat-label">Empleados Activos</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-icon">
-                  <i class="fas fa-calendar"></i>
-                </div>
-                <div class="stat-number" id="diasTrabajados">0</div>
-                <div class="stat-label">Días Trabajados</div>
-              </div>
-            </div>
-
-            <h3>Gráficos y Análisis</h3>
-            <div id="graficosContainer">
-              <!-- Aquí se insertarán los gráficos -->
-              <p>Los gráficos se cargarán dinámicamente...</p>
-            </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="generarNomina()">
+              <i class="fas fa-calculator"></i> Generar Nómina
+            </button>
+            <button class="btn btn-success" onclick="generarComprobante()">
+              <i class="fas fa-file-pdf"></i> Generar Comprobante
+            </button>
           </div>
         </div>
       </div>
-    </main>
 
-    <!-- ===== MODALES PROFESIONALES ===== -->
-    
-    <!-- Modal de Nuevo Empleado -->
-    <div id="modalEmpleado" class="modal-overlay">
-      <div class="modal-container">
+      <!-- Pestaña de Reportes -->
+      <div id="tab-reportes" class="tab-content">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3 id="totalEmpleados">0</h3>
+            <p>Total Empleados</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="empleadosActivos">0</h3>
+            <p>Empleados Activos</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="horasMes">0</h3>
+            <p>Horas del Mes</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="totalPagos">$0</h3>
+            <p>Total Pagos</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="nominasGeneradas">0</h3>
+            <p>Nóminas Generadas</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="promedioHoras">0</h3>
+            <p>Promedio Horas</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="promedioSalario">$0</h3>
+            <p>Promedio Salario</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Empleado -->
+    <div id="modalEmpleado" class="modal">
+      <div class="modal-content">
         <div class="modal-header">
-          <h3><i class="fas fa-user-plus"></i> Nuevo Empleado</h3>
-          <button class="modal-close" onclick="cerrarModalEmpleado()">
-            <i class="fas fa-times"></i>
-          </button>
+          <h3 class="modal-title">Gestionar Empleado</h3>
+          <button class="close" onclick="cerrarModalEmpleado()">&times;</button>
         </div>
         <div class="modal-body">
-          <form id="formEmpleado" class="empleado-form">
+          <form id="formEmpleado">
+            <input type="hidden" name="empleadoId" value="" />
             <div class="form-row">
               <div class="form-group">
-                <label>Nombre Completo *</label>
-                <input type="text" id="nombreEmpleado" required placeholder="Ingrese el nombre completo">
+                <label for="nombreEmpleado">Nombre Completo *</label>
+                <input type="text" id="nombreEmpleado" name="nombre" required />
               </div>
               <div class="form-group">
-                <label>Cédula *</label>
-                <input type="text" id="cedulaEmpleado" required placeholder="Ingrese la cédula">
+                <label for="cedulaEmpleado">Cédula *</label>
+                <input type="text" id="cedulaEmpleado" name="cedula" required />
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Cargo *</label>
-                <input type="text" id="cargoEmpleado" required placeholder="Ingrese el cargo">
+                <label for="cargoEmpleado">Cargo *</label>
+                <input type="text" id="cargoEmpleado" name="cargo" required />
               </div>
               <div class="form-group">
-                <label>Departamento *</label>
-                <select id="departamentoEmpleado" required>
+                <label for="departamentoEmpleado">Departamento</label>
+                <select id="departamentoEmpleado" name="departamento">
                   <option value="">Seleccionar departamento</option>
                 </select>
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Tipo de Salario *</label>
-                <select id="tipoSalarioEmpleado" required onchange="cambiarTipoSalario()">
-                  <option value="">Seleccionar tipo</option>
-                  <option value="fijo">Salario Fijo Mensual</option>
-                  <option value="por_horas">Salario por Horas Trabajadas</option>
-                </select>
+                <label for="salarioEmpleado">Salario *</label>
+                <input type="number" id="salarioEmpleado" name="salario" min="0" step="1000" required />
               </div>
               <div class="form-group">
-                <label>Tipo de Contrato *</label>
-                <select id="tipoContratoEmpleado" required>
-                  <option value="">Seleccionar tipo</option>
-                  <option value="Indefinido">Indefinido</option>
-                  <option value="Término Fijo">Término Fijo</option>
-                  <option value="Obra o Labor">Obra o Labor</option>
-                  <option value="Aprendizaje">Aprendizaje</option>
+                <label for="tipoContratoEmpleado">Tipo de Contrato</label>
+                <select id="tipoContratoEmpleado" name="tipoContrato">
+                  <option value="indefinido">Indefinido</option>
+                  <option value="fijo">Fijo</option>
+                  <option value="obra_labor">Obra o Labor</option>
+                  <option value="aprendizaje">Aprendizaje</option>
                 </select>
               </div>
             </div>
-            
-            <!-- Campos para Salario Fijo -->
-            <div id="camposSalarioFijo" class="form-row" style="display: none;">
-              <div class="form-group">
-                <label>Salario Base Mensual *</label>
-                <input type="text" id="salarioFijoEmpleado" required placeholder="Ingrese el salario mensual" inputmode="numeric">
-                <small class="form-help">Ingrese el salario en pesos colombianos (COP)</small>
-              </div>
-              <div class="form-group">
-                <label>Bonificaciones Mensuales</label>
-                <input type="text" id="bonificacionesEmpleado" placeholder="Bonificaciones adicionales" inputmode="numeric">
-                <small class="form-help">Opcional: Bonificaciones adicionales en pesos colombianos</small>
-              </div>
-            </div>
-            
-            <!-- Campos para Salario por Horas -->
-            <div id="camposSalarioHoras" class="form-row" style="display: none;">
-              <div class="form-group">
-                <label>Salario Base Mensual (Referencia)</label>
-                <input type="text" id="salarioReferenciaEmpleado" required placeholder="Salario base de referencia" inputmode="numeric">
-                <small class="form-help">Este valor se usará como referencia para cálculos. Los valores por hora se configuran en el gestor de horas.</small>
-              </div>
-            </div>
-            
             <div class="form-row">
               <div class="form-group">
-                <label>Fecha de Contratación *</label>
-                <input type="date" id="fechaContratacionEmpleado" required>
+                <label for="fechaContratacionEmpleado">Fecha de Contratación</label>
+                <input type="date" id="fechaContratacionEmpleado" name="fechaContratacion" />
               </div>
               <div class="form-group">
-                <label>Estado *</label>
-                <select id="estadoEmpleado" required>
+                <label for="estadoEmpleado">Estado</label>
+                <select id="estadoEmpleado" name="estado">
                   <option value="activo">Activo</option>
                   <option value="inactivo">Inactivo</option>
-                  <option value="vacaciones">Vacaciones</option>
-                  <option value="licencia">Licencia</option>
                 </select>
               </div>
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-success" onclick="guardarEmpleado()">
-            <i class="fas fa-save"></i> Guardar Empleado
+          <button type="button" class="btn btn-outline-primary" onclick="cerrarModalEmpleado()">Cancelar</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="document.getElementById('formEmpleado').dispatchEvent(new Event('submit'))"
+          >
+            Guardar
           </button>
-          <button class="btn btn-secondary" onclick="cerrarModalEmpleado()">Cancelar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Gestionar Departamentos -->
-    <div id="modalDepartamento" class="modal-overlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3><i class="fas fa-sitemap"></i> Gestionar Departamentos</h3>
-          <button class="modal-close" onclick="cerrarModalDepartamento()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="departamentos-lista">
-            <h4><i class="fas fa-list"></i> Departamentos Existentes</h4>
-            <div id="listaDepartamentos" class="departamentos-grid">
-              <!-- Se llena dinámicamente -->
-            </div>
-            <div id="mensajeNoDepartamentos" class="no-data" style="display: none;">
-              <i class="fas fa-info-circle"></i>
-              <p>No hay departamentos registrados. Agrega el primero para comenzar.</p>
-            </div>
-          </div>
-          
-          <div class="departamento-nuevo">
-            <h4><i class="fas fa-plus-circle"></i> Agregar Nuevo Departamento</h4>
-            <form id="formDepartamento" class="departamento-form">
-              <div class="form-row">
-                <div class="form-group">
-                  <label>Nombre del Departamento *</label>
-                  <input type="text" id="nombreDepartamento" required placeholder="Ej: Tecnología, Ventas, Recursos Humanos">
-                  <small class="form-help">Ingrese un nombre descriptivo y único para el departamento</small>
-                </div>
-                <div class="form-group">
-                  <label>Color de Identificación</label>
-                  <div class="color-picker-container">
-                    <input type="color" id="colorDepartamento" value="#4f81bd">
-                    <span class="color-preview" id="colorPreview"></span>
-                  </div>
-                  <small class="form-help">Seleccione un color para identificar visualmente el departamento</small>
-                </div>
-              </div>
-              <div class="form-group">
-                <label>Descripción</label>
-                <textarea id="descripcionDepartamento" rows="3" placeholder="Describa las funciones y responsabilidades del departamento"></textarea>
-                <small class="form-help">Opcional: Agregue una descripción detallada del departamento</small>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-success" onclick="guardarDepartamento()">
-            <i class="fas fa-plus"></i> Agregar Departamento
-          </button>
-          <button class="btn btn-secondary" onclick="cerrarModalDepartamento()">Cerrar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Exportar Empleados -->
-    <div id="modalExportarEmpleados" class="modal-overlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3><i class="fas fa-file-excel"></i> Exportar Empleados</h3>
-          <button class="modal-close" onclick="cerrarModalExportarEmpleados()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="export-filters">
-            <div class="filter-group">
-              <label>Filtrar por Estado:</label>
-              <select id="exportEstadoEmpleados">
-                <option value="">Todos los Estados</option>
-                <option value="activo">Solo Activos</option>
-                <option value="inactivo">Solo Inactivos</option>
-                <option value="vacaciones">Solo en Vacaciones</option>
-                <option value="licencia">Solo en Licencia</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Filtrar por Departamento:</label>
-              <select id="exportDepartamentoEmpleados">
-                <option value="">Todos los Departamentos</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Incluir Información:</label>
-              <div class="checkbox-group">
-                <label><input type="checkbox" id="exportInfoPersonal" checked> Información Personal</label>
-                <label><input type="checkbox" id="exportInfoLaboral" checked> Información Laboral</label>
-                <label><input type="checkbox" id="exportSalarios" checked> Salarios</label>
-                <label><input type="checkbox" id="exportHistorial" checked> Historial de Horas</label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-success" onclick="procesarExportacionEmpleados()">
-            <i class="fas fa-download"></i> Exportar Empleados
-          </button>
-          <button class="btn btn-secondary" onclick="cerrarModalExportarEmpleados()">Cancelar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Reporte General -->
-    <div id="modalReporteGeneral" class="modal-overlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3><i class="fas fa-chart-bar"></i> Reporte General</h3>
-          <button class="modal-close" onclick="cerrarModalReporteGeneral()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="report-filters">
-            <div class="filter-group">
-              <label>Período de Análisis:</label>
-              <select id="reporteGeneralPeriodo">
-                <option value="mes" selected>Este Mes</option>
-                <option value="trimestre">Este Trimestre</option>
-                <option value="anio">Este Año</option>
-                <option value="personalizado">Personalizado</option>
-              </select>
-            </div>
-            <div class="filter-group" id="fechasReporteGeneral" style="display: none;">
-              <label>Fecha Inicio:</label>
-              <input type="date" id="reporteGeneralFechaInicio">
-              <label>Fecha Fin:</label>
-              <input type="date" id="reporteGeneralFechaFin">
-            </div>
-            <div class="filter-group">
-              <label>Incluir Gráficos:</label>
-              <div class="checkbox-group">
-                <label><input type="checkbox" id="reporteGraficos" checked> Gráficos de Tendencia</label>
-                <label><input type="checkbox" id="reporteComparativas" checked> Comparativas</label>
-                <label><input type="checkbox" id="reporteProyecciones" checked> Proyecciones</label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" onclick="generarReporteGeneral()">
-            <i class="fas fa-chart-line"></i> Generar Reporte
-          </button>
-          <button class="btn btn-secondary" onclick="cerrarModalReporteGeneral()">Cancelar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Reporte por Empleado -->
-    <div id="modalReporteEmpleado" class="modal-overlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3><i class="fas fa-user-chart"></i> Reporte por Empleado</h3>
-          <button class="modal-close" onclick="cerrarModalReporteEmpleado()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="report-filters">
-            <div class="filter-group">
-              <label>Seleccionar Empleado:</label>
-              <select id="reporteEmpleadoSelect" required>
-                <option value="">Seleccionar empleado</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Período de Análisis:</label>
-              <select id="reporteEmpleadoPeriodo">
-                <option value="mes" selected>Este Mes</option>
-                <option value="trimestre">Este Trimestre</option>
-                <option value="anio">Este Año</option>
-                <option value="personalizado">Personalizado</option>
-              </select>
-            </div>
-            <div class="filter-group" id="fechasReporteEmpleado" style="display: none;">
-              <label>Fecha Inicio:</label>
-              <input type="date" id="reporteEmpleadoFechaInicio">
-              <label>Fecha Fin:</label>
-              <input type="date" id="reporteEmpleadoFechaFin">
-            </div>
-            <div class="filter-group">
-              <label>Detalles a Incluir:</label>
-              <div class="checkbox-group">
-                <label><input type="checkbox" id="reporteHorasTrabajadas" checked> Horas Trabajadas</label>
-                <label><input type="checkbox" id="reporteSalarios" checked> Cálculo de Salarios</label>
-                <label><input type="checkbox" id="reporteRendimiento" checked> Rendimiento</label>
-                <label><input type="checkbox" id="reporteComparativas" checked> Comparativas</label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" onclick="generarReporteEmpleado()">
-            <i class="fas fa-user-chart"></i> Generar Reporte
-          </button>
-          <button class="btn btn-secondary" onclick="cerrarModalReporteEmpleado()">Cancelar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Reporte por Departamento -->
-    <div id="modalReporteDepartamento" class="modal-overlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3><i class="fas fa-sitemap"></i> Reporte por Departamento</h3>
-          <button class="modal-close" onclick="cerrarModalReporteDepartamento()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="report-filters">
-            <div class="filter-group">
-              <label>Seleccionar Departamento:</label>
-              <select id="reporteDepartamentoSelect">
-                <option value="">Todos los Departamentos</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Período de Análisis:</label>
-              <select id="reporteDepartamentoPeriodo">
-                <option value="mes" selected>Este Mes</option>
-                <option value="trimestre">Este Trimestre</option>
-                <option value="anio">Este Año</option>
-                <option value="personalizado">Personalizado</option>
-              </select>
-            </div>
-            <div class="filter-group" id="fechasReporteDepartamento" style="display: none;">
-              <label>Fecha Inicio:</label>
-              <input type="date" id="reporteDepartamentoFechaInicio">
-              <label>Fecha Fin:</label>
-              <input type="date" id="reporteDepartamentoFechaFin">
-            </div>
-            <div class="filter-group">
-              <label>Métricas a Incluir:</label>
-              <div class="checkbox-group">
-                <label><input type="checkbox" id="reporteProductividad" checked> Productividad</label>
-                <label><input type="checkbox" id="reporteCostos" checked> Costos Laborales</label>
-                <label><input type="checkbox" id="reporteEficiencia" checked> Eficiencia</label>
-                <label><input type="checkbox" id="reporteComparativas" checked> Comparativas</label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" onclick="generarReporteDepartamento()">
-            <i class="fas fa-sitemap"></i> Generar Reporte
-          </button>
-          <button class="btn btn-secondary" onclick="cerrarModalReporteDepartamento()">Cancelar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Registro de Horas -->
-    <div id="modalRegistroHoras" class="modal-overlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3><i class="fas fa-clock"></i> Registro de Horas</h3>
-          <button class="modal-close" onclick="cerrarModalRegistroHoras()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <p>Por favor complete el formulario de horas con los datos requeridos:</p>
-          <ul>
-            <li>Seleccione un empleado</li>
-            <li>Ingrese la fecha</li>
-            <li>Complete al menos un tipo de hora</li>
-          </ul>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" onclick="cerrarModalRegistroHoras()">Cerrar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Cálculo de Horas -->
-    <div id="modalCalculoHoras" class="modal-overlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3><i class="fas fa-calculator"></i> Cálculo de Horas</h3>
-          <button class="modal-close" onclick="cerrarModalCalculoHoras()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <p>Por favor complete el formulario de horas para poder calcular los salarios correspondientes.</p>
-          <div class="calculo-preview">
-            <div class="calculo-item">
-              <span class="label">Empleado:</span>
-              <span class="value" id="calculoEmpleado">No seleccionado</span>
-            </div>
-            <div class="calculo-item">
-              <span class="label">Fecha:</span>
-              <span class="value" id="calculoFecha">No ingresada</span>
-            </div>
-            <div class="calculo-item">
-              <span class="label">Total Horas:</span>
-              <span class="value" id="calculoTotalHoras">0</span>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" onclick="document.getElementById('tab-horas').scrollIntoView()">Ir al Formulario</button>
-          <button class="btn btn-secondary" onclick="cerrarModalCalculoHoras()">Cerrar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Exportación Excel -->
-    <div id="modalExportarExcel" class="modal-overlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3><i class="fas fa-file-excel"></i> Exportar a Excel</h3>
-          <button class="modal-close" onclick="cerrarModalExportarExcel()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="export-options">
-            <h4>Seleccione el tipo de exportación:</h4>
-            <div class="export-option">
-              <input type="radio" id="exportHoras" name="exportType" value="horas" checked>
-              <label for="exportHoras">Horas Trabajadas</label>
-            </div>
-            <div class="export-option">
-              <input type="radio" id="exportEmpleados" name="exportType" value="empleados">
-              <label for="exportEmpleados">Lista de Empleados</label>
-            </div>
-            <div class="export-option">
-              <input type="radio" id="exportNominas" name="exportType" value="nominas">
-              <label for="exportNominas">Nóminas Generadas</label>
-            </div>
-          </div>
-          <div class="export-filters">
-            <div class="filter-group">
-              <label>Fecha Inicio:</label>
-              <input type="date" id="exportFechaInicio">
-            </div>
-            <div class="filter-group">
-              <label>Fecha Fin:</label>
-              <input type="date" id="exportFechaFin">
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-success" onclick="procesarExportacion()">
-            <i class="fas fa-download"></i> Exportar
-          </button>
-          <button class="btn btn-secondary" onclick="cerrarModalExportarExcel()">Cancelar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Reporte de Horas -->
-    <div id="modalReporteHoras" class="modal-overlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3><i class="fas fa-chart-line"></i> Reporte de Horas</h3>
-          <button class="modal-close" onclick="cerrarModalReporteHoras()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="report-filters">
-            <div class="filter-group">
-              <label>Período:</label>
-              <select id="reportePeriodo">
-                <option value="semana">Esta Semana</option>
-                <option value="mes" selected>Este Mes</option>
-                <option value="trimestre">Este Trimestre</option>
-                <option value="anio">Este Año</option>
-                <option value="personalizado">Personalizado</option>
-              </select>
-            </div>
-            <div class="filter-group" id="fechasPersonalizadas" style="display: none;">
-              <label>Fecha Inicio:</label>
-              <input type="date" id="reporteFechaInicio">
-              <label>Fecha Fin:</label>
-              <input type="date" id="reporteFechaFin">
-            </div>
-            <div class="filter-group">
-              <label>Departamento:</label>
-              <select id="reporteDepartamento">
-                <option value="">Todos los Departamentos</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" onclick="generarReporteHoras()">
-            <i class="fas fa-chart-bar"></i> Generar Reporte
-          </button>
-          <button class="btn btn-secondary" onclick="cerrarModalReporteHoras()">Cancelar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Generar Nómina -->
-    <div id="modalGenerarNomina" class="modal-overlay">
-      <div class="modal-container">
-        <div class="modal-header">
-          <h3><i class="fas fa-file-invoice-dollar"></i> Generar Nueva Nómina</h3>
-          <button class="modal-close" onclick="cerrarModalGenerarNomina()">
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="nomina-filters">
-            <div class="filter-group">
-              <label>Período de Pago:</label>
-              <select id="nominaPeriodo">
-                <option value="quincenal">Quincenal</option>
-                <option value="mensual" selected>Mensual</option>
-              </select>
-            </div>
-            <div class="filter-group">
-              <label>Fecha Inicio:</label>
-              <input type="date" id="nominaFechaInicio" required>
-            </div>
-            <div class="filter-group">
-              <label>Fecha Fin:</label>
-              <input type="date" id="nominaFechaFin" required>
-            </div>
-            <div class="filter-group">
-              <label>Departamento:</label>
-              <select id="nominaDepartamento">
-                <option value="">Todos los Departamentos</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-success" onclick="procesarGeneracionNomina()">
-            <i class="fas fa-calculator"></i> Generar Nómina
-          </button>
-          <button class="btn btn-secondary" onclick="cerrarModalGenerarNomina()">Cancelar</button>
         </div>
       </div>
     </div>
 
     <!-- Scripts -->
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="../../static/firebase-config.js"></script>
     <script src="../../static/firebase-sync-manager.js"></script>
-    <script src="../../static/colombian-labor-law.js"></script>
-    <script src="../../static/comprobante-pdf-generator.js"></script>
-    <script src="../../static/notifications-system.js"></script>
-    <script src="salary-formatting.js"></script>
-    <script src="datos-ejemplo.js"></script>
-    <script src="gestion_personal.js"></script>
-
-    <!-- Scripts adicionales -->
+    <script src="gestion_personal_optimized.js"></script>
     <script>
-      // Esperar a que Firebase esté disponible
-      document.addEventListener('DOMContentLoaded', () => {
-        if (typeof window.axyraFirebase === 'undefined') {
-          console.warn('⚠️ Firebase no está disponible, usando modo offline');
+      // Función para cambiar pestañas
+      function cambiarTab(tabName) {
+        // Ocultar todos los contenidos
+        document.querySelectorAll('.tab-content').forEach((content) => {
+          content.classList.remove('active');
+        });
+
+        // Remover clase active de todas las pestañas
+        document.querySelectorAll('.gestion-personal-tab').forEach((tab) => {
+          tab.classList.remove('active');
+        });
+
+        // Mostrar contenido seleccionado
+        const selectedContent = document.getElementById(`tab-${tabName}`);
+        if (selectedContent) {
+          selectedContent.classList.add('active');
+        }
+
+        // Activar pestaña seleccionada
+        const selectedTab = document.querySelector(`[onclick*="cambiarTab('${tabName}')"]`);
+        if (selectedTab) {
+          selectedTab.classList.add('active');
+        }
+      }
+
+      // Función para mostrar modal de empleado
+      function mostrarModalEmpleado(empleadoId = null) {
+        if (window.gestionPersonal) {
+          window.gestionPersonal.mostrarModalEmpleado(empleadoId);
+        }
+      }
+
+      // Función para cerrar modal de empleado
+      function cerrarModalEmpleado() {
+        if (window.gestionPersonal) {
+          window.gestionPersonal.cerrarModalEmpleado();
+        }
+      }
+
+      // Función para calcular horas
+      function calcularHoras() {
+        if (window.gestionPersonal) {
+          window.gestionPersonal.calcularHoras();
+        }
+      }
+
+      // Función para generar comprobante
+      function generarComprobante() {
+        if (window.gestionPersonal) {
+          window.gestionPersonal.generarComprobante();
+        }
+      }
+
+      // Función para generar nómina
+      function generarNomina() {
+        if (window.gestionPersonal) {
+          window.gestionPersonal.generarNomina();
+        }
+      }
+
+      // Establecer fecha actual por defecto
+      document.addEventListener('DOMContentLoaded', function () {
+        const fechaInput = document.getElementById('fechaHoras');
+        if (fechaInput) {
+          fechaInput.value = new Date().toISOString().split('T')[0];
         }
       });
     </script>
-    
-    <!-- Chat de IA AXYRA - Cargar al final -->
-    <script src="../../static/axyra-ai-global.js"></script>
-    <script src="../../static/professional-notifications.js"></script>
   </body>
 </html>

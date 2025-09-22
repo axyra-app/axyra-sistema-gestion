@@ -619,3 +619,5 @@ window.axyraPayPalIntegration = new AxyraPayPalIntegration();
 // Exportar para uso global
 window.AxyraPayPalIntegration = AxyraPayPalIntegration;
 
+
+

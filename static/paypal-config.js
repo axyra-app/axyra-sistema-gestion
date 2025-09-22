@@ -122,3 +122,5 @@ window.AxyraPayPalConfig = {
 // Inicializar automáticamente
 window.AxyraPayPalConfig.init();
 
+
+
