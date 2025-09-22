@@ -1,114 +1,99 @@
-// ========================================
-// SISTEMA DE CHAT CON IA AXYRA
-// ========================================
+/**
+ * 🤖 SISTEMA DE CHAT CON IA AVANZADO - AXYRA
+ */
 
-console.log('🤖 Inicializando sistema de chat con IA...');
+class AIChatSystem {
+    constructor() {
+        this.isOpen = false;
+        this.messages = [];
+        this.context = {
+            currentModule: null,
+            userRole: 'admin',
+            companyId: null,
+            sessionId: this.generateSessionId()
+        };
+        
+        this.knowledgeBase = this.initializeKnowledgeBase();
+        this.init();
+    }
 
-class AxyraAIChat {
-  constructor() {
-    this.isOpen = false;
-    this.messages = [];
-    this.personalities = {
-      axyra: {
-        name: 'AXYRA Assistant',
-        icon: '🤖',
-        description: 'Asistente general de AXYRA',
-        context:
-          'Eres un asistente virtual especializado en el sistema de gestión empresarial AXYRA. Ayudas a los usuarios con consultas sobre empleados, nóminas, horas, reportes y configuración del sistema.',
-      },
-      hr: {
-        name: 'Especialista en RRHH',
-        icon: '👥',
-        description: 'Experto en gestión de personal',
-        context:
-          'Eres un especialista en recursos humanos con amplia experiencia en gestión de empleados, contratos, políticas laborales y mejores prácticas de RRHH.',
-      },
-      finance: {
-        name: 'Analista Financiero',
-        icon: '💰',
-        description: 'Experto en finanzas y nóminas',
-        context:
-          'Eres un analista financiero especializado en liquidación de nóminas, cálculos salariales, recargos nocturnos, dominicales y festivos según la legislación laboral colombiana.',
-      },
-      tech: {
-        name: 'Soporte Técnico',
-        icon: '⚙️',
-        description: 'Especialista en tecnología',
-        context:
-          'Eres un especialista en soporte técnico del sistema AXYRA. Ayudas con problemas técnicos, configuración, errores y optimización del sistema.',
-      },
-    };
-    this.currentPersonality = 'axyra';
-    this.init();
-  }
+    init() {
+        this.createChatInterface();
+        this.setupEventListeners();
+        this.loadChatHistory();
+        console.log('🤖 Sistema de Chat IA inicializado');
+    }
 
-  init() {
-    this.createChatWidget();
-    this.setupEventListeners();
-    this.loadChatHistory();
-    console.log('✅ Sistema de chat con IA inicializado');
-  }
+    createChatInterface() {
+        const chatHTML = `
+            <div class="ai-chat-container" id="ai-chat-container">
+                <button class="ai-chat-toggle" id="ai-chat-toggle">
+                    <i class="fas fa-robot"></i>
+                    <span class="ai-chat-badge" id="ai-chat-badge">0</span>
+                </button>
 
-  createChatWidget() {
-    // Crear contenedor del chat
-    const chatContainer = document.createElement('div');
-    chatContainer.id = 'axyra-chat-container';
-    chatContainer.innerHTML = `
-            <div class="axyra-chat-widget">
-                <div class="axyra-chat-header" onclick="axyraAIChat.toggleChat()">
-                    <div class="axyra-chat-header-content">
-                        <div class="axyra-chat-avatar">
-                            <img src="logo.png" alt="AXYRA" style="width: 24px; height: 24px; object-fit: contain;">
-                        </div>
-                        <div class="axyra-chat-info">
-                            <h4>AXYRA Assistant</h4>
-                            <p>¿En qué puedo ayudarte?</p>
-                        </div>
-                    </div>
-                    <div class="axyra-chat-toggle">
-                        <span class="axyra-chat-toggle-icon">💬</span>
-                    </div>
-                </div>
-                
-                <div class="axyra-chat-body" id="axyra-chat-body">
-                    <div class="axyra-chat-messages" id="axyra-chat-messages">
-                        <div class="axyra-chat-welcome">
-                            <div class="axyra-chat-welcome-avatar">
-                                <img src="logo.png" alt="AXYRA" style="width: 20px; height: 20px; object-fit: contain;">
+                <div class="ai-chat-window" id="ai-chat-window">
+                    <div class="ai-chat-header">
+                        <div class="ai-chat-title">
+                            <div class="ai-avatar">
+                                <i class="fas fa-robot"></i>
                             </div>
-                            <div class="axyra-chat-welcome-content">
-                                <h4>¡Hola! Soy AXYRA Assistant</h4>
-                                <p>Estoy aquí para ayudarte con cualquier consulta sobre el sistema. ¿En qué puedo asistirte hoy?</p>
-                                <div class="axyra-chat-quick-actions">
-                                    <button class="axyra-chat-quick-btn" onclick="axyraAIChat.sendQuickMessage('¿Cómo gestiono empleados?')">
-                                        👥 Empleados
-                                    </button>
-                                    <button class="axyra-chat-quick-btn" onclick="axyraAIChat.sendQuickMessage('¿Cómo calculo nóminas?')">
-                                        💰 Nóminas
-                                    </button>
-                                    <button class="axyra-chat-quick-btn" onclick="axyraAIChat.sendQuickMessage('¿Cómo genero reportes?')">
-                                        📊 Reportes
-                                    </button>
+                            <div class="ai-info">
+                                <h3>Asistente IA</h3>
+                                <span class="ai-status">Disponible</span>
+                            </div>
+                        </div>
+                        <div class="ai-chat-controls">
+                            <button class="ai-chat-close" id="ai-chat-close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ai-chat-body">
+                        <div class="ai-chat-messages" id="ai-chat-messages">
+                            <div class="ai-welcome-message">
+                                <div class="ai-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <p>¡Hola! Soy tu asistente de IA de AXYRA. ¿En qué puedo ayudarte hoy?</p>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="axyra-chat-input-container">
-                        <div class="axyra-chat-personality-selector">
-                            <select id="axyra-chat-personality" onchange="axyraAIChat.changePersonality(this.value)">
-                                <option value="axyra">🤖 AXYRA Assistant</option>
-                                <option value="hr">👥 Especialista RRHH</option>
-                                <option value="finance">💰 Analista Financiero</option>
-                                <option value="tech">⚙️ Soporte Técnico</option>
-                            </select>
+
+                        <div class="ai-quick-suggestions" id="ai-quick-suggestions">
+                            <button class="suggestion-btn" data-query="¿Cómo registro un nuevo empleado?">
+                                <i class="fas fa-user-plus"></i>
+                                Registrar empleado
+                            </button>
+                            <button class="suggestion-btn" data-query="¿Cómo genero una nómina?">
+                                <i class="fas fa-calculator"></i>
+                                Generar nómina
+                            </button>
+                            <button class="suggestion-btn" data-query="¿Cómo hago un corte de caja?">
+                                <i class="fas fa-cash-register"></i>
+                                Corte de caja
+                            </button>
                         </div>
-                        
-                        <div class="axyra-chat-input-wrapper">
-                            <input type="text" id="axyra-chat-input" placeholder="Escribe tu mensaje..." 
-                                   onkeypress="axyraAIChat.handleKeyPress(event)">
-                            <button class="axyra-chat-send-btn" onclick="axyraAIChat.sendMessage()">
-                                📤
+
+                        <div class="ai-typing-indicator" id="ai-typing-indicator">
+                            <div class="ai-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="typing-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-chat-footer">
+                        <div class="ai-chat-input-container">
+                            <input type="text" id="ai-chat-input" placeholder="Escribe tu pregunta..." class="ai-chat-input">
+                            <button class="ai-chat-send" id="ai-chat-send">
+                                <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
                     </div>
@@ -116,663 +101,195 @@ class AxyraAIChat {
             </div>
         `;
 
-    // Agregar estilos
-    const styles = document.createElement('style');
-    styles.textContent = `
-            #axyra-chat-container {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 10000;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            }
+        document.body.insertAdjacentHTML('beforeend', chatHTML);
+    }
 
-            .axyra-chat-widget {
-                width: 350px;
-                height: 500px;
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-                transform: translateY(420px);
-                transition: transform 0.3s ease;
-            }
+    setupEventListeners() {
+        document.getElementById('ai-chat-toggle').addEventListener('click', () => {
+            this.toggleChat();
+        });
 
-            .axyra-chat-widget.open {
-                transform: translateY(0);
-            }
+        document.getElementById('ai-chat-close').addEventListener('click', () => {
+            this.closeChat();
+        });
 
-            .axyra-chat-header {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                color: white;
-                padding: 16px;
-                cursor: pointer;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
+        document.getElementById('ai-chat-send').addEventListener('click', () => {
+            this.sendMessage();
+        });
 
-            .axyra-chat-header-content {
-                display: flex;
-                align-items: center;
-                gap: 12px;
+        document.getElementById('ai-chat-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.sendMessage();
             }
+        });
 
-            .axyra-chat-avatar {
-                width: 40px;
-                height: 40px;
-                background: rgba(255,255,255,0.2);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 20px;
-                padding: 8px;
-            }
+        document.querySelectorAll('.suggestion-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const query = e.currentTarget.dataset.query;
+                document.getElementById('ai-chat-input').value = query;
+                this.sendMessage();
+            });
+        });
+    }
 
-            .axyra-chat-avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-
-            .axyra-chat-info h4 {
-                margin: 0;
-                font-size: 16px;
-                font-weight: 600;
-            }
-
-            .axyra-chat-info p {
-                margin: 0;
-                font-size: 12px;
-                opacity: 0.9;
-            }
-
-            .axyra-chat-toggle {
-                font-size: 20px;
-                transition: transform 0.3s ease;
-            }
-
-            .axyra-chat-widget.open .axyra-chat-toggle {
-                transform: rotate(180deg);
-            }
-
-            .axyra-chat-body {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                background: #f8f9fa;
-            }
-
-            .axyra-chat-messages {
-                flex: 1;
-                padding: 16px;
-                overflow-y: auto;
-                overflow-x: hidden;
-                display: flex;
-                flex-direction: column;
-                gap: 12px;
-                max-height: calc(100% - 120px);
-                scroll-behavior: smooth;
-            }
-
-            .axyra-chat-messages::-webkit-scrollbar {
-                width: 6px;
-            }
-
-            .axyra-chat-messages::-webkit-scrollbar-track {
-                background: #f1f1f1;
-                border-radius: 3px;
-            }
-
-            .axyra-chat-messages::-webkit-scrollbar-thumb {
-                background: #c1c1c1;
-                border-radius: 3px;
-            }
-
-            .axyra-chat-messages::-webkit-scrollbar-thumb:hover {
-                background: #a8a8a8;
-            }
-
-            .axyra-chat-welcome {
-                display: flex;
-                gap: 12px;
-                margin-bottom: 16px;
-            }
-
-            .axyra-chat-welcome-avatar {
-                width: 32px;
-                height: 32px;
-                background: #667eea;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 16px;
-                flex-shrink: 0;
-                padding: 6px;
-            }
-
-            .axyra-chat-welcome-avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-
-            .axyra-chat-welcome-content h4 {
-                margin: 0 0 8px 0;
-                font-size: 14px;
-                color: #333;
-            }
-
-            .axyra-chat-welcome-content p {
-                margin: 0 0 12px 0;
-                font-size: 13px;
-                color: #666;
-                line-height: 1.4;
-            }
-
-            .axyra-chat-quick-actions {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-            }
-
-            .axyra-chat-quick-btn {
-                background: white;
-                border: 1px solid #e0e0e0;
-                border-radius: 20px;
-                padding: 6px 12px;
-                font-size: 12px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-
-            .axyra-chat-quick-btn:hover {
-                background: #667eea;
-                color: white;
-                border-color: #667eea;
-            }
-
-            .axyra-chat-message {
-                display: flex;
-                gap: 8px;
-                max-width: 85%;
-            }
-
-            .axyra-chat-message.user {
-                align-self: flex-end;
-                flex-direction: row-reverse;
-            }
-
-            .axyra-chat-message-avatar {
-                width: 28px;
-                height: 28px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 14px;
-                flex-shrink: 0;
-                padding: 4px;
-            }
-
-            .axyra-chat-message-avatar img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }
-
-            .axyra-chat-message.user .axyra-chat-message-avatar {
-                background: #667eea;
-                color: white;
-            }
-
-            .axyra-chat-message.assistant .axyra-chat-message-avatar {
-                background: #f0f0f0;
-                color: #333;
-            }
-
-            .axyra-chat-message-content {
-                background: white;
-                padding: 10px 14px;
-                border-radius: 18px;
-                font-size: 14px;
-                line-height: 1.4;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            }
-
-            .axyra-chat-message.user .axyra-chat-message-content {
-                background: #667eea;
-                color: white;
-            }
-
-            .axyra-chat-input-container {
-                padding: 16px;
-                background: white;
-                border-top: 1px solid #e0e0e0;
-                position: sticky;
-                bottom: 0;
-                z-index: 10;
-                flex-shrink: 0;
-            }
-
-            .axyra-chat-personality-selector {
-                margin-bottom: 8px;
-            }
-
-            .axyra-chat-personality-selector select {
-                width: 100%;
-                padding: 8px 12px;
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
-                font-size: 12px;
-                background: white;
-            }
-
-            .axyra-chat-input-wrapper {
-                display: flex;
-                gap: 8px;
-                align-items: center;
-            }
-
-            .axyra-chat-input-wrapper input {
-                flex: 1;
-                padding: 10px 14px;
-                border: 1px solid #e0e0e0;
-                border-radius: 20px;
-                font-size: 14px;
-                outline: none;
-            }
-
-            .axyra-chat-input-wrapper input:focus {
-                border-color: #667eea;
-            }
-
-            .axyra-chat-send-btn {
-                width: 40px;
-                height: 40px;
-                background: #667eea;
-                border: none;
-                border-radius: 50%;
-                color: white;
-                font-size: 16px;
-                cursor: pointer;
-                transition: all 0.2s ease;
-            }
-
-            .axyra-chat-send-btn:hover {
-                background: #5a6fd8;
-                transform: scale(1.05);
-            }
-
-            .axyra-chat-typing {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #666;
-                font-size: 12px;
-                font-style: italic;
-            }
-
-            .axyra-chat-typing-dots {
-                display: flex;
-                gap: 2px;
-            }
-
-            .axyra-chat-typing-dot {
-                width: 4px;
-                height: 4px;
-                background: #667eea;
-                border-radius: 50%;
-                animation: typing 1.4s infinite;
-            }
-
-            .axyra-chat-typing-dot:nth-child(2) {
-                animation-delay: 0.2s;
-            }
-
-            .axyra-chat-typing-dot:nth-child(3) {
-                animation-delay: 0.4s;
-            }
-
-            @keyframes typing {
-                0%, 60%, 100% {
-                    transform: translateY(0);
+    initializeKnowledgeBase() {
+        return {
+            empleados: {
+                registrar: {
+                    pregunta: ["registrar empleado", "nuevo empleado", "agregar empleado"],
+                    respuesta: "Para registrar un nuevo empleado:\n1. Ve a 'Gestión de Personal' → 'Empleados'\n2. Haz clic en 'Nuevo Empleado'\n3. Completa los datos personales y laborales\n4. Guarda el empleado"
                 }
-                30% {
-                    transform: translateY(-10px);
+            },
+            nominas: {
+                generar: {
+                    pregunta: ["generar nómina", "crear nómina", "calcular nómina"],
+                    respuesta: "Para generar una nómina:\n1. Ve a 'Gestión de Personal' → 'Nómina'\n2. Selecciona el período\n3. Elige los empleados a incluir\n4. Revisa los cálculos automáticos\n5. Genera el PDF de la nómina"
+                }
+            },
+            cuadre_caja: {
+                movimiento: {
+                    pregunta: ["registrar movimiento", "nuevo movimiento", "movimiento de caja"],
+                    respuesta: "Para registrar un movimiento de caja:\n1. Ve a 'Cuadre de Caja' → 'Movimientos'\n2. Haz clic en 'Nuevo Movimiento'\n3. Selecciona tipo (Ingreso/Egreso)\n4. Completa concepto y monto\n5. Guarda el movimiento"
                 }
             }
-
-            @media (max-width: 480px) {
-                #axyra-chat-container {
-                    bottom: 10px;
-                    right: 10px;
-                    left: 10px;
-                }
-
-                .axyra-chat-widget {
-                    width: 100%;
-                    height: 400px;
-                }
-            }
-        `;
-
-    document.head.appendChild(styles);
-    document.body.appendChild(chatContainer);
-  }
-
-  setupEventListeners() {
-    // Event listeners ya están en el HTML
-  }
-
-  toggleChat() {
-    this.isOpen = !this.isOpen;
-    const widget = document.querySelector('.axyra-chat-widget');
-    const body = document.getElementById('axyra-chat-body');
-
-    if (this.isOpen) {
-      widget.classList.add('open');
-      body.style.display = 'flex';
-      
-      // Asegurar que el input esté presente y funcional
-      this.ensureInputVisibility();
-      
-      // Focus en el input después de un pequeño delay
-      setTimeout(() => {
-        const input = document.getElementById('axyra-chat-input');
-        if (input) {
-          input.focus();
-        }
-      }, 300);
-    } else {
-      widget.classList.remove('open');
-      body.style.display = 'none';
-    }
-  }
-
-  changePersonality(personality) {
-    this.currentPersonality = personality;
-    const personalityData = this.personalities[personality];
-
-    // Actualizar header
-    const header = document.querySelector('.axyra-chat-header-content');
-    if (header) {
-      header.innerHTML = `
-            <div class="axyra-chat-avatar">
-                <img src="logo.png" alt="AXYRA" style="width: 24px; height: 24px; object-fit: contain;">
-            </div>
-            <div class="axyra-chat-info">
-                <h4>${personalityData.name}</h4>
-                <p>${personalityData.description}</p>
-            </div>
-        `;
+        };
     }
 
-    // Agregar mensaje de cambio de personalidad
-    this.addMessage(
-      'assistant',
-      `¡Hola! Ahora soy ${personalityData.name}. ${personalityData.description}. ¿En qué puedo ayudarte?`
-    );
-
-    // Asegurar que el input esté visible y funcional
-    this.ensureInputVisibility();
-  }
-
-  ensureInputVisibility() {
-    // Verificar que el input container esté presente
-    const inputContainer = document.querySelector('.axyra-chat-input-container');
-    if (!inputContainer) {
-      console.warn('⚠️ Input container no encontrado, recreando...');
-      this.recreateInputContainer();
-    }
-
-    // Verificar que el input esté presente
-    const input = document.getElementById('axyra-chat-input');
-    if (!input) {
-      console.warn('⚠️ Input no encontrado, recreando...');
-      this.recreateInputContainer();
-    }
-
-    // Asegurar que el chat esté abierto para mostrar el input
-    if (this.isOpen) {
-      this.toggleChat();
-      setTimeout(() => this.toggleChat(), 100);
-    }
-  }
-
-  recreateInputContainer() {
-    const chatBody = document.getElementById('axyra-chat-body');
-    if (chatBody) {
-      // Buscar si ya existe el input container
-      let inputContainer = chatBody.querySelector('.axyra-chat-input-container');
-      
-      if (!inputContainer) {
-        // Crear el input container si no existe
-        inputContainer = document.createElement('div');
-        inputContainer.className = 'axyra-chat-input-container';
-        inputContainer.innerHTML = `
-          <div class="axyra-chat-personality-selector">
-            <select id="axyra-chat-personality" onchange="axyraAIChat.changePersonality(this.value)">
-              <option value="axyra" ${this.currentPersonality === 'axyra' ? 'selected' : ''}>🤖 AXYRA Assistant</option>
-              <option value="hr" ${this.currentPersonality === 'hr' ? 'selected' : ''}>👥 Especialista RRHH</option>
-              <option value="finance" ${this.currentPersonality === 'finance' ? 'selected' : ''}>💰 Analista Financiero</option>
-              <option value="tech" ${this.currentPersonality === 'tech' ? 'selected' : ''}>⚙️ Soporte Técnico</option>
-            </select>
-          </div>
-          
-          <div class="axyra-chat-input-wrapper">
-            <input type="text" id="axyra-chat-input" placeholder="Escribe tu mensaje..." 
-                   onkeypress="axyraAIChat.handleKeyPress(event)">
-            <button class="axyra-chat-send-btn" onclick="axyraAIChat.sendMessage()">
-              📤
-            </button>
-          </div>
-        `;
+    toggleChat() {
+        const chatWindow = document.getElementById('ai-chat-window');
+        this.isOpen = !this.isOpen;
         
-        chatBody.appendChild(inputContainer);
-        console.log('✅ Input container recreado');
-      }
-    }
-  }
-
-  handleKeyPress(event) {
-    if (event.key === 'Enter') {
-      this.sendMessage();
-    }
-  }
-
-  sendQuickMessage(message) {
-    document.getElementById('axyra-chat-input').value = message;
-    this.sendMessage();
-  }
-
-  sendMessage() {
-    const input = document.getElementById('axyra-chat-input');
-    const message = input.value.trim();
-
-    if (!message) return;
-
-    // Agregar mensaje del usuario
-    this.addMessage('user', message);
-    input.value = '';
-
-    // Mostrar indicador de escritura
-    this.showTypingIndicator();
-
-    // Simular respuesta de IA
-    setTimeout(() => {
-      this.hideTypingIndicator();
-      this.generateAIResponse(message);
-    }, 1000 + Math.random() * 2000);
-  }
-
-  addMessage(sender, content) {
-    const messagesContainer = document.getElementById('axyra-chat-messages');
-    if (!messagesContainer) {
-      console.error('❌ Contenedor de mensajes no encontrado');
-      return;
-    }
-
-    const personalityData = this.personalities[this.currentPersonality];
-
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `axyra-chat-message ${sender}`;
-
-    const avatar = sender === 'user' ? '👤' : '<img src="logo.png" alt="AXYRA" style="width: 16px; height: 16px; object-fit: contain;">';
-
-    messageDiv.innerHTML = `
-            <div class="axyra-chat-message-avatar">${avatar}</div>
-            <div class="axyra-chat-message-content">${content}</div>
-        `;
-
-    messagesContainer.appendChild(messageDiv);
-    
-    // Scroll suave al final
-    setTimeout(() => {
-      messagesContainer.scrollTo({
-        top: messagesContainer.scrollHeight,
-        behavior: 'smooth'
-      });
-    }, 100);
-
-    // Guardar en historial
-    this.messages.push({ sender, content, timestamp: Date.now() });
-    this.saveChatHistory();
-
-    // Asegurar que el input esté visible después de agregar mensaje
-    this.ensureInputVisibility();
-  }
-
-  showTypingIndicator() {
-    const messagesContainer = document.getElementById('axyra-chat-messages');
-    const typingDiv = document.createElement('div');
-    typingDiv.id = 'axyra-chat-typing-indicator';
-    typingDiv.className = 'axyra-chat-typing';
-    typingDiv.innerHTML = `
-            <div class="axyra-chat-message-avatar">
-                <img src="logo.png" alt="AXYRA" style="width: 16px; height: 16px; object-fit: contain;">
-            </div>
-            <div class="axyra-chat-typing-dots">
-                <div class="axyra-chat-typing-dot"></div>
-                <div class="axyra-chat-typing-dot"></div>
-                <div class="axyra-chat-typing-dot"></div>
-            </div>
-        `;
-
-    messagesContainer.appendChild(typingDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-  }
-
-  hideTypingIndicator() {
-    const typingIndicator = document.getElementById('axyra-chat-typing-indicator');
-    if (typingIndicator) {
-      typingIndicator.remove();
-    }
-  }
-
-  generateAIResponse(userMessage) {
-    const personalityData = this.personalities[this.currentPersonality];
-    const context = personalityData.context;
-
-    // Respuestas predefinidas basadas en la personalidad y contexto
-    let response = this.getContextualResponse(userMessage, this.currentPersonality);
-
-    this.addMessage('assistant', response);
-  }
-
-  getContextualResponse(message, personality) {
-    const lowerMessage = message.toLowerCase();
-
-    const responses = {
-      axyra: {
-        empleados:
-          'Para gestionar empleados en AXYRA, ve al módulo "Empleados" donde puedes agregar, editar y administrar toda la información de tu personal. ¿Te gustaría que te explique alguna función específica?',
-        nómina:
-          'El módulo de nómina calcula automáticamente salarios, recargos nocturnos, dominicales y festivos. Solo necesitas configurar los datos de los empleados y el sistema hace el resto. ¿Necesitas ayuda con algún cálculo específico?',
-        horas:
-          'El control de horas te permite registrar entrada/salida, horas extras y generar reportes de tiempo trabajado. Es muy fácil de usar y se integra automáticamente con la nómina.',
-        reportes:
-          'AXYRA genera reportes automáticamente: nóminas, horas trabajadas, análisis financiero y más. Puedes exportarlos en PDF o Excel. ¿Qué tipo de reporte necesitas?',
-        configuración:
-          'En configuración puedes personalizar parámetros del sistema, datos de la empresa, políticas laborales y más. ¿Qué aspecto te gustaría configurar?',
-        ayuda:
-          'Estoy aquí para ayudarte con cualquier consulta sobre AXYRA. Puedes preguntarme sobre empleados, nóminas, horas, reportes o cualquier funcionalidad del sistema.',
-        default:
-          'Entiendo tu consulta. AXYRA es un sistema completo de gestión empresarial. ¿Podrías ser más específico sobre qué funcionalidad necesitas? Puedo ayudarte con empleados, nóminas, horas, reportes o configuración.',
-      },
-      hr: {
-        contrato:
-          'Para gestionar contratos, ve al módulo de empleados y selecciona "Contratos". Puedes crear, modificar y hacer seguimiento a todos los contratos laborales.',
-        política:
-          'Las políticas laborales se configuran en el módulo de configuración. Puedes establecer horarios, días festivos, políticas de vacaciones y más.',
-        evaluación:
-          'AXYRA incluye herramientas para evaluaciones de desempeño. Ve al módulo de empleados y busca "Evaluaciones" para más detalles.',
-        default:
-          'Como especialista en RRHH, puedo ayudarte con contratos, políticas laborales, evaluaciones de desempeño y mejores prácticas de gestión de personal. ¿En qué área específica necesitas ayuda?',
-      },
-      finance: {
-        salario:
-          'Para calcular salarios, el sistema considera el salario base, horas trabajadas, recargos nocturnos (35%), dominicales (75%) y festivos (100%). ¿Necesitas ayuda con algún cálculo específico?',
-        recargo:
-          'Los recargos se calculan automáticamente: nocturno 35%, dominical 75%, festivo 100%. El sistema identifica automáticamente las horas que aplican para cada recargo.',
-        liquidación:
-          'La liquidación incluye salario base, recargos, deducciones (salud, pensión, etc.) y prestaciones. Todo se calcula automáticamente según la legislación colombiana.',
-        default:
-          'Como analista financiero, puedo ayudarte con cálculos de nómina, recargos, deducciones, prestaciones y análisis financiero. ¿Qué aspecto financiero necesitas revisar?',
-      },
-      tech: {
-        error:
-          'Si encuentras un error, primero intenta recargar la página. Si persiste, verifica tu conexión a internet y contacta soporte técnico en axyra.app@gmail.com.',
-        lento:
-          'Si el sistema está lento, verifica tu conexión a internet y cierra otras pestañas del navegador. También puedes limpiar la caché del navegador.',
-        configuración:
-          'Para problemas de configuración, ve al módulo de configuración y verifica que todos los campos estén completos. Si necesitas ayuda específica, contacta soporte.',
-        default:
-          'Como especialista técnico, puedo ayudarte con problemas de rendimiento, errores, configuración y optimización del sistema. ¿Qué problema técnico estás experimentando?',
-      },
-    };
-
-    const personalityResponses = responses[personality] || responses['axyra'];
-
-    // Buscar respuesta específica
-    for (const [keyword, response] of Object.entries(personalityResponses)) {
-      if (lowerMessage.includes(keyword)) {
-        return response;
-      }
-    }
-
-    return personalityResponses['default'];
-  }
-
-  loadChatHistory() {
-    const saved = localStorage.getItem('axyra_chat_history');
-    if (saved) {
-      this.messages = JSON.parse(saved);
-      // Mostrar últimos 10 mensajes
-      const recentMessages = this.messages.slice(-10);
-      recentMessages.forEach((msg) => {
-        if (msg.sender !== 'user') {
-          const personalityData = this.personalities[this.currentPersonality];
-          msg.avatar = personalityData.icon;
+        if (this.isOpen) {
+            chatWindow.classList.add('show');
+            document.getElementById('ai-chat-input').focus();
+        } else {
+            chatWindow.classList.remove('show');
         }
-      });
     }
-  }
 
-  saveChatHistory() {
-    // Guardar solo los últimos 50 mensajes
-    const recentMessages = this.messages.slice(-50);
-    localStorage.setItem('axyra_chat_history', JSON.stringify(recentMessages));
-  }
+    closeChat() {
+        const chatWindow = document.getElementById('ai-chat-window');
+        chatWindow.classList.remove('show');
+        this.isOpen = false;
+    }
+
+    async sendMessage() {
+        const input = document.getElementById('ai-chat-input');
+        const message = input.value.trim();
+        
+        if (!message) return;
+
+        this.addMessage(message, 'user');
+        input.value = '';
+
+        this.showTypingIndicator();
+
+        setTimeout(() => {
+            this.hideTypingIndicator();
+            const response = this.processMessage(message);
+            this.addMessage(response.text, 'ai');
+        }, 1500);
+    }
+
+    addMessage(text, sender) {
+        const messagesContainer = document.getElementById('ai-chat-messages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}-message`;
+        
+        const timestamp = new Date().toLocaleTimeString();
+        
+        if (sender === 'user') {
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <p>${text}</p>
+                    <span class="message-time">${timestamp}</span>
+                </div>
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>${text}</p>
+                    <span class="message-time">${timestamp}</span>
+                </div>
+            `;
+        }
+
+        messagesContainer.appendChild(messageDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        this.messages.push({
+            text,
+            sender,
+            timestamp: new Date(),
+            id: this.generateMessageId()
+        });
+    }
+
+    processMessage(message) {
+        const query = message.toLowerCase();
+        
+        for (const category in this.knowledgeBase) {
+            for (const topic in this.knowledgeBase[category]) {
+                const topicData = this.knowledgeBase[category][topic];
+                
+                for (const keyword of topicData.pregunta) {
+                    if (query.includes(keyword.toLowerCase())) {
+                        return { text: topicData.respuesta };
+                    }
+                }
+            }
+        }
+
+        if (query.includes('hola') || query.includes('hi')) {
+            return {
+                text: "¡Hola! ¿En qué puedo ayudarte con AXYRA? Puedes preguntarme sobre empleados, nóminas, cuadre de caja o cualquier funcionalidad del sistema."
+            };
+        }
+
+        return {
+            text: "Entiendo tu consulta. Puedo ayudarte con gestión de empleados, nóminas, cuadre de caja y reportes. ¿Hay algo específico de estos temas en lo que pueda ayudarte?"
+        };
+    }
+
+    showTypingIndicator() {
+        const indicator = document.getElementById('ai-typing-indicator');
+        indicator.style.display = 'flex';
+    }
+
+    hideTypingIndicator() {
+        const indicator = document.getElementById('ai-typing-indicator');
+        indicator.style.display = 'none';
+    }
+
+    loadChatHistory() {
+        try {
+            const saved = localStorage.getItem('axyra_ai_chat_history');
+            if (saved) {
+                this.messages = JSON.parse(saved);
+            }
+        } catch (error) {
+            console.error('Error cargando historial del chat:', error);
+        }
+    }
+
+    generateSessionId() {
+        return 'ai_session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    generateMessageId() {
+        return 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
 }
 
-// Inicializar el chat cuando se carga la página
+// Inicializar sistema de chat IA
 document.addEventListener('DOMContentLoaded', () => {
-  window.axyraAIChat = new AxyraAIChat();
+    new AIChatSystem();
 });
 
-console.log('✅ Sistema de chat con IA cargado');
+window.AIChatSystem = AIChatSystem;
