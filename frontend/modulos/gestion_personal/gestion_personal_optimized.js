@@ -464,17 +464,28 @@ class GestionPersonalOptimized {
 
   llenarSelectorEmpleados() {
     const selector = document.getElementById('empleadoHoras');
-    if (!selector) return;
+    if (!selector) {
+      console.warn('Selector de empleados no encontrado');
+      return;
+    }
 
     selector.innerHTML = '<option value="">Seleccionar empleado</option>';
+    
+    if (!this.empleados || this.empleados.length === 0) {
+      console.warn('No hay empleados para cargar en el selector');
+      return;
+    }
+
     this.empleados
-      .filter((emp) => emp.estado === 'activo')
+      .filter((emp) => emp.estado !== 'inactivo') // Cambiar la condición
       .forEach((empleado) => {
         const option = document.createElement('option');
         option.value = empleado.id;
-        option.textContent = `${empleado.nombre} - ${empleado.cargo}`;
+        option.textContent = `${empleado.nombre} ${empleado.apellido || ''} - ${empleado.cargo || 'Sin cargo'}`;
         selector.appendChild(option);
       });
+
+    console.log(`✅ Selector de empleados llenado con ${this.empleados.length} empleados`);
   }
 
   llenarSelectorDepartamentos() {
@@ -959,9 +970,345 @@ class GestionPersonalOptimized {
     console.log('Generando comprobante...');
   }
 
-  generarNomina() {
-    // Implementar generación de nómina
-    console.log('Generando nómina...');
+  async generarNomina() {
+    try {
+      // Obtener empleados y horas trabajadas
+      const empleados = await this.loadFromStorage('empleados');
+      const horasTrabajadas = await this.loadFromStorage('horas_trabajadas');
+      
+      if (empleados.length === 0) {
+        this.showNotification('No hay empleados registrados', 'Debes registrar empleados antes de generar nóminas', 'warning');
+        return;
+      }
+
+      // Mostrar modal de selección de empleado
+      this.showEmpleadoSelectionModal(empleados, horasTrabajadas);
+      
+    } catch (error) {
+      console.error('Error generando nómina:', error);
+      this.showNotification('Error generando nómina', error.message, 'error');
+    }
+  }
+
+  showEmpleadoSelectionModal(empleados, horasTrabajadas) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+      <div class="modal-content modal-large">
+        <div class="modal-header">
+          <h2><i class="fas fa-calculator"></i> Generar Nómina Individual</h2>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="empleado-nomina">Seleccionar Empleado *</label>
+            <select id="empleado-nomina" class="form-control" required>
+              <option value="">Seleccionar empleado...</option>
+              ${empleados.map(emp => `
+                <option value="${emp.id}" data-cedula="${emp.cedula}" data-salario="${emp.salario || 0}">
+                  ${emp.nombre} ${emp.apellido} - ${emp.cedula}
+                </option>
+              `).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="periodo-nomina">Período de Pago *</label>
+            <select id="periodo-nomina" class="form-control" required>
+              <option value="">Seleccionar período...</option>
+              <option value="2024-01">Enero 2024</option>
+              <option value="2024-02">Febrero 2024</option>
+              <option value="2024-03">Marzo 2024</option>
+              <option value="2024-04">Abril 2024</option>
+              <option value="2024-05">Mayo 2024</option>
+              <option value="2024-06">Junio 2024</option>
+              <option value="2024-07">Julio 2024</option>
+              <option value="2024-08">Agosto 2024</option>
+              <option value="2024-09">Septiembre 2024</option>
+              <option value="2024-10">Octubre 2024</option>
+              <option value="2024-11">Noviembre 2024</option>
+              <option value="2024-12">Diciembre 2024</option>
+            </select>
+          </div>
+          <div id="nomina-preview" class="nomina-preview" style="display: none;">
+            <h3>Vista Previa de Nómina</h3>
+            <div id="nomina-detalle"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelar-nomina">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="generar-pdf" disabled>Generar PDF</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Event listeners
+    const empleadoSelect = modal.querySelector('#empleado-nomina');
+    const periodoSelect = modal.querySelector('#periodo-nomina');
+    const cancelarBtn = modal.querySelector('#cancelar-nomina');
+    const generarPdfBtn = modal.querySelector('#generar-pdf');
+    const closeBtn = modal.querySelector('.modal-close');
+
+    empleadoSelect.addEventListener('change', () => {
+      this.calcularNomina(empleadoSelect.value, periodoSelect.value, empleados, horasTrabajadas, modal);
+    });
+
+    periodoSelect.addEventListener('change', () => {
+      this.calcularNomina(empleadoSelect.value, periodoSelect.value, empleados, horasTrabajadas, modal);
+    });
+
+    generarPdfBtn.addEventListener('click', () => {
+      this.generarPDFNomina(empleadoSelect.value, periodoSelect.value, empleados, horasTrabajadas);
+    });
+
+    cancelarBtn.addEventListener('click', () => this.closeModal(modal));
+    closeBtn.addEventListener('click', () => this.closeModal(modal));
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) this.closeModal(modal);
+    });
+  }
+
+  calcularNomina(empleadoId, periodo, empleados, horasTrabajadas, modal) {
+    if (!empleadoId || !periodo) return;
+
+    const empleado = empleados.find(e => e.id === empleadoId);
+    if (!empleado) return;
+
+    const salarioBase = parseFloat(empleado.salario || 0);
+    const horasEmpleado = horasTrabajadas.filter(h => h.empleadoId === empleadoId);
+    
+    // Calcular horas del período (simplificado)
+    const totalHorasOrdinarias = horasEmpleado.reduce((sum, h) => sum + (h.horasOrdinarias || 0), 0);
+    const totalHorasExtras = horasEmpleado.reduce((sum, h) => sum + (h.horasExtras || 0), 0);
+    
+    const valorHora = salarioBase / 240; // 240 horas mensuales
+    const valorHorasOrdinarias = totalHorasOrdinarias * valorHora;
+    const valorHorasExtras = totalHorasExtras * valorHora * 1.5; // 50% extra
+    
+    const salarioBruto = valorHorasOrdinarias + valorHorasExtras;
+    
+    // Deducciones (simplificado)
+    const salud = salarioBruto * 0.04;
+    const pension = salarioBruto * 0.04;
+    const totalDeducciones = salud + pension;
+    
+    const salarioNeto = salarioBruto - totalDeducciones;
+
+    const nominaPreview = modal.querySelector('#nomina-preview');
+    const nominaDetalle = modal.querySelector('#nomina-detalle');
+    const generarPdfBtn = modal.querySelector('#generar-pdf');
+
+    nominaDetalle.innerHTML = `
+      <div class="nomina-info">
+        <div class="empleado-info">
+          <h4>${empleado.nombre} ${empleado.apellido}</h4>
+          <p>Cédula: ${empleado.cedula}</p>
+          <p>Cargo: ${empleado.cargo}</p>
+          <p>Período: ${periodo}</p>
+        </div>
+        <div class="nomina-calculations">
+          <div class="calculation-row">
+            <span>Salario Base:</span>
+            <span>$${this.formatCurrency(salarioBase)}</span>
+          </div>
+          <div class="calculation-row">
+            <span>Horas Ordinarias (${totalHorasOrdinarias}h):</span>
+            <span>$${this.formatCurrency(valorHorasOrdinarias)}</span>
+          </div>
+          <div class="calculation-row">
+            <span>Horas Extras (${totalHorasExtras}h):</span>
+            <span>$${this.formatCurrency(valorHorasExtras)}</span>
+          </div>
+          <div class="calculation-row total">
+            <span>Salario Bruto:</span>
+            <span>$${this.formatCurrency(salarioBruto)}</span>
+          </div>
+          <div class="deductions">
+            <h5>Deducciones:</h5>
+            <div class="calculation-row">
+              <span>Salud (4%):</span>
+              <span>$${this.formatCurrency(salud)}</span>
+            </div>
+            <div class="calculation-row">
+              <span>Pensión (4%):</span>
+              <span>$${this.formatCurrency(pension)}</span>
+            </div>
+            <div class="calculation-row total">
+              <span>Total Deducciones:</span>
+              <span>$${this.formatCurrency(totalDeducciones)}</span>
+            </div>
+          </div>
+          <div class="calculation-row final-total">
+            <span>Salario Neto a Pagar:</span>
+            <span>$${this.formatCurrency(salarioNeto)}</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    nominaPreview.style.display = 'block';
+    generarPdfBtn.disabled = false;
+  }
+
+  async generarPDFNomina(empleadoId, periodo, empleados, horasTrabajadas) {
+    try {
+      const empleado = empleados.find(e => e.id === empleadoId);
+      if (!empleado) return;
+
+      // Crear contenido HTML para el PDF
+      const htmlContent = this.generarHTMLNomina(empleado, periodo, horasTrabajadas);
+      
+      // Crear ventana para imprimir
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+      
+      // Esperar a que cargue y luego imprimir
+      printWindow.onload = () => {
+        printWindow.print();
+        printWindow.close();
+      };
+
+      this.showNotification('PDF generado', 'La nómina se ha generado correctamente', 'success');
+      
+    } catch (error) {
+      console.error('Error generando PDF:', error);
+      this.showNotification('Error generando PDF', error.message, 'error');
+    }
+  }
+
+  generarHTMLNomina(empleado, periodo, horasTrabajadas) {
+    const fechaActual = new Date().toLocaleDateString('es-CO');
+    const horasEmpleado = horasTrabajadas.filter(h => h.empleadoId === empleado.id);
+    
+    // Cálculos (simplificado)
+    const salarioBase = parseFloat(empleado.salario || 0);
+    const totalHorasOrdinarias = horasEmpleado.reduce((sum, h) => sum + (h.horasOrdinarias || 0), 0);
+    const totalHorasExtras = horasEmpleado.reduce((sum, h) => sum + (h.horasExtras || 0), 0);
+    
+    const valorHora = salarioBase / 240;
+    const valorHorasOrdinarias = totalHorasOrdinarias * valorHora;
+    const valorHorasExtras = totalHorasExtras * valorHora * 1.5;
+    
+    const salarioBruto = valorHorasOrdinarias + valorHorasExtras;
+    const salud = salarioBruto * 0.04;
+    const pension = salarioBruto * 0.04;
+    const totalDeducciones = salud + pension;
+    const salarioNeto = salarioBruto - totalDeducciones;
+
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Nómina - ${empleado.nombre} ${empleado.apellido}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .logo { font-size: 24px; font-weight: bold; color: #667eea; }
+          .title { font-size: 20px; margin: 10px 0; }
+          .info { margin-bottom: 20px; }
+          .info-row { display: flex; justify-content: space-between; margin: 5px 0; }
+          .table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+          .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          .table th { background-color: #f2f2f2; }
+          .total-row { font-weight: bold; background-color: #f9f9f9; }
+          .final-total { font-size: 18px; color: #667eea; }
+          .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="logo">AXYRA</div>
+          <div class="title">COMPROBANTE DE PAGO DE NÓMINA</div>
+          <div>Período: ${periodo}</div>
+          <div>Fecha de emisión: ${fechaActual}</div>
+        </div>
+        
+        <div class="info">
+          <div class="info-row">
+            <span><strong>Empleado:</strong> ${empleado.nombre} ${empleado.apellido}</span>
+          </div>
+          <div class="info-row">
+            <span><strong>Cédula:</strong> ${empleado.cedula}</span>
+            <span><strong>Cargo:</strong> ${empleado.cargo}</span>
+          </div>
+          <div class="info-row">
+            <span><strong>Departamento:</strong> ${empleado.departamento || 'N/A'}</span>
+            <span><strong>Fecha de ingreso:</strong> ${new Date(empleado.fechaIngreso).toLocaleDateString('es-CO')}</span>
+          </div>
+        </div>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th>Horas</th>
+              <th>Valor Hora</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Horas Ordinarias</td>
+              <td>${totalHorasOrdinarias}</td>
+              <td>$${this.formatCurrency(valorHora)}</td>
+              <td>$${this.formatCurrency(valorHorasOrdinarias)}</td>
+            </tr>
+            <tr>
+              <td>Horas Extras</td>
+              <td>${totalHorasExtras}</td>
+              <td>$${this.formatCurrency(valorHora * 1.5)}</td>
+              <td>$${this.formatCurrency(valorHorasExtras)}</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="3"><strong>Salario Bruto</strong></td>
+              <td><strong>$${this.formatCurrency(salarioBruto)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Deducciones</th>
+              <th>Porcentaje</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Salud</td>
+              <td>4%</td>
+              <td>$${this.formatCurrency(salud)}</td>
+            </tr>
+            <tr>
+              <td>Pensión</td>
+              <td>4%</td>
+              <td>$${this.formatCurrency(pension)}</td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="2"><strong>Total Deducciones</strong></td>
+              <td><strong>$${this.formatCurrency(totalDeducciones)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="info">
+          <div class="info-row final-total">
+            <span><strong>SALARIO NETO A PAGAR:</strong></span>
+            <span><strong>$${this.formatCurrency(salarioNeto)}</strong></span>
+          </div>
+        </div>
+
+        <div class="footer">
+          <p>Este comprobante ha sido generado automáticamente por el sistema AXYRA</p>
+          <p>Villa Venecia - Sistema de Gestión de Nómina</p>
+        </div>
+      </body>
+      </html>
+    `;
   }
 
   verDetalleHoras(registroId) {

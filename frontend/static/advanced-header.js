@@ -1,401 +1,400 @@
 /**
- * 🎯 HEADER AVANZADO - AXYRA SISTEMA DE GESTIÓN
- * 
- * Header completo con navegación, notificaciones, perfil de usuario
- * y funcionalidades avanzadas del sistema.
+ * 🎯 HEADER BRUTAL - AXYRA SISTEMA DE GESTIÓN
+ * Header moderno, funcional y brutal
  */
 
 class AdvancedHeader {
     constructor() {
-        this.notifications = [];
+        this.header = null;
         this.user = null;
-        this.isOnline = navigator.onLine;
+        this.companyId = null;
+        this.notifications = [];
         this.init();
     }
 
-    init() {
-        this.createHeaderHTML();
+    async init() {
+        await this.loadUserAndCompany();
+        this.createHeader();
         this.setupEventListeners();
-        this.loadUserData();
-        this.setupNotifications();
-        this.setupOnlineStatus();
-        console.log('🎯 Header avanzado inicializado');
+        this.updateConnectionStatus();
+        this.loadNotifications();
+        console.log('🎯 Header brutal inicializado');
     }
 
-    createHeaderHTML() {
-        const headerHTML = `
-            <header class="advanced-header">
-                <!-- Logo y Título -->
-                <div class="header-left">
-                    <div class="logo-container">
-                        <img src="logo.png" alt="AXYRA" class="logo">
-                        <span class="system-name">AXYRA</span>
-                        <span class="system-version">v2.0</span>
-                    </div>
-                </div>
+    async loadUserAndCompany() {
+        // Cargar datos del usuario desde localStorage o Firebase
+        this.user = {
+            displayName: localStorage.getItem('userName') || 'Usuario',
+            email: localStorage.getItem('userEmail') || 'usuario@empresa.com',
+            photoURL: localStorage.getItem('userPhoto') || 'https://via.placeholder.com/32x32/007bff/ffffff?text=U'
+        };
+        this.companyId = localStorage.getItem('companyId') || 'default';
+    }
 
-                <!-- Barra de Búsqueda -->
-                <div class="header-center">
-                    <div class="search-container">
-                        <input type="text" id="global-search" placeholder="Buscar empleados, nóminas, movimientos..." class="search-input">
-                        <button class="search-btn" id="search-btn">
-                            <i class="fas fa-search"></i>
-                        </button>
-                        <div class="search-results" id="search-results"></div>
-                    </div>
-                </div>
+    createHeader() {
+        // Crear el header si no existe
+        if (!document.querySelector('.advanced-header')) {
+            this.header = document.createElement('header');
+            this.header.className = 'advanced-header';
+            document.body.insertBefore(this.header, document.body.firstChild);
+        } else {
+            this.header = document.querySelector('.advanced-header');
+        }
 
-                <!-- Funcionalidades del Header -->
-                <div class="header-right">
-                    <!-- Estado de Conexión -->
-                    <div class="connection-status" id="connection-status">
-                        <i class="fas fa-wifi" id="connection-icon"></i>
-                        <span id="connection-text">Online</span>
-                    </div>
+        this.renderHeader();
+    }
 
-                    <!-- Notificaciones -->
-                    <div class="notifications-container">
-                        <button class="notification-btn" id="notification-btn">
-                            <i class="fas fa-bell"></i>
-                            <span class="notification-badge" id="notification-badge">0</span>
-                        </button>
-                        <div class="notifications-dropdown" id="notifications-dropdown">
-                            <div class="notifications-header">
-                                <h3>Notificaciones</h3>
-                                <button class="mark-all-read" id="mark-all-read">Marcar todas como leídas</button>
-                            </div>
-                            <div class="notifications-list" id="notifications-list">
-                                <div class="no-notifications">No hay notificaciones</div>
-                            </div>
-                        </div>
-                    </div>
+    renderHeader() {
+        const userName = this.user ? this.user.displayName : 'Usuario';
+        const userEmail = this.user ? this.user.email : 'usuario@empresa.com';
+        const userPhoto = this.user && this.user.photoURL ? this.user.photoURL : 'https://via.placeholder.com/32x32/007bff/ffffff?text=U';
+        const notificationCount = this.getNotificationCount();
 
-                    <!-- Chat IA -->
-                    <div class="ai-chat-container">
-                        <button class="ai-chat-btn" id="ai-chat-btn">
-                            <i class="fas fa-robot"></i>
-                            <span class="ai-indicator" id="ai-indicator"></span>
-                        </button>
-                    </div>
-
-                    <!-- Perfil de Usuario -->
-                    <div class="user-profile-container">
-                        <button class="user-profile-btn" id="user-profile-btn">
-                            <img src="https://via.placeholder.com/32x32/007bff/ffffff?text=U" alt="Usuario" class="user-avatar" id="user-avatar">
-                            <span class="user-name" id="user-name">Usuario</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                        <div class="user-dropdown" id="user-dropdown">
-                            <div class="user-info">
-                                <img src="https://via.placeholder.com/48x48/007bff/ffffff?text=U" alt="Usuario" class="user-avatar-large">
-                                <div class="user-details">
-                                    <div class="user-name-large" id="user-name-large">Usuario</div>
-                                    <div class="user-email" id="user-email">usuario@empresa.com</div>
-                                    <div class="user-role" id="user-role">Administrador</div>
-                                </div>
-                            </div>
-                            <div class="user-menu">
-                                <a href="#" class="menu-item" id="profile-settings">
-                                    <i class="fas fa-user-cog"></i>
-                                    Configuración de Perfil
-                                </a>
-                                <a href="#" class="menu-item" id="system-settings">
-                                    <i class="fas fa-cog"></i>
-                                    Configuración del Sistema
-                                </a>
-                                <a href="#" class="menu-item" id="help-support">
-                                    <i class="fas fa-question-circle"></i>
-                                    Ayuda y Soporte
-                                </a>
-                                <div class="menu-divider"></div>
-                                <a href="#" class="menu-item logout" id="logout-btn">
-                                    <i class="fas fa-sign-out-alt"></i>
-                                    Cerrar Sesión
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Menú Móvil -->
-                    <button class="mobile-menu-btn" id="mobile-menu-btn">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
-            </header>
-
-            <!-- Chat IA Flotante -->
-            <div class="ai-chat-window" id="ai-chat-window">
-                <div class="ai-chat-header">
-                    <div class="ai-chat-title">
-                        <i class="fas fa-robot"></i>
-                        <span>Asistente IA</span>
-                        <div class="ai-status" id="ai-status">Disponible</div>
-                    </div>
-                    <button class="ai-chat-close" id="ai-chat-close">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="ai-chat-messages" id="ai-chat-messages">
-                    <div class="ai-message">
-                        <div class="ai-avatar">
-                            <i class="fas fa-robot"></i>
-                        </div>
-                        <div class="ai-message-content">
-                            <p>¡Hola! Soy tu asistente de IA. ¿En qué puedo ayudarte hoy?</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="ai-chat-input-container">
-                    <input type="text" id="ai-chat-input" placeholder="Escribe tu pregunta..." class="ai-chat-input">
-                    <button id="ai-chat-send" class="ai-chat-send">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
+        this.header.innerHTML = `
+          <div class="header-left">
+            <div class="logo-container">
+              <img src="static/logo-axyra.svg" alt="AXYRA" class="logo">
+              <span class="system-name">AXYRA</span>
+              <span class="system-version">v2.0</span>
             </div>
-
-            <!-- Overlay para móvil -->
-            <div class="mobile-overlay" id="mobile-overlay"></div>
+          </div>
+          <div class="header-center">
+            <div class="search-container">
+              <input type="text" id="global-search" placeholder="Buscar empleados, nóminas, movimientos..." class="search-input">
+              <button class="search-btn" id="search-btn">
+                <i class="fas fa-search"></i>
+              </button>
+              <div class="search-results" id="search-results"></div>
+            </div>
+          </div>
+          <div class="header-right">
+            <div class="connection-status" id="connection-status">
+              <i class="fas fa-wifi" id="connection-icon"></i>
+              <span id="connection-text">Online</span>
+            </div>
+            <div class="notifications-container">
+              <button class="notification-btn" id="notification-btn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notification-badge">${notificationCount > 0 ? notificationCount : ''}</span>
+              </button>
+              <div class="notifications-dropdown" id="notifications-dropdown">
+                <div class="notifications-header">
+                  <h3>Notificaciones</h3>
+                  <button class="mark-all-read" id="mark-all-read">Marcar todas como leídas</button>
+                </div>
+                <div class="notifications-list" id="notifications-list">
+                  <div class="no-notifications">No hay notificaciones</div>
+                </div>
+              </div>
+            </div>
+            <div class="ai-chat-container">
+              <button class="ai-chat-btn" id="ai-chat-btn">
+                <i class="fas fa-robot"></i>
+                <span class="ai-indicator" id="ai-indicator"></span>
+              </button>
+            </div>
+            <div class="user-profile-container">
+              <button class="user-profile-btn" id="user-profile-btn">
+                <img src="${userPhoto}" alt="Usuario" class="user-avatar" id="user-avatar">
+                <span class="user-name" id="user-name">${userName}</span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="user-dropdown" id="user-dropdown">
+                <div class="user-info">
+                  <img src="${userPhoto}" alt="Usuario" class="user-avatar-large">
+                  <div class="user-details">
+                    <div class="user-name-large" id="user-name-large">${userName}</div>
+                    <div class="user-email" id="user-email">${userEmail}</div>
+                    <div class="user-role" id="user-role">Administrador</div>
+                  </div>
+                </div>
+                <div class="user-menu">
+                  <a href="#" class="menu-item" id="profile-settings">
+                    <i class="fas fa-user-cog"></i>
+                    Configuración de Perfil
+                  </a>
+                  <a href="#" class="menu-item" id="system-settings">
+                    <i class="fas fa-cog"></i>
+                    Configuración del Sistema
+                  </a>
+                  <a href="#" class="menu-item" id="help-support">
+                    <i class="fas fa-question-circle"></i>
+                    Ayuda y Soporte
+                  </a>
+                  <div class="menu-divider"></div>
+                  <a href="#" class="menu-item logout" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Cerrar Sesión
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         `;
-
-        // Insertar header al inicio del body
-        document.body.insertAdjacentHTML('afterbegin', headerHTML);
     }
 
     setupEventListeners() {
         // Búsqueda global
-        const searchInput = document.getElementById('global-search');
-        const searchBtn = document.getElementById('search-btn');
-        const searchResults = document.getElementById('search-results');
+        const searchInput = this.header.querySelector('#global-search');
+        const searchBtn = this.header.querySelector('#search-btn');
+        const searchResults = this.header.querySelector('#search-results');
 
-        searchInput.addEventListener('input', (e) => {
-            this.handleGlobalSearch(e.target.value);
-        });
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this.handleSearch(e.target.value);
+            });
 
-        searchBtn.addEventListener('click', () => {
-            this.performSearch(searchInput.value);
-        });
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.performSearch(e.target.value);
+                }
+            });
+
+            searchInput.addEventListener('focus', () => {
+                this.showSearchResults();
+            });
+        }
+
+        if (searchBtn) {
+            searchBtn.addEventListener('click', () => {
+                const query = searchInput?.value || '';
+                this.performSearch(query);
+            });
+        }
 
         // Notificaciones
-        const notificationBtn = document.getElementById('notification-btn');
-        const notificationsDropdown = document.getElementById('notifications-dropdown');
-        const markAllRead = document.getElementById('mark-all-read');
+        const notificationBtn = this.header.querySelector('#notification-btn');
+        const notificationsDropdown = this.header.querySelector('#notifications-dropdown');
+        const markAllRead = this.header.querySelector('#mark-all-read');
 
-        notificationBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.toggleNotifications();
-        });
+        if (notificationBtn) {
+            notificationBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notificationsDropdown.classList.toggle('active');
+                this.header.querySelector('#user-dropdown').classList.remove('active');
+            });
+        }
 
-        markAllRead.addEventListener('click', () => {
-            this.markAllNotificationsAsRead();
-        });
+        if (markAllRead) {
+            markAllRead.addEventListener('click', () => {
+                this.markAllNotificationsAsRead();
+            });
+        }
 
         // Chat IA
-        const aiChatBtn = document.getElementById('ai-chat-btn');
-        const aiChatWindow = document.getElementById('ai-chat-window');
-        const aiChatClose = document.getElementById('ai-chat-close');
-        const aiChatSend = document.getElementById('ai-chat-send');
-        const aiChatInput = document.getElementById('ai-chat-input');
-
-        aiChatBtn.addEventListener('click', () => {
-            this.toggleAIChat();
-        });
-
-        aiChatClose.addEventListener('click', () => {
-            this.closeAIChat();
-        });
-
-        aiChatSend.addEventListener('click', () => {
-            this.sendAIMessage();
-        });
-
-        aiChatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.sendAIMessage();
-            }
-        });
+        const aiChatBtn = this.header.querySelector('#ai-chat-btn');
+        if (aiChatBtn) {
+            aiChatBtn.addEventListener('click', () => {
+                this.openAIChat();
+            });
+        }
 
         // Perfil de usuario
-        const userProfileBtn = document.getElementById('user-profile-btn');
-        const userDropdown = document.getElementById('user-dropdown');
-        const logoutBtn = document.getElementById('logout-btn');
+        const userProfileBtn = this.header.querySelector('#user-profile-btn');
+        const userDropdown = this.header.querySelector('#user-dropdown');
+        const logoutBtn = this.header.querySelector('#logout-btn');
+        const profileSettings = this.header.querySelector('#profile-settings');
+        const systemSettings = this.header.querySelector('#system-settings');
+        const helpSupport = this.header.querySelector('#help-support');
 
-        userProfileBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.toggleUserDropdown();
-        });
+        if (userProfileBtn) {
+            userProfileBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userDropdown.classList.toggle('active');
+                notificationsDropdown.classList.remove('active');
+            });
+        }
 
-        logoutBtn.addEventListener('click', () => {
-            this.logout();
-        });
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.logout();
+            });
+        }
 
-        // Menú móvil
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileOverlay = document.getElementById('mobile-overlay');
+        if (profileSettings) {
+            profileSettings.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.openProfileSettings();
+            });
+        }
 
-        mobileMenuBtn.addEventListener('click', () => {
-            this.toggleMobileMenu();
-        });
+        if (systemSettings) {
+            systemSettings.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.openSystemSettings();
+            });
+        }
 
-        mobileOverlay.addEventListener('click', () => {
-            this.closeMobileMenu();
-        });
+        if (helpSupport) {
+            helpSupport.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.openHelpSupport();
+            });
+        }
 
         // Cerrar dropdowns al hacer clic fuera
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.notifications-container')) {
-                this.closeNotifications();
+                notificationsDropdown.classList.remove('active');
             }
             if (!e.target.closest('.user-profile-container')) {
-                this.closeUserDropdown();
+                userDropdown.classList.remove('active');
+            }
+            if (!e.target.closest('.search-container')) {
+                searchResults.classList.remove('active');
             }
         });
+
+        // Estado de conexión
+        window.addEventListener('online', () => this.updateConnectionStatus());
+        window.addEventListener('offline', () => this.updateConnectionStatus());
     }
 
-    loadUserData() {
-        try {
-            const userData = JSON.parse(localStorage.getItem('axyra_user_data') || '{}');
-            this.user = userData;
-            
-            if (userData.uid) {
-                document.getElementById('user-name').textContent = userData.displayName || 'Usuario';
-                document.getElementById('user-name-large').textContent = userData.displayName || 'Usuario';
-                document.getElementById('user-email').textContent = userData.email || 'usuario@empresa.com';
-                document.getElementById('user-role').textContent = userData.role || 'Administrador';
-            }
-        } catch (error) {
-            console.error('Error cargando datos de usuario:', error);
-        }
-    }
-
-    setupNotifications() {
-        // Simular notificaciones de ejemplo
-        this.notifications = [
-            {
-                id: 1,
-                title: 'Nueva nómina generada',
-                message: 'Se ha generado la nómina del período actual',
-                timestamp: new Date(),
-                read: false,
-                type: 'success'
-            },
-            {
-                id: 2,
-                title: 'Corte de caja pendiente',
-                message: 'El corte de caja del día anterior está pendiente',
-                timestamp: new Date(Date.now() - 3600000),
-                read: false,
-                type: 'warning'
-            },
-            {
-                id: 3,
-                title: 'Sistema actualizado',
-                message: 'AXYRA se ha actualizado a la versión 2.0',
-                timestamp: new Date(Date.now() - 7200000),
-                read: true,
-                type: 'info'
-            }
-        ];
-
-        this.updateNotificationsDisplay();
-    }
-
-    setupOnlineStatus() {
-        window.addEventListener('online', () => {
-            this.isOnline = true;
-            this.updateConnectionStatus();
-        });
-
-        window.addEventListener('offline', () => {
-            this.isOnline = false;
-            this.updateConnectionStatus();
-        });
-
-        this.updateConnectionStatus();
-    }
-
-    updateConnectionStatus() {
-        const connectionIcon = document.getElementById('connection-icon');
-        const connectionText = document.getElementById('connection-text');
-
-        if (this.isOnline) {
-            connectionIcon.className = 'fas fa-wifi';
-            connectionText.textContent = 'Online';
-            connectionIcon.style.color = '#28a745';
-        } else {
-            connectionIcon.className = 'fas fa-wifi-slash';
-            connectionText.textContent = 'Offline';
-            connectionIcon.style.color = '#dc3545';
-        }
-    }
-
-    handleGlobalSearch(query) {
+    async handleSearch(query) {
         if (query.length < 2) {
             this.hideSearchResults();
             return;
         }
 
-        // Simular búsqueda
-        const results = this.performSearch(query);
-        this.showSearchResults(results);
+        console.log('🔍 Buscando:', query);
+        
+        // Simular búsqueda con datos de ejemplo
+        const results = await this.searchData(query);
+        this.displaySearchResults(results);
     }
 
-    performSearch(query) {
-        // Aquí implementarías la búsqueda real
-        console.log('Buscando:', query);
-        return [];
+    async searchData(query) {
+        // Simular datos de búsqueda
+        const mockData = [
+            {
+                type: 'empleado',
+                title: 'Juan Pérez',
+                description: 'Desarrollador - Tecnología',
+                icon: 'fas fa-user',
+                link: '/modulos/gestion_personal/gestion_personal.html#empleados'
+            },
+            {
+                type: 'nomina',
+                title: 'Nómina Enero 2024',
+                description: 'Total: $2,500,000',
+                icon: 'fas fa-calculator',
+                link: '/modulos/gestion_personal/gestion_personal.html#nomina'
+            },
+            {
+                type: 'movimiento',
+                title: 'Pago de servicios',
+                description: 'Egreso - $150,000',
+                icon: 'fas fa-cash-register',
+                link: '/modulos/cuadre_caja/index.html'
+            }
+        ];
+
+        return mockData.filter(item => 
+            item.title.toLowerCase().includes(query.toLowerCase()) ||
+            item.description.toLowerCase().includes(query.toLowerCase())
+        );
     }
 
-    showSearchResults(results) {
-        const searchResults = document.getElementById('search-results');
-        searchResults.style.display = 'block';
-        // Implementar resultados de búsqueda
+    displaySearchResults(results) {
+        const searchResults = this.header.querySelector('#search-results');
+        
+        if (results.length === 0) {
+            searchResults.innerHTML = '<div class="no-results">No se encontraron resultados</div>';
+        } else {
+            searchResults.innerHTML = results.map(result => `
+                <div class="search-result-item" data-link="${result.link}">
+                    <div class="search-result-icon">
+                        <i class="${result.icon}"></i>
+                    </div>
+                    <div class="search-result-content">
+                        <div class="search-result-title">${result.title}</div>
+                        <div class="search-result-description">${result.description}</div>
+                        <div class="search-result-type">${result.type.toUpperCase()}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Agregar event listeners a los resultados
+            searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const link = item.dataset.link;
+                    if (link) {
+                        window.location.href = link;
+                    }
+                });
+            });
+        }
+
+        searchResults.classList.add('active');
+    }
+
+    showSearchResults() {
+        const searchResults = this.header.querySelector('#search-results');
+        searchResults.classList.add('active');
     }
 
     hideSearchResults() {
-        const searchResults = document.getElementById('search-results');
-        searchResults.style.display = 'none';
+        const searchResults = this.header.querySelector('#search-results');
+        searchResults.classList.remove('active');
     }
 
-    toggleNotifications() {
-        const dropdown = document.getElementById('notifications-dropdown');
-        dropdown.classList.toggle('show');
+    performSearch(query) {
+        if (!query.trim()) return;
+        
+        console.log('🔍 Realizando búsqueda:', query);
+        this.handleSearch(query);
+        
+        // Mostrar notificación
+        this.showNotification('Búsqueda realizada', `Se encontraron resultados para "${query}"`, 'info');
     }
 
-    closeNotifications() {
-        const dropdown = document.getElementById('notifications-dropdown');
-        dropdown.classList.remove('show');
+    loadNotifications() {
+        // Cargar notificaciones desde localStorage
+        const stored = localStorage.getItem('axyra_notifications');
+        this.notifications = stored ? JSON.parse(stored) : [];
+        this.updateNotificationBadge();
+        this.renderNotifications();
     }
 
-    updateNotificationsDisplay() {
-        const unreadCount = this.notifications.filter(n => !n.read).length;
-        const badge = document.getElementById('notification-badge');
-        const list = document.getElementById('notifications-list');
+    getNotificationCount() {
+        return this.notifications.filter(n => !n.read).length;
+    }
 
-        badge.textContent = unreadCount;
-        badge.style.display = unreadCount > 0 ? 'block' : 'none';
+    updateNotificationBadge() {
+        const badge = this.header.querySelector('#notification-badge');
+        const count = this.getNotificationCount();
+        
+        if (badge) {
+            badge.textContent = count > 0 ? count : '';
+            badge.style.display = count > 0 ? 'flex' : 'none';
+        }
+    }
 
+    renderNotifications() {
+        const notificationsList = this.header.querySelector('#notifications-list');
+        
         if (this.notifications.length === 0) {
-            list.innerHTML = '<div class="no-notifications">No hay notificaciones</div>';
+            notificationsList.innerHTML = '<div class="no-notifications">No hay notificaciones</div>';
             return;
         }
 
-        list.innerHTML = this.notifications.map(notification => `
-            <div class="notification-item ${notification.read ? 'read' : 'unread'}" data-id="${notification.id}">
-                <div class="notification-icon ${notification.type}">
-                    <i class="fas fa-${this.getNotificationIcon(notification.type)}"></i>
+        notificationsList.innerHTML = this.notifications.map(notif => `
+            <div class="notification-item ${notif.type} ${notif.read ? 'read' : 'unread'}" data-id="${notif.id}">
+                <div class="notification-icon">
+                    <i class="fas fa-${this.getNotificationIcon(notif.type)}"></i>
                 </div>
                 <div class="notification-content">
-                    <div class="notification-title">${notification.title}</div>
-                    <div class="notification-message">${notification.message}</div>
-                    <div class="notification-time">${this.formatTime(notification.timestamp)}</div>
+                    <div class="notification-message">${notif.message}</div>
+                    <div class="notification-time">${this.formatTimeAgo(notif.timestamp)}</div>
                 </div>
             </div>
         `).join('');
 
-        // Agregar event listeners a las notificaciones
-        list.querySelectorAll('.notification-item').forEach(item => {
+        // Agregar event listeners
+        notificationsList.querySelectorAll('.notification-item').forEach(item => {
             item.addEventListener('click', () => {
-                const id = parseInt(item.dataset.id);
+                const id = item.dataset.id;
                 this.markNotificationAsRead(id);
             });
         });
@@ -404,137 +403,115 @@ class AdvancedHeader {
     getNotificationIcon(type) {
         const icons = {
             success: 'check-circle',
+            error: 'exclamation-circle',
             warning: 'exclamation-triangle',
-            error: 'times-circle',
             info: 'info-circle'
         };
         return icons[type] || 'bell';
-    }
-
-    formatTime(timestamp) {
-        const now = new Date();
-        const diff = now - timestamp;
-        const minutes = Math.floor(diff / 60000);
-        const hours = Math.floor(diff / 3600000);
-        const days = Math.floor(diff / 86400000);
-
-        if (minutes < 1) return 'Ahora';
-        if (minutes < 60) return `${minutes}m`;
-        if (hours < 24) return `${hours}h`;
-        return `${days}d`;
     }
 
     markNotificationAsRead(id) {
         const notification = this.notifications.find(n => n.id === id);
         if (notification) {
             notification.read = true;
-            this.updateNotificationsDisplay();
+            localStorage.setItem('axyra_notifications', JSON.stringify(this.notifications));
+            this.updateNotificationBadge();
+            this.renderNotifications();
         }
     }
 
     markAllNotificationsAsRead() {
         this.notifications.forEach(n => n.read = true);
-        this.updateNotificationsDisplay();
+        localStorage.setItem('axyra_notifications', JSON.stringify(this.notifications));
+        this.updateNotificationBadge();
+        this.renderNotifications();
+        this.showNotification('Notificaciones marcadas como leídas', '', 'success');
     }
 
-    toggleAIChat() {
-        const chatWindow = document.getElementById('ai-chat-window');
-        chatWindow.classList.toggle('show');
+    showNotification(message, description = '', type = 'info') {
+        const notification = {
+            id: Date.now().toString(),
+            message,
+            description,
+            type,
+            timestamp: new Date().toISOString(),
+            read: false
+        };
+
+        this.notifications.unshift(notification);
+        localStorage.setItem('axyra_notifications', JSON.stringify(this.notifications));
+        this.updateNotificationBadge();
+        this.renderNotifications();
+    }
+
+    updateConnectionStatus() {
+        const connectionIcon = this.header.querySelector('#connection-icon');
+        const connectionText = this.header.querySelector('#connection-text');
         
-        if (chatWindow.classList.contains('show')) {
-            document.getElementById('ai-chat-input').focus();
+        if (navigator.onLine) {
+            connectionIcon.className = 'fas fa-wifi';
+            connectionText.textContent = 'Online';
+            connectionIcon.style.color = '#4ade80';
+        } else {
+            connectionIcon.className = 'fas fa-wifi-slash';
+            connectionText.textContent = 'Offline';
+            connectionIcon.style.color = '#ef4444';
         }
     }
 
-    closeAIChat() {
-        const chatWindow = document.getElementById('ai-chat-window');
-        chatWindow.classList.remove('show');
-    }
-
-    sendAIMessage() {
-        const input = document.getElementById('ai-chat-input');
-        const message = input.value.trim();
-        
-        if (!message) return;
-
-        // Agregar mensaje del usuario
-        this.addChatMessage(message, 'user');
-        input.value = '';
-
-        // Simular respuesta de IA
-        setTimeout(() => {
-            const response = this.generateAIResponse(message);
-            this.addChatMessage(response, 'ai');
-        }, 1000);
-    }
-
-    addChatMessage(message, sender) {
-        const messagesContainer = document.getElementById('ai-chat-messages');
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `${sender}-message`;
-        
-        const avatar = sender === 'user' ? 
-            '<div class="user-avatar"><i class="fas fa-user"></i></div>' :
-            '<div class="ai-avatar"><i class="fas fa-robot"></i></div>';
-
-        messageDiv.innerHTML = `
-            ${avatar}
-            <div class="message-content">
-                <p>${message}</p>
-            </div>
-        `;
-
-        messagesContainer.appendChild(messageDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    generateAIResponse(message) {
-        const responses = [
-            'Entiendo tu consulta. Te ayudo con eso.',
-            'Excelente pregunta. Aquí tienes la información que necesitas.',
-            'Perfecto, puedo ayudarte con esa funcionalidad.',
-            'Esa es una característica importante del sistema.',
-            'Te explico cómo funciona esa parte del sistema.'
-        ];
-        
-        return responses[Math.floor(Math.random() * responses.length)];
-    }
-
-    toggleUserDropdown() {
-        const dropdown = document.getElementById('user-dropdown');
-        dropdown.classList.toggle('show');
-    }
-
-    closeUserDropdown() {
-        const dropdown = document.getElementById('user-dropdown');
-        dropdown.classList.remove('show');
-    }
-
-    toggleMobileMenu() {
-        const overlay = document.getElementById('mobile-overlay');
-        overlay.classList.toggle('show');
-    }
-
-    closeMobileMenu() {
-        const overlay = document.getElementById('mobile-overlay');
-        overlay.classList.remove('show');
+    openAIChat() {
+        // Abrir chat de IA si está disponible
+        if (window.axyraAIChatSystem) {
+            window.axyraAIChatSystem.toggleChatWindow();
+        } else {
+            this.showNotification('Chat de IA no disponible', 'El sistema de chat está cargando...', 'warning');
+        }
     }
 
     logout() {
         if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
             // Limpiar datos locales
-            localStorage.removeItem('axyra_user_data');
-            localStorage.removeItem('axyra_analytics_events');
+            localStorage.clear();
             
             // Redirigir al login
             window.location.href = '/login.html';
         }
     }
+
+    openProfileSettings() {
+        this.showNotification('Configuración de perfil', 'Esta funcionalidad estará disponible pronto', 'info');
+    }
+
+    openSystemSettings() {
+        this.showNotification('Configuración del sistema', 'Esta funcionalidad estará disponible pronto', 'info');
+    }
+
+    openHelpSupport() {
+        this.showNotification('Ayuda y soporte', 'Esta funcionalidad estará disponible pronto', 'info');
+    }
+
+    formatTimeAgo(timestamp) {
+        const now = new Date();
+        const date = new Date(timestamp);
+        const seconds = Math.floor((now - date) / 1000);
+
+        if (seconds < 60) return `${seconds}s`;
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) return `${minutes}m`;
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours}h`;
+        const days = Math.floor(hours / 24);
+        if (days < 30) return `${days}d`;
+        const months = Math.floor(days / 30);
+        if (months < 12) return `${months}m`;
+        const years = Math.floor(months / 12);
+        return `${years}a`;
+    }
 }
 
-// Inicializar header cuando se carga la página
+// Inicializar header cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', () => {
-    new AdvancedHeader();
+    window.axyraAdvancedHeader = new AdvancedHeader();
 });
 
 // Exportar para uso global
