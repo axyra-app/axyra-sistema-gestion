@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "name": "axyra-sistema-gestion",
   "buildCommand": "echo 'Build completed'",
   "outputDirectory": "frontend",
   "installCommand": "npm install",
@@ -13,10 +12,5 @@
       "src": "/(.*)",
       "dest": "/frontend/$1"
     }
-  ],
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs18"
-    }
-  }
+  ]
 }
