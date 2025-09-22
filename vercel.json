@@ -1,16 +1,9 @@
 {
   "version": 2,
   "name": "axyra-sistema-gestion",
-  "builds": [
-    {
-      "src": "frontend/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "api/**/*.js",
-      "use": "@vercel/node"
-    }
-  ],
+  "buildCommand": "echo 'Build completed'",
+  "outputDirectory": "frontend",
+  "installCommand": "npm install",
   "routes": [
     {
       "src": "/api/processPayPalPayment",
