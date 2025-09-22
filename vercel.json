@@ -3,6 +3,7 @@
   "buildCommand": "echo 'Build completed'",
   "outputDirectory": "frontend",
   "installCommand": "npm install",
+  "framework": null,
   "routes": [
     {
       "src": "/api/(.*)",
