@@ -513,9 +513,11 @@ class GestionPersonalOptimized {
 
     let html = '';
     this.empleados.forEach((empleado) => {
+      const tieneHoras = this.horas.some(hora => hora.empleadoId === empleado.id);
+      
       html += `
         <tr>
-          <td>${empleado.nombre}</td>
+          <td><strong>${empleado.nombre}</strong></td>
           <td>${empleado.cedula}</td>
           <td>${empleado.cargo}</td>
           <td>${empleado.departamento || 'Sin asignar'}</td>
@@ -523,14 +525,23 @@ class GestionPersonalOptimized {
           <td>${empleado.tipoContrato || 'Indefinido'}</td>
           <td><span class="estado-badge ${empleado.estado}">${empleado.estado}</span></td>
           <td>
-            <button class="btn btn-sm btn-outline-primary" onclick="gestionPersonal.mostrarModalEmpleado('${
-              empleado.id
-            }')">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" onclick="gestionPersonal.eliminarEmpleado('${empleado.id}')">
-              <i class="fas fa-trash"></i>
-            </button>
+            <div class="btn-group" role="group">
+              <button class="btn btn-sm btn-outline-primary" onclick="gestionPersonal.mostrarModalEmpleado('${empleado.id}')" title="Editar empleado">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-info" onclick="gestionPersonal.verDetalleEmpleado('${empleado.id}')" title="Ver detalles">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-success" onclick="gestionPersonal.imprimirEmpleadoIndividual('${empleado.id}')" title="Imprimir empleado">
+                <i class="fas fa-print"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger" 
+                      onclick="gestionPersonal.eliminarEmpleadoIndividual('${empleado.id}')" 
+                      title="${tieneHoras ? 'No se puede eliminar (tiene horas registradas)' : 'Eliminar empleado'}"
+                      ${tieneHoras ? 'disabled' : ''}>
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </td>
         </tr>
       `;
@@ -616,10 +627,26 @@ class GestionPersonalOptimized {
         })
         .reduce((total, hora) => total + this.calcularTotalHoras(hora.horas), 0);
 
+      // Calcular salarios basados en horas trabajadas
       let totalPagos = 0;
       this.empleados.forEach((empleado) => {
         if (empleado.estado === 'activo') {
-          totalPagos += empleado.salario || 0;
+          // Obtener horas del empleado en el mes actual
+          const horasEmpleado = this.horas.filter(hora => {
+            const fechaHora = new Date(hora.fecha);
+            return (fechaHora.getMonth() === mesActual && 
+                    fechaHora.getFullYear() === anioActual && 
+                    hora.empleadoId === empleado.id);
+          });
+
+          if (horasEmpleado.length > 0) {
+            // Calcular salario basado en horas trabajadas
+            const salarioEmpleado = this.calcularSalarioPorHorasTrabajadas(empleado, horasEmpleado);
+            totalPagos += salarioEmpleado;
+          } else {
+            // Si no hay horas registradas, usar salario base
+            totalPagos += empleado.salario || 0;
+          }
         }
       });
 
@@ -647,6 +674,69 @@ class GestionPersonalOptimized {
     } catch (error) {
       console.error('❌ Error al actualizar estadísticas:', error);
     }
+  }
+
+  calcularSalarioPorHorasTrabajadas(empleado, horasRegistradas) {
+    let salarioTotal = 0;
+    
+    // Salario base por hora (basado en salario mínimo colombiano)
+    const salarioBaseHora = 1423500 / 240; // Salario mínimo / horas mensuales (240 horas)
+    
+    horasRegistradas.forEach(registro => {
+      const horas = registro.horas || {};
+      
+      // Horas ordinarias
+      if (horas.ordinarias) {
+        salarioTotal += horas.ordinarias * salarioBaseHora;
+      }
+      
+      // Recargo nocturno (35% adicional)
+      if (horas.recargo_nocturno) {
+        salarioTotal += horas.recargo_nocturno * (salarioBaseHora * 1.35);
+      }
+      
+      // Recargo diurno dominical (75% adicional)
+      if (horas.recargo_diurno_dominical) {
+        salarioTotal += horas.recargo_diurno_dominical * (salarioBaseHora * 1.75);
+      }
+      
+      // Recargo nocturno dominical (110% adicional)
+      if (horas.recargo_nocturno_dominical) {
+        salarioTotal += horas.recargo_nocturno_dominical * (salarioBaseHora * 2.1);
+      }
+      
+      // Hora extra diurna (25% adicional)
+      if (horas.hora_extra_diurna) {
+        salarioTotal += horas.hora_extra_diurna * (salarioBaseHora * 1.25);
+      }
+      
+      // Hora extra nocturna (60% adicional)
+      if (horas.hora_extra_nocturna) {
+        salarioTotal += horas.hora_extra_nocturna * (salarioBaseHora * 1.6);
+      }
+      
+      // Hora diurna dominical/festivo (75% adicional)
+      if (horas.hora_diurna_dominical_o_festivo) {
+        salarioTotal += horas.hora_diurna_dominical_o_festivo * (salarioBaseHora * 1.75);
+      }
+      
+      // Hora extra diurna dominical/festivo (100% adicional)
+      if (horas.hora_extra_diurna_dominical_o_festivo) {
+        salarioTotal += horas.hora_extra_diurna_dominical_o_festivo * (salarioBaseHora * 2.0);
+      }
+      
+      // Hora nocturna dominical/festivo (110% adicional)
+      if (horas.hora_nocturna_dominical_o_festivo) {
+        salarioTotal += horas.hora_nocturna_dominical_o_festivo * (salarioBaseHora * 2.1);
+      }
+      
+      // Hora extra nocturna dominical/festivo (185% adicional)
+      if (horas.hora_extra_nocturna_dominical_o_festivo) {
+        salarioTotal += horas.hora_extra_nocturna_dominical_o_festivo * (salarioBaseHora * 2.85);
+      }
+    });
+    
+    return Math.round(salarioTotal);
   }
 
   formatearMoneda(valor) {
@@ -1347,6 +1437,349 @@ class GestionPersonalOptimized {
     }
   }
 
+  // ========================================
+  // FUNCIONES DE IMPRESIÓN Y EXPORTACIÓN
+  // ========================================
+
+  imprimirListaEmpleados() {
+    try {
+      const empleados = this.empleados.filter(emp => emp.estado === 'activo');
+      if (empleados.length === 0) {
+        this.mostrarNotificacion('No hay empleados activos para imprimir', 'warning');
+        return;
+      }
+
+      const ventanaImpresion = window.open('', '_blank');
+      const fechaActual = new Date().toLocaleDateString('es-CO');
+      
+      ventanaImpresion.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Lista de Empleados - AXYRA</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .header h1 { color: #007bff; margin: 0; }
+            .header p { color: #666; margin: 5px 0; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+            th { background-color: #007bff; color: white; }
+            tr:nth-child(even) { background-color: #f2f2f2; }
+            .footer { margin-top: 30px; text-align: center; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>AXYRA - Lista de Empleados</h1>
+            <p>Fecha de impresión: ${fechaActual}</p>
+            <p>Total de empleados: ${empleados.length}</p>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Cédula</th>
+                <th>Cargo</th>
+                <th>Departamento</th>
+                <th>Salario</th>
+                <th>Tipo Contrato</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${empleados.map(emp => `
+                <tr>
+                  <td>${emp.nombre}</td>
+                  <td>${emp.cedula}</td>
+                  <td>${emp.cargo}</td>
+                  <td>${emp.departamento}</td>
+                  <td>$${(emp.salario || 0).toLocaleString()}</td>
+                  <td>${emp.tipoContrato || 'N/A'}</td>
+                  <td>${emp.estado}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          <div class="footer">
+            <p>© ${new Date().getFullYear()} AXYRA - Sistema de Gestión Empresarial</p>
+          </div>
+        </body>
+        </html>
+      `);
+      
+      ventanaImpresion.document.close();
+      ventanaImpresion.focus();
+      ventanaImpresion.print();
+      
+      this.mostrarNotificacion('Lista de empleados enviada a impresión', 'success');
+      
+    } catch (error) {
+      console.error('❌ Error imprimiendo lista:', error);
+      this.mostrarNotificacion('Error al imprimir lista', 'error');
+    }
+  }
+
+  exportarEmpleadosPDF() {
+    try {
+      const empleados = this.empleados.filter(emp => emp.estado === 'activo');
+      if (empleados.length === 0) {
+        this.mostrarNotificacion('No hay empleados activos para exportar', 'warning');
+        return;
+      }
+
+      // Crear contenido HTML para PDF
+      const contenidoHTML = `
+        <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+          <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #007bff; padding-bottom: 20px;">
+            <h1 style="color: #007bff; margin: 0;">AXYRA - Lista de Empleados</h1>
+            <p style="color: #666; margin: 5px 0;">Fecha: ${new Date().toLocaleDateString('es-CO')}</p>
+            <p style="color: #666; margin: 5px 0;">Total: ${empleados.length} empleados</p>
+          </div>
+          
+          <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+              <tr style="background-color: #007bff; color: white;">
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Nombre</th>
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Cédula</th>
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Cargo</th>
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Salario</th>
+                <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${empleados.map((emp, index) => `
+                <tr style="${index % 2 === 0 ? 'background-color: #f9f9f9;' : ''}">
+                  <td style="border: 1px solid #ddd; padding: 12px;">${emp.nombre}</td>
+                  <td style="border: 1px solid #ddd; padding: 12px;">${emp.cedula}</td>
+                  <td style="border: 1px solid #ddd; padding: 12px;">${emp.cargo}</td>
+                  <td style="border: 1px solid #ddd; padding: 12px;">$${(emp.salario || 0).toLocaleString()}</td>
+                  <td style="border: 1px solid #ddd; padding: 12px;">${emp.estado}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 30px; text-align: center; color: #666; font-size: 12px;">
+            <p>© ${new Date().getFullYear()} AXYRA - Sistema de Gestión Empresarial</p>
+          </div>
+        </div>
+      `;
+
+      // Crear ventana para PDF
+      const ventanaPDF = window.open('', '_blank');
+      ventanaPDF.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Lista de Empleados - AXYRA</title>
+          <style>
+            @media print {
+              body { margin: 0; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          ${contenidoHTML}
+          <div class="no-print" style="text-align: center; margin-top: 20px;">
+            <button onclick="window.print()" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+              Imprimir PDF
+            </button>
+          </div>
+        </body>
+        </html>
+      `);
+      
+      ventanaPDF.document.close();
+      this.mostrarNotificacion('Lista de empleados exportada correctamente', 'success');
+      
+    } catch (error) {
+      console.error('❌ Error exportando PDF:', error);
+      this.mostrarNotificacion('Error al exportar PDF', 'error');
+    }
+  }
+
+  eliminarEmpleadoIndividual(empleadoId) {
+    try {
+      const empleado = this.empleados.find(emp => emp.id === empleadoId);
+      if (!empleado) {
+        this.mostrarNotificacion('Empleado no encontrado', 'error');
+        return;
+      }
+
+      // Verificar si tiene horas registradas
+      const tieneHoras = this.horas.some(hora => hora.empleadoId === empleadoId);
+      if (tieneHoras) {
+        this.mostrarNotificacion('No se puede eliminar el empleado porque tiene horas registradas', 'warning');
+        return;
+      }
+
+      if (confirm(`¿Estás seguro de que quieres eliminar a ${empleado.nombre}?`)) {
+        // Eliminar empleado
+        this.empleados = this.empleados.filter(emp => emp.id !== empleadoId);
+        
+        // Guardar en localStorage
+        localStorage.setItem('axyra_empleados', JSON.stringify(this.empleados));
+        
+        // Actualizar vista
+        this.renderizarEmpleados();
+        this.actualizarEstadisticas();
+        
+        this.mostrarNotificacion(`${empleado.nombre} eliminado correctamente`, 'success');
+        console.log('✅ Empleado eliminado:', empleado.nombre);
+      }
+      
+    } catch (error) {
+      console.error('❌ Error eliminando empleado:', error);
+      this.mostrarNotificacion('Error al eliminar empleado', 'error');
+    }
+  }
+
+  verDetalleEmpleado(empleadoId) {
+    try {
+      const empleado = this.empleados.find(emp => emp.id === empleadoId);
+      if (!empleado) {
+        this.mostrarNotificacion('Empleado no encontrado', 'error');
+        return;
+      }
+
+      // Obtener horas del empleado
+      const horasEmpleado = this.horas.filter(hora => hora.empleadoId === empleadoId);
+      const totalHoras = horasEmpleado.reduce((total, hora) => total + this.calcularTotalHoras(hora.horas), 0);
+      const salarioCalculado = this.calcularSalarioPorHorasTrabajadas(empleado, horasEmpleado);
+
+      const modal = document.createElement('div');
+      modal.className = 'axyra-modal';
+      modal.innerHTML = `
+        <div class="axyra-modal-content">
+          <div class="axyra-modal-header">
+            <h3><i class="fas fa-user"></i> Detalle del Empleado</h3>
+            <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+          </div>
+          <div class="axyra-modal-body">
+            <div class="empleado-detalle">
+              <div class="detalle-section">
+                <h4>Información Personal</h4>
+                <p><strong>Nombre:</strong> ${empleado.nombre}</p>
+                <p><strong>Cédula:</strong> ${empleado.cedula}</p>
+                <p><strong>Cargo:</strong> ${empleado.cargo}</p>
+                <p><strong>Departamento:</strong> ${empleado.departamento || 'Sin asignar'}</p>
+                <p><strong>Estado:</strong> <span class="estado-badge ${empleado.estado}">${empleado.estado}</span></p>
+              </div>
+              
+              <div class="detalle-section">
+                <h4>Información Laboral</h4>
+                <p><strong>Salario Base:</strong> $${(empleado.salario || 0).toLocaleString()}</p>
+                <p><strong>Tipo Contrato:</strong> ${empleado.tipoContrato || 'Indefinido'}</p>
+                <p><strong>Fecha Contratación:</strong> ${empleado.fechaContratacion || 'No especificada'}</p>
+              </div>
+              
+              <div class="detalle-section">
+                <h4>Estadísticas de Trabajo</h4>
+                <p><strong>Total Horas Registradas:</strong> ${totalHoras.toFixed(1)} horas</p>
+                <p><strong>Salario Calculado:</strong> $${salarioCalculado.toLocaleString()}</p>
+                <p><strong>Registros de Horas:</strong> ${horasEmpleado.length}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Agregar estilos
+      const style = document.createElement('style');
+      style.textContent = `
+        .empleado-detalle { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .detalle-section { background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .detalle-section h4 { color: #007bff; margin-bottom: 10px; }
+        .detalle-section p { margin: 8px 0; }
+        .estado-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .estado-badge.activo { background: #d4edda; color: #155724; }
+        .estado-badge.inactivo { background: #f8d7da; color: #721c24; }
+      `;
+      document.head.appendChild(style);
+      document.body.appendChild(modal);
+      
+    } catch (error) {
+      console.error('❌ Error mostrando detalle:', error);
+      this.mostrarNotificacion('Error al mostrar detalle', 'error');
+    }
+  }
+
+  imprimirEmpleadoIndividual(empleadoId) {
+    try {
+      const empleado = this.empleados.find(emp => emp.id === empleadoId);
+      if (!empleado) {
+        this.mostrarNotificacion('Empleado no encontrado', 'error');
+        return;
+      }
+
+      const ventanaImpresion = window.open('', '_blank');
+      const fechaActual = new Date().toLocaleDateString('es-CO');
+      
+      ventanaImpresion.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Empleado - ${empleado.nombre} - AXYRA</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .header h1 { color: #007bff; margin: 0; }
+            .header p { color: #666; margin: 5px 0; }
+            .info-section { margin: 20px 0; }
+            .info-section h3 { color: #007bff; border-bottom: 2px solid #007bff; padding-bottom: 5px; }
+            .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+            .info-item { margin: 10px 0; }
+            .info-item strong { color: #333; }
+            .footer { margin-top: 30px; text-align: center; color: #666; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>AXYRA - Información del Empleado</h1>
+            <p>Fecha de impresión: ${fechaActual}</p>
+          </div>
+          
+          <div class="info-section">
+            <h3>Información Personal</h3>
+            <div class="info-grid">
+              <div class="info-item"><strong>Nombre:</strong> ${empleado.nombre}</div>
+              <div class="info-item"><strong>Cédula:</strong> ${empleado.cedula}</div>
+              <div class="info-item"><strong>Cargo:</strong> ${empleado.cargo}</div>
+              <div class="info-item"><strong>Departamento:</strong> ${empleado.departamento || 'Sin asignar'}</div>
+              <div class="info-item"><strong>Estado:</strong> ${empleado.estado}</div>
+              <div class="info-item"><strong>Tipo Contrato:</strong> ${empleado.tipoContrato || 'Indefinido'}</div>
+            </div>
+          </div>
+          
+          <div class="info-section">
+            <h3>Información Laboral</h3>
+            <div class="info-grid">
+              <div class="info-item"><strong>Salario Base:</strong> $${(empleado.salario || 0).toLocaleString()}</div>
+              <div class="info-item"><strong>Fecha Contratación:</strong> ${empleado.fechaContratacion || 'No especificada'}</div>
+            </div>
+          </div>
+          
+          <div class="footer">
+            <p>© ${new Date().getFullYear()} AXYRA - Sistema de Gestión Empresarial</p>
+          </div>
+        </body>
+        </html>
+      `);
+      
+      ventanaImpresion.document.close();
+      ventanaImpresion.focus();
+      ventanaImpresion.print();
+      
+      this.mostrarNotificacion('Información del empleado enviada a impresión', 'success');
+      
+    } catch (error) {
+      console.error('❌ Error imprimiendo empleado:', error);
+      this.mostrarNotificacion('Error al imprimir empleado', 'error');
+    }
+  }
+
   async generarNomina() {
     try {
       // Obtener empleados y horas trabajadas
@@ -1706,6 +2139,37 @@ document.addEventListener('DOMContentLoaded', () => {
     console.error('❌ Error al cargar módulo de Gestión de Personal:', error);
   }
 });
+
+// Funciones globales para acceso desde HTML
+window.imprimirListaEmpleados = () => {
+  if (window.gestionPersonal) {
+    window.gestionPersonal.imprimirListaEmpleados();
+  }
+};
+
+window.exportarEmpleadosPDF = () => {
+  if (window.gestionPersonal) {
+    window.gestionPersonal.exportarEmpleadosPDF();
+  }
+};
+
+window.eliminarEmpleadoIndividual = (empleadoId) => {
+  if (window.gestionPersonal) {
+    window.gestionPersonal.eliminarEmpleadoIndividual(empleadoId);
+  }
+};
+
+window.verDetalleEmpleado = (empleadoId) => {
+  if (window.gestionPersonal) {
+    window.gestionPersonal.verDetalleEmpleado(empleadoId);
+  }
+};
+
+window.imprimirEmpleadoIndividual = (empleadoId) => {
+  if (window.gestionPersonal) {
+    window.gestionPersonal.imprimirEmpleadoIndividual(empleadoId);
+  }
+};
 
 // Exportar para uso global
 window.GestionPersonalOptimized = GestionPersonalOptimized;
