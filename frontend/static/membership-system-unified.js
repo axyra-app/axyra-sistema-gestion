@@ -219,8 +219,13 @@ class AxyraMembershipSystemUnified {
                 return;
             }
 
-            // Mostrar modal de pago
-            this.showPaymentModal(plan);
+            // Usar integración real con Wompi
+            if (window.axyraWompiIntegration) {
+                await window.axyraWompiIntegration.initiatePayment(planId);
+            } else {
+                // Fallback al modal de pago original
+                this.showPaymentModal(plan);
+            }
 
         } catch (error) {
             console.error('❌ Error seleccionando plan:', error);
