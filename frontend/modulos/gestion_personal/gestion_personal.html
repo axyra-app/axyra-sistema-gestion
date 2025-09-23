@@ -828,7 +828,7 @@
         <div class="table-container">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px">
             <h3><i class="fas fa-history"></i> Historial de Horas</h3>
-            <button class="btn btn-danger btn-sm" onclick="window.axyraGestionPersonal?.limpiarTablaHoras()">
+            <button class="btn btn-danger btn-sm" onclick="AxyraGestionPersonal.limpiarTablaHoras()">
               <i class="fas fa-trash"></i> Limpiar Tabla
             </button>
           </div>
@@ -942,13 +942,12 @@
           <h3><i class="fas fa-file-invoice-dollar"></i> Generar Nómina</h3>
           <div class="form-row">
             <div class="form-group">
-              <label for="periodoNomina">Período</label>
-              <select id="periodoNomina" name="periodoNomina">
-                <option value="">Seleccionar período</option>
-                <option value="2024-01">Enero 2024</option>
-                <option value="2024-02">Febrero 2024</option>
-                <option value="2024-03">Marzo 2024</option>
-              </select>
+              <label for="fechaInicioNomina">Fecha de Inicio</label>
+              <input type="date" id="fechaInicioNomina" name="fechaInicioNomina" required />
+            </div>
+            <div class="form-group">
+              <label for="fechaFinNomina">Fecha de Fin</label>
+              <input type="date" id="fechaFinNomina" name="fechaFinNomina" required />
             </div>
             <div class="form-group">
               <label for="nominaDepartamento">Departamento</label>
@@ -1145,11 +1144,24 @@
         }
       }
 
-      // Establecer fecha actual por defecto
+      // Establecer fechas por defecto
       document.addEventListener('DOMContentLoaded', function () {
         const fechaInput = document.getElementById('fechaHoras');
         if (fechaInput) {
           fechaInput.value = new Date().toISOString().split('T')[0];
+        }
+
+        // Configurar fechas por defecto para nómina (primer y último día del mes actual)
+        const fechaInicioNomina = document.getElementById('fechaInicioNomina');
+        const fechaFinNomina = document.getElementById('fechaFinNomina');
+        
+        if (fechaInicioNomina && fechaFinNomina) {
+          const hoy = new Date();
+          const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+          const ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+          
+          fechaInicioNomina.value = primerDia.toISOString().split('T')[0];
+          fechaFinNomina.value = ultimoDia.toISOString().split('T')[0];
         }
       });
     </script>

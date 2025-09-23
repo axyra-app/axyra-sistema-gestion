@@ -526,17 +526,17 @@ class GestionPersonalOptimized {
           <td><span class="estado-badge ${empleado.estado}">${empleado.estado}</span></td>
           <td>
             <div class="btn-group" role="group">
-              <button class="btn btn-sm btn-outline-primary" onclick="gestionPersonal.mostrarModalEmpleado('${empleado.id}')" title="Editar empleado">
+              <button class="action-btn edit" onclick="window.axyraGestionPersonal?.mostrarModalEmpleado('${empleado.id}')" title="Editar empleado">
                 <i class="fas fa-edit"></i>
               </button>
-              <button class="btn btn-sm btn-outline-info" onclick="gestionPersonal.verDetalleEmpleado('${empleado.id}')" title="Ver detalles">
+              <button class="action-btn view" onclick="window.axyraGestionPersonal?.verDetalleEmpleado('${empleado.id}')" title="Ver detalles">
                 <i class="fas fa-eye"></i>
               </button>
-              <button class="btn btn-sm btn-outline-success" onclick="gestionPersonal.imprimirEmpleadoIndividual('${empleado.id}')" title="Imprimir empleado">
+              <button class="action-btn print" onclick="window.axyraGestionPersonal?.imprimirEmpleadoIndividual('${empleado.id}')" title="Imprimir empleado">
                 <i class="fas fa-print"></i>
               </button>
-              <button class="btn btn-sm btn-outline-danger" 
-                      onclick="gestionPersonal.eliminarEmpleadoIndividual('${empleado.id}')" 
+              <button class="action-btn delete" 
+                      onclick="window.axyraGestionPersonal?.eliminarEmpleadoIndividual('${empleado.id}')" 
                       title="${tieneHoras ? 'No se puede eliminar (tiene horas registradas)' : 'Eliminar empleado'}"
                       ${tieneHoras ? 'disabled' : ''}>
                 <i class="fas fa-trash"></i>
@@ -556,6 +556,28 @@ class GestionPersonalOptimized {
     let html = '';
     this.horas.forEach((registro) => {
       const horas = registro.horas || {};
+      
+      // Calcular total de horas
+      const totalHoras = (horas.ordinarias || 0) + 
+                        (horas.recargo_nocturno || 0) + 
+                        (horas.recargo_diurno_dominical || 0) + 
+                        (horas.recargo_nocturno_dominical || 0) + 
+                        (horas.hora_extra_diurna || 0) + 
+                        (horas.hora_extra_nocturna || 0) + 
+                        (horas.hora_diurna_dominical_o_festivo || 0) + 
+                        (horas.hora_extra_diurna_dominical_o_festivo || 0) + 
+                        (horas.hora_nocturna_dominical_o_festivo || 0) + 
+                        (horas.hora_extra_nocturna_dominical_o_festivo || 0);
+      
+      // Calcular total salario si no existe
+      let totalSalario = registro.totalSalario || 0;
+      if (totalSalario === 0 && registro.empleadoId) {
+        const empleado = this.empleados.find(e => e.id === registro.empleadoId);
+        if (empleado) {
+          totalSalario = this.calcularSalarioPorHorasTrabajadas(empleado, horas);
+        }
+      }
+      
       html += `
         <tr>
           <td>${registro.fecha}</td>
@@ -570,10 +592,10 @@ class GestionPersonalOptimized {
           <td>${horas.hora_extra_diurna_dominical_o_festivo || 0}</td>
           <td>${horas.hora_nocturna_dominical_o_festivo || 0}</td>
           <td>${horas.hora_extra_nocturna_dominical_o_festivo || 0}</td>
-          <td>${registro.totalHoras || 0}</td>
-          <td>$${(registro.totalSalario || 0).toLocaleString()}</td>
+          <td><strong>${totalHoras.toFixed(1)}</strong></td>
+          <td><strong>$${totalSalario.toLocaleString()}</strong></td>
           <td>
-            <button class="btn btn-sm btn-outline-info" onclick="gestionPersonal.verDetalleHoras('${registro.id}')">
+            <button class="action-btn view" onclick="window.axyraGestionPersonal?.verDetalleHoras('${registro.id}')" title="Ver detalles">
               <i class="fas fa-eye"></i>
             </button>
           </td>
@@ -640,9 +662,11 @@ class GestionPersonalOptimized {
           });
 
           if (horasEmpleado.length > 0) {
-            // Calcular salario basado en horas trabajadas
-            const salarioEmpleado = this.calcularSalarioPorHorasTrabajadas(empleado, horasEmpleado);
-            totalPagos += salarioEmpleado;
+            // Sumar todos los salarios calculados de las horas registradas
+            horasEmpleado.forEach(registroHora => {
+              const salarioCalculado = this.calcularSalarioPorHorasTrabajadas(empleado, registroHora.horas);
+              totalPagos += salarioCalculado;
+            });
           } else {
             // Si no hay horas registradas, usar salario base
             totalPagos += empleado.salario || 0;
@@ -1493,6 +1517,13 @@ class GestionPersonalOptimized {
     } catch (error) {
       console.error('❌ Error limpiando tabla:', error);
       this.mostrarNotificacion('Error limpiando tabla', 'error');
+    }
+  }
+
+  // Función global para el botón limpiar tabla
+  static limpiarTablaHoras() {
+    if (window.axyraGestionPersonal) {
+      window.axyraGestionPersonal.limpiarTablaHoras();
     }
   }
 
