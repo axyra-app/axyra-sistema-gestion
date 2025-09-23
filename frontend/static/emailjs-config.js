@@ -8,10 +8,8 @@ class AxyraEmailService {
     this.serviceId = 'service_dvqt6fd'; // Tu Service ID de EmailJS
     this.userId = 'YOUR_USER_ID'; // Necesitarás reemplazar esto con tu User ID
     this.templates = {
-      welcome: 'template_welcome',
-      passwordReset: 'template_password_reset',
-      paymentSummary: 'template_payment_summary',
-      loginCode: 'template_login_code'
+      loginCode: 'template_login_code', // Template #1 - MÁS IMPORTANTE
+      paymentSummary: 'template_payment_summary' // Template #2 - SEGUNDO MÁS IMPORTANTE
     };
     
     this.init();
@@ -45,10 +43,11 @@ class AxyraEmailService {
   }
 
   // ========================================
-  // CORREO DE BIENVENIDA
+  // CORREO DE BIENVENIDA (USANDO TEMPLATE DE LOGIN)
   // ========================================
   async sendWelcomeEmail(userData) {
     try {
+      // Usar el template de login para bienvenida (más simple)
       const templateParams = {
         to_name: userData.nombre || userData.email,
         to_email: userData.email,
@@ -58,9 +57,10 @@ class AxyraEmailService {
         current_year: new Date().getFullYear()
       };
 
+      // Usar template de login como fallback para bienvenida
       const response = await emailjs.send(
         this.serviceId,
-        this.templates.welcome,
+        this.templates.loginCode,
         templateParams
       );
 
@@ -102,25 +102,26 @@ class AxyraEmailService {
   }
 
   // ========================================
-  // CORREO DE REINICIO DE CONTRASEÑA
+  // CORREO DE REINICIO DE CONTRASEÑA (USANDO TEMPLATE DE LOGIN)
   // ========================================
   async sendPasswordResetEmail(userData, resetToken) {
     try {
       const resetUrl = `${window.location.origin}/reset-password.html?token=${resetToken}`;
       
+      // Usar template de login para reinicio (más simple)
       const templateParams = {
         to_name: userData.nombre || userData.email,
         to_email: userData.email,
-        reset_url: resetUrl,
+        login_url: resetUrl, // Usar reset_url como login_url
         company_name: 'AXYRA',
         support_email: 'soporte@axyra.com',
-        token_expires: '1 hora',
         current_year: new Date().getFullYear()
       };
 
+      // Usar template de login como fallback para reinicio
       const response = await emailjs.send(
         this.serviceId,
-        this.templates.passwordReset,
+        this.templates.loginCode,
         templateParams
       );
 
@@ -167,27 +168,30 @@ class AxyraEmailService {
   }
 
   // ========================================
-  // CORREO DE NOTIFICACIÓN DE NÓMINA
+  // CORREO DE NOTIFICACIÓN DE NÓMINA (USANDO TEMPLATE DE PAGOS)
   // ========================================
   async sendPayrollNotificationEmail(employeeData, payrollData) {
     try {
+      // Usar template de pagos para nómina (más simple)
       const templateParams = {
         to_name: employeeData.nombre,
         to_email: employeeData.email,
         company_name: 'AXYRA',
-        payroll_period: payrollData.period,
-        total_hours: payrollData.totalHours,
-        gross_salary: this.formatCurrency(payrollData.grossSalary),
-        deductions: this.formatCurrency(payrollData.deductions),
-        net_salary: this.formatCurrency(payrollData.netSalary),
+        plan_name: `Nómina - ${payrollData.period}`,
+        plan_duration: '1 período',
+        payment_amount: this.formatCurrency(payrollData.netSalary),
+        payment_method: 'Transferencia bancaria',
         payment_date: payrollData.paymentDate,
-        hr_email: 'rrhh@axyra.com',
+        transaction_id: `NOMINA_${Date.now()}`,
+        next_payment: 'Próximo período',
+        support_email: 'rrhh@axyra.com',
         current_year: new Date().getFullYear()
       };
 
+      // Usar template de pagos como fallback para nómina
       const response = await emailjs.send(
         this.serviceId,
-        'template_payroll_notification',
+        this.templates.paymentSummary,
         templateParams
       );
 
