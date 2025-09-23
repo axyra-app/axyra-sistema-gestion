@@ -31,9 +31,11 @@
         background: #f8fafc;
       }
 
-      /* Header */
+      /* Header BRUTAL */
       .axyra-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #ff0080 0%, #ff8c00 25%, #ff0080 50%, #8a2be2 75%, #ff0080 100%);
+        background-size: 400% 400%;
+        animation: gradientShift 3s ease infinite;
         color: white;
         padding: 1rem 0;
         position: fixed;
@@ -41,7 +43,14 @@
         left: 0;
         right: 0;
         z-index: 1000;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 32px rgba(255, 0, 128, 0.4);
+        border-bottom: 3px solid #00ffff;
+      }
+
+      @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
       }
 
       .axyra-container {
@@ -116,31 +125,60 @@
       }
 
       .axyra-btn-secondary {
-        background: rgba(255, 255, 255, 0.2);
+        background: linear-gradient(45deg, #ff0080, #ff8c00, #00ffff);
+        background-size: 300% 300%;
+        animation: gradientShift 2s ease infinite;
         color: white;
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        border: 3px solid #00ffff;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 8px 25px rgba(255, 0, 128, 0.6);
       }
 
       .axyra-btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-2px);
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 15px 35px rgba(255, 0, 128, 0.8);
+        animation-duration: 0.5s;
       }
 
       .axyra-btn-outline {
         background: transparent;
         color: white;
-        border: 2px solid white;
+        border: 3px solid #00ffff;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .axyra-btn-outline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(45deg, #ff0080, #ff8c00, #00ffff);
+        transition: left 0.5s ease;
+        z-index: -1;
+      }
+
+      .axyra-btn-outline:hover::before {
+        left: 0;
       }
 
       .axyra-btn-outline:hover {
-        background: white;
-        color: #667eea;
-        transform: translateY(-2px);
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 15px 35px rgba(0, 255, 255, 0.8);
       }
 
-      /* Hero Section */
+      /* Hero Section BRUTAL */
       .axyra-hero {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #ff0080 0%, #ff8c00 25%, #8a2be2 50%, #00ffff 75%, #ff0080 100%);
+        background-size: 400% 400%;
+        animation: gradientShift 4s ease infinite, heroPulse 2s ease infinite;
         color: white;
         padding: 120px 0 80px;
         text-align: center;
@@ -149,6 +187,11 @@
         min-height: 100vh;
         display: flex;
         align-items: center;
+      }
+
+      @keyframes heroPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.02); }
       }
 
       .axyra-hero::before {
@@ -160,6 +203,37 @@
         bottom: 0;
         background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
         opacity: 0.3;
+        animation: gridMove 20s linear infinite;
+      }
+
+      @keyframes gridMove {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(10px, 10px); }
+      }
+
+      /* Partículas flotantes */
+      .axyra-hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: 
+          radial-gradient(2px 2px at 20px 30px, #00ffff, transparent),
+          radial-gradient(2px 2px at 40px 70px, #ff0080, transparent),
+          radial-gradient(1px 1px at 90px 40px, #ff8c00, transparent),
+          radial-gradient(1px 1px at 130px 80px, #8a2be2, transparent),
+          radial-gradient(2px 2px at 160px 30px, #00ffff, transparent);
+        background-repeat: repeat;
+        background-size: 200px 100px;
+        animation: particles 15s linear infinite;
+        opacity: 0.6;
+      }
+
+      @keyframes particles {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-100px); }
       }
 
       .axyra-hero-content {
@@ -171,18 +245,34 @@
       }
 
       .axyra-hero h1 {
-        font-size: 3.5rem;
-        font-weight: 800;
+        font-size: 4.5rem;
+        font-weight: 900;
         margin-bottom: 1.5rem;
         line-height: 1.1;
-        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.6);
+        animation: titleGlow 2s ease-in-out infinite alternate, titleBounce 3s ease infinite;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+      }
+
+      @keyframes titleGlow {
+        0% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(0, 255, 255, 0.6); }
+        100% { text-shadow: 0 0 30px rgba(255, 0, 128, 0.8), 0 0 60px rgba(255, 140, 0, 0.6); }
+      }
+
+      @keyframes titleBounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
       }
 
       .axyra-highlight {
-        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        background: linear-gradient(135deg, #ff0080 0%, #ff8c00 25%, #00ffff 50%, #ff0080 75%, #ff8c00 100%);
+        background-size: 400% 400%;
+        animation: gradientShift 2s ease infinite;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+        text-shadow: none;
       }
 
       .axyra-hero-subtitle {
@@ -201,30 +291,73 @@
       }
 
       .axyra-btn-primary {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        background: linear-gradient(45deg, #ff0080, #ff8c00, #00ffff, #8a2be2);
+        background-size: 400% 400%;
+        animation: gradientShift 2s ease infinite;
         color: white;
-        padding: 1rem 2rem;
-        font-size: 1.1rem;
-        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        padding: 1.2rem 2.5rem;
+        font-size: 1.2rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border: 3px solid #00ffff;
+        box-shadow: 0 15px 35px rgba(255, 0, 128, 0.6), 0 0 20px rgba(0, 255, 255, 0.4);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .axyra-btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.6s ease;
+      }
+
+      .axyra-btn-primary:hover::before {
+        left: 100%;
       }
 
       .axyra-btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(37, 99, 235, 0.6);
+        transform: translateY(-8px) scale(1.1);
+        box-shadow: 0 25px 50px rgba(255, 0, 128, 0.8), 0 0 30px rgba(0, 255, 255, 0.6);
+        animation-duration: 0.5s;
       }
 
-      /* Features Section */
+      /* Features Section BRUTAL */
       .axyra-features {
         padding: 80px 0;
-        background: white;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .axyra-features::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
       }
 
       .axyra-features h2 {
         text-align: center;
-        font-size: 2.5rem;
-        font-weight: 700;
+        font-size: 3.5rem;
+        font-weight: 900;
         margin-bottom: 3rem;
-        color: #1f2937;
+        color: #00ffff;
+        text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        animation: titleGlow 2s ease-in-out infinite alternate;
+        position: relative;
+        z-index: 2;
       }
 
       .axyra-features-grid {
@@ -237,70 +370,136 @@
       }
 
       .axyra-feature-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 16px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 255, 255, 0.2);
         text-align: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: 1px solid #e5e7eb;
+        transition: all 0.4s ease;
+        border: 2px solid #00ffff;
+        position: relative;
+        overflow: hidden;
+        z-index: 2;
+      }
+
+      .axyra-feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+        transition: left 0.6s ease;
+      }
+
+      .axyra-feature-card:hover::before {
+        left: 100%;
       }
 
       .axyra-feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        transform: translateY(-15px) scale(1.05);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 255, 255, 0.4);
+        border-color: #ff0080;
       }
 
       .axyra-feature-icon {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 20px;
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(45deg, #ff0080, #ff8c00, #00ffff, #8a2be2);
+        background-size: 400% 400%;
+        animation: gradientShift 3s ease infinite;
+        border-radius: 25px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 1.5rem;
-        font-size: 2rem;
+        font-size: 2.5rem;
         color: white;
+        box-shadow: 0 10px 25px rgba(255, 0, 128, 0.4);
+        border: 3px solid #00ffff;
       }
 
       .axyra-feature-card h3 {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: 1.8rem;
+        font-weight: 900;
         margin-bottom: 1rem;
-        color: #1f2937;
+        color: #00ffff;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
 
       .axyra-feature-card p {
-        color: #6b7280;
+        color: #ffffff;
         line-height: 1.6;
         margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        opacity: 0.9;
       }
 
       .axyra-feature-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(45deg, #ff0080, #ff8c00, #00ffff, #8a2be2);
+        background-size: 400% 400%;
+        animation: gradientShift 2s ease infinite;
         color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
+        padding: 1rem 2rem;
+        border-radius: 15px;
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 1px;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        transition: all 0.3s ease;
+        transition: all 0.4s ease;
+        border: 2px solid #00ffff;
+        box-shadow: 0 8px 25px rgba(255, 0, 128, 0.4);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .axyra-feature-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.6s ease;
+      }
+
+      .axyra-feature-btn:hover::before {
+        left: 100%;
       }
 
       .axyra-feature-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        transform: translateY(-5px) scale(1.1);
+        box-shadow: 0 15px 35px rgba(255, 0, 128, 0.6), 0 0 20px rgba(0, 255, 255, 0.4);
+        animation-duration: 0.5s;
       }
 
-      /* Footer */
+      /* Footer BRUTAL */
       .axyra-footer {
-        background: #1f2937;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
         color: white;
         padding: 3rem 0 2rem;
         text-align: center;
+        position: relative;
+        overflow: hidden;
+        border-top: 3px solid #00ffff;
+      }
+
+      .axyra-footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="15" height="15" patternUnits="userSpaceOnUse"><path d="M 15 0 L 0 0 0 15" fill="none" stroke="rgba(0,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
       }
 
       .axyra-footer-content {
@@ -310,13 +509,23 @@
       }
 
       .axyra-footer h3 {
-        font-size: 1.5rem;
+        font-size: 2rem;
         margin-bottom: 1rem;
+        color: #00ffff;
+        text-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: 900;
+        position: relative;
+        z-index: 2;
       }
 
       .axyra-footer p {
-        opacity: 0.8;
+        opacity: 0.9;
         margin-bottom: 2rem;
+        font-size: 1.1rem;
+        position: relative;
+        z-index: 2;
       }
 
       .axyra-footer-links {
@@ -328,20 +537,29 @@
       }
 
       .axyra-footer-links a {
-        color: white;
+        color: #00ffff;
         text-decoration: none;
-        opacity: 0.8;
-        transition: opacity 0.3s ease;
+        opacity: 0.9;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        z-index: 2;
       }
 
       .axyra-footer-links a:hover {
         opacity: 1;
+        text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        transform: translateY(-2px);
       }
 
       .axyra-footer-bottom {
-        border-top: 1px solid #374151;
+        border-top: 2px solid #00ffff;
         padding-top: 2rem;
-        opacity: 0.6;
+        opacity: 0.8;
+        position: relative;
+        z-index: 2;
       }
 
       /* Responsive */
