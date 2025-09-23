@@ -14,6 +14,14 @@
 
     <!-- Firebase Config -->
     <script src="static/firebase-config.js"></script>
+    
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <!-- AXYRA Systems -->
+    <script src="static/emailjs-config.js"></script>
+    <script src="static/auth-system.js"></script>
+    <script src="static/error-handler.js"></script>
 
     <style>
       * {
@@ -253,6 +261,7 @@
       <div class="error-message" id="errorMessage"></div>
       <div class="success-message" id="successMessage"></div>
 
+      <!-- Formulario de Email -->
       <form id="loginForm">
         <div class="form-group">
           <label for="email" class="form-label">Correo Electrónico</label>
@@ -267,24 +276,9 @@
           />
         </div>
 
-        <div class="form-group">
-          <label for="password" class="form-label">Contraseña</label>
-          <div class="password-container">
-            <input type="password" id="password" name="password" class="form-input" placeholder="Contraseña" required />
-            <button type="button" class="password-toggle" onclick="togglePassword()">
-              <i class="fas fa-eye" id="passwordToggleIcon"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="checkbox-group">
-          <input type="checkbox" id="remember" name="remember" />
-          <label for="remember">Recordar sesión</label>
-        </div>
-
         <button type="submit" class="btn" id="loginBtn">
-          <i class="fas fa-sign-in-alt"></i>
-          Iniciar Sesión
+          <i class="fas fa-paper-plane"></i>
+          Enviar Código de Acceso
         </button>
 
         <div class="divider">
@@ -294,6 +288,35 @@
         <button type="button" class="btn btn-google" onclick="loginWithGoogle()">
           <i class="fab fa-google"></i>
           Continuar con Google
+        </button>
+      </form>
+
+      <!-- Formulario de Código -->
+      <form id="codeForm" style="display: none;">
+        <div class="form-group">
+          <label class="form-label">Código de Acceso</label>
+          <p class="form-description">Ingresa el código de 6 dígitos que enviamos a tu email</p>
+          <input
+            type="text"
+            id="loginCode"
+            name="loginCode"
+            class="form-input"
+            placeholder="123456"
+            maxlength="6"
+            pattern="[0-9]{6}"
+            required
+          />
+          <input type="hidden" id="userEmail" name="userEmail" />
+        </div>
+
+        <button type="submit" class="btn" id="verifyBtn">
+          <i class="fas fa-check"></i>
+          Verificar Código
+        </button>
+
+        <button type="button" class="btn btn-secondary" onclick="axyraAuth.showLoginForm()">
+          <i class="fas fa-arrow-left"></i>
+          Volver
         </button>
       </form>
 
