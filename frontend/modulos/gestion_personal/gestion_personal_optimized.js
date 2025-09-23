@@ -679,63 +679,101 @@ class GestionPersonalOptimized {
   calcularSalarioPorHorasTrabajadas(empleado, horasRegistradas) {
     let salarioTotal = 0;
     
-    // Salario base por hora (basado en salario mínimo colombiano)
-    const salarioBaseHora = 1423500 / 240; // Salario mínimo / horas mensuales (240 horas)
+    // Fórmula correcta: Salario ingresado ÷ 220 horas
+    const salarioBaseHora = (empleado.salario || 1423500) / 220;
+    
+    console.log(`💰 Calculando salario para ${empleado.nombre}:`);
+    console.log(`   Salario base: $${(empleado.salario || 1423500).toLocaleString()}`);
+    console.log(`   Valor hora ordinaria: $${salarioBaseHora.toFixed(0)}`);
     
     horasRegistradas.forEach(registro => {
       const horas = registro.horas || {};
+      let subtotalRegistro = 0;
       
       // Horas ordinarias
       if (horas.ordinarias) {
-        salarioTotal += horas.ordinarias * salarioBaseHora;
+        const subtotal = horas.ordinarias * salarioBaseHora;
+        salarioTotal += subtotal;
+        subtotalRegistro += subtotal;
+        console.log(`   - Ordinarias: ${horas.ordinarias} hrs × $${salarioBaseHora.toFixed(0)} = $${subtotal.toFixed(0)}`);
       }
       
       // Recargo nocturno (35% adicional)
       if (horas.recargo_nocturno) {
-        salarioTotal += horas.recargo_nocturno * (salarioBaseHora * 1.35);
+        const subtotal = horas.recargo_nocturno * (salarioBaseHora * 1.35);
+        salarioTotal += subtotal;
+        subtotalRegistro += subtotal;
+        console.log(`   - Recargo nocturno: ${horas.recargo_nocturno} hrs × $${(salarioBaseHora * 1.35).toFixed(0)} = $${subtotal.toFixed(0)}`);
       }
       
       // Recargo diurno dominical (75% adicional)
       if (horas.recargo_diurno_dominical) {
-        salarioTotal += horas.recargo_diurno_dominical * (salarioBaseHora * 1.75);
+        const subtotal = horas.recargo_diurno_dominical * (salarioBaseHora * 1.75);
+        salarioTotal += subtotal;
+        subtotalRegistro += subtotal;
+        console.log(`   - Recargo diurno dominical: ${horas.recargo_diurno_dominical} hrs × $${(salarioBaseHora * 1.75).toFixed(0)} = $${subtotal.toFixed(0)}`);
       }
       
       // Recargo nocturno dominical (110% adicional)
       if (horas.recargo_nocturno_dominical) {
-        salarioTotal += horas.recargo_nocturno_dominical * (salarioBaseHora * 2.1);
+        const subtotal = horas.recargo_nocturno_dominical * (salarioBaseHora * 2.1);
+        salarioTotal += subtotal;
+        subtotalRegistro += subtotal;
+        console.log(`   - Recargo nocturno dominical: ${horas.recargo_nocturno_dominical} hrs × $${(salarioBaseHora * 2.1).toFixed(0)} = $${subtotal.toFixed(0)}`);
       }
       
       // Hora extra diurna (25% adicional)
       if (horas.hora_extra_diurna) {
-        salarioTotal += horas.hora_extra_diurna * (salarioBaseHora * 1.25);
+        const subtotal = horas.hora_extra_diurna * (salarioBaseHora * 1.25);
+        salarioTotal += subtotal;
+        subtotalRegistro += subtotal;
+        console.log(`   - Hora extra diurna: ${horas.hora_extra_diurna} hrs × $${(salarioBaseHora * 1.25).toFixed(0)} = $${subtotal.toFixed(0)}`);
       }
       
       // Hora extra nocturna (60% adicional)
       if (horas.hora_extra_nocturna) {
-        salarioTotal += horas.hora_extra_nocturna * (salarioBaseHora * 1.6);
+        const subtotal = horas.hora_extra_nocturna * (salarioBaseHora * 1.6);
+        salarioTotal += subtotal;
+        subtotalRegistro += subtotal;
+        console.log(`   - Hora extra nocturna: ${horas.hora_extra_nocturna} hrs × $${(salarioBaseHora * 1.6).toFixed(0)} = $${subtotal.toFixed(0)}`);
       }
       
       // Hora diurna dominical/festivo (75% adicional)
       if (horas.hora_diurna_dominical_o_festivo) {
-        salarioTotal += horas.hora_diurna_dominical_o_festivo * (salarioBaseHora * 1.75);
+        const subtotal = horas.hora_diurna_dominical_o_festivo * (salarioBaseHora * 1.75);
+        salarioTotal += subtotal;
+        subtotalRegistro += subtotal;
+        console.log(`   - Hora diurna dominical/festivo: ${horas.hora_diurna_dominical_o_festivo} hrs × $${(salarioBaseHora * 1.75).toFixed(0)} = $${subtotal.toFixed(0)}`);
       }
       
       // Hora extra diurna dominical/festivo (100% adicional)
       if (horas.hora_extra_diurna_dominical_o_festivo) {
-        salarioTotal += horas.hora_extra_diurna_dominical_o_festivo * (salarioBaseHora * 2.0);
+        const subtotal = horas.hora_extra_diurna_dominical_o_festivo * (salarioBaseHora * 2.0);
+        salarioTotal += subtotal;
+        subtotalRegistro += subtotal;
+        console.log(`   - Hora extra diurna dominical/festivo: ${horas.hora_extra_diurna_dominical_o_festivo} hrs × $${(salarioBaseHora * 2.0).toFixed(0)} = $${subtotal.toFixed(0)}`);
       }
       
       // Hora nocturna dominical/festivo (110% adicional)
       if (horas.hora_nocturna_dominical_o_festivo) {
-        salarioTotal += horas.hora_nocturna_dominical_o_festivo * (salarioBaseHora * 2.1);
+        const subtotal = horas.hora_nocturna_dominical_o_festivo * (salarioBaseHora * 2.1);
+        salarioTotal += subtotal;
+        subtotalRegistro += subtotal;
+        console.log(`   - Hora nocturna dominical/festivo: ${horas.hora_nocturna_dominical_o_festivo} hrs × $${(salarioBaseHora * 2.1).toFixed(0)} = $${subtotal.toFixed(0)}`);
       }
       
       // Hora extra nocturna dominical/festivo (185% adicional)
       if (horas.hora_extra_nocturna_dominical_o_festivo) {
-        salarioTotal += horas.hora_extra_nocturna_dominical_o_festivo * (salarioBaseHora * 2.85);
+        const subtotal = horas.hora_extra_nocturna_dominical_o_festivo * (salarioBaseHora * 2.85);
+        salarioTotal += subtotal;
+        subtotalRegistro += subtotal;
+        console.log(`   - Hora extra nocturna dominical/festivo: ${horas.hora_extra_nocturna_dominical_o_festivo} hrs × $${(salarioBaseHora * 2.85).toFixed(0)} = $${subtotal.toFixed(0)}`);
       }
+      
+      console.log(`   Subtotal registro: $${subtotalRegistro.toFixed(0)}`);
     });
     
+    console.log(`   Total salario: $${salarioTotal.toFixed(0)}`);
     return Math.round(salarioTotal);
   }
 
@@ -1184,6 +1222,18 @@ class GestionPersonalOptimized {
     try {
       console.log('🧮 Calculando horas...');
       
+      // Obtener empleado seleccionado para usar su salario
+      const empleadoId = document.getElementById('empleadoHoras').value;
+      const empleado = this.empleados.find(emp => emp.id === empleadoId);
+      
+      if (!empleado) {
+        this.mostrarNotificacion('Por favor seleccione un empleado', 'warning');
+        return;
+      }
+      
+      // Fórmula correcta: Salario del empleado ÷ 220 horas
+      const salarioBaseHora = (empleado.salario || 1423500) / 220;
+      
       // Obtener valores de los campos
       const campos = [
         'ordinaryHours', 'nightSurchargeHours', 'daySundaySurchargeHours',
@@ -1195,18 +1245,18 @@ class GestionPersonalOptimized {
       let totalHoras = 0;
       let totalSalario = 0;
       
-      // Tarifas por hora (según normativa colombiana)
+      // Tarifas calculadas basadas en el salario del empleado
       const tarifas = {
-        ordinary: 6470,
-        nightSurcharge: 6470 + 2265,
-        daySundaySurcharge: 6470 + 4853,
-        nightSundaySurcharge: 6470 + 7118,
-        dayOvertime: 6470 + 1618,
-        nightOvertime: 6470 + 4853,
-        daySundayHoliday: 6470 + 5176,
-        daySundayOvertime: 6470 + 6794,
-        nightSundayHoliday: 6470 + 7118,
-        nightSundayOvertime: 6470 + 11970
+        ordinary: salarioBaseHora,
+        nightSurcharge: salarioBaseHora * 1.35, // +35%
+        daySundaySurcharge: salarioBaseHora * 1.75, // +75%
+        nightSundaySurcharge: salarioBaseHora * 2.1, // +110%
+        dayOvertime: salarioBaseHora * 1.25, // +25%
+        nightOvertime: salarioBaseHora * 1.6, // +60%
+        daySundayHoliday: salarioBaseHora * 1.75, // +75%
+        daySundayOvertime: salarioBaseHora * 2.0, // +100%
+        nightSundayHoliday: salarioBaseHora * 2.1, // +110%
+        nightSundayOvertime: salarioBaseHora * 2.85 // +185%
       };
       
       const nombresTarifas = {
@@ -1224,6 +1274,10 @@ class GestionPersonalOptimized {
       
       const calculos = [];
       
+      console.log(`💰 Calculando para ${empleado.nombre}:`);
+      console.log(`   Salario base: $${(empleado.salario || 1423500).toLocaleString()}`);
+      console.log(`   Valor hora ordinaria: $${salarioBaseHora.toFixed(0)}`);
+      
       campos.forEach((campo, index) => {
         const input = document.getElementById(campo);
         if (input) {
@@ -1239,12 +1293,17 @@ class GestionPersonalOptimized {
             calculos.push({
               concepto: nombresTarifas[nombreTarifa],
               horas: horas,
-              tarifa: tarifa,
-              subtotal: subtotal
+              tarifa: Math.round(tarifa),
+              subtotal: Math.round(subtotal)
             });
+            
+            console.log(`   - ${nombresTarifas[nombreTarifa]}: ${horas} hrs × $${Math.round(tarifa)} = $${Math.round(subtotal)}`);
           }
         }
       });
+      
+      console.log(`   Total horas: ${totalHoras}`);
+      console.log(`   Total salario: $${Math.round(totalSalario)}`);
       
       // Mostrar resultados
       this.mostrarResultadosCalculo(calculos, totalHoras, totalSalario);
