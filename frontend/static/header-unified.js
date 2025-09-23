@@ -26,6 +26,7 @@ class UnifiedHeader {
         this.setupEventListeners();
         this.updateConnectionStatus();
         this.loadNotifications();
+        this.initializeAIChat();
         console.log('🎯 Header unificado inicializado');
     }
 
@@ -64,7 +65,7 @@ class UnifiedHeader {
         this.header.innerHTML = `
           <div class="axyra-header-content">
             <div class="axyra-logo-title">
-              <img src="static/logo-axyra.svg" alt="AXYRA Logo" class="axyra-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+              <img src="logo.png" alt="AXYRA Logo" class="axyra-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
               <i class="fas fa-building" style="display: none; font-size: 32px; color: #4299e1; margin-right: 12px;" class="axyra-logo-fallback"></i>
               <div class="axyra-title-section">
                 <h1 class="axyra-title">AXYRA</h1>
@@ -541,6 +542,195 @@ class UnifiedHeader {
         if (months < 12) return `${months}m`;
         const years = Math.floor(months / 12);
         return `${years}a`;
+    }
+
+    openProfileSettings() {
+        window.location.href = '../configuracion/configuracion.html#perfil';
+    }
+
+    openSystemSettings() {
+        window.location.href = '../configuracion/configuracion.html#sistema';
+    }
+
+    openHelpSupport() {
+        window.location.href = '../../ayuda.html';
+    }
+
+    initializeAIChat() {
+        // Solo crear chat IA si no existe
+        if (document.querySelector('#ai-chat-bubble')) {
+            console.log('Chat IA ya existe, saltando inicialización');
+            return;
+        }
+
+        // Crear el chat IA
+        const chatHTML = `
+            <div class="ai-chat-container" id="ai-chat-container">
+                <button class="ai-chat-toggle" id="ai-chat-toggle">
+                    <div class="chat-bubble-content">
+                        <i class="fas fa-robot"></i>
+                        <span class="chat-badge"></span>
+                    </div>
+                    <div class="chat-bubble-text">
+                        <span class="chat-title">AXYRA Assistant</span>
+                        <span class="chat-subtitle">¿En qué puedo ayudarte?</span>
+                    </div>
+                </button>
+
+                <div class="ai-chat-window" id="ai-chat-window">
+                    <div class="ai-chat-header">
+                        <div class="ai-chat-title">
+                            <div class="ai-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="ai-info">
+                                <h3>Asistente IA</h3>
+                                <span class="ai-status">Disponible</span>
+                            </div>
+                        </div>
+                        <div class="ai-chat-controls">
+                            <button class="ai-chat-close" id="ai-chat-close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="ai-chat-messages" id="ai-chat-messages">
+                        <div class="ai-chat-message ai">
+                            <strong>¡Hola! Soy tu asistente AXYRA.</strong><br>
+                            Puedo ayudarte con:
+                            <ul>
+                                <li>Gestión de empleados</li>
+                                <li>Registro de horas</li>
+                                <li>Cálculo de nóminas</li>
+                                <li>Cuadre de caja</li>
+                                <li>Y mucho más...</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="ai-chat-typing-indicator" id="ai-chat-typing">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div class="ai-chat-input-area">
+                        <input type="text" id="ai-chat-input" placeholder="Escribe tu pregunta...">
+                        <button id="ai-chat-send">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+
+                    <div class="quick-suggestions">
+                        <button class="suggestion-btn" data-suggestion="¿Cómo registro horas?">¿Cómo registro horas?</button>
+                        <button class="suggestion-btn" data-suggestion="¿Cómo calculo nómina?">¿Cómo calculo nómina?</button>
+                        <button class="suggestion-btn" data-suggestion="¿Cómo agrego empleado?">¿Cómo agrego empleado?</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', chatHTML);
+        this.setupAIChatEvents();
+        console.log('🤖 Chat IA inicializado desde header unificado');
+    }
+
+    setupAIChatEvents() {
+        const chatToggle = document.getElementById('ai-chat-toggle');
+        const chatWindow = document.getElementById('ai-chat-window');
+        const chatClose = document.getElementById('ai-chat-close');
+        const chatInput = document.getElementById('ai-chat-input');
+        const chatSend = document.getElementById('ai-chat-send');
+        const chatMessages = document.getElementById('ai-chat-messages');
+        const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+
+        if (chatToggle) {
+            chatToggle.addEventListener('click', () => {
+                chatWindow.classList.toggle('active');
+            });
+        }
+
+        if (chatClose) {
+            chatClose.addEventListener('click', () => {
+                chatWindow.classList.remove('active');
+            });
+        }
+
+        if (chatSend) {
+            chatSend.addEventListener('click', () => {
+                this.sendAIMessage();
+            });
+        }
+
+        if (chatInput) {
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.sendAIMessage();
+                }
+            });
+        }
+
+        suggestionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const suggestion = btn.dataset.suggestion;
+                chatInput.value = suggestion;
+                this.sendAIMessage();
+            });
+        });
+    }
+
+    sendAIMessage() {
+        const chatInput = document.getElementById('ai-chat-input');
+        const chatMessages = document.getElementById('ai-chat-messages');
+        const message = chatInput.value.trim();
+
+        if (!message) return;
+
+        // Agregar mensaje del usuario
+        const userMessage = document.createElement('div');
+        userMessage.className = 'ai-chat-message user';
+        userMessage.textContent = message;
+        chatMessages.appendChild(userMessage);
+
+        // Limpiar input
+        chatInput.value = '';
+
+        // Mostrar indicador de escritura
+        const typingIndicator = document.getElementById('ai-chat-typing');
+        typingIndicator.classList.add('active');
+
+        // Simular respuesta de IA
+        setTimeout(() => {
+            typingIndicator.classList.remove('active');
+            
+            const aiMessage = document.createElement('div');
+            aiMessage.className = 'ai-chat-message ai';
+            aiMessage.innerHTML = this.generateAIResponse(message);
+            chatMessages.appendChild(aiMessage);
+
+            // Scroll al final
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 1500);
+    }
+
+    generateAIResponse(message) {
+        const responses = {
+            'horas': 'Para registrar horas:<br>1. Selecciona el empleado<br>2. Elige la fecha<br>3. Ingresa las horas trabajadas<br>4. Haz clic en "Registrar Horas"',
+            'nomina': 'Para calcular nómina:<br>1. Ve a la pestaña "Nómina"<br>2. Selecciona el empleado<br>3. Elige el período<br>4. Haz clic en "Generar Nómina"',
+            'empleado': 'Para agregar empleado:<br>1. Ve a la pestaña "Empleados"<br>2. Haz clic en "Agregar Empleado"<br>3. Completa los datos<br>4. Guarda la información',
+            'caja': 'Para cuadre de caja:<br>1. Ve al módulo "Caja"<br>2. Registra movimientos<br>3. Calcula el cuadre<br>4. Genera reporte'
+        };
+
+        const lowerMessage = message.toLowerCase();
+        
+        for (const [key, response] of Object.entries(responses)) {
+            if (lowerMessage.includes(key)) {
+                return response;
+            }
+        }
+
+        return 'Entiendo tu consulta. Te puedo ayudar con:<br>• Gestión de empleados<br>• Registro de horas<br>• Cálculo de nóminas<br>• Cuadre de caja<br><br>¿En qué más puedo ayudarte?';
     }
 }
 
