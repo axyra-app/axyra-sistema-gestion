@@ -9,9 +9,9 @@ class AxyraAutomaticEmailSender {
     this.userId = '1heyO_r8WJOhBOBYs';
     this.templates = {
       loginCode: 'template_login_code',
-      paymentSummary: 'template_payment_summary'
+      paymentSummary: 'template_payment_summary',
     };
-    
+
     this.init();
   }
 
@@ -48,13 +48,13 @@ class AxyraAutomaticEmailSender {
   async sendLoginCode(email, userName = null) {
     try {
       console.log('📧 Enviando código de login a:', email);
-      
+
       // Generar código de 6 dígitos
       const loginCode = this.generateLoginCode();
-      
+
       // Guardar código temporalmente (10 minutos)
       this.saveLoginCode(email, loginCode);
-      
+
       const templateParams = {
         to_name: userName || email.split('@')[0],
         to_email: email,
@@ -63,27 +63,23 @@ class AxyraAutomaticEmailSender {
         login_url: window.location.origin + '/login.html',
         support_email: 'soporte@axyra.com',
         company_name: 'AXYRA',
-        current_year: new Date().getFullYear()
+        current_year: new Date().getFullYear(),
       };
 
-      const response = await emailjs.send(
-        this.serviceId,
-        this.templates.loginCode,
-        templateParams
-      );
+      const response = await emailjs.send(this.serviceId, this.templates.loginCode, templateParams);
 
       console.log('✅ Código de login enviado:', response);
-      return { 
-        success: true, 
+      return {
+        success: true,
         message: 'Código enviado correctamente',
-        code: loginCode // Para desarrollo - quitar en producción
+        code: loginCode, // Para desarrollo - quitar en producción
       };
     } catch (error) {
       console.error('❌ Error enviando código de login:', error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: 'Error enviando código de login',
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -94,7 +90,7 @@ class AxyraAutomaticEmailSender {
   async sendPaymentConfirmation(email, paymentData) {
     try {
       console.log('📧 Enviando confirmación de pago a:', email);
-      
+
       const templateParams = {
         to_name: paymentData.userName || email.split('@')[0],
         to_email: email,
@@ -108,26 +104,22 @@ class AxyraAutomaticEmailSender {
         login_url: window.location.origin + '/index.html',
         support_email: 'soporte@axyra.com',
         company_name: 'AXYRA',
-        current_year: new Date().getFullYear()
+        current_year: new Date().getFullYear(),
       };
 
-      const response = await emailjs.send(
-        this.serviceId,
-        this.templates.paymentSummary,
-        templateParams
-      );
+      const response = await emailjs.send(this.serviceId, this.templates.paymentSummary, templateParams);
 
       console.log('✅ Confirmación de pago enviada:', response);
-      return { 
-        success: true, 
-        message: 'Confirmación de pago enviada correctamente'
+      return {
+        success: true,
+        message: 'Confirmación de pago enviada correctamente',
       };
     } catch (error) {
       console.error('❌ Error enviando confirmación de pago:', error);
-      return { 
-        success: false, 
+      return {
+        success: false,
         message: 'Error enviando confirmación de pago',
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -138,7 +130,7 @@ class AxyraAutomaticEmailSender {
   verifyLoginCode(email, code) {
     try {
       const storedCode = this.getLoginCode(email);
-      
+
       if (!storedCode) {
         return { valid: false, message: 'Código no encontrado' };
       }
@@ -177,7 +169,7 @@ class AxyraAutomaticEmailSender {
       style: 'currency',
       currency: 'COP',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount);
   }
 
@@ -195,7 +187,7 @@ class AxyraAutomaticEmailSender {
     codes[email] = {
       code: code,
       timestamp: Date.now(),
-      expires: Date.now() + (10 * 60 * 1000) // 10 minutos
+      expires: Date.now() + 10 * 60 * 1000, // 10 minutos
     };
     localStorage.setItem('axyra_login_codes', JSON.stringify(codes));
   }
@@ -214,7 +206,7 @@ class AxyraAutomaticEmailSender {
   // ========================================
   // FUNCIONES PÚBLICAS PARA USO DIRECTO
   // ========================================
-  
+
   // Función para enviar código de login (llamar desde formulario)
   async sendLoginCodeToUser() {
     const email = document.getElementById('email')?.value;
@@ -224,7 +216,7 @@ class AxyraAutomaticEmailSender {
     }
 
     const result = await this.sendLoginCode(email);
-    
+
     if (result.success) {
       alert('Código enviado correctamente. Revisa tu email.');
       // Mostrar formulario de código
@@ -238,14 +230,14 @@ class AxyraAutomaticEmailSender {
   async verifyUserCode() {
     const email = document.getElementById('userEmail')?.value;
     const code = document.getElementById('loginCode')?.value;
-    
+
     if (!email || !code) {
       alert('Por favor completa todos los campos');
       return;
     }
 
     const result = this.verifyLoginCode(email, code);
-    
+
     if (result.valid) {
       alert('Código válido. Iniciando sesión...');
       // Redirigir al dashboard
@@ -263,11 +255,11 @@ class AxyraAutomaticEmailSender {
       planDuration: '1 mes',
       amount: amount,
       method: 'Wompi',
-      transactionId: this.generateTransactionId()
+      transactionId: this.generateTransactionId(),
     };
 
     const result = await this.sendPaymentConfirmation(email, paymentData);
-    
+
     if (result.success) {
       alert('Confirmación de pago enviada correctamente');
     } else {
@@ -279,7 +271,7 @@ class AxyraAutomaticEmailSender {
   showCodeForm(email) {
     const loginForm = document.getElementById('loginForm');
     const codeForm = document.getElementById('codeForm');
-    
+
     if (loginForm) loginForm.style.display = 'none';
     if (codeForm) {
       codeForm.style.display = 'block';
@@ -291,7 +283,7 @@ class AxyraAutomaticEmailSender {
   showLoginForm() {
     const loginForm = document.getElementById('loginForm');
     const codeForm = document.getElementById('codeForm');
-    
+
     if (loginForm) loginForm.style.display = 'block';
     if (codeForm) codeForm.style.display = 'none';
   }
