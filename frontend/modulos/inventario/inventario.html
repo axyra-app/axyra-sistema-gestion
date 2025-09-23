@@ -1098,6 +1098,7 @@
     <script src="../../static/audit-system-unified.js"></script>
 
     <script src="inventario.js"></script>
+    <script src="inventario-methods.js"></script>
 
     <!-- FUNCIONES AVANZADAS DE INVENTARIO - IMPLEMENTACIÓN COMPLETA -->
     <script>
@@ -1106,18 +1107,21 @@
         try {
           const productos = JSON.parse(localStorage.getItem('axyra_productos') || '[]');
           const movimientos = JSON.parse(localStorage.getItem('axyra_movimientos_inventario') || '[]');
-          
+
           // Calcular estadísticas
           const totalProductos = productos.length;
           const stockTotal = productos.reduce((total, p) => total + (p.stock || 0), 0);
-          const productosStockBajo = productos.filter(p => (p.stock || 0) <= (p.stockMinimo || 5)).length;
-          const valorTotalInventario = productos.reduce((total, p) => total + (p.precioCompra || 0) * (p.stock || 0), 0);
-          
+          const productosStockBajo = productos.filter((p) => (p.stock || 0) <= (p.stockMinimo || 5)).length;
+          const valorTotalInventario = productos.reduce(
+            (total, p) => total + (p.precioCompra || 0) * (p.stock || 0),
+            0
+          );
+
           // Calcular movimientos de hoy
           const hoy = new Date().toISOString().split('T')[0];
-          const entradasHoy = movimientos.filter(m => m.tipo === 'entrada' && m.fecha.startsWith(hoy)).length;
-          const salidasHoy = movimientos.filter(m => m.tipo === 'salida' && m.fecha.startsWith(hoy)).length;
-          
+          const entradasHoy = movimientos.filter((m) => m.tipo === 'entrada' && m.fecha.startsWith(hoy)).length;
+          const salidasHoy = movimientos.filter((m) => m.tipo === 'salida' && m.fecha.startsWith(hoy)).length;
+
           // Actualizar elementos del DOM
           const elementos = {
             totalProductos: totalProductos,
@@ -1125,31 +1129,31 @@
             productosStockBajo: productosStockBajo,
             valorTotalInventario: '$' + valorTotalInventario.toLocaleString(),
             entradasHoy: entradasHoy,
-            salidasHoy: salidasHoy
+            salidasHoy: salidasHoy,
           };
-          
+
           Object.entries(elementos).forEach(([id, valor]) => {
             const elemento = document.getElementById(id);
             if (elemento) {
               elemento.textContent = valor;
             }
           });
-          
+
           console.log('✅ Estadísticas del inventario actualizadas:', elementos);
         } catch (error) {
           console.error('❌ Error actualizando estadísticas del inventario:', error);
         }
       }
-      
+
       // Actualizar estadísticas al cargar la página
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         actualizarEstadisticasInventario();
       });
-      
+
       // Funciones globales para los botones del HTML
-      window.mostrarModalProducto = function() {
+      window.mostrarModalProducto = function () {
         console.log('🔧 Abriendo modal de nuevo producto');
-        
+
         // Crear modal de nuevo producto
         const modalHTML = `
           <div id="modalProducto" style="
@@ -1213,15 +1217,15 @@
             </div>
           </div>
         `;
-        
+
         // Remover modal existente si existe
         const existingModal = document.getElementById('modalProducto');
         if (existingModal) existingModal.remove();
-        
+
         // Agregar nuevo modal
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         console.log('✅ Modal de nuevo producto creado');
-        
+
         // Debug: verificar que el modal se creó
         setTimeout(() => {
           const modal = document.getElementById('modalProducto');
@@ -1234,9 +1238,9 @@
         }, 100);
       };
 
-      window.mostrarModalEntrada = function() {
+      window.mostrarModalEntrada = function () {
         console.log('🔧 Abriendo modal de entrada');
-        
+
         // Crear modal de entrada
         const modalHTML = `
           <div id="modalEntrada" style="
@@ -1295,19 +1299,19 @@
             </div>
           </div>
         `;
-        
+
         // Remover modal existente si existe
         const existingModal = document.getElementById('modalEntrada');
         if (existingModal) existingModal.remove();
-        
+
         // Agregar nuevo modal
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         console.log('✅ Modal de entrada creado');
       };
 
-      window.mostrarModalSalida = function() {
+      window.mostrarModalSalida = function () {
         console.log('🔧 Abriendo modal de salida');
-        
+
         // Crear modal de salida
         const modalHTML = `
           <div id="modalSalida" style="
@@ -1366,23 +1370,23 @@
             </div>
           </div>
         `;
-        
+
         // Remover modal existente si existe
         const existingModal = document.getElementById('modalSalida');
         if (existingModal) existingModal.remove();
-        
+
         // Agregar nuevo modal
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         console.log('✅ Modal de salida creado');
       };
 
-      window.exportarInventarioExcel = function() {
+      window.exportarInventarioExcel = function () {
         console.log('🔧 Exportando inventario a Excel');
-        
+
         // Obtener datos del localStorage
         const productos = JSON.parse(localStorage.getItem('axyra_productos') || '[]');
         const movimientos = JSON.parse(localStorage.getItem('axyra_movimientos_inventario') || '[]');
-        
+
         if (productos.length === 0) {
           // Mostrar notificación profesional en lugar de alert
           const notification = document.createElement('div');
@@ -1413,7 +1417,7 @@
               </div>
             </div>
           `;
-          
+
           // Agregar animación CSS
           const style = document.createElement('style');
           style.textContent = `
@@ -1429,9 +1433,9 @@
             }
           `;
           document.head.appendChild(style);
-          
+
           document.body.appendChild(notification);
-          
+
           // Remover notificación después de 4 segundos
           setTimeout(() => {
             if (notification.parentNode) {
@@ -1445,22 +1449,22 @@
           }, 4000);
           return;
         }
-        
+
         // Crear datos para Excel
-        const datosExcel = productos.map(producto => ({
-          'Nombre': producto.nombre || 'N/A',
-          'Categoría': producto.categoria || 'N/A',
-          'Precio': producto.precio || 0,
-          'Stock': producto.stock || 0,
-          'Fecha Creación': new Date(producto.fechaCreacion || Date.now()).toLocaleDateString()
+        const datosExcel = productos.map((producto) => ({
+          Nombre: producto.nombre || 'N/A',
+          Categoría: producto.categoria || 'N/A',
+          Precio: producto.precio || 0,
+          Stock: producto.stock || 0,
+          'Fecha Creación': new Date(producto.fechaCreacion || Date.now()).toLocaleDateString(),
         }));
-        
+
         // Crear archivo Excel simple
         const csvContent = [
           'Nombre,Categoría,Precio,Stock,Fecha Creación',
-          ...datosExcel.map(row => Object.values(row).join(','))
+          ...datosExcel.map((row) => Object.values(row).join(',')),
         ].join('\n');
-        
+
         // Descargar archivo
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
@@ -1471,7 +1475,7 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         // Mostrar notificación mejorada
         const notification = document.createElement('div');
         notification.style.cssText = `
@@ -1501,7 +1505,7 @@
             </div>
           </div>
         `;
-        
+
         // Agregar animación CSS
         const style = document.createElement('style');
         style.textContent = `
@@ -1517,9 +1521,9 @@
           }
         `;
         document.head.appendChild(style);
-        
+
         document.body.appendChild(notification);
-        
+
         // Remover notificación después de 4 segundos
         setTimeout(() => {
           if (notification.parentNode) {
@@ -1531,38 +1535,38 @@
             }, 300);
           }
         }, 4000);
-        
+
         console.log('✅ Inventario exportado:', datosExcel.length, 'productos');
       };
 
       // Funciones para cerrar modals
-      window.cerrarModalProducto = function() {
+      window.cerrarModalProducto = function () {
         const modal = document.getElementById('modalProducto');
         if (modal) modal.remove();
       };
 
-      window.cerrarModalEntrada = function() {
+      window.cerrarModalEntrada = function () {
         const modal = document.getElementById('modalEntrada');
         if (modal) modal.remove();
       };
 
-      window.cerrarModalSalida = function() {
+      window.cerrarModalSalida = function () {
         const modal = document.getElementById('modalSalida');
         if (modal) modal.remove();
       };
 
       // Función para guardar producto
-      window.guardarProducto = function() {
+      window.guardarProducto = function () {
         const nombre = document.getElementById('nombreProducto').value;
         const categoria = document.getElementById('categoriaProducto').value;
         const precio = parseFloat(document.getElementById('precioProducto').value);
         const stock = parseInt(document.getElementById('stockProducto').value);
-        
+
         if (!nombre || !categoria || !precio || !stock) {
           alert('Por favor completa todos los campos');
           return;
         }
-        
+
         // Crear producto
         const producto = {
           id: Date.now().toString(),
@@ -1570,35 +1574,35 @@
           categoria: categoria,
           precio: precio,
           stock: stock,
-          fechaCreacion: new Date().toISOString()
+          fechaCreacion: new Date().toISOString(),
         };
-        
+
         // Guardar en localStorage
         let productos = JSON.parse(localStorage.getItem('axyra_productos') || '[]');
         productos.push(producto);
         localStorage.setItem('axyra_productos', JSON.stringify(productos));
-        
+
         // Cerrar modal y mostrar confirmación
         window.cerrarModalProducto();
         alert('✅ Producto guardado correctamente');
-        
+
         // Actualizar estadísticas
         actualizarEstadisticasInventario();
-        
+
         console.log('✅ Producto guardado:', producto);
       };
 
       // Funciones para procesar entradas y salidas
-      window.procesarEntrada = function() {
+      window.procesarEntrada = function () {
         const productoId = document.getElementById('productoEntrada').value;
         const cantidad = parseInt(document.getElementById('cantidadEntrada').value);
         const motivo = document.getElementById('motivoEntrada').value;
-        
+
         if (!productoId || !cantidad || !motivo) {
           alert('Por favor completa todos los campos');
           return;
         }
-        
+
         // Simular entrada de stock
         const movimiento = {
           id: Date.now().toString(),
@@ -1606,34 +1610,34 @@
           tipo: 'entrada',
           cantidad: cantidad,
           motivo: motivo,
-          fecha: new Date().toISOString()
+          fecha: new Date().toISOString(),
         };
-        
+
         // Guardar movimiento
         let movimientos = JSON.parse(localStorage.getItem('axyra_movimientos_inventario') || '[]');
         movimientos.push(movimiento);
         localStorage.setItem('axyra_movimientos_inventario', JSON.stringify(movimientos));
-        
+
         // Cerrar modal y mostrar confirmación
         window.cerrarModalEntrada();
         alert('✅ Entrada registrada correctamente');
-        
+
         // Actualizar estadísticas
         actualizarEstadisticasInventario();
-        
+
         console.log('✅ Entrada registrada:', movimiento);
       };
 
-      window.procesarSalida = function() {
+      window.procesarSalida = function () {
         const productoId = document.getElementById('productoSalida').value;
         const cantidad = parseInt(document.getElementById('cantidadSalida').value);
         const motivo = document.getElementById('motivoSalida').value;
-        
+
         if (!productoId || !cantidad || !motivo) {
           alert('Por favor completa todos los campos');
           return;
         }
-        
+
         // Simular salida de stock
         const movimiento = {
           id: Date.now().toString(),
@@ -1641,21 +1645,21 @@
           tipo: 'salida',
           cantidad: cantidad,
           motivo: motivo,
-          fecha: new Date().toISOString()
+          fecha: new Date().toISOString(),
         };
-        
+
         // Guardar movimiento
         let movimientos = JSON.parse(localStorage.getItem('axyra_movimientos_inventario') || '[]');
         movimientos.push(movimiento);
         localStorage.setItem('axyra_movimientos_inventario', JSON.stringify(movimientos));
-        
+
         // Cerrar modal y mostrar confirmación
         window.cerrarModalSalida();
         alert('✅ Salida registrada correctamente');
-        
+
         // Actualizar estadísticas
         actualizarEstadisticasInventario();
-        
+
         console.log('✅ Salida registrada:', movimiento);
       };
     </script>

@@ -1,17 +1,35 @@
 {
   "version": 2,
-  "buildCommand": "echo 'Build completed'",
-  "outputDirectory": "frontend",
-  "installCommand": "npm install",
-  "framework": null,
-  "routes": [
+  "builds": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "src": "frontend/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/frontend/index.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/frontend/$1"
+      "source": "/login.html",
+      "destination": "/frontend/login.html"
+    },
+    {
+      "source": "/register.html",
+      "destination": "/frontend/register.html"
+    },
+    {
+      "source": "/admin.html",
+      "destination": "/frontend/admin.html"
+    },
+    {
+      "source": "/modulos/(.*)",
+      "destination": "/frontend/modulos/$1"
+    },
+    {
+      "source": "/static/(.*)",
+      "destination": "/frontend/static/$1"
     }
   ]
 }

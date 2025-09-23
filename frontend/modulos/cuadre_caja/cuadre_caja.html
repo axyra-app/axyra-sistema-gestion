@@ -73,13 +73,58 @@
           <p class="axyra-page-subtitle">Registro de ingresos por factura individual y control de caja</p>
         </div>
 
-        <!-- Dashboard de Analytics Financieros -->
+        <!-- Dashboard de Analytics Financieros Mejorado -->
         <div class="axyra-financial-dashboard">
           <div class="axyra-financial-header">
             <h3>💰 Analytics Financieros Avanzados</h3>
             <p>Análisis detallado de ingresos, tendencias y rentabilidad</p>
           </div>
 
+          <!-- KPIs Financieros en la parte superior -->
+          <div class="axyra-financial-metrics-grid">
+            <div class="axyra-kpi-card axyra-kpi-primary">
+              <div class="axyra-kpi-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="axyra-kpi-content">
+                <div class="axyra-kpi-value" id="ingresoPromedio">$0</div>
+                <div class="axyra-kpi-label">Ingreso Promedio</div>
+                <div class="axyra-kpi-subtitle">Por transacción</div>
+              </div>
+            </div>
+            <div class="axyra-kpi-card axyra-kpi-success">
+              <div class="axyra-kpi-icon">
+                <i class="fas fa-file-invoice"></i>
+              </div>
+              <div class="axyra-kpi-content">
+                <div class="axyra-kpi-value" id="facturasPorDia">0</div>
+                <div class="axyra-kpi-label">Facturas/Día</div>
+                <div class="axyra-kpi-subtitle">Promedio diario</div>
+              </div>
+            </div>
+            <div class="axyra-kpi-card axyra-kpi-warning">
+              <div class="axyra-kpi-icon">
+                <i class="fas fa-trending-up"></i>
+              </div>
+              <div class="axyra-kpi-content">
+                <div class="axyra-kpi-value" id="crecimientoMensual">0%</div>
+                <div class="axyra-kpi-label">Crecimiento</div>
+                <div class="axyra-kpi-subtitle">Mensual</div>
+              </div>
+            </div>
+            <div class="axyra-kpi-card axyra-kpi-info">
+              <div class="axyra-kpi-icon">
+                <i class="fas fa-wallet"></i>
+              </div>
+              <div class="axyra-kpi-content">
+                <div class="axyra-kpi-value" id="totalVentas">$0</div>
+                <div class="axyra-kpi-label">Total Ventas</div>
+                <div class="axyra-kpi-subtitle">Este mes</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gráficos en grid horizontal -->
           <div class="axyra-financial-grid">
             <!-- Gráfico de Ingresos por Mes -->
             <div class="axyra-financial-card">
@@ -107,66 +152,16 @@
                 <canvas id="rendimientoEncargadoChart"></canvas>
               </div>
             </div>
+          </div>
 
-            <!-- Gráfico de Tendencias Diarias -->
-            <div class="axyra-financial-card">
-              <div class="axyra-financial-card-header">
-                <h4>📊 Tendencias por Día de la Semana</h4>
-                <p>Patrones de ingresos semanales</p>
-              </div>
-              <div class="axyra-financial-chart">
-                <canvas id="tendenciasDiariasChart"></canvas>
-              </div>
+          <!-- Gráfico de Tendencias Diarias -->
+          <div class="axyra-financial-card" style="margin-top: 20px">
+            <div class="axyra-financial-card-header">
+              <h4>📊 Tendencias por Día de la Semana</h4>
+              <p>Patrones de ingresos semanales</p>
             </div>
-
-            <!-- KPIs Financieros Mejorados -->
-            <div class="axyra-financial-card">
-              <div class="axyra-financial-card-header">
-                <h4>📊 Indicadores Financieros</h4>
-                <p>Métricas clave de rendimiento empresarial</p>
-              </div>
-              <div class="axyra-financial-metrics-grid">
-                <div class="axyra-kpi-card axyra-kpi-primary">
-                  <div class="axyra-kpi-icon">
-                    <i class="fas fa-chart-line"></i>
-                  </div>
-                  <div class="axyra-kpi-content">
-                    <div class="axyra-kpi-value" id="ingresoPromedio">$0</div>
-                    <div class="axyra-kpi-label">Ingreso Promedio</div>
-                    <div class="axyra-kpi-subtitle">Por transacción</div>
-                  </div>
-                </div>
-                <div class="axyra-kpi-card axyra-kpi-success">
-                  <div class="axyra-kpi-icon">
-                    <i class="fas fa-file-invoice"></i>
-                  </div>
-                  <div class="axyra-kpi-content">
-                    <div class="axyra-kpi-value" id="facturasPorDia">0</div>
-                    <div class="axyra-kpi-label">Facturas/Día</div>
-                    <div class="axyra-kpi-subtitle">Promedio diario</div>
-                  </div>
-                </div>
-                <div class="axyra-kpi-card axyra-kpi-warning">
-                  <div class="axyra-kpi-icon">
-                    <i class="fas fa-trending-up"></i>
-                  </div>
-                  <div class="axyra-kpi-content">
-                    <div class="axyra-kpi-value" id="crecimientoMensual">0%</div>
-                    <div class="axyra-kpi-label">Crecimiento</div>
-                    <div class="axyra-kpi-subtitle">Mensual</div>
-                  </div>
-                </div>
-                <div class="axyra-kpi-card axyra-kpi-info">
-                  <div class="axyra-kpi-icon">
-                    <i class="fas fa-wallet"></i>
-                  </div>
-                  <div class="axyra-kpi-content">
-                    <div class="axyra-kpi-value" id="totalVentas">$0</div>
-                    <div class="axyra-kpi-label">Total Ventas</div>
-                    <div class="axyra-kpi-subtitle">Este mes</div>
-                  </div>
-                </div>
-              </div>
+            <div class="axyra-financial-chart">
+              <canvas id="tendenciasDiariasChart"></canvas>
             </div>
           </div>
         </div>
@@ -2800,11 +2795,12 @@
             '$' + ingresoPromedio.toLocaleString(undefined, { maximumFractionDigits: 0 });
           document.getElementById('facturasPorDia').textContent = facturasPorDia.toFixed(1);
           document.getElementById('crecimientoMensual').textContent = crecimientoMensual.toFixed(1) + '%';
-          
+
           // Actualizar total de ventas del mes actual
           const totalVentasElement = document.getElementById('totalVentas');
           if (totalVentasElement) {
-            totalVentasElement.textContent = '$' + ingresosMesActual.toLocaleString(undefined, { maximumFractionDigits: 0 });
+            totalVentasElement.textContent =
+              '$' + ingresosMesActual.toLocaleString(undefined, { maximumFractionDigits: 0 });
           }
         } catch (error) {
           console.error('❌ Error actualizando KPIs financieros:', error);
@@ -2822,7 +2818,7 @@
       window.exportarTendencias = exportarTendencias;
       window.actualizarGraficosFinancieros = actualizarGraficosFinancieros;
     </script>
-    
+
     <!-- Chat de IA AXYRA - Cargar al final -->
     <script src="../../static/axyra-ai-global.js"></script>
   </body>
