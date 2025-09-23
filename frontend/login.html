@@ -20,6 +20,7 @@
     
     <!-- AXYRA Systems -->
     <script src="static/emailjs-config.js"></script>
+    <script src="static/emailjs-automatic-sender.js"></script>
     <script src="static/auth-system.js"></script>
     <script src="static/error-handler.js"></script>
 
@@ -276,7 +277,7 @@
           />
         </div>
 
-        <button type="submit" class="btn" id="loginBtn">
+        <button type="button" class="btn" id="loginBtn" onclick="sendLoginCode()">
           <i class="fas fa-paper-plane"></i>
           Enviar Código de Acceso
         </button>
@@ -309,12 +310,12 @@
           <input type="hidden" id="userEmail" name="userEmail" />
         </div>
 
-        <button type="submit" class="btn" id="verifyBtn">
+        <button type="button" class="btn" id="verifyBtn" onclick="verifyCode()">
           <i class="fas fa-check"></i>
           Verificar Código
         </button>
 
-        <button type="button" class="btn btn-secondary" onclick="axyraAuth.showLoginForm()">
+        <button type="button" class="btn btn-secondary" onclick="showLoginForm()">
           <i class="fas fa-arrow-left"></i>
           Volver
         </button>

@@ -6,7 +6,7 @@
 class AxyraEmailService {
   constructor() {
     this.serviceId = 'service_dvqt6fd'; // Tu Service ID de EmailJS
-    this.userId = 'YOUR_USER_ID'; // Necesitarás reemplazar esto con tu User ID
+    this.userId = '1heyO_r8WJOhBOBYs'; // Tu Public Key de EmailJS
     this.templates = {
       loginCode: 'template_login_code', // Template #1 - MÁS IMPORTANTE
       paymentSummary: 'template_payment_summary' // Template #2 - SEGUNDO MÁS IMPORTANTE

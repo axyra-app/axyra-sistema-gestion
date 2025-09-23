@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Email - AXYRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <!-- AXYRA Systems -->
+    <script src="static/emailjs-config.js"></script>
+    <script src="static/emailjs-automatic-sender.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            background: #f8f9fa;
+        }
+        .test-section h3 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,123,255,0.4);
+        }
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+        .result {
+            margin: 15px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #333; margin-bottom: 30px;">
+            🚀 AXYRA - Test de Envío Automático de Correos
+        </h1>
+        
+        <!-- Test 1: Código de Login -->
+        <div class="test-section">
+            <h3>🔐 Test 1: Envío de Código de Login</h3>
+            <div class="form-group">
+                <label for="testEmail">Email de destino:</label>
+                <input type="email" id="testEmail" placeholder="tu@email.com" value="axyra.app@gmail.com">
+            </div>
+            <button class="btn" onclick="testLoginCode()">
+                <i class="fas fa-paper-plane"></i> Enviar Código de Login
+            </button>
+            <div id="loginResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Test 2: Confirmación de Pago -->
+        <div class="test-section">
+            <h3>💳 Test 2: Envío de Confirmación de Pago</h3>
+            <div class="form-group">
+                <label for="paymentEmail">Email de destino:</label>
+                <input type="email" id="paymentEmail" placeholder="tu@email.com" value="axyra.app@gmail.com">
+            </div>
+            <div class="form-group">
+                <label for="paymentAmount">Monto del pago:</label>
+                <input type="number" id="paymentAmount" placeholder="29000" value="29000">
+            </div>
+            <div class="form-group">
+                <label for="planName">Nombre del plan:</label>
+                <input type="text" id="planName" placeholder="Plan Básico" value="Plan Básico">
+            </div>
+            <button class="btn btn-success" onclick="testPaymentConfirmation()">
+                <i class="fas fa-credit-card"></i> Enviar Confirmación de Pago
+            </button>
+            <div id="paymentResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Test 3: Verificación de Código -->
+        <div class="test-section">
+            <h3>🔍 Test 3: Verificación de Código</h3>
+            <div class="form-group">
+                <label for="verifyEmail">Email:</label>
+                <input type="email" id="verifyEmail" placeholder="tu@email.com" value="axyra.app@gmail.com">
+            </div>
+            <div class="form-group">
+                <label for="verifyCode">Código de 6 dígitos:</label>
+                <input type="text" id="verifyCode" placeholder="123456" maxlength="6">
+            </div>
+            <button class="btn btn-warning" onclick="testCodeVerification()">
+                <i class="fas fa-check"></i> Verificar Código
+            </button>
+            <div id="verifyResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Información del Sistema -->
+        <div class="test-section">
+            <h3>ℹ️ Información del Sistema</h3>
+            <p><strong>Service ID:</strong> service_dvqt6fd</p>
+            <p><strong>User ID:</strong> 1heyO_r8WJOhBOBYs</p>
+            <p><strong>Templates:</strong></p>
+            <ul>
+                <li>template_login_code (Código de Login)</li>
+                <li>template_payment_summary (Confirmación de Pago)</li>
+            </ul>
+            <p><strong>Estado:</strong> <span id="systemStatus">Cargando...</span></p>
+        </div>
+    </div>
+
+    <script>
+        // Función para test de código de login
+        async function testLoginCode() {
+            const email = document.getElementById('testEmail').value;
+            const resultDiv = document.getElementById('loginResult');
+            
+            if (!email) {
+                showResult('loginResult', 'Por favor ingresa un email', 'error');
+                return;
+            }
+
+            showResult('loginResult', 'Enviando código...', 'info');
+            
+            try {
+                const result = await axyraEmailSender.sendLoginCode(email);
+                
+                if (result.success) {
+                    showResult('loginResult', `✅ Código enviado correctamente a ${email}. Código: ${result.code}`, 'success');
+                } else {
+                    showResult('loginResult', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('loginResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Función para test de confirmación de pago
+        async function testPaymentConfirmation() {
+            const email = document.getElementById('paymentEmail').value;
+            const amount = parseInt(document.getElementById('paymentAmount').value);
+            const planName = document.getElementById('planName').value;
+            const resultDiv = document.getElementById('paymentResult');
+            
+            if (!email || !amount) {
+                showResult('paymentResult', 'Por favor completa todos los campos', 'error');
+                return;
+            }
+
+            showResult('paymentResult', 'Enviando confirmación...', 'info');
+            
+            try {
+                const result = await axyraEmailSender.simulatePayment(email, amount, planName);
+                
+                if (result.success) {
+                    showResult('paymentResult', `✅ Confirmación de pago enviada correctamente a ${email}`, 'success');
+                } else {
+                    showResult('paymentResult', `❌ Error: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('paymentResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Función para test de verificación de código
+        function testCodeVerification() {
+            const email = document.getElementById('verifyEmail').value;
+            const code = document.getElementById('verifyCode').value;
+            
+            if (!email || !code) {
+                showResult('verifyResult', 'Por favor completa todos los campos', 'error');
+                return;
+            }
+
+            const result = axyraEmailSender.verifyLoginCode(email, code);
+            
+            if (result.valid) {
+                showResult('verifyResult', `✅ Código válido para ${email}`, 'success');
+            } else {
+                showResult('verifyResult', `❌ ${result.message}`, 'error');
+            }
+        }
+
+        // Función para mostrar resultados
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+        }
+
+        // Verificar estado del sistema
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (typeof axyraEmailSender !== 'undefined') {
+                    document.getElementById('systemStatus').textContent = '✅ Sistema listo';
+                    document.getElementById('systemStatus').style.color = '#28a745';
+                } else {
+                    document.getElementById('systemStatus').textContent = '❌ Error cargando sistema';
+                    document.getElementById('systemStatus').style.color = '#dc3545';
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
