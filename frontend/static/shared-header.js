@@ -128,27 +128,32 @@ class AxyraSharedHeader {
       try {
         console.log('👤 Actualizando información del usuario...');
 
-        // Intentar obtener usuario de Firebase
-        if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
-          try {
-            const currentUser = firebase.auth().currentUser;
-            if (currentUser) {
-              userEmail.textContent = currentUser.email || 'Usuario';
-              if (roleBadge) {
-                const roleText = roleBadge.querySelector('.axyra-role-badge-text');
-                if (roleText) {
-                  roleText.textContent = 'Empleado';
-                }
-              }
-              console.log('✅ Email del usuario actualizado:', currentUser.email);
-            } else {
-              this.loadUserFromLocalStorage();
+        // Verificar si Firebase está disponible
+        if (typeof firebase === 'undefined' || !firebase.auth) {
+          console.log('⚠️ Firebase no disponible, usando datos por defecto');
+          this.loadUserFromLocalStorage();
+          return;
+        }
+
+        // Verificar si hay usuario autenticado
+        const currentUser = firebase.auth().currentUser;
+        if (!currentUser) {
+          console.log('⚠️ Usuario no autenticado');
+          this.loadUserFromLocalStorage();
+          return;
+        }
+
+        try {
+          userEmail.textContent = currentUser.email || 'Usuario';
+          if (roleBadge) {
+            const roleText = roleBadge.querySelector('.axyra-role-badge-text');
+            if (roleText) {
+              roleText.textContent = 'Empleado';
             }
-          } catch (firebaseError) {
-            console.warn('⚠️ Error accediendo a Firebase:', firebaseError.message);
-            this.loadUserFromLocalStorage();
           }
-        } else {
+          console.log('✅ Email del usuario actualizado:', currentUser.email);
+        } catch (firebaseError) {
+          console.warn('⚠️ Error accediendo a Firebase:', firebaseError.message);
           this.loadUserFromLocalStorage();
         }
 

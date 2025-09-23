@@ -255,6 +255,9 @@ class GestionPersonalOptimized {
       this.mostrarNotificacion('Horas registradas correctamente', 'success');
       this.renderizarHoras();
       this.actualizarEstadisticas();
+      
+      // Limpiar campos del formulario
+      this.limpiarCamposHoras();
 
       return true;
     } catch (error) {
@@ -887,12 +890,139 @@ class GestionPersonalOptimized {
   }
 
   mostrarNotificacion(mensaje, tipo = 'info') {
+    // Usar el sistema de notificaciones unificado si está disponible
+    if (window.axyraErrorHandler) {
+      window.axyraErrorHandler.showNotification('Gestión de Personal', mensaje, tipo);
+      return;
+    }
+
+    // Fallback al sistema de notificaciones original
     if (typeof mostrarNotificacionProfesional === 'function') {
       mostrarNotificacionProfesional(mensaje, tipo);
     } else if (typeof mostrarNotificacion === 'function') {
       mostrarNotificacion(mensaje, tipo);
     } else {
-      alert(mensaje);
+      // Crear notificación profesional
+      const notificacion = document.createElement('div');
+      notificacion.className = `axyra-notification axyra-notification-${tipo}`;
+      notificacion.innerHTML = `
+        <div class="axyra-notification-content">
+          <div class="axyra-notification-icon">
+            <i class="fas fa-${this.getIconoNotificacion(tipo)}"></i>
+          </div>
+          <div class="axyra-notification-message">
+            <strong>Gestión de Personal</strong>
+            <p>${mensaje}</p>
+          </div>
+          <button class="axyra-notification-close" onclick="this.closest('.axyra-notification').remove()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+
+      // Agregar estilos si no existen
+      if (!document.getElementById('axyra-notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'axyra-notification-styles';
+        style.textContent = `
+          .axyra-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            min-width: 300px;
+            max-width: 400px;
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+          }
+          .axyra-notification.mostrar {
+            transform: translateX(0);
+          }
+          .axyra-notification-content {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            gap: 12px;
+          }
+          .axyra-notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+          }
+          .axyra-notification-success .axyra-notification-icon {
+            background: #d1fae5;
+            color: #065f46;
+          }
+          .axyra-notification-error .axyra-notification-icon {
+            background: #fee2e2;
+            color: #991b1b;
+          }
+          .axyra-notification-warning .axyra-notification-icon {
+            background: #fef3c7;
+            color: #92400e;
+          }
+          .axyra-notification-info .axyra-notification-icon {
+            background: #dbeafe;
+            color: #1e40af;
+          }
+          .axyra-notification-message {
+            flex: 1;
+          }
+          .axyra-notification-message strong {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+          }
+          .axyra-notification-message p {
+            margin: 0;
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.4;
+          }
+          .axyra-notification-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+          }
+          .axyra-notification-close:hover {
+            background: #f3f4f6;
+            color: #374151;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      // Agregar al DOM
+      document.body.appendChild(notificacion);
+
+      // Mostrar con animación
+      setTimeout(() => {
+        notificacion.classList.add('mostrar');
+      }, 100);
+
+      // Ocultar después de 5 segundos
+      setTimeout(() => {
+        notificacion.classList.remove('mostrar');
+        setTimeout(() => {
+          if (notificacion.parentNode) {
+            notificacion.parentNode.removeChild(notificacion);
+          }
+        }, 300);
+      }, 5000);
     }
   }
 
@@ -961,13 +1091,260 @@ class GestionPersonalOptimized {
 
   // Funciones adicionales para compatibilidad
   calcularHoras() {
-    // Implementar cálculo de horas
-    console.log('Calculando horas...');
+    try {
+      console.log('🧮 Calculando horas...');
+      
+      // Obtener valores de los campos
+      const campos = [
+        'ordinaryHours', 'nightSurchargeHours', 'daySundaySurchargeHours',
+        'nightSundaySurchargeHours', 'dayOvertimeHours', 'nightOvertimeHours',
+        'daySundayHolidayHours', 'daySundayOvertimeHours', 'nightSundayHolidayHours',
+        'nightSundayOvertimeHours'
+      ];
+      
+      let totalHoras = 0;
+      let totalSalario = 0;
+      
+      // Tarifas por hora (según normativa colombiana)
+      const tarifas = {
+        ordinary: 6470,
+        nightSurcharge: 6470 + 2265,
+        daySundaySurcharge: 6470 + 4853,
+        nightSundaySurcharge: 6470 + 7118,
+        dayOvertime: 6470 + 1618,
+        nightOvertime: 6470 + 4853,
+        daySundayHoliday: 6470 + 5176,
+        daySundayOvertime: 6470 + 6794,
+        nightSundayHoliday: 6470 + 7118,
+        nightSundayOvertime: 6470 + 11970
+      };
+      
+      const nombresTarifas = {
+        ordinary: 'Ordinarias',
+        nightSurcharge: 'Recargo Nocturno',
+        daySundaySurcharge: 'Recargo Diurno Dominical',
+        nightSundaySurcharge: 'Recargo Nocturno Dominical',
+        dayOvertime: 'Hora Extra Diurna',
+        nightOvertime: 'Hora Extra Nocturna',
+        daySundayHoliday: 'Hora Diurna Dominical/Festivo',
+        daySundayOvertime: 'Hora Extra Diurna Dominical/Festivo',
+        nightSundayHoliday: 'Hora Nocturna Dominical/Festivo',
+        nightSundayOvertime: 'Hora Extra Nocturna Dominical/Festivo'
+      };
+      
+      const calculos = [];
+      
+      campos.forEach((campo, index) => {
+        const input = document.getElementById(campo);
+        if (input) {
+          const horas = parseFloat(input.value) || 0;
+          const nombreTarifa = Object.keys(tarifas)[index];
+          const tarifa = tarifas[nombreTarifa];
+          const subtotal = horas * tarifa;
+          
+          totalHoras += horas;
+          totalSalario += subtotal;
+          
+          if (horas > 0) {
+            calculos.push({
+              concepto: nombresTarifas[nombreTarifa],
+              horas: horas,
+              tarifa: tarifa,
+              subtotal: subtotal
+            });
+          }
+        }
+      });
+      
+      // Mostrar resultados
+      this.mostrarResultadosCalculo(calculos, totalHoras, totalSalario);
+      
+    } catch (error) {
+      console.error('❌ Error calculando horas:', error);
+      this.showNotification('Error calculando horas', error.message, 'error');
+    }
+  }
+
+  mostrarResultadosCalculo(calculos, totalHoras, totalSalario) {
+    const modal = document.createElement('div');
+    modal.className = 'axyra-modal';
+    modal.innerHTML = `
+      <div class="axyra-modal-content">
+        <div class="axyra-modal-header">
+          <h3><i class="fas fa-calculator"></i> Resultados del Cálculo</h3>
+          <button class="axyra-modal-close" onclick="this.closest('.axyra-modal').remove()">&times;</button>
+        </div>
+        <div class="axyra-modal-body">
+          <div class="calculation-results">
+            ${calculos.map(calc => `
+              <div class="calc-item">
+                <span class="calc-concept">${calc.concepto}</span>
+                <span class="calc-hours">${calc.horas} hrs</span>
+                <span class="calc-rate">$${calc.tarifa.toLocaleString()}</span>
+                <span class="calc-subtotal">$${calc.subtotal.toLocaleString()}</span>
+              </div>
+            `).join('')}
+            <div class="calc-total">
+              <strong>Total Horas: ${totalHoras}</strong>
+              <strong>Total Salario: $${totalSalario.toLocaleString()}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    // Agregar estilos
+    const style = document.createElement('style');
+    style.textContent = `
+      .calculation-results {
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      .calc-item {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 10px;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        align-items: center;
+      }
+      .calc-total {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-top: 15px;
+        font-size: 16px;
+      }
+      .calc-concept {
+        font-weight: 600;
+        color: #495057;
+      }
+      .calc-hours, .calc-rate, .calc-subtotal {
+        text-align: right;
+        color: #6c757d;
+      }
+      .calc-subtotal {
+        font-weight: 600;
+        color: #28a745;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(modal);
   }
 
   generarComprobante() {
-    // Implementar generación de comprobante
-    console.log('Generando comprobante...');
+    try {
+      console.log('📄 Generando comprobante...');
+      
+      // Verificar si hay datos para generar comprobante
+      const campos = [
+        'ordinaryHours', 'nightSurchargeHours', 'daySundaySurchargeHours',
+        'nightSundaySurchargeHours', 'dayOvertimeHours', 'nightOvertimeHours',
+        'daySundayHolidayHours', 'daySundayOvertimeHours', 'nightSundayHolidayHours',
+        'nightSundayOvertimeHours'
+      ];
+      
+      let tieneDatos = false;
+      const datosHoras = {};
+      
+      campos.forEach((campo, index) => {
+        const input = document.getElementById(campo);
+        if (input) {
+          const horas = parseFloat(input.value) || 0;
+          datosHoras[campo] = horas;
+          if (horas > 0) tieneDatos = true;
+        }
+      });
+      
+      if (!tieneDatos) {
+        this.showNotification('No hay horas para generar comprobante', 'Ingresa al menos una hora trabajada', 'warning');
+        return;
+      }
+      
+      // Obtener datos del empleado seleccionado
+      const empleadoSelect = document.getElementById('employeeSelect');
+      const empleadoNombre = empleadoSelect ? empleadoSelect.options[empleadoSelect.selectedIndex]?.textContent : 'Empleado';
+      const empleadoId = empleadoSelect ? empleadoSelect.value : '000001';
+      
+      // Generar comprobante usando el generador
+      if (window.axyraWorkOrderGenerator) {
+        const empleadoData = {
+          name: empleadoNombre,
+          id: empleadoId,
+          contractType: 'TEMPORAL',
+          baseSalary: 1423500
+        };
+        
+        const horasData = {
+          ordinary: datosHoras.ordinaryHours || 0,
+          nightSurcharge: datosHoras.nightSurchargeHours || 0,
+          daySundaySurcharge: datosHoras.daySundaySurchargeHours || 0,
+          nightSundaySurcharge: datosHoras.nightSundaySurchargeHours || 0,
+          dayOvertime: datosHoras.dayOvertimeHours || 0,
+          nightOvertime: datosHoras.nightOvertimeHours || 0,
+          daySundayHoliday: datosHoras.daySundayHolidayHours || 0,
+          daySundayOvertime: datosHoras.daySundayOvertimeHours || 0,
+          nightSundayHoliday: datosHoras.nightSundayHolidayHours || 0,
+          nightSundayOvertime: datosHoras.nightSundayOvertimeHours || 0
+        };
+        
+        window.axyraWorkOrderGenerator.generateWorkOrder(empleadoData, horasData);
+      } else {
+        this.showNotification('Generador de comprobantes no disponible', 'Intenta recargar la página', 'error');
+      }
+      
+    } catch (error) {
+      console.error('❌ Error generando comprobante:', error);
+      this.showNotification('Error generando comprobante', error.message, 'error');
+    }
+  }
+
+  limpiarCamposHoras() {
+    const campos = [
+      'ordinaryHours', 'nightSurchargeHours', 'daySundaySurchargeHours',
+      'nightSundaySurchargeHours', 'dayOvertimeHours', 'nightOvertimeHours',
+      'daySundayHolidayHours', 'daySundayOvertimeHours', 'nightSundayHolidayHours',
+      'nightSundayOvertimeHours'
+    ];
+    
+    campos.forEach(campo => {
+      const input = document.getElementById(campo);
+      if (input) {
+        input.value = '0';
+      }
+    });
+    
+    console.log('🧹 Campos de horas limpiados');
+  }
+
+  limpiarTablaHoras() {
+    try {
+      // Confirmar acción
+      if (!confirm('¿Estás seguro de que quieres limpiar toda la tabla de horas? Esta acción no se puede deshacer.')) {
+        return;
+      }
+
+      // Limpiar datos del localStorage
+      localStorage.removeItem('axyra_horas');
+      this.horas = [];
+      
+      // Limpiar tabla
+      this.renderizarHoras();
+      
+      // Actualizar estadísticas
+      this.actualizarEstadisticas();
+      
+      this.mostrarNotificacion('Tabla de horas limpiada correctamente', 'success');
+      console.log('🧹 Tabla de horas limpiada');
+      
+    } catch (error) {
+      console.error('❌ Error limpiando tabla:', error);
+      this.mostrarNotificacion('Error limpiando tabla', 'error');
+    }
   }
 
   async generarNomina() {

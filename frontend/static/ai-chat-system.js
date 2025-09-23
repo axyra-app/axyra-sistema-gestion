@@ -20,10 +20,28 @@ class AIChatSystem {
     }
 
     init() {
+        // Verificar si el usuario tiene acceso al chat IA
+        if (!this.hasAccessToAIChat()) {
+            console.log('🚫 Usuario no tiene acceso al chat IA (plan básico/gratuito)');
+            return;
+        }
+        
         this.createChatInterface();
         this.setupEventListeners();
         this.loadChatHistory();
         console.log('🤖 Sistema de Chat IA inicializado');
+    }
+
+    hasAccessToAIChat() {
+        // Verificar plan del usuario
+        if (window.axyraMembershipSystem && window.axyraMembershipSystem.currentMembership) {
+            const plan = window.axyraMembershipSystem.currentMembership.id;
+            // Solo planes professional y enterprise tienen acceso al chat IA
+            return plan === 'professional' || plan === 'enterprise';
+        }
+        
+        // Si no hay sistema de membresías, permitir acceso (modo desarrollo)
+        return true;
     }
 
     detectCurrentModule() {
