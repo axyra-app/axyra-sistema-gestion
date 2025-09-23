@@ -33,7 +33,7 @@
 
       /* Header */
       .axyra-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         color: white;
         padding: 1rem 0;
         position: fixed;
@@ -41,7 +41,7 @@
         left: 0;
         right: 0;
         z-index: 1000;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
       }
 
       .axyra-container {
@@ -201,16 +201,16 @@
       }
 
       .axyra-btn-primary {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         color: white;
         padding: 1rem 2rem;
         font-size: 1.1rem;
-        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
       }
 
       .axyra-btn-primary:hover {
         transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(37, 99, 235, 0.6);
+        box-shadow: 0 12px 35px rgba(59, 130, 246, 0.6);
       }
 
       /* Features Section */
@@ -254,7 +254,7 @@
       .axyra-feature-icon {
         width: 80px;
         height: 80px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         border-radius: 20px;
         display: flex;
         align-items: center;
@@ -278,7 +278,7 @@
       }
 
       .axyra-feature-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
         color: white;
         padding: 0.75rem 1.5rem;
         border-radius: 8px;
@@ -292,7 +292,7 @@
 
       .axyra-feature-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
       }
 
       /* Footer */
@@ -318,7 +318,7 @@
       .axyra-footer-section h3 {
         font-size: 1.5rem;
         margin-bottom: 1rem;
-        color: #667eea;
+        color: #3b82f6;
       }
 
       .axyra-footer-section h4 {
@@ -352,7 +352,7 @@
       }
 
       .axyra-social-link:hover {
-        background: #667eea;
+        background: #3b82f6;
         transform: translateY(-2px);
       }
 
@@ -373,7 +373,7 @@
       }
 
       .axyra-footer-links-list a:hover {
-        color: #667eea;
+        color: #3b82f6;
       }
 
       .axyra-footer-bottom {
@@ -397,7 +397,7 @@
       }
 
       .axyra-footer-bottom-links a:hover {
-        color: #667eea;
+        color: #3b82f6;
       }
 
       .axyra-footer-bottom {
@@ -500,18 +500,18 @@
               <p>Sistema de Gestión Integral</p>
             </div>
           </div>
-          <nav class="axyra-nav">
-            <a href="#inicio" class="axyra-nav-link">Inicio</a>
-            <a href="#servicios" class="axyra-nav-link">Servicios</a>
-            <a href="ayuda.html" class="axyra-nav-link">Ayuda</a>
-            <a href="#contacto" class="axyra-nav-link">Contacto</a>
-          </nav>
+        <nav class="axyra-nav">
+          <a href="#inicio" class="axyra-nav-link" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">Inicio</a>
+          <a href="#features" class="axyra-nav-link" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">Servicios</a>
+          <a href="ayuda.html" class="axyra-nav-link">Ayuda</a>
+          <a href="#contacto" class="axyra-nav-link" onclick="document.getElementById('contacto').scrollIntoView({behavior: 'smooth'})">Contacto</a>
+        </nav>
           <div class="axyra-header-actions">
-            <a href="login.html" class="axyra-btn axyra-btn-secondary">
+            <a href="login.html" class="axyra-btn axyra-btn-secondary" onclick="window.location.href='login.html'">
               <i class="fas fa-sign-in-alt"></i>
               Iniciar Sesión
             </a>
-            <a href="register.html" class="axyra-btn axyra-btn-outline">
+            <a href="register.html" class="axyra-btn axyra-btn-outline" onclick="window.location.href='register.html'">
               <i class="fas fa-user-plus"></i>
               Registrarse
             </a>
@@ -525,7 +525,8 @@
       <div class="axyra-hero-content">
         <h1>Bienvenido a <span class="axyra-highlight">AXYRA</span></h1>
         <p class="axyra-hero-subtitle">
-          Tu sistema completo de gestión empresarial. Controla empleados, nóminas, horas y más desde una sola plataforma.
+          Tu sistema completo de gestión empresarial. Controla empleados, nóminas, horas y más desde una sola
+          plataforma.
         </p>
         <div class="axyra-hero-actions">
           <a href="login.html" class="axyra-btn axyra-btn-primary">
@@ -551,7 +552,7 @@
             </div>
             <h3>Gestión de Empleados</h3>
             <p>Administra toda la información de tus empleados, contratos y perfiles de manera eficiente y segura.</p>
-            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+            <a href="login.html" class="axyra-feature-btn" onclick="window.location.href='login.html'">
               <i class="fas fa-arrow-right"></i>
               Acceder
             </a>
@@ -563,7 +564,7 @@
             </div>
             <h3>Control de Horas</h3>
             <p>Registra y controla las horas trabajadas, turnos y horarios de tu equipo con precisión.</p>
-            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+            <a href="login.html" class="axyra-feature-btn" onclick="window.location.href='login.html'">
               <i class="fas fa-arrow-right"></i>
               Acceder
             </a>
@@ -575,7 +576,7 @@
             </div>
             <h3>Gestión de Nómina</h3>
             <p>Calcula salarios, bonificaciones y genera reportes de nómina automáticamente.</p>
-            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+            <a href="login.html" class="axyra-feature-btn" onclick="window.location.href='login.html'">
               <i class="fas fa-arrow-right"></i>
               Acceder
             </a>
@@ -587,7 +588,7 @@
             </div>
             <h3>Control de Inventario</h3>
             <p>Gestiona tu inventario, controla stock y optimiza tus recursos de manera inteligente.</p>
-            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+            <a href="login.html" class="axyra-feature-btn" onclick="window.location.href='login.html'">
               <i class="fas fa-arrow-right"></i>
               Acceder
             </a>
@@ -599,7 +600,7 @@
             </div>
             <h3>Reportes y Analytics</h3>
             <p>Obtén insights valiosos con reportes detallados y análisis de rendimiento en tiempo real.</p>
-            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+            <a href="login.html" class="axyra-feature-btn" onclick="window.location.href='login.html'">
               <i class="fas fa-arrow-right"></i>
               Acceder
             </a>
@@ -611,7 +612,7 @@
             </div>
             <h3>Configuración Avanzada</h3>
             <p>Personaliza el sistema según las necesidades específicas de tu empresa.</p>
-            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+            <a href="login.html" class="axyra-feature-btn" onclick="window.location.href='login.html'">
               <i class="fas fa-arrow-right"></i>
               Acceder
             </a>
@@ -634,54 +635,53 @@
               <a href="#" class="axyra-social-link"><i class="fab fa-instagram"></i></a>
             </div>
           </div>
-          
+
           <div class="axyra-footer-section">
             <h4>Producto</h4>
             <ul class="axyra-footer-links-list">
-              <li><a href="#features">Características</a></li>
-              <li><a href="#pricing">Precios</a></li>
-              <li><a href="#demo">Demo</a></li>
-              <li><a href="#integrations">Integraciones</a></li>
+              <li><a href="#features" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">Características</a></li>
+              <li><a href="login.html">Precios</a></li>
+              <li><a href="login.html">Integraciones</a></li>
             </ul>
           </div>
-          
+
           <div class="axyra-footer-section">
             <h4>Empresa</h4>
             <ul class="axyra-footer-links-list">
-              <li><a href="#about">Acerca de</a></li>
-              <li><a href="#careers">Carreras</a></li>
-              <li><a href="#blog">Blog</a></li>
-              <li><a href="#press">Prensa</a></li>
+              <li><a href="login.html">Acerca de</a></li>
+              <li><a href="login.html">Carreras</a></li>
+              <li><a href="login.html">Blog</a></li>
+              <li><a href="login.html">Prensa</a></li>
             </ul>
           </div>
-          
+
           <div class="axyra-footer-section">
             <h4>Soporte</h4>
             <ul class="axyra-footer-links-list">
-              <li><a href="#help">Centro de Ayuda</a></li>
-              <li><a href="#contact">Contacto</a></li>
-              <li><a href="#status">Estado del Sistema</a></li>
-              <li><a href="#security">Seguridad</a></li>
+              <li><a href="ayuda.html">Centro de Ayuda</a></li>
+              <li><a href="#contacto" onclick="document.getElementById('contacto').scrollIntoView({behavior: 'smooth'})">Contacto</a></li>
+              <li><a href="login.html">Estado del Sistema</a></li>
+              <li><a href="login.html">Seguridad</a></li>
             </ul>
           </div>
-          
+
           <div class="axyra-footer-section">
             <h4>Legal</h4>
             <ul class="axyra-footer-links-list">
-              <li><a href="#privacy">Política de Privacidad</a></li>
-              <li><a href="#terms">Términos de Servicio</a></li>
-              <li><a href="#cookies">Política de Cookies</a></li>
-              <li><a href="#gdpr">GDPR</a></li>
+              <li><a href="login.html">Política de Privacidad</a></li>
+              <li><a href="login.html">Términos de Servicio</a></li>
+              <li><a href="login.html">Política de Cookies</a></li>
+              <li><a href="login.html">GDPR</a></li>
             </ul>
           </div>
         </div>
-        
+
         <div class="axyra-footer-bottom">
           <p>&copy; 2024 AXYRA. Todos los derechos reservados.</p>
           <div class="axyra-footer-bottom-links">
-            <a href="#privacy">Privacidad</a>
-            <a href="#terms">Términos</a>
-            <a href="#cookies">Cookies</a>
+            <a href="login.html">Privacidad</a>
+            <a href="login.html">Términos</a>
+            <a href="login.html">Cookies</a>
           </div>
         </div>
       </div>
@@ -694,14 +694,14 @@
         <h3>🔐 Acceso Requerido</h3>
         <p>Para acceder a esta funcionalidad, necesitas iniciar sesión o crear una cuenta.</p>
         <div class="axyra-modal-actions">
-          <a href="login.html" class="axyra-btn axyra-btn-primary">
-            <i class="fas fa-sign-in-alt"></i>
-            Iniciar Sesión
-          </a>
-          <a href="register.html" class="axyra-btn axyra-btn-outline">
-            <i class="fas fa-user-plus"></i>
-            Registrarse
-          </a>
+            <a href="login.html" class="axyra-btn axyra-btn-primary" onclick="window.location.href='login.html'">
+              <i class="fas fa-sign-in-alt"></i>
+              Iniciar Sesión
+            </a>
+            <a href="register.html" class="axyra-btn axyra-btn-outline" onclick="window.location.href='register.html'">
+              <i class="fas fa-user-plus"></i>
+              Registrarse
+            </a>
         </div>
       </div>
     </div>
@@ -730,28 +730,28 @@
       }
 
       // Cerrar modal al hacer clic fuera
-      document.getElementById('authModal').addEventListener('click', function(e) {
+      document.getElementById('authModal').addEventListener('click', function (e) {
         if (e.target === this) {
           closeAuthModal();
         }
       });
 
       // Smooth scrolling para enlaces internos
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         anchor.addEventListener('click', function (e) {
           e.preventDefault();
           const target = document.querySelector(this.getAttribute('href'));
           if (target) {
             target.scrollIntoView({
               behavior: 'smooth',
-              block: 'start'
+              block: 'start',
             });
           }
         });
       });
 
       // Verificar si ya está autenticado
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function () {
         if (typeof firebase !== 'undefined' && firebase.auth) {
           firebase.auth().onAuthStateChanged((user) => {
             if (user) {
