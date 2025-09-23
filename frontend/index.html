@@ -1,42 +1,154 @@
 <!DOCTYPE html>
-    <html lang="es" data-version="v14">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <title>AXYRA - Sistema de Gestión</title>
-    <link rel="stylesheet" href="static/axyra-styles.css" />
-    <link rel="stylesheet" href="static/modal-fixes.css" />
-    <link rel="stylesheet" href="static/membership-styles.css" />
-    <link rel="stylesheet" href="static/grid-background.css" />
-    <link rel="stylesheet" href="static/axyra-design-system.css" />
-    <link rel="stylesheet" href="static/ai-chat-styles.css" />
-    <link rel="stylesheet" href="static/dashboard-styles.css" />
+    <title>AXYRA - Sistema de Gestión Empresarial</title>
     <link rel="icon" href="nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="static/axyra-design-system.css" />
+    <link rel="stylesheet" href="static/ai-chat-styles.css" />
 
-    <!-- Estilo BRUTAL para el fondo azul cuadriculado -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <!-- Firebase Config -->
+    <script src="static/firebase-config.js"></script>
+
     <style>
-      /* Fondo original restaurado con mejoras */
-      html,
-      body {
-        background: #f8fafc !important;
-        min-height: 100vh !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        font-family: 'Poppins', sans-serif !important;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
-      /* Hero section original con mejoras */
+      body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: #f8fafc;
+      }
+
+      /* Header */
+      .axyra-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .axyra-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .axyra-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .axyra-logo {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .axyra-logo img {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+      }
+
+      .axyra-logo-text h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .axyra-logo-text p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin: 0;
+      }
+
+      .axyra-nav {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .axyra-nav-link {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: opacity 0.3s ease;
+      }
+
+      .axyra-nav-link:hover {
+        opacity: 0.8;
+      }
+
+      .axyra-header-actions {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .axyra-btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .axyra-btn-secondary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .axyra-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+      }
+
+      .axyra-btn-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+      }
+
+      .axyra-btn-outline:hover {
+        background: white;
+        color: #667eea;
+        transform: translateY(-2px);
+      }
+
+      /* Hero Section */
       .axyra-hero {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%) !important;
-        padding: 200px 0 100px !important;
-        color: #ffffff !important;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 120px 0 80px;
+        text-align: center;
         position: relative;
         overflow: hidden;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
       }
 
       .axyra-hero::before {
@@ -48,1104 +160,279 @@
         bottom: 0;
         background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
         opacity: 0.3;
-        z-index: 1;
       }
 
       .axyra-hero-content {
         position: relative;
         z-index: 2;
-        text-align: center;
         max-width: 800px;
         margin: 0 auto;
+        padding: 0 2rem;
       }
 
-      .axyra-hero-content h1 {
-        color: #ffffff !important;
-        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.6) !important;
-        font-size: 3.5rem !important;
-        font-weight: 800 !important;
-        margin-bottom: 1.5rem !important;
-        animation: titleFadeIn 1s ease-out;
+      .axyra-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        line-height: 1.1;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
       }
 
-      @keyframes titleFadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .axyra-hero-content p {
-        color: #ffffff !important;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6) !important;
-        font-size: 1.5rem !important;
-        font-weight: 500 !important;
-        margin-bottom: 2rem !important;
-        animation: textFadeIn 1s ease-out 0.3s both;
-      }
-
-      @keyframes textFadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* Botones con animaciones mejoradas */
-      .axyra-hero-actions {
-        display: flex;
-        gap: 24px;
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 48px;
-        animation: buttonsSlideIn 1s ease-out 0.5s both;
-        align-items: center;
-      }
-
-      @keyframes buttonsSlideIn {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .axyra-btn {
-        position: relative;
-        overflow: hidden;
-        border-radius: 12px !important;
-        font-weight: 700 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
-        min-width: 200px !important;
-        padding: 18px 36px !important;
-        font-size: 1rem !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 12px !important;
-        text-align: center !important;
-        line-height: 1.2 !important;
-        border: 2px solid transparent !important;
-      }
-
-      /* Responsive para botones del hero */
-      @media (max-width: 768px) {
-        .axyra-hero-actions {
-          flex-direction: column !important;
-          gap: 16px !important;
-          align-items: center !important;
-        }
-
-        .axyra-btn {
-          min-width: 250px !important;
-          padding: 16px 32px !important;
-          font-size: 0.9rem !important;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .axyra-btn {
-          min-width: 200px !important;
-          padding: 14px 28px !important;
-          font-size: 0.85rem !important;
-        }
-      }
-
-      .axyra-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.5s;
-      }
-
-      .axyra-btn:hover::before {
-        left: 100%;
-      }
-
-      .axyra-btn:hover {
-        transform: translateY(-3px) !important;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
-      }
-
-      .axyra-btn-primary {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%) !important;
-        color: white !important;
-        border: 2px solid rgba(255, 255, 255, 0.2) !important;
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4), 0 0 15px rgba(37, 99, 235, 0.2) !important;
-      }
-
-      .axyra-btn-primary:hover {
-        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 50%, #1e3a8a 100%) !important;
-        border-color: rgba(255, 255, 255, 0.4) !important;
-        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.5), 0 0 20px rgba(37, 99, 235, 0.3) !important;
-      }
-
-      .axyra-btn-secondary {
-        background: rgba(255, 255, 255, 0.95) !important;
-        color: #1f2937 !important;
-        border: 2px solid rgba(255, 255, 255, 0.8) !important;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-      }
-
-      .axyra-btn-secondary:hover {
-        background: rgba(255, 255, 255, 1) !important;
-        border-color: rgba(255, 255, 255, 1) !important;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-      }
-
-      /* Secciones con fondo blanco semitransparente */
-      .axyra-section {
-        background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(20px) !important;
-        border-radius: 25px !important;
-        margin: 30px 0 !important;
-        padding: 50px 0 !important;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        animation: sectionSlideUp 0.8s ease-out both;
-      }
-
-      @keyframes sectionSlideUp {
-        from {
-          opacity: 0;
-          transform: translateY(50px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .axyra-memberships-brutal {
-        background: rgba(255, 255, 255, 0.98) !important;
-        backdrop-filter: blur(25px) !important;
-        border-radius: 30px !important;
-        margin: 40px 0 !important;
-        padding: 80px 0 !important;
-        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3) !important;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
-        animation: sectionSlideUp 1s ease-out 0.5s both;
-      }
-
-      /* HEADER BRUTAL MEJORADO */
-      .axyra-header {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 25%, #334155 50%, #475569 75%, #64748b 100%) !important;
-        backdrop-filter: blur(20px) !important;
-        border-bottom: 2px solid rgba(59, 130, 246, 0.3) !important;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(59, 130, 246, 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-        position: relative !important;
-        overflow: hidden !important;
-        max-width: 100% !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-
-      /* Efecto de partículas en el header */
-      .axyra-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 1px, transparent 1px),
-          radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.1) 1px, transparent 1px),
-          radial-gradient(circle at 40% 60%, rgba(236, 72, 153, 0.1) 1px, transparent 1px);
-        background-size: 30px 30px, 50px 50px, 40px 40px;
-        animation: headerParticles 15s linear infinite;
-        pointer-events: none;
-        z-index: 1;
-      }
-
-      @keyframes headerParticles {
-        0% {
-          transform: translateY(0px) rotate(0deg);
-        }
-        25% {
-          transform: translateY(-5px) rotate(90deg);
-        }
-        50% {
-          transform: translateY(-10px) rotate(180deg);
-        }
-        75% {
-          transform: translateY(-5px) rotate(270deg);
-        }
-        100% {
-          transform: translateY(0px) rotate(360deg);
-        }
-      }
-
-      /* Efecto de brillo en el header */
-      .axyra-header::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-        animation: headerShimmer 3s ease-in-out infinite;
-        z-index: 2;
-      }
-
-      @keyframes headerShimmer {
-        0% {
-          left: -100%;
-        }
-        50% {
-          left: 100%;
-        }
-        100% {
-          left: 100%;
-        }
-      }
-
-      /* Contenedor del header */
-      .axyra-header .axyra-container {
-        max-width: 1200px !important;
-        margin: 0 auto !important;
-        padding: 0 20px !important;
-        position: relative !important;
-        z-index: 3 !important;
-      }
-
-      /* Layout del header */
-      .axyra-header-content {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        padding: 16px 0 !important;
-        min-height: 80px !important;
-      }
-
-      /* Logo del header */
-      .axyra-logo {
-        display: flex !important;
-        align-items: center !important;
-        gap: 12px !important;
-        flex-shrink: 0 !important;
-      }
-
-      .axyra-logo-img {
-        width: 48px !important;
-        height: 48px !important;
-        object-fit: contain !important;
-        border-radius: 8px !important;
-      }
-
-      .axyra-logo-text h1 {
-        margin: 0 !important;
-        font-size: 1.8rem !important;
-        font-weight: 800 !important;
-        color: white !important;
-        line-height: 1.2 !important;
-      }
-
-      .axyra-logo-text p {
-        margin: 0 !important;
-        font-size: 0.9rem !important;
-        color: rgba(255, 255, 255, 0.8) !important;
-        line-height: 1.2 !important;
-      }
-
-      /* Navegación del header */
-      .axyra-nav {
-        display: flex !important;
-        align-items: center !important;
-        gap: 24px !important;
-        flex: 1 !important;
-        justify-content: center !important;
-      }
-
-      .axyra-nav-link {
-        color: white !important;
-        text-decoration: none !important;
-        font-weight: 500 !important;
-        font-size: 1rem !important;
-        transition: all 0.3s ease !important;
-        padding: 8px 16px !important;
-        border-radius: 6px !important;
-      }
-
-      .axyra-nav-link:hover {
-        color: #60a5fa !important;
-        background: rgba(255, 255, 255, 0.1) !important;
-      }
-
-      /* Responsive para el header */
-      @media (max-width: 1024px) {
-        .axyra-nav {
-          gap: 16px !important;
-        }
-
-        .axyra-nav-link {
-          font-size: 0.9rem !important;
-          padding: 6px 12px !important;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .axyra-header-content {
-          flex-direction: column !important;
-          gap: 16px !important;
-          padding: 12px 0 !important;
-        }
-
-        .axyra-nav {
-          order: 3 !important;
-          width: 100% !important;
-          justify-content: center !important;
-        }
-
-        .axyra-header-actions {
-          order: 2 !important;
-        }
-      }
-
-      /* Logo con efectos brutales */
-      .axyra-logo {
-        position: relative !important;
-        overflow: hidden !important;
-      }
-
-      .axyra-logo::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.6s ease;
-        z-index: 1;
-      }
-
-      .axyra-logo:hover::before {
-        left: 100%;
-      }
-
-      .axyra-logo:hover {
-        transform: scale(1.05) !important;
-        transition: transform 0.3s ease !important;
-      }
-
-      /* Navegación con efectos */
-      .axyra-nav {
-        position: relative !important;
-        z-index: 3 !important;
-      }
-
-      .axyra-nav a {
-        position: relative !important;
-        overflow: hidden !important;
-        transition: all 0.3s ease !important;
-        border-radius: 8px !important;
-        padding: 10px 20px !important;
-        margin: 0 5px !important;
-      }
-
-      .axyra-nav a::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-        transition: left 0.5s ease;
-        z-index: 1;
-      }
-
-      .axyra-nav a:hover::before {
-        left: 100%;
-      }
-
-      .axyra-nav a:hover {
-        transform: translateY(-2px) scale(1.05) !important;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3) !important;
-        background: rgba(255, 255, 255, 0.1) !important;
-      }
-
-      /* Botones del header con efectos brutales */
-      .axyra-header .axyra-btn {
-        position: relative !important;
-        overflow: hidden !important;
-        transition: all 0.3s ease !important;
-        border-radius: 25px !important;
-        padding: 12px 24px !important;
-        font-weight: 700 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
-        min-width: 140px !important;
-        text-align: center !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 8px !important;
-        font-size: 0.9rem !important;
-        line-height: 1.2 !important;
-      }
-
-      /* Contenedor de botones del header */
-      .axyra-header .axyra-header-actions {
-        display: flex !important;
-        gap: 12px !important;
-        align-items: center !important;
-        flex-wrap: wrap !important;
-      }
-
-      /* Responsive para botones del header */
-      @media (max-width: 768px) {
-        .axyra-header .axyra-header-actions {
-          gap: 8px !important;
-        }
-
-        .axyra-header .axyra-btn {
-          min-width: 120px !important;
-          padding: 10px 20px !important;
-          font-size: 0.8rem !important;
-        }
-      }
-
-      .axyra-header .axyra-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.6s ease;
-        z-index: 1;
-      }
-
-      .axyra-header .axyra-btn:hover::before {
-        left: 100%;
-      }
-
-      .axyra-header .axyra-btn:hover {
-        transform: translateY(-3px) scale(1.05) !important;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 20px rgba(59, 130, 246, 0.4) !important;
-      }
-
-      /* Botón primario del header */
-      .axyra-header .axyra-btn-primary {
-        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%) !important;
-        color: white !important;
-        border: 2px solid rgba(255, 255, 255, 0.2) !important;
-      }
-
-      .axyra-header .axyra-btn-primary:hover {
-        background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 50%, #1e3a8a 100%) !important;
-        border-color: rgba(255, 255, 255, 0.4) !important;
-      }
-
-      /* Botón secundario del header */
-      .axyra-header .axyra-btn-secondary {
-        background: rgba(255, 255, 255, 0.1) !important;
-        color: white !important;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
-        backdrop-filter: blur(10px) !important;
-      }
-
-      .axyra-header .axyra-btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.2) !important;
-        border-color: rgba(255, 255, 255, 0.5) !important;
-      }
-
-      /* Footer mejorado */
-      .axyra-footer-professional {
-        background: rgba(15, 23, 42, 0.95) !important;
-        backdrop-filter: blur(20px) !important;
-        border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
-        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3) !important;
-      }
-
-      /* ANIMACIONES BRUTALES PARA ELEMENTOS */
-      .axyra-feature-card,
-      .axyra-quick-card,
-      .axyra-membership-card {
-        animation: cardSlideInBrutal 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
-        transform-origin: center;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .axyra-feature-card:nth-child(1) {
-        animation-delay: 0.1s;
-      }
-      .axyra-feature-card:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-      .axyra-feature-card:nth-child(3) {
-        animation-delay: 0.3s;
-      }
-      .axyra-feature-card:nth-child(4) {
-        animation-delay: 0.4s;
-      }
-      .axyra-quick-card:nth-child(1) {
-        animation-delay: 0.1s;
-      }
-      .axyra-quick-card:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-      .axyra-quick-card:nth-child(3) {
-        animation-delay: 0.3s;
-      }
-      .axyra-quick-card:nth-child(4) {
-        animation-delay: 0.4s;
-      }
-      .axyra-membership-card:nth-child(1) {
-        animation-delay: 0.1s;
-      }
-      .axyra-membership-card:nth-child(2) {
-        animation-delay: 0.2s;
-      }
-      .axyra-membership-card:nth-child(3) {
-        animation-delay: 0.3s;
-      }
-
-      @keyframes cardSlideInBrutal {
-        0% {
-          opacity: 0;
-          transform: translateY(50px) scale(0.8) rotateX(15deg);
-          filter: blur(5px);
-        }
-        50% {
-          opacity: 0.8;
-          transform: translateY(-10px) scale(1.05) rotateX(-5deg);
-          filter: blur(1px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0) scale(1) rotateX(0deg);
-          filter: blur(0px);
-        }
-      }
-
-      /* Efectos de brillo en las tarjetas */
-      .axyra-feature-card::before,
-      .axyra-quick-card::before,
-      .axyra-membership-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-        transition: left 0.6s ease;
-        z-index: 1;
-      }
-
-      /* Efectos de hover FLUIDOS */
-      .axyra-feature-card:hover,
-      .axyra-quick-card:hover,
-      .axyra-membership-card:hover {
-        transform: translateY(-8px) scale(1.02) !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 20px rgba(59, 130, 246, 0.2) !important;
-        border: 2px solid rgba(59, 130, 246, 0.3) !important;
-        transition: all 0.2s ease-out !important;
-      }
-
-      .axyra-feature-card:hover::before,
-      .axyra-quick-card:hover::before,
-      .axyra-membership-card:hover::before {
-        left: 100%;
-      }
-
-      /* Animación de hover simplificada - removida para mejor performance */
-
-      /* Animaciones de pulso para iconos */
-      .axyra-feature-icon,
-      .axyra-quick-icon {
-        animation: iconPulse 2s ease-in-out infinite;
-        transition: all 0.3s ease;
-      }
-
-      .axyra-feature-card:hover .axyra-feature-icon,
-      .axyra-quick-card:hover .axyra-quick-icon {
-        animation: iconSpin 0.6s ease-in-out;
-        transform: scale(1.2);
-      }
-
-      @keyframes iconPulse {
-        0%,
-        100% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.1);
-        }
-      }
-
-      @keyframes iconSpin {
-        0% {
-          transform: scale(1) rotate(0deg);
-        }
-        50% {
-          transform: scale(1.3) rotate(180deg);
-        }
-        100% {
-          transform: scale(1.2) rotate(360deg);
-        }
-      }
-
-      /* Efectos de gradiente animado en títulos */
-      .axyra-section-title {
-        background: linear-gradient(45deg, #1e293b, #3b82f6, #8b5cf6, #ec4899, #1e293b);
-        background-size: 400% 400%;
+      .axyra-highlight {
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        animation: titleGradientBrutal 3s ease infinite;
-        font-weight: 800 !important;
-        text-align: center;
+      }
+
+      .axyra-hero-subtitle {
+        font-size: 1.25rem;
         margin-bottom: 2rem;
+        opacity: 0.9;
+        line-height: 1.6;
       }
 
-      @keyframes titleGradientBrutal {
-        0% {
-          background-position: 0% 50%;
-        }
-        50% {
-          background-position: 100% 50%;
-        }
-        100% {
-          background-position: 0% 50%;
-        }
+      .axyra-hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
       }
 
-      /* Efectos de partículas flotantes */
-      .axyra-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 2px, transparent 2px),
-          radial-gradient(circle at 80% 80%, rgba(147, 51, 234, 0.1) 2px, transparent 2px),
-          radial-gradient(circle at 40% 60%, rgba(236, 72, 153, 0.1) 2px, transparent 2px);
-        background-size: 50px 50px, 80px 80px, 60px 60px;
-        animation: particlesFloatBrutal 20s linear infinite;
-        pointer-events: none;
-        z-index: 1;
+      .axyra-btn-primary {
+        background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+        color: white;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
       }
 
-      @keyframes particlesFloatBrutal {
-        0% {
-          transform: translateY(0px) rotate(0deg);
-        }
-        25% {
-          transform: translateY(-10px) rotate(90deg);
-        }
-        50% {
-          transform: translateY(-20px) rotate(180deg);
-        }
-        75% {
-          transform: translateY(-10px) rotate(270deg);
-        }
-        100% {
-          transform: translateY(0px) rotate(360deg);
-        }
+      .axyra-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(37, 99, 235, 0.6);
       }
 
-      /* Efectos de scroll reveal */
-      .axyra-section {
-        position: relative;
-        overflow: hidden;
+      /* Features Section */
+      .axyra-features {
+        padding: 80px 0;
+        background: white;
       }
 
-      .axyra-section::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-        animation: sectionShimmer 3s ease-in-out infinite;
-        z-index: 2;
+      .axyra-features h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 3rem;
+        color: #1f2937;
       }
 
-      @keyframes sectionShimmer {
-        0% {
-          left: -100%;
-        }
-        50% {
-          left: 100%;
-        }
-        100% {
-          left: 100%;
-        }
+      .axyra-features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
       }
 
-      /* Iconos de membresía con logo AXYRA */
-      .axyra-membership-icon {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        border-radius: 15px;
+      .axyra-feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #e5e7eb;
+      }
+
+      .axyra-feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .axyra-feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 16px;
-        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-        position: relative;
-        overflow: hidden;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: white;
+      }
+
+      .axyra-feature-card h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #1f2937;
+      }
+
+      .axyra-feature-card p {
+        color: #6b7280;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+      }
+
+      .axyra-feature-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
         transition: all 0.3s ease;
       }
 
-      .axyra-membership-icon::before {
-        content: '';
-        position: absolute;
+      .axyra-feature-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      /* Footer */
+      .axyra-footer {
+        background: #1f2937;
+        color: white;
+        padding: 3rem 0 2rem;
+        text-align: center;
+      }
+
+      .axyra-footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+
+      .axyra-footer h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+
+      .axyra-footer p {
+        opacity: 0.8;
+        margin-bottom: 2rem;
+      }
+
+      .axyra-footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .axyra-footer-links a {
+        color: white;
+        text-decoration: none;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+      }
+
+      .axyra-footer-links a:hover {
+        opacity: 1;
+      }
+
+      .axyra-footer-bottom {
+        border-top: 1px solid #374151;
+        padding-top: 2rem;
+        opacity: 0.6;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .axyra-hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .axyra-hero-subtitle {
+          font-size: 1.1rem;
+        }
+
+        .axyra-hero-actions {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .axyra-nav {
+          display: none;
+        }
+
+        .axyra-features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Auth Modal */
+      .axyra-modal {
+        display: none;
+        position: fixed;
+        z-index: 9999;
+        left: 0;
         top: 0;
-        left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.6s ease;
+        background-color: rgba(0, 0, 0, 0.8);
+        align-items: center;
+        justify-content: center;
       }
 
-      .axyra-membership-card:hover .axyra-membership-icon::before {
-        left: 100%;
-      }
-
-      .axyra-membership-card:hover .axyra-membership-icon {
-        transform: scale(1.1) rotateY(10deg);
-        box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
-      }
-
-      .axyra-membership-logo {
-        width: 36px;
-        height: 36px;
-        object-fit: contain;
-        filter: brightness(0) invert(1);
-        z-index: 2;
-        position: relative;
-      }
-
-      /* Iconos específicos por plan */
-      .axyra-membership-basic .axyra-membership-icon {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-      }
-
-      .axyra-membership-basic:hover .axyra-membership-icon {
-        box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
-      }
-
-      .axyra-membership-professional .axyra-membership-icon {
-        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-      }
-
-      .axyra-membership-professional:hover .axyra-membership-icon {
-        box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
-      }
-
-      .axyra-membership-enterprise .axyra-membership-icon {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
-      }
-
-      .axyra-membership-enterprise:hover .axyra-membership-icon {
-        box-shadow: 0 12px 30px rgba(139, 92, 246, 0.4);
-      }
-
-      /* Iconos de features más profesionales */
-      .axyra-feature-item .axyra-feature-icon {
-        color: #3b82f6 !important;
-        font-size: 12px !important;
-        font-weight: bold !important;
-        margin-right: 12px !important;
-        display: inline-block !important;
-        width: 16px !important;
-        text-align: center !important;
-      }
-
-      /* Badges mejorados para mejor visibilidad */
-      .axyra-membership-badge {
-        position: absolute !important;
-        top: -8px !important;
-        right: 20px !important;
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-        color: white !important;
-        padding: 6px 16px !important;
-        border-radius: 20px !important;
-        font-size: 11px !important;
-        font-weight: 700 !important;
-        text-transform: uppercase !important;
-        letter-spacing: 0.5px !important;
-        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4) !important;
-        z-index: 10 !important;
-        transform: translateY(0) !important;
-        transition: all 0.3s ease !important;
-      }
-
-      .axyra-badge-featured {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
-        box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4) !important;
-      }
-
-      .axyra-badge-enterprise {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
-        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4) !important;
-      }
-
-      .axyra-membership-card:hover .axyra-membership-badge {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5) !important;
-      }
-
-      .axyra-membership-card:hover .axyra-badge-featured {
-        box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5) !important;
-      }
-
-      .axyra-membership-card:hover .axyra-badge-enterprise {
-        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5) !important;
-      }
-
-        /* ESTILOS PARA MODALES */
-        .axyra-modal {
-          display: none;
-          position: fixed;
-          z-index: 999999;
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          background-color: rgba(0, 0, 0, 0.8);
-          align-items: center;
-          justify-content: center;
-        }
-
-        .axyra-modal.show {
-          display: flex;
-        }
-
-      @keyframes modalFadeIn {
-        from {
-          opacity: 0;
-          transform: scale(0.8);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
+      .axyra-modal.show {
+        display: flex;
       }
 
       .axyra-modal-content {
-        background: white !important;
-        border-radius: 12px !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
-        max-width: 500px !important;
-        width: 90% !important;
-        max-height: 80vh !important;
-        overflow-y: auto !important;
-        position: relative !important;
-        animation: modalSlideIn 0.3s ease-out !important;
+        background: white;
+        padding: 2rem;
+        border-radius: 16px;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        position: relative;
       }
 
-      @keyframes modalSlideIn {
-        from {
-          opacity: 0;
-          transform: translateY(-50px) scale(0.9);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0) scale(1);
-        }
+      .axyra-modal h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #1f2937;
       }
 
-      .axyra-modal-header {
-        padding: 20px 24px 16px !important;
-        border-bottom: 1px solid #e5e7eb !important;
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
-        border-radius: 12px 12px 0 0 !important;
-      }
-
-      .axyra-modal-header h3 {
-        margin: 0 !important;
-        color: #1f2937 !important;
-        font-size: 1.25rem !important;
-        font-weight: 600 !important;
-      }
-
-      .axyra-modal-close {
-        background: none !important;
-        border: none !important;
-        font-size: 24px !important;
-        color: #6b7280 !important;
-        cursor: pointer !important;
-        padding: 4px !important;
-        border-radius: 4px !important;
-        transition: all 0.2s ease !important;
-      }
-
-      .axyra-modal-close:hover {
-        background: #f3f4f6 !important;
-        color: #374151 !important;
-      }
-
-      .axyra-modal-body {
-        padding: 24px !important;
-        color: #374151 !important;
-        line-height: 1.6 !important;
-      }
-
-      .axyra-modal-body h4 {
-        color: #1f2937 !important;
-        font-size: 1.1rem !important;
-        font-weight: 600 !important;
-        margin: 0 0 16px 0 !important;
-      }
-
-      .axyra-modal-body h5 {
-        color: #374151 !important;
-        font-size: 1rem !important;
-        font-weight: 600 !important;
-        margin: 16px 0 8px 0 !important;
-      }
-
-      .axyra-modal-body p {
-        margin: 0 0 12px 0 !important;
-      }
-
-      .axyra-modal-body ul {
-        margin: 8px 0 16px 0 !important;
-        padding-left: 20px !important;
-      }
-
-      .axyra-modal-body li {
-        margin: 4px 0 !important;
+      .axyra-modal p {
+        color: #6b7280;
+        margin-bottom: 2rem;
       }
 
       .axyra-modal-actions {
-        padding: 16px 24px 24px !important;
-        border-top: 1px solid #e5e7eb !important;
-        display: flex !important;
-        gap: 12px !important;
-        justify-content: flex-end !important;
-        background: #f9fafb !important;
-        border-radius: 0 0 12px 12px !important;
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
       }
 
-      .axyra-modal-actions .axyra-btn {
-        min-width: 120px !important;
+      .axyra-modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #6b7280;
       }
-
-      /* Modal grande para contenido extenso */
-      .axyra-modal-large .axyra-modal-content {
-        max-width: 700px !important;
-      }
-
-      /* Responsive para modales */
-      @media (max-width: 768px) {
-        .axyra-modal-content {
-          width: 95% !important;
-          margin: 20px !important;
-        }
-
-        .axyra-modal-header,
-        .axyra-modal-body,
-        .axyra-modal-actions {
-          padding-left: 16px !important;
-          padding-right: 16px !important;
-        }
-      }
-      </style>
+    </style>
   </head>
-  
-  <!-- Script de debug para modales - DEBE EJECUTARSE PRIMERO -->
-  <script>
-    console.log('🔍 SCRIPT DE DEBUG CARGADO');
-    
-    // Función global para probar modal
-    window.testModal = function() {
-      console.log('🧪 Probando modal...');
-      const modal = document.getElementById('authModal');
-      if (modal) {
-        console.log('✅ Modal encontrado');
-        modal.style.display = 'flex';
-        modal.classList.add('show');
-        console.log('✅ Modal mostrado');
-        
-        setTimeout(() => {
-          modal.style.display = 'none';
-          modal.classList.remove('show');
-          console.log('✅ Modal ocultado');
-        }, 3000);
-      } else {
-        console.error('❌ Modal NO encontrado');
-      }
-    };
-    
-    // Ejecutar cuando el DOM esté listo
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('🔍 DOM cargado, verificando modal...');
-      const modal = document.getElementById('authModal');
-      if (modal) {
-        console.log('✅ Modal encontrado en DOM');
-        console.log('📋 Modal info:', {
-          id: modal.id,
-          className: modal.className,
-          style: modal.style.cssText,
-          computedDisplay: window.getComputedStyle(modal).display
-        });
-      } else {
-        console.error('❌ Modal NO encontrado en DOM');
-      }
-    });
-  </script>
-  
+
   <body>
-    <!-- SCRIPT DE PRUEBA INMEDIATA -->
-    <script>
-      console.log('🚨 SCRIPT DE PRUEBA EJECUTÁNDOSE INMEDIATAMENTE');
-      console.log('🔍 Buscando modal...');
-      const modal = document.getElementById('authModal');
-      if (modal) {
-        console.log('✅ Modal encontrado:', modal);
-        console.log('📋 Modal display:', modal.style.display);
-        console.log('📋 Modal classes:', modal.className);
-      } else {
-        console.error('❌ Modal NO encontrado');
-      }
-      
-    </script>
-    
     <!-- Header -->
     <header class="axyra-header">
       <div class="axyra-container">
         <div class="axyra-header-content">
           <div class="axyra-logo">
-            <img src="logo.png" alt="AXYRA Logo" class="axyra-logo-img" />
+            <img src="logo.png" alt="AXYRA Logo" />
             <div class="axyra-logo-text">
               <h1>AXYRA</h1>
               <p>Sistema de Gestión Integral</p>
@@ -1156,32 +443,37 @@
             <a href="#servicios" class="axyra-nav-link">Servicios</a>
             <a href="ayuda.html" class="axyra-nav-link">Ayuda</a>
             <a href="#contacto" class="axyra-nav-link">Contacto</a>
-            <div class="axyra-header-actions">
-              <a href="login.html" class="axyra-btn axyra-btn-secondary" id="headerLoginBtn">🔐 Iniciar Sesión</a>
-              <a href="register.html" class="axyra-btn axyra-btn-outline" id="headerRegisterBtn">📝 Registrarse</a>
-            </div>
           </nav>
+          <div class="axyra-header-actions">
+            <a href="login.html" class="axyra-btn axyra-btn-secondary">
+              <i class="fas fa-sign-in-alt"></i>
+              Iniciar Sesión
+            </a>
+            <a href="register.html" class="axyra-btn axyra-btn-outline">
+              <i class="fas fa-user-plus"></i>
+              Registrarse
+            </a>
+          </div>
         </div>
       </div>
     </header>
 
     <!-- Hero Section -->
     <section class="axyra-hero" id="inicio">
-      <div class="axyra-container">
-        <div class="axyra-hero-content">
-          <h1 class="axyra-index-main-title">Bienvenido a <span class="axyra-highlight">AXYRA</span></h1>
-          <p class="axyra-hero-subtitle">
-            Tu sistema completo de gestión empresarial. Controla empleados, nóminas, horas y más desde una sola
-            plataforma.
-          </p>
-          <div class="axyra-hero-actions">
-            <button class="axyra-btn axyra-btn-primary axyra-btn-large" onclick="handleDashboardAccess()">
-              🚀 Ir al Dashboard
-            </button>
-            <button class="axyra-btn axyra-btn-secondary axyra-btn-large" onclick="handleEmpleadosAccess()">
-              👥 Gestionar Empleados
-            </button>
-          </div>
+      <div class="axyra-hero-content">
+        <h1>Bienvenido a <span class="axyra-highlight">AXYRA</span></h1>
+        <p class="axyra-hero-subtitle">
+          Tu sistema completo de gestión empresarial. Controla empleados, nóminas, horas y más desde una sola plataforma.
+        </p>
+        <div class="axyra-hero-actions">
+          <a href="login.html" class="axyra-btn axyra-btn-primary">
+            <i class="fas fa-rocket"></i>
+            Comenzar Ahora
+          </a>
+          <a href="#servicios" class="axyra-btn axyra-btn-outline">
+            <i class="fas fa-info-circle"></i>
+            Conocer Más
+          </a>
         </div>
       </div>
     </section>
@@ -1189,2028 +481,174 @@
     <!-- Features Section -->
     <section class="axyra-features" id="servicios">
       <div class="axyra-container">
-        <h2 class="axyra-section-title">Funcionalidades Principales</h2>
+        <h2>Funcionalidades Principales</h2>
         <div class="axyra-features-grid">
           <div class="axyra-feature-card">
-            <div class="axyra-feature-icon">👥</div>
+            <div class="axyra-feature-icon">
+              <i class="fas fa-users"></i>
+            </div>
             <h3>Gestión de Empleados</h3>
-            <p>Administra toda la información de tus empleados, contratos y perfiles de manera eficiente.</p>
-            <button class="axyra-btn axyra-btn-outline" onclick="handleEmpleadosAccess()">Acceder</button>
+            <p>Administra toda la información de tus empleados, contratos y perfiles de manera eficiente y segura.</p>
+            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+              <i class="fas fa-arrow-right"></i>
+              Acceder
+            </a>
           </div>
 
           <div class="axyra-feature-card">
-            <div class="axyra-feature-icon">⏰</div>
+            <div class="axyra-feature-icon">
+              <i class="fas fa-clock"></i>
+            </div>
             <h3>Control de Horas</h3>
-            <p>Registra y controla las horas trabajadas, turnos y horarios de tu equipo.</p>
-            <button class="axyra-btn axyra-btn-outline" onclick="handleHorasAccess()">Acceder</button>
+            <p>Registra y controla las horas trabajadas, turnos y horarios de tu equipo con precisión.</p>
+            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+              <i class="fas fa-arrow-right"></i>
+              Acceder
+            </a>
           </div>
 
           <div class="axyra-feature-card">
-            <div class="axyra-feature-icon">💰</div>
+            <div class="axyra-feature-icon">
+              <i class="fas fa-calculator"></i>
+            </div>
             <h3>Gestión de Nómina</h3>
             <p>Calcula salarios, bonificaciones y genera reportes de nómina automáticamente.</p>
-            <button class="axyra-btn axyra-btn-outline" onclick="handleNominaAccess()">Acceder</button>
+            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+              <i class="fas fa-arrow-right"></i>
+              Acceder
+            </a>
           </div>
 
           <div class="axyra-feature-card">
-            <div class="axyra-feature-icon">📊</div>
-            <h3>Dashboard Analítico</h3>
-            <p>Visualiza estadísticas, métricas y reportes en tiempo real de tu empresa.</p>
-            <button class="axyra-btn axyra-btn-outline" onclick="handleDashboardAccess()">Acceder</button>
+            <div class="axyra-feature-icon">
+              <i class="fas fa-boxes"></i>
+            </div>
+            <h3>Control de Inventario</h3>
+            <p>Gestiona tu inventario, controla stock y optimiza tus recursos de manera inteligente.</p>
+            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+              <i class="fas fa-arrow-right"></i>
+              Acceder
+            </a>
+          </div>
+
+          <div class="axyra-feature-card">
+            <div class="axyra-feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3>Reportes y Analytics</h3>
+            <p>Obtén insights valiosos con reportes detallados y análisis de rendimiento en tiempo real.</p>
+            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+              <i class="fas fa-arrow-right"></i>
+              Acceder
+            </a>
+          </div>
+
+          <div class="axyra-feature-card">
+            <div class="axyra-feature-icon">
+              <i class="fas fa-cog"></i>
+            </div>
+            <h3>Configuración Avanzada</h3>
+            <p>Personaliza el sistema según las necesidades específicas de tu empresa.</p>
+            <a href="#" class="axyra-feature-btn" onclick="showAuthModal()">
+              <i class="fas fa-arrow-right"></i>
+              Acceder
+            </a>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Quick Access Section -->
-    <section class="axyra-quick-access">
-      <div class="axyra-container">
-        <h2 class="axyra-section-title">Acceso Rápido</h2>
-        <div class="axyra-quick-grid">
-          <button class="axyra-quick-card" onclick="handleDashboardAccess()">
-            <div class="axyra-quick-icon">📊</div>
-            <h3>Dashboard</h3>
-            <p>Vista general del sistema</p>
-          </button>
-
-          <button class="axyra-quick-card" onclick="handleEmpleadosAccess()">
-            <div class="axyra-quick-icon">👥</div>
-            <h3>Empleados</h3>
-            <p>Gestionar personal</p>
-          </button>
-
-          <button class="axyra-quick-card" onclick="handleHorasAccess()">
-            <div class="axyra-quick-icon">⏰</div>
-            <h3>Horas</h3>
-            <p>Control de tiempo</p>
-          </button>
-
-          <button class="axyra-quick-card" onclick="handleNominaAccess()">
-            <div class="axyra-quick-icon">💰</div>
-            <h3>Nómina</h3>
-            <p>Gestión salarial</p>
-          </button>
-
-          <button class="axyra-quick-card" onclick="handleCuadreAccess()">
-            <div class="axyra-quick-icon">🧮</div>
-            <h3>Cuadre de Caja</h3>
-            <p>Control financiero</p>
-          </button>
-
-          <button class="axyra-quick-card" onclick="handleConfigAccess()">
-            <div class="axyra-quick-icon">⚙️</div>
-            <h3>Configuración</h3>
-            <p>Ajustes del sistema</p>
-          </button>
+    <!-- Footer -->
+    <footer class="axyra-footer" id="contacto">
+      <div class="axyra-footer-content">
+        <h3>AXYRA - Sistema de Gestión Empresarial</h3>
+        <p>La solución más completa para la gestión de tu empresa</p>
+        <div class="axyra-footer-links">
+          <a href="login.html">Iniciar Sesión</a>
+          <a href="register.html">Registrarse</a>
+          <a href="ayuda.html">Ayuda</a>
+          <a href="#contacto">Contacto</a>
         </div>
-      </div>
-    </section>
-
-    <!-- Estadísticas Destacadas -->
-    <section class="axyra-stats-highlight">
-      <div class="axyra-container">
-        <h2 class="axyra-section-title">¿Por qué AXYRA?</h2>
-        <div class="axyra-stats-highlight-grid">
-          <div class="axyra-stat-highlight-card">
-            <div class="axyra-stat-highlight-icon">🚀</div>
-            <div class="axyra-stat-highlight-number">100%</div>
-            <div class="axyra-stat-highlight-label">Automatizado</div>
-            <p>Procesos completamente automatizados para máxima eficiencia</p>
-          </div>
-
-          <div class="axyra-stat-highlight-card">
-            <div class="axyra-stat-highlight-icon">⚡</div>
-            <div class="axyra-stat-highlight-number">24/7</div>
-            <div class="axyra-stat-highlight-label">Disponible</div>
-            <p>Acceso continuo desde cualquier dispositivo y ubicación</p>
-          </div>
-
-          <div class="axyra-stat-highlight-card">
-            <div class="axyra-stat-highlight-icon">🔒</div>
-            <div class="axyra-stat-highlight-number">100%</div>
-            <div class="axyra-stat-highlight-label">Seguro</div>
-            <p>Datos protegidos con la más alta seguridad empresarial</p>
-          </div>
-
-          <div class="axyra-stat-highlight-card">
-            <div class="axyra-stat-highlight-icon">📱</div>
-            <div class="axyra-stat-highlight-number">100%</div>
-            <div class="axyra-stat-highlight-label">Responsive</div>
-            <p>Funciona perfectamente en todos los dispositivos</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Características Destacadas -->
-    <section class="axyra-features-highlight">
-      <div class="axyra-container">
-        <h2 class="axyra-section-title">Características Destacadas</h2>
-        <div class="axyra-features-highlight-grid">
-          <div class="axyra-feature-highlight-item">
-            <div class="axyra-feature-highlight-icon">🎯</div>
-            <div class="axyra-feature-highlight-content">
-              <h3>Gestión Inteligente</h3>
-              <p>Sistema inteligente que aprende de tus patrones de uso y se adapta a tu empresa</p>
-            </div>
-          </div>
-
-          <div class="axyra-feature-highlight-item">
-            <div class="axyra-feature-highlight-icon">📊</div>
-            <div class="axyra-feature-highlight-content">
-              <h3>Reportes Avanzados</h3>
-              <p>Análisis detallado con gráficos interactivos y exportación profesional</p>
-            </div>
-          </div>
-
-          <div class="axyra-feature-highlight-item">
-            <div class="axyra-feature-highlight-icon">🔄</div>
-            <div class="axyra-feature-highlight-content">
-              <h3>Sincronización en Tiempo Real</h3>
-              <p>Todos los cambios se reflejan instantáneamente en toda la plataforma</p>
-            </div>
-          </div>
-
-          <div class="axyra-feature-highlight-item">
-            <div class="axyra-feature-highlight-icon">🌐</div>
-            <div class="axyra-feature-highlight-content">
-              <h3>Acceso Multiplataforma</h3>
-              <p>Funciona perfectamente en web, móvil y tablet sin necesidad de instalación</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sección de Contacto -->
-    <section class="axyra-contact" id="contacto">
-      <div class="axyra-container">
-        <h2 class="axyra-section-title">Contacto</h2>
-        <div class="axyra-contact-content">
-          <div class="axyra-contact-info">
-            <h3>¿Necesitas Ayuda?</h3>
-            <p>Nuestro equipo está aquí para ayudarte con cualquier pregunta o consulta sobre AXYRA.</p>
-
-            <div class="axyra-contact-methods">
-              <div class="axyra-contact-method">
-                <div class="axyra-contact-icon">📧</div>
-                <div class="axyra-contact-details">
-                  <h4>Email de Soporte</h4>
-                  <p>axyra.app@gmail.com</p>
-                  <button class="axyra-btn axyra-btn-primary" onclick="enviarEmailSoporte()">Enviar Email</button>
-                </div>
-              </div>
-
-              <div class="axyra-contact-method">
-                <div class="axyra-contact-icon">📱</div>
-                <div class="axyra-contact-details">
-                  <h4>WhatsApp Business</h4>
-                  <p>Respuesta rápida en WhatsApp</p>
-                  <button class="axyra-btn axyra-btn-success" onclick="contactarWhatsApp()">
-                    Contactar por WhatsApp
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="axyra-contact-form">
-            <h3>Envíanos un Mensaje</h3>
-            <form id="contactForm" onsubmit="enviarMensajeContacto(event)">
-              <div class="form-group">
-                <label for="contactName">Nombre Completo *</label>
-                <input type="text" id="contactName" name="name" required />
-              </div>
-
-              <div class="form-group">
-                <label for="contactEmail">Email *</label>
-                <input type="email" id="contactEmail" name="email" required />
-              </div>
-
-              <div class="form-group">
-                <label for="contactSubject">Asunto *</label>
-                <input type="text" id="contactSubject" name="subject" required />
-              </div>
-
-              <div class="form-group">
-                <label for="contactMessage">Mensaje *</label>
-                <textarea id="contactMessage" name="message" rows="5" required></textarea>
-              </div>
-
-              <button type="submit" class="axyra-btn axyra-btn-primary">📧 Enviar Mensaje</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sección de Membresías Brutal -->
-    <section class="axyra-memberships-brutal">
-      <div class="axyra-container">
-        <div class="axyra-memberships-header">
-          <h2 class="axyra-memberships-title">
-            <span class="axyra-title-main">💎 ELIGE TU PLAN</span>
-            <span class="axyra-title-sub">Y TRANSFORMA TU EMPRESA</span>
-          </h2>
-          <p class="axyra-memberships-subtitle">
-            Desbloquea el poder completo de AXYRA con nuestros planes profesionales
-          </p>
-        </div>
-
-        <div class="axyra-memberships-grid">
-          <!-- Plan Básico -->
-          <div class="axyra-membership-card axyra-membership-basic" data-plan="basic">
-            <div class="axyra-membership-badge">POPULAR</div>
-            <div class="axyra-membership-header">
-              <div class="axyra-membership-icon">
-                <img src="logo.png" alt="AXYRA" class="axyra-membership-logo" />
-              </div>
-              <h3>Básico</h3>
-              <div class="axyra-membership-price">
-                <span class="axyra-price-currency">$</span>
-                <span class="axyra-price-amount">49.900</span>
-                <span class="axyra-price-period">/mes</span>
-              </div>
-            </div>
-            <div class="axyra-membership-features">
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Hasta 10 empleados</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Dashboard completo</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Gestión de empleados</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Cálculo de nóminas</span>
-              </div>
-            </div>
-            <button class="axyra-btn axyra-btn-primary axyra-membership-btn" onclick="selectMembershipPlan('basic')">
-              Seleccionar Plan
-            </button>
-          </div>
-
-          <!-- Plan Profesional -->
-          <div
-            class="axyra-membership-card axyra-membership-professional axyra-membership-featured"
-            data-plan="professional"
-          >
-            <div class="axyra-membership-badge axyra-badge-featured">MÁS POPULAR</div>
-            <div class="axyra-membership-header">
-              <div class="axyra-membership-icon">
-                <img src="logo.png" alt="AXYRA" class="axyra-membership-logo" />
-              </div>
-              <h3>Profesional</h3>
-              <div class="axyra-membership-price">
-                <span class="axyra-price-currency">$</span>
-                <span class="axyra-price-amount">129.900</span>
-                <span class="axyra-price-period">/mes</span>
-              </div>
-            </div>
-            <div class="axyra-membership-features">
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Hasta 50 empleados</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Chat de IA profesional</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Reportes avanzados</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Integración con bancos</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Soporte prioritario</span>
-              </div>
-            </div>
-            <button
-              class="axyra-btn axyra-btn-gradient axyra-membership-btn"
-              onclick="selectMembershipPlan('professional')"
-            >
-              ¡Elegir Profesional!
-            </button>
-          </div>
-
-          <!-- Plan Empresarial -->
-          <div class="axyra-membership-card axyra-membership-enterprise" data-plan="enterprise">
-            <div class="axyra-membership-badge axyra-badge-enterprise">PREMIUM</div>
-            <div class="axyra-membership-header">
-              <div class="axyra-membership-icon">
-                <img src="logo.png" alt="AXYRA" class="axyra-membership-logo" />
-              </div>
-              <h3>Empresarial</h3>
-              <div class="axyra-membership-price">
-                <span class="axyra-price-currency">$</span>
-                <span class="axyra-price-amount">259.900</span>
-                <span class="axyra-price-period">/mes</span>
-              </div>
-            </div>
-            <div class="axyra-membership-features">
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Empleados ilimitados</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>IA avanzada</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Consultoría incluida</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>Soporte 24/7</span>
-              </div>
-              <div class="axyra-feature-item">
-                <span class="axyra-feature-icon">●</span>
-                <span>API personalizada</span>
-              </div>
-            </div>
-            <button
-              class="axyra-btn axyra-btn-secondary axyra-membership-btn"
-              onclick="selectMembershipPlan('enterprise')"
-            >
-              ¡Elegir Empresarial!
-            </button>
-          </div>
-        </div>
-
-        <div class="axyra-memberships-footer">
-          <p class="axyra-memberships-guarantee">
-            <span class="axyra-guarantee-icon">🛡️</span>
-            <strong>Soporte técnico especializado</strong> - Nuestro equipo está aquí para ayudarte
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="axyra-cta">
-      <div class="axyra-container">
-        <div class="axyra-cta-content">
-          <h2 class="axyra-cta-title">¿Listo para comenzar?</h2>
-          <p class="axyra-cta-subtitle">Accede a todas las funcionalidades de AXYRA de manera inmediata</p>
-          <div class="axyra-cta-actions">
-            <button class="axyra-btn axyra-btn-primary axyra-btn-large" onclick="handleDashboardAccess()">
-              🚀 Comenzar Ahora
-            </button>
-            <button class="axyra-btn axyra-btn-secondary axyra-btn-large" id="btnLogin" onclick="handleLoginClick()">
-              🔐 Iniciar Sesión
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer Profesional -->
-    <footer class="axyra-footer-professional">
-      <div class="axyra-container">
-        <div class="axyra-footer-content">
-          <div class="axyra-footer-section">
-            <h4>¿TIENES DUDAS?</h4>
-            <ul>
-              <li><button onclick="contactarSoporte()">✉️ ESCRIBENOS</button></li>
-              <li><button onclick="enviarFeedback()">📡 ENVIAR FEEDBACK</button></li>
-            </ul>
-          </div>
-
-          <div class="axyra-footer-section">
-            <h4>NOSOTROS</h4>
-            <ul>
-              <li><button onclick="quienesSomos()">Quiénes Somos</button></li>
-              <li><button onclick="centroAyuda()">Centro de Ayuda</button></li>
-              <li><button onclick="comoFunciona()">Cómo Funciona</button></li>
-              <li><button onclick="terminosCondiciones()">Términos y Condiciones</button></li>
-              <li><button onclick="garantiaSatisfaccion()">Garantía de Satisfacción</button></li>
-            </ul>
-            <div class="axyra-copyright">
-              <p>&copy; 2025 AXYRA</p>
-            </div>
-          </div>
-
-          <div class="axyra-footer-section">
-            <h4>NUESTROS SERVICIOS</h4>
-            <ul>
-              <li><button onclick="servicioEmpleados()">👥 Empleados</button></li>
-              <li><button onclick="servicioHoras()">⏰ Gestión de Horas</button></li>
-              <li><button onclick="servicioNomina()">💰 Nómina</button></li>
-              <li><button onclick="servicioCuadre()">🧮 Cuadre de Caja</button></li>
-              <li><button onclick="servicioConfiguracion()">⚙️ Configuración</button></li>
-              <li><button onclick="servicioDashboard()">📊 Dashboard</button></li>
-            </ul>
-          </div>
-        </div>
-
         <div class="axyra-footer-bottom">
-          <div class="axyra-footer-bottom-content">
-            <div class="axyra-offer">
-              <button onclick="ofrecerServicios()" class="axyra-offer-btn">OFRECE TUS SERVICIOS</button>
-            </div>
-          </div>
+          <p>&copy; 2024 AXYRA. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>
 
-    <!-- Modal de Autenticación -->
+    <!-- Auth Modal -->
     <div id="authModal" class="axyra-modal">
       <div class="axyra-modal-content">
-        <div class="axyra-modal-header">
-          <h3>🔐 Acceso Requerido</h3>
-          <button class="axyra-modal-close" onclick="closeAuthModal()">&times;</button>
-        </div>
-        <div class="axyra-modal-body">
-          <p>Para acceder a esta funcionalidad, necesitas iniciar sesión o crear una cuenta.</p>
-          <div class="axyra-modal-actions">
-            <button class="axyra-btn axyra-btn-primary" onclick="redirectToLogin()">🔐 Iniciar Sesión</button>
-            <button class="axyra-btn axyra-btn-secondary" onclick="redirectToRegister()">📝 Registrarse</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Política de Privacidad -->
-    <div id="privacyModal" class="axyra-modal">
-      <div class="axyra-modal-content axyra-modal-large">
-        <div class="axyra-modal-header">
-          <h3>📋 Política de Privacidad</h3>
-          <button class="axyra-modal-close" onclick="closePrivacyModal()">&times;</button>
-        </div>
-        <div class="axyra-modal-body">
-          <h4>AXYRA - Política de Privacidad</h4>
-          <p><strong>Última actualización:</strong> 18 de Agosto, 2025</p>
-
-          <h5>1. Información que Recopilamos</h5>
-          <p>
-            Recopilamos información que nos proporcionas directamente, como cuando creas una cuenta, utilizas nuestros
-            servicios o te comunicas con nosotros.
-          </p>
-
-          <h5>2. Cómo Utilizamos tu Información</h5>
-          <p>
-            Utilizamos la información que recopilamos para proporcionar, mantener y mejorar nuestros servicios, así como
-            para desarrollar nuevos servicios.
-          </p>
-
-          <h5>3. Compartir Información</h5>
-          <p>
-            No vendemos, alquilamos ni compartimos tu información personal con terceros, excepto en las circunstancias
-            descritas en esta política.
-          </p>
-
-          <h5>4. Seguridad de Datos</h5>
-          <p>
-            Implementamos medidas de seguridad técnicas y organizativas apropiadas para proteger tu información personal
-            contra el acceso no autorizado, alteración, divulgación o destrucción.
-          </p>
-
-          <h5>5. Tus Derechos</h5>
-          <p>
-            Tienes derecho a acceder, corregir o eliminar tu información personal. Puedes ejercer estos derechos
-            contactándonos directamente.
-          </p>
-
-          <h5>6. Contacto</h5>
-          <p>Si tienes preguntas sobre esta política, contáctanos en: <strong>axyra.app@gmail.com</strong></p>
+        <button class="axyra-modal-close" onclick="closeAuthModal()">&times;</button>
+        <h3>🔐 Acceso Requerido</h3>
+        <p>Para acceder a esta funcionalidad, necesitas iniciar sesión o crear una cuenta.</p>
+        <div class="axyra-modal-actions">
+          <a href="login.html" class="axyra-btn axyra-btn-primary">
+            <i class="fas fa-sign-in-alt"></i>
+            Iniciar Sesión
+          </a>
+          <a href="register.html" class="axyra-btn axyra-btn-outline">
+            <i class="fas fa-user-plus"></i>
+            Registrarse
+          </a>
         </div>
       </div>
     </div>
 
-    <!-- Modal de Términos de Servicio -->
-    <div id="termsModal" class="axyra-modal">
-      <div class="axyra-modal-content axyra-modal-large">
-        <div class="axyra-modal-header">
-          <h3>📜 Términos de Servicio</h3>
-          <button class="axyra-modal-close" onclick="closeTermsModal()">&times;</button>
-        </div>
-        <div class="axyra-modal-body">
-          <h4>AXYRA - Términos de Servicio</h4>
-          <p><strong>Última actualización:</strong> 18 de Agosto, 2025</p>
-
-          <h5>1. Aceptación de Términos</h5>
-          <p>
-            Al acceder y utilizar AXYRA, aceptas estar sujeto a estos términos de servicio. Si no estás de acuerdo con
-            alguna parte de estos términos, no debes utilizar nuestro servicio.
-          </p>
-
-          <h5>2. Descripción del Servicio</h5>
-          <p>
-            AXYRA es un sistema de gestión empresarial que incluye funcionalidades para la gestión de empleados, control
-            de horas, nóminas y análisis empresarial.
-          </p>
-
-          <h5>3. Uso Aceptable</h5>
-          <p>
-            Te comprometes a utilizar el servicio solo para fines legales y de acuerdo con estos términos. No debes
-            utilizar el servicio para actividades ilegales o no autorizadas.
-          </p>
-
-          <h5>4. Cuentas de Usuario</h5>
-          <p>
-            Eres responsable de mantener la confidencialidad de tu cuenta y contraseña. Eres responsable de todas las
-            actividades que ocurran bajo tu cuenta.
-          </p>
-
-          <h5>5. Propiedad Intelectual</h5>
-          <p>
-            El servicio y su contenido original, características y funcionalidad son propiedad de AXYRA y están
-            protegidos por leyes de propiedad intelectual.
-          </p>
-
-          <h5>6. Limitación de Responsabilidad</h5>
-          <p>
-            En ningún caso AXYRA será responsable por daños indirectos, incidentales, especiales, consecuentes o
-            punitivos.
-          </p>
-
-          <h5>7. Contacto</h5>
-          <p>Para preguntas sobre estos términos, contáctanos en: <strong>axyr.app@gmail.com</strong></p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal de Soporte Técnico -->
-    <div id="supportModal" class="axyra-modal">
-      <div class="axyra-modal-content">
-        <div class="axyra-modal-header">
-          <h3>🛠️ Soporte Técnico</h3>
-          <button class="axyra-modal-close" onclick="closeSupportModal()">&times;</button>
-        </div>
-        <div class="axyra-modal-body">
-          <h4>¿Necesitas Ayuda?</h4>
-          <p>Nuestro equipo de soporte está aquí para ayudarte con cualquier pregunta o problema que puedas tener.</p>
-
-          <div class="axyra-support-info">
-            <div class="axyra-support-item">
-              <span class="axyra-support-icon">📧</span>
-              <div>
-                <strong>Email de Soporte:</strong>
-                <a href="mailto:axyr.app@gmail.com">axyr.app@gmail.com</a>
-              </div>
-            </div>
-
-            <div class="axyra-support-item">
-              <span class="axyra-support-icon">⏰</span>
-              <div>
-                <strong>Horario de Atención:</strong>
-                <p>Lunes a Viernes: 9:00 AM - 6:00 PM</p>
-              </div>
-            </div>
-
-            <div class="axyra-support-item">
-              <span class="axyra-support-icon">🚀</span>
-              <div>
-                <strong>Tiempo de Respuesta:</strong>
-                <p>Máximo 24 horas</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="axyra-modal-actions">
-            <button class="axyra-btn axyra-btn-primary" onclick="sendSupportEmail()">📧 Enviar Email</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Scripts -->
+    <script src="static/include-header.js"></script>
+    <script src="static/ai-chat-system.js"></script>
+    <script src="static/notifications.js"></script>
+    <script src="static/monitoring.js"></script>
 
     <script>
-      // Verificar estado de autenticación
-      function checkAuthStatus() {
-        const user = localStorage.getItem('axyra_isolated_user');
-        const btnLogin = document.getElementById('btnLogin');
-        const headerLoginBtn = document.getElementById('headerLoginBtn');
-        const headerRegisterBtn = document.getElementById('headerRegisterBtn');
-
-        if (user) {
-          // Usuario logueado - cambiar botones por "Ir al Dashboard"
-          if (btnLogin) {
-            btnLogin.innerHTML = '🚀 Ir al Dashboard';
-            btnLogin.onclick = () => (window.location.href = 'modulos/dashboard/dashboard.html');
-            btnLogin.className = 'axyra-btn axyra-btn-primary axyra-btn-large';
-          }
-
-          if (headerLoginBtn) {
-            headerLoginBtn.innerHTML = '🚀 Dashboard';
-            headerLoginBtn.href = 'modulos/dashboard/dashboard.html';
-            headerLoginBtn.className = 'axyra-btn axyra-btn-primary';
-          }
-
-          if (headerRegisterBtn) {
-            headerRegisterBtn.style.display = 'none';
-          }
-        } else {
-          // Usuario no logueado - mostrar botones de login y registro
-          if (btnLogin) {
-            btnLogin.innerHTML = '🔐 Iniciar Sesión';
-            btnLogin.onclick = handleLoginClick;
-            btnLogin.className = 'axyra-btn axyra-btn-secondary axyra-btn-large';
-          }
-
-          if (headerLoginBtn) {
-            headerLoginBtn.innerHTML = '🔐 Iniciar Sesión';
-            headerLoginBtn.href = 'login.html';
-            headerLoginBtn.className = 'axyra-btn axyra-btn-secondary';
-          }
-
-          if (headerRegisterBtn) {
-            headerRegisterBtn.style.display = 'inline-block';
-          }
-        }
-      }
-
-      // Funciones de manejo de acceso
-      function handleDashboardAccess() {
-        console.log('🔍 handleDashboardAccess llamada');
-        const user = localStorage.getItem('axyra_isolated_user');
-        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
-
-        if (!user) {
-          console.log('🔐 Mostrando modal de autenticación...');
-          showAuthModal();
-          return;
-        }
-
-        // Verificar acceso con sistema de membresías
-        if (window.axyraMembership && !window.axyraMembership.canAccessFeature('dashboard')) {
-          console.log('💎 Acceso denegado - Plan insuficiente');
-          return;
-        }
-
-        console.log('🚀 Redirigiendo a dashboard...');
-        try {
-          window.location.href = 'modulos/dashboard/dashboard.html';
-        } catch (error) {
-          console.error('❌ Error al redirigir:', error);
-          alert('Error al acceder al dashboard. Por favor, inténtalo de nuevo.');
-        }
-      }
-
-      function handleEmpleadosAccess() {
-        console.log('🔍 handleEmpleadosAccess llamada');
-        const user = localStorage.getItem('axyra_isolated_user');
-        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
-
-        if (user) {
-          console.log('🚀 Redirigiendo a empleados...');
-          try {
-            window.location.href = 'modulos/gestion_personal/gestion_personal.html';
-          } catch (error) {
-            console.error('❌ Error al redirigir:', error);
-            alert('Error al acceder a empleados. Por favor, inténtalo de nuevo.');
-          }
-        } else {
-          console.log('🔐 Mostrando modal de autenticación...');
-          showAuthModal();
-        }
-      }
-
-      function handleHorasAccess() {
-        console.log('🔍 handleHorasAccess llamada');
-        const user = localStorage.getItem('axyra_isolated_user');
-        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
-
-        if (!user) {
-          console.log('🔐 Mostrando modal de autenticación...');
-          showAuthModal();
-          return;
-        }
-
-        console.log('🚀 Redirigiendo a horas...');
-        try {
-          window.location.href = 'modulos/gestion_personal/gestion_personal.html';
-        } catch (error) {
-          console.error('❌ Error al redirigir:', error);
-          alert('Error al acceder a horas. Por favor, inténtalo de nuevo.');
-        }
-      }
-
-      function handleNominaAccess() {
-        console.log('🔍 handleNominaAccess llamada');
-        const user = localStorage.getItem('axyra_isolated_user');
-        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
-
-        if (!user) {
-          console.log('🔐 Mostrando modal de autenticación...');
-          showAuthModal();
-          return;
-        }
-
-        console.log('🚀 Redirigiendo a nómina...');
-        try {
-          window.location.href = 'modulos/gestion_personal/gestion_personal.html';
-        } catch (error) {
-          console.error('❌ Error al redirigir:', error);
-          alert('Error al acceder a nómina. Por favor, inténtalo de nuevo.');
-        }
-      }
-
-      function handleCuadreAccess() {
-        console.log('🔍 handleCuadreAccess llamada');
-        const user = localStorage.getItem('axyra_isolated_user');
-        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
-
-        if (!user) {
-          console.log('🔐 Mostrando modal de autenticación...');
-          showAuthModal();
-          return;
-        }
-
-        console.log('🚀 Redirigiendo a cuadre de caja...');
-        try {
-          window.location.href = 'modulos/cuadre_caja/cuadre_caja.html';
-        } catch (error) {
-          console.error('❌ Error al redirigir:', error);
-          alert('Error al acceder a cuadre de caja. Por favor, inténtalo de nuevo.');
-        }
-      }
-
-      function handleConfigAccess() {
-        console.log('🔍 handleConfigAccess llamada');
-        const user = localStorage.getItem('axyra_isolated_user');
-        console.log('👤 Usuario:', user ? 'Logueado' : 'No logueado');
-
-        if (!user) {
-          console.log('🔐 Mostrando modal de autenticación...');
-          showAuthModal();
-          return;
-        }
-
-        console.log('🚀 Redirigiendo a configuración...');
-        try {
-          window.location.href = 'modulos/configuracion/configuracion.html';
-        } catch (error) {
-          console.error('❌ Error al redirigir:', error);
-          alert('Error al acceder a configuración. Por favor, inténtalo de nuevo.');
-        }
-      }
-
-      function handleLoginClick() {
-        window.location.href = 'login.html';
-      }
-
-      function handleRegisterClick() {
-        window.location.href = 'register.html';
-      }
-
-      // Funciones del modal de autenticación
+      // Función para mostrar modal de autenticación
       function showAuthModal() {
-        console.log('🔐 showAuthModal llamada');
-        
-        // Crear modal completamente nuevo
-        const existingModal = document.getElementById('authModal');
-        if (existingModal) {
-          existingModal.remove();
+        const modal = document.getElementById('authModal');
+        if (modal) {
+          modal.classList.add('show');
         }
-        
-        // Crear el overlay
-        const overlay = document.createElement('div');
-        overlay.id = 'authModalOverlay';
-        overlay.style.cssText = `
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
-          background-color: rgba(0, 0, 0, 0.8) !important;
-          z-index: 999999 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        `;
-        
-        // Crear el contenido del modal
-        const modalContent = document.createElement('div');
-        modalContent.style.cssText = `
-          background: white !important;
-          border-radius: 12px !important;
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
-          max-width: 500px !important;
-          width: 90% !important;
-          max-height: 80vh !important;
-          overflow-y: auto !important;
-          position: relative !important;
-        `;
-        
-        // Crear el header
-        const header = document.createElement('div');
-        header.style.cssText = `
-          padding: 20px 24px 16px !important;
-          border-bottom: 1px solid #e5e7eb !important;
-          display: flex !important;
-          justify-content: space-between !important;
-          align-items: center !important;
-          background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
-          border-radius: 12px 12px 0 0 !important;
-        `;
-        
-        const title = document.createElement('h3');
-        title.textContent = '🔐 Acceso Requerido';
-        title.style.cssText = `
-          margin: 0 !important;
-          color: #1f2937 !important;
-          font-size: 1.25rem !important;
-          font-weight: 600 !important;
-        `;
-        
-        const closeBtn = document.createElement('button');
-        closeBtn.innerHTML = '&times;';
-        closeBtn.style.cssText = `
-          background: none !important;
-          border: none !important;
-          font-size: 24px !important;
-          color: #6b7280 !important;
-          cursor: pointer !important;
-          padding: 4px !important;
-          border-radius: 4px !important;
-        `;
-        closeBtn.onclick = closeAuthModal;
-        
-        header.appendChild(title);
-        header.appendChild(closeBtn);
-        
-        // Crear el body
-        const body = document.createElement('div');
-        body.style.cssText = `
-          padding: 24px !important;
-          color: #374151 !important;
-          line-height: 1.6 !important;
-        `;
-        
-        const message = document.createElement('p');
-        message.textContent = 'Para acceder a esta funcionalidad, necesitas iniciar sesión o crear una cuenta.';
-        message.style.cssText = `
-          margin: 0 0 12px 0 !important;
-        `;
-        
-        body.appendChild(message);
-        
-        // Crear las acciones
-        const actions = document.createElement('div');
-        actions.style.cssText = `
-          padding: 16px 24px 24px !important;
-          border-top: 1px solid #e5e7eb !important;
-          display: flex !important;
-          gap: 12px !important;
-          justify-content: flex-end !important;
-          background: #f9fafb !important;
-          border-radius: 0 0 12px 12px !important;
-        `;
-        
-        const loginBtn = document.createElement('button');
-        loginBtn.textContent = '🔐 Iniciar Sesión';
-        loginBtn.style.cssText = `
-          background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-          color: white !important;
-          border: none !important;
-          padding: 12px 24px !important;
-          border-radius: 8px !important;
-          cursor: pointer !important;
-          font-weight: 600 !important;
-          min-width: 120px !important;
-        `;
-        loginBtn.onclick = redirectToLogin;
-        
-        const registerBtn = document.createElement('button');
-        registerBtn.textContent = '📝 Registrarse';
-        registerBtn.style.cssText = `
-          background: white !important;
-          color: #374151 !important;
-          border: 2px solid #e5e7eb !important;
-          padding: 12px 24px !important;
-          border-radius: 8px !important;
-          cursor: pointer !important;
-          font-weight: 600 !important;
-          min-width: 120px !important;
-        `;
-        registerBtn.onclick = redirectToRegister;
-        
-        actions.appendChild(loginBtn);
-        actions.appendChild(registerBtn);
-        
-        // Ensamblar el modal
-        modalContent.appendChild(header);
-        modalContent.appendChild(body);
-        modalContent.appendChild(actions);
-        overlay.appendChild(modalContent);
-        
-        // Agregar al body
-        document.body.appendChild(overlay);
-        
-        console.log('✅ Modal nuevo creado y mostrado');
       }
 
+      // Función para cerrar modal
       function closeAuthModal() {
-        const overlay = document.getElementById('authModalOverlay');
-        if (overlay) {
-          overlay.remove();
-        }
-        const oldModal = document.getElementById('authModal');
-        if (oldModal) {
-          oldModal.style.display = 'none';
+        const modal = document.getElementById('authModal');
+        if (modal) {
+          modal.classList.remove('show');
         }
       }
 
-      function redirectToLogin() {
-        window.location.href = 'login.html';
-      }
+      // Cerrar modal al hacer clic fuera
+      document.getElementById('authModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeAuthModal();
+        }
+      });
 
-      function redirectToRegister() {
-        window.location.href = 'register.html';
-      }
-
-      // Funciones de los modales de información
-      function showPrivacyPolicy() {
-        document.getElementById('privacyModal').style.display = 'flex';
-      }
-
-      function closePrivacyModal() {
-        document.getElementById('privacyModal').style.display = 'none';
-      }
-
-      function showTermsOfService() {
-        document.getElementById('termsModal').style.display = 'flex';
-      }
-
-      function closeTermsModal() {
-        document.getElementById('termsModal').style.display = 'none';
-      }
-
-      function showSupport() {
-        document.getElementById('supportModal').style.display = 'flex';
-      }
-
-      function closeSupportModal() {
-        document.getElementById('supportModal').style.display = 'none';
-      }
-
-      function sendSupportEmail() {
-        window.open('mailto:axyr.app@gmail.com?subject=Soporte%20Técnico%20AXYRA&body=Hola,%20necesito%20ayuda%20con:');
-      }
-
-      // Cerrar modales al hacer clic fuera de ellos
-      window.onclick = function (event) {
-        const modals = document.querySelectorAll('.axyra-modal');
-        modals.forEach((modal) => {
-          if (event.target === modal) {
-            modal.style.display = 'none';
-          }
-        });
-      };
-
-      // Navegación suave
-      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+      // Smooth scrolling para enlaces internos
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
           e.preventDefault();
           const target = document.querySelector(this.getAttribute('href'));
           if (target) {
             target.scrollIntoView({
               behavior: 'smooth',
-              block: 'start',
+              block: 'start'
             });
           }
         });
       });
 
-      // Efectos de scroll
-      window.addEventListener('scroll', () => {
-        const header = document.querySelector('.axyra-header');
-        if (window.scrollY > 100) {
-          header.classList.add('axyra-header-scrolled');
-        } else {
-          header.classList.remove('axyra-header-scrolled');
-        }
-      });
-
-      // Verificar estado al cargar la página
-      window.addEventListener('load', checkAuthStatus);
-
-      // Verificar estado cuando cambie el localStorage
-      window.addEventListener('storage', checkAuthStatus);
-
-      // ========================================
-      // FUNCIONES DE MEMBRESÍAS
-      // ========================================
-
-      function selectMembershipPlan(planType) {
-        console.log('💎 Seleccionando plan:', planType);
-
-        // Redirigir a la página de membresías detallada
-        window.location.href = 'membresias.html';
-      }
-
-      function showMembershipSuccess(planType) {
-        const plans = {
-          free: 'Gratis',
-          basic: 'Básico',
-          professional: 'Profesional',
-          enterprise: 'Empresarial',
-        };
-
-        const notification = document.createElement('div');
-        notification.className = 'axyra-membership-success';
-        notification.innerHTML = `
-          <div class="axyra-success-content">
-            <div class="axyra-success-icon">🎉</div>
-            <div class="axyra-success-text">
-              <h3>¡Plan ${plans[planType]} Activado!</h3>
-              <p>Ya puedes acceder a todas las funcionalidades de tu plan</p>
-            </div>
-            <button class="axyra-success-close" onclick="this.parentElement.parentElement.remove()">×</button>
-          </div>
-        `;
-
-        document.body.appendChild(notification);
-
-        // Animación de entrada
-        setTimeout(() => {
-          notification.classList.add('show');
-        }, 100);
-
-        // Auto-remover después de 5 segundos
-        setTimeout(() => {
-          notification.classList.remove('show');
-          setTimeout(() => notification.remove(), 300);
-        }, 5000);
-      }
-
-      // ========================================
-      // FUNCIONES DEL FOOTER PROFESIONAL
-      // ========================================
-
-      // Sección ¿TIENES DUDAS?
-      function contactarSoporte() {
-        const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>✉️ Escribenos</h3>
-              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>¿Tienes Dudas o Necesitas Ayuda?</h4>
-              
-              <h5>📧 Canales de Contacto</h5>
-              <ul>
-                <li><strong>Soporte Técnico:</strong> axyra.app@gmail.com</li>
-                <li><strong>Consultas Generales:</strong> axyra.app@gmail.com</li>
-                <li><strong>Implementación:</strong> axyra.app@gmail.com</li>
-                <li><strong>Facturación:</strong> axyra.app@gmail.com</li>
-              </ul>
-              
-              <h5>⏰ Tiempos de Respuesta</h5>
-              <ul>
-                <li><strong>Urgencias:</strong> 2-4 horas</li>
-                <li><strong>Consultas Técnicas:</strong> 24 horas</li>
-                <li><strong>Implementaciones:</strong> 48-72 horas</li>
-                <li><strong>Mejoras del Sistema:</strong> 1 semana</li>
-              </ul>
-              
-              <h5>🔧 Tipos de Soporte</h5>
-              <ul>
-                <li>Configuración inicial del sistema</li>
-                <li>Migración de datos existentes</li>
-                <li>Capacitación de usuarios</li>
-                <li>Resolución de problemas técnicos</li>
-                <li>Personalizaciones específicas</li>
-                <li>Integración con otros sistemas</li>
-              </ul>
-              
-              <div class="axyra-modal-actions">
-                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank')">
-                  📧 Contactar Ahora
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      // Función para contactar soporte
-      function contactarSoporte() {
-        console.log('✉️ Contactar soporte');
-        const modal = document.createElement('div');
-        modal.id = 'contactarSoporteModal';
-        modal.style.cssText = `
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
-          background-color: rgba(0, 0, 0, 0.8) !important;
-          z-index: 999999 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        `;
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>✉️ Contactar Soporte</h3>
-              <button class="axyra-modal-close" onclick="document.getElementById('contactarSoporteModal').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>¿Necesitas Ayuda? Estamos Aquí para Ti</h4>
-              
-              <h5>📞 Canales de Contacto</h5>
-              <ul>
-                <li><strong>📧 Email:</strong> soporte@axyra.com</li>
-                <li><strong>💬 Chat en Vivo:</strong> Usa el botón de chat en la esquina inferior derecha</li>
-                <li><strong>📱 WhatsApp:</strong> +57 300 123 4567</li>
-                <li><strong>🕒 Horario:</strong> Lunes a Viernes 8:00 AM - 6:00 PM</li>
-              </ul>
-              
-              <h5>⚡ Respuesta Rápida</h5>
-              <p>Nuestro equipo de soporte técnico responde en menos de 2 horas durante horario laboral.</p>
-              
-              <div class="axyra-modal-actions" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:soporte@axyra.com?subject=Soporte AXYRA - Consulta', '_blank')">
-                  📧 Enviar Email
-                </button>
-                <button class="axyra-btn axyra-btn-secondary" onclick="document.querySelector('.axyra-chat-bubble').click()">
-                  💬 Abrir Chat
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      function enviarFeedback() {
-        const modal = document.createElement('div');
-        modal.id = 'enviarFeedbackModal';
-        modal.style.cssText = `
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
-          background-color: rgba(0, 0, 0, 0.8) !important;
-          z-index: 999999 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        `;
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>📡 Enviar Feedback</h3>
-              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>Tu Opinión es Valiosa para Nosotros</h4>
-              
-              <h5>💡 ¿Qué Puedes Reportar?</h5>
-              <ul>
-                <li><strong>Bugs o Errores:</strong> Problemas que encuentres en el sistema</li>
-                <li><strong>Sugerencias:</strong> Ideas para mejorar la funcionalidad</li>
-                <li><strong>Nuevas Características:</strong> Funcionalidades que te gustaría ver</li>
-                <li><strong>Experiencia de Usuario:</strong> Qué te gusta y qué no del sistema</li>
-                <li><strong>Rendimiento:</strong> Problemas de velocidad o lentitud</li>
-              </ul>
-              
-              <h5>📝 Cómo Enviar Feedback Efectivo</h5>
-              <ol>
-                <li><strong>Describe el problema:</strong> Sé específico sobre qué está pasando</li>
-                <li><strong>Pasos para reproducir:</strong> Cómo llegaste al problema</li>
-                <li><strong>Resultado esperado:</strong> Qué debería pasar</li>
-                <li><strong>Resultado actual:</strong> Qué está pasando realmente</li>
-                <li><strong>Capturas de pantalla:</strong> Si es posible, adjunta imágenes</li>
-              </ol>
-              
-              <h5>🎯 Categorías de Feedback</h5>
-              <ul>
-                <li>Interfaz de usuario</li>
-                <li>Funcionalidades del sistema</li>
-                <li>Rendimiento y velocidad</li>
-                <li>Documentación y ayuda</li>
-                <li>Integración con otros sistemas</li>
-                <li>Reportes y análisis</li>
-              </ul>
-              
-              <div class="axyra-modal-actions" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Feedback AXYRA', '_blank')">
-                  📧 Enviar Feedback
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      function centroAyuda() {
-        const modal = document.createElement('div');
-        modal.id = 'centroAyudaModal';
-        modal.style.cssText = `
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
-          background-color: rgba(0, 0, 0, 0.8) !important;
-          z-index: 999999 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        `;
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>🆘 Centro de Ayuda</h3>
-              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>¿Necesitas Ayuda con AXYRA?</h4>
-              
-              <h5>📧 Contacto Directo</h5>
-              <p>Para soporte técnico inmediato, contáctanos en: <strong>axyra.app@gmail.com</strong></p>
-              
-              <h5>🔧 Problemas Comunes</h5>
-              <ul>
-                <li><strong>Acceso al sistema:</strong> Verifica tu email y contraseña</li>
-                <li><strong>Módulos no cargan:</strong> Recarga la página y verifica tu conexión</li>
-                <li><strong>Datos no se guardan:</strong> Asegúrate de tener conexión a internet</li>
-                <li><strong>Reportes no generan:</strong> Verifica que tengas datos en el sistema</li>
-              </ul>
-              
-              <h5>📚 Recursos Adicionales</h5>
-              <ul>
-                <li>Manual de usuario detallado</li>
-                <li>Videos tutoriales paso a paso</li>
-                <li>FAQ con preguntas frecuentes</li>
-                <li>Soporte técnico especializado</li>
-              </ul>
-              
-              <div class="axyra-modal-actions" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank')">
-                  📧 Contactar Soporte
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      function comoFunciona() {
-        const modal = document.createElement('div');
-        modal.id = 'comoFuncionaModal';
-        modal.style.cssText = `
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
-          background-color: rgba(0, 0, 0, 0.8) !important;
-          z-index: 999999 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        `;
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>⚙️ Cómo Funciona AXYRA</h3>
-              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>Ecosistema Integrado de Gestión Empresarial</h4>
-              
-              <h5>🔄 Flujo de Trabajo</h5>
-              <ol>
-                <li><strong>Registro de Empleados:</strong> Crea y gestiona perfiles completos</li>
-                <li><strong>Control de Horas:</strong> Registra entrada/salida y horas extras</li>
-                <li><strong>Liquidación de Nómina:</strong> Cálculo automático con recargos</li>
-                <li><strong>Análisis Financiero:</strong> Reportes y cuadres de caja</li>
-                <li><strong>Configuración:</strong> Personaliza parámetros del sistema</li>
-              </ol>
-              
-              <h5>🔗 Módulos Integrados</h5>
-              <ul>
-                <li><strong>Dashboard:</strong> Vista general de toda la empresa</li>
-                <li><strong>Empleados:</strong> Gestión completa del personal</li>
-                <li><strong>Horas:</strong> Control preciso del tiempo trabajado</li>
-                <li><strong>Nómina:</strong> Liquidación automática de salarios</li>
-                <li><strong>Cuadre de Caja:</strong> Control financiero detallado</li>
-                <li><strong>Configuración:</strong> Ajustes del sistema</li>
-              </ul>
-              
-              <h5>💡 Características Destacadas</h5>
-              <ul>
-                <li>Sincronización en tiempo real</li>
-                <li>Backup automático de datos</li>
-                <li>Interfaz responsive para móviles</li>
-                <li>Reportes exportables en PDF</li>
-                <li>Seguridad de nivel empresarial</li>
-              </ul>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      function terminosCondiciones() {
-        const modal = document.createElement('div');
-        modal.id = 'terminosCondicionesModal';
-        modal.style.cssText = `
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
-          background-color: rgba(0, 0, 0, 0.8) !important;
-          z-index: 999999 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        `;
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>📋 Términos y Condiciones</h3>
-              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>Términos de Uso de AXYRA</h4>
-              
-              <h5>📝 Aceptación de Términos</h5>
-              <p>Al utilizar AXYRA, aceptas estos términos y condiciones. Si no estás de acuerdo, no uses nuestro servicio.</p>
-              
-              <h5>🔒 Uso del Servicio</h5>
-              <ul>
-                <li><strong>Uso Autorizado:</strong> Solo para gestión empresarial legítima</li>
-                <li><strong>Prohibido:</strong> Uso ilegal, abusivo o que viole derechos de terceros</li>
-                <li><strong>Responsabilidad:</strong> Eres responsable de la información que ingreses</li>
-                <li><strong>Confidencialidad:</strong> Protegemos tus datos según nuestra política de privacidad</li>
-              </ul>
-              
-              <h5>💰 Pagos y Suscripciones</h5>
-              <ul>
-                <li>Los pagos se procesan de forma segura</li>
-                <li>Las suscripciones se renuevan automáticamente</li>
-                <li>Puedes cancelar en cualquier momento</li>
-                <li>Los reembolsos siguen nuestra política específica</li>
-              </ul>
-              
-              <h5>⚠️ Limitaciones</h5>
-              <p>AXYRA se proporciona "tal como está". No garantizamos disponibilidad 100% ni responsabilidad por pérdidas indirectas.</p>
-              
-              <div class="axyra-modal-actions" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:legal@axyra.com?subject=Consulta Legal', '_blank')">
-                  📧 Consultas Legales
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      function garantiaSatisfaccion() {
-        const modal = document.createElement('div');
-        modal.id = 'garantiaSatisfaccionModal';
-        modal.style.cssText = `
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
-          background-color: rgba(0, 0, 0, 0.8) !important;
-          z-index: 999999 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        `;
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>🛡️ Garantía de Satisfacción</h3>
-              <button class="axyra-modal-close" onclick="document.getElementById('garantiaSatisfaccionModal').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>Tu Satisfacción es Nuestra Prioridad</h4>
-              
-              <h5>✅ Garantía de Calidad</h5>
-              <p>Garantizamos la calidad y funcionamiento de nuestro sistema. Si experimentas problemas técnicos que no podemos resolver, trabajaremos contigo para encontrar una solución adecuada.</p>
-              
-              <h5>🔒 Términos de la Garantía</h5>
-              <ul>
-                <li><strong>Funcionamiento:</strong> El sistema funcionará según las especificaciones técnicas</li>
-                <li><strong>Soporte:</strong> Asistencia técnica especializada durante tu suscripción</li>
-                <li><strong>Actualizaciones:</strong> Mejoras y correcciones incluidas sin costo adicional</li>
-                <li><strong>Disponibilidad:</strong> 99.9% de tiempo de actividad del sistema</li>
-              </ul>
-              
-              <h5>📞 Cómo Reportar Problemas</h5>
-              <ol>
-                <li>Envía un email a <strong>soporte@axyra.com</strong></li>
-                <li>Describe detalladamente el problema encontrado</li>
-                <li>Incluye capturas de pantalla si es posible</li>
-                <li>Nuestro equipo técnico responderá en menos de 24 horas</li>
-              </ol>
-              
-              <h5>💡 Compromiso con la Excelencia</h5>
-              <ul>
-                <li>Sistema desarrollado con las mejores prácticas de la industria</li>
-                <li>Soporte técnico especializado y capacitado</li>
-                <li>Actualizaciones regulares basadas en feedback de usuarios</li>
-                <li>Interfaz intuitiva diseñada para facilitar el trabajo diario</li>
-                <li>Monitoreo continuo del rendimiento del sistema</li>
-              </ul>
-              
-              <h5>⚠️ Política de Reembolsos</h5>
-              <p>Los reembolsos se consideran únicamente en casos de fallas técnicas críticas que impidan el uso del sistema y que no puedan ser resueltas por nuestro equipo técnico en un plazo razonable.</p>
-              
-              <div class="axyra-modal-actions" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:soporte@axyra.com?subject=Reporte Técnico - Consulta', '_blank')">
-                  📧 Reportar Problema
-                </button>
-                <button class="axyra-btn axyra-btn-secondary" onclick="document.getElementById('garantiaSatisfaccionModal').remove()">
-                  ✅ Entendido
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      // Funciones adicionales que faltaban
-      function contactarSoporte() {
-        const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>✉️ Contactar Soporte</h3>
-              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>¿Necesitas Ayuda?</h4>
-              <p>Nuestro equipo de soporte está aquí para ayudarte con cualquier consulta sobre AXYRA.</p>
-              
-              <h5>📧 Email de Soporte</h5>
-              <p><strong>axyra.app@gmail.com</strong></p>
-              
-              <h5>📱 WhatsApp Business</h5>
-              <p><strong>+57 318 724 9579</strong></p>
-              
-              <h5>🕒 Horario de Atención</h5>
-              <p>Lunes a Viernes: 9:00 AM - 6:00 PM (Hora Colombia)</p>
-              
-              <div class="axyra-modal-actions">
-                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank')">
-                  📧 Enviar Email
-                </button>
-                <button class="axyra-btn axyra-btn-secondary" onclick="window.open('https://wa.me/573187249579?text=Hola, necesito soporte con AXYRA', '_blank')">
-                  📱 WhatsApp
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      function enviarFeedback() {
-        const modal = document.createElement('div');
-        modal.id = 'enviarFeedbackModal';
-        modal.style.cssText = `
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
-          background-color: rgba(0, 0, 0, 0.8) !important;
-          z-index: 999999 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        `;
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>📡 Enviar Feedback</h3>
-              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>Tu Opinión es Importante</h4>
-              <p>Ayúdanos a mejorar AXYRA compartiendo tus sugerencias y comentarios.</p>
-              
-              <h5>💡 ¿Qué te gustaría mejorar?</h5>
-              <ul>
-                <li>Nuevas funcionalidades</li>
-                <li>Mejoras en la interfaz</li>
-                <li>Optimización de rendimiento</li>
-                <li>Integraciones adicionales</li>
-              </ul>
-              
-              <h5>📝 Envía tu Feedback</h5>
-              <p>Escríbenos a: <strong>feedback@axyra.app</strong></p>
-              
-              <div class="axyra-modal-actions" style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button class="axyra-btn axyra-btn-primary" onclick="window.open('mailto:feedback@axyra.app?subject=Feedback AXYRA', '_blank')">
-                  📧 Enviar Feedback
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      function quienesSomos() {
-        const modal = document.createElement('div');
-        modal.id = 'quienesSomosModal';
-        modal.style.cssText = `
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100vw !important;
-          height: 100vh !important;
-          background-color: rgba(0, 0, 0, 0.8) !important;
-          z-index: 999999 !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        `;
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>👥 Quiénes Somos</h3>
-              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>AXYRA - Transformando la Gestión Empresarial</h4>
-              
-              <h5>🎯 Nuestra Misión</h5>
-              <p>Simplificar y optimizar la gestión empresarial a través de tecnología innovadora, brindando herramientas que permitan a las empresas crecer de manera eficiente y sostenible.</p>
-              
-              <h5>💡 Nuestra Visión</h5>
-              <p>Ser la plataforma líder en gestión empresarial en Colombia, reconocida por su facilidad de uso, confiabilidad y capacidad de adaptación a las necesidades de cada empresa.</p>
-              
-              <h5>🏆 Nuestros Valores</h5>
-              <ul>
-                <li><strong>Innovación:</strong> Siempre buscamos nuevas formas de mejorar</li>
-                <li><strong>Confianza:</strong> La seguridad de tus datos es nuestra prioridad</li>
-                <li><strong>Simplicidad:</strong> Hacemos lo complejo simple</li>
-                <li><strong>Compromiso:</strong> Estamos contigo en cada paso</li>
-              </ul>
-              
-              <h5>📊 Nuestro Impacto</h5>
-              <ul>
-                <li>+500 empresas confían en AXYRA</li>
-                <li>+10,000 empleados gestionados</li>
-                <li>99.9% de tiempo de actividad</li>
-                <li>Respuesta de soporte en menos de 2 horas</li>
-              </ul>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-      }
-
-      // Sección NUESTROS SERVICIOS
-      function servicioEmpleados() {
-        handleEmpleadosAccess();
-      }
-
-      function servicioHoras() {
-        handleHorasAccess();
-      }
-
-      function servicioNomina() {
-        handleNominaAccess();
-      }
-
-      function servicioCuadre() {
-        handleCuadreAccess();
-      }
-
-      function servicioConfiguracion() {
-        if (localStorage.getItem('axyra_isolated_user')) {
-          window.location.href = 'modulos/configuracion/configuracion.html';
-        } else {
-          showAuthModal();
-        }
-      }
-
-      function servicioDashboard() {
-        handleDashboardAccess();
-      }
-
-      // Sección SIGUENOS
-      function seguirFacebook() {
-        alert('Próximamente: Síguenos en Facebook para tips de gestión empresarial.');
-      }
-
-      function seguirInstagram() {
-        alert('Próximamente: Síguenos en Instagram para contenido visual de AXYRA.');
-      }
-
-      function seguirLinkedIn() {
-        alert('Próximamente: Conecta con nosotros en LinkedIn para networking empresarial.');
-      }
-
-      // Sección OFRECE TUS SERVICIOS
-      function ofrecerServicios() {
-        if (localStorage.getItem('axyra_isolated_user')) {
-          alert(
-            '¡Gracias por tu interés! Ya tienes acceso completo a AXYRA. Si quieres ofrecer servicios adicionales, contáctanos en axyra.app@gmail.com'
-          );
-        } else {
-          showAuthModal();
-        }
-      }
-
-      // ========================================
-      // FUNCIONES DE CONTACTO
-      // ========================================
-
-      function enviarEmailSoporte() {
-        window.open('mailto:axyra.app@gmail.com?subject=Soporte AXYRA', '_blank');
-      }
-
-      function contactarWhatsApp() {
-        const mensaje = encodeURIComponent('Hola, necesito información sobre AXYRA');
-        window.open(`https://wa.me/573187249579?text=${mensaje}`, '_blank');
-      }
-
-      function enviarMensajeContacto(event) {
-        event.preventDefault();
-
-        const formData = new FormData(event.target);
-        const data = {
-          name: formData.get('name'),
-          email: formData.get('email'),
-          subject: formData.get('subject'),
-          message: formData.get('message'),
-        };
-
-        // Simular envío (en producción esto iría a un servidor)
-        const modal = document.createElement('div');
-        modal.className = 'axyra-modal';
-        modal.style.display = 'flex';
-        modal.innerHTML = `
-          <div class="axyra-modal-content">
-            <div class="axyra-modal-header">
-              <h3>✅ Mensaje Enviado</h3>
-              <button class="axyra-modal-close" onclick="this.closest('[id$=Modal]').remove()">&times;</button>
-            </div>
-            <div class="axyra-modal-body">
-              <h4>¡Gracias por tu mensaje!</h4>
-              <p>Hemos recibido tu consulta y te responderemos en las próximas 24 horas.</p>
-              
-              <h5>📋 Detalles del mensaje:</h5>
-              <ul>
-                <li><strong>Nombre:</strong> ${data.name}</li>
-                <li><strong>Email:</strong> ${data.email}</li>
-                <li><strong>Asunto:</strong> ${data.subject}</li>
-                <li><strong>Mensaje:</strong> ${data.message}</li>
-              </ul>
-              
-              <p><strong>📧 Email de confirmación enviado a:</strong> ${data.email}</p>
-              
-              <div class="axyra-modal-actions">
-                <button class="axyra-btn axyra-btn-primary" onclick="this.closest('[id$=Modal]').remove()">
-                  ✅ Entendido
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        document.body.appendChild(modal);
-
-        // Limpiar formulario
-        event.target.reset();
-      }
-    </script>
-
-    <!-- Sistema de Membresías AXYRA -->
-    <script src="static/membership-system.js"></script>
-
-    <!-- Vercel Config -->
-    <script src="static/vercel-config.js"></script>
-
-    <!-- Live Chat AI -->
-    <script src="static/live-chat-ai.js?v=5"></script>
-    <link rel="stylesheet" href="static/live-chat-styles.css?v=5" />
-
-    <!-- Script para forzar recarga y limpiar caché -->
-    <script>
-      // Forzar recarga si es versión antigua
-        if (localStorage.getItem('axyra_version') !== 'v20') {
-          localStorage.setItem('axyra_version', 'v20');
-        if (performance.navigation.type === 1) {
-          // Solo recargar si no es la primera carga
-          window.location.reload(true);
-        }
-      }
-
-    </script>
-
-    <!-- Script BRUTAL para efectos espectaculares -->
-    <script>
-      // Función para agregar efectos brutales
-      function addBrutalEffects() {
-        // Agregar animaciones a las tarjetas
-        const cards = document.querySelectorAll('.axyra-feature-card, .axyra-quick-card, .axyra-membership-card');
-        cards.forEach((card, index) => {
-          card.style.animationDelay = `${index * 0.1}s`;
-          card.style.animation = 'cardSlideInBrutal 0.8s cubic-bezier(0.4, 0, 0.2, 1) both';
-        });
-
-        // Efecto de scroll reveal brutal
-        const observerOptions = {
-          threshold: 0.1,
-          rootMargin: '0px 0px -100px 0px',
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.style.animation = 'cardSlideInBrutal 0.8s cubic-bezier(0.4, 0, 0.2, 1) both';
-
-              // Efecto de partículas al aparecer
-              createParticleEffect(entry.target);
+      // Verificar si ya está autenticado
+      document.addEventListener('DOMContentLoaded', function() {
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+          firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              // Usuario autenticado, redirigir al dashboard
+              window.location.href = 'modulos/dashboard/dashboard.html';
             }
           });
-        }, observerOptions);
-
-        // Observar todas las tarjetas
-        cards.forEach((card) => observer.observe(card));
-
-        // Efectos de mouse tracking
-        addMouseTrackingEffects();
-
-        // Efectos de parallax
-        addParallaxEffects();
-
-        console.log('🔥 Efectos BRUTALES aplicados');
-      }
-
-      // Función para crear efecto de partículas
-      function createParticleEffect(element) {
-        const rect = element.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        for (let i = 0; i < 8; i++) {
-          const particle = document.createElement('div');
-          particle.style.position = 'fixed';
-          particle.style.left = centerX + 'px';
-          particle.style.top = centerY + 'px';
-          particle.style.width = '4px';
-          particle.style.height = '4px';
-          particle.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
-          particle.style.borderRadius = '50%';
-          particle.style.pointerEvents = 'none';
-          particle.style.zIndex = '9999';
-          particle.style.animation = `particleExplode 1s ease-out forwards`;
-
-          const angle = (i / 8) * Math.PI * 2;
-          const distance = 50 + Math.random() * 50;
-          const endX = centerX + Math.cos(angle) * distance;
-          const endY = centerY + Math.sin(angle) * distance;
-
-          particle.style.setProperty('--end-x', endX + 'px');
-          particle.style.setProperty('--end-y', endY + 'px');
-
-          document.body.appendChild(particle);
-
-          setTimeout(() => {
-            particle.remove();
-          }, 1000);
         }
-      }
-
-      // Agregar CSS para partículas
-      const particleStyle = document.createElement('style');
-      particleStyle.textContent = `
-        @keyframes particleExplode {
-          0% {
-            transform: scale(0) translate(0, 0);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(1) translate(calc(var(--end-x) - 50%), calc(var(--end-y) - 50%));
-            opacity: 0;
-          }
-        }
-      `;
-      document.head.appendChild(particleStyle);
-
-      // Efectos de seguimiento del mouse
-      function addMouseTrackingEffects() {
-        document.addEventListener('mousemove', (e) => {
-          const cards = document.querySelectorAll('.axyra-feature-card, .axyra-quick-card, .axyra-membership-card');
-
-          cards.forEach((card) => {
-            const rect = card.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-
-            const deltaX = (e.clientX - centerX) / 20;
-            const deltaY = (e.clientY - centerY) / 20;
-
-            if (Math.abs(deltaX) < 50 && Math.abs(deltaY) < 50) {
-              card.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(1.02)`;
-              card.style.transition = 'transform 0.1s ease-out';
-            } else {
-              card.style.transform = 'translate(0, 0) scale(1)';
-            }
-          });
-        });
-      }
-
-      // Efectos de parallax
-      function addParallaxEffects() {
-        window.addEventListener('scroll', () => {
-          const scrolled = window.pageYOffset;
-          const sections = document.querySelectorAll('.axyra-section');
-
-          sections.forEach((section, index) => {
-            const speed = 0.5 + index * 0.1;
-            const yPos = -(scrolled * speed);
-            section.style.transform = `translateY(${yPos}px)`;
-          });
-        });
-      }
-
-      // Efectos de click brutal
-      function addClickEffects() {
-        const buttons = document.querySelectorAll('.axyra-btn');
-
-        buttons.forEach((button) => {
-          button.addEventListener('click', (e) => {
-            // Efecto de ripple
-            const ripple = document.createElement('span');
-            const rect = button.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height);
-            const x = e.clientX - rect.left - size / 2;
-            const y = e.clientY - rect.top - size / 2;
-
-            ripple.style.position = 'absolute';
-            ripple.style.left = x + 'px';
-            ripple.style.top = y + 'px';
-            ripple.style.width = size + 'px';
-            ripple.style.height = size + 'px';
-            ripple.style.background = 'rgba(255, 255, 255, 0.6)';
-            ripple.style.borderRadius = '50%';
-            ripple.style.transform = 'scale(0)';
-            ripple.style.animation = 'ripple 0.6s ease-out';
-            ripple.style.pointerEvents = 'none';
-
-            button.style.position = 'relative';
-            button.style.overflow = 'hidden';
-            button.appendChild(ripple);
-
-            setTimeout(() => {
-              ripple.remove();
-            }, 600);
-          });
-        });
-      }
-
-      // Agregar CSS para ripple
-      const rippleStyle = document.createElement('style');
-      rippleStyle.textContent = `
-        @keyframes ripple {
-          to {
-            transform: scale(2);
-            opacity: 0;
-          }
-        }
-      `;
-      document.head.appendChild(rippleStyle);
-
-      // Efectos brutales específicos para el header
-      function addHeaderBrutalEffects() {
-        const header = document.querySelector('.axyra-header');
-        if (!header) return;
-
-        // Efecto de partículas dinámicas en el header
-        setInterval(() => {
-          createHeaderParticle(header);
-        }, 2000);
-
-        // Efecto de brillo al hacer scroll
-        window.addEventListener('scroll', () => {
-          const scrolled = window.pageYOffset;
-          if (scrolled > 50) {
-            header.style.boxShadow = `
-              0 15px 50px rgba(0, 0, 0, 0.5),
-              0 0 30px rgba(59, 130, 246, 0.3),
-              inset 0 1px 0 rgba(255, 255, 255, 0.2)
-            `;
-          } else {
-            header.style.boxShadow = `
-              0 10px 40px rgba(0, 0, 0, 0.4),
-              0 0 20px rgba(59, 130, 246, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.1)
-            `;
-          }
-        });
-
-        console.log('🔥 Efectos brutales del header aplicados');
-      }
-
-      // Crear partículas en el header
-      function createHeaderParticle(header) {
-        const particle = document.createElement('div');
-        particle.style.position = 'absolute';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.top = '100%';
-        particle.style.width = '2px';
-        particle.style.height = '2px';
-        particle.style.background = `hsl(${Math.random() * 60 + 200}, 70%, 60%)`;
-        particle.style.borderRadius = '50%';
-        particle.style.pointerEvents = 'none';
-        particle.style.zIndex = '1';
-        particle.style.animation = 'headerParticleFloat 3s ease-out forwards';
-
-        header.appendChild(particle);
-
-        setTimeout(() => {
-          particle.remove();
-        }, 3000);
-      }
-
-      // Agregar CSS para partículas del header
-      const headerParticleStyle = document.createElement('style');
-      headerParticleStyle.textContent = `
-        @keyframes headerParticleFloat {
-          0% {
-            transform: translateY(0) scale(0);
-            opacity: 1;
-          }
-          50% {
-            transform: translateY(-50px) scale(1);
-            opacity: 0.8;
-          }
-          100% {
-            transform: translateY(-100px) scale(0);
-            opacity: 0;
-          }
-        }
-      `;
-      document.head.appendChild(headerParticleStyle);
-
-      // Aplicar cuando se carga el DOM
-      document.addEventListener('DOMContentLoaded', function () {
-        addBrutalEffects();
-        addClickEffects();
-        addHeaderBrutalEffects();
-      });
-
-      // Aplicar cuando se carga la ventana
-      window.addEventListener('load', function () {
-        addBrutalEffects();
-        addClickEffects();
-        addHeaderBrutalEffects();
       });
     </script>
-
-    <!-- Scripts avanzados -->
-    <!-- Header Compartido AXYRA -->
-    <script src="static/include-header.js"></script>
-    <script src="static/ai-chat-system.js"></script>
-    <script src="static/notifications.js"></script>
-    <script src="static/dashboard-analytics.js"></script>
-    <script src="static/monitoring.js"></script>
   </body>
 </html>
