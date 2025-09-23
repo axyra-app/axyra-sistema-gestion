@@ -558,6 +558,9 @@
               <button type="button" class="btn btn-outline-primary" onclick="calcularHoras()">
                 <i class="fas fa-calculator"></i> Calcular
               </button>
+              <button type="button" class="btn btn-success" data-generate-work-order>
+                <i class="fas fa-file-invoice"></i> Generar Comprobante
+              </button>
             </div>
           </form>
         </div>
@@ -801,6 +804,8 @@
     <script src="../../static/firebase-config.js"></script>
     <script src="../../static/firebase-sync-manager.js"></script>
     <script src="gestion_personal_optimized.js"></script>
+    <script src="../../static/company-config-system.js"></script>
+    <script src="../../static/work-order-generator.js"></script>
     <script>
       // Función para cambiar pestañas
       function cambiarTab(tabName) {
