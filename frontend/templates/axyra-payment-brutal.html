@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXYRA Payment - Confirmación de Pago</title>
+</head>
+<body>
+    <!-- CÓDIGO BRUTAL PARA AXYRA PAYMENT CONFIRMATION -->
+    <div style="
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        margin: 0;
+        padding: 20px;
+    ">
+        <div style="max-width: 700px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.15);">
+            
+            <!-- HEADER BRUTAL -->
+            <div style="
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                padding: 30px;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            ">
+                <div style="
+                    position: absolute;
+                    top: -50%;
+                    left: -50%;
+                    width: 200%;
+                    height: 200%;
+                    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                    animation: pulse 3s ease-in-out infinite;
+                "></div>
+                
+                <a style="text-decoration: none; outline: none; display: inline-block;" href="{{login_url}}" target="_blank">
+                    <img style="height: 50px; vertical-align: middle; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));" 
+                         height="50px" 
+                         src="cid:logo.png" 
+                         alt="AXYRA Logo" />
+                </a>
+                
+                <div style="margin-top: 20px;">
+                    <h1 style="
+                        color: #ffffff;
+                        font-size: 32px;
+                        font-weight: 800;
+                        margin: 0;
+                        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                        letter-spacing: 1px;
+                    ">💳 PAGO CONFIRMADO</h1>
+                    <p style="
+                        color: #e8f5e8;
+                        font-size: 18px;
+                        margin: 10px 0 0 0;
+                        font-weight: 500;
+                    ">AXYRA - Sistema de Gestión Empresarial</p>
+                </div>
+            </div>
+
+            <!-- CONTENIDO PRINCIPAL -->
+            <div style="padding: 40px 30px;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="
+                        color: #333;
+                        font-size: 24px;
+                        font-weight: 700;
+                        margin: 0 0 10px 0;
+                    ">¡Hola {{to_name}}!</h2>
+                    <p style="
+                        color: #666;
+                        font-size: 16px;
+                        line-height: 1.6;
+                        margin: 0;
+                    ">Tu pago ha sido procesado exitosamente. Aquí tienes todos los detalles:</p>
+                </div>
+
+                <!-- INFORMACIÓN DE PAGO BRUTAL -->
+                <div style="
+                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                    border: 3px solid #28a745;
+                    border-radius: 20px;
+                    padding: 30px;
+                    margin: 30px 0;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: linear-gradient(45deg, transparent 30%, rgba(40,167,69,0.1) 50%, transparent 70%);
+                        animation: shimmer 2s ease-in-out infinite;
+                    "></div>
+                    
+                    <div style="position: relative; z-index: 1;">
+                        <h3 style="
+                            color: #28a745;
+                            font-size: 20px;
+                            margin: 0 0 25px 0;
+                            font-weight: 700;
+                            text-align: center;
+                        ">📋 Detalles de la Transacción</h3>
+                        
+                        <div style="
+                            background: #ffffff;
+                            border-radius: 15px;
+                            padding: 25px;
+                            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                        ">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 12px 0; color: #666; font-weight: 600; border-bottom: 1px solid #eee;">Plan:</td>
+                                    <td style="padding: 12px 0; color: #333; font-weight: 700; border-bottom: 1px solid #eee;">{{plan_name}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px 0; color: #666; font-weight: 600; border-bottom: 1px solid #eee;">Duración:</td>
+                                    <td style="padding: 12px 0; color: #333; font-weight: 700; border-bottom: 1px solid #eee;">{{plan_duration}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px 0; color: #666; font-weight: 600; border-bottom: 1px solid #eee;">Método de Pago:</td>
+                                    <td style="padding: 12px 0; color: #333; font-weight: 700; border-bottom: 1px solid #eee;">{{payment_method}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px 0; color: #666; font-weight: 600; border-bottom: 1px solid #eee;">Fecha:</td>
+                                    <td style="padding: 12px 0; color: #333; font-weight: 700; border-bottom: 1px solid #eee;">{{payment_date}}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 12px 0; color: #666; font-weight: 600; border-bottom: 1px solid #eee;">ID Transacción:</td>
+                                    <td style="padding: 12px 0; color: #333; font-weight: 700; border-bottom: 1px solid #eee; font-family: monospace;">{{transaction_id}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MONTO TOTAL BRUTAL -->
+                <div style="
+                    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+                    border-radius: 20px;
+                    padding: 30px;
+                    text-align: center;
+                    margin: 30px 0;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+                        animation: pulse 2s ease-in-out infinite;
+                    "></div>
+                    
+                    <div style="position: relative; z-index: 1;">
+                        <p style="
+                            color: #e3f2fd;
+                            font-size: 16px;
+                            margin: 0 0 10px 0;
+                            font-weight: 600;
+                        ">MONTO TOTAL PAGADO</p>
+                        <h1 style="
+                            color: #ffffff;
+                            font-size: 48px;
+                            font-weight: 900;
+                            margin: 0;
+                            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                        ">{{payment_amount}}</h1>
+                    </div>
+                </div>
+
+                <!-- PRÓXIMO PAGO -->
+                <div style="
+                    background: #fff3cd;
+                    border: 2px solid #ffeaa7;
+                    border-radius: 15px;
+                    padding: 20px;
+                    margin: 30px 0;
+                    text-align: center;
+                ">
+                    <h3 style="
+                        color: #856404;
+                        font-size: 18px;
+                        margin: 0 0 10px 0;
+                        font-weight: 700;
+                    ">🔄 Próximo Pago</h3>
+                    <p style="
+                        color: #856404;
+                        font-size: 16px;
+                        margin: 0;
+                        font-weight: 600;
+                    ">{{next_payment}}</p>
+                </div>
+
+                <!-- BOTÓN DE ACCIÓN BRUTAL -->
+                <div style="text-align: center; margin: 40px 0;">
+                    <a href="{{login_url}}" style="
+                        display: inline-block;
+                        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                        color: #ffffff;
+                        text-decoration: none;
+                        padding: 18px 40px;
+                        border-radius: 50px;
+                        font-size: 18px;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        box-shadow: 0 8px 25px rgba(40,167,69,0.4);
+                        transition: all 0.3s ease;
+                        position: relative;
+                        overflow: hidden;
+                    " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 12px 35px rgba(40,167,69,0.6)';" 
+                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(40,167,69,0.4)';">
+                        <span style="position: relative; z-index: 1;">🚀 ACCEDER A MI CUENTA</span>
+                        <div style="
+                            position: absolute;
+                            top: 0;
+                            left: -100%;
+                            width: 100%;
+                            height: 100%;
+                            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                            animation: slide 2s infinite;
+                        "></div>
+                    </a>
+                </div>
+
+                <!-- INFORMACIÓN ADICIONAL -->
+                <div style="
+                    background: #f8f9fa;
+                    border-left: 4px solid #007bff;
+                    padding: 20px;
+                    border-radius: 0 10px 10px 0;
+                    margin: 30px 0;
+                ">
+                    <h3 style="
+                        color: #007bff;
+                        font-size: 16px;
+                        margin: 0 0 15px 0;
+                        font-weight: 700;
+                    ">✨ ¡Gracias por confiar en AXYRA!</h3>
+                    <ul style="
+                        color: #666;
+                        font-size: 14px;
+                        line-height: 1.6;
+                        margin: 0;
+                        padding-left: 20px;
+                    ">
+                        <li>Tu suscripción está activa y lista para usar</li>
+                        <li>Acceso completo a todas las funcionalidades</li>
+                        <li>Soporte técnico prioritario incluido</li>
+                        <li>Actualizaciones automáticas del sistema</li>
+                    </ul>
+                </div>
+
+                <!-- CONTACTO -->
+                <div style="text-align: center; margin-top: 40px;">
+                    <p style="
+                        color: #666;
+                        font-size: 14px;
+                        margin: 0 0 10px 0;
+                    ">¿Preguntas sobre tu pago? Nuestro equipo está aquí para ti:</p>
+                    <p style="
+                        color: #007bff;
+                        font-size: 16px;
+                        font-weight: 600;
+                        margin: 0;
+                    ">📧 {{support_email}} | 🌐 {{company_name}}</p>
+                </div>
+            </div>
+
+            <!-- FOOTER BRUTAL -->
+            <div style="
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+                color: #ffffff;
+                padding: 30px;
+                text-align: center;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-bottom: 20px;
+                ">
+                    <div style="
+                        width: 40px;
+                        height: 40px;
+                        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin-right: 15px;
+                    ">
+                        <span style="font-size: 20px;">💳</span>
+                    </div>
+                    <div>
+                        <h3 style="
+                            color: #ffffff;
+                            font-size: 18px;
+                            margin: 0;
+                            font-weight: 700;
+                        ">AXYRA</h3>
+                        <p style="
+                            color: #bdc3c7;
+                            font-size: 12px;
+                            margin: 0;
+                        ">Sistema de Gestión Empresarial</p>
+                    </div>
+                </div>
+                
+                <div style="
+                    border-top: 1px solid #34495e;
+                    padding-top: 20px;
+                    margin-top: 20px;
+                ">
+                    <p style="
+                        color: #bdc3c7;
+                        font-size: 12px;
+                        margin: 0;
+                    ">© {{current_year}} AXYRA - Todos los derechos reservados</p>
+                    <p style="
+                        color: #95a5a6;
+                        font-size: 11px;
+                        margin: 5px 0 0 0;
+                    ">Este correo fue enviado a {{to_email}} porque realizaste un pago en AXYRA</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; }
+            50% { transform: scale(1.1) rotate(180deg); opacity: 0.8; }
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes slide {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+    </style>
+</body>
+</html>

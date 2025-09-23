@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXYRA - Templates EmailJS Finales</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+        .template {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            background: #f8f9fa;
+        }
+        .template h3 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .copy-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; color: #333; margin-bottom: 30px;">🚀 AXYRA - Templates EmailJS BRUTALES</h1>
+        
+        <!-- TEMPLATE 1: ONE-TIME PASSWORD -->
+        <div class="template">
+            <h3>1. 🔐 ONE-TIME PASSWORD (Código de Acceso)</h3>
+            <p><strong>Template ID:</strong> <code>template_login_code</code></p>
+            <p><strong>Variables:</strong> {{to_name}}, {{login_code}}, {{code_expires}}, {{login_url}}, {{support_email}}, {{company_name}}, {{current_year}}, {{to_email}}</p>
+            
+            <button class="copy-btn" onclick="copyToClipboard('otp-code')">📋 Copiar Código</button>
+            
+            <div id="otp-code" class="code-block">
+&lt;div style="
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+"&gt;
+    &lt;div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.15);"&gt;
+        
+        &lt;!-- HEADER BRUTAL --&gt;
+        &lt;div style="
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        "&gt;
+            &lt;div style="
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                animation: pulse 3s ease-in-out infinite;
+            "&gt;&lt;/div&gt;
+            
+            &lt;a style="text-decoration: none; outline: none; display: inline-block;" href="{{login_url}}" target="_blank"&gt;
+                &lt;img style="height: 50px; vertical-align: middle; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));" 
+                     height="50px" 
+                     src="cid:logo.png" 
+                     alt="AXYRA Logo" /&gt;
+            &lt;/a&gt;
+            
+            &lt;div style="margin-top: 20px;"&gt;
+                &lt;h1 style="
+                    color: #ffffff;
+                    font-size: 32px;
+                    font-weight: 800;
+                    margin: 0;
+                    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    letter-spacing: 1px;
+                "&gt;🔐 CÓDIGO DE ACCESO&lt;/h1&gt;
+                &lt;p style="
+                    color: #e3f2fd;
+                    font-size: 18px;
+                    margin: 10px 0 0 0;
+                    font-weight: 500;
+                "&gt;AXYRA - Sistema de Gestión Empresarial&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- CONTENIDO PRINCIPAL --&gt;
+        &lt;div style="padding: 40px 30px;"&gt;
+            &lt;div style="text-align: center; margin-bottom: 30px;"&gt;
+                &lt;h2 style="
+                    color: #333;
+                    font-size: 24px;
+                    font-weight: 700;
+                    margin: 0 0 10px 0;
+                "&gt;Hola {{to_name}},&lt;/h2&gt;
+                &lt;p style="
+                    color: #666;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    margin: 0;
+                "&gt;Has solicitado acceso a &lt;strong style="color: #007bff;"&gt;AXYRA&lt;/strong&gt;. Usa el siguiente código para autenticarte:&lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;!-- CÓDIGO BRUTAL --&gt;
+            &lt;div style="
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border: 3px solid #007bff;
+                border-radius: 20px;
+                padding: 40px;
+                text-align: center;
+                margin: 30px 0;
+                position: relative;
+                overflow: hidden;
+            "&gt;
+                &lt;div style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(45deg, transparent 30%, rgba(0,123,255,0.1) 50%, transparent 70%);
+                    animation: shimmer 2s ease-in-out infinite;
+                "&gt;&lt;/div&gt;
+                
+                &lt;div style="
+                    background: #ffffff;
+                    border: 2px dashed #007bff;
+                    border-radius: 15px;
+                    padding: 30px;
+                    margin: 20px 0;
+                    position: relative;
+                    z-index: 1;
+                "&gt;
+                    &lt;p style="
+                        color: #666;
+                        font-size: 14px;
+                        margin: 0 0 15px 0;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                    "&gt;TU CÓDIGO DE ACCESO&lt;/p&gt;
+                    &lt;h1 style="
+                        color: #007bff;
+                        font-size: 48px;
+                        font-weight: 900;
+                        margin: 0;
+                        letter-spacing: 8px;
+                        font-family: 'Courier New', monospace;
+                        text-shadow: 0 2px 4px rgba(0,123,255,0.3);
+                    "&gt;{{login_code}}&lt;/h1&gt;
+                &lt;/div&gt;
+                
+                &lt;div style="
+                    background: #fff3cd;
+                    border: 1px solid #ffeaa7;
+                    border-radius: 10px;
+                    padding: 15px;
+                    margin: 20px 0;
+                    position: relative;
+                    z-index: 1;
+                "&gt;
+                    &lt;p style="
+                        color: #856404;
+                        font-size: 14px;
+                        margin: 0;
+                        font-weight: 600;
+                    "&gt;⏰ Este código expira en &lt;strong&gt;{{code_expires}}&lt;/strong&gt;&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- BOTÓN DE ACCIÓN BRUTAL --&gt;
+            &lt;div style="text-align: center; margin: 40px 0;"&gt;
+                &lt;a href="{{login_url}}" style="
+                    display: inline-block;
+                    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+                    color: #ffffff;
+                    text-decoration: none;
+                    padding: 18px 40px;
+                    border-radius: 50px;
+                    font-size: 18px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    box-shadow: 0 8px 25px rgba(0,123,255,0.4);
+                "&gt;
+                    🚀 ACCEDER A AXYRA
+                &lt;/a&gt;
+            &lt;/div&gt;
+
+            &lt;!-- INFORMACIÓN DE SEGURIDAD --&gt;
+            &lt;div style="
+                background: #f8f9fa;
+                border-left: 4px solid #28a745;
+                padding: 20px;
+                border-radius: 0 10px 10px 0;
+                margin: 30px 0;
+            "&gt;
+                &lt;h3 style="
+                    color: #28a745;
+                    font-size: 16px;
+                    margin: 0 0 10px 0;
+                    font-weight: 700;
+                "&gt;🛡️ Información de Seguridad&lt;/h3&gt;
+                &lt;ul style="
+                    color: #666;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    margin: 0;
+                    padding-left: 20px;
+                "&gt;
+                    &lt;li&gt;No compartas este código con nadie&lt;/li&gt;
+                    &lt;li&gt;AXYRA nunca te pedirá tu código por teléfono&lt;/li&gt;
+                    &lt;li&gt;Si no solicitaste este código, ignora este correo&lt;/li&gt;
+                    &lt;li&gt;Tu cuenta permanece segura&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+
+            &lt;!-- CONTACTO --&gt;
+            &lt;div style="text-align: center; margin-top: 40px;"&gt;
+                &lt;p style="
+                    color: #666;
+                    font-size: 14px;
+                    margin: 0 0 10px 0;
+                "&gt;¿Necesitas ayuda? Nuestro equipo está aquí para ti:&lt;/p&gt;
+                &lt;p style="
+                    color: #007bff;
+                    font-size: 16px;
+                    font-weight: 600;
+                    margin: 0;
+                "&gt;📧 {{support_email}} | 🌐 {{company_name}}&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- FOOTER BRUTAL --&gt;
+        &lt;div style="
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ffffff;
+            padding: 30px;
+            text-align: center;
+        "&gt;
+            &lt;div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 20px;
+            "&gt;
+                &lt;div style="
+                    width: 40px;
+                    height: 40px;
+                    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 15px;
+                "&gt;
+                    &lt;span style="font-size: 20px;"&gt;⚡&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div&gt;
+                    &lt;h3 style="
+                        color: #ffffff;
+                        font-size: 18px;
+                        margin: 0;
+                        font-weight: 700;
+                    "&gt;AXYRA&lt;/h3&gt;
+                    &lt;p style="
+                        color: #bdc3c7;
+                        font-size: 12px;
+                        margin: 0;
+                    "&gt;Sistema de Gestión Empresarial&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;div style="
+                border-top: 1px solid #34495e;
+                padding-top: 20px;
+                margin-top: 20px;
+            "&gt;
+                &lt;p style="
+                    color: #bdc3c7;
+                    font-size: 12px;
+                    margin: 0;
+                "&gt;© {{current_year}} AXYRA - Todos los derechos reservados&lt;/p&gt;
+                &lt;p style="
+                    color: #95a5a6;
+                    font-size: 11px;
+                    margin: 5px 0 0 0;
+                "&gt;Este correo fue enviado a {{to_email}} porque solicitaste acceso a AXYRA&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+    @keyframes pulse {
+        0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; }
+        50% { transform: scale(1.1) rotate(180deg); opacity: 0.8; }
+    }
+    
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+&lt;/style&gt;
+            </div>
+        </div>
+
+        <!-- TEMPLATE 2: PAYMENT CONFIRMATION -->
+        <div class="template">
+            <h3>2. 💳 PAYMENT CONFIRMATION (Resumen de Pagos)</h3>
+            <p><strong>Template ID:</strong> <code>template_payment_summary</code></p>
+            <p><strong>Variables:</strong> {{to_name}}, {{plan_name}}, {{plan_duration}}, {{payment_amount}}, {{payment_method}}, {{payment_date}}, {{transaction_id}}, {{next_payment}}, {{login_url}}, {{support_email}}, {{company_name}}, {{current_year}}, {{to_email}}</p>
+            
+            <button class="copy-btn" onclick="copyToClipboard('payment-code')">📋 Copiar Código</button>
+            
+            <div id="payment-code" class="code-block">
+&lt;div style="
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+"&gt;
+    &lt;div style="max-width: 700px; margin: 0 auto; background: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.15);"&gt;
+        
+        &lt;!-- HEADER BRUTAL --&gt;
+        &lt;div style="
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        "&gt;
+            &lt;div style="
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+                animation: pulse 3s ease-in-out infinite;
+            "&gt;&lt;/div&gt;
+            
+            &lt;a style="text-decoration: none; outline: none; display: inline-block;" href="{{login_url}}" target="_blank"&gt;
+                &lt;img style="height: 50px; vertical-align: middle; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));" 
+                     height="50px" 
+                     src="cid:logo.png" 
+                     alt="AXYRA Logo" /&gt;
+            &lt;/a&gt;
+            
+            &lt;div style="margin-top: 20px;"&gt;
+                &lt;h1 style="
+                    color: #ffffff;
+                    font-size: 32px;
+                    font-weight: 800;
+                    margin: 0;
+                    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    letter-spacing: 1px;
+                "&gt;💳 PAGO CONFIRMADO&lt;/h1&gt;
+                &lt;p style="
+                    color: #e8f5e8;
+                    font-size: 18px;
+                    margin: 10px 0 0 0;
+                    font-weight: 500;
+                "&gt;AXYRA - Sistema de Gestión Empresarial&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- CONTENIDO PRINCIPAL --&gt;
+        &lt;div style="padding: 40px 30px;"&gt;
+            &lt;div style="text-align: center; margin-bottom: 30px;"&gt;
+                &lt;h2 style="
+                    color: #333;
+                    font-size: 24px;
+                    font-weight: 700;
+                    margin: 0 0 10px 0;
+                "&gt;¡Hola {{to_name}}!&lt;/h2&gt;
+                &lt;p style="
+                    color: #666;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    margin: 0;
+                "&gt;Tu pago ha sido procesado exitosamente. Aquí tienes todos los detalles:&lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;!-- INFORMACIÓN DE PAGO BRUTAL --&gt;
+            &lt;div style="
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                border: 3px solid #28a745;
+                border-radius: 20px;
+                padding: 30px;
+                margin: 30px 0;
+                position: relative;
+                overflow: hidden;
+            "&gt;
+                &lt;div style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(45deg, transparent 30%, rgba(40,167,69,0.1) 50%, transparent 70%);
+                    animation: shimmer 2s ease-in-out infinite;
+                "&gt;&lt;/div&gt;
+                
+                &lt;div style="position: relative; z-index: 1;"&gt;
+                    &lt;h3 style="
+                        color: #28a745;
+                        font-size: 20px;
+                        margin: 0 0 25px 0;
+                        font-weight: 700;
+                        text-align: center;
+                    "&gt;📋 Detalles de la Transacción&lt;/h3&gt;
+                    
+                    &lt;div style="
+                        background: #ffffff;
+                        border-radius: 15px;
+                        padding: 25px;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                    "&gt;
+                        &lt;table style="width: 100%; border-collapse: collapse;"&gt;
+                            &lt;tr&gt;
+                                &lt;td style="padding: 12px 0; color: #666; font-weight: 600; border-bottom: 1px solid #eee;"&gt;Plan:&lt;/td&gt;
+                                &lt;td style="padding: 12px 0; color: #333; font-weight: 700; border-bottom: 1px solid #eee;"&gt;{{plan_name}}&lt;/td&gt;
+                            &lt;/tr&gt;
+                            &lt;tr&gt;
+                                &lt;td style="padding: 12px 0; color: #666; font-weight: 600; border-bottom: 1px solid #eee;"&gt;Duración:&lt;/td&gt;
+                                &lt;td style="padding: 12px 0; color: #333; font-weight: 700; border-bottom: 1px solid #eee;"&gt;{{plan_duration}}&lt;/td&gt;
+                            &lt;/tr&gt;
+                            &lt;tr&gt;
+                                &lt;td style="padding: 12px 0; color: #666; font-weight: 600; border-bottom: 1px solid #eee;"&gt;Método de Pago:&lt;/td&gt;
+                                &lt;td style="padding: 12px 0; color: #333; font-weight: 700; border-bottom: 1px solid #eee;"&gt;{{payment_method}}&lt;/td&gt;
+                            &lt;/tr&gt;
+                            &lt;tr&gt;
+                                &lt;td style="padding: 12px 0; color: #666; font-weight: 600; border-bottom: 1px solid #eee;"&gt;Fecha:&lt;/td&gt;
+                                &lt;td style="padding: 12px 0; color: #333; font-weight: 700; border-bottom: 1px solid #eee;"&gt;{{payment_date}}&lt;/td&gt;
+                            &lt;/tr&gt;
+                            &lt;tr&gt;
+                                &lt;td style="padding: 12px 0; color: #666; font-weight: 600; border-bottom: 1px solid #eee;"&gt;ID Transacción:&lt;/td&gt;
+                                &lt;td style="padding: 12px 0; color: #333; font-weight: 700; border-bottom: 1px solid #eee; font-family: monospace;"&gt;{{transaction_id}}&lt;/td&gt;
+                            &lt;/tr&gt;
+                        &lt;/table&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- MONTO TOTAL BRUTAL --&gt;
+            &lt;div style="
+                background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+                border-radius: 20px;
+                padding: 30px;
+                text-align: center;
+                margin: 30px 0;
+                position: relative;
+                overflow: hidden;
+            "&gt;
+                &lt;div style="
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+                    animation: pulse 2s ease-in-out infinite;
+                "&gt;&lt;/div&gt;
+                
+                &lt;div style="position: relative; z-index: 1;"&gt;
+                    &lt;p style="
+                        color: #e3f2fd;
+                        font-size: 16px;
+                        margin: 0 0 10px 0;
+                        font-weight: 600;
+                    "&gt;MONTO TOTAL PAGADO&lt;/p&gt;
+                    &lt;h1 style="
+                        color: #ffffff;
+                        font-size: 48px;
+                        font-weight: 900;
+                        margin: 0;
+                        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    "&gt;{{payment_amount}}&lt;/h1&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- PRÓXIMO PAGO --&gt;
+            &lt;div style="
+                background: #fff3cd;
+                border: 2px solid #ffeaa7;
+                border-radius: 15px;
+                padding: 20px;
+                margin: 30px 0;
+                text-align: center;
+            "&gt;
+                &lt;h3 style="
+                    color: #856404;
+                    font-size: 18px;
+                    margin: 0 0 10px 0;
+                    font-weight: 700;
+                "&gt;🔄 Próximo Pago&lt;/h3&gt;
+                &lt;p style="
+                    color: #856404;
+                    font-size: 16px;
+                    margin: 0;
+                    font-weight: 600;
+                "&gt;{{next_payment}}&lt;/p&gt;
+            &lt;/div&gt;
+
+            &lt;!-- BOTÓN DE ACCIÓN BRUTAL --&gt;
+            &lt;div style="text-align: center; margin: 40px 0;"&gt;
+                &lt;a href="{{login_url}}" style="
+                    display: inline-block;
+                    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                    color: #ffffff;
+                    text-decoration: none;
+                    padding: 18px 40px;
+                    border-radius: 50px;
+                    font-size: 18px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    box-shadow: 0 8px 25px rgba(40,167,69,0.4);
+                "&gt;
+                    🚀 ACCEDER A MI CUENTA
+                &lt;/a&gt;
+            &lt;/div&gt;
+
+            &lt;!-- INFORMACIÓN ADICIONAL --&gt;
+            &lt;div style="
+                background: #f8f9fa;
+                border-left: 4px solid #007bff;
+                padding: 20px;
+                border-radius: 0 10px 10px 0;
+                margin: 30px 0;
+            "&gt;
+                &lt;h3 style="
+                    color: #007bff;
+                    font-size: 16px;
+                    margin: 0 0 15px 0;
+                    font-weight: 700;
+                "&gt;✨ ¡Gracias por confiar en AXYRA!&lt;/h3&gt;
+                &lt;ul style="
+                    color: #666;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    margin: 0;
+                    padding-left: 20px;
+                "&gt;
+                    &lt;li&gt;Tu suscripción está activa y lista para usar&lt;/li&gt;
+                    &lt;li&gt;Acceso completo a todas las funcionalidades&lt;/li&gt;
+                    &lt;li&gt;Soporte técnico prioritario incluido&lt;/li&gt;
+                    &lt;li&gt;Actualizaciones automáticas del sistema&lt;/li&gt;
+                &lt;/ul&gt;
+            &lt;/div&gt;
+
+            &lt;!-- CONTACTO --&gt;
+            &lt;div style="text-align: center; margin-top: 40px;"&gt;
+                &lt;p style="
+                    color: #666;
+                    font-size: 14px;
+                    margin: 0 0 10px 0;
+                "&gt;¿Preguntas sobre tu pago? Nuestro equipo está aquí para ti:&lt;/p&gt;
+                &lt;p style="
+                    color: #007bff;
+                    font-size: 16px;
+                    font-weight: 600;
+                    margin: 0;
+                "&gt;📧 {{support_email}} | 🌐 {{company_name}}&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- FOOTER BRUTAL --&gt;
+        &lt;div style="
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ffffff;
+            padding: 30px;
+            text-align: center;
+        "&gt;
+            &lt;div style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 20px;
+            "&gt;
+                &lt;div style="
+                    width: 40px;
+                    height: 40px;
+                    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-right: 15px;
+                "&gt;
+                    &lt;span style="font-size: 20px;"&gt;💳&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div&gt;
+                    &lt;h3 style="
+                        color: #ffffff;
+                        font-size: 18px;
+                        margin: 0;
+                        font-weight: 700;
+                    "&gt;AXYRA&lt;/h3&gt;
+                    &lt;p style="
+                        color: #bdc3c7;
+                        font-size: 12px;
+                        margin: 0;
+                    "&gt;Sistema de Gestión Empresarial&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            
+            &lt;div style="
+                border-top: 1px solid #34495e;
+                padding-top: 20px;
+                margin-top: 20px;
+            "&gt;
+                &lt;p style="
+                    color: #bdc3c7;
+                    font-size: 12px;
+                    margin: 0;
+                "&gt;© {{current_year}} AXYRA - Todos los derechos reservados&lt;/p&gt;
+                &lt;p style="
+                    color: #95a5a6;
+                    font-size: 11px;
+                    margin: 5px 0 0 0;
+                "&gt;Este correo fue enviado a {{to_email}} porque realizaste un pago en AXYRA&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+    @keyframes pulse {
+        0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.5; }
+        50% { transform: scale(1.1) rotate(180deg); opacity: 0.8; }
+    }
+    
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+&lt;/style&gt;
+            </div>
+        </div>
+
+        <!-- INSTRUCCIONES -->
+        <div class="template">
+            <h3>📋 Instrucciones de Configuración</h3>
+            <ol style="color: #666; line-height: 1.6;">
+                <li><strong>Crear Template #1:</strong> Ve a EmailJS → Email Templates → Create Template</li>
+                <li><strong>Nombre:</strong> "Login Code" | <strong>ID:</strong> "template_login_code"</li>
+                <li><strong>Contenido:</strong> Copia y pega el código del Template #1</li>
+                <li><strong>Crear Template #2:</strong> Ve a EmailJS → Email Templates → Create Template</li>
+                <li><strong>Nombre:</strong> "Payment Summary" | <strong>ID:</strong> "template_payment_summary"</li>
+                <li><strong>Contenido:</strong> Copia y pega el código del Template #2</li>
+                <li><strong>Configurar User ID:</strong> Reemplaza "YOUR_USER_ID" en emailjs-config.js</li>
+                <li><strong>Dominios autorizados:</strong> Agrega tu dominio de Vercel en EmailJS</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                alert('¡Código copiado al portapapeles!');
+            }).catch(function(err) {
+                console.error('Error copiando: ', err);
+                // Fallback para navegadores más antiguos
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('¡Código copiado al portapapeles!');
+            });
+        }
+    </script>
+</body>
+</html>
