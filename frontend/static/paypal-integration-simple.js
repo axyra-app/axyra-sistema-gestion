@@ -6,7 +6,7 @@
 class AxyraPayPalIntegrationSimple {
     constructor() {
         this.config = {
-            clientId: 'AfphhCNx415bpleyT1g5iPIN9IQLCGFGq4a21YpqZHO7zw',
+            clientId: 'test', // Usar 'test' para modo sandbox
             environment: 'sandbox', // Cambiar a 'production' cuando esté listo
             currency: 'USD',
             locale: 'es_ES'
@@ -22,13 +22,24 @@ class AxyraPayPalIntegrationSimple {
 
     async init() {
         try {
-            await this.loadPayPalSDK();
-            this.setupErrorHandling();
-            console.log('✅ PayPal Integration Simple inicializado');
+            // Verificar si PayPal está disponible antes de cargar
+            if (this.isPayPalAvailable()) {
+                await this.loadPayPalSDK();
+                this.setupErrorHandling();
+                console.log('✅ PayPal Integration Simple inicializado');
+            } else {
+                console.warn('⚠️ PayPal no disponible, deshabilitando...');
+                this.disablePayPal();
+            }
         } catch (error) {
             console.warn('⚠️ Error inicializando PayPal:', error.message);
             this.disablePayPal();
         }
+    }
+
+    isPayPalAvailable() {
+        // Verificar conectividad y disponibilidad
+        return navigator.onLine && this.config.clientId !== 'test';
     }
 
     async loadPayPalSDK() {

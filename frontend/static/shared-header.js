@@ -129,18 +129,23 @@ class AxyraSharedHeader {
         console.log('👤 Actualizando información del usuario...');
 
         // Intentar obtener usuario de Firebase
-        if (typeof firebase !== 'undefined' && firebase.auth) {
-          const currentUser = firebase.auth().currentUser;
-          if (currentUser) {
-            userEmail.textContent = currentUser.email || 'Usuario';
-            if (roleBadge) {
-              const roleText = roleBadge.querySelector('.axyra-role-badge-text');
-              if (roleText) {
-                roleText.textContent = 'Empleado';
+        if (typeof firebase !== 'undefined' && firebase.auth && firebase.auth().currentUser) {
+          try {
+            const currentUser = firebase.auth().currentUser;
+            if (currentUser) {
+              userEmail.textContent = currentUser.email || 'Usuario';
+              if (roleBadge) {
+                const roleText = roleBadge.querySelector('.axyra-role-badge-text');
+                if (roleText) {
+                  roleText.textContent = 'Empleado';
+                }
               }
+              console.log('✅ Email del usuario actualizado:', currentUser.email);
+            } else {
+              this.loadUserFromLocalStorage();
             }
-            console.log('✅ Email del usuario actualizado:', currentUser.email);
-          } else {
+          } catch (firebaseError) {
+            console.warn('⚠️ Error accediendo a Firebase:', firebaseError.message);
             this.loadUserFromLocalStorage();
           }
         } else {

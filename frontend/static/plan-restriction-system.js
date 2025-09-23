@@ -106,6 +106,15 @@ class AxyraPlanRestrictionSystem {
    */
   async checkUserPlan(userId) {
     try {
+      // Usar el sistema de fallback si está disponible
+      if (window.axyraAPIFallback) {
+        const data = await window.axyraAPIFallback.checkUserPlan(userId);
+        this.userPlan = data.plan || 'free';
+        this.planStatus = data.status || 'inactive';
+        this.hasAccess = data.hasAccess || false;
+        return;
+      }
+
       const response = await fetch(`/api/checkUserPlan?userId=${userId}`);
       const data = await response.json();
 
