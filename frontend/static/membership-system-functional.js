@@ -368,30 +368,245 @@ class AxyraMembershipSystemFunctional {
 
   async processWompiPayment(plan) {
     try {
-      // Simular pago exitoso para testing
+      // Para planes gratuitos, activar directamente
       if (plan.price === 0) {
-        await this.updateMembership(plan.id, 'wompi_test');
-        this.showNotification('¡Plan activado exitosamente!', 'success');
+        await this.updateMembership(plan.id, 'free_trial');
+        this.showNotification('¡Prueba gratuita activada exitosamente!', 'success');
         this.closePaymentModal();
         return;
       }
 
-      // Aquí iría la integración real con Wompi
-      console.log('🔄 Procesando pago con Wompi...', {
+      // Para planes de pago, determinar si es prueba gratuita
+      const isFreeTrial = this.isFreeTrial(plan);
+      
+      if (isFreeTrial) {
+        // Mostrar modal de validación de identidad
+        this.showValidationModal(plan);
+      } else {
+        // Pago completo
+        this.processFullPayment(plan);
+      }
+
+    } catch (error) {
+      console.error('❌ Error procesando pago con Wompi:', error);
+      throw error;
+    }
+  }
+
+  isFreeTrial(plan) {
+    // Verificar si el usuario está en período de prueba gratuita
+    const storedMembership = localStorage.getItem('axyra_membership');
+    if (storedMembership) {
+      const membership = JSON.parse(storedMembership);
+      const startDate = new Date(membership.startDate);
+      const daysSinceStart = (Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+      
+      // Si es menos de 7 días desde el inicio, es prueba gratuita
+      return daysSinceStart < 7;
+    }
+    
+    // Si no hay membresía previa, es prueba gratuita
+    return true;
+  }
+
+  showValidationModal(plan) {
+    const modal = document.createElement('div');
+    modal.className = 'axyra-validation-modal';
+    modal.innerHTML = `
+      <div class="axyra-validation-modal-content">
+        <div class="axyra-validation-modal-header">
+          <h3>Validación de Identidad</h3>
+          <button class="axyra-validation-modal-close" onclick="this.closest('.axyra-validation-modal').remove()">×</button>
+        </div>
+        <div class="axyra-validation-modal-body">
+          <div class="validation-info">
+            <div class="validation-icon">🔐</div>
+            <h4>Prueba Gratuita de ${plan.name}</h4>
+            <p>Para activar tu prueba gratuita, necesitamos validar tu identidad con una pequeña transacción de <strong>$200 COP</strong>.</p>
+            <div class="validation-details">
+              <div class="detail-item">
+                <span class="detail-label">Costo de validación:</span>
+                <span class="detail-value">$200 COP</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Plan seleccionado:</span>
+                <span class="detail-value">${plan.name}</span>
+              </div>
+              <div class="detail-item">
+                <span class="detail-label">Duración de prueba:</span>
+                <span class="detail-value">7 días gratis</span>
+              </div>
+            </div>
+          </div>
+          <div class="validation-actions">
+            <button id="axyra-validate-identity" class="axyra-validation-button">
+              Validar Identidad - $200 COP
+            </button>
+            <button class="axyra-cancel-button" onclick="this.closest('.axyra-validation-modal').remove()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Agregar estilos
+    const styles = document.createElement('style');
+    styles.textContent = `
+      .axyra-validation-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+      }
+      .axyra-validation-modal-content {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      }
+      .axyra-validation-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .axyra-validation-modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #666;
+      }
+      .validation-info {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+      .validation-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+      .validation-details {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 16px;
+        margin: 16px 0;
+      }
+      .detail-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .detail-label {
+        color: #64748b;
+        font-weight: 500;
+      }
+      .detail-value {
+        color: #1e293b;
+        font-weight: 600;
+      }
+      .validation-actions {
+        display: flex;
+        gap: 12px;
+      }
+      .axyra-validation-button {
+        flex: 1;
+        padding: 12px 24px;
+        background: #3b82f6;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .axyra-validation-button:hover {
+        background: #2563eb;
+      }
+      .axyra-cancel-button {
+        flex: 1;
+        padding: 12px 24px;
+        background: #e5e7eb;
+        color: #374151;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .axyra-cancel-button:hover {
+        background: #d1d5db;
+      }
+    `;
+    
+    if (document.head) {
+      document.head.appendChild(styles);
+    }
+
+    if (document.body) {
+      document.body.appendChild(modal);
+    }
+
+    // Configurar event listener para validación
+    modal.querySelector('#axyra-validate-identity').addEventListener('click', () => {
+      this.processValidationPayment(plan);
+    });
+  }
+
+  async processValidationPayment(plan) {
+    try {
+      console.log('🔐 Procesando validación de identidad...', {
+        plan: plan.id,
+        validationAmount: 200
+      });
+
+      // Aquí iría la integración real con Wompi para $200 COP
+      // Por ahora simulamos el proceso
+      this.showNotification('Procesando validación de identidad...', 'info');
+      
+      setTimeout(async () => {
+        // Simular validación exitosa
+        await this.updateMembership(plan.id, 'free_trial_validation');
+        this.showNotification('¡Prueba gratuita activada! Validación exitosa.', 'success');
+        this.closePaymentModal();
+      }, 2000);
+
+    } catch (error) {
+      console.error('❌ Error en validación:', error);
+      this.showNotification('Error en la validación: ' + error.message, 'error');
+    }
+  }
+
+  async processFullPayment(plan) {
+    try {
+      console.log('💳 Procesando pago completo con Wompi...', {
         amount: plan.price,
         currency: plan.currency,
         plan: plan.id,
       });
 
-      // Simular pago exitoso
+      // Aquí iría la integración real con Wompi para el precio completo
+      this.showNotification('Procesando pago completo...', 'info');
+      
       setTimeout(async () => {
-        await this.updateMembership(plan.id, 'wompi');
+        await this.updateMembership(plan.id, 'wompi_full');
         this.showNotification('¡Pago procesado exitosamente!', 'success');
         this.closePaymentModal();
       }, 2000);
+
     } catch (error) {
-      console.error('❌ Error procesando pago con Wompi:', error);
-      throw error;
+      console.error('❌ Error procesando pago completo:', error);
+      this.showNotification('Error procesando pago: ' + error.message, 'error');
     }
   }
 
