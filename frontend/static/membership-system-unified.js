@@ -122,43 +122,43 @@ class AxyraMembershipSystemUnified {
     }
   }
 
-   async checkAuthentication() {
-     return new Promise((resolve, reject) => {
-       // Esperar a que Firebase esté disponible
-       const checkFirebase = () => {
-         try {
-           if (typeof firebase !== 'undefined' && firebase.auth && firebase.apps && firebase.apps.length > 0) {
-             firebase.auth().onAuthStateChanged(async (user) => {
-               if (user) {
-                 this.currentUser = user;
-                 console.log('👤 Usuario autenticado:', user.email);
-                 resolve(user);
-               } else {
-                 console.log('⚠️ Usuario no autenticado');
-                 this.currentUser = null;
-                 resolve(null);
-               }
-             });
-           } else {
-             // Esperar un poco más si Firebase no está listo
-             setTimeout(() => {
-               if (typeof firebase !== 'undefined' && firebase.auth) {
-                 checkFirebase();
-               } else {
-                 console.warn('⚠️ Firebase no disponible, usando modo offline');
-                 resolve(null);
-               }
-             }, 1000);
-           }
-         } catch (error) {
-           console.warn('⚠️ Error verificando autenticación, usando modo offline:', error);
-           resolve(null);
-         }
-       };
+  async checkAuthentication() {
+    return new Promise((resolve, reject) => {
+      // Esperar a que Firebase esté disponible
+      const checkFirebase = () => {
+        try {
+          if (typeof firebase !== 'undefined' && firebase.auth && firebase.apps && firebase.apps.length > 0) {
+            firebase.auth().onAuthStateChanged(async (user) => {
+              if (user) {
+                this.currentUser = user;
+                console.log('👤 Usuario autenticado:', user.email);
+                resolve(user);
+              } else {
+                console.log('⚠️ Usuario no autenticado');
+                this.currentUser = null;
+                resolve(null);
+              }
+            });
+          } else {
+            // Esperar un poco más si Firebase no está listo
+            setTimeout(() => {
+              if (typeof firebase !== 'undefined' && firebase.auth) {
+                checkFirebase();
+              } else {
+                console.warn('⚠️ Firebase no disponible, usando modo offline');
+                resolve(null);
+              }
+            }, 1000);
+          }
+        } catch (error) {
+          console.warn('⚠️ Error verificando autenticación, usando modo offline:', error);
+          resolve(null);
+        }
+      };
 
-       checkFirebase();
-     });
-   }
+      checkFirebase();
+    });
+  }
 
   async loadCurrentMembership() {
     if (!this.currentUser) {
@@ -538,43 +538,52 @@ class AxyraMembershipSystemUnified {
   }
 
   showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `axyra-notification axyra-notification-${type}`;
-    notification.textContent = message;
+    try {
+      const notification = document.createElement('div');
+      notification.className = `axyra-notification axyra-notification-${type}`;
+      notification.textContent = message;
 
-    notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            z-index: 10001;
-            max-width: 300px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        `;
+      notification.style.cssText = `
+              position: fixed;
+              top: 20px;
+              right: 20px;
+              padding: 15px 20px;
+              border-radius: 8px;
+              color: white;
+              font-weight: 500;
+              z-index: 10001;
+              max-width: 300px;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          `;
 
-    const colors = {
-      success: '#10b981',
-      error: '#ef4444',
-      warning: '#f59e0b',
-      info: '#3b82f6',
-    };
+      const colors = {
+        success: '#10b981',
+        error: '#ef4444',
+        warning: '#f59e0b',
+        info: '#3b82f6',
+      };
 
-    notification.style.backgroundColor = colors[type] || colors.info;
+      notification.style.backgroundColor = colors[type] || colors.info;
 
-    if (document.body) {
-      document.body.appendChild(notification);
-    } else {
-      console.warn('⚠️ document.body no disponible para mostrar notificación');
-    }
-
-    setTimeout(() => {
-      if (notification.parentElement) {
-        notification.remove();
+      // Verificar que document.body existe y está disponible
+      if (document.body && document.body.appendChild) {
+        document.body.appendChild(notification);
+      } else {
+        console.warn('⚠️ document.body no disponible para mostrar notificación');
+        // Mostrar en consola como fallback
+        console.log(`📢 Notificación: ${message}`);
+        return;
       }
-    }, 5000);
+
+      setTimeout(() => {
+        if (notification.parentElement) {
+          notification.remove();
+        }
+      }, 5000);
+    } catch (error) {
+      console.warn('⚠️ Error mostrando notificación:', error);
+      console.log(`📢 Notificación: ${message}`);
+    }
   }
 
   handleError(error) {
@@ -620,16 +629,23 @@ class AxyraMembershipSystemUnified {
 document.addEventListener('DOMContentLoaded', () => {
     // Esperar a que Firebase esté disponible
     const initMembershipSystem = () => {
-        if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
-            window.axyraMembershipSystem = new AxyraMembershipSystemUnified();
-        } else {
-            // Esperar un poco más
-            setTimeout(initMembershipSystem, 1000);
+        try {
+            if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0 && firebase.auth) {
+                console.log('🔥 Firebase listo, inicializando sistema de membresías...');
+                window.axyraMembershipSystem = new AxyraMembershipSystemUnified();
+            } else {
+                console.log('⏳ Esperando Firebase...');
+                setTimeout(initMembershipSystem, 1000);
+            }
+        } catch (error) {
+            console.warn('⚠️ Error inicializando sistema de membresías:', error);
+            // Intentar de nuevo en 2 segundos
+            setTimeout(initMembershipSystem, 2000);
         }
     };
     
-    // Esperar un poco antes de inicializar
-    setTimeout(initMembershipSystem, 2000);
+    // Esperar 3 segundos antes de inicializar
+    setTimeout(initMembershipSystem, 3000);
 });
 
 // Exportar para uso en otros módulos
