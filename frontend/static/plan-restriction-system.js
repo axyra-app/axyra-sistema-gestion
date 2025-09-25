@@ -190,7 +190,6 @@ class AxyraPlanRestrictionSystem {
     });
   }
 
-
   /**
    * Actualiza indicadores de plan
    */
@@ -353,7 +352,7 @@ class AxyraPlanRestrictionSystem {
            <div class="plans-grid">
              <div class="plan-card" data-plan="basic">
                <h3>Plan Básico</h3>
-               <div class="price">$49,900<span>/mes</span></div>
+               <div class="price">$29,900<span>/mes</span></div>
                <p class="plan-description">Perfecto para pequeñas empresas que están comenzando</p>
                <ul class="features">
                  <li>✅ Hasta 10 empleados</li>
@@ -369,7 +368,7 @@ class AxyraPlanRestrictionSystem {
              <div class="plan-card featured" data-plan="professional">
                <div class="badge">MÁS POPULAR</div>
                <h3>Plan Profesional</h3>
-               <div class="price">$129,900<span>/mes</span></div>
+               <div class="price">$49,900<span>/mes</span></div>
                <p class="plan-description">Ideal para empresas en crecimiento y establecidas</p>
                <ul class="features">
                  <li>✅ Hasta 50 empleados</li>
@@ -387,7 +386,7 @@ class AxyraPlanRestrictionSystem {
              <div class="plan-card" data-plan="enterprise">
                <div class="badge">PREMIUM</div>
                <h3>Plan Empresarial</h3>
-               <div class="price">$259,900<span>/mes</span></div>
+               <div class="price">$99,900<span>/mes</span></div>
                <p class="plan-description">Para grandes empresas con necesidades complejas</p>
                <ul class="features">
                  <li>✅ Empleados ilimitados</li>
@@ -659,9 +658,9 @@ class AxyraPlanRestrictionSystem {
    */
   createDualPaymentButton(planType) {
     const planPrices = {
-      basic: 49900,
-      professional: 129900,
-      enterprise: 259900,
+      basic: 29900,
+      professional: 49900,
+      enterprise: 99900,
     };
 
     const planNames = {
@@ -695,13 +694,8 @@ class AxyraPlanRestrictionSystem {
       const amount = parseFloat(payButton.dataset.amount);
       const description = payButton.dataset.description;
       const userId = payButton.dataset.userId;
-      
-      window.axyraDualPaymentSystem.showPaymentMethodModal(
-        planType, 
-        amount, 
-        description, 
-        userId
-      );
+
+      window.axyraDualPaymentSystem.showPaymentMethodModal(planType, amount, description, userId);
     } else {
       // Fallback: simular clic en el botón
       setTimeout(() => {

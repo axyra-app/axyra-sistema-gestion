@@ -9,22 +9,22 @@ class AxyraWompiValidation {
       validationAmount: 200, // $200 COP para validación
       currency: 'COP',
       description: 'Validación de identidad - Prueba gratuita AXYRA',
-      
+
       // Configuración de Wompi
       wompiConfig: {
-        publicKey: process.env.WOMPI_PUBLIC_KEY || 'pub_test_123456789',
-        environment: 'test', // 'test' o 'production'
-        redirectUrl: window.location.origin + '/modulos/membresias/membresias.html?success=true'
+        publicKey: 'pub_prod_DMd1RNFhiA3813HZ3YZFsNjSg2beSS00', // Clave pública de Wompi
+        environment: 'production', // 'test' o 'production'
+        redirectUrl: window.location.origin + '/modulos/membresias/membresias.html?success=true',
       },
-      
+
       // Configuración de pruebas gratuitas
       freeTrialConfig: {
         duration: 7, // días
         maxValidations: 1, // máximo 1 validación por usuario
-        validationRequired: true // requiere validación para activar
-      }
+        validationRequired: true, // requiere validación para activar
+      },
     };
-    
+
     this.init();
   }
 
@@ -71,7 +71,7 @@ class AxyraWompiValidation {
       console.log('🔐 Procesando validación de identidad...', {
         plan: plan.id,
         amount: this.config.validationAmount,
-        userInfo
+        userInfo,
       });
 
       // Verificar si el usuario ya tiene una validación previa
@@ -87,15 +87,14 @@ class AxyraWompiValidation {
         reference: `validation_${Date.now()}_${plan.id}`,
         customer: {
           email: userInfo.email || 'usuario@axyra.com',
-          name: userInfo.name || 'Usuario AXYRA'
+          name: userInfo.name || 'Usuario AXYRA',
         },
         plan: plan.id,
-        type: 'validation'
+        type: 'validation',
       };
 
       // Procesar con Wompi
       return await this.processWompiValidation(validationTransaction);
-
     } catch (error) {
       console.error('❌ Error en validación de identidad:', error);
       throw error;
@@ -110,7 +109,7 @@ class AxyraWompiValidation {
         const validation = JSON.parse(storedValidation);
         const validationDate = new Date(validation.date);
         const daysSinceValidation = (Date.now() - validationDate.getTime()) / (1000 * 60 * 60 * 24);
-        
+
         // Si la validación es menor a 30 días, es válida
         return daysSinceValidation < 30;
       }
@@ -128,7 +127,7 @@ class AxyraWompiValidation {
 
       // Aquí iría la integración real con Wompi
       // Por ahora simulamos el proceso
-      
+
       return new Promise((resolve, reject) => {
         // Simular procesamiento de Wompi
         setTimeout(() => {
@@ -139,16 +138,15 @@ class AxyraWompiValidation {
             amount: transaction.amount,
             currency: transaction.currency,
             status: 'APPROVED',
-            reference: transaction.reference
+            reference: transaction.reference,
           };
 
           // Guardar validación en localStorage
           this.saveValidation(transaction.plan, wompiResponse);
-          
+
           resolve(wompiResponse);
         }, 2000);
       });
-
     } catch (error) {
       console.error('❌ Error procesando validación con Wompi:', error);
       throw error;
@@ -164,7 +162,7 @@ class AxyraWompiValidation {
         amount: wompiResponse.amount,
         transactionId: wompiResponse.transactionId,
         status: wompiResponse.status,
-        reference: wompiResponse.reference
+        reference: wompiResponse.reference,
       };
 
       localStorage.setItem('axyra_validation', JSON.stringify(validationData));
@@ -195,7 +193,7 @@ class AxyraWompiValidation {
 
     const validationDate = new Date(validation.date);
     const daysSinceValidation = (Date.now() - validationDate.getTime()) / (1000 * 60 * 60 * 24);
-    
+
     return daysSinceValidation < 30; // Válida por 30 días
   }
 
