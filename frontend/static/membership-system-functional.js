@@ -111,6 +111,9 @@ class AxyraMembershipSystemFunctional {
       // Configurar event listeners
       this.setupEventListeners();
 
+      // Verificar si regresó de validación de Wompi
+      this.checkWompiValidationReturn();
+
       console.log('✅ Sistema de Membresías Funcional AXYRA inicializado');
     } catch (error) {
       console.error('❌ Error inicializando sistema de membresías:', error);
@@ -378,7 +381,7 @@ class AxyraMembershipSystemFunctional {
 
       // Para planes de pago, determinar si es prueba gratuita
       const isFreeTrial = this.isFreeTrial(plan);
-      
+
       if (isFreeTrial) {
         // Mostrar modal de validación de identidad
         this.showValidationModal(plan);
@@ -386,7 +389,6 @@ class AxyraMembershipSystemFunctional {
         // Pago completo
         this.processFullPayment(plan);
       }
-
     } catch (error) {
       console.error('❌ Error procesando pago con Wompi:', error);
       throw error;
@@ -400,11 +402,11 @@ class AxyraMembershipSystemFunctional {
       const membership = JSON.parse(storedMembership);
       const startDate = new Date(membership.startDate);
       const daysSinceStart = (Date.now() - startDate.getTime()) / (1000 * 60 * 60 * 24);
-      
+
       // Si es menos de 7 días desde el inicio, es prueba gratuita
       return daysSinceStart < 7;
     }
-    
+
     // Si no hay membresía previa, es prueba gratuita
     return true;
   }
@@ -548,7 +550,7 @@ class AxyraMembershipSystemFunctional {
         background: #d1d5db;
       }
     `;
-    
+
     if (document.head) {
       document.head.appendChild(styles);
     }
@@ -567,23 +569,81 @@ class AxyraMembershipSystemFunctional {
     try {
       console.log('🔐 Procesando validación de identidad...', {
         plan: plan.id,
-        validationAmount: 200
+        validationAmount: 200,
       });
 
-      // Aquí iría la integración real con Wompi para $200 COP
-      // Por ahora simulamos el proceso
-      this.showNotification('Procesando validación de identidad...', 'info');
+      // Crear enlace de Wompi para validación de $200 COP
+      const wompiLink = this.createWompiValidationLink(plan);
       
-      setTimeout(async () => {
-        // Simular validación exitosa
-        await this.updateMembership(plan.id, 'free_trial_validation');
-        this.showNotification('¡Prueba gratuita activada! Validación exitosa.', 'success');
-        this.closePaymentModal();
-      }, 2000);
-
+      // Redirigir a Wompi con el monto correcto
+      window.open(wompiLink, '_blank');
+      
+      this.showNotification('Redirigiendo a Wompi para validación de $200 COP...', 'info');
+      
     } catch (error) {
       console.error('❌ Error en validación:', error);
       this.showNotification('Error en la validación: ' + error.message, 'error');
+    }
+  }
+
+  createWompiValidationLink(plan) {
+    try {
+      // Configuración para validación de $200 COP
+      const validationData = {
+        amount: 200, // $200 COP para validación
+        currency: 'COP',
+        description: `Validación de identidad - ${plan.name}`,
+        reference: `validation_${Date.now()}_${plan.id}`,
+        customer: {
+          email: 'usuario@axyra.com',
+          name: 'Usuario AXYRA'
+        },
+        plan: plan.id,
+        type: 'validation'
+      };
+
+      // Crear URL de Wompi para validación
+      const wompiUrl = this.buildWompiUrl(validationData);
+      
+      console.log('🔗 Enlace de validación Wompi creado:', wompiUrl);
+      return wompiUrl;
+      
+    } catch (error) {
+      console.error('❌ Error creando enlace de Wompi:', error);
+      throw error;
+    }
+  }
+
+  buildWompiUrl(validationData) {
+    try {
+      // Usar configuración de claves de Wompi
+      if (window.axyraWompiKeys) {
+        return window.axyraWompiKeys.createValidationLink({
+          id: validationData.plan,
+          name: validationData.description
+        });
+      }
+      
+      // Fallback si no hay configuración de claves
+      const baseUrl = 'https://checkout.wompi.co/l/';
+      
+      // Parámetros para la validación
+      const params = new URLSearchParams({
+        'public-key': 'pub_test_123456789', // Reemplazar con tu clave pública
+        'currency': validationData.currency,
+        'amount-in-cents': (validationData.amount * 100).toString(), // Convertir a centavos
+        'reference': validationData.reference,
+        'customer-email': validationData.customer.email,
+        'customer-name': validationData.customer.name,
+        'description': validationData.description,
+        'redirect-url': window.location.origin + '/modulos/membresias/membresias.html?validation=success&plan=' + validationData.plan
+      });
+
+      return `${baseUrl}?${params.toString()}`;
+      
+    } catch (error) {
+      console.error('❌ Error construyendo URL de Wompi:', error);
+      throw error;
     }
   }
 
@@ -597,13 +657,12 @@ class AxyraMembershipSystemFunctional {
 
       // Aquí iría la integración real con Wompi para el precio completo
       this.showNotification('Procesando pago completo...', 'info');
-      
+
       setTimeout(async () => {
         await this.updateMembership(plan.id, 'wompi_full');
         this.showNotification('¡Pago procesado exitosamente!', 'success');
         this.closePaymentModal();
       }, 2000);
-
     } catch (error) {
       console.error('❌ Error procesando pago completo:', error);
       this.showNotification('Error procesando pago: ' + error.message, 'error');
@@ -654,6 +713,46 @@ class AxyraMembershipSystemFunctional {
     const modal = document.querySelector('.axyra-payment-modal');
     if (modal) {
       modal.remove();
+    }
+  }
+
+  checkWompiValidationReturn() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const validation = urlParams.get('validation');
+      const plan = urlParams.get('plan');
+      
+      if (validation === 'success' && plan) {
+        console.log('✅ Usuario regresó de validación exitosa de Wompi');
+        this.handleValidationSuccess(plan);
+        
+        // Limpiar URL
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+      }
+    } catch (error) {
+      console.warn('⚠️ Error verificando retorno de Wompi:', error);
+    }
+  }
+
+  async handleValidationSuccess(planId) {
+    try {
+      console.log('🎉 Procesando validación exitosa para plan:', planId);
+      
+      // Activar prueba gratuita
+      await this.updateMembership(planId, 'free_trial_validation');
+      
+      // Mostrar notificación de éxito
+      this.showNotification('¡Prueba gratuita activada! Validación exitosa.', 'success');
+      
+      // Recargar la página para mostrar el plan activo
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+      
+    } catch (error) {
+      console.error('❌ Error procesando validación exitosa:', error);
+      this.showNotification('Error activando prueba gratuita: ' + error.message, 'error');
     }
   }
 
