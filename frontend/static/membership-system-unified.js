@@ -539,6 +539,13 @@ class AxyraMembershipSystemUnified {
 
   showNotification(message, type = 'info') {
     try {
+      // Verificar que document.body existe y está disponible
+      if (!document.body || !document.body.appendChild) {
+        console.warn('⚠️ document.body no disponible para mostrar notificación');
+        console.log(`📢 Notificación: ${message}`);
+        return;
+      }
+
       const notification = document.createElement('div');
       notification.className = `axyra-notification axyra-notification-${type}`;
       notification.textContent = message;
@@ -565,15 +572,7 @@ class AxyraMembershipSystemUnified {
 
       notification.style.backgroundColor = colors[type] || colors.info;
 
-      // Verificar que document.body existe y está disponible
-      if (document.body && document.body.appendChild) {
-        document.body.appendChild(notification);
-      } else {
-        console.warn('⚠️ document.body no disponible para mostrar notificación');
-        // Mostrar en consola como fallback
-        console.log(`📢 Notificación: ${message}`);
-        return;
-      }
+      document.body.appendChild(notification);
 
       setTimeout(() => {
         if (notification.parentElement) {
@@ -627,25 +626,25 @@ class AxyraMembershipSystemUnified {
 
 // Inicializar el sistema de membresías después de que Firebase esté listo
 document.addEventListener('DOMContentLoaded', () => {
-    // Esperar a que Firebase esté disponible
-    const initMembershipSystem = () => {
-        try {
-            if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0 && firebase.auth) {
-                console.log('🔥 Firebase listo, inicializando sistema de membresías...');
-                window.axyraMembershipSystem = new AxyraMembershipSystemUnified();
-            } else {
-                console.log('⏳ Esperando Firebase...');
-                setTimeout(initMembershipSystem, 1000);
-            }
-        } catch (error) {
-            console.warn('⚠️ Error inicializando sistema de membresías:', error);
-            // Intentar de nuevo en 2 segundos
-            setTimeout(initMembershipSystem, 2000);
-        }
-    };
-    
-    // Esperar 5 segundos antes de inicializar
-    setTimeout(initMembershipSystem, 5000);
+  // Esperar a que Firebase esté disponible
+  const initMembershipSystem = () => {
+    try {
+      if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0 && firebase.auth) {
+        console.log('🔥 Firebase listo, inicializando sistema de membresías...');
+        window.axyraMembershipSystem = new AxyraMembershipSystemUnified();
+      } else {
+        console.log('⏳ Esperando Firebase...');
+        setTimeout(initMembershipSystem, 1000);
+      }
+    } catch (error) {
+      console.warn('⚠️ Error inicializando sistema de membresías:', error);
+      // Intentar de nuevo en 2 segundos
+      setTimeout(initMembershipSystem, 2000);
+    }
+  };
+
+  // Esperar 5 segundos antes de inicializar
+  setTimeout(initMembershipSystem, 5000);
 });
 
 // DESHABILITAR TEMPORALMENTE EL SISTEMA DE MEMBRESÍAS
