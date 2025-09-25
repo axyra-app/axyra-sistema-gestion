@@ -129,22 +129,34 @@ class AxyraMembershipSystemUnified {
 
     async checkAuthentication() {
         return new Promise((resolve, reject) => {
-            if (typeof firebase !== 'undefined' && firebase.auth) {
-                firebase.auth().onAuthStateChanged(async (user) => {
-                    if (user) {
-                        this.currentUser = user;
-                        console.log('👤 Usuario autenticado:', user.email);
-                        resolve(user);
-                    } else {
-                        console.log('⚠️ Usuario no autenticado');
-                        this.currentUser = null;
-                        resolve(null);
-                    }
-                });
-            } else {
-                console.warn('⚠️ Firebase no disponible, usando modo offline');
-                resolve(null);
-            }
+            // Esperar a que Firebase esté disponible
+            const checkFirebase = () => {
+                if (typeof firebase !== 'undefined' && firebase.auth && firebase.apps && firebase.apps.length > 0) {
+                    firebase.auth().onAuthStateChanged(async (user) => {
+                        if (user) {
+                            this.currentUser = user;
+                            console.log('👤 Usuario autenticado:', user.email);
+                            resolve(user);
+                        } else {
+                            console.log('⚠️ Usuario no autenticado');
+                            this.currentUser = null;
+                            resolve(null);
+                        }
+                    });
+                } else {
+                    // Esperar un poco más si Firebase no está listo
+                    setTimeout(() => {
+                        if (typeof firebase !== 'undefined' && firebase.auth) {
+                            checkFirebase();
+                        } else {
+                            console.warn('⚠️ Firebase no disponible, usando modo offline');
+                            resolve(null);
+                        }
+                    }, 1000);
+                }
+            };
+            
+            checkFirebase();
         });
     }
 
@@ -359,9 +371,15 @@ class AxyraMembershipSystemUnified {
                 border-top: 1px solid #eee;
             }
         `;
-        document.head.appendChild(styles);
+        if (document.head) {
+            document.head.appendChild(styles);
+        }
 
-        document.body.appendChild(modal);
+        if (document.body) {
+            document.body.appendChild(modal);
+        } else {
+            console.warn('⚠️ document.body no disponible para mostrar modal');
+        }
 
         // Configurar event listeners
         modal.querySelectorAll('.axyra-payment-option').forEach(option => {
@@ -551,7 +569,11 @@ class AxyraMembershipSystemUnified {
 
         notification.style.backgroundColor = colors[type] || colors.info;
 
-        document.body.appendChild(notification);
+        if (document.body) {
+            document.body.appendChild(notification);
+        } else {
+            console.warn('⚠️ document.body no disponible para mostrar notificación');
+        }
 
         setTimeout(() => {
             if (notification.parentElement) {

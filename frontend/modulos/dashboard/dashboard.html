@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="../../static/modal-emergency-fix.css" />
     <link rel="stylesheet" href="../../static/header-fixes.css" />
     <link rel="stylesheet" href="../../static/dashboard-blur-fix.css" />
+    <link rel="stylesheet" href="../../static/footer-center-fix.css" />
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -62,14 +63,14 @@
 
     <!-- Sistema de Logging Limpio -->
     <script src="../../static/clean-logging-system.js"></script>
-    
-    <!-- Sistema de Integración PayPal -->
-    <script src="../../static/paypal-integration-simple.js"></script>
+
+    <!-- Sistema de Integración PayPal - DESHABILITADO -->
+    <!-- <script src="../../static/paypal-integration-simple.js"></script> -->
     <script src="../../static/wompi-integration.js"></script>
     <script src="../../static/wompi-only-payment.js"></script>
     <script src="../../static/payment-system-fallback.js"></script>
     <script src="../../static/dual-payment-system.js"></script>
-    
+
     <!-- Sistema Real de Pagos Wompi -->
     <script src="../../static/wompi-integration-real.js"></script>
     <script src="../../static/subscription-manager.js"></script>
@@ -409,7 +410,11 @@
                 <i class="fas fa-crown" id="membershipIcon"></i>
                 <span id="membershipText">Plan Gratuito</span>
               </div>
-              <button class="axyra-upgrade-btn" id="upgradeBtn" onclick="window.location.href='../../membresias.html'">
+              <button
+                class="axyra-upgrade-btn"
+                id="upgradeBtn"
+                onclick="window.location.href='../membresias/membresias.html'"
+              >
                 <i class="fas fa-rocket"></i>
                 Ver Planes
               </button>
@@ -602,6 +607,15 @@
         </div>
       </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="axyra-footer">
+      <div class="axyra-footer-content">
+        <div class="axyra-footer-bottom">
+          <p>&copy; 2025 AXYRA. Sistema de Gestión Empresarial.</p>
+        </div>
+      </div>
+    </footer>
 
     <!-- Modales para estadísticas -->
     <div id="empleadosModal" class="axyra-modal">
