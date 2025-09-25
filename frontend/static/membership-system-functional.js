@@ -12,79 +12,74 @@ class AxyraMembershipSystemFunctional {
           price: 0,
           currency: 'COP',
           interval: 'month',
-          features: [
-            'Hasta 5 empleados',
-            'Dashboard básico',
-            'Reportes básicos',
-            'Soporte por email'
-          ],
+          features: ['Hasta 5 empleados', 'Dashboard básico', 'Reportes básicos', 'Soporte por email'],
           limitations: {
             maxEmployees: 5,
             maxReports: 10,
             advancedFeatures: false,
             prioritySupport: false,
-            apiAccess: false
-          }
+            apiAccess: false,
+          },
         },
         basic: {
           id: 'basic',
           name: 'Plan Básico',
+          price: 29900,
+          currency: 'COP',
+          interval: 'month',
+          features: [
+            'Hasta 5 empleados',
+            'Gestión básica de nómina',
+            'Inventario simple',
+            'Reportes básicos',
+            'Soporte por email',
+            '5GB de almacenamiento',
+          ],
+          limitations: {
+            maxEmployees: 5,
+            maxReports: 50,
+            advancedFeatures: false,
+            prioritySupport: false,
+            apiAccess: false,
+          },
+        },
+        professional: {
+          id: 'professional',
+          name: 'Plan Profesional',
           price: 49900,
           currency: 'COP',
           interval: 'month',
           features: [
             'Hasta 25 empleados',
-            'Dashboard completo',
+            'Gestión completa de nómina',
+            'Inventario avanzado',
+            'Cuadre de caja',
             'Reportes avanzados',
-            'Gestión de horas',
-            'Cálculo de nóminas',
-            'Soporte prioritario'
+            'Chat de IA incluido',
+            'Soporte prioritario',
           ],
           limitations: {
             maxEmployees: 25,
-            maxReports: 100,
+            maxReports: 200,
             advancedFeatures: true,
             prioritySupport: true,
-            apiAccess: false
-          }
-        },
-        professional: {
-          id: 'professional',
-          name: 'Plan Profesional',
-          price: 129900,
-          currency: 'COP',
-          interval: 'month',
-          features: [
-            'Empleados ilimitados',
-            'Todas las funcionalidades',
-            'Nómina avanzada',
-            'Reportes personalizados',
-            'Inventario completo',
-            'Soporte 24/7',
-            'API personalizada'
-          ],
-          limitations: {
-            maxEmployees: -1,
-            maxReports: -1,
-            advancedFeatures: true,
-            prioritySupport: true,
-            apiAccess: true
-          }
+            apiAccess: false,
+          },
         },
         enterprise: {
           id: 'enterprise',
           name: 'Plan Empresarial',
-          price: 259900,
+          price: 99900,
           currency: 'COP',
           interval: 'month',
           features: [
-            'Todo lo anterior',
+            'Empleados ilimitados',
+            'Todas las funciones',
             'Múltiples sucursales',
-            'Integración personalizada',
-            'Soporte dedicado',
-            'Capacitación incluida',
-            'SLA garantizado',
-            'White-label disponible'
+            'API personalizada',
+            'Reportes personalizados',
+            'Soporte 24/7',
+            'Almacenamiento ilimitado',
           ],
           limitations: {
             maxEmployees: -1,
@@ -93,29 +88,29 @@ class AxyraMembershipSystemFunctional {
             prioritySupport: true,
             apiAccess: true,
             multiBranch: true,
-            customIntegration: true
-          }
-        }
-      }
+            customIntegration: true,
+          },
+        },
+      },
     };
 
     this.currentUser = null;
     this.currentMembership = null;
     this.paymentMethods = ['wompi'];
-    
+
     this.init();
   }
 
   async init() {
     try {
       console.log('💎 Inicializando Sistema de Membresías Funcional AXYRA...');
-      
+
       // Cargar membresía actual
       await this.loadCurrentMembership();
-      
+
       // Configurar event listeners
       this.setupEventListeners();
-      
+
       console.log('✅ Sistema de Membresías Funcional AXYRA inicializado');
     } catch (error) {
       console.error('❌ Error inicializando sistema de membresías:', error);
@@ -127,12 +122,15 @@ class AxyraMembershipSystemFunctional {
     try {
       // Usar plan gratuito por defecto
       this.currentMembership = this.config.plans.free;
-      
+
       // Verificar si hay datos en localStorage
       const storedMembership = localStorage.getItem('axyra_membership');
       if (storedMembership) {
         const membershipData = JSON.parse(storedMembership);
-        this.currentMembership = { ...this.config.plans[membershipData.plan] || this.config.plans.free, ...membershipData };
+        this.currentMembership = {
+          ...(this.config.plans[membershipData.plan] || this.config.plans.free),
+          ...membershipData,
+        };
       }
 
       console.log('💎 Membresía actual cargada:', this.currentMembership);
@@ -177,7 +175,6 @@ class AxyraMembershipSystemFunctional {
 
       // Mostrar modal de pago
       this.showPaymentModal(plan);
-
     } catch (error) {
       console.error('❌ Error seleccionando plan:', error);
       this.showNotification('Error seleccionando plan: ' + error.message, 'error');
@@ -198,7 +195,7 @@ class AxyraMembershipSystemFunctional {
             <h4>${plan.name}</h4>
             <p class="plan-price">$${plan.price.toLocaleString()} COP</p>
             <ul class="axyra-plan-features">
-              ${plan.features.map(feature => `<li>✅ ${feature}</li>`).join('')}
+              ${plan.features.map((feature) => `<li>✅ ${feature}</li>`).join('')}
             </ul>
           </div>
           <div class="axyra-payment-options">
@@ -327,7 +324,7 @@ class AxyraMembershipSystemFunctional {
         cursor: not-allowed;
       }
     `;
-    
+
     if (document.head) {
       document.head.appendChild(styles);
     }
@@ -337,9 +334,9 @@ class AxyraMembershipSystemFunctional {
     }
 
     // Configurar event listeners
-    modal.querySelectorAll('.axyra-payment-option').forEach(option => {
+    modal.querySelectorAll('.axyra-payment-option').forEach((option) => {
       option.addEventListener('click', () => {
-        modal.querySelectorAll('.axyra-payment-option').forEach(opt => opt.classList.remove('selected'));
+        modal.querySelectorAll('.axyra-payment-option').forEach((opt) => opt.classList.remove('selected'));
         option.classList.add('selected');
         modal.querySelector('#axyra-process-payment').disabled = false;
       });
@@ -363,7 +360,6 @@ class AxyraMembershipSystemFunctional {
       } else {
         throw new Error('Método de pago no válido');
       }
-
     } catch (error) {
       console.error('❌ Error procesando pago:', error);
       this.showNotification('Error procesando pago: ' + error.message, 'error');
@@ -384,16 +380,15 @@ class AxyraMembershipSystemFunctional {
       console.log('🔄 Procesando pago con Wompi...', {
         amount: plan.price,
         currency: plan.currency,
-        plan: plan.id
+        plan: plan.id,
       });
-      
+
       // Simular pago exitoso
       setTimeout(async () => {
         await this.updateMembership(plan.id, 'wompi');
         this.showNotification('¡Pago procesado exitosamente!', 'success');
         this.closePaymentModal();
       }, 2000);
-
     } catch (error) {
       console.error('❌ Error procesando pago con Wompi:', error);
       throw error;
@@ -411,7 +406,7 @@ class AxyraMembershipSystemFunctional {
         startDate: new Date(),
         endDate: this.calculateEndDate(planId),
         paymentMethod: paymentMethod,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
 
       // Actualizar en localStorage
@@ -421,7 +416,6 @@ class AxyraMembershipSystemFunctional {
       this.currentMembership = { ...plan, ...membershipData };
 
       console.log('✅ Membresía actualizada correctamente');
-
     } catch (error) {
       console.error('❌ Error actualizando membresía:', error);
       throw error;
@@ -431,13 +425,13 @@ class AxyraMembershipSystemFunctional {
   calculateEndDate(planId) {
     const startDate = new Date();
     const plan = this.config.plans[planId];
-    
+
     if (plan.interval === 'month') {
       return new Date(startDate.getTime() + 30 * 24 * 60 * 60 * 1000);
     } else if (plan.interval === 'year') {
       return new Date(startDate.getTime() + 365 * 24 * 60 * 60 * 1000);
     }
-    
+
     return new Date(startDate.getTime() + 30 * 24 * 60 * 60 * 1000);
   }
 
@@ -502,7 +496,6 @@ class AxyraMembershipSystemFunctional {
           }
         }, 300);
       }, 5000);
-
     } catch (error) {
       console.warn('⚠️ Error mostrando notificación:', error);
       console.log(`📢 Notificación: ${message}`);
@@ -530,9 +523,9 @@ class AxyraMembershipSystemFunctional {
 
   canAccessModule(module) {
     if (!this.currentMembership) return false;
-    
+
     const restrictions = this.currentMembership.limitations;
-    
+
     switch (module) {
       case 'gestion_personal':
         return restrictions.advancedFeatures;
