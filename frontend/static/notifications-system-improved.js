@@ -13,7 +13,7 @@ class AxyraNotificationSystemImproved {
     this.notificationCount = 0;
     this.maxNotifications = 5; // Máximo de notificaciones visibles
     this.notificationStack = []; // Stack para organizar notificaciones
-    
+
     this.init();
   }
 
@@ -43,7 +43,7 @@ class AxyraNotificationSystemImproved {
       this.loadStoredNotifications();
       this.renderNotifications();
       this.setupEventListeners();
-      
+
       console.log('✅ Sistema de notificaciones AXYRA mejorado inicializado correctamente');
       this.showWelcomeNotification();
     } catch (error) {
@@ -100,7 +100,7 @@ class AxyraNotificationSystemImproved {
 
       document.body.appendChild(container);
       this.notificationContainer = container;
-      
+
       console.log('✅ Contenedor de notificaciones mejorado creado');
     } catch (error) {
       console.error('❌ Error creando contenedor de notificaciones:', error);
@@ -169,7 +169,7 @@ class AxyraNotificationSystemImproved {
       const nominas = this.getDataFromStorage('axyra_nominas') || [];
       const cuadres = this.getDataFromStorage('axyra_cuadres') || [];
       const config = this.getDataFromStorage('axyra_config_empresa') || {};
-      
+
       const systemNotifications = [];
 
       // Verificar empleados sin horas registradas
@@ -189,7 +189,7 @@ class AxyraNotificationSystemImproved {
             action: 'Ver empleados',
             timestamp: Date.now(),
             data: { empleados: empleadosSinHoras },
-            priority: 'high'
+            priority: 'high',
           });
         }
       }
@@ -205,7 +205,7 @@ class AxyraNotificationSystemImproved {
           action: 'Ver nóminas',
           timestamp: Date.now(),
           data: { nominas: nominasPendientes },
-          priority: 'medium'
+          priority: 'medium',
         });
       }
 
@@ -220,13 +220,13 @@ class AxyraNotificationSystemImproved {
           action: 'Ver cuadres',
           timestamp: Date.now(),
           data: { cuadres: cuadresPendientes },
-          priority: 'medium'
+          priority: 'medium',
         });
       }
 
       // Organizar notificaciones por prioridad
       systemNotifications.sort((a, b) => {
-        const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+        const priorityOrder = { high: 3, medium: 2, low: 1 };
         return priorityOrder[b.priority] - priorityOrder[a.priority];
       });
 
@@ -242,7 +242,7 @@ class AxyraNotificationSystemImproved {
 
   showSystemNotification(notification) {
     try {
-      const existingNotification = this.notifications.find(n => n.id === notification.id);
+      const existingNotification = this.notifications.find((n) => n.id === notification.id);
       if (existingNotification) {
         console.log(`⚠️ Notificación ${notification.id} ya existe, saltando...`);
         return;
@@ -256,7 +256,7 @@ class AxyraNotificationSystemImproved {
         action: notification.action,
         timestamp: notification.timestamp,
         isSystem: true,
-        priority: notification.priority
+        priority: notification.priority,
       });
 
       this.addNotification(notificationElement);
@@ -285,7 +285,7 @@ class AxyraNotificationSystemImproved {
         title: this.getNotificationTitle(type),
         message: message,
         timestamp: Date.now(),
-        priority: 'low'
+        priority: 'low',
       });
 
       this.addNotification(notificationElement);
@@ -339,26 +339,26 @@ class AxyraNotificationSystemImproved {
       const notificationDiv = document.createElement('div');
       notificationDiv.id = notification.id;
       notificationDiv.className = `axyra-notification axyra-notification-${notification.type}`;
-      
+
       // Estilos mejorados con mejor organización
       notificationDiv.style.cssText = `
         background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        border-radius: 16px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.06);
-        margin-bottom: 12px;
-        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.05);
+        margin-bottom: 8px;
+        padding: 16px;
         border: 1px solid rgba(255,255,255,0.8);
         transform: translateX(100%);
         opacity: 0;
-        transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
         pointer-events: auto;
-        max-width: 400px;
-        min-width: 360px;
+        max-width: 350px;
+        min-width: 320px;
         overflow: visible;
         position: relative;
         z-index: 10000;
         backdrop-filter: blur(10px);
-        border-left: 4px solid ${this.getNotificationColor(notification.type)};
+        border-left: 3px solid ${this.getNotificationColor(notification.type)};
       `;
 
       // Contenido HTML mejorado
@@ -397,7 +397,9 @@ class AxyraNotificationSystemImproved {
               </div>
             </div>
           </div>
-          <button class="axyra-notification-close" onclick="window.axyraNotificationSystem.removeNotification('${notification.id}')" style="
+          <button class="axyra-notification-close" onclick="window.axyraNotificationSystem.removeNotification('${
+            notification.id
+          }')" style="
             background: rgba(148, 163, 184, 0.1); 
             border: none; 
             color: #64748b; 
@@ -427,9 +429,13 @@ class AxyraNotificationSystemImproved {
             ${notification.message}
           </div>
           
-          ${notification.action ? `
+          ${
+            notification.action
+              ? `
             <div class="axyra-notification-actions" style="display: flex; gap: 8px; align-items: center;">
-              <button class="axyra-notification-action" onclick="window.axyraNotificationSystem.handleNotificationAction('${notification.id}')" style="
+              <button class="axyra-notification-action" onclick="window.axyraNotificationSystem.handleNotificationAction('${
+                notification.id
+              }')" style="
                 background: ${this.getNotificationColor(notification.type)}; 
                 color: white; 
                 border: none; 
@@ -444,7 +450,9 @@ class AxyraNotificationSystemImproved {
               ">
                 ${notification.action}
               </button>
-              <button class="axyra-notification-dismiss" onclick="window.axyraNotificationSystem.removeNotification('${notification.id}')" style="
+              <button class="axyra-notification-dismiss" onclick="window.axyraNotificationSystem.removeNotification('${
+                notification.id
+              }')" style="
                 background: rgba(148, 163, 184, 0.1); 
                 color: #64748b; 
                 border: 1px solid rgba(148, 163, 184, 0.2); 
@@ -458,7 +466,9 @@ class AxyraNotificationSystemImproved {
                 Descartar
               </button>
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
       `;
 
@@ -510,7 +520,7 @@ class AxyraNotificationSystemImproved {
       if (notification && notification.element) {
         notification.element.style.transform = 'translateX(100%)';
         notification.element.style.opacity = '0';
-        
+
         setTimeout(() => {
           if (notification.element.parentNode) {
             notification.element.parentNode.removeChild(notification.element);
@@ -530,7 +540,7 @@ class AxyraNotificationSystemImproved {
       const notification = this.notifications.find((n) => n.id === notificationId);
       if (notification) {
         console.log(`✅ Acción ejecutada para notificación: ${notificationId}`);
-        
+
         if (notification.id === 'empleados_sin_horas') {
           if (window.location.pathname.includes('/empleados/')) {
             if (typeof gestionarDepartamentos === 'function') {
@@ -548,7 +558,7 @@ class AxyraNotificationSystemImproved {
             window.location.href = '/modulos/caja/caja.html';
           }
         }
-        
+
         this.removeNotification(notificationId);
       }
     } catch (error) {
@@ -699,7 +709,7 @@ class AxyraNotificationSystemImproved {
         acc[type] = (acc[type] || 0) + 1;
         return acc;
       }, {}),
-      maxNotifications: this.maxNotifications
+      maxNotifications: this.maxNotifications,
     };
   }
 }
