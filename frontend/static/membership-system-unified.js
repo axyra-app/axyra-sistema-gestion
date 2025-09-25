@@ -644,9 +644,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    // Esperar 3 segundos antes de inicializar
-    setTimeout(initMembershipSystem, 3000);
+    // Esperar 5 segundos antes de inicializar
+    setTimeout(initMembershipSystem, 5000);
 });
+
+// DESHABILITAR TEMPORALMENTE EL SISTEMA DE MEMBRESÍAS
+console.log('⚠️ Sistema de membresías deshabilitado temporalmente para evitar errores de Firebase');
 
 // Exportar para uso en otros módulos
 if (typeof module !== 'undefined' && module.exports) {
