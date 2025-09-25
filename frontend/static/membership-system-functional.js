@@ -574,12 +574,11 @@ class AxyraMembershipSystemFunctional {
 
       // Crear enlace de Wompi para validación de $200 COP
       const wompiLink = this.createWompiValidationLink(plan);
-      
+
       // Redirigir a Wompi con el monto correcto
       window.open(wompiLink, '_blank');
-      
+
       this.showNotification('Redirigiendo a Wompi para validación de $200 COP...', 'info');
-      
     } catch (error) {
       console.error('❌ Error en validación:', error);
       this.showNotification('Error en la validación: ' + error.message, 'error');
@@ -596,18 +595,17 @@ class AxyraMembershipSystemFunctional {
         reference: `validation_${Date.now()}_${plan.id}`,
         customer: {
           email: 'usuario@axyra.com',
-          name: 'Usuario AXYRA'
+          name: 'Usuario AXYRA',
         },
         plan: plan.id,
-        type: 'validation'
+        type: 'validation',
       };
 
       // Crear URL de Wompi para validación
       const wompiUrl = this.buildWompiUrl(validationData);
-      
+
       console.log('🔗 Enlace de validación Wompi creado:', wompiUrl);
       return wompiUrl;
-      
     } catch (error) {
       console.error('❌ Error creando enlace de Wompi:', error);
       throw error;
@@ -620,27 +618,27 @@ class AxyraMembershipSystemFunctional {
       if (window.axyraWompiKeys) {
         return window.axyraWompiKeys.createValidationLink({
           id: validationData.plan,
-          name: validationData.description
+          name: validationData.description,
         });
       }
-      
+
       // Fallback si no hay configuración de claves
       const baseUrl = 'https://checkout.wompi.co/l/';
-      
-      // Parámetros para la validación
-      const params = new URLSearchParams({
-        'public-key': 'pub_test_123456789', // Reemplazar con tu clave pública
-        'currency': validationData.currency,
-        'amount-in-cents': (validationData.amount * 100).toString(), // Convertir a centavos
-        'reference': validationData.reference,
-        'customer-email': validationData.customer.email,
-        'customer-name': validationData.customer.name,
-        'description': validationData.description,
-        'redirect-url': window.location.origin + '/modulos/membresias/membresias.html?validation=success&plan=' + validationData.plan
-      });
+
+       // Parámetros para la validación
+       const params = new URLSearchParams({
+         'public-key': 'pub_prod_DMd1RNFhiA3813HZ3YZFsNjSg2beSS00', // Tu clave pública de Wompi
+         currency: validationData.currency,
+         'amount-in-cents': (validationData.amount * 100).toString(), // Convertir a centavos
+         reference: validationData.reference,
+         'customer-email': validationData.customer.email,
+         'customer-name': validationData.customer.name,
+         description: validationData.description,
+         'redirect-url':
+           window.location.origin + '/modulos/membresias/membresias.html?validation=success&plan=' + validationData.plan,
+       });
 
       return `${baseUrl}?${params.toString()}`;
-      
     } catch (error) {
       console.error('❌ Error construyendo URL de Wompi:', error);
       throw error;
@@ -721,11 +719,11 @@ class AxyraMembershipSystemFunctional {
       const urlParams = new URLSearchParams(window.location.search);
       const validation = urlParams.get('validation');
       const plan = urlParams.get('plan');
-      
+
       if (validation === 'success' && plan) {
         console.log('✅ Usuario regresó de validación exitosa de Wompi');
         this.handleValidationSuccess(plan);
-        
+
         // Limpiar URL
         const newUrl = window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
@@ -738,18 +736,17 @@ class AxyraMembershipSystemFunctional {
   async handleValidationSuccess(planId) {
     try {
       console.log('🎉 Procesando validación exitosa para plan:', planId);
-      
+
       // Activar prueba gratuita
       await this.updateMembership(planId, 'free_trial_validation');
-      
+
       // Mostrar notificación de éxito
       this.showNotification('¡Prueba gratuita activada! Validación exitosa.', 'success');
-      
+
       // Recargar la página para mostrar el plan activo
       setTimeout(() => {
         window.location.reload();
       }, 2000);
-      
     } catch (error) {
       console.error('❌ Error procesando validación exitosa:', error);
       this.showNotification('Error activando prueba gratuita: ' + error.message, 'error');

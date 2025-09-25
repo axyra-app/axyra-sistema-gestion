@@ -4,28 +4,28 @@
 
 class AxyraWompiKeys {
   constructor() {
-    this.config = {
-      // Claves de Wompi - REEMPLAZAR CON TUS CLAVES REALES
-      publicKey: 'pub_test_123456789', // Tu clave pública de Wompi
-      privateKey: 'prv_test_123456789', // Tu clave privada de Wompi
-      
-      // Configuración de entorno
-      environment: 'test', // 'test' o 'production'
-      
+     this.config = {
+       // Claves de Wompi - CONFIGURADAS CON TUS CLAVES REALES
+       publicKey: 'pub_prod_DMd1RNFhiA3813HZ3YZFsNjSg2beSS00', // Tu clave pública de Wompi
+       privateKey: 'prv_prod_aka7VAtItpCAF3qhVuD8zvt7FUWXduPY', // Tu clave privada de Wompi
+
+       // Configuración de entorno
+       environment: 'production', // 'test' o 'production'
+
       // URLs de Wompi
       urls: {
         test: 'https://checkout.wompi.co/l/',
-        production: 'https://checkout.wompi.co/l/'
+        production: 'https://checkout.wompi.co/l/',
       },
-      
+
       // Configuración de validación
       validation: {
         amount: 200, // $200 COP para validación
         currency: 'COP',
-        description: 'Validación de identidad - Prueba gratuita AXYRA'
-      }
+        description: 'Validación de identidad - Prueba gratuita AXYRA',
+      },
     };
-    
+
     this.init();
   }
 
@@ -42,12 +42,11 @@ class AxyraWompiKeys {
         this.config.privateKey = process.env.WOMPI_PRIVATE_KEY || this.config.privateKey;
         this.config.environment = process.env.WOMPI_ENVIRONMENT || this.config.environment;
       }
-      
+
       console.log('🔑 Claves Wompi configuradas:', {
         environment: this.config.environment,
-        publicKey: this.config.publicKey.substring(0, 10) + '...'
+        publicKey: this.config.publicKey.substring(0, 10) + '...',
       });
-      
     } catch (error) {
       console.warn('⚠️ Error cargando claves de entorno:', error);
     }
@@ -83,20 +82,20 @@ class AxyraWompiKeys {
     try {
       const validationConfig = this.getValidationConfig();
       const wompiUrl = this.getWompiUrl();
-      
+
       const params = new URLSearchParams({
         'public-key': this.getPublicKey(),
-        'currency': validationConfig.currency,
+        currency: validationConfig.currency,
         'amount-in-cents': (validationConfig.amount * 100).toString(),
-        'reference': `validation_${Date.now()}_${plan.id}`,
+        reference: `validation_${Date.now()}_${plan.id}`,
         'customer-email': 'usuario@axyra.com',
         'customer-name': 'Usuario AXYRA',
-        'description': `${validationConfig.description} - ${plan.name}`,
-        'redirect-url': window.location.origin + '/modulos/membresias/membresias.html?validation=success&plan=' + plan.id
+        description: `${validationConfig.description} - ${plan.name}`,
+        'redirect-url':
+          window.location.origin + '/modulos/membresias/membresias.html?validation=success&plan=' + plan.id,
       });
 
       return `${wompiUrl}?${params.toString()}`;
-      
     } catch (error) {
       console.error('❌ Error creando enlace de validación:', error);
       throw error;
@@ -107,20 +106,19 @@ class AxyraWompiKeys {
   createFullPaymentLink(plan) {
     try {
       const wompiUrl = this.getWompiUrl();
-      
+
       const params = new URLSearchParams({
         'public-key': this.getPublicKey(),
-        'currency': 'COP',
+        currency: 'COP',
         'amount-in-cents': (plan.price * 100).toString(),
-        'reference': `payment_${Date.now()}_${plan.id}`,
+        reference: `payment_${Date.now()}_${plan.id}`,
         'customer-email': 'usuario@axyra.com',
         'customer-name': 'Usuario AXYRA',
-        'description': `Pago completo - ${plan.name}`,
-        'redirect-url': window.location.origin + '/modulos/membresias/membresias.html?payment=success&plan=' + plan.id
+        description: `Pago completo - ${plan.name}`,
+        'redirect-url': window.location.origin + '/modulos/membresias/membresias.html?payment=success&plan=' + plan.id,
       });
 
       return `${wompiUrl}?${params.toString()}`;
-      
     } catch (error) {
       console.error('❌ Error creando enlace de pago completo:', error);
       throw error;
