@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../../static/modal-emergency-fix.css" />
     <link rel="stylesheet" href="../../static/header-fixes.css" />
     <link rel="stylesheet" href="cuadre-caja-styles.css" />
+    <link rel="stylesheet" href="../../static/footer-center-fix.css" />
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -34,7 +35,9 @@
     <script src="../../static/roles-config.js"></script>
 
     <!-- Sistema de Notificaciones Push AXYRA -->
-    <script src="../../static/notifications-system.js"></script>
+    <!-- Sistema de Notificaciones AXYRA Profesional -->
+    <link rel="stylesheet" href="../../static/notifications-professional-styles.css" />
+    <script src="../../static/notifications-system-professional.js"></script>
 
     <!-- Sistema Unificado de Autenticación AXYRA -->
     <script src="../../static/unified-auth-system.js"></script>
@@ -71,6 +74,20 @@
         <div class="axyra-page-header">
           <h1 class="axyra-page-title">Cuadre de Caja</h1>
           <p class="axyra-page-subtitle">Registro de ingresos por factura individual y control de caja</p>
+        </div>
+
+        <!-- Selector de Fecha para Resumen -->
+        <div class="axyra-date-selector-container">
+          <div class="axyra-date-selector">
+            <label for="fechaResumen" class="axyra-label">📅 Seleccionar Fecha para Resumen:</label>
+            <input type="date" id="fechaResumen" class="axyra-input" value="" />
+            <button onclick="cargarResumenPorFecha()" class="axyra-btn axyra-btn-primary">
+              <i class="fas fa-calendar-check"></i> Ver Resumen
+            </button>
+            <button onclick="cargarResumenHoy()" class="axyra-btn axyra-btn-secondary">
+              <i class="fas fa-calendar-day"></i> Hoy
+            </button>
+          </div>
         </div>
 
         <!-- Dashboard de Analytics Financieros Mejorado -->
@@ -587,6 +604,55 @@
       let empleados = [];
       let monedaActual = 'COP';
 
+      // Verificar membresía premium
+      function verificarMembresiaPremium() {
+        const userData = localStorage.getItem('axyra_isolated_user');
+        if (!userData) return false;
+
+        const user = JSON.parse(userData);
+        const membresia = user.membresia || user.plan || 'free';
+
+        // Verificar si tiene membresía premium
+        const planesPremium = ['premium', 'pro', 'enterprise', 'business'];
+        return planesPremium.includes(membresia.toLowerCase());
+      }
+
+      // Mostrar restricción premium
+      function mostrarRestriccionPremium() {
+        const mainContent = document.querySelector('.axyra-container');
+        if (mainContent) {
+          mainContent.innerHTML = `
+            <div class="axyra-premium-restriction">
+              <div class="axyra-premium-card">
+                <div class="axyra-premium-icon">
+                  <i class="fas fa-crown"></i>
+                </div>
+                <h2>🔒 Cuadre de Caja - Función Premium</h2>
+                <p>Esta función está disponible solo para usuarios con membresía premium.</p>
+                <div class="axyra-premium-features">
+                  <h3>✨ Funciones Premium incluidas:</h3>
+                  <ul>
+                    <li>📊 Analytics financieros avanzados</li>
+                    <li>📅 Resumen por fecha personalizada</li>
+                    <li>📈 Reportes detallados</li>
+                    <li>💾 Exportación Excel profesional</li>
+                    <li>🔄 Sincronización en tiempo real</li>
+                  </ul>
+                </div>
+                <div class="axyra-premium-actions">
+                  <button onclick="window.location.href='../membresias/membresias.html'" class="axyra-btn axyra-btn-primary">
+                    <i class="fas fa-star"></i> Ver Planes Premium
+                  </button>
+                  <button onclick="window.location.href='../dashboard/dashboard.html'" class="axyra-btn axyra-btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver al Dashboard
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
       // Inicialización
       window.addEventListener('load', async () => {
         try {
@@ -596,7 +662,14 @@
           const isAuthenticated = await checkAuth();
 
           if (isAuthenticated) {
-            console.log('✅ Usuario autenticado, cargando cuadre de caja...');
+            // Verificar membresía premium
+            if (!verificarMembresiaPremium()) {
+              console.log('❌ Usuario sin membresía premium, mostrando restricción...');
+              mostrarRestriccionPremium();
+              return;
+            }
+
+            console.log('✅ Usuario autenticado con membresía premium, cargando cuadre de caja...');
 
             // Cargar facturas
             await cargarFacturas();
@@ -604,6 +677,9 @@
             // Cargar resumen y configuración
             cargarResumen();
             cargarConfiguracion();
+
+            // Configurar actualización en tiempo real
+            configurarActualizacionTiempoReal();
 
             console.log('✅ Módulo de cuadre de caja cargado correctamente');
           } else {
@@ -713,7 +789,7 @@
       function mostrarFacturas() {
         const tbody = document.getElementById('facturasTableBody');
         if (facturas.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" class="axyra-text-center">No hay facturas registradas</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="9" class="axyra-text-center">No hay facturas registradas</td></tr>';
           return;
         }
 
@@ -729,7 +805,12 @@
             <td>${factura.metodoPago || '-'}</td>
             <td>${factura.descripcion || '-'}</td>
             <td>
-              <button class="axyra-btn axyra-btn-danger axyra-btn-small" onclick="eliminarFactura('${factura.id}')">
+              <span class="axyra-badge axyra-badge-success">${factura.estado || 'Pagada'}</span>
+            </td>
+            <td>
+              <button class="axyra-btn axyra-btn-danger axyra-btn-small" onclick="mostrarModalEliminarFactura(${JSON.stringify(
+                factura
+              ).replace(/"/g, '&quot;')})">
                 <i class="fas fa-trash"></i>
               </button>
             </td>
@@ -774,9 +855,9 @@
       }
 
       // Cargar resumen del día
-      function cargarResumen() {
+      function cargarResumen(fechaEspecifica = null) {
         try {
-          const fechaHoy = new Date().toISOString().split('T')[0];
+          const fechaHoy = fechaEspecifica || new Date().toISOString().split('T')[0];
           const facturasHoy = facturas.filter((f) => f.fecha === fechaHoy);
 
           // Calcular totales
@@ -830,16 +911,16 @@
 
             const ultimaFacturaTimeElement = document.getElementById('ultimaFacturaTime');
             if (ultimaFacturaTimeElement) {
-              const fechaFactura = new Date(ultimaFactura.fecha);
-              // Formatear hora en zona horaria de Colombia
-              const horaColombia = fechaFactura.toLocaleTimeString('es-CO', {
+              // Usar la hora actual del sistema en lugar de la fecha de la factura
+              const ahora = new Date();
+              const horaActual = ahora.toLocaleTimeString('es-CO', {
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
                 hour12: true,
                 timeZone: 'America/Bogota',
               });
-              ultimaFacturaTimeElement.textContent = `Registrada a las ${horaColombia}`;
+              ultimaFacturaTimeElement.textContent = `Registrada a las ${horaActual}`;
             }
           } else {
             document.getElementById('ultimaFactura').textContent = formatearMoneda(0);
@@ -849,6 +930,9 @@
               ultimaFacturaTimeElement.textContent = '';
             }
           }
+
+          // Actualizar KPIs financieros
+          actualizarKPIsFinancieros();
 
           console.log('✅ Resumen del día actualizado');
         } catch (error) {
@@ -893,16 +977,16 @@
               factura.encargado
             } - ${factura.metodoPago.toUpperCase()}`;
 
-            // Actualizar tiempo
-            const fechaFactura = new Date(factura.fecha);
-            const horaColombia = fechaFactura.toLocaleTimeString('es-CO', {
+            // Actualizar tiempo - usar la hora actual del sistema
+            const ahora = new Date();
+            const horaActual = ahora.toLocaleTimeString('es-CO', {
               hour: '2-digit',
               minute: '2-digit',
               second: '2-digit',
               hour12: true,
               timeZone: 'America/Bogota',
             });
-            ultimaFacturaTimeElement.textContent = `Registrada a las ${horaColombia}`;
+            ultimaFacturaTimeElement.textContent = `Registrada a las ${horaActual}`;
 
             console.log('✅ Última factura actualizada inmediatamente:', factura.numero);
           }
@@ -915,6 +999,29 @@
       function cargarConfiguracion() {
         const moneda = localStorage.getItem('axyra_moneda') || 'COP';
         cambiarMoneda(moneda);
+
+        // Establecer fecha actual por defecto
+        document.getElementById('fechaResumen').value = new Date().toISOString().split('T')[0];
+      }
+
+      // Cargar resumen por fecha específica
+      function cargarResumenPorFecha() {
+        const fechaSeleccionada = document.getElementById('fechaResumen').value;
+        if (!fechaSeleccionada) {
+          mostrarMensaje('❌ Por favor selecciona una fecha', 'warning');
+          return;
+        }
+
+        cargarResumen(fechaSeleccionada);
+        mostrarMensaje(`✅ Resumen cargado para ${fechaSeleccionada}`, 'success');
+      }
+
+      // Cargar resumen de hoy
+      function cargarResumenHoy() {
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('fechaResumen').value = hoy;
+        cargarResumen(hoy);
+        mostrarMensaje('✅ Resumen de hoy cargado', 'success');
       }
 
       // Función para manejar cambio en encargado
@@ -1173,8 +1280,29 @@
         // Actualizar resumen del día en tiempo real
         setTimeout(() => {
           cargarResumen();
+          actualizarKPIsFinancieros();
         }, 100);
       });
+
+      // Configurar actualización en tiempo real
+      function configurarActualizacionTiempoReal() {
+        // Actualizar cada 30 segundos
+        setInterval(() => {
+          cargarResumen();
+          actualizarKPIsFinancieros();
+        }, 30000);
+
+        // Actualizar cuando se detecten cambios en localStorage
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'axyra_facturas') {
+            cargarResumen();
+            actualizarKPIsFinancieros();
+            mostrarFacturas();
+          }
+        });
+
+        console.log('✅ Actualización en tiempo real configurada');
+      }
 
       // Limpiar formulario
       function limpiarFormulario() {
@@ -1453,18 +1581,17 @@
 
           // Agregar datos de cada factura
           facturas.forEach((f, index) => {
-            const empleado = empleados.find((e) => e.id === f.empleado_id);
-            console.log(`📝 Procesando factura ${index + 1}:`, f.id, empleado?.nombre);
+            console.log(`📝 Procesando factura ${index + 1}:`, f.id, f.encargado);
 
             data.push([
               f.id || 'N/A',
-              empleado ? empleado.nombre : 'Empleado no encontrado',
-              empleado ? empleado.cedula || 'N/A' : 'N/A',
+              f.encargado || 'N/A',
+              f.cedulaEncargado || 'N/A',
               new Date(f.fecha).toLocaleDateString('es-CO', { timeZone: 'America/Bogota' }),
-              f.concepto || 'N/A',
-              formatearMoneda(f.valor),
-              f.estado || 'Activa',
-              f.observaciones || 'N/A',
+              f.descripcion || 'N/A',
+              formatearMoneda(f.monto),
+              f.estado || 'Pagada',
+              f.area || 'N/A',
             ]);
           });
 
@@ -1550,18 +1677,17 @@
 
           // Agregar datos de cada factura
           facturas.forEach((f, index) => {
-            const empleado = empleados.find((e) => e.id === f.empleado_id);
-            console.log(`📝 Procesando factura ${index + 1}:`, f.id, empleado?.nombre);
+            console.log(`📝 Procesando factura ${index + 1}:`, f.id, f.encargado);
 
             data.push([
               f.id || 'N/A',
-              empleado ? empleado.nombre : 'Empleado no encontrado',
-              empleado ? empleado.cedula || 'N/A' : 'N/A',
+              f.encargado || 'N/A',
+              f.cedulaEncargado || 'N/A',
               new Date(f.fecha).toLocaleDateString('es-CO', { timeZone: 'America/Bogota' }),
-              f.concepto || 'N/A',
-              formatearMoneda(f.valor),
-              f.estado || 'Activa',
-              f.observaciones || 'N/A',
+              f.descripcion || 'N/A',
+              formatearMoneda(f.monto),
+              f.estado || 'Pagada',
+              f.area || 'N/A',
             ]);
           });
 
@@ -1685,6 +1811,136 @@
         font-size: 0.9rem;
         line-height: 1.5;
         margin: 0;
+      }
+
+      /* Estilos para selector de fecha */
+      .axyra-date-selector-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .axyra-date-selector {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .axyra-date-selector .axyra-label {
+        color: white;
+        font-weight: 600;
+        margin: 0;
+        font-size: 1.1rem;
+      }
+
+      .axyra-date-selector .axyra-input {
+        background: white;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 1rem;
+        min-width: 200px;
+      }
+
+      /* Estilos para restricción premium */
+      .axyra-premium-restriction {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        padding: 40px 20px;
+      }
+
+      .axyra-premium-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 100%;
+      }
+
+      .axyra-premium-icon {
+        font-size: 4rem;
+        color: #fbbf24;
+        margin-bottom: 20px;
+      }
+
+      .axyra-premium-card h2 {
+        color: #1f2937;
+        margin-bottom: 16px;
+        font-size: 2rem;
+      }
+
+      .axyra-premium-card p {
+        color: #6b7280;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+      }
+
+      .axyra-premium-features {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 24px;
+        margin: 24px 0;
+        text-align: left;
+      }
+
+      .axyra-premium-features h3 {
+        color: #1f2937;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+
+      .axyra-premium-features ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .axyra-premium-features li {
+        padding: 8px 0;
+        color: #374151;
+        font-size: 1rem;
+      }
+
+      .axyra-premium-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      /* Estilos para badges de estado */
+      .axyra-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .axyra-badge-success {
+        background-color: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+      }
+
+      .axyra-badge-warning {
+        background-color: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+
+      .axyra-badge-danger {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
       }
 
       /* Estilos para el modal de eliminación */
@@ -2761,8 +3017,8 @@
         try {
           const facturas = JSON.parse(localStorage.getItem('axyra_facturas') || '[]');
 
-          // Calcular ingreso promedio
-          const totalIngresos = facturas.reduce((sum, f) => sum + parseFloat(f.valor || 0), 0);
+          // Calcular ingreso promedio usando 'monto' en lugar de 'valor'
+          const totalIngresos = facturas.reduce((sum, f) => sum + parseFloat(f.monto || 0), 0);
           const ingresoPromedio = facturas.length > 0 ? totalIngresos / facturas.length : 0;
 
           // Calcular facturas por día (últimos 30 días)
@@ -2785,14 +3041,13 @@
             return fecha.getMonth() === mesAnterior && fecha.getFullYear() === añoAnterior;
           });
 
-          const ingresosMesActual = facturasMesActual.reduce((sum, f) => sum + parseFloat(f.valor || 0), 0);
-          const ingresosMesAnterior = facturasMesAnterior.reduce((sum, f) => sum + parseFloat(f.valor || 0), 0);
+          const ingresosMesActual = facturasMesActual.reduce((sum, f) => sum + parseFloat(f.monto || 0), 0);
+          const ingresosMesAnterior = facturasMesAnterior.reduce((sum, f) => sum + parseFloat(f.monto || 0), 0);
           const crecimientoMensual =
             ingresosMesAnterior > 0 ? ((ingresosMesActual - ingresosMesAnterior) / ingresosMesAnterior) * 100 : 0;
 
           // Actualizar UI
-          document.getElementById('ingresoPromedio').textContent =
-            '$' + ingresoPromedio.toLocaleString(undefined, { maximumFractionDigits: 0 });
+          document.getElementById('ingresoPromedio').textContent = formatearMoneda(ingresoPromedio);
           document.getElementById('facturasPorDia').textContent = facturasPorDia.toFixed(1);
           document.getElementById('crecimientoMensual').textContent = crecimientoMensual.toFixed(1) + '%';
 

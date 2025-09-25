@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="../../static/modal-emergency-fix.css" />
     <link rel="stylesheet" href="../../static/header-fixes.css" />
     <link rel="stylesheet" href="inventario-styles.css" />
+    <link rel="stylesheet" href="../../static/footer-center-fix.css" />
     <link rel="icon" href="../../nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
@@ -722,6 +723,82 @@
           min-width: auto;
         }
       }
+
+      /* Estilos para restricción premium */
+      .axyra-premium-restriction {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+        padding: 40px 20px;
+      }
+
+      .axyra-premium-card {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        width: 100%;
+      }
+
+      .axyra-premium-icon {
+        font-size: 4rem;
+        color: #fbbf24;
+        margin-bottom: 20px;
+      }
+
+      .axyra-premium-card h2 {
+        color: #1f2937;
+        margin-bottom: 16px;
+        font-size: 2rem;
+      }
+
+      .axyra-premium-card p {
+        color: #6b7280;
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+      }
+
+      .axyra-premium-features {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 24px;
+        margin: 24px 0;
+        text-align: left;
+      }
+
+      .axyra-premium-features h3 {
+        color: #1f2937;
+        margin-bottom: 16px;
+        text-align: center;
+      }
+
+      .axyra-premium-features ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .axyra-premium-features li {
+        padding: 8px 0;
+        color: #374151;
+        font-size: 1rem;
+      }
+
+      .axyra-premium-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      @media (max-width: 768px) {
+        .axyra-premium-actions {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
     </style>
 
     <!-- Firebase -->
@@ -742,7 +819,9 @@
     <script src="../../static/roles-config.js"></script>
 
     <!-- Sistema de Notificaciones Push AXYRA -->
-    <script src="../../static/notifications-system.js"></script>
+    <!-- Sistema de Notificaciones AXYRA Profesional -->
+    <link rel="stylesheet" href="../../static/notifications-professional-styles.css" />
+    <script src="../../static/notifications-system-professional.js"></script>
 
     <!-- Sistema Unificado de Autenticación AXYRA -->
     <script src="../../static/unified-auth-system.js"></script>
@@ -755,6 +834,38 @@
   </head>
   <body>
     <!-- Header Compartido AXYRA - Se insertará automáticamente -->
+
+    <!-- Verificación de membresía premium -->
+    <div id="membership-check" style="display: none">
+      <div class="axyra-premium-restriction">
+        <div class="axyra-premium-card">
+          <div class="axyra-premium-icon">
+            <i class="fas fa-crown"></i>
+          </div>
+          <h2>🔒 Inventario - Función Premium</h2>
+          <p>Esta función está disponible solo para usuarios con membresía premium.</p>
+          <div class="axyra-premium-features">
+            <h3>✨ Funciones Premium incluidas:</h3>
+            <ul>
+              <li>📦 Gestión completa de inventario</li>
+              <li>📊 Reportes de stock en tiempo real</li>
+              <li>🔄 Sincronización automática</li>
+              <li>📈 Analytics de inventario</li>
+              <li>💾 Exportación de datos</li>
+              <li>🔔 Alertas de stock bajo</li>
+            </ul>
+          </div>
+          <div class="axyra-premium-actions">
+            <button onclick="window.location.href='../membresias/membresias.html'" class="axyra-btn axyra-btn-primary">
+              <i class="fas fa-star"></i> Ver Planes Premium
+            </button>
+            <button onclick="window.location.href='../dashboard/dashboard.html'" class="axyra-btn axyra-btn-secondary">
+              <i class="fas fa-arrow-left"></i> Volver al Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Contenido Principal -->
     <main class="axyra-section">
@@ -922,6 +1033,15 @@
         </div>
       </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="axyra-footer">
+      <div class="axyra-footer-content">
+        <div class="axyra-footer-bottom">
+          <p>&copy; 2025 AXYRA. Sistema de Gestión Empresarial.</p>
+        </div>
+      </div>
+    </footer>
 
     <!-- Modal para Agregar/Editar Producto -->
     <div id="modalProducto" class="inventario-modal">
@@ -2149,5 +2269,51 @@
 
     <!-- Chat de IA AXYRA - Cargar al final -->
     <script src="../../static/axyra-ai-global.js"></script>
+    <script>
+      // Verificar membresía premium
+      function verificarMembresiaPremium() {
+        const userData = localStorage.getItem('axyra_isolated_user');
+        if (!userData) return false;
+
+        const user = JSON.parse(userData);
+        const membresia = user.membresia || user.plan || 'free';
+
+        // Verificar si tiene membresía premium
+        const planesPremium = ['premium', 'pro', 'enterprise', 'business'];
+        return planesPremium.includes(membresia.toLowerCase());
+      }
+
+      // Mostrar restricción premium
+      function mostrarRestriccionPremium() {
+        const membershipCheck = document.getElementById('membership-check');
+        const mainContent = document.querySelector('.axyra-section');
+
+        if (membershipCheck && mainContent) {
+          membershipCheck.style.display = 'block';
+          mainContent.style.display = 'none';
+        }
+      }
+
+      // Inicialización del sistema de inventario
+      document.addEventListener('DOMContentLoaded', function () {
+        console.log('🚀 Sistema de Inventario AXYRA inicializando...');
+
+        // Verificar membresía premium
+        if (!verificarMembresiaPremium()) {
+          console.log('❌ Usuario sin membresía premium, mostrando restricción...');
+          mostrarRestriccionPremium();
+          return;
+        }
+
+        console.log('✅ Usuario con membresía premium, cargando inventario...');
+
+        // Inicializar el sistema de inventario
+        if (window.AxyraInventorySystem) {
+          window.AxyraInventorySystem.init();
+        } else {
+          console.warn('⚠️ Sistema de inventario no disponible');
+        }
+      });
+    </script>
   </body>
 </html>
