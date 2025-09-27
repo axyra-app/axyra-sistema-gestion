@@ -53,6 +53,15 @@
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo h1 i {
+            font-size: 2rem;
+            color: #667eea;
         }
 
         .logo p {
@@ -391,7 +400,16 @@
         // Inicializar Firebase
         if (typeof firebase !== 'undefined') {
             const config = window.getAxyraConfig();
-            firebase.initializeApp(config.firebase);
+            if (config && config.firebase) {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(config.firebase);
+                }
+                console.log('🔥 Firebase inicializado correctamente en registro');
+            } else {
+                console.error('❌ Error: No se pudo obtener la configuración de Firebase');
+            }
+        } else {
+            console.error('❌ Error: Firebase SDK no está disponible');
         }
 
         // Función para mostrar/ocultar contraseña
@@ -440,10 +458,40 @@
                     return;
                 }
 
+                // Verificar que Firebase esté inicializado
+                if (!firebase.apps.length) {
+                    showMessage('Firebase no está inicializado. Recarga la página e intenta nuevamente.');
+                    return;
+                }
+
                 const provider = new firebase.auth.GoogleAuthProvider();
                 firebase.auth().signInWithPopup(provider)
-                    .then((result) => {
+                    .then(async (result) => {
                         const user = result.user;
+                        
+                        // Crear perfil de usuario con información básica
+                        const userData = {
+                            nombre: user.displayName || 'Usuario Google',
+                            usuario: user.email.split('@')[0],
+                            email: user.email,
+                            telefono: '',
+                            cargo: '',
+                            empresa: 'Empresa Google',
+                            nit: '',
+                            sector: '',
+                            direccion: '',
+                            ciudad: '',
+                            pais: 'Colombia',
+                            fechaRegistro: firebase.firestore.FieldValue.serverTimestamp(),
+                            rol: 'admin',
+                            activo: true,
+                            tipoCuenta: 'empresarial',
+                            proveedor: 'google'
+                        };
+
+                        // Guardar en Firestore
+                        await firebase.firestore().collection('users').doc(user.uid).set(userData);
+                        
                         showMessage(`¡Registro exitoso! Bienvenido ${user.displayName}`, 'success');
                         
                         // Redirigir al dashboard después de 2 segundos
@@ -453,7 +501,15 @@
                     })
                     .catch((error) => {
                         console.error('Error en registro con Google:', error);
-                        showMessage('Error en el registro con Google. Intenta nuevamente.');
+                        let errorMessage = 'Error en el registro con Google. Intenta nuevamente.';
+                        
+                        if (error.code === 'auth/popup-closed-by-user') {
+                            errorMessage = 'Registro cancelado por el usuario.';
+                        } else if (error.code === 'auth/popup-blocked') {
+                            errorMessage = 'Popup bloqueado. Permite ventanas emergentes e intenta nuevamente.';
+                        }
+                        
+                        showMessage(errorMessage);
                     });
             } catch (error) {
                 console.error('Error en registro con Google:', error);
@@ -591,12 +647,14 @@
         });
 
         // Verificar si el usuario ya está autenticado
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                // Usuario ya autenticado, redirigir al dashboard
-                window.location.href = 'dashboard-optimized.html';
-            }
-        });
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    // Usuario ya autenticado, redirigir al dashboard
+                    window.location.href = 'dashboard-optimized.html';
+                }
+            });
+        }
     </script>
 </body>
 </html>

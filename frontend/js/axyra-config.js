@@ -28,98 +28,68 @@ window.AXYRA_CONFIG = {
     storageBucket: window.ENV?.VITE_FIREBASE_STORAGE_BUCKET || 'axyra-48238.firebasestorage.app',
     messagingSenderId: window.ENV?.VITE_FIREBASE_MESSAGING_SENDER_ID || '796334517286',
     appId: window.ENV?.VITE_FIREBASE_APP_ID || '1:796334517286:web:95947cf0f773dc11378ae7',
-    measurementId: window.ENV?.VITE_FIREBASE_MEASUREMENT_ID || 'G-R8W2MP15B7',
+    measurementId: window.ENV?.VITE_FIREBASE_MEASUREMENT_ID || 'G-R8W2MP15B7'
   },
 
   // Configuración de la empresa
   company: {
-    name: 'Villa Venecia',
-    nit: '900.000.000-1',
-    address: 'Calle Principal #123',
-    phone: '(57)300-123-4567',
-    email: 'info@villavenecia.com',
-    logo: 'logo.png',
-  },
-
-  // Configuración del sistema
-  system: {
-    version: '1.0.0',
-    environment: 'production',
-    debug: false,
-    autoSave: true,
-    sessionTimeout: 30, // minutos
-    maxLoginAttempts: 5,
+    name: 'AXYRA Sistema de Gestión',
+    version: '2.0.0',
+    description: 'Sistema integral de gestión empresarial',
+    url: 'https://axyra.vercel.app',
+    support: {
+      email: 'soporte@axyra.com',
+      phone: '+57 300 123 4567'
+    }
   },
 
   // Configuración de seguridad
   security: {
-    twoFactorEnabled: false,
-    backupFrequency: 'daily',
-    notificationsFrequency: 10, // minutos
-    sessionTimeout: 30, // minutos
-  },
-
-  // Configuración de membresías
-  memberships: {
-    free: {
-      name: 'Gratuito',
-      price: 0,
-      features: ['Hasta 5 empleados', 'Reportes básicos', 'Soporte por email'],
-    },
-    basic: {
-      name: 'Básico',
-      price: 49900,
-      features: ['Hasta 10 empleados', 'Reportes avanzados', 'Soporte prioritario', 'Dashboard completo'],
-    },
-    professional: {
-      name: 'Profesional',
-      price: 129900,
-      features: [
-        'Hasta 50 empleados',
-        'Reportes ejecutivos',
-        'Soporte 24/7',
-        'Dashboard avanzado',
-        'Inventario completo',
-      ],
-    },
-    enterprise: {
-      name: 'Empresarial',
-      price: 259900,
-      features: [
-        'Empleados ilimitados',
-        'Reportes personalizados',
-        'Soporte dedicado',
-        'Dashboard personalizado',
-        'API completa',
-      ],
-    },
-  },
-
-  // Configuración de nómina colombiana
-  payroll: {
-    salarioMinimo: 1300000,
-    porcentajeCesantias: 8.33,
-    porcentajePrima: 8.33,
-    porcentajeInteresesCesantias: 12,
-    porcentajeSalud: 4,
-    porcentajePension: 4,
-    porcentajeARL: 0.522,
-    porcentajeCajaCompensacion: 4,
-    porcentajeICBF: 3,
-    porcentajeSENA: 2,
+    sessionTimeout: 3600000, // 1 hora
+    maxLoginAttempts: 5,
+    lockoutTime: 900000, // 15 minutos
+    passwordMinLength: 6,
+    requireEmailVerification: false
   },
 
   // Configuración de notificaciones
   notifications: {
-    email: true,
-    push: true,
-    sms: false,
-    whatsapp: false,
-    frequency: 'INMEDIATA',
-    schedule: {
-      start: '08:00',
-      end: '18:00',
-    },
+    enabled: true,
+    types: ['success', 'error', 'warning', 'info'],
+    autoHide: true,
+    duration: 5000,
+    position: 'top-right'
+  },
+
+  // Configuración de la aplicación
+  app: {
+    theme: 'light',
+    language: 'es',
+    timezone: 'America/Bogota',
+    currency: 'COP',
+    dateFormat: 'DD/MM/YYYY',
+    timeFormat: '24h'
+  },
+
+  // Configuración de paginación
+  pagination: {
+    defaultPageSize: 10,
+    pageSizeOptions: [5, 10, 25, 50, 100]
+  },
+
+  // Configuración de exportación
+  export: {
+    defaultFormat: 'pdf',
+    supportedFormats: ['pdf', 'excel', 'csv'],
+    maxRecords: 10000
+  },
+
+  // Configuración de backup
+  backup: {
+    enabled: true,
+    frequency: 'daily',
+    retentionDays: 30,
+    autoBackup: true
   },
 
   // Configuración de integraciones
@@ -136,8 +106,8 @@ window.AXYRA_CONFIG = {
         'https://www.googleapis.com/auth/drive.readonly',
         'https://www.googleapis.com/auth/drive.file',
         'https://www.googleapis.com/auth/calendar.readonly',
-        'https://www.googleapis.com/auth/calendar.events',
-      ],
+        'https://www.googleapis.com/auth/calendar.events'
+      ]
     },
 
     // Microsoft 365
@@ -153,147 +123,121 @@ window.AXYRA_CONFIG = {
         'https://graph.microsoft.com/Files.ReadWrite',
         'https://graph.microsoft.com/Calendars.ReadWrite',
         'https://graph.microsoft.com/Team.ReadBasic.All',
-        'https://graph.microsoft.com/User.Read',
-      ],
+        'https://graph.microsoft.com/User.Read'
+      ]
     },
 
     // Pagos
     payments: {
       wompi: {
-        publicKey: process.env.VITE_WOMPI_PUBLIC_KEY || '',
-        privateKey: process.env.VITE_WOMPI_PRIVATE_KEY || '',
-        environment: process.env.VITE_WOMPI_ENVIRONMENT || 'sandbox',
-        enabled: true,
+        publicKey: window.ENV?.VITE_WOMPI_PUBLIC_KEY || '',
+        privateKey: window.ENV?.VITE_WOMPI_PRIVATE_KEY || '',
+        environment: window.ENV?.VITE_WOMPI_ENVIRONMENT || 'sandbox',
+        merchantId: window.ENV?.VITE_WOMPI_MERCHANT_ID || '',
+        accountId: window.ENV?.VITE_WOMPI_ACCOUNT_ID || '',
+        webhookSecret: window.ENV?.VITE_WOMPI_WEBHOOK_SECRET || ''
       },
       paypal: {
-        clientId: process.env.VITE_PAYPAL_CLIENT_ID || '',
-        clientSecret: process.env.VITE_PAYPAL_CLIENT_SECRET || '',
-        environment: process.env.VITE_PAYPAL_ENVIRONMENT || 'sandbox',
-        enabled: true,
+        clientId: window.ENV?.VITE_PAYPAL_CLIENT_ID || '',
+        clientSecret: window.ENV?.VITE_PAYPAL_CLIENT_SECRET || '',
+        environment: window.ENV?.VITE_PAYPAL_ENVIRONMENT || 'sandbox'
       },
       stripe: {
-        publishableKey: process.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
-        secretKey: process.env.VITE_STRIPE_SECRET_KEY || '',
-        enabled: true,
-      },
+        publicKey: window.ENV?.VITE_STRIPE_PUBLIC_KEY || '',
+        secretKey: window.ENV?.VITE_STRIPE_SECRET_KEY || ''
+      }
     },
 
     // Email
     email: {
-      smtp: {
-        host: process.env.VITE_SMTP_HOST || '',
-        port: process.env.VITE_SMTP_PORT || 587,
-        secure: process.env.VITE_SMTP_SECURE === 'true',
-        user: process.env.VITE_SMTP_USER || '',
-        password: process.env.VITE_SMTP_PASSWORD || '',
-        enabled: true,
-      },
-      sendgrid: {
-        apiKey: process.env.VITE_SENDGRID_API_KEY || '',
-        enabled: false,
-      },
-      mailgun: {
-        apiKey: process.env.VITE_MAILGUN_API_KEY || '',
-        domain: process.env.VITE_MAILGUN_DOMAIN || '',
-        enabled: false,
-      },
-      awsSes: {
-        accessKeyId: process.env.VITE_AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.VITE_AWS_SECRET_ACCESS_KEY || '',
-        region: process.env.VITE_AWS_REGION || 'us-east-1',
-        enabled: false,
-      },
+      emailjsServiceId: window.ENV?.VITE_EMAILJS_SERVICE_ID || '',
+      emailjsTemplateId: window.ENV?.VITE_EMAILJS_TEMPLATE_ID || '',
+      emailjsPublicKey: window.ENV?.VITE_EMAILJS_PUBLIC_KEY || '',
+      smtpHost: window.ENV?.VITE_SMTP_HOST || '',
+      smtpPort: window.ENV?.VITE_SMTP_PORT || '',
+      smtpUser: window.ENV?.VITE_SMTP_USER || '',
+      smtpPass: window.ENV?.VITE_SMTP_PASS || '',
+      sendgridApiKey: window.ENV?.VITE_SENDGRID_API_KEY || '',
+      mailgunApiKey: window.ENV?.VITE_MAILGUN_API_KEY || '',
+      mailgunDomain: window.ENV?.VITE_MAILGUN_DOMAIN || '',
+      awsSesRegion: window.ENV?.VITE_AWS_SES_REGION || '',
+      awsSesAccessKeyId: window.ENV?.VITE_AWS_SES_ACCESS_KEY_ID || '',
+      awsSesSecretAccessKey: window.ENV?.VITE_AWS_SES_SECRET_ACCESS_KEY || ''
     },
 
     // SMS
     sms: {
-      twilio: {
-        accountSid: process.env.VITE_TWILIO_ACCOUNT_SID || '',
-        authToken: process.env.VITE_TWILIO_AUTH_TOKEN || '',
-        phoneNumber: process.env.VITE_TWILIO_PHONE_NUMBER || '',
-        enabled: false,
-      },
-      awsSns: {
-        accessKeyId: process.env.VITE_AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.VITE_AWS_SECRET_ACCESS_KEY || '',
-        region: process.env.VITE_AWS_REGION || 'us-east-1',
-        enabled: false,
-      },
-      sendgrid: {
-        apiKey: process.env.VITE_SENDGRID_API_KEY || '',
-        enabled: false,
-      },
+      twilioAccountSid: window.ENV?.VITE_TWILIO_ACCOUNT_SID || '',
+      twilioAuthToken: window.ENV?.VITE_TWILIO_AUTH_TOKEN || '',
+      twilioPhoneNumber: window.ENV?.VITE_TWILIO_PHONE_NUMBER || '',
+      awsSnsRegion: window.ENV?.VITE_AWS_SNS_REGION || '',
+      awsSnsAccessKeyId: window.ENV?.VITE_AWS_SNS_ACCESS_KEY_ID || '',
+      awsSnsSecretAccessKey: window.ENV?.VITE_AWS_SNS_SECRET_ACCESS_KEY || '',
+      sendgridApiKey: window.ENV?.VITE_SENDGRID_SMS_API_KEY || ''
     },
 
     // Cloud Storage
     cloudStorage: {
-      awsS3: {
-        accessKeyId: process.env.VITE_AWS_ACCESS_KEY_ID || '',
-        secretAccessKey: process.env.VITE_AWS_SECRET_ACCESS_KEY || '',
-        region: process.env.VITE_AWS_REGION || 'us-east-1',
-        bucket: process.env.VITE_AWS_S3_BUCKET || '',
-        enabled: false,
-      },
-      googleCloud: {
-        projectId: process.env.VITE_GOOGLE_CLOUD_PROJECT_ID || '',
-        keyFilename: process.env.VITE_GOOGLE_CLOUD_KEY_FILE || '',
-        bucket: process.env.VITE_GOOGLE_CLOUD_BUCKET || '',
-        enabled: false,
-      },
-      azure: {
-        accountName: process.env.VITE_AZURE_ACCOUNT_NAME || '',
-        accountKey: process.env.VITE_AZURE_ACCOUNT_KEY || '',
-        containerName: process.env.VITE_AZURE_CONTAINER_NAME || '',
-        enabled: false,
-      },
-      dropbox: {
-        accessToken: process.env.VITE_DROPBOX_ACCESS_TOKEN || '',
-        enabled: false,
-      },
+      awsS3AccessKeyId: window.ENV?.VITE_AWS_ACCESS_KEY_ID || '',
+      awsS3SecretAccessKey: window.ENV?.VITE_AWS_SECRET_ACCESS_KEY || '',
+      awsS3Region: window.ENV?.VITE_AWS_REGION || '',
+      awsS3BucketName: window.ENV?.VITE_AWS_S3_BUCKET_NAME || '',
+      googleCloudProjectId: window.ENV?.VITE_GOOGLE_CLOUD_PROJECT_ID || '',
+      googleCloudKeyFile: window.ENV?.VITE_GOOGLE_CLOUD_KEY_FILE || '',
+      azureStorageAccount: window.ENV?.VITE_AZURE_STORAGE_ACCOUNT || '',
+      azureStorageKey: window.ENV?.VITE_AZURE_STORAGE_KEY || '',
+      dropboxAccessToken: window.ENV?.VITE_DROPBOX_ACCESS_TOKEN || ''
     },
+
+    // API Management
+    apiManagement: {
+      jwtSecret: window.ENV?.VITE_JWT_SECRET || '',
+      apiKeyHeader: window.ENV?.VITE_API_KEY_HEADER || 'X-API-KEY'
+    }
   },
-};
 
-// Función para obtener configuración
-window.getAxyraConfig = function (key) {
-  const keys = key.split('.');
-  let value = window.AXYRA_CONFIG;
+  // Configuración de seguridad
+  security: {
+    encryptionKey: window.ENV?.VITE_ENCRYPTION_KEY || '',
+    jwtSecret: window.ENV?.VITE_JWT_SECRET || '',
+    sessionTimeout: 3600000, // 1 hora
+    loginAttempts: 5,
+    lockoutTime: 300000 // 5 minutos
+  },
 
-  for (const k of keys) {
-    value = value[k];
-    if (value === undefined) return null;
+  // Configuración general
+  general: {
+    appName: window.ENV?.VITE_APP_NAME || 'AXYRA Sistema de Gestión',
+    appUrl: window.ENV?.VITE_APP_URL || 'https://axyra.vercel.app',
+    nodeEnv: window.ENV?.NODE_ENV || 'production'
+  },
+
+  // Configuración de analytics
+  analytics: {
+    googleAnalyticsId: window.ENV?.VITE_GA_MEASUREMENT_ID || ''
   }
-
-  return value;
 };
 
 // Función para actualizar configuración
-window.updateAxyraConfig = function (key, value) {
-  const keys = key.split('.');
-  let config = window.AXYRA_CONFIG;
-
-  for (let i = 0; i < keys.length - 1; i++) {
-    if (!config[keys[i]]) config[keys[i]] = {};
-    config = config[keys[i]];
-  }
-
-  config[keys[keys.length - 1]] = value;
-
-  // Guardar en localStorage
+window.updateAxyraConfig = function(newConfig) {
+  window.AXYRA_CONFIG = { ...window.AXYRA_CONFIG, ...newConfig };
   localStorage.setItem('axyra_config', JSON.stringify(window.AXYRA_CONFIG));
 };
 
-// Cargar configuración desde localStorage
-document.addEventListener('DOMContentLoaded', function () {
+// Cargar configuración guardada
+window.loadAxyraConfig = function() {
   const savedConfig = localStorage.getItem('axyra_config');
   if (savedConfig) {
     try {
       const parsedConfig = JSON.parse(savedConfig);
       window.AXYRA_CONFIG = { ...window.AXYRA_CONFIG, ...parsedConfig };
     } catch (error) {
-      console.error('Error cargando configuración:', error);
+      console.error('Error cargando configuración guardada:', error);
     }
   }
-});
+};
 
-console.log('✅ Configuración AXYRA cargada correctamente');
+// Inicializar configuración
+window.loadAxyraConfig();
+
+console.log('🔧 AXYRA Config cargado correctamente');
