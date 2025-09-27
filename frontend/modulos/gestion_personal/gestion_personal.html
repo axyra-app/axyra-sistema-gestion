@@ -266,66 +266,188 @@
         border: 2px dashed #dee2e6;
       }
 
-      /* Estadísticas */
+      /* Estadísticas - Diseño Moderno */
       .estadisticas-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        margin-bottom: 30px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
       }
 
       .stat-card {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 30px 25px;
+        border-radius: 20px;
         text-align: center;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e1e5e9;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        border: none;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+      }
+
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+        border-radius: 20px;
+        pointer-events: none;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+      }
+
+      .stat-card:nth-child(1) {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+
+      .stat-card:nth-child(2) {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      }
+
+      .stat-card:nth-child(3) {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      }
+
+      .stat-card:nth-child(4) {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
       }
 
       .stat-card h3 {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #667eea;
-        margin: 0 0 10px 0;
+        font-size: 3rem;
+        font-weight: 800;
+        color: white;
+        margin: 0 0 15px 0;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        position: relative;
+        z-index: 2;
       }
 
       .stat-card p {
-        color: #666;
+        color: rgba(255, 255, 255, 0.9);
         margin: 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+        position: relative;
+        z-index: 2;
+        letter-spacing: 0.5px;
+      }
+
+      .stat-card .stat-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 2.5rem;
+        color: rgba(255, 255, 255, 0.3);
+        z-index: 1;
+      }
+
+      .stat-card .stat-trend {
+        position: absolute;
+        bottom: 15px;
+        right: 20px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
         font-weight: 500;
+        z-index: 2;
+      }
+
+      /* Animaciones de entrada */
+      .stat-card {
+        animation: slideInUp 0.6s ease-out;
+      }
+
+      .stat-card:nth-child(1) { animation-delay: 0.1s; }
+      .stat-card:nth-child(2) { animation-delay: 0.2s; }
+      .stat-card:nth-child(3) { animation-delay: 0.3s; }
+      .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .gestion-personal-tabs {
         display: flex;
-        background: #f8f9fa;
-        border-radius: 8px;
-        margin-bottom: 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+        margin-bottom: 30px;
         overflow-x: auto;
+        padding: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
       }
 
       .gestion-personal-tab {
         flex: 1;
-        padding: 15px 20px;
+        padding: 18px 25px;
         text-align: center;
         cursor: pointer;
         border: none;
         background: transparent;
-        color: #1a1a1a;
-        font-weight: 700;
+        color: #666;
+        font-weight: 600;
         font-size: 15px;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         white-space: nowrap;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        border-radius: 12px;
+        position: relative;
+        overflow: hidden;
+        min-width: 150px;
+      }
+
+      .gestion-personal-tab::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        border-radius: 12px;
+      }
+
+      .gestion-personal-tab:hover::before {
+        opacity: 1;
+      }
+
+      .gestion-personal-tab:hover {
+        color: #667eea;
+        transform: translateY(-2px);
       }
 
       .gestion-personal-tab.active {
-        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        border-radius: 8px;
+        border-radius: 12px;
         margin: 2px;
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-        text-shadow: none;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        transform: translateY(-2px);
+      }
+
+      .gestion-personal-tab.active::before {
+        display: none;
+      }
+
+      .gestion-personal-tab i {
+        margin-right: 8px;
+        font-size: 1.1rem;
       }
 
       .gestion-personal-tab:hover {
@@ -920,20 +1042,28 @@
       <!-- Estadísticas -->
       <div class="estadisticas-container">
         <div class="stat-card">
+          <i class="fas fa-users stat-icon"></i>
           <h3 id="totalEmpleados">0</h3>
           <p>Empleados</p>
+          <div class="stat-trend">+0% este mes</div>
         </div>
         <div class="stat-card">
+          <i class="fas fa-clock stat-icon"></i>
           <h3 id="totalHoras">0</h3>
           <p>Registros de Horas</p>
+          <div class="stat-trend">+0% esta semana</div>
         </div>
         <div class="stat-card">
+          <i class="fas fa-building stat-icon"></i>
           <h3 id="totalDepartamentos">0</h3>
           <p>Departamentos</p>
+          <div class="stat-trend">Activos</div>
         </div>
         <div class="stat-card">
+          <i class="fas fa-chart-line stat-icon"></i>
           <h3 id="promedioHoras">0</h3>
           <p>Promedio Horas/Registro</p>
+          <div class="stat-trend">Eficiencia</div>
         </div>
       </div>
 
