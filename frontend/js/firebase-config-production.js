@@ -6,13 +6,13 @@
 class FirebaseConfigProduction {
   constructor() {
     this.config = {
-      apiKey: "AIzaSyBvQKjJ8X9Y2Z3A4B5C6D7E8F9G0H1I2J3K",
-      authDomain: "axyra-sistema-gestion.firebaseapp.com",
-      projectId: "axyra-sistema-gestion",
-      storageBucket: "axyra-sistema-gestion.appspot.com",
-      messagingSenderId: "123456789012",
-      appId: "1:123456789012:web:abcdef1234567890abcdef",
-      measurementId: "G-ABCDEF1234"
+      apiKey: "AIzaSyAW3ejokcsWAP5G1yJT63jLBpFmdTiTUwc",
+      authDomain: "axyra-48238.firebaseapp.com",
+      projectId: "axyra-48238",
+      storageBucket: "axyra-48238.firebasestorage.app",
+      messagingSenderId: "796334517286",
+      appId: "1:796334517286:web:95947cf0f773dc11378ae7",
+      measurementId: "G-R8W2MP15B7"
     };
     
     this.isInitialized = false;
