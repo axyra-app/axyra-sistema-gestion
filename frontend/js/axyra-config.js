@@ -8,7 +8,7 @@ window.getAxyraConfig = function() {
   return window.AXYRA_CONFIG;
 };
 
-// Configuración de variables de entorno para Vite
+// Configuración de variables de entorno
 window.ENV = {
   VITE_FIREBASE_API_KEY: 'AIzaSyAW3ejokcsWAP5G1yJT63jLBpFmdTiTUwc',
   VITE_FIREBASE_AUTH_DOMAIN: 'axyra-48238.firebaseapp.com',
@@ -19,16 +19,17 @@ window.ENV = {
   VITE_FIREBASE_MEASUREMENT_ID: 'G-R8W2MP15B7'
 };
 
+// Configuración principal
 window.AXYRA_CONFIG = {
   // Configuración de Firebase
   firebase: {
-    apiKey: window.ENV?.VITE_FIREBASE_API_KEY || 'AIzaSyAW3ejokcsWAP5G1yJT63jLBpFmdTiTUwc',
-    authDomain: window.ENV?.VITE_FIREBASE_AUTH_DOMAIN || 'axyra-48238.firebaseapp.com',
-    projectId: window.ENV?.VITE_FIREBASE_PROJECT_ID || 'axyra-48238',
-    storageBucket: window.ENV?.VITE_FIREBASE_STORAGE_BUCKET || 'axyra-48238.firebasestorage.app',
-    messagingSenderId: window.ENV?.VITE_FIREBASE_MESSAGING_SENDER_ID || '796334517286',
-    appId: window.ENV?.VITE_FIREBASE_APP_ID || '1:796334517286:web:95947cf0f773dc11378ae7',
-    measurementId: window.ENV?.VITE_FIREBASE_MEASUREMENT_ID || 'G-R8W2MP15B7'
+    apiKey: window.ENV.VITE_FIREBASE_API_KEY,
+    authDomain: window.ENV.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: window.ENV.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: window.ENV.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: window.ENV.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: window.ENV.VITE_FIREBASE_APP_ID,
+    measurementId: window.ENV.VITE_FIREBASE_MEASUREMENT_ID
   },
 
   // Configuración de la empresa
@@ -96,9 +97,9 @@ window.AXYRA_CONFIG = {
   integrations: {
     // Google Workspace
     googleWorkspace: {
-      clientId: window.ENV?.VITE_GOOGLE_CLIENT_ID || '',
-      clientSecret: window.ENV?.VITE_GOOGLE_CLIENT_SECRET || '',
-      redirectUri: window.ENV?.VITE_GOOGLE_REDIRECT_URI || window.location.origin + '/auth/google/callback',
+      clientId: window.ENV.VITE_GOOGLE_CLIENT_ID || '',
+      clientSecret: window.ENV.VITE_GOOGLE_CLIENT_SECRET || '',
+      redirectUri: window.ENV.VITE_GOOGLE_REDIRECT_URI || window.location.origin + '/auth/google/callback',
       enabled: true,
       scopes: [
         'https://www.googleapis.com/auth/gmail.readonly',
@@ -112,10 +113,10 @@ window.AXYRA_CONFIG = {
 
     // Microsoft 365
     microsoft365: {
-      clientId: window.ENV?.VITE_MICROSOFT_CLIENT_ID || '',
-      clientSecret: window.ENV?.VITE_MICROSOFT_CLIENT_SECRET || '',
-      tenantId: window.ENV?.VITE_MICROSOFT_TENANT_ID || 'common',
-      redirectUri: window.ENV?.VITE_MICROSOFT_REDIRECT_URI || window.location.origin + '/auth/microsoft/callback',
+      clientId: window.ENV.VITE_MICROSOFT_CLIENT_ID || '',
+      clientSecret: window.ENV.VITE_MICROSOFT_CLIENT_SECRET || '',
+      tenantId: window.ENV.VITE_MICROSOFT_TENANT_ID || 'common',
+      redirectUri: window.ENV.VITE_MICROSOFT_REDIRECT_URI || window.location.origin + '/auth/microsoft/callback',
       enabled: true,
       scopes: [
         'https://graph.microsoft.com/Mail.Read',
@@ -130,91 +131,82 @@ window.AXYRA_CONFIG = {
     // Pagos
     payments: {
       wompi: {
-        publicKey: window.ENV?.VITE_WOMPI_PUBLIC_KEY || '',
-        privateKey: window.ENV?.VITE_WOMPI_PRIVATE_KEY || '',
-        environment: window.ENV?.VITE_WOMPI_ENVIRONMENT || 'sandbox',
-        merchantId: window.ENV?.VITE_WOMPI_MERCHANT_ID || '',
-        accountId: window.ENV?.VITE_WOMPI_ACCOUNT_ID || '',
-        webhookSecret: window.ENV?.VITE_WOMPI_WEBHOOK_SECRET || ''
+        publicKey: window.ENV.VITE_WOMPI_PUBLIC_KEY || '',
+        privateKey: window.ENV.VITE_WOMPI_PRIVATE_KEY || '',
+        environment: window.ENV.VITE_WOMPI_ENVIRONMENT || 'sandbox',
+        merchantId: window.ENV.VITE_WOMPI_MERCHANT_ID || '',
+        accountId: window.ENV.VITE_WOMPI_ACCOUNT_ID || '',
+        webhookSecret: window.ENV.VITE_WOMPI_WEBHOOK_SECRET || ''
       },
       paypal: {
-        clientId: window.ENV?.VITE_PAYPAL_CLIENT_ID || '',
-        clientSecret: window.ENV?.VITE_PAYPAL_CLIENT_SECRET || '',
-        environment: window.ENV?.VITE_PAYPAL_ENVIRONMENT || 'sandbox'
+        clientId: window.ENV.VITE_PAYPAL_CLIENT_ID || '',
+        clientSecret: window.ENV.VITE_PAYPAL_CLIENT_SECRET || '',
+        environment: window.ENV.VITE_PAYPAL_ENVIRONMENT || 'sandbox'
       },
       stripe: {
-        publicKey: window.ENV?.VITE_STRIPE_PUBLIC_KEY || '',
-        secretKey: window.ENV?.VITE_STRIPE_SECRET_KEY || ''
+        publicKey: window.ENV.VITE_STRIPE_PUBLIC_KEY || '',
+        secretKey: window.ENV.VITE_STRIPE_SECRET_KEY || ''
       }
     },
 
     // Email
     email: {
-      emailjsServiceId: window.ENV?.VITE_EMAILJS_SERVICE_ID || '',
-      emailjsTemplateId: window.ENV?.VITE_EMAILJS_TEMPLATE_ID || '',
-      emailjsPublicKey: window.ENV?.VITE_EMAILJS_PUBLIC_KEY || '',
-      smtpHost: window.ENV?.VITE_SMTP_HOST || '',
-      smtpPort: window.ENV?.VITE_SMTP_PORT || '',
-      smtpUser: window.ENV?.VITE_SMTP_USER || '',
-      smtpPass: window.ENV?.VITE_SMTP_PASS || '',
-      sendgridApiKey: window.ENV?.VITE_SENDGRID_API_KEY || '',
-      mailgunApiKey: window.ENV?.VITE_MAILGUN_API_KEY || '',
-      mailgunDomain: window.ENV?.VITE_MAILGUN_DOMAIN || '',
-      awsSesRegion: window.ENV?.VITE_AWS_SES_REGION || '',
-      awsSesAccessKeyId: window.ENV?.VITE_AWS_SES_ACCESS_KEY_ID || '',
-      awsSesSecretAccessKey: window.ENV?.VITE_AWS_SES_SECRET_ACCESS_KEY || ''
+      emailjsServiceId: window.ENV.VITE_EMAILJS_SERVICE_ID || '',
+      emailjsTemplateId: window.ENV.VITE_EMAILJS_TEMPLATE_ID || '',
+      emailjsPublicKey: window.ENV.VITE_EMAILJS_PUBLIC_KEY || '',
+      smtpHost: window.ENV.VITE_SMTP_HOST || '',
+      smtpPort: window.ENV.VITE_SMTP_PORT || '',
+      smtpUser: window.ENV.VITE_SMTP_USER || '',
+      smtpPass: window.ENV.VITE_SMTP_PASS || '',
+      sendgridApiKey: window.ENV.VITE_SENDGRID_API_KEY || '',
+      mailgunApiKey: window.ENV.VITE_MAILGUN_API_KEY || '',
+      mailgunDomain: window.ENV.VITE_MAILGUN_DOMAIN || '',
+      awsSesRegion: window.ENV.VITE_AWS_SES_REGION || '',
+      awsSesAccessKeyId: window.ENV.VITE_AWS_SES_ACCESS_KEY_ID || '',
+      awsSesSecretAccessKey: window.ENV.VITE_AWS_SES_SECRET_ACCESS_KEY || ''
     },
 
     // SMS
     sms: {
-      twilioAccountSid: window.ENV?.VITE_TWILIO_ACCOUNT_SID || '',
-      twilioAuthToken: window.ENV?.VITE_TWILIO_AUTH_TOKEN || '',
-      twilioPhoneNumber: window.ENV?.VITE_TWILIO_PHONE_NUMBER || '',
-      awsSnsRegion: window.ENV?.VITE_AWS_SNS_REGION || '',
-      awsSnsAccessKeyId: window.ENV?.VITE_AWS_SNS_ACCESS_KEY_ID || '',
-      awsSnsSecretAccessKey: window.ENV?.VITE_AWS_SNS_SECRET_ACCESS_KEY || '',
-      sendgridApiKey: window.ENV?.VITE_SENDGRID_SMS_API_KEY || ''
+      twilioAccountSid: window.ENV.VITE_TWILIO_ACCOUNT_SID || '',
+      twilioAuthToken: window.ENV.VITE_TWILIO_AUTH_TOKEN || '',
+      twilioPhoneNumber: window.ENV.VITE_TWILIO_PHONE_NUMBER || '',
+      awsSnsRegion: window.ENV.VITE_AWS_SNS_REGION || '',
+      awsSnsAccessKeyId: window.ENV.VITE_AWS_SNS_ACCESS_KEY_ID || '',
+      awsSnsSecretAccessKey: window.ENV.VITE_AWS_SNS_SECRET_ACCESS_KEY || '',
+      sendgridApiKey: window.ENV.VITE_SENDGRID_SMS_API_KEY || ''
     },
 
     // Cloud Storage
     cloudStorage: {
-      awsS3AccessKeyId: window.ENV?.VITE_AWS_ACCESS_KEY_ID || '',
-      awsS3SecretAccessKey: window.ENV?.VITE_AWS_SECRET_ACCESS_KEY || '',
-      awsS3Region: window.ENV?.VITE_AWS_REGION || '',
-      awsS3BucketName: window.ENV?.VITE_AWS_S3_BUCKET_NAME || '',
-      googleCloudProjectId: window.ENV?.VITE_GOOGLE_CLOUD_PROJECT_ID || '',
-      googleCloudKeyFile: window.ENV?.VITE_GOOGLE_CLOUD_KEY_FILE || '',
-      azureStorageAccount: window.ENV?.VITE_AZURE_STORAGE_ACCOUNT || '',
-      azureStorageKey: window.ENV?.VITE_AZURE_STORAGE_KEY || '',
-      dropboxAccessToken: window.ENV?.VITE_DROPBOX_ACCESS_TOKEN || ''
+      awsS3AccessKeyId: window.ENV.VITE_AWS_ACCESS_KEY_ID || '',
+      awsS3SecretAccessKey: window.ENV.VITE_AWS_SECRET_ACCESS_KEY || '',
+      awsS3Region: window.ENV.VITE_AWS_REGION || '',
+      awsS3BucketName: window.ENV.VITE_AWS_S3_BUCKET_NAME || '',
+      googleCloudProjectId: window.ENV.VITE_GOOGLE_CLOUD_PROJECT_ID || '',
+      googleCloudKeyFile: window.ENV.VITE_GOOGLE_CLOUD_KEY_FILE || '',
+      azureStorageAccount: window.ENV.VITE_AZURE_STORAGE_ACCOUNT || '',
+      azureStorageKey: window.ENV.VITE_AZURE_STORAGE_KEY || '',
+      dropboxAccessToken: window.ENV.VITE_DROPBOX_ACCESS_TOKEN || ''
     },
 
     // API Management
     apiManagement: {
-      jwtSecret: window.ENV?.VITE_JWT_SECRET || '',
-      apiKeyHeader: window.ENV?.VITE_API_KEY_HEADER || 'X-API-KEY'
+      jwtSecret: window.ENV.VITE_JWT_SECRET || '',
+      apiKeyHeader: window.ENV.VITE_API_KEY_HEADER || 'X-API-KEY'
     }
-  },
-
-  // Configuración de seguridad
-  security: {
-    encryptionKey: window.ENV?.VITE_ENCRYPTION_KEY || '',
-    jwtSecret: window.ENV?.VITE_JWT_SECRET || '',
-    sessionTimeout: 3600000, // 1 hora
-    loginAttempts: 5,
-    lockoutTime: 300000 // 5 minutos
   },
 
   // Configuración general
   general: {
-    appName: window.ENV?.VITE_APP_NAME || 'AXYRA Sistema de Gestión',
-    appUrl: window.ENV?.VITE_APP_URL || 'https://axyra.vercel.app',
-    nodeEnv: window.ENV?.NODE_ENV || 'production'
+    appName: window.ENV.VITE_APP_NAME || 'AXYRA Sistema de Gestión',
+    appUrl: window.ENV.VITE_APP_URL || 'https://axyra.vercel.app',
+    nodeEnv: window.ENV.NODE_ENV || 'production'
   },
 
   // Configuración de analytics
   analytics: {
-    googleAnalyticsId: window.ENV?.VITE_GA_MEASUREMENT_ID || ''
+    googleAnalyticsId: window.ENV.VITE_GA_MEASUREMENT_ID || ''
   }
 };
 
