@@ -243,7 +243,7 @@ class AxyraAuthSystem {
     localStorage.removeItem('axyra_current_user');
     
     // Redirigir al login
-    window.location.href = '/login.html';
+    window.location.href = '/login-optimized.html';
   }
 
   loadUserFromStorage() {

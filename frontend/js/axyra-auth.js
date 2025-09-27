@@ -233,8 +233,13 @@ class AxyraAuthSystem {
   }
 
   redirectToLogin() {
-    if (window.location.pathname !== '/login-optimized.html') {
-      window.location.href = '/login-optimized.html';
+    if (window.location.pathname !== '/login-optimized.html' && !window.location.pathname.includes('login-optimized.html')) {
+      console.log('🔄 Redirigiendo a login por sesión expirada...');
+      if (window.sessionRedirectSystem) {
+        window.sessionRedirectSystem.handleSessionExpired();
+      } else {
+        window.location.href = 'login-optimized.html';
+      }
     }
   }
 
