@@ -44,8 +44,12 @@ class AxyraAuthSystem {
       throw new Error('Firebase no está disponible');
     }
 
-    // Configurar Firebase
-    const config = window.getAxyraConfig();
+    // Usar configuración unificada
+    const config = window.axyraUnifiedConfig ? window.axyraUnifiedConfig.getConfig() : window.getAxyraConfig();
+    if (!config) {
+      throw new Error('Configuración AXYRA no disponible');
+    }
+
     if (!firebase.apps.length) {
       firebase.initializeApp(config.firebase);
     }

@@ -1338,7 +1338,7 @@
         <div class="table-container">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px">
             <h3><i class="fas fa-history"></i> Historial de Horas</h3>
-            <button class="btn btn-danger btn-sm" onclick="AxyraGestionPersonal.limpiarTablaHoras()">
+            <button class="btn btn-danger btn-sm" onclick="limpiarTablaHoras()">
               <i class="fas fa-trash"></i> Limpiar Tabla
             </button>
           </div>
@@ -1749,18 +1749,49 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <!-- Scripts AXYRA Core -->
-    <script src="../../js/firebase-config-production.js"></script>
-    <script src="../../js/axyra-config-fixed.js"></script>
+    <script src="../../js/axyra-unified-config.js"></script>
     <script src="../../js/axyra-notifications.js"></script>
     <script src="../../js/axyra-auth.js"></script>
-
-    <!-- Test de conexión Firebase -->
-    <script src="../../js/test-firebase-connection.js"></script>
 
     <!-- Gestión de Personal Optimizado -->
     <script src="gestion_personal_fixed.js"></script>
 
     <!-- Header Compartido AXYRA -->
     <script src="../../static/include-header.js"></script>
+
+    <!-- Funciones globales para gestión de personal -->
+    <script>
+      // Función global para limpiar tabla de horas
+      function limpiarTablaHoras() {
+        try {
+          if (window.axyraGestionPersonal && typeof window.axyraGestionPersonal.limpiarTablaHoras === 'function') {
+            window.axyraGestionPersonal.limpiarTablaHoras();
+          } else {
+            console.warn('⚠️ AxyraGestionPersonal no está disponible, usando fallback');
+            // Fallback: limpiar tabla manualmente
+            const tableBody = document.querySelector('.table tbody');
+            if (tableBody) {
+              tableBody.innerHTML = '';
+              console.log('✅ Tabla de horas limpiada (fallback)');
+            }
+          }
+        } catch (error) {
+          console.error('❌ Error limpiando tabla de horas:', error);
+        }
+      }
+
+      // Función global para ver detalle de horas
+      function verDetalleHoras(horasId) {
+        try {
+          if (window.axyraGestionPersonal && typeof window.axyraGestionPersonal.verDetalleHoras === 'function') {
+            window.axyraGestionPersonal.verDetalleHoras(horasId);
+          } else {
+            console.warn('⚠️ AxyraGestionPersonal no está disponible para ver detalle');
+          }
+        } catch (error) {
+          console.error('❌ Error viendo detalle de horas:', error);
+        }
+      }
+    </script>
   </body>
 </html>
