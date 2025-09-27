@@ -109,9 +109,9 @@ window.AXYRA_CONFIG = {
   integrations: {
     // Google Workspace
     googleWorkspace: {
-      clientId: process.env.VITE_GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.VITE_GOOGLE_CLIENT_SECRET || '',
-      redirectUri: process.env.VITE_GOOGLE_REDIRECT_URI || window.location.origin + '/auth/google/callback',
+      clientId: window.ENV?.VITE_GOOGLE_CLIENT_ID || '',
+      clientSecret: window.ENV?.VITE_GOOGLE_CLIENT_SECRET || '',
+      redirectUri: window.ENV?.VITE_GOOGLE_REDIRECT_URI || window.location.origin + '/auth/google/callback',
       enabled: true,
       scopes: [
         'https://www.googleapis.com/auth/gmail.readonly',
@@ -125,10 +125,10 @@ window.AXYRA_CONFIG = {
 
     // Microsoft 365
     microsoft365: {
-      clientId: process.env.VITE_MICROSOFT_CLIENT_ID || '',
-      clientSecret: process.env.VITE_MICROSOFT_CLIENT_SECRET || '',
-      tenantId: process.env.VITE_MICROSOFT_TENANT_ID || 'common',
-      redirectUri: process.env.VITE_MICROSOFT_REDIRECT_URI || window.location.origin + '/auth/microsoft/callback',
+      clientId: window.ENV?.VITE_MICROSOFT_CLIENT_ID || '',
+      clientSecret: window.ENV?.VITE_MICROSOFT_CLIENT_SECRET || '',
+      tenantId: window.ENV?.VITE_MICROSOFT_TENANT_ID || 'common',
+      redirectUri: window.ENV?.VITE_MICROSOFT_REDIRECT_URI || window.location.origin + '/auth/microsoft/callback',
       enabled: true,
       scopes: [
         'https://graph.microsoft.com/Mail.Read',

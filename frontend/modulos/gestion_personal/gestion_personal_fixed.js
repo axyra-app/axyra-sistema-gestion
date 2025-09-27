@@ -994,6 +994,201 @@ class AxyraGestionPersonal {
     // Función para generar nómina (implementar según necesidades)
     console.log('Generando nómina...');
   }
+
+  // Función para limpiar tabla de horas
+  limpiarTablaHoras() {
+    try {
+      const container = document.getElementById('listaHoras');
+      if (container) {
+        container.innerHTML = '<p class="no-data">No hay horas registradas</p>';
+      }
+      console.log('✅ Tabla de horas limpiada');
+    } catch (error) {
+      console.error('❌ Error limpiando tabla de horas:', error);
+    }
+  }
+
+  // Función para mostrar horas de un empleado específico
+  mostrarHorasEmpleado(empleado, horasEmpleado) {
+    try {
+      const modal = document.getElementById('modalHorasEmpleado');
+      if (!modal) {
+        this.crearModalHorasEmpleado();
+        return this.mostrarHorasEmpleado(empleado, horasEmpleado);
+      }
+
+      // Llenar el modal con los datos
+      const empleadoNombre = document.getElementById('empleadoNombreHoras');
+      const listaHoras = document.getElementById('listaHorasEmpleado');
+
+      if (empleadoNombre) {
+        empleadoNombre.textContent = empleado.nombre;
+      }
+
+      if (listaHoras) {
+        if (horasEmpleado.length === 0) {
+          listaHoras.innerHTML = '<p class="no-data">No hay horas registradas para este empleado</p>';
+        } else {
+          const html = horasEmpleado.map(horas => `
+            <div class="horas-empleado-item">
+              <div class="horas-info">
+                <p><strong>Fecha:</strong> ${new Date(horas.fecha).toLocaleDateString()}</p>
+                <p><strong>Horario:</strong> ${horas.horaInicio} - ${horas.horaFin}</p>
+                <p><strong>Horas Trabajadas:</strong> ${horas.horasTrabajadas} horas</p>
+                <p><strong>Tipo:</strong> ${this.getTipoHorasNombre(horas.tipo)}</p>
+                ${horas.descripcion ? `<p><strong>Descripción:</strong> ${horas.descripcion}</p>` : ''}
+              </div>
+              <div class="horas-actions">
+                <button class="btn btn-sm btn-primary" onclick="window.axyraGestionPersonal.editarHoras('${horas.id}')">
+                  <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn btn-sm btn-danger" onclick="window.axyraGestionPersonal.eliminarHoras('${horas.id}')">
+                  <i class="fas fa-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          `).join('');
+          listaHoras.innerHTML = html;
+        }
+      }
+
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    } catch (error) {
+      console.error('❌ Error mostrando horas del empleado:', error);
+      this.mostrarError('Error mostrando las horas del empleado');
+    }
+  }
+
+  // Función para crear modal de horas de empleado
+  crearModalHorasEmpleado() {
+    const modalHTML = `
+      <div id="modalHorasEmpleado" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Horas del Empleado: <span id="empleadoNombreHoras"></span></h2>
+            <span class="close" onclick="window.axyraGestionPersonal.cerrarModalHorasEmpleado()">&times;</span>
+          </div>
+          <div class="modal-body">
+            <div id="listaHorasEmpleado">
+              <!-- Las horas se cargarán aquí -->
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="window.axyraGestionPersonal.cerrarModalHorasEmpleado()">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  }
+
+  // Función para cerrar modal de horas de empleado
+  cerrarModalHorasEmpleado() {
+    try {
+      const modal = document.getElementById('modalHorasEmpleado');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    } catch (error) {
+      console.error('❌ Error cerrando modal horas empleado:', error);
+    }
+  }
+
+  // Función para mostrar detalle de horas
+  mostrarDetalleHoras(horas, empleado) {
+    try {
+      const modal = document.getElementById('modalDetalleHoras');
+      if (!modal) {
+        this.crearModalDetalleHoras();
+        return this.mostrarDetalleHoras(horas, empleado);
+      }
+
+      // Llenar el modal con los datos
+      const empleadoNombre = document.getElementById('detalleEmpleadoNombre');
+      const fechaDetalle = document.getElementById('detalleFecha');
+      const horarioDetalle = document.getElementById('detalleHorario');
+      const horasTrabajadasDetalle = document.getElementById('detalleHorasTrabajadas');
+      const tipoDetalle = document.getElementById('detalleTipo');
+      const descripcionDetalle = document.getElementById('detalleDescripcion');
+
+      if (empleadoNombre) empleadoNombre.textContent = empleado ? empleado.nombre : 'Empleado no encontrado';
+      if (fechaDetalle) fechaDetalle.textContent = new Date(horas.fecha).toLocaleDateString();
+      if (horarioDetalle) horarioDetalle.textContent = `${horas.horaInicio} - ${horas.horaFin}`;
+      if (horasTrabajadasDetalle) horasTrabajadasDetalle.textContent = `${horas.horasTrabajadas} horas`;
+      if (tipoDetalle) tipoDetalle.textContent = this.getTipoHorasNombre(horas.tipo);
+      if (descripcionDetalle) descripcionDetalle.textContent = horas.descripcion || 'Sin descripción';
+
+      modal.style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    } catch (error) {
+      console.error('❌ Error mostrando detalle de horas:', error);
+      this.mostrarError('Error mostrando el detalle de las horas');
+    }
+  }
+
+  // Función para crear modal de detalle de horas
+  crearModalDetalleHoras() {
+    const modalHTML = `
+      <div id="modalDetalleHoras" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Detalle de Horas</h2>
+            <span class="close" onclick="window.axyraGestionPersonal.cerrarModalDetalleHoras()">&times;</span>
+          </div>
+          <div class="modal-body">
+            <div class="detalle-horas-container">
+              <div class="detalle-item">
+                <label>Empleado:</label>
+                <span id="detalleEmpleadoNombre"></span>
+              </div>
+              <div class="detalle-item">
+                <label>Fecha:</label>
+                <span id="detalleFecha"></span>
+              </div>
+              <div class="detalle-item">
+                <label>Horario:</label>
+                <span id="detalleHorario"></span>
+              </div>
+              <div class="detalle-item">
+                <label>Horas Trabajadas:</label>
+                <span id="detalleHorasTrabajadas"></span>
+              </div>
+              <div class="detalle-item">
+                <label>Tipo:</label>
+                <span id="detalleTipo"></span>
+              </div>
+              <div class="detalle-item">
+                <label>Descripción:</label>
+                <span id="detalleDescripcion"></span>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" onclick="window.axyraGestionPersonal.editarHoras()">Editar</button>
+            <button type="button" class="btn btn-secondary" onclick="window.axyraGestionPersonal.cerrarModalDetalleHoras()">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  }
+
+  // Función para cerrar modal de detalle de horas
+  cerrarModalDetalleHoras() {
+    try {
+      const modal = document.getElementById('modalDetalleHoras');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    } catch (error) {
+      console.error('❌ Error cerrando modal detalle horas:', error);
+    }
+  }
 }
 
 // Inicializar el sistema

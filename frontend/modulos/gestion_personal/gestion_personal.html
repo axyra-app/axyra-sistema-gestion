@@ -341,6 +341,67 @@
         letter-spacing: 0.5px;
       }
 
+      /* Estilos para modales adicionales */
+      .horas-empleado-item {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e1e5e9;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .horas-empleado-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .horas-empleado-item .horas-info {
+        margin-bottom: 15px;
+      }
+
+      .horas-empleado-item .horas-info p {
+        margin: 5px 0;
+        color: #666;
+        font-size: 14px;
+      }
+
+      .horas-empleado-item .horas-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .detalle-horas-container {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      .detalle-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #e1e5e9;
+      }
+
+      .detalle-item:last-child {
+        border-bottom: none;
+      }
+
+      .detalle-item label {
+        font-weight: 600;
+        color: #2c3e50;
+        margin: 0;
+      }
+
+      .detalle-item span {
+        color: #666;
+        font-weight: 500;
+      }
+
       .stat-card .stat-icon {
         position: absolute;
         top: 20px;
@@ -1588,7 +1649,7 @@
 
     <!-- Scripts avanzados -->
     <!-- AXYRA Core Scripts -->
-    <script src="../../js/axyra-config.js"></script>
+    <script src="../../js/axyra-config-fixed.js"></script>
     <script src="../../js/axyra-notifications.js"></script>
     <script src="../../js/axyra-auth.js"></script>
 
@@ -1597,7 +1658,5 @@
 
     <!-- Header Compartido AXYRA -->
     <script src="../../static/include-header.js"></script>
-    <script src="../../static/ai-chat-system.js"></script>
-    <script src="../../static/monitoring.js"></script>
   </body>
 </html>
