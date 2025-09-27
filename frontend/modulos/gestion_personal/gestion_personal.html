@@ -1625,6 +1625,27 @@
         }
       }
 
+      // Función para limpiar tabla de horas
+      function limpiarTablaHoras() {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.limpiarTablaHoras();
+        }
+      }
+
+      // Función para mostrar detalle de horas
+      function mostrarDetalleHoras(horasId) {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.verDetalleHoras(horasId);
+        }
+      }
+
+      // Función para mostrar detalle de horas (alias para compatibilidad)
+      function verDetalleHoras(horasId) {
+        if (window.axyraGestionPersonal) {
+          window.axyraGestionPersonal.verDetalleHoras(horasId);
+        }
+      }
+
       // Establecer fechas por defecto
       document.addEventListener('DOMContentLoaded', function () {
         const fechaInput = document.getElementById('fechaHoras');
@@ -1658,5 +1679,7 @@
 
     <!-- Header Compartido AXYRA -->
     <script src="../../static/include-header.js"></script>
+
+    <!-- Scripts adicionales problemáticos eliminados para evitar conflictos -->
   </body>
 </html>

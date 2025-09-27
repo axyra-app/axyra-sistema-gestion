@@ -74,6 +74,11 @@ class AxyraGestionPersonal {
         this.guardarDepartamentos();
       }
 
+      // Agregar datos de prueba si no hay datos
+      if (this.empleados.length === 0) {
+        this.agregarDatosPrueba();
+      }
+
       console.log('✅ Datos cargados correctamente:', {
         empleados: this.empleados.length,
         horas: this.horas.length,
@@ -651,10 +656,16 @@ class AxyraGestionPersonal {
 
   verDetalleHoras(horasId) {
     try {
+      console.log('🔍 Buscando horas con ID:', horasId);
       const horas = this.horas.find((h) => h.id === horasId);
       if (horas) {
+        console.log('✅ Horas encontradas:', horas);
         const empleado = this.empleados.find((e) => e.id === horas.empleadoId);
+        console.log('✅ Empleado encontrado:', empleado);
         this.mostrarDetalleHoras(horas, empleado);
+      } else {
+        console.warn('⚠️ No se encontraron horas con ID:', horasId);
+        this.mostrarError('No se encontraron las horas especificadas');
       }
     } catch (error) {
       console.error('❌ Error mostrando detalle de horas:', error);
@@ -796,6 +807,70 @@ class AxyraGestionPersonal {
       container.innerHTML = html;
     } catch (error) {
       console.error('❌ Error renderizando departamentos:', error);
+    }
+  }
+
+  // ========================================
+  // DATOS DE PRUEBA
+  // ========================================
+
+  agregarDatosPrueba() {
+    try {
+      console.log('📝 Agregando datos de prueba...');
+      
+      // Empleado de prueba
+      const empleadoPrueba = {
+        id: this.generarId(),
+        nombre: 'Juan Fernando Uran',
+        cedula: '1046666450',
+        cargo: 'Desarrollador',
+        departamento: 'admin',
+        salario: 3000000,
+        fechaIngreso: '2024-01-15',
+        telefono: '3187245979',
+        email: 'jfuran.va@gmail.com',
+        direccion: 'Bogotá, Colombia',
+        fechaCreacion: new Date().toISOString(),
+        fechaActualizacion: new Date().toISOString()
+      };
+      
+      this.empleados.push(empleadoPrueba);
+      this.guardarEmpleados();
+      
+      // Horas de prueba
+      const horasPrueba = [
+        {
+          id: this.generarId(),
+          empleadoId: empleadoPrueba.id,
+          fecha: new Date().toISOString().split('T')[0],
+          horaInicio: '08:00',
+          horaFin: '17:00',
+          horasTrabajadas: 9,
+          descripcion: 'Desarrollo de funcionalidades',
+          tipo: 'normal',
+          fechaCreacion: new Date().toISOString(),
+          fechaActualizacion: new Date().toISOString()
+        },
+        {
+          id: this.generarId(),
+          empleadoId: empleadoPrueba.id,
+          fecha: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          horaInicio: '08:30',
+          horaFin: '16:30',
+          horasTrabajadas: 8,
+          descripcion: 'Reuniones y planificación',
+          tipo: 'normal',
+          fechaCreacion: new Date().toISOString(),
+          fechaActualizacion: new Date().toISOString()
+        }
+      ];
+      
+      this.horas.push(...horasPrueba);
+      this.guardarHoras();
+      
+      console.log('✅ Datos de prueba agregados correctamente');
+    } catch (error) {
+      console.error('❌ Error agregando datos de prueba:', error);
     }
   }
 
@@ -998,13 +1073,33 @@ class AxyraGestionPersonal {
   // Función para limpiar tabla de horas
   limpiarTablaHoras() {
     try {
-      const container = document.getElementById('listaHoras');
-      if (container) {
-        container.innerHTML = '<p class="no-data">No hay horas registradas</p>';
+      console.log('🧹 Limpiando tabla de horas...');
+      
+      // Confirmar antes de limpiar
+      if (confirm('¿Estás seguro de que deseas limpiar toda la tabla de horas? Esta acción no se puede deshacer.')) {
+        // Limpiar datos en memoria
+        this.horas = [];
+        this.guardarHoras();
+        
+        // Limpiar contenedor de horas
+        const container = document.getElementById('listaHoras');
+        if (container) {
+          container.innerHTML = '<p class="no-data">No hay horas registradas</p>';
+        }
+        
+        // Actualizar estadísticas
+        this.actualizarEstadisticas();
+        
+        // Mostrar mensaje de éxito
+        this.mostrarExito('Tabla de horas limpiada correctamente');
+        
+        console.log('✅ Tabla de horas limpiada completamente');
+      } else {
+        console.log('❌ Limpieza de tabla cancelada por el usuario');
       }
-      console.log('✅ Tabla de horas limpiada');
     } catch (error) {
       console.error('❌ Error limpiando tabla de horas:', error);
+      this.mostrarError('Error limpiando la tabla de horas');
     }
   }
 
