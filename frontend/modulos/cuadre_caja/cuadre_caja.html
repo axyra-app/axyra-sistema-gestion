@@ -577,11 +577,11 @@
 
           // No hay sesión activa
           console.log('⚠️ No hay sesión activa en cuadre de caja - redirigiendo al login');
-          window.location.href = '../../login.html';
+          window.location.href = '../../login-optimized.html';
           return false;
         } catch (error) {
           console.error('❌ Error al verificar sesión en cuadre de caja:', error);
-          window.location.href = '../../login.html';
+          window.location.href = '../../login-optimized.html';
           return false;
         }
       }
@@ -596,7 +596,7 @@
         }
 
         console.log('✅ Sesión cerrada desde cuadre de caja');
-        window.location.href = '../../login.html';
+        window.location.href = '../../login-optimized.html';
       }
 
       // Variables globales

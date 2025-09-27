@@ -251,7 +251,7 @@ class AxyraSharedHeader {
       sessionStorage.clear();
 
       // Redirigir al login
-      window.location.href = '../../login.html';
+      window.location.href = '../../login-optimized.html';
     } catch (error) {
       console.error('Error cerrando sesión:', error);
 
@@ -261,7 +261,7 @@ class AxyraSharedHeader {
       sessionStorage.clear();
 
       // Redirigir al login
-      window.location.href = '../../login.html';
+      window.location.href = '../../login-optimized.html';
     }
   }
 

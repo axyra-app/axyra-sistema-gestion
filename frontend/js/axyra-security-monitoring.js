@@ -1338,7 +1338,7 @@ class AxyraSecurityMonitoringSystem {
   requireReauthentication() {
     // Requerir reautenticación
     localStorage.removeItem('axyra_user_session');
-    window.location.href = '/login.html';
+    window.location.href = '/login-optimized.html';
   }
 
   // Métodos de utilidad

@@ -229,8 +229,8 @@ class AxyraAuthSystem {
   }
 
   redirectToLogin() {
-    if (window.location.pathname !== '/login.html') {
-      window.location.href = '/login.html';
+    if (window.location.pathname !== '/login-optimized.html') {
+      window.location.href = '/login-optimized.html';
     }
   }
 

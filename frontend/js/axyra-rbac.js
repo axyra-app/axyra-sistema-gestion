@@ -760,7 +760,7 @@ class AxyraRBACSystem {
     this.clearUserSession();
 
     // Redirigir a login
-    window.location.href = '/login.html';
+    window.location.href = '/login-optimized.html';
   }
 
   validateSession() {
