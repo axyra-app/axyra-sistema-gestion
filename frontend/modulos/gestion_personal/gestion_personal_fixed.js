@@ -74,10 +74,7 @@ class AxyraGestionPersonal {
         this.guardarDepartamentos();
       }
 
-      // Agregar datos de prueba si no hay datos
-      if (this.empleados.length === 0) {
-        this.agregarDatosPrueba();
-      }
+      // Sistema listo para producción - sin datos de prueba
 
       console.log('✅ Datos cargados correctamente:', {
         empleados: this.empleados.length,
@@ -683,7 +680,18 @@ class AxyraGestionPersonal {
       if (!container) return;
 
       if (this.empleados.length === 0) {
-        container.innerHTML = '<p class="no-data">No hay empleados registrados</p>';
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h3>No hay empleados registrados</h3>
+            <p>Comienza agregando tu primer empleado al sistema</p>
+            <button class="btn btn-primary" onclick="mostrarModalEmpleado()">
+              <i class="fas fa-plus"></i> Agregar Empleado
+            </button>
+          </div>
+        `;
         return;
       }
 
@@ -727,7 +735,18 @@ class AxyraGestionPersonal {
       if (!container) return;
 
       if (this.horas.length === 0) {
-        container.innerHTML = '<p class="no-data">No hay horas registradas</p>';
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <h3>No hay horas registradas</h3>
+            <p>Comienza registrando las horas trabajadas por tus empleados</p>
+            <button class="btn btn-primary" onclick="mostrarModalHoras()">
+              <i class="fas fa-plus"></i> Registrar Horas
+            </button>
+          </div>
+        `;
         return;
       }
 
@@ -772,7 +791,15 @@ class AxyraGestionPersonal {
       if (!container) return;
 
       if (this.departamentos.length === 0) {
-        container.innerHTML = '<p class="no-data">No hay departamentos registrados</p>';
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">
+              <i class="fas fa-building"></i>
+            </div>
+            <h3>No hay departamentos registrados</h3>
+            <p>Los departamentos se crean automáticamente al agregar empleados</p>
+          </div>
+        `;
         return;
       }
 
@@ -810,69 +837,6 @@ class AxyraGestionPersonal {
     }
   }
 
-  // ========================================
-  // DATOS DE PRUEBA
-  // ========================================
-
-  agregarDatosPrueba() {
-    try {
-      console.log('📝 Agregando datos de prueba...');
-      
-      // Empleado de prueba
-      const empleadoPrueba = {
-        id: this.generarId(),
-        nombre: 'Juan Fernando Uran',
-        cedula: '1046666450',
-        cargo: 'Desarrollador',
-        departamento: 'admin',
-        salario: 3000000,
-        fechaIngreso: '2024-01-15',
-        telefono: '3187245979',
-        email: 'jfuran.va@gmail.com',
-        direccion: 'Bogotá, Colombia',
-        fechaCreacion: new Date().toISOString(),
-        fechaActualizacion: new Date().toISOString()
-      };
-      
-      this.empleados.push(empleadoPrueba);
-      this.guardarEmpleados();
-      
-      // Horas de prueba
-      const horasPrueba = [
-        {
-          id: this.generarId(),
-          empleadoId: empleadoPrueba.id,
-          fecha: new Date().toISOString().split('T')[0],
-          horaInicio: '08:00',
-          horaFin: '17:00',
-          horasTrabajadas: 9,
-          descripcion: 'Desarrollo de funcionalidades',
-          tipo: 'normal',
-          fechaCreacion: new Date().toISOString(),
-          fechaActualizacion: new Date().toISOString()
-        },
-        {
-          id: this.generarId(),
-          empleadoId: empleadoPrueba.id,
-          fecha: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          horaInicio: '08:30',
-          horaFin: '16:30',
-          horasTrabajadas: 8,
-          descripcion: 'Reuniones y planificación',
-          tipo: 'normal',
-          fechaCreacion: new Date().toISOString(),
-          fechaActualizacion: new Date().toISOString()
-        }
-      ];
-      
-      this.horas.push(...horasPrueba);
-      this.guardarHoras();
-      
-      console.log('✅ Datos de prueba agregados correctamente');
-    } catch (error) {
-      console.error('❌ Error agregando datos de prueba:', error);
-    }
-  }
 
   // ========================================
   // UTILIDADES
@@ -1075,23 +1039,26 @@ class AxyraGestionPersonal {
     try {
       console.log('🧹 Limpiando tabla de horas...');
       
+      // Verificar si hay datos para limpiar
+      if (this.horas.length === 0) {
+        this.mostrarInfo('No hay horas registradas para limpiar');
+        return;
+      }
+      
       // Confirmar antes de limpiar
-      if (confirm('¿Estás seguro de que deseas limpiar toda la tabla de horas? Esta acción no se puede deshacer.')) {
+      if (confirm(`¿Estás seguro de que deseas eliminar TODAS las ${this.horas.length} horas registradas? Esta acción no se puede deshacer.`)) {
         // Limpiar datos en memoria
         this.horas = [];
         this.guardarHoras();
         
-        // Limpiar contenedor de horas
-        const container = document.getElementById('listaHoras');
-        if (container) {
-          container.innerHTML = '<p class="no-data">No hay horas registradas</p>';
-        }
+        // Re-renderizar la lista de horas (mostrará estado vacío)
+        this.renderizarHoras();
         
         // Actualizar estadísticas
         this.actualizarEstadisticas();
         
         // Mostrar mensaje de éxito
-        this.mostrarExito('Tabla de horas limpiada correctamente');
+        this.mostrarExito('Todas las horas han sido eliminadas correctamente');
         
         console.log('✅ Tabla de horas limpiada completamente');
       } else {
