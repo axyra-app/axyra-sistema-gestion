@@ -8,6 +8,17 @@ window.getAxyraConfig = function() {
   return window.AXYRA_CONFIG;
 };
 
+// Configuración de variables de entorno para Vite
+window.ENV = {
+  VITE_FIREBASE_API_KEY: 'AIzaSyAW3ejokcsWAP5G1yJT63jLBpFmdTiTUwc',
+  VITE_FIREBASE_AUTH_DOMAIN: 'axyra-48238.firebaseapp.com',
+  VITE_FIREBASE_PROJECT_ID: 'axyra-48238',
+  VITE_FIREBASE_STORAGE_BUCKET: 'axyra-48238.firebasestorage.app',
+  VITE_FIREBASE_MESSAGING_SENDER_ID: '796334517286',
+  VITE_FIREBASE_APP_ID: '1:796334517286:web:95947cf0f773dc11378ae7',
+  VITE_FIREBASE_MEASUREMENT_ID: 'G-R8W2MP15B7'
+};
+
 window.AXYRA_CONFIG = {
   // Configuración de Firebase
   firebase: {
