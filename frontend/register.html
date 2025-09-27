@@ -501,7 +501,7 @@
     <!-- AXYRA Core Scripts -->
     <script src="js/firebase-config.js"></script>
     <script src="js/axyra-notifications.js"></script>
-    <script src="js/axyra-auth.js"></script>
+    <script src="js/register-auth.js"></script>
 
     <script>
         // Inicializar Firebase
@@ -558,66 +558,33 @@
         }
 
         // Función para registrar con Google
-        function registerWithGoogle() {
+        async function registerWithGoogle() {
             try {
-                if (typeof firebase === 'undefined') {
-                    showMessage('Firebase no está disponible. Intenta más tarde.');
+                if (!window.registerAuth) {
+                    showMessage('Sistema de autenticación no está disponible. Intenta más tarde.');
                     return;
                 }
 
-                // Verificar que Firebase esté inicializado
-                if (!firebase.apps.length) {
-                    showMessage('Firebase no está inicializado. Recarga la página e intenta nuevamente.');
-                    return;
+                const result = await window.registerAuth.registerWithGoogle();
+                
+                if (result.success) {
+                    showMessage(`¡Registro exitoso! Bienvenido ${result.user.displayName}`, 'success');
+                    
+                    // Redirigir al dashboard después de 2 segundos
+                    setTimeout(() => {
+                        window.location.href = 'dashboard-optimized.html';
+                    }, 2000);
+                } else {
+                    let errorMessage = 'Error en el registro con Google. Intenta nuevamente.';
+                    
+                    if (result.error.code === 'auth/popup-closed-by-user') {
+                        errorMessage = 'Registro cancelado por el usuario.';
+                    } else if (result.error.code === 'auth/popup-blocked') {
+                        errorMessage = 'Popup bloqueado. Permite ventanas emergentes e intenta nuevamente.';
+                    }
+                    
+                    showMessage(errorMessage);
                 }
-
-                const provider = new firebase.auth.GoogleAuthProvider();
-                firebase.auth().signInWithPopup(provider)
-                    .then(async (result) => {
-                        const user = result.user;
-                        
-                        // Crear perfil de usuario con información básica
-                        const userData = {
-                            nombre: user.displayName || 'Usuario Google',
-                            usuario: user.email.split('@')[0],
-                            email: user.email,
-                            telefono: '',
-                            cargo: '',
-                            empresa: 'Empresa Google',
-                            nit: '',
-                            sector: '',
-                            direccion: '',
-                            ciudad: '',
-                            pais: 'Colombia',
-                            fechaRegistro: firebase.firestore.FieldValue.serverTimestamp(),
-                            rol: 'admin',
-                            activo: true,
-                            tipoCuenta: 'empresarial',
-                            proveedor: 'google'
-                        };
-
-                        // Guardar en Firestore
-                        await firebase.firestore().collection('users').doc(user.uid).set(userData);
-                        
-                        showMessage(`¡Registro exitoso! Bienvenido ${user.displayName}`, 'success');
-                        
-                        // Redirigir al dashboard después de 2 segundos
-                        setTimeout(() => {
-                            window.location.href = 'dashboard-optimized.html';
-                        }, 2000);
-                    })
-                    .catch((error) => {
-                        console.error('Error en registro con Google:', error);
-                        let errorMessage = 'Error en el registro con Google. Intenta nuevamente.';
-                        
-                        if (error.code === 'auth/popup-closed-by-user') {
-                            errorMessage = 'Registro cancelado por el usuario.';
-                        } else if (error.code === 'auth/popup-blocked') {
-                            errorMessage = 'Popup bloqueado. Permite ventanas emergentes e intenta nuevamente.';
-                        }
-                        
-                        showMessage(errorMessage);
-                    });
             } catch (error) {
                 console.error('Error en registro con Google:', error);
                 showMessage('Error en el registro con Google. Intenta nuevamente.');
@@ -676,103 +643,51 @@
             }
 
             try {
-                if (typeof firebase === 'undefined') {
-                    showMessage('Firebase no está disponible. Intenta más tarde.');
+                if (!window.registerAuth) {
+                    showMessage('Sistema de autenticación no está disponible. Intenta más tarde.');
                     return;
                 }
 
-                // Crear usuario con Firebase Auth
-                const userCredential = await firebase.auth().createUserWithEmailAndPassword(formData.email, formData.password);
-                const user = userCredential.user;
-
-                // Actualizar perfil del usuario
-                await user.updateProfile({
-                    displayName: formData.nombre
-                });
-
-                // Guardar información completa en Firestore
-                await firebase.firestore().collection('users').doc(user.uid).set({
-                    // Información personal
-                    nombre: formData.nombre,
-                    usuario: formData.usuario,
-                    email: formData.email,
-                    telefono: formData.telefono || '',
-                    cargo: formData.cargo || '',
-                    
-                    // Información de la empresa
-                    empresa: formData.empresa,
-                    nit: formData.nit,
-                    sector: formData.sector || '',
-                    direccion: formData.direccion || '',
-                    ciudad: formData.ciudad || '',
-                    pais: formData.pais || 'Colombia',
-                    
-                    // Información del sistema
-                    fechaRegistro: firebase.firestore.FieldValue.serverTimestamp(),
-                    rol: 'admin', // El primer usuario es admin
-                    activo: true,
-                    tipoCuenta: 'empresarial'
-                });
-
-                // Crear documento de la empresa
-                await firebase.firestore().collection('empresas').doc(user.uid).set({
-                    nombre: formData.empresa,
-                    nit: formData.nit,
-                    sector: formData.sector || '',
-                    direccion: formData.direccion || '',
-                    ciudad: formData.ciudad || '',
-                    pais: formData.pais || 'Colombia',
-                    fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
-                    administrador: user.uid,
-                    activa: true
-                });
-
-                showMessage(`¡Registro exitoso! Bienvenido ${formData.nombre} de ${formData.empresa}`, 'success');
+                const result = await window.registerAuth.registerWithEmail(formData.email, formData.password, formData);
                 
-                // Redirigir al dashboard después de 2 segundos
-                setTimeout(() => {
-                    window.location.href = 'dashboard-optimized.html';
-                }, 2000);
+                if (result.success) {
+                    showMessage(`¡Registro exitoso! Bienvenido ${formData.nombre} de ${formData.empresa}`, 'success');
+                    
+                    // Redirigir al dashboard después de 2 segundos
+                    setTimeout(() => {
+                        window.location.href = 'dashboard-optimized.html';
+                    }, 2000);
+                } else {
+                    let errorMessage = 'Error en el registro. Intenta nuevamente.';
+                    
+                    if (result.error.code === 'auth/email-already-in-use') {
+                        errorMessage = 'Este correo electrónico ya está registrado.';
+                    } else if (result.error.code === 'auth/weak-password') {
+                        errorMessage = 'La contraseña es muy débil.';
+                    } else if (result.error.code === 'auth/invalid-email') {
+                        errorMessage = 'El correo electrónico no es válido.';
+                    } else if (result.error.code === 'auth/operation-not-allowed') {
+                        errorMessage = 'El registro con email/contraseña no está habilitado.';
+                    }
+                    
+                    showMessage(errorMessage);
+                }
 
             } catch (error) {
                 console.error('Error en registro:', error);
-                
-                let errorMessage = 'Error en el registro. Intenta nuevamente.';
-                
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage = 'Este correo electrónico ya está registrado.';
-                } else if (error.code === 'auth/weak-password') {
-                    errorMessage = 'La contraseña es muy débil.';
-                } else if (error.code === 'auth/invalid-email') {
-                    errorMessage = 'El correo electrónico no es válido.';
-                } else if (error.code === 'auth/operation-not-allowed') {
-                    errorMessage = 'El registro con email/contraseña no está habilitado.';
-                }
-                
-                showMessage(errorMessage);
+                showMessage('Error en el registro. Intenta nuevamente.');
             }
         });
 
-        // Verificar si el usuario ya está autenticado
+        // Verificar si el usuario ya está autenticado (solo si Firebase está disponible)
         if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            // Solo verificar si hay un usuario autenticado, no redirigir automáticamente
             firebase.auth().onAuthStateChanged((user) => {
                 if (user) {
-                    // Usuario ya autenticado, redirigir al dashboard
-                    window.location.href = 'dashboard-optimized.html';
+                    console.log('✅ Usuario ya autenticado, pero permaneciendo en registro');
+                    // No redirigir automáticamente, permitir que el usuario decida
                 }
             });
-        } else {
-            // Esperar a que Firebase se inicialice
-            setTimeout(() => {
-                if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
-                    firebase.auth().onAuthStateChanged((user) => {
-                        if (user) {
-                            // Usuario ya autenticado, redirigir al dashboard
-                            window.location.href = 'dashboard-optimized.html';
-                        }
-                    });
-                }
-            }, 1000);
         }
     </script>
 </body>
