@@ -839,6 +839,161 @@ class AxyraGestionPersonal {
 
 
   // ========================================
+  // FUNCIONES DE EXPORTACIÓN
+  // ========================================
+
+  exportarEmpleadosPDF() {
+    try {
+      if (this.empleados.length === 0) {
+        this.mostrarInfo('No hay empleados para exportar');
+        return;
+      }
+
+      // Crear contenido HTML para PDF
+      let contenido = `
+        <h2>Lista de Empleados - AXYRA</h2>
+        <p>Fecha de exportación: ${new Date().toLocaleDateString()}</p>
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #f2f2f2;">
+              <th>Nombre</th>
+              <th>Cédula</th>
+              <th>Cargo</th>
+              <th>Departamento</th>
+              <th>Salario</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      this.empleados.forEach(empleado => {
+        contenido += `
+          <tr>
+            <td>${empleado.nombre}</td>
+            <td>${empleado.cedula}</td>
+            <td>${empleado.cargo}</td>
+            <td>${this.getDepartamentoNombre(empleado.departamento)}</td>
+            <td>$${empleado.salario.toLocaleString()}</td>
+            <td>Activo</td>
+          </tr>
+        `;
+      });
+
+      contenido += `
+          </tbody>
+        </table>
+      `;
+
+      // Crear ventana para imprimir
+      const ventanaImpresion = window.open('', '_blank');
+      ventanaImpresion.document.write(`
+        <html>
+          <head>
+            <title>Lista de Empleados - AXYRA</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              table { width: 100%; border-collapse: collapse; }
+              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              th { background-color: #f2f2f2; }
+            </style>
+          </head>
+          <body>
+            ${contenido}
+          </body>
+        </html>
+      `);
+      ventanaImpresion.document.close();
+      ventanaImpresion.print();
+
+      this.mostrarExito('PDF generado correctamente');
+    } catch (error) {
+      console.error('❌ Error exportando PDF:', error);
+      this.mostrarError('Error generando el PDF');
+    }
+  }
+
+  imprimirListaEmpleados() {
+    try {
+      if (this.empleados.length === 0) {
+        this.mostrarInfo('No hay empleados para imprimir');
+        return;
+      }
+
+      // Crear contenido para imprimir
+      let contenido = `
+        <h2>Lista de Empleados - AXYRA</h2>
+        <p>Fecha: ${new Date().toLocaleDateString()}</p>
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #f2f2f2;">
+              <th>Nombre</th>
+              <th>Cédula</th>
+              <th>Cargo</th>
+              <th>Departamento</th>
+              <th>Salario</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      this.empleados.forEach(empleado => {
+        contenido += `
+          <tr>
+            <td>${empleado.nombre}</td>
+            <td>${empleado.cedula}</td>
+            <td>${empleado.cargo}</td>
+            <td>${this.getDepartamentoNombre(empleado.departamento)}</td>
+            <td>$${empleado.salario.toLocaleString()}</td>
+          </tr>
+        `;
+      });
+
+      contenido += `
+          </tbody>
+        </table>
+      `;
+
+      // Crear ventana para imprimir
+      const ventanaImpresion = window.open('', '_blank');
+      ventanaImpresion.document.write(`
+        <html>
+          <head>
+            <title>Lista de Empleados - AXYRA</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              table { width: 100%; border-collapse: collapse; }
+              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+              th { background-color: #f2f2f2; }
+              @media print {
+                body { margin: 0; }
+                @page { margin: 1cm; }
+              }
+            </style>
+          </head>
+          <body>
+            ${contenido}
+            <script>
+              window.onload = function() {
+                window.print();
+                window.onafterprint = function() {
+                  window.close();
+                };
+              };
+            </script>
+          </body>
+        </html>
+      `);
+      ventanaImpresion.document.close();
+
+      this.mostrarExito('Lista enviada a impresión');
+    } catch (error) {
+      console.error('❌ Error imprimiendo lista:', error);
+      this.mostrarError('Error enviando a impresión');
+    }
+  }
+
+  // ========================================
   // UTILIDADES
   // ========================================
 
@@ -996,15 +1151,92 @@ class AxyraGestionPersonal {
 
   // Funciones para ser llamadas desde HTML
   mostrarModalEmpleado(empleadoId = null) {
-    this.mostrarModalEmpleado(empleadoId);
+    try {
+      const modal = document.getElementById('modalEmpleado');
+      if (modal) {
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        
+        // Limpiar formulario
+        const form = document.getElementById('formEmpleado');
+        if (form) {
+          form.reset();
+        }
+        
+        // Enfocar primer campo
+        const primerCampo = modal.querySelector('input');
+        if (primerCampo) {
+          primerCampo.focus();
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error mostrando modal empleado:', error);
+      this.mostrarError('Error abriendo el formulario de empleado');
+    }
   }
 
   cerrarModalEmpleado() {
-    this.cerrarModalEmpleado();
+    try {
+      const modal = document.getElementById('modalEmpleado');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    } catch (error) {
+      console.error('❌ Error cerrando modal empleado:', error);
+    }
   }
 
   guardarEmpleado() {
-    this.guardarEmpleado();
+    try {
+      const form = document.getElementById('formEmpleado');
+      if (!form) {
+        this.mostrarError('Formulario no encontrado');
+        return;
+      }
+
+      const formData = new FormData(form);
+      const empleado = {
+        id: this.generarId(),
+        nombre: formData.get('nombre') || '',
+        cedula: formData.get('cedula') || '',
+        cargo: formData.get('cargo') || '',
+        departamento: formData.get('departamento') || 'admin',
+        salario: parseFloat(formData.get('salario')) || 0,
+        fechaIngreso: formData.get('fechaIngreso') || new Date().toISOString().split('T')[0],
+        telefono: formData.get('telefono') || '',
+        email: formData.get('email') || '',
+        direccion: formData.get('direccion') || '',
+        fechaCreacion: new Date().toISOString(),
+        fechaActualizacion: new Date().toISOString()
+      };
+
+      // Validar datos requeridos
+      if (!empleado.nombre || !empleado.cedula) {
+        this.mostrarError('Nombre y cédula son campos requeridos');
+        return;
+      }
+
+      // Verificar si ya existe un empleado con la misma cédula
+      const empleadoExistente = this.empleados.find(e => e.cedula === empleado.cedula);
+      if (empleadoExistente) {
+        this.mostrarError('Ya existe un empleado con esta cédula');
+        return;
+      }
+
+      // Agregar empleado
+      this.empleados.push(empleado);
+      this.guardarEmpleados();
+      this.renderizarEmpleados();
+      this.actualizarEstadisticas();
+      this.cerrarModalEmpleado();
+      
+      this.mostrarExito('Empleado guardado correctamente');
+      console.log('✅ Empleado guardado:', empleado);
+    } catch (error) {
+      console.error('❌ Error guardando empleado:', error);
+      this.mostrarError('Error guardando el empleado');
+    }
   }
 
   mostrarModalHoras(horasId = null) {

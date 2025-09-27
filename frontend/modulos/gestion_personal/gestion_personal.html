@@ -1674,12 +1674,44 @@
         }
       }
 
-      // Función para mostrar detalle de horas (alias para compatibilidad)
-      function verDetalleHoras(horasId) {
-        if (window.axyraGestionPersonal) {
-          window.axyraGestionPersonal.verDetalleHoras(horasId);
-        }
+    // Función para mostrar detalle de horas (alias para compatibilidad)
+    function verDetalleHoras(horasId) {
+      if (window.axyraGestionPersonal) {
+        window.axyraGestionPersonal.verDetalleHoras(horasId);
       }
+    }
+
+    // Funciones de exportación
+    function exportarEmpleadosPDF() {
+      if (window.axyraGestionPersonal) {
+        window.axyraGestionPersonal.exportarEmpleadosPDF();
+      }
+    }
+
+    function imprimirListaEmpleados() {
+      if (window.axyraGestionPersonal) {
+        window.axyraGestionPersonal.imprimirListaEmpleados();
+      }
+    }
+
+    // Funciones de modales
+    function mostrarModalEmpleado() {
+      if (window.axyraGestionPersonal) {
+        window.axyraGestionPersonal.mostrarModalEmpleado();
+      }
+    }
+
+    function cerrarModalEmpleado() {
+      if (window.axyraGestionPersonal) {
+        window.axyraGestionPersonal.cerrarModalEmpleado();
+      }
+    }
+
+    function guardarEmpleado() {
+      if (window.axyraGestionPersonal) {
+        window.axyraGestionPersonal.guardarEmpleado();
+      }
+    }
 
       // Establecer fechas por defecto
       document.addEventListener('DOMContentLoaded', function () {
@@ -1703,18 +1735,21 @@
       });
     </script>
 
-    <!-- Scripts avanzados -->
-    <!-- AXYRA Core Scripts -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Scripts AXYRA Core -->
+    <script src="../../js/firebase-config-production.js"></script>
     <script src="../../js/axyra-config-fixed.js"></script>
     <script src="../../js/axyra-notifications.js"></script>
     <script src="../../js/axyra-auth.js"></script>
 
-    <!-- Gestión de Personal Corregido -->
+    <!-- Gestión de Personal Optimizado -->
     <script src="gestion_personal_fixed.js"></script>
 
     <!-- Header Compartido AXYRA -->
     <script src="../../static/include-header.js"></script>
-
-    <!-- Scripts adicionales problemáticos eliminados para evitar conflictos -->
   </body>
 </html>
