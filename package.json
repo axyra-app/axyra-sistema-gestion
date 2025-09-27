@@ -55,7 +55,7 @@
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
-    "firebase-tools": "^13.0.0",
+    "firebase-tools": "^14.17.0",
     "vercel": "^32.0.0"
   },
   "repository": {
