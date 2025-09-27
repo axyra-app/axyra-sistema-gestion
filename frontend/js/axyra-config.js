@@ -3,15 +3,21 @@
 // Sistema de gestión empresarial
 // ========================================
 
+// Función para obtener la configuración
+window.getAxyraConfig = function() {
+  return window.AXYRA_CONFIG;
+};
+
 window.AXYRA_CONFIG = {
   // Configuración de Firebase
   firebase: {
-    apiKey: process.env.VITE_FIREBASE_API_KEY || 'AIzaSyBvQvqQvqQvqQvqQvqQvqQvqQvqQvqQ',
-    authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN || 'villa-venecia-nomina.firebaseapp.com',
-    projectId: process.env.VITE_FIREBASE_PROJECT_ID || 'villa-venecia-nomina',
-    storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET || 'villa-venecia-nomina.appspot.com',
-    messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789',
-    appId: process.env.VITE_FIREBASE_APP_ID || '1:123456789:web:abcdef123456',
+    apiKey: window.ENV?.VITE_FIREBASE_API_KEY || 'AIzaSyAW3ejokcsWAP5G1yJT63jLBpFmdTiTUwc',
+    authDomain: window.ENV?.VITE_FIREBASE_AUTH_DOMAIN || 'axyra-48238.firebaseapp.com',
+    projectId: window.ENV?.VITE_FIREBASE_PROJECT_ID || 'axyra-48238',
+    storageBucket: window.ENV?.VITE_FIREBASE_STORAGE_BUCKET || 'axyra-48238.firebasestorage.app',
+    messagingSenderId: window.ENV?.VITE_FIREBASE_MESSAGING_SENDER_ID || '796334517286',
+    appId: window.ENV?.VITE_FIREBASE_APP_ID || '1:796334517286:web:95947cf0f773dc11378ae7',
+    measurementId: window.ENV?.VITE_FIREBASE_MEASUREMENT_ID || 'G-R8W2MP15B7',
   },
 
   // Configuración de la empresa

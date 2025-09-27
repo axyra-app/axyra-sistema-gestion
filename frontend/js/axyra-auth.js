@@ -45,9 +45,9 @@ class AxyraAuthSystem {
     }
 
     // Configurar Firebase
-    const config = window.getAxyraConfig('firebase');
+    const config = window.getAxyraConfig();
     if (!firebase.apps.length) {
-      firebase.initializeApp(config);
+      firebase.initializeApp(config.firebase);
     }
 
     this.auth = firebase.auth();
@@ -146,10 +146,10 @@ class AxyraAuthSystem {
       // Configurar persistencia
       const persistence = rememberMe ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION;
 
-      await this.auth.setPersistence(persistence);
+      await firebase.auth().setPersistence(persistence);
 
       // Intentar login
-      const result = await this.auth.signInWithEmailAndPassword(email, password);
+      const result = await firebase.auth().signInWithEmailAndPassword(email, password);
 
       // Resetear intentos de login
       this.resetLoginAttempts();
