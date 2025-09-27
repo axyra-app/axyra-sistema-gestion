@@ -1,6 +1,6 @@
 // ========================================
-// CONFIGURACIÓN FIREBASE SIMPLE
-// Sin dependencias de process.env
+// CONFIGURACIÓN FIREBASE ROBUSTA
+// Sistema de gestión empresarial AXYRA
 // ========================================
 
 // Configuración directa de Firebase
@@ -54,4 +54,23 @@ window.getAxyraConfig = function() {
   };
 };
 
-console.log('🔥 Firebase Simple configurado correctamente');
+// Inicializar Firebase automáticamente
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof firebase !== 'undefined') {
+    try {
+      // Verificar si Firebase ya está inicializado
+      if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+        console.log('🔥 Firebase inicializado automáticamente');
+      } else {
+        console.log('🔥 Firebase ya estaba inicializado');
+      }
+    } catch (error) {
+      console.error('❌ Error inicializando Firebase:', error);
+    }
+  } else {
+    console.error('❌ Firebase SDK no está disponible');
+  }
+});
+
+console.log('🔥 Firebase Config cargado correctamente');

@@ -499,7 +499,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <!-- AXYRA Core Scripts -->
-    <script src="js/firebase-simple.js"></script>
+    <script src="js/firebase-config.js"></script>
     <script src="js/axyra-notifications.js"></script>
     <script src="js/axyra-auth.js"></script>
 
@@ -761,6 +761,18 @@
                     window.location.href = 'dashboard-optimized.html';
                 }
             });
+        } else {
+            // Esperar a que Firebase se inicialice
+            setTimeout(() => {
+                if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+                    firebase.auth().onAuthStateChanged((user) => {
+                        if (user) {
+                            // Usuario ya autenticado, redirigir al dashboard
+                            window.location.href = 'dashboard-optimized.html';
+                        }
+                    });
+                }
+            }, 1000);
         }
     </script>
 </body>
