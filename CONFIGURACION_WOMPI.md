@@ -18,10 +18,10 @@ this.config = {
   // REEMPLAZAR CON TUS CLAVES REALES
   publicKey: 'pub_test_tu_clave_publica_aqui',
   privateKey: 'prv_test_tu_clave_privada_aqui',
-  
+
   // Configuración de entorno
   environment: 'test', // 'test' o 'production'
-  
+
   // ... resto de la configuración
 };
 ```
@@ -41,6 +41,7 @@ WOMPI_ENVIRONMENT=test
 ### 4. **Configuración para validación de $200 COP**
 
 El sistema está configurado para:
+
 - **Validación de identidad:** $200 COP
 - **Prueba gratuita:** 7 días
 - **Redirección:** Automática después del pago
@@ -48,6 +49,7 @@ El sistema está configurado para:
 ### 5. **URLs de redirección**
 
 Configura en tu dashboard de Wompi:
+
 - **URL de éxito:** `https://tu-dominio.vercel.app/modulos/membresias/membresias.html?validation=success&plan={plan}`
 - **URL de error:** `https://tu-dominio.vercel.app/modulos/membresias/membresias.html?validation=error`
 
@@ -70,14 +72,18 @@ Configura en tu dashboard de Wompi:
 ## 🔧 Solución de problemas
 
 ### **Problema: Sigue cobrando $99,000**
+
 **Solución:** Verifica que las claves estén configuradas correctamente y que el archivo `wompi-keys-config.js` esté cargado.
 
 ### **Problema: No redirige a Wompi**
+
 **Solución:** Verifica que la URL de Wompi esté configurada correctamente y que las claves sean válidas.
 
 ### **Problema: No activa la prueba gratuita**
+
 **Solución:** Verifica que la URL de redirección esté configurada correctamente en Wompi.
 
 ## 📞 Soporte
 
 Si tienes problemas con la configuración, contacta al soporte técnico de AXYRA.
+

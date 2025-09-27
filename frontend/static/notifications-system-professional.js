@@ -8,18 +8,18 @@ class AxyraNotificationSystemProfessional {
     this.container = null;
     this.maxNotifications = 3;
     this.isInitialized = false;
-    
+
     this.init();
   }
 
   async init() {
     try {
       console.log('🔔 Inicializando Sistema de Notificaciones Profesional AXYRA...');
-      
+
       this.createNotificationContainer();
       this.setupEventListeners();
       this.loadStoredNotifications();
-      
+
       this.isInitialized = true;
       console.log('✅ Sistema de Notificaciones Profesional AXYRA inicializado');
     } catch (error) {
@@ -33,7 +33,7 @@ class AxyraNotificationSystemProfessional {
     this.container = document.createElement('div');
     this.container.className = 'axyra-notifications-container-professional';
     this.container.id = 'axyra-notifications-container';
-    
+
     this.container.style.cssText = `
       position: fixed;
       top: 20px;
@@ -74,8 +74,9 @@ class AxyraNotificationSystemProfessional {
       const stored = localStorage.getItem('axyra_notifications');
       if (stored) {
         const notifications = JSON.parse(stored);
-        notifications.forEach(notification => {
-          if (notification.timestamp > Date.now() - 24 * 60 * 60 * 1000) { // Solo últimas 24h
+        notifications.forEach((notification) => {
+          if (notification.timestamp > Date.now() - 24 * 60 * 60 * 1000) {
+            // Solo últimas 24h
             this.showNotification(notification.message, notification.type, notification.duration, notification.action);
           }
         });
@@ -94,11 +95,11 @@ class AxyraNotificationSystemProfessional {
         timestamp: Date.now(),
         duration: duration,
         action: action,
-        title: this.getNotificationTitle(type)
+        title: this.getNotificationTitle(type),
       };
 
       this.notifications.unshift(notification);
-      
+
       // Limitar número de notificaciones
       if (this.notifications.length > this.maxNotifications) {
         this.notifications = this.notifications.slice(0, this.maxNotifications);
@@ -113,7 +114,6 @@ class AxyraNotificationSystemProfessional {
           this.removeNotification(notification.id);
         }, duration);
       }
-
     } catch (error) {
       console.error('❌ Error mostrando notificación:', error);
     }
@@ -124,7 +124,7 @@ class AxyraNotificationSystemProfessional {
       const notificationElement = document.createElement('div');
       notificationElement.id = notification.id;
       notificationElement.className = `axyra-notification-professional axyra-notification-${notification.type}`;
-      
+
       notificationElement.style.cssText = `
         background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
         border-radius: 12px;
@@ -211,7 +211,9 @@ class AxyraNotificationSystemProfessional {
             ${notification.message}
           </div>
           
-          ${notification.action ? `
+          ${
+            notification.action
+              ? `
             <div class="axyra-notification-actions" style="display: flex; gap: 8px; align-items: center;">
               <button class="axyra-notification-action" style="
                 background: ${this.getNotificationColor(notification.type)}; 
@@ -229,20 +231,21 @@ class AxyraNotificationSystemProfessional {
                 ${notification.action}
               </button>
             </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
       `;
 
       if (this.container) {
         this.container.appendChild(notificationElement);
-        
+
         // Animación de entrada
         setTimeout(() => {
           notificationElement.style.transform = 'translateX(0)';
           notificationElement.style.opacity = '1';
         }, 100);
       }
-
     } catch (error) {
       console.error('❌ Error renderizando notificación:', error);
     }
@@ -254,7 +257,7 @@ class AxyraNotificationSystemProfessional {
       if (notificationElement) {
         notificationElement.style.transform = 'translateX(100%)';
         notificationElement.style.opacity = '0';
-        
+
         setTimeout(() => {
           if (notificationElement.parentElement) {
             notificationElement.remove();
@@ -263,9 +266,8 @@ class AxyraNotificationSystemProfessional {
       }
 
       // Remover de la lista
-      this.notifications = this.notifications.filter(n => n.id !== notificationId);
+      this.notifications = this.notifications.filter((n) => n.id !== notificationId);
       this.storeNotifications();
-
     } catch (error) {
       console.error('❌ Error removiendo notificación:', error);
     }
@@ -273,16 +275,16 @@ class AxyraNotificationSystemProfessional {
 
   handleNotificationAction(notificationId) {
     try {
-      const notification = this.notifications.find(n => n.id === notificationId);
+      const notification = this.notifications.find((n) => n.id === notificationId);
       if (notification) {
         console.log('🔔 Acción de notificación ejecutada:', notification.action);
-        
+
         // Aquí puedes agregar lógica específica para cada acción
         if (notification.action === 'Ver empleados') {
           // Redirigir a la página de empleados
           window.location.href = '/modulos/empleados/empleados.html';
         }
-        
+
         this.removeNotification(notificationId);
       }
     } catch (error) {
@@ -333,22 +335,25 @@ class AxyraNotificationSystemProfessional {
   formatTime(timestamp) {
     const now = Date.now();
     const diff = now - timestamp;
-    
-    if (diff < 60000) { // Menos de 1 minuto
+
+    if (diff < 60000) {
+      // Menos de 1 minuto
       return 'Ahora';
-    } else if (diff < 3600000) { // Menos de 1 hora
+    } else if (diff < 3600000) {
+      // Menos de 1 hora
       const minutes = Math.floor(diff / 60000);
       return `Hace ${minutes}m`;
-    } else if (diff < 86400000) { // Menos de 1 día
+    } else if (diff < 86400000) {
+      // Menos de 1 día
       const hours = Math.floor(diff / 3600000);
       return `Hace ${hours}h`;
     } else {
       const date = new Date(timestamp);
-      return date.toLocaleDateString('es-ES', { 
-        day: '2-digit', 
-        month: '2-digit', 
-        hour: '2-digit', 
-        minute: '2-digit' 
+      return date.toLocaleDateString('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
       });
     }
   }
@@ -397,7 +402,7 @@ class AxyraNotificationSystemProfessional {
         acc[n.type] = (acc[n.type] || 0) + 1;
         return acc;
       }, {}),
-      maxNotifications: this.maxNotifications
+      maxNotifications: this.maxNotifications,
     };
   }
 }
@@ -415,3 +420,4 @@ if (document.readyState === 'loading') {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = AxyraNotificationSystemProfessional;
 }
+

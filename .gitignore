@@ -1,190 +1,98 @@
-# Dependencies
+# ========================================
+# AXYRA SISTEMA DE GESTIÓN - .gitignore
+# ========================================
+
+# Variables de entorno (NUNCA subir a Git)
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+.env.test
+
+# Archivos de backup
+*.backup
+*.bak
+*.tmp
+*.temp
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependencias
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Archivos de sistema
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
-# Firebase
-.firebase/
-firebase-debug.log
-firestore-debug.log
-
-# Vercel
-.vercel
-
-# IDE
+# IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Logs
-logs/
-*.log
-
-# Runtime data
-pids/
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
-coverage/
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# next.js build output
-.next
-
-# nuxt.js build output
-.nuxt
-
-# vuepress build output
-.vuepress/dist
-
-# Serverless directories
-.serverless
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# Temporary folders
-tmp/
-temp/
-
-# Build outputs
+# Archivos de build
 dist/
 build/
+out/
 
-# Firebase emulator
+# Archivos de cache
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+
+# Archivos de testing
+coverage/
+.nyc_output/
+
+# Archivos de Firebase
+.firebase/
 firebase-debug.log
 firestore-debug.log
-ui-debug.log
 
-# Local development
-.local/
+# Archivos de Vercel
+.vercel/
 
-# Backup files
+# Archivos de configuración local
+config.local.json
+settings.local.json
+
+# Archivos de base de datos local
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de uploads
+uploads/
+public/uploads/
+
+# Archivos de backup del sistema
+backups/
 *.backup
-*.bak
 
-# Test files
-test-results/
-coverage/
+# Archivos de documentación temporal
+docs/temp/
+docs/draft/
 
-# Documentation build
-docs/_build/
+# Archivos de desarrollo
+dev/
+test/
+debug/
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Java
-*.class
-*.jar
-*.war
-*.ear
-
-# Compiled binary addons
-build/Release
-
-# TypeScript
-*.tsbuildinfo
-
-# Optional eslint cache
-.eslintcache
-
-# Microbundle cache
-.rpt2_cache/
-.rts2_cache_cjs/
-.rts2_cache_es/
-.rts2_cache_umd/
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env
-
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# Next.js build output
-.next
-
-# Nuxt.js build / generate output
-.nuxt
-dist
-
-# Gatsby files
-.cache/
-public
-
-# Storybook build outputs
-.out
-.storybook-out
-
-# Temporary folders
-tmp/
-temp/
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Archivos de configuración específicos del entorno
+.env.*.local

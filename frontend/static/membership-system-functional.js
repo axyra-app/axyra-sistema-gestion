@@ -625,18 +625,18 @@ class AxyraMembershipSystemFunctional {
       // Fallback si no hay configuración de claves
       const baseUrl = 'https://checkout.wompi.co/l/';
 
-       // Parámetros para la validación
-       const params = new URLSearchParams({
-         'public-key': 'pub_prod_DMd1RNFhiA3813HZ3YZFsNjSg2beSS00', // Tu clave pública de Wompi
-         currency: validationData.currency,
-         'amount-in-cents': (validationData.amount * 100).toString(), // Convertir a centavos
-         reference: validationData.reference,
-         'customer-email': validationData.customer.email,
-         'customer-name': validationData.customer.name,
-         description: validationData.description,
-         'redirect-url':
-           window.location.origin + '/modulos/membresias/membresias.html?validation=success&plan=' + validationData.plan,
-       });
+      // Parámetros para la validación
+      const params = new URLSearchParams({
+        'public-key': 'pub_prod_DMd1RNFhiA3813HZ3YZFsNjSg2beSS00', // Tu clave pública de Wompi
+        currency: validationData.currency,
+        'amount-in-cents': (validationData.amount * 100).toString(), // Convertir a centavos
+        reference: validationData.reference,
+        'customer-email': validationData.customer.email,
+        'customer-name': validationData.customer.name,
+        description: validationData.description,
+        'redirect-url':
+          window.location.origin + '/modulos/membresias/membresias.html?validation=success&plan=' + validationData.plan,
+      });
 
       return `${baseUrl}?${params.toString()}`;
     } catch (error) {

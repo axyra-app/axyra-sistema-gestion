@@ -4,13 +4,13 @@
 
 class AxyraWompiKeys {
   constructor() {
-     this.config = {
-       // Claves de Wompi - CONFIGURADAS CON TUS CLAVES REALES
-       publicKey: 'pub_prod_DMd1RNFhiA3813HZ3YZFsNjSg2beSS00', // Tu clave pública de Wompi
-       privateKey: 'prv_prod_aka7VAtItpCAF3qhVuD8zvt7FUWXduPY', // Tu clave privada de Wompi
+    this.config = {
+      // Claves de Wompi - CONFIGURADAS CON TUS CLAVES REALES
+      publicKey: 'pub_prod_DMd1RNFhiA3813HZ3YZFsNjSg2beSS00', // Tu clave pública de Wompi
+      privateKey: 'prv_prod_aka7VAtItpCAF3qhVuD8zvt7FUWXduPY', // Tu clave privada de Wompi
 
-       // Configuración de entorno
-       environment: 'production', // 'test' o 'production'
+      // Configuración de entorno
+      environment: 'production', // 'test' o 'production'
 
       // URLs de Wompi
       urls: {

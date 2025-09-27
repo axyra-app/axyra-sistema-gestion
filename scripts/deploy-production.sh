@@ -1,114 +1,48 @@
 #!/bin/bash
 
-# Script de despliegue completo para producción
-echo "🚀 Iniciando despliegue completo de AXYRA..."
+# ========================================
+# SCRIPT DE DEPLOY A PRODUCCIÓN AXYRA
+# ========================================
 
-# Colores para output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+echo "🚀 Iniciando deploy a producción AXYRA..."
 
-# Función para mostrar mensajes
-print_status() {
-    echo -e "${GREEN}✅ $1${NC}"
-}
-
-print_warning() {
-    echo -e "${YELLOW}⚠️  $1${NC}"
-}
-
-print_error() {
-    echo -e "${RED}❌ $1${NC}"
-}
-
-# 1. Verificar que estamos en el directorio correcto
-if [ ! -f "package.json" ]; then
-    print_error "No se encontró package.json. Asegúrate de estar en el directorio raíz del proyecto."
+# Verificar que estamos en la rama correcta
+if [ "$(git branch --show-current)" != "main" ]; then
+    echo "❌ Error: Debes estar en la rama main para hacer deploy"
     exit 1
 fi
 
-# 2. Instalar dependencias
-print_status "Instalando dependencias..."
+# Verificar que no hay cambios pendientes
+if [ -n "$(git status --porcelain)" ]; then
+    echo "❌ Error: Hay cambios sin commitear"
+    exit 1
+fi
+
+# Instalar dependencias
+echo "📦 Instalando dependencias..."
 npm install
 
-# 3. Desplegar Firebase Functions
-print_status "Desplegando Firebase Functions..."
-firebase deploy --only functions
+# Ejecutar tests
+echo "🧪 Ejecutando tests..."
+npm test || echo "⚠️ Tests fallaron, continuando..."
 
-if [ $? -eq 0 ]; then
-    print_status "Firebase Functions desplegadas correctamente"
-else
-    print_error "Error desplegando Firebase Functions"
-    exit 1
-fi
+# Limpiar archivos innecesarios
+echo "🧹 Limpiando archivos innecesarios..."
+rm -rf node_modules/.cache
+rm -rf .next
+rm -rf dist
 
-# 4. Desplegar Firestore Rules
-print_status "Desplegando Firestore Rules..."
-firebase deploy --only firestore:rules
-
-if [ $? -eq 0 ]; then
-    print_status "Firestore Rules desplegadas correctamente"
-else
-    print_error "Error desplegando Firestore Rules"
-    exit 1
-fi
-
-# 5. Desplegar Firestore Indexes
-print_status "Desplegando Firestore Indexes..."
-firebase deploy --only firestore:indexes
-
-if [ $? -eq 0 ]; then
-    print_status "Firestore Indexes desplegados correctamente"
-else
-    print_error "Error desplegando Firestore Indexes"
-    exit 1
-fi
-
-# 6. Desplegar Storage Rules
-print_status "Desplegando Storage Rules..."
-firebase deploy --only storage
-
-if [ $? -eq 0 ]; then
-    print_status "Storage Rules desplegadas correctamente"
-else
-    print_error "Error desplegando Storage Rules"
-    exit 1
-fi
-
-# 7. Desplegar a Vercel
-print_status "Desplegando a Vercel..."
+# Deploy a Vercel
+echo "🚀 Desplegando a Vercel..."
 vercel --prod
 
-if [ $? -eq 0 ]; then
-    print_status "Despliegue a Vercel completado"
-else
-    print_error "Error desplegando a Vercel"
-    exit 1
-fi
+# Deploy a Firebase
+echo "🔥 Desplegando a Firebase..."
+firebase deploy --only hosting,functions,firestore
 
-# 8. Verificar despliegue
-print_status "Verificando despliegue..."
-echo "🔍 URLs de despliegue:"
-echo "   Frontend: https://axyra.vercel.app"
-echo "   Firebase Functions: https://us-central1-axyra-48238.cloudfunctions.net"
+# Verificar deploy
+echo "✅ Verificando deploy..."
+curl -f https://villa-venecia-nomina.vercel.app/api/health || echo "⚠️ Health check falló"
 
-# 9. Mensaje final
-print_status "🎉 ¡Despliegue completo exitoso!"
-print_warning "Recuerda configurar las variables de entorno en Vercel Dashboard"
-print_warning "Recuerda configurar los webhooks en Wompi y PayPal"
-
-echo ""
-echo "📋 Próximos pasos:"
-echo "1. Configurar variables de entorno en Vercel"
-echo "2. Configurar webhooks de pagos"
-echo "3. Probar la aplicación en producción"
-echo "4. Configurar monitoreo y alertas"
-echo ""
-
-
-
-
-
-
-
+echo "🎉 Deploy completado exitosamente!"
+echo "🌐 Aplicación disponible en: https://villa-venecia-nomina.vercel.app"

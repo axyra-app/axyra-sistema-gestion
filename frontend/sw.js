@@ -203,30 +203,76 @@ async function cleanupCache() {
   console.log('✅ Cache limpiado');
 }
 
-// Manejar notificaciones push (futuro)
+// Manejar notificaciones push
 self.addEventListener('push', (event) => {
-  if (event.data) {
-    const data = event.data.json();
-    const options = {
-      body: data.body,
-      icon: '/static/icons/icon-192x192.png',
-      badge: '/static/icons/badge-72x72.png',
-      vibrate: [100, 50, 100],
-      data: data.data,
-      actions: data.actions || [],
-    };
+  console.log('🔔 Push recibido:', event);
 
-    event.waitUntil(self.registration.showNotification(data.title, options));
+  let data = {};
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (error) {
+      data = { title: 'AXYRA', body: event.data.text() };
+    }
   }
+
+  const options = {
+    body: data.body || 'Nueva notificación',
+    icon: data.icon || '/logo.png',
+    badge: data.badge || '/logo.png',
+    tag: data.tag || 'axyra-push',
+    data: data.data || {},
+    actions: data.actions || [],
+    requireInteraction: data.requireInteraction || false,
+    silent: data.silent || false,
+    timestamp: Date.now(),
+  };
+
+  event.waitUntil(self.registration.showNotification(data.title || 'AXYRA', options));
 });
 
-// Manejar clics en notificaciones
+// Manejar clicks en notificaciones
 self.addEventListener('notificationclick', (event) => {
+  console.log('👆 Notificación clickeada:', event);
+
   event.notification.close();
 
-  if (event.action === 'open') {
-    event.waitUntil(clients.openWindow(event.notification.data.url || '/'));
-  }
+  const data = event.notification.data || {};
+  const url = data.url || '/dashboard';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window' }).then((clientList) => {
+      // Buscar ventana existente
+      for (const client of clientList) {
+        if (client.url.includes(url) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+
+      // Abrir nueva ventana
+      if (clients.openWindow) {
+        return clients.openWindow(url);
+      }
+    })
+  );
+});
+
+// Manejar cierre de notificaciones
+self.addEventListener('notificationclose', (event) => {
+  console.log('❌ Notificación cerrada:', event);
+
+  // Enviar mensaje a la página principal
+  self.clients.matchAll().then((clients) => {
+    clients.forEach((client) => {
+      client.postMessage({
+        type: 'NOTIFICATION_CLOSED',
+        payload: {
+          tag: event.notification.tag,
+          timestamp: Date.now(),
+        },
+      });
+    });
+  });
 });
 
 console.log('✅ Service Worker AXYRA cargado');

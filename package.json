@@ -9,7 +9,7 @@
     "start": "vercel start",
     "deploy": "vercel --prod",
     "deploy:firebase": "firebase deploy",
-    "deploy:all": "./deploy-production.sh",
+    "deploy:all": "./scripts/deploy-production.sh",
     "test": "node scripts/test-criticas.js",
     "test:health": "node scripts/health-check.js",
     "backup": "node scripts/backup-system.js create",
@@ -22,7 +22,11 @@
     "logs:firebase": "firebase functions:log",
     "logs:vercel": "vercel logs",
     "backup:firestore": "firebase firestore:export gs://axyra-48238-backups/firestore/$(date +%Y%m%d_%H%M%S)",
-    "clean": "rm -rf node_modules package-lock.json && npm install"
+    "clean": "rm -rf node_modules package-lock.json && npm install",
+    "optimize": "node scripts/optimize-project.js",
+    "validate": "node scripts/validate-config.js",
+    "check-env": "node scripts/check-env-variables.js",
+    "validate-final": "node scripts/validate-final-system.js"
   },
   "keywords": [
     "sistema-gestion",
@@ -44,14 +48,15 @@
     "npm": ">=8.0.0"
   },
   "dependencies": {
-    "firebase-admin": "^13.5.0",
-    "firebase": "^10.7.1",
     "crypto": "^1.0.1",
+    "dotenv": "^17.2.2",
+    "firebase": "^10.7.1",
+    "firebase-admin": "^13.5.0",
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
-    "vercel": "^32.0.0",
-    "firebase-tools": "^13.0.0"
+    "firebase-tools": "^13.0.0",
+    "vercel": "^32.0.0"
   },
   "repository": {
     "type": "git",

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../static/axyra-design-system.css" />
     <link rel="stylesheet" href="../../static/header-fixes.css" />
     <link rel="stylesheet" href="../../static/ai-chat-styles.css" />
+    <link rel="stylesheet" href="../../static/footer-center-fix.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
       .gestion-personal-container {
@@ -1154,12 +1155,12 @@
         // Configurar fechas por defecto para nómina (primer y último día del mes actual)
         const fechaInicioNomina = document.getElementById('fechaInicioNomina');
         const fechaFinNomina = document.getElementById('fechaFinNomina');
-        
+
         if (fechaInicioNomina && fechaFinNomina) {
           const hoy = new Date();
           const primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
           const ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
-          
+
           fechaInicioNomina.value = primerDia.toISOString().split('T')[0];
           fechaFinNomina.value = ultimoDia.toISOString().split('T')[0];
         }
