@@ -99,6 +99,12 @@ class RegisterAuthSystem {
                 activa: true
             });
 
+            // Redirigir al dashboard después del registro exitoso
+            console.log('✅ Registro exitoso, redirigiendo al dashboard...');
+            setTimeout(() => {
+                window.location.href = 'dashboard-optimized.html';
+            }, 2000);
+
             return { success: true, user: user };
         } catch (error) {
             console.error('❌ Error en registro:', error);

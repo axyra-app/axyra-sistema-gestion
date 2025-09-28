@@ -202,11 +202,22 @@ class AxyraAuthSystem {
 
   async logout() {
     try {
+      console.log('🚪 Cerrando sesión...');
+      
+      // Limpiar datos del usuario usando el sistema de limpieza
+      if (window.userDataCleaner) {
+        window.userDataCleaner.forceCleanAll();
+      } else {
+        this.clearUserData();
+      }
+      
+      // Cerrar sesión en Firebase
       await this.auth.signOut();
-      this.clearUserData();
+      
+      console.log('✅ Sesión cerrada correctamente');
       this.redirectToLogin();
     } catch (error) {
-      console.error('Error al cerrar sesión:', error);
+      console.error('❌ Error al cerrar sesión:', error);
     }
   }
 
