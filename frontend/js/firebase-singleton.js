@@ -16,9 +16,36 @@ class FirebaseSingleton {
         
         console.log('🔥 Inicializando Singleton de Firebase...');
         this.setupFirebaseConfig();
-        this.initializeFirebase();
-        this.isInitialized = true;
-        console.log('✅ Singleton de Firebase inicializado');
+        
+        // Esperar a que Firebase esté disponible
+        this.waitForFirebase().then(() => {
+            this.initializeFirebase();
+            this.isInitialized = true;
+            console.log('✅ Singleton de Firebase inicializado');
+        }).catch(error => {
+            console.error('❌ Error esperando Firebase:', error);
+        });
+    }
+
+    async waitForFirebase() {
+        return new Promise((resolve, reject) => {
+            let attempts = 0;
+            const maxAttempts = 50; // 5 segundos máximo
+            
+            const checkFirebase = () => {
+                attempts++;
+                
+                if (typeof firebase !== 'undefined') {
+                    resolve();
+                } else if (attempts >= maxAttempts) {
+                    reject(new Error('Firebase SDK no se cargó en el tiempo esperado'));
+                } else {
+                    setTimeout(checkFirebase, 100);
+                }
+            };
+            
+            checkFirebase();
+        });
     }
 
     setupFirebaseConfig() {
@@ -106,11 +133,12 @@ const firebaseSingleton = new FirebaseSingleton();
 window.firebaseSingleton = firebaseSingleton;
 window.getFirebase = () => firebaseSingleton.getFirebase();
 window.getFirebaseConfig = () => firebaseSingleton.getConfig();
+window.getAxyraConfig = () => firebaseSingleton.getConfig(); // Alias para compatibilidad
 window.isFirebaseReady = () => firebaseSingleton.isFirebaseReady();
 
-// Interceptar intentos de inicialización múltiple
-const originalInitializeApp = firebase?.initializeApp;
-if (firebase && originalInitializeApp) {
+// Interceptar intentos de inicialización múltiple (solo si Firebase está disponible)
+if (typeof firebase !== 'undefined') {
+    const originalInitializeApp = firebase.initializeApp;
     firebase.initializeApp = function(config, name) {
         if (firebase.apps.length > 0) {
             console.warn('⚠️ Firebase ya está inicializado, usando instancia existente');

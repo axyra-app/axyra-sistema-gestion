@@ -7,16 +7,17 @@
     <link rel="icon" href="nomina.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
+    <!-- Firebase SDK (debe cargarse primero) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
     <!-- AXYRA Core Scripts -->
     <script src="js/firebase-singleton.js"></script>
     <script src="js/notifications-enhanced.js"></script>
     <script src="js/axyra-auth.js"></script>
     <script src="js/ai-chat-functional.js"></script>
-
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="js/axyra-initializer.js"></script>
 
     <style>
       * {
