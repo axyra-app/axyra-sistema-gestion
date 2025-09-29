@@ -56,7 +56,7 @@
   },
   "devDependencies": {
     "firebase-tools": "^13.0.0",
-    "vercel": "^32.0.0"
+    "vercel": "^48.1.6"
   },
   "repository": {
     "type": "git",
