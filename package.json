@@ -52,7 +52,7 @@
     "dotenv": "^17.2.2",
     "firebase": "^10.7.1",
     "firebase-admin": "^13.5.0",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "firebase-tools": "^13.0.0",
