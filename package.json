@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "crypto": "^1.0.1",
-    "dotenv": "^17.2.2",
+    "dotenv": "^17.2.3",
     "firebase": "^10.7.1",
     "firebase-admin": "^13.5.0",
     "node-fetch": "^2.6.7"
